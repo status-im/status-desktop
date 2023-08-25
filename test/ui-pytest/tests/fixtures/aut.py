@@ -3,8 +3,11 @@ from datetime import datetime
 import pytest
 
 import configs
+import constants
+from constants import UserAccount
 from driver.aut import AUT
 from gui.main_window import MainWindow
+from gui.screens.onboarding import LoginView
 from scripts.utils import system_path
 
 
@@ -33,3 +36,21 @@ def main_window(aut: AUT, user_data):
     aut.launch(f'-d={user_data.parent}')
     yield MainWindow().wait_until_appears().prepare()
     aut.detach().stop()
+
+
+@pytest.fixture
+def user_account(request) -> UserAccount:
+    if hasattr(request, 'param'):
+        user_account = request.param
+        assert isinstance(user_account, UserAccount)
+    else:
+        user_account = constants.user.user_account_default
+    yield user_account
+
+
+@pytest.fixture
+def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindow:
+    if LoginView().is_visible:
+        yield main_window.log_in(user_account)
+    else:
+        yield main_window.sign_up(user_account)

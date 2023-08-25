@@ -7,11 +7,11 @@ from allure import step
 import configs.timeouts
 import constants
 import driver
-from gui.components.before_started_popup import BeforeStartedPopUp
-from gui.components.profile_picture_popup import shift_image
+from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
+from gui.components.onboarding.welcome_status_popup import WelcomeStatusPopup
+from gui.components.picture_edit_popup import shift_image
 from gui.components.splash_screen import SplashScreen
-from gui.components.welcome_status_popup import WelcomeStatusPopup
-from gui.screens.onboarding import AllowNotificationsView, WelcomeScreen, TouchIDAuthView, KeysView
+from gui.screens.onboarding import AllowNotificationsView, WelcomeView, TouchIDAuthView, KeysView
 from scripts.tools import image
 
 _logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ def keys_screen(main_window) -> KeysView:
         if configs.system.IS_MAC:
             AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeScreen().wait_until_appears()
+        wellcome_screen = WelcomeView().wait_until_appears()
         return wellcome_screen.get_keys()
 
 
@@ -43,7 +43,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         profile_view.set_display_name(user_name)
         if user_image is not None:
             profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_FILES / user_image)
-            profile_picture_popup.make_profile_picture(zoom=zoom, shift=shift)
+            profile_picture_popup.make_picture(zoom=zoom, shift=shift)
         assert not profile_view.error_message
 
     with step('Open Profile details view and verify user info'):
@@ -108,7 +108,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703039', 'Import: 12 word seed phrase')
 @pytest.mark.case(703039)
-@pytest.mark.parametrize('user_account', [constants.user.user_account])
+@pytest.mark.parametrize('user_account', [constants.user.user_account_default])
 def test_import_seed_phrase(keys_screen, main_window, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

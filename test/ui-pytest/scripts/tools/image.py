@@ -66,11 +66,15 @@ class Image:
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.exists() and not force:
             raise FileExistsError(path)
+        if self.view is None:
+            self.update_view()
         cv2.imwrite(str(path), self.view)
 
     @allure.step('Compare images')
     def compare(
             self, expected: np.ndarray, threshold: float = 0.99) -> bool:
+        if self.view is None:
+            self.update_view()
         correlation = Ocv.compare_images(self.view, expected)
         result = correlation >= threshold
         _logger.info(f'Images equals on: {abs(round(correlation, 4) * 100)}%')

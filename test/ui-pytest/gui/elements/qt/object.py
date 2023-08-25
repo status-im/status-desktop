@@ -86,8 +86,7 @@ class QObject(BaseObject):
     @property
     @allure.step('Get image {0}')
     def image(self):
-        if self._image.view is None:
-            self._image.update_view()
+        self._image.update_view()
         return self._image
 
     @allure.step('Click {0}')
