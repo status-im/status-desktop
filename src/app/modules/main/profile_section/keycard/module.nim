@@ -114,11 +114,11 @@ method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlo
 method onDisplayKeycardSharedModuleFlow*(self: Module) =
   self.view.emitDisplayKeycardSharedModuleFlow()
 
-method runSetupKeycardPopup*(self: Module) =
+method runSetupKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard, keyUid)
 
 method runCreateNewKeycardWithNewSeedPhrasePopup*(self: Module) =
   self.createSharedKeycardModule()

@@ -450,9 +450,19 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
   if flowToRun == FlowType.SetupNewKeycard:
     let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = true,
       excludePrivateKeyKeypairs = false)
-    self.view.createKeyPairModel(items)
-    self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
-    self.controller.readyToDisplayPopup()
+    if keyUid.len == 0:
+      self.view.createKeyPairModel(items)
+      self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
+      self.controller.readyToDisplayPopup()
+    else:
+      let filteredItems = items.filter(x => x.getKeyUid() == keyUid)
+      if filteredItems.len != 1:
+        error "sm_cannot resolve a keypair being migrated"
+        self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+        return
+      self.setSelectedKeyPair(filteredItems[0])
+      self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+      self.controller.runLoadAccountFlow()
     return
   if flowToRun == FlowType.Authentication:
     self.controller.connectKeychainSignals()

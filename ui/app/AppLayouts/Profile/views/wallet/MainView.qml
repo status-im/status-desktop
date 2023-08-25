@@ -28,6 +28,7 @@ Column {
     signal goToDappPermissionsView()
     signal runRenameKeypairFlow(var model)
     signal runRemoveKeypairFlow(var model)
+    signal runMoveKeypairToKeycardFlow(var model)
 
     spacing: 8
 
@@ -237,6 +238,9 @@ Column {
                 }
                 onRunImportViaQrFlow: {
                     root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.mode.importViaQr)
+                }
+                onRunMoveKeypairToKeycardFlow: {
+                    root.runMoveKeypairToKeycardFlow(model)
                 }
             }
         }

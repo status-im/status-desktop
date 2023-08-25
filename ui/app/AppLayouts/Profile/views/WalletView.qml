@@ -122,6 +122,9 @@ SettingsContentBase {
                 removeKeypairPopup.accounts= model.keyPair.accounts
                 removeKeypairPopup.active = true
             }
+            onRunMoveKeypairToKeycardFlow: {
+                root.rootStore.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
+            }
         }
 
         NetworksView {
@@ -186,6 +189,9 @@ SettingsContentBase {
             }
             onRunImportMissingKeypairFlow: {
                 root.walletStore.runKeypairImportPopup(keyPair.keyUid, Constants.keypairImportPopup.mode.selectImportMethod)
+            }
+            onRunMoveKeypairToKeycardFlow: {
+                root.rootStore.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
             }
         }
 

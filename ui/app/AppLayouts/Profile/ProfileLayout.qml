@@ -6,6 +6,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
+import shared.popups.keycard 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
@@ -13,8 +14,10 @@ import "stores"
 import "popups"
 import "views"
 
+import StatusQ.Core 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups.Dialog 0.1
 
 StatusSectionLayout {
     id: root
@@ -332,6 +335,52 @@ StatusSectionLayout {
                 mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth
             }
+        }
+    }
+
+    Connections {
+        target: root.store.keycardStore.keycardModule
+        enabled: profileContainer.currentIndex === Constants.settingsSubsection.wallet ||
+                 profileContainer.currentIndex === Constants.settingsSubsection.keycard
+
+        function onDisplayKeycardSharedModuleFlow() {
+            keycardPopup.active = true
+        }
+        function onDestroyKeycardSharedModuleFlow() {
+            keycardPopup.active = false
+        }
+        function onSharedModuleBusy() {
+            Global.openPopup(sharedModuleBusyPopupComponent)
+        }
+    }
+
+    Loader {
+        id: keycardPopup
+        active: false
+        sourceComponent: KeycardPopup {
+            sharedKeycardModule: root.store.keycardStore.keycardModule.keycardSharedModule
+            emojiPopup: root.emojiPopup
+        }
+
+        onLoaded: {
+            keycardPopup.item.open()
+        }
+    }
+
+    Component {
+        id: sharedModuleBusyPopupComponent
+        StatusDialog {
+            id: titleContentDialog
+            title: qsTr("Status Keycard")
+
+            StatusBaseText {
+                anchors.fill: parent
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.directColor1
+                text: qsTr("The Keycard module is still busy, please try again")
+            }
+
+            standardButtons: Dialog.Ok
         }
     }
 }

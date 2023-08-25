@@ -5,11 +5,9 @@ import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import shared.popups.keycard 1.0
 
 import "../stores"
 import "./keycard"
@@ -50,23 +48,6 @@ SettingsContentBase {
             property string observedKeyUid: ""
         }
 
-        Component {
-            id: sharedModuleBusyPopupComponent
-            StatusDialog {
-                id: titleContentDialog
-                title: qsTr("Status Keycard")
-
-                StatusBaseText {
-                    anchors.fill: parent
-                    font.pixelSize: Constants.keycard.general.fontSize2
-                    color: Theme.palette.directColor1
-                    text: qsTr("The Keycard module is still busy, please try again")
-                }
-
-                standardButtons: Dialog.Ok
-            }
-        }
-
         MainView {
             Layout.preferredWidth: root.contentWidth
             keycardStore: root.keycardStore
@@ -92,33 +73,6 @@ SettingsContentBase {
             onDetailsModelIsEmpty: {
                 // if keypair is removed while user is in the details keycard view mode we need to go back to main keycard view
                 root.handleBackAction()
-            }
-        }
-
-        Connections {
-            target: root.keycardStore.keycardModule
-
-            function onDisplayKeycardSharedModuleFlow() {
-                keycardPopup.active = true
-            }
-            function onDestroyKeycardSharedModuleFlow() {
-                keycardPopup.active = false
-            }
-            function onSharedModuleBusy() {
-                Global.openPopup(sharedModuleBusyPopupComponent)
-            }
-        }
-
-        Loader {
-            id: keycardPopup
-            active: false
-            sourceComponent: KeycardPopup {
-                sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
-                emojiPopup: root.emojiPopup
-            }
-
-            onLoaded: {
-                keycardPopup.item.open()
             }
         }
     }

@@ -43,11 +43,11 @@ QtObject:
     return newQVariant()
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
-    
+
   proc sharedModuleBusy*(self: View) {.signal.}
   proc emitSharedModuleBusy*(self: View) =
     self.sharedModuleBusy()
-    
+
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =
     self.displayKeycardSharedModuleFlow()
@@ -56,8 +56,8 @@ QtObject:
   proc emitDestroyKeycardSharedModuleFlow*(self: View) =
     self.destroyKeycardSharedModuleFlow()
 
-  proc runSetupKeycardPopup*(self: View) {.slot.} =
-    self.delegate.runSetupKeycardPopup()
+  proc runSetupKeycardPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runSetupKeycardPopup(keyUid)
 
   proc runCreateNewKeycardWithNewSeedPhrasePopup*(self: View) {.slot.} =
     self.delegate.runCreateNewKeycardWithNewSeedPhrasePopup()

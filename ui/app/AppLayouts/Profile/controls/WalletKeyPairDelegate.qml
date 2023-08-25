@@ -28,6 +28,7 @@ Rectangle {
     signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
+    signal runMoveKeypairToKeycardFlow()
 
     QtObject {
         id: d
@@ -92,6 +93,7 @@ Rectangle {
                             onRunImportViaPrivateKeyFlow: root.runImportViaPrivateKeyFlow()
                             onRunRenameKeypairFlow: root.runRenameKeypairFlow()
                             onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
+                            onRunMoveKeypairToKeycardFlow: root.runMoveKeypairToKeycardFlow()
                         }
                     }
                 },
