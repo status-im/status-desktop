@@ -6,8 +6,8 @@ QtObject {
 
     property var keycardModule
 
-    function runSetupKeycardPopup() {
-        root.keycardModule.runSetupKeycardPopup()
+    function runSetupKeycardPopup(keyUid) {
+        root.keycardModule.runSetupKeycardPopup(keyUid)
     }
 
     function runCreateNewKeycardWithNewSeedPhrasePopup() {

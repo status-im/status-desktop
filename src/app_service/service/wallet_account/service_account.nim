@@ -13,6 +13,33 @@ proc storeKeypair(self: Service, keypair: KeypairDto) =
     return
   self.keypairs[keypair.keyUid] = keypair
 
+# replaces only keypair/accounts fields that could be changed
+proc replaceKeypair(self: Service, keypair: KeypairDto) =
+  if keypair.keyUid.len == 0:
+    error "trying to replace a keypair with empty keyUid"
+    return
+  if not self.keypairs.hasKey(keypair.keyUid):
+    error "trying to replace a non existing keypair"
+    return
+  var localKp = self.keypairs[keypair.keyUid]
+  localKp.name = keypair.name
+  localKp.lastUsedDerivationIndex = keypair.lastUsedDerivationIndex
+  localKp.syncedFrom = keypair.syncedFrom
+  localKp.removed = keypair.removed
+  localKp.keycards = keypair.keycards
+  for locAcc in localKp.accounts:
+    for acc in keypair.accounts:
+      if cmpIgnoreCase(locAcc.address, acc.address) != 0:
+        continue
+      locAcc.name = acc.name
+      locAcc.colorId = acc.colorId
+      locAcc.emoji = acc.emoji
+      locAcc.operable = acc.operable
+      locAcc.removed = acc.removed
+      locAcc.prodPreferredChainIds = acc.prodPreferredChainIds
+      locAcc.testPreferredChainIds = acc.testPreferredChainIds
+      break
+
 proc storeAccountToKeypair(self: Service, account: WalletAccountDto) =
   if account.keyUid.len == 0:
     error "trying to store a keypair related account with empty keyUid"
@@ -644,6 +671,7 @@ proc handleKeypair(self: Service, keypair: KeypairDto) =
     localKp.name = keypair.name
     localKp.lastUsedDerivationIndex = keypair.lastUsedDerivationIndex
     localKp.syncedFrom = keypair.syncedFrom
+    localKp.keycards = keypair.keycards
     # - first remove removed accounts from the UI
     let addresses = localKp.accounts.map(a => a.address)
     for address in addresses:

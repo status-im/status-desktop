@@ -105,7 +105,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runSetupKeycardPopup()
+            root.keycardStore.runSetupKeycardPopup("")
         }
     }
 

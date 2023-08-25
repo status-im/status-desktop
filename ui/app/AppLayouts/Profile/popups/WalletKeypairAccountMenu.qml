@@ -17,6 +17,7 @@ StatusMenu {
     signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
+    signal runMoveKeypairToKeycardFlow()
 
     StatusAction {
         text: enabled? qsTr("Show encrypted QR on device") : ""
@@ -33,16 +34,15 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? root.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move keys to a Keycard") : ""
-        enabled: !!root.keyPair &&
-                 root.keyPair.operability !== Constants.keypair.operability.nonOperable
+        text: enabled? root.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move keypair to a Keycard") : ""
+        enabled: !!root.keyPair
         icon.name: !!root.keyPair && root.keyPair.migratedToKeycard? "keycard-crossed" : "keycard"
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
             if (root.keyPair.migratedToKeycard)
                 console.warn("TODO: stop using Keycard")
             else
-                console.warn("TODO: move keys to a Keycard")
+                root.runMoveKeypairToKeycardFlow()
         }
     }
 

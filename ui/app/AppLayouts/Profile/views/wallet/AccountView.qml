@@ -27,6 +27,7 @@ ColumnLayout {
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
     signal runImportMissingKeypairFlow()
+    signal runMoveKeypairToKeycardFlow()
 
     property var account
     property var keyPair
@@ -307,5 +308,6 @@ ColumnLayout {
         hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
         onRunRenameKeypairFlow: root.runRenameKeypairFlow()
         onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
+        onRunMoveKeypairToKeycardFlow: root.runMoveKeypairToKeycardFlow()
     }
 }
