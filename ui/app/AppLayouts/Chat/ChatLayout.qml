@@ -23,6 +23,12 @@ StackLayout {
 
     property var sectionItemModel
 
+    readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
+    readonly property bool isAdmin: community.memberRole === Constants.memberRole.admin
+    readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
+    readonly property bool isControlNode: community.isControlNode
+    readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
+
     property bool communitySettingsDisabled
 
     property var emojiPopup
@@ -153,7 +159,7 @@ StackLayout {
 
     Loader {
         id: communitySettingsLoader
-        active: root.rootStore.chatCommunitySectionModule.isCommunity()
+        active: root.rootStore.chatCommunitySectionModule.isCommunity() && root.isPrivilegedUser
 
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
