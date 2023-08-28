@@ -796,4 +796,9 @@ method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
     self.scrollToMessage(messageId)
   self.firstUnseenMessageState.initialized = true
   self.firstUnseenMessageState.fetching = false
+
+  # If there're no messages, consider initial message as loaded to hide loading animation. 
+  if messageId == "":
+    self.initialMessagesLoaded = true
+
   self.reevaluateViewLoadingState()
