@@ -367,6 +367,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     # check if this loading was caused by the click on a messages from the app search result
     self.checkIfMessageLoadedAndScrollToItIfItIs()
 
+  debug "<<< newMessagesLoaded", messageCount = $messages.len
   self.initialMessagesLoaded = true
   self.reevaluateViewLoadingState()
 

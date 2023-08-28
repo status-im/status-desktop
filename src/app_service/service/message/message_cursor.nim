@@ -1,4 +1,4 @@
-import strformat
+import strformat, chronicles
 
 type
   CursorValue* = string
@@ -9,6 +9,7 @@ type
 
 proc initMessageCursor*(value: CursorValue, pending: bool,
     mostRecent: bool): MessageCursor =
+  debug "<<< initMessageCursor", pending, mostRecent
   MessageCursor(value: value, pending: pending, mostRecent: mostRecent)
 
 proc getValue*(self: MessageCursor): CursorValue =

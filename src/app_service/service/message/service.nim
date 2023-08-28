@@ -194,6 +194,7 @@ QtObject:
     self.msgCursor.del(chatId)
 
   proc initOrGetMessageCursor(self: Service, chatId: string): MessageCursor =
+    debug "<<< initOrGetMessageCursor", chatId
     if(not self.msgCursor.hasKey(chatId)):
       self.msgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
     return self.msgCursor[chatId]

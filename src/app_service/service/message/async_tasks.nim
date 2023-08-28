@@ -23,6 +23,8 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     "chatId": arg.chatId
   }
 
+  debug "<<< asyncFetchChatMessagesTask", chatId = $arg.chatId
+
   # handle messages
   if(arg.msgCursor != CURSOR_VALUE_IGNORE):
     var messagesArr: JsonNode

@@ -375,6 +375,9 @@ method onMutualContactChanged*(self: Module) =
   self.view.onMutualContactChanged(isContact)
 
 method onMadeActive*(self: Module) =
+
+  debug "<<< onMadeActive", chatId = $self.controller.getMyChatId(), chatType = $self.controller.getChatDetails().chatType, chatDetails = $self.controller.getChatDetails()
+
   # The new messages marker is reset each time the chat is made active,
   # as messages may arrive out of order and relying on the previous
   # new messages marker could yield incorrect results.
