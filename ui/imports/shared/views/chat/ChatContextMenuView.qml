@@ -202,6 +202,7 @@ StatusMenu {
 
     StatusAction {
         objectName: "clearHistoryMenuItem"
+        id: clearHistoryMenuItem
         text: qsTr("Clear History")
         icon.name: "close-circle"
         type: deleteOrLeaveMenuItem.enabled ? StatusAction.Type.Normal : StatusAction.Type.Danger
