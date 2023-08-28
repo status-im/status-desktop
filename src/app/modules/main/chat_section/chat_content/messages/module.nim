@@ -555,16 +555,16 @@ method getChatIcon*(self: Module): string =
   return chatDto.icon
 
 method amIChatAdmin*(self: Module): bool =
-  if(not self.controller.belongsToCommunity()):
+  if not self.controller.belongsToCommunity():
     let chatDto = self.controller.getChatDetails()
     for member in chatDto.members:
       if (member.id == singletonInstance.userProfile.getPubKey()):
+        # TODO untangle this. There is no special roles for group chats
         return member.role == MemberRole.Owner or member.role == MemberRole.Admin or member.role == MemberRole.TokenMaster
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
-    return communityDto.memberRole == MemberRole.Owner or
-        communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
+    return communityDto.isPrivilegedUser
 
 method pinMessageAllowedForMembers*(self: Module): bool =
   if(self.controller.belongsToCommunity()):
@@ -734,8 +734,7 @@ method markMessagesAsRead*(self: Module, messages: seq[string]) =
   self.view.model().markAsSeen(messages)
 
 method updateCommunityDetails*(self: Module, community: CommunityDto) =
-  self.view.setAmIChatAdmin(community.memberRole == MemberRole.Owner or
-    community.memberRole == MemberRole.Admin or community.memberRole == MemberRole.TokenMaster)
+  self.view.setAmIChatAdmin(community.isPrivilegedUser)
   self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
 
 proc setChatDetails(self: Module, chatDetails: ChatDto) =

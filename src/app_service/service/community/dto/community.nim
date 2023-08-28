@@ -567,3 +567,15 @@ proc getCommunityChats*(self: CommunityDto, chatsIds: seq[string]): seq[ChatDto]
         chats.add(communityChat)
         break
   return chats
+
+proc isOwner*(self: CommunityDto): bool =
+  return self.memberRole == MemberRole.Owner
+
+proc isTokenMaster*(self: CommunityDto): bool =
+  return self.memberRole == MemberRole.TokenMaster
+
+proc isAdmin*(self: CommunityDto): bool =
+  return self.memberRole == MemberRole.Admin
+
+proc isPrivilegedUser*(self: CommunityDto): bool =
+  return self.isControlNode or self.isOwner or self.isTokenMaster or self.isAdmin

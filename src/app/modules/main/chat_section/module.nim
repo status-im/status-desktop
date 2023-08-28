@@ -350,10 +350,6 @@ method onChatsLoaded*(
       if chatId == activeChatId:
         cModule.onMadeActive()
 
-    if(self.controller.isCommunity()):
-      let community = self.controller.getMyCommunity()
-      self.controller.asyncCheckChannelPermissions(community.id, activeChatId)
-
   self.view.chatsLoaded()
 
 proc checkIfModuleDidLoad(self: Module) =
@@ -432,8 +428,9 @@ method activeItemSet*(self: Module, itemId: string) =
   self.delegate.onDeactivateChatLoader(deactivateSectionId, deactivateChatId)
 
   if self.controller.isCommunity():
-    self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
-
+    let community = self.controller.getMyCommunity()
+    if not community.isPrivilegedUser:
+      self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -505,8 +502,10 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     self.setActiveItem(activeChatId)
 
   if self.isCommunity():
-    self.controller.asyncCheckPermissionsToJoin()
-    self.controller.asyncCheckAllChannelsPermissions()
+    let community = self.controller.getMyCommunity()
+    if not community.isPrivilegedUser:
+      self.controller.asyncCheckPermissionsToJoin()
+      self.controller.asyncCheckAllChannelsPermissions()
 
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
