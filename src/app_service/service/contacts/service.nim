@@ -397,7 +397,7 @@ QtObject:
       var num64: int64
       let parsedChars = parseHex(pubkey, num64)
       if(parsedChars != PK_LENGTH_0X_INCLUDED):
-        debug "id doesn't have expected length"
+        debug "id doesn't have expected length", pubkey, parsedChars, expectedLength = $PK_LENGTH_0X_INCLUDED
         return
 
       let alias = self.generateAlias(pubkey)
