@@ -712,7 +712,7 @@ QtObject {
                 //selectedSharedAddresses: [???]
                 //selectedAirdropAddress: "???"
                 loginType: chatStore.loginType
-                walletAccountsModel: WalletStore.RootStore.receiveAccounts
+                walletAccountsModel: root.rootStore.walletAccountsModel
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
                     return root.rootStore.permissionsModel

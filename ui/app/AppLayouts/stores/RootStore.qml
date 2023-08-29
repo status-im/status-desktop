@@ -42,7 +42,7 @@ QtObject {
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
-    property var walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
+    property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
         proxyRoles: ExpressionRole {

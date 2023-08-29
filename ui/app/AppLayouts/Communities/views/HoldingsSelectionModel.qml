@@ -33,7 +33,7 @@ SortFilterProxyModel {
                             : collectiblesModel
                 const item = PermissionsHelpers.getTokenByKey(model, key)
 
-                return item ? item.shortName || item.name : ""
+                return item ? item.symbol || item.shortName || item.name : ""
             }
 
             function getText(type, key, amount) {

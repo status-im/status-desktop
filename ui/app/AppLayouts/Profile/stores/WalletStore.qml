@@ -11,6 +11,7 @@ QtObject {
     property var collectibles: root.walletModule.collectiblesModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
+    property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     readonly property var networks: networksModule.networks
