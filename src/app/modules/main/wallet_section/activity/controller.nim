@@ -33,7 +33,6 @@ proc toRef*[T](obj: T): ref T =
 const FETCH_BATCH_COUNT_DEFAULT = 10
 const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
 
-# TODO: implement passing of collectibles
 QtObject:
   type
     Controller* = ref object of QObject
@@ -76,18 +75,16 @@ QtObject:
     read = getRecipientsModel
 
   proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: MultiTransactionDto): ExtraData =
-    # TODO: Use symbols from backendEntry when they're available
-    result.inSymbol = item.toAsset
-    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
-    result.outSymbol = item.fromAsset
-    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
+    if metadata.symbolIn.isSome():
+      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+    if metadata.symbolOut.isSome():
+      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
   proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref TransactionDto): ExtraData =
-    # TODO: Use symbols from backendEntry when they're available
-    result.inSymbol = item[].symbol
-    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
-    result.outSymbol = item[].symbol
-    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
+    if metadata.symbolIn.isSome():
+      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+    if metadata.symbolOut.isSome():
+      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
   proc getResolvedSymbol(self: Controller, transaction: TransactionDto): string =
     if transaction.symbol != "":
