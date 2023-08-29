@@ -179,7 +179,9 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       if self.chatId == chat.id:
+        echo "Chat content"
         self.delegate.onChatEdited(chat)
+        echo "Chat done"
 
 proc getMyChatId*(self: Controller): string =
   return self.chatId

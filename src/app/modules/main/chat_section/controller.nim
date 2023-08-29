@@ -156,9 +156,11 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
+      echo "Chat section"
       discard self.delegate.addOrUpdateChat(chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = false)
+      echo "Chat section done"
 
   self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
     var args = CreatedChatArgs(e)

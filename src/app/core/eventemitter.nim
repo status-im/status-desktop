@@ -46,6 +46,7 @@ proc disconnect*(this: EventEmitter, handlerId: UUID) =
       this.events[k].del handlerId
 
 proc emit*(this:EventEmitter, name:string, args:Args): void  =
+  echo "Emitting ", name
   if this.events.hasKey(name):
     # collect the handlers before executing them
     # because of 'once' proc, we also mutate

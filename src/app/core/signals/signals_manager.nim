@@ -56,6 +56,7 @@ QtObject:
     self.processSignal(signal)
 
   proc decode(self: SignalsManager, jsonSignal: JsonNode): Signal =
+    echo jsonSignal
     let signalString = jsonSignal{"type"}.getStr
     var signalType: SignalType
     try:
