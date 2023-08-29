@@ -137,8 +137,10 @@ Item {
                 HistoryView {
                     overview: RootStore.overview
                     showAllAccounts: root.showAllAccounts
-                    onLaunchTransactionDetail: {
-                        transactionDetailView.transaction = transaction
+                    onLaunchTransactionDetail: function (entry, entryIndex) {
+                        transactionDetailView.transactionIndex = entryIndex
+                        transactionDetailView.transaction = entry
+
                         stack.currentIndex = 3
                     }
                 }
