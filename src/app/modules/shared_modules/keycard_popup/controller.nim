@@ -185,6 +185,12 @@ proc init*(self: Controller, fullConnect = true) =
       self.delegate.onSecondaryActionClicked()
     self.connectionIds.add(handlerId)
 
+    handlerId = self.events.onWithUUID(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
+      let args = KeycardArgs(e)
+      self.tmpAddingMigratedKeypairSuccess = args.success
+      self.delegate.onSecondaryActionClicked()
+    self.connectionIds.add(handlerId)
+
     handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
       let args = ResultArgs(e)
       self.tmpConvertingProfileSuccess = args.success
@@ -723,6 +729,9 @@ proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName,
     info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
+
+proc migrateNonProfileKeycardKeypairToApp*(self: Controller, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
+  self.walletAccountService.migrateNonProfileKeycardKeypairToAppAsync(keyUid, seedPhrase, password, doPasswordHashing)
 
 proc getSigningPhrase*(self: Controller): string =
   if not serviceApplicable(self.settingsService):

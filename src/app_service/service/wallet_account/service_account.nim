@@ -448,6 +448,38 @@ proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, 
   except Exception as e:
     error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
 
+proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.} =
+  var data = KeycardArgs(
+    success: false,
+    keycard: KeycardDto()
+  )
+  try:
+    let responseObj = response.parseJson
+    discard responseObj.getProp("success", data.success)
+    discard responseObj.getProp("keyUid", data.keycard.keyUid)
+    let kp = self.getKeypairByKeyUid(data.keycard.keyUid)
+    if kp.isNil:
+      data.success = false
+    else:
+      kp.keycards = @[]
+  except Exception as e:
+    error "error handilng migrated keycard response", errDesription=e.msg
+  self.events.emit(SIGNAL_ALL_KEYCARDS_DELETED, data)
+
+proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
+  var finalPassword = password
+  if doPasswordHashing:
+    finalPassword = utils.hashPassword(password)
+  let arg = MigrateNonProfileKeycardKeypairToAppTaskArg(
+    tptr: cast[ByteAddress](migrateNonProfileKeycardKeypairToAppTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: "onNonProfileKeycardKeypairMigratedToApp",
+    keyUid: keyUid,
+    seedPhrase: seedPhrase,
+    password: finalPassword
+  )
+  self.threadpool.start(arg)
+
 proc getRandomMnemonic*(self: Service): string =
   try:
     let response = status_go_accounts.getRandomMnemonic()

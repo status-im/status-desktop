@@ -120,6 +120,12 @@ method runSetupKeycardPopup*(self: Module, keyUid: string) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard, keyUid)
 
+method runStopUsingKeycardPopup*(self: Module, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromKeycardToApp, keyUid)
+
 method runCreateNewKeycardWithNewSeedPhrasePopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:

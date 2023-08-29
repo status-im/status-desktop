@@ -44,6 +44,8 @@ StatusModal {
             return qsTr("Create a new pairing code")
         case Constants.keycardSharedFlow.createCopyOfAKeycard:
             return qsTr("Create a backup copy of this Keycard")
+        case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+            return qsTr("Migrate a keypair from Keycard to Status")
         }
 
         return ""

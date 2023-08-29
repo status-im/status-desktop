@@ -30,7 +30,8 @@ QtObject {
         case Constants.keycardSharedState.changingKeycardPin:
         case Constants.keycardSharedState.changingKeycardPuk:
         case Constants.keycardSharedState.changingKeycardPairingCode:
-        case Constants.keycardSharedState.migratingKeyPair:
+        case Constants.keycardSharedState.migratingKeypairToApp:
+        case Constants.keycardSharedState.migratingKeypairToKeycard:
         case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
         case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
         case Constants.keycardSharedState.importingFromKeycard:
@@ -366,6 +367,15 @@ QtObject {
                         break
                     }
                     break
+
+                case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.migrateKeypairToApp:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                    case Constants.keycardSharedState.wrongSeedPhrase:
+                        return true
+                    }
+                    break
                 }
 
                 return false
@@ -456,6 +466,14 @@ QtObject {
 
                     case Constants.keycardSharedState.importingFromKeycardSuccess:
                         return qsTr("View imported accounts in Wallet")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keyPairMigrateSuccess:
+                        if (!root.sharedKeycardModule.migratingProfileKeyPair())
+                            return qsTr("Factory reset this Keycard")
                     }
                     break
                 }
@@ -575,7 +593,7 @@ QtObject {
                             return qsTr("Unlock Keycard")
                         return qsTr("Next")
 
-                    case Constants.keycardSharedState.migratingKeyPair:
+                    case Constants.keycardSharedState.migratingKeypairToKeycard:
                     case Constants.keycardSharedState.keyPairMigrateFailure:
                         return qsTr("Done")
 
@@ -989,6 +1007,26 @@ QtObject {
                         return qsTr("Factory reset this Keycard")
                     }
                     break
+
+                case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.migrateKeypairToApp:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                    case Constants.keycardSharedState.wrongSeedPhrase:
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.migratingKeypairToApp:
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.keyPairMigrateFailure:
+                        return qsTr("Close")
+
+                    case Constants.keycardSharedState.keyPairMigrateSuccess:
+                        if (root.sharedKeycardModule.migratingProfileKeyPair())
+                            return qsTr("Restart App & Sign In Using Your New Password")
+                        return qsTr("Done")
+                    }
+                    break
                 }
 
                 return ""
@@ -1126,6 +1164,14 @@ QtObject {
 
                     case Constants.keycardSharedState.factoryResetConfirmation:
                     case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                        return root.primaryButtonEnabled
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
                     case Constants.keycardSharedState.enterSeedPhrase:
                         return root.primaryButtonEnabled
                     }

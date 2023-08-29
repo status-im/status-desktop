@@ -158,6 +158,12 @@ method load*(self: Module) =
       return
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
+    self.refreshWalletAccounts()
+
   self.events.on(SIGNAL_KEYPAIR_NAME_CHANGED) do(e: Args):
     let args = KeypairArgs(e)
     self.onKeypairRenamed(args.keypair.keyUid, args.keypair.name)

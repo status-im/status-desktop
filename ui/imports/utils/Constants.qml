@@ -123,6 +123,7 @@ QtObject {
         readonly property string changeKeycardPuk: "ChangeKeycardPuk"
         readonly property string changePairingCode: "ChangePairingCode"
         readonly property string createCopyOfAKeycard: "CreateCopyOfAKeycard"
+        readonly property string migrateFromKeycardToApp: "MigrateFromKeycardToApp"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -167,7 +168,9 @@ QtObject {
         readonly property string seedPhraseEnterWords: "SeedPhraseEnterWords"
         readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
         readonly property string keyPairMigrateFailure: "KeyPairMigrateFailure"
-        readonly property string migratingKeyPair: "MigratingKeyPair"
+        readonly property string migrateKeypairToApp: "MigrateKeypairToApp"
+        readonly property string migratingKeypairToApp: "MigratingKeypairToApp"
+        readonly property string migratingKeypairToKeycard: "MigratingKeypairToKeycard"
         readonly property string enterPassword: "EnterPassword"
         readonly property string wrongPassword: "WrongPassword"
         readonly property string biometricsPasswordFailed: "BiometricsPasswordFailed"
@@ -634,7 +637,7 @@ QtObject {
             readonly property int popupWidth: 640
             readonly property int popupHeight: 500
             readonly property int popupBiggerHeight: 626
-            readonly property int titleHeight: 44
+            readonly property int titleHeight: 60
             readonly property int messageHeight: 48
             readonly property int footerButtonsHeight: 44
             readonly property int loginInfoHeight1: 24

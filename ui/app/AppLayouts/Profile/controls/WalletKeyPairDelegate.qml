@@ -29,6 +29,7 @@ Rectangle {
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
     signal runMoveKeypairToKeycardFlow()
+    signal runStopUsingKeycardFlow()
 
     QtObject {
         id: d
@@ -94,6 +95,7 @@ Rectangle {
                             onRunRenameKeypairFlow: root.runRenameKeypairFlow()
                             onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
                             onRunMoveKeypairToKeycardFlow: root.runMoveKeypairToKeycardFlow()
+                            onRunStopUsingKeycardFlow: root.runStopUsingKeycardFlow()
                         }
                     }
                 },

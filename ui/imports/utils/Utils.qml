@@ -851,9 +851,7 @@ QtObject {
                     return qsTr("Restored from backup. Import keypair to use derived accounts.")
                 }
             }
-            if (keypair.syncedFrom !== "") {
-                return qsTr("Import keypair to use derived accounts")
-            }
+            return qsTr("Import keypair to use derived accounts")
         }
 
         return ""
