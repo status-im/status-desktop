@@ -178,7 +178,7 @@ StatusListItem {
         const endl = "\n"
         const endl2 = endl + endl
         const type = modelData.txType
-        const feeEthValue = rootStore.getGasEthValue(modelData.totalFees.amount, 1)
+        const feeEthValue = rootStore.getGasEthValue(detailsObj.totalFees.amount, 1)
 
         // TITLE
         switch (type) {
@@ -401,7 +401,7 @@ StatusListItem {
             case Constants.TransactionType.Send:
             case Constants.TransactionType.Swap:
             case Constants.TransactionType.Bridge:
-                const feeValue = LocaleUtils.currencyAmountToLocaleString(modelData.totalFees)
+                const feeValue = LocaleUtils.currencyAmountToLocaleString(detailsObj.totalFees)
                 const feeFiat = rootStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeValue).arg(feeFiat) + endl2
                 break

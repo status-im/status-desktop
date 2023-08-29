@@ -22,6 +22,7 @@ QtObject:
       input*: string
       contractAddress: Option[eth.Address]
       maxTotalFees: CurrencyAmount
+      totalFees: CurrencyAmount
 
   proc setup(self: ActivityDetails) =
     self.QObject.setup
@@ -39,6 +40,7 @@ QtObject:
     else:
       result.id = id
     result.maxTotalFees = newCurrencyAmount()
+    result.totalFees = newCurrencyAmount()
     result.setup()
 
   proc newActivityDetails*(e: JsonNode, valueConvertor: AmountToCurrencyConvertor): ActivityDetails =
@@ -47,6 +49,7 @@ QtObject:
     const hashField = "hash"
     const contractAddressField = "contractAddress"
     const inputField = "input"
+    const totalFeesField = "totalFees"
 
     result = ActivityDetails(
       id: e["id"].getStr(),
@@ -61,6 +64,10 @@ QtObject:
       result.maxTotalFees = valueConvertor(stint.fromHex(UInt256, maxTotalFees), "Gwei")
     else:
       result.maxTotalFees = newCurrencyAmount()
+
+    if e.hasKey(totalFeesField) and e[totalFeesField].kind != JNull:
+      let totalFees = e[totalFeesField].getStr()
+      result.totalFees = valueConvertor(stint.fromHex(UInt256, totalFees), "Gwei")
 
     if e.hasKey(hashField) and e[hashField].kind != JNull:
       result.txHash = e[hashField].getStr()
@@ -118,3 +125,9 @@ QtObject:
 
   QtProperty[QVariant] maxTotalFees:
     read = getMaxTotalFees
+
+  proc getTotalFees*(self: ActivityDetails): QVariant {.slot.} =
+    return newQVariant(self.totalFees)
+
+  QtProperty[QVariant] totalFees:
+    read = getTotalFees
