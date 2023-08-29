@@ -62,6 +62,7 @@ QtObject:
   proc onKeycardAdded*(self: Service, response: string) {.slot.}
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.}
   proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.}
+  proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
 
   proc delete*(self: Service) =
     self.closingApp = true

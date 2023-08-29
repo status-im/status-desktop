@@ -6,7 +6,7 @@ proc extractPredefinedKeycardDataToNumber*(currValue: string): int =
     return currNum
   except:
     return 0
-    
+
 proc updatePredefinedKeycardData*(currValue: string, value: PredefinedKeycardData, add: bool): string =
   var currNum: int
   try:
@@ -19,7 +19,7 @@ proc updatePredefinedKeycardData*(currValue: string, value: PredefinedKeycardDat
       if parseInt(currValue, currNum) == 0:
         return ""
       else:
-        return $(currNum and (not value.int))  
+        return $(currNum and (not value.int))
   except:
     return if add: $(value.int) else: ""
 
@@ -143,8 +143,12 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newMaxPukRetriesReachedState(flowType, backState)
   if stateToBeCreated == StateType.MaxPairingSlotsReached:
     return newMaxPairingSlotsReachedState(flowType, backState)
-  if stateToBeCreated == StateType.MigratingKeyPair:
-    return newMigratingKeyPairState(flowType, backState)
+  if stateToBeCreated == StateType.MigrateKeypairToApp:
+    return newMigrateKeypairToAppState(flowType, backState)
+  if stateToBeCreated == StateType.MigratingKeypairToApp:
+    return newMigratingKeypairToAppState(flowType, backState)
+  if stateToBeCreated == StateType.MigratingKeypairToKeycard:
+    return newMigratingKeypairToKeycardState(flowType, backState)
   if stateToBeCreated == StateType.NoPCSCService:
     return newNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.NotKeycard:
@@ -193,5 +197,5 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newWrongKeychainPinState(flowType, backState)
   if stateToBeCreated == StateType.WrongSeedPhrase:
     return newWrongSeedPhraseState(flowType, backState)
-  
+
   error "No implementation available for state ", state=stateToBeCreated

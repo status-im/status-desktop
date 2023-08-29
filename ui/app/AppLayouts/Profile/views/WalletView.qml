@@ -125,6 +125,9 @@ SettingsContentBase {
             onRunMoveKeypairToKeycardFlow: {
                 root.rootStore.keycardStore.runSetupKeycardPopup(model.keyPair.keyUid)
             }
+            onRunStopUsingKeycardFlow: {
+                root.rootStore.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
+            }
         }
 
         NetworksView {
@@ -192,6 +195,9 @@ SettingsContentBase {
             }
             onRunMoveKeypairToKeycardFlow: {
                 root.rootStore.keycardStore.runSetupKeycardPopup(keyPair.keyUid)
+            }
+            onRunStopUsingKeycardFlow: {
+                root.rootStore.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
             }
         }
 

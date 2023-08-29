@@ -123,6 +123,20 @@ ColumnLayout {
     }
 
     StatusListItem {
+        Layout.fillWidth: true
+        title: qsTr("Stop using Keycard for this keypair")
+        components: [
+            StatusIcon {
+                icon: "tiny/chevron-right"
+                color: Theme.palette.baseColor1
+            }
+        ]
+        onClicked: {
+            root.keycardStore.runStopUsingKeycardPopup(root.keyUid)
+        }
+    }
+
+    StatusListItem {
         visible: root.keycardStore.keycardModule.keycardDetailsModel?
                      root.keycardStore.keycardModule.keycardDetailsModel.lockedItemsCount > 0 : false
         Layout.fillWidth: true

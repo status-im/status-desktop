@@ -29,6 +29,7 @@ Column {
     signal runRenameKeypairFlow(var model)
     signal runRemoveKeypairFlow(var model)
     signal runMoveKeypairToKeycardFlow(var model)
+    signal runStopUsingKeycardFlow(var model)
 
     spacing: 8
 
@@ -241,6 +242,9 @@ Column {
                 }
                 onRunMoveKeypairToKeycardFlow: {
                     root.runMoveKeypairToKeycardFlow(model)
+                }
+                onRunStopUsingKeycardFlow: {
+                    root.runStopUsingKeycardFlow(model)
                 }
             }
         }

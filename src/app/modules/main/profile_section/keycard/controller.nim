@@ -64,6 +64,12 @@ proc init*(self: Controller) =
       return
     self.delegate.onKeycardChange(args.keycard)
 
+  self.events.on(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
+    self.delegate.onKeycardChange(args.keycard)
+
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardArgs(e)
     if not args.success:

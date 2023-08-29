@@ -59,6 +59,9 @@ QtObject:
   proc runSetupKeycardPopup*(self: View, keyUid: string) {.slot.} =
     self.delegate.runSetupKeycardPopup(keyUid)
 
+  proc runStopUsingKeycardPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runStopUsingKeycardPopup(keyUid)
+
   proc runCreateNewKeycardWithNewSeedPhrasePopup*(self: View) {.slot.} =
     self.delegate.runCreateNewKeycardWithNewSeedPhrasePopup()
 

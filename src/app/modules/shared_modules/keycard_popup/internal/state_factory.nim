@@ -89,7 +89,9 @@ include keycard_already_unlocked_state
 include max_pin_retries_reached_state
 include max_puk_retries_reached_state
 include max_pairing_slots_reached_state
-include migrating_key_pair_state
+include migrate_keypair_to_app_state
+include migrating_keypair_to_app_state
+include migrating_keypair_to_keycard_state
 include no_pcsc_service_state
 include not_keycard_state
 include pin_set_state

@@ -64,6 +64,7 @@ type FlowType* {.pure.} = enum
   ChangeKeycardPuk = "ChangeKeycardPuk"
   ChangePairingCode = "ChangePairingCode"
   CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
+  MigrateFromKeycardToApp = "MigrateFromKeycardToApp"
 
 # For the following flows we don't run card syncing.
 const FlowsWeShouldNotTryAKeycardSyncFor* = @[
@@ -75,7 +76,8 @@ const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.SetupNewKeycardOldSeedPhrase,
   FlowType.ImportFromKeycard,
   FlowType.Authentication,
-  FlowType.CreateCopyOfAKeycard
+  FlowType.CreateCopyOfAKeycard,
+  FlowType.MigrateFromKeycardToApp
 ]
 
 type

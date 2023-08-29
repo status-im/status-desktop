@@ -248,6 +248,11 @@ proc makePartiallyOperableAccoutsFullyOperable*(password: string):
   let payload = %* [password]
   return core.callPrivateRPC("accounts_makePartiallyOperableAccoutsFullyOperable", payload)
 
+proc migrateNonProfileKeycardKeypairToApp*(mnemonic: string, password: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [mnemonic, password]
+  return core.callPrivateRPC("accounts_migrateNonProfileKeycardKeypairToApp", payload)
+
 proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,

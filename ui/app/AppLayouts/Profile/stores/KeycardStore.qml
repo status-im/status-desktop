@@ -10,6 +10,10 @@ QtObject {
         root.keycardModule.runSetupKeycardPopup(keyUid)
     }
 
+    function runStopUsingKeycardPopup(keyUid) {
+        root.keycardModule.runStopUsingKeycardPopup(keyUid)
+    }
+
     function runCreateNewKeycardWithNewSeedPhrasePopup() {
         root.keycardModule.runCreateNewKeycardWithNewSeedPhrasePopup()
     }

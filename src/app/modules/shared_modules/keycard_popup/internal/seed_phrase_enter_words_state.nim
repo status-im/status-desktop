@@ -23,18 +23,18 @@ method executeCancelCommand*(self: SeedPhraseEnterWordsState, controller: Contro
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method resolveKeycardNextState*(self: SeedPhraseEnterWordsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: SeedPhraseEnterWordsState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.SetupNewKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
         controller.removeProfileMnemonic()
-        return createState(StateType.MigratingKeyPair, self.flowType, nil)
+        return createState(StateType.MigratingKeypairToKeycard, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
         controller.setKeycardUid(keycardEvent.instanceUID)
         var item = newKeyPairItem(keyUid = keycardEvent.keyUid)

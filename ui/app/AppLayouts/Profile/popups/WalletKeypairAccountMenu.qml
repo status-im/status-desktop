@@ -18,6 +18,7 @@ StatusMenu {
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
     signal runMoveKeypairToKeycardFlow()
+    signal runStopUsingKeycardFlow()
 
     StatusAction {
         text: enabled? qsTr("Show encrypted QR on device") : ""
@@ -40,7 +41,7 @@ StatusMenu {
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
             if (root.keyPair.migratedToKeycard)
-                console.warn("TODO: stop using Keycard")
+                root.runStopUsingKeycardFlow()
             else
                 root.runMoveKeypairToKeycardFlow()
         }

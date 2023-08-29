@@ -9,9 +9,11 @@ proc delete*(self: KeyPairMigrateFailureState) =
   self.State.delete
 
 method executePrePrimaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.MigrateFromKeycardToApp:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
 method executeCancelCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.MigrateFromKeycardToApp:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

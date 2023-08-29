@@ -29,6 +29,9 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
 method runSetupKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method runStopUsingKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method runCreateNewKeycardWithNewSeedPhrasePopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

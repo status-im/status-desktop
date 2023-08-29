@@ -28,6 +28,7 @@ ColumnLayout {
     signal runRemoveKeypairFlow()
     signal runImportMissingKeypairFlow()
     signal runMoveKeypairToKeycardFlow()
+    signal runStopUsingKeycardFlow()
 
     property var account
     property var keyPair
@@ -309,5 +310,6 @@ ColumnLayout {
         onRunRenameKeypairFlow: root.runRenameKeypairFlow()
         onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
         onRunMoveKeypairToKeycardFlow: root.runMoveKeypairToKeycardFlow()
+        onRunStopUsingKeycardFlow: root.runStopUsingKeycardFlow()
     }
 }

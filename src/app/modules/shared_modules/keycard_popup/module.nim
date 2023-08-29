@@ -156,7 +156,10 @@ method validSeedPhrase*[T](self: Module[T], value: string): bool =
   return self.controller.validSeedPhrase(value)
 
 method migratingProfileKeyPair*[T](self: Module[T]): bool =
-  return self.controller.getSelectedKeyPairIsProfile()
+  let flowType = self.getCurrentFlowType()
+  if flowType == FlowType.SetupNewKeycard:
+    return self.controller.getSelectedKeyPairIsProfile()
+  return self.controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
 
 method getSigningPhrase*[T](self: Module[T]): string =
   return self.controller.getSigningPhrase()
@@ -532,6 +535,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true, exportMasterAddr = true)
     return
+  if flowToRun == FlowType.MigrateFromKeycardToApp:
+    if keyUid.len == 0:
+      error "sm_cannot run a migration from keycar to app flow without knowing in advance a keypair being migrated"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    self.prepareKeyPairForProcessing(keyUid)
+    self.view.setCurrentState(newMigrateKeypairToAppState(flowToRun, nil))
+    self.controller.readyToDisplayPopup()
+    return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
@@ -609,7 +621,13 @@ method updateKeyPairHelper*[T](self: Module[T], cardMetadata: CardMetadata) =
 
 method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
   let flowType = self.getCurrentFlowType()
+  if password.len == 0:
+    self.view.setDisablePopup(false)
+    return
   if flowType == FlowType.SetupNewKeycard:
+    self.controller.setPassword(password)
+    self.onSecondaryActionClicked()
+  if flowType == FlowType.MigrateFromKeycardToApp:
     self.controller.setPassword(password)
     self.onSecondaryActionClicked()
 

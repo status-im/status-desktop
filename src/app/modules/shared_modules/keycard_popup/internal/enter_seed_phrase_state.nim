@@ -50,6 +50,13 @@ method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Co
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getKeyPairForProcessing().getKeyUid()
     if not self.verifiedSeedPhrase:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+  if self.flowType == FlowType.MigrateFromKeycardToApp:
+    let keyUid = controller.getKeyUidForSeedPhrase(sp)
+    self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getKeyPairForProcessing().getKeyUid()
+    if self.verifiedSeedPhrase:
+      controller.authenticateUser()
+    else:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
 method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
@@ -70,12 +77,20 @@ method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller):
     if self.verifiedSeedPhrase:
       return createState(StateType.CreatePin, self.flowType, nil)
     return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+  if self.flowType == FlowType.MigrateFromKeycardToApp:
+    if not self.verifiedSeedPhrase:
+      return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+
+method getNextSecondaryState*(self: EnterSeedPhraseState, controller: Controller): State =
+  if self.flowType == FlowType.MigrateFromKeycardToApp:
+    return createState(StateType.MigratingKeypairToApp, self.flowType, nil)
 
 method executeCancelCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromKeycardToApp:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent,
@@ -86,7 +101,7 @@ method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: str
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
-        return createState(StateType.MigratingKeyPair, self.flowType, nil)
+        return createState(StateType.MigratingKeypairToKeycard, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if keycardFlowType == ResponseTypeValueEnterNewPIN and
       keycardEvent.error.len > 0 and
