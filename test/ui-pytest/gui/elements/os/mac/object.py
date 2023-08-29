@@ -23,7 +23,7 @@ class NativeObject(BaseObject):
     def is_visible(self):
         try:
             return self.object is not None
-        except LookupError as err:
+        except (LookupError, ValueError) as err:
             _logger.debug(err)
             return False
 

@@ -5,10 +5,11 @@ from abc import abstractmethod
 
 import allure
 
+import configs
 import constants.tesseract
 import driver
 from gui.components.os.open_file_dialogs import OpenFileDialog
-from gui.components.profile_picture_popup import ProfilePicturePopup
+from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
 from gui.elements.qt.text_edit import TextEdit
@@ -31,10 +32,10 @@ class AllowNotificationsView(QObject):
         self.wait_until_hidden()
 
 
-class WelcomeScreen(QObject):
+class WelcomeView(QObject):
 
     def __init__(self):
-        super(WelcomeScreen, self).__init__('mainWindow_WelcomeView')
+        super(WelcomeView, self).__init__('mainWindow_WelcomeView')
         self._new_user_button = Button('mainWindow_I_am_new_to_Status_StatusBaseText')
         self._existing_user_button = Button('mainWindow_I_already_use_Status_StatusBaseText')
 
@@ -45,10 +46,10 @@ class WelcomeScreen(QObject):
         return KeysView().wait_until_appears()
 
 
-class OnboardingScreen(QObject):
+class OnboardingView(QObject):
 
     def __init__(self, object_name):
-        super(OnboardingScreen, self).__init__(object_name)
+        super(OnboardingView, self).__init__(object_name)
         self._back_button = Button('mainWindow_onboardingBackButton_StatusRoundButton')
 
     @abstractmethod
@@ -56,7 +57,7 @@ class OnboardingScreen(QObject):
         pass
 
 
-class KeysView(OnboardingScreen):
+class KeysView(OnboardingView):
 
     def __init__(self):
         super(KeysView, self).__init__('mainWindow_KeysMainView')
@@ -80,12 +81,12 @@ class KeysView(OnboardingScreen):
         return ImportSeedPhraseView().wait_until_appears()
 
     @allure.step('Go back')
-    def back(self) -> WelcomeScreen:
+    def back(self) -> WelcomeView:
         self._back_button.click()
-        return WelcomeScreen().wait_until_appears()
+        return WelcomeView().wait_until_appears()
 
 
-class ImportSeedPhraseView(OnboardingScreen):
+class ImportSeedPhraseView(OnboardingView):
 
     def __init__(self):
         super(ImportSeedPhraseView, self).__init__('mainWindow_KeysMainView')
@@ -102,7 +103,7 @@ class ImportSeedPhraseView(OnboardingScreen):
         return KeysView().wait_until_appears()
 
 
-class SeedPhraseInputView(OnboardingScreen):
+class SeedPhraseInputView(OnboardingView):
 
     def __init__(self):
         super(SeedPhraseInputView, self).__init__('mainWindow_SeedPhraseInputView')
@@ -134,7 +135,7 @@ class SeedPhraseInputView(OnboardingScreen):
         return YourProfileView().wait_until_appears()
 
 
-class KeycardInitView(OnboardingScreen):
+class KeycardInitView(OnboardingView):
 
     def __init__(self):
         super(KeycardInitView, self).__init__('mainWindow_KeycardInitView')
@@ -149,7 +150,7 @@ class KeycardInitView(OnboardingScreen):
         return KeysView().wait_until_appears()
 
 
-class YourProfileView(OnboardingScreen):
+class YourProfileView(OnboardingView):
 
     def __init__(self):
         super(YourProfileView, self).__init__('mainWindow_InsertDetailsView')
@@ -175,13 +176,13 @@ class YourProfileView(OnboardingScreen):
         return self
 
     @allure.step('Set user image')
-    def set_user_image(self, fp: SystemPath) -> ProfilePicturePopup:
+    def set_user_image(self, fp: SystemPath) -> PictureEditPopup:
         allure.attach(name='User image', body=fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
         self._upload_picture_button.hover()
         self._upload_picture_button.click()
         file_dialog = OpenFileDialog().wait_until_appears()
         file_dialog.open_file(fp)
-        return ProfilePicturePopup().wait_until_appears()
+        return PictureEditPopup().wait_until_appears()
 
     @allure.step('Open Emoji and Icon view')
     def next(self) -> 'EmojiAndIconView':
@@ -195,7 +196,7 @@ class YourProfileView(OnboardingScreen):
         return KeysView().wait_until_appears()
 
 
-class EmojiAndIconView(OnboardingScreen):
+class EmojiAndIconView(OnboardingView):
 
     def __init__(self):
         super(EmojiAndIconView, self).__init__('mainWindow_InsertDetailsView')
@@ -265,7 +266,7 @@ class EmojiAndIconView(OnboardingScreen):
         return self.profile_image.has_color(constants.Color.WHITE, crop=crop)
 
 
-class CreatePasswordView(OnboardingScreen):
+class CreatePasswordView(OnboardingView):
 
     def __init__(self):
         super(CreatePasswordView, self).__init__('mainWindow_CreatePasswordView')
@@ -294,7 +295,7 @@ class CreatePasswordView(OnboardingScreen):
         return EmojiAndIconView().wait_until_appears()
 
 
-class ConfirmPasswordView(OnboardingScreen):
+class ConfirmPasswordView(OnboardingView):
 
     def __init__(self):
         super(ConfirmPasswordView, self).__init__('mainWindow_ConfirmPasswordView')
@@ -312,7 +313,7 @@ class ConfirmPasswordView(OnboardingScreen):
         return CreatePasswordView().wait_until_appears()
 
 
-class TouchIDAuthView(OnboardingScreen):
+class TouchIDAuthView(OnboardingView):
 
     def __init__(self):
         super(TouchIDAuthView, self).__init__('mainWindow_TouchIDAuthView')
@@ -322,3 +323,44 @@ class TouchIDAuthView(OnboardingScreen):
     def prefer_password(self):
         self._prefer_password_button.click()
         self.wait_until_hidden()
+
+
+class LoginView(QObject):
+
+    def __init__(self):
+        super(LoginView, self).__init__('mainWindow_LoginView')
+        self._password_text_edit = TextEdit('loginView_passwordInput')
+        self._arrow_right_button = Button('loginView_submitBtn')
+        self._current_user_name_label = TextLabel('loginView_currentUserNameLabel')
+        self._change_account_button = Button('loginView_changeAccountBtn')
+        self._accounts_combobox = QObject('accountsView_accountListPanel')
+
+    @allure.step('Log in user')
+    def log_in(self, account):
+        if self._current_user_name_label.text != account.name:
+            self._change_account_button.hover()
+            self._change_account_button.click()
+            self.select_user_name(account.name)
+
+        self._password_text_edit.text = account.password
+        self._arrow_right_button.click()
+        self.wait_until_hidden()
+
+    @allure.step('Select user')
+    def select_user_name(self, user_name, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        names = set()
+
+        def _select_user() -> bool:
+            for index in range(self._accounts_combobox.object.count):
+                name_object = self._accounts_combobox.object.itemAt(index)
+                name_label = str(name_object.label)
+                names.add(name_label)
+                if name_label == user_name:
+                    try:
+                        driver.mouseClick(name_object)
+                    except RuntimeError:
+                        continue
+                    return True
+            return False
+
+        assert driver.waitFor(lambda: _select_user(), timeout_msec), f'User name: "{user_name}" not found in {names}'
