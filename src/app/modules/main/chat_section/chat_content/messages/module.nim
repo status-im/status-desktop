@@ -245,8 +245,9 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         else:
           quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
-      var communityChats: seq[ChatDto]
-      communityChats = self.controller.getCommunityDetails().chats
+      var communityChats: seq[ChatDto] = @[]
+      if self.controller.belongsToCommunity():
+        communityChats = self.controller.getCommunityDetails().chats
 
       var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
@@ -364,7 +365,9 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
 
   for message in messages:
     let sender = self.controller.getContactDetails(message.`from`)
-    let communityChats = self.controller.getCommunityDetails().chats
+    var communityChats: seq[ChatDto] = @[]
+    if self.controller.belongsToCommunity():
+      communityChats = self.controller.getCommunityDetails().chats
     var quotedMessageAuthorDetails = ContactDetails()
     if message.quotedMessage.`from` != "":
       if(message.`from` == message.quotedMessage.`from`):
@@ -593,7 +596,9 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let communityChats = self.controller.getCommunityDetails().chats
+      var communityChats: seq[ChatDto] = @[]
+      if self.controller.belongsToCommunity():
+        communityChats = self.controller.getCommunityDetails().chats
       item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
 method deleteMessage*(self: Module, messageId: string) =
@@ -611,7 +616,9 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     return
 
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
-  let communityChats = self.controller.getCommunityDetails().chats
+  var communityChats: seq[ChatDto] = @[]
+  if self.controller.belongsToCommunity():
+    communityChats = self.controller.getCommunityDetails().chats
 
   self.view.model().updateEditedMsg(
     message.id,

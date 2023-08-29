@@ -141,8 +141,6 @@ method addChat*(self: Module, itemId: string) =
   if(ind != -1):
     return
   let chatDto = self.controller.getChatDetails(itemId)
-  if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:
-    return
   self.addChat(chatDto)
 
 method setName*(self: Module, itemId: string, name: string) =
