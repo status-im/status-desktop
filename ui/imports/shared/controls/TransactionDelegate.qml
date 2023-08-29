@@ -170,7 +170,7 @@ StatusListItem {
 
     function getDetailsString(detailsObj) {
         if (!detailsObj) {
-            rootStore.fetchTxDetails(modelData.id, modelData.isMultiTransaction, modelData.isPending)
+            rootStore.fetchTxDetails(index)
             detailsObj = rootStore.getTxDetails()
         }
 

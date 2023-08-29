@@ -27,23 +27,13 @@ Item {
     property var overview: WalletStores.RootStore.overview
     property var contactsStore
     property var transaction
+    property int transactionIndex
     property var sendModal
     property bool showAllAccounts: false
     readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
-    onTransactionChanged: {
-        d.decodedInputData = ""
-        if (!transaction)
-            return
-
-        RootStore.fetchTxDetails(transaction.id, transaction.isMultiTransaction, transaction.isPending)
-        d.details = RootStore.getTxDetails()
-
-        if (!!d.details && !!d.details.input) {
-            d.loadingInputDate = true
-            RootStore.fetchDecodedTxData(d.details.txHash, d.details.input)
-        }
-    }
+    onTransactionChanged: d.updateTransactionDetails()
+    Component.onCompleted: d.updateTransactionDetails()
 
     QtObject {
         id: d
@@ -83,7 +73,7 @@ Item {
             const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(d.details.totalFees) : 0
+        readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
@@ -93,6 +83,20 @@ Item {
 
         function retryTransaction() {
             // TODO handle failed transaction retry
+        }
+
+        function updateTransactionDetails() {
+            d.decodedInputData = ""
+            if (!transaction)
+                return
+
+            RootStore.fetchTxDetails(transactionIndex)
+            d.details = RootStore.getTxDetails()
+
+            if (!!d.details && !!d.details.input) {
+                d.loadingInputDate = true
+                RootStore.fetchDecodedTxData(d.details.txHash, d.details.input)
+            }
         }
     }
 
@@ -459,7 +463,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Token format")
-                            subTitle: root.isTransactionValid ? transaction.tokenType.toUpperCase() : ""
+                            subTitle: root.isTransactionValid ? d.details.tokenType.toUpperCase() : ""
                             visible: !!subTitle
                         }
                         TransactionDataTile {
@@ -634,7 +638,7 @@ Item {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
                             case Constants.TransactionType.Bridge:
-                                return LocaleUtils.currencyAmountToLocaleString(d.details.totalFees)
+                                return d.details ? LocaleUtils.currencyAmountToLocaleString(d.details.totalFees) : ""
                             default:
                                 return ""
                             }

@@ -35,6 +35,12 @@ QtObject:
     for i in 0 ..< self.entries.len:
       result &= fmt"""[{i}]:({$self.entries[i]})"""
 
+  proc getEntry*(self: Model, index: int): entry.ActivityEntry =
+    if index < 0 or index >= self.entries.len:
+      return nil
+
+    return self.entries[index]
+
   proc countChanged(self: Model) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
@@ -97,13 +103,13 @@ QtObject:
 
   proc sameIdentity(e: entry.ActivityEntry, d: backend.Data): bool =
     let m = e.getMetadata()
-    if m.payloadType != d.payloadType:
+    if m.getPayloadType() != d.payloadType:
       return false
 
-    if m.payloadType == MultiTransaction:
-      return m.id == d.id.get()
+    if m.getPayloadType() == MultiTransaction:
+      return m.getMultiTransactionId().get(0) == d.id.get()
 
-    return m.transaction.isSome() and d.transaction.isSome() and m.transaction.get() == d.transaction.get()
+    return m.getTransactionIdentity().isSome() and d.transaction.isSome() and m.getTransactionIdentity().get() == d.transaction.get()
 
   proc updateEntries*(self: Model, updates: seq[backend.Data]) =
     for i in countdown(self.entries.high, 0):

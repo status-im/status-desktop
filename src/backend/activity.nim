@@ -253,14 +253,13 @@ proc `%`*(pt: TransferType): JsonNode {.inline.} =
 proc fromJson*(jn: JsonNode, T: typedesc[TransferType]): TransferType {.inline.} =
   return cast[TransferType](jn.getInt())
 
-# TODO: hide internals behind safe interface
 # Mirrors status-go/services/wallet/activity/activity.go Entry
 type
   ActivityEntry* = object
     # Identification
-    payloadType*: PayloadType
-    transaction*: Option[TransactionIdentity]
-    id*: int
+    payloadType: PayloadType
+    transaction: Option[TransactionIdentity]
+    id: int
 
     timestamp*: int
 
@@ -321,6 +320,19 @@ type
     offset*: int
     hasMore*: bool
     errorCode*: ErrorCode
+
+proc getPayloadType*(ae: ActivityEntry): PayloadType =
+  return ae.payloadType
+
+proc getTransactionIdentity*(ae: ActivityEntry): Option[TransactionIdentity] =
+  if ae.payloadType == PayloadType.MultiTransaction:
+    return none(TransactionIdentity)
+  return ae.transaction
+
+proc getMultiTransactionId*(ae: ActivityEntry): Option[int] =
+  if ae.payloadType != PayloadType.MultiTransaction:
+    return none(int)
+  return some(ae.id)
 
 proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
   return %*(ae)
