@@ -431,17 +431,14 @@ QtObject {
             return qsTr("%1 %2").arg(loc.standaloneDayName(value.getDay(), Locale.ShortFormat)).arg(value.toLocaleTimeString(loc, formatString))
         }
 
-        // otherwise
-        var fullFormatString = d.fixupTimeFormatString(loc.dateTimeFormat(Locale.ShortFormat))
+        // within this year
         if (now.getFullYear() === value.getFullYear()) {
-            // strip year part, if current year -> "31 December 09:41"
-            // It remove preceding dot or space
-            fullFormatString = fullFormatString.replace(/([.\s])?\b(y+)\b/g, "")
-        } else if (!fullFormatString.includes("yyyy")) {
-            fullFormatString = fullFormatString.replace("yy", "yyyy") // different year -> "31 December 2022 09:41"
+            // strip year part, if current year -> "31 Dec 09:41"
+            return getDayMonth(value) + " " + formatTime(value, Locale.ShortFormat)
         }
 
-        return value.toLocaleString(loc, fullFormatString)
+        // otherwise
+        return formatDateTime(value, Locale.ShortFormat)
     }
 
     function getTimeDifference(d1, d2) {
