@@ -42,7 +42,6 @@ QtObject:
       metadata: backend.ActivityEntry
       extradata: ExtraData
 
-      totalFees: CurrencyAmount
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
 
@@ -79,7 +78,6 @@ QtObject:
     result.metadata = metadata
     result.extradata = extradata
 
-    result.totalFees = valueConvertor(stint.fromHex(UInt256, tr.totalFees), "Gwei")
     result.amountCurrency = valueConvertor(
       if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
       tr.symbol
@@ -228,16 +226,6 @@ QtObject:
     read = getNftImageUrl
     write = setNftImageUrl
     notify = nftImageUrlChanged
-
-  proc getTotalFees*(self: ActivityEntry): QVariant {.slot.} =
-    if self.transaction == nil:
-      error "getTotalFees: ActivityEntry is not an transaction entry"
-      return newQVariant(self.noAmount)
-    return newQVariant(self.totalFees)
-
-  # TODO: lazy load this in activity history service. See #11597
-  QtProperty[QVariant] totalFees:
-    read = getTotalFees
 
   proc getTxType*(self: ActivityEntry): int {.slot.} =
     return self.metadata.activityType.int

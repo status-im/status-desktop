@@ -83,7 +83,7 @@ Item {
             const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(transaction.totalFees) : 0
+        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(d.details.totalFees) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
@@ -634,7 +634,7 @@ Item {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
                             case Constants.TransactionType.Bridge:
-                                return LocaleUtils.currencyAmountToLocaleString(root.transaction.totalFees)
+                                return LocaleUtils.currencyAmountToLocaleString(d.details.totalFees)
                             default:
                                 return ""
                             }
