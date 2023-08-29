@@ -175,7 +175,8 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.members.map(proc(member: ChatMember): MemberItem =
         result = self.createMemberItem(member.id, "", MembershipRequestState.Accepted)),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
-      bannedMembers = c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem =
+      # TODO: pending and banned members 
+      bannedMembers = c.getBannedMembersIds().map(proc(bannedMemberId: string): MemberItem =
         result = self.createMemberItem(bannedMemberId, "", MembershipRequestState.Banned)),
       pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),

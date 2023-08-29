@@ -34,6 +34,13 @@ type
     Members,
     ControlNodeUptime
 
+type
+  CommunityMemberState* {.pure.} = enum
+    Banned = 0,
+    BanPending,
+    UnbanPending,
+    KickPending
+
 type CommunityMembershipRequestDto* = object
   id*: string
   publicKey*: string
@@ -154,7 +161,7 @@ type CommunityDto* = object
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
-  bannedMembersIds*: seq[string]
+  pendingAndBannedMembers*: Table[string, CommunityMemberState]
   declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
   encrypted*: bool
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
@@ -427,10 +434,11 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   else:
     result.tags = "[]"
 
-  var bannedMembersIdsObj: JsonNode
-  if(jsonObj.getProp("banList", bannedMembersIdsObj) and bannedMembersIdsObj.kind == JArray):
-    for bannedMemberId in bannedMembersIdsObj:
-      result.bannedMembersIds.add(bannedMemberId.getStr)
+  var pendingAndBannedMembersObj: JsonNode
+  if (jsonObj.getProp("pendingAndBannedMembers", pendingAndBannedMembersObj) and pendingAndBannedMembersObj.kind == JObject):
+    result.pendingAndBannedMembers = initTable[string, CommunityMemberState]()
+    for memberId, communityMemberState in pendingAndBannedMembersObj:
+      result.pendingAndBannedMembers[memberId] = CommunityMemberState(communityMemberState.getInt())
 
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
@@ -494,6 +502,13 @@ proc contains(arrayToSearch: seq[int], searched: int): bool =
       return true
   return false
 
+proc getBannedMembersIds*(self: CommunityDto): seq[string] =
+  var bannedIds: seq[string] = @[]
+  for memberId, state in self.pendingAndBannedMembers:
+    if state == CommunityMemberState.Banned:
+      bannedIds.add(memberId)
+  return bannedIds
+
 proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
   ChannelGroupDto(
     id: communityDto.id,
@@ -520,7 +535,7 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     canManageUsers: communityDto.canManageUsers,
     muted: communityDto.muted,
     historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
-    bannedMembersIds: communityDto.bannedMembersIds,
+    bannedMembersIds: communityDto.getBannedMembersIds(),
     encrypted: communityDto.encrypted,
   )
 
