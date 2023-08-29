@@ -19,9 +19,6 @@ type
   ExtraData* = object
     inAmount*: float64
     outAmount*: float64
-    # TODO: Fields below should come from the metadata. see #11597
-    inSymbol*: string
-    outSymbol*: string
 
   AmountToCurrencyConvertor* = proc (amount: UInt256, symbol: string): CurrencyAmount
 
@@ -147,13 +144,13 @@ QtObject:
     read = getRecipient
 
   proc getInSymbol*(self: ActivityEntry): string {.slot.} =
-    return self.extradata.inSymbol
+    return self.metadata.symbolIn.get("")
 
   QtProperty[string] inSymbol:
     read = getInSymbol
 
   proc getOutSymbol*(self: ActivityEntry): string {.slot.} =
-    return self.extradata.outSymbol
+    return self.metadata.symbolOut.get("")
 
   QtProperty[string] outSymbol:
     read = getOutSymbol

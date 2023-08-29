@@ -272,6 +272,8 @@ type
 
     tokenOut*: Option[Token]
     tokenIn*: Option[Token]
+    symbolOut*: Option[string]
+    symbolIn*: Option[string]
 
     sender*: Option[eth.Address]
     recipient*: Option[eth.Address]
@@ -295,6 +297,8 @@ type
 
     tokenOut*: Option[Token]
     tokenIn*: Option[Token]
+    symbolOut*: Option[string]
+    symbolIn*: Option[string]
 
     sender*: Option[eth.Address]
     recipient*: Option[eth.Address]
@@ -331,6 +335,8 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const amountInField = "amountIn"
   const tokenOutField = "tokenOut"
   const tokenInField = "tokenIn"
+  const symbolOutField = "symbolOut"
+  const symbolInField = "symbolIn"
   const senderField = "sender"
   const recipientField = "recipient"
   const chainIdOutField = "chainIdOut"
@@ -364,6 +370,14 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
                 some(fromJson(e[tokenInField], Token))
               else:
                 none(Token),
+    symbolOut:  if e.contains(symbolOutField):
+                  some(e[symbolOutField].getStr())
+                else:
+                  none(string),
+    symbolIn: if e.contains(symbolInField):
+                some(e[symbolInField].getStr())
+              else:
+                none(string),
 
     nftName: if e.contains(nftNameField): some(e[nftNameField].getStr()) else: none(string),
     nftUrl: if e.contains(nftUrlField): some(e[nftUrlField].getStr()) else: none(string),
@@ -396,6 +410,8 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     amountIn: data.amountIn.get(),
     tokenOut: data.tokenOut,
     tokenIn: data.tokenIn,
+    symbolOut: data.symbolOut,
+    symbolIn: data.symbolIn,
     sender: data.sender,
     recipient: data.recipient,
     chainIdOut: data.chainIdOut,
@@ -417,6 +433,8 @@ proc `$`*(self: ActivityEntry): string =
     amountIn* {$self.amountIn},
     tokenOut* {$self.tokenOut},
     tokenIn* {$self.tokenIn}
+    symbolOut* {$self.symbolOut}
+    symbolIn* {$self.symbolIn}
     sender* {$self.sender}
     recipient* {$self.recipient}
     chainIdOut* {$self.chainIdOut}
