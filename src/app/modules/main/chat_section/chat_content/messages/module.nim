@@ -246,6 +246,9 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   if(messages.len > 0):
     for message in messages:
+    
+      debug "<<< newMessage loaded: ", id = $message.id
+
       # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
       # Now we just skip deleted messages
       if message.deleted or message.deletedForMe:
@@ -354,6 +357,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
+      debug "<<< newMessage loaded and added: ", id = $message.id
 
     if self.controller.getChatDetails().hasMoreMessagesToRequest():
       viewItems.add(self.createFetchMoreMessagesItem())
@@ -682,7 +686,7 @@ proc switchToMessage*(self: Module, messageId: string) =
 
 method scrollToMessage*(self: Module, messageId: string) =
 
-  debug "<<< scrollToMessage", messageId
+  debug "<<< scrollToMessage-1", messageId
 
   if messageId == "":
     return
@@ -691,11 +695,13 @@ method scrollToMessage*(self: Module, messageId: string) =
     return
 
   self.getMessageRequestId = self.controller.asyncGetMessageById(messageId)
+  debug "<<< scrollToMessage-2", messageId, messageRequestId = $self.getMessageRequestId
+
   self.view.setMessageSearchOngoing(true)
 
 method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
 
-  debug "<<< onGetMessageById", requestId, messageId
+  debug "<<< onGetMessageById", requestId, messageRequestId = $self.getMessageRequestId, messageId, message
 
   if self.getMessageRequestId != requestId:
     return
