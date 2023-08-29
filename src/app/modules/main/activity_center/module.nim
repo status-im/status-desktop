@@ -82,7 +82,9 @@ method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: string): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let communityChats = self.controller.getCommunityById(communityId).chats
+  var communityChats: seq[ChatDto] = @[]
+  if communityId != singletonInstance.userProfile.getPubKey():
+    communityChats = self.controller.getCommunityById(communityId).chats
 
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
