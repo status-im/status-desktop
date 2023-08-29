@@ -86,6 +86,7 @@ Item {
         readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(transaction.totalFees) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
+        readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
         property string decodedInputData: ""
         property bool loadingInputDate: false
@@ -158,12 +159,17 @@ Item {
             WalletTxProgressBlock {
                 id: progressBlock
                 width: Math.min(513, root.width)
+                readonly property int latestBlockNumber: root.isTransactionValid && !pending && !error ? RootStore.hex2Dec(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId)) : 0
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
-                isLayer1: root.isTransactionValid && RootStore.getNetworkLayer(root.transaction.chainId) == 1
-                confirmations: root.isTransactionValid && !pending && !error ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - d.blockNumber): 0
-                chainName: transactionHeader.networkName
-                timeStamp: root.isTransactionValid ? transaction.timestamp: ""
+                outNetworkLayer: root.isTransactionValid ? Number(RootStore.getNetworkLayer(transactionHeader.isMultiTransaction ? root.transaction.chainIdOut : root.transaction.chainId)) : 0
+                inNetworkLayer: root.isTransactionValid && transactionHeader.isMultiTransaction && d.isBridge ? Number(RootStore.getNetworkLayer(root.transaction.chainIdIn)) : 0
+                outNetworkTimestamp: root.isTransactionValid ? root.transaction.timestamp : 0
+                inNetworkTimestamp: root.isTransactionValid ? root.transaction.timestamp : 0
+                outChainName: transactionHeader.isMultiTransaction ? transactionHeader.networkNameOut : transactionHeader.networkName
+                inChainName: transactionHeader.isMultiTransaction && d.isBridge ? transactionHeader.networkNameIn : ""
+                outNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
+                inNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
             }
 
             Separator {
