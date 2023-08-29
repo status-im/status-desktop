@@ -133,8 +133,11 @@ method addChat*(self: Module, chatDto: ChatDto) =
   let ind = self.view.exemptionsModel().findIndexForItemId(chatDto.id)
   if(ind != -1):
     return
+  echo "Create item"
   let item = self.createChatItem(chatDto)
+  echo "created item"
   self.view.exemptionsModel().addItem(item)
+  echo "added item"
 
 method addChat*(self: Module, itemId: string) =
   let ind = self.view.exemptionsModel().findIndexForItemId(itemId)
