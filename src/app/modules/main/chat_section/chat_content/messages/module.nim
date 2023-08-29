@@ -695,6 +695,8 @@ method scrollToMessage*(self: Module, messageId: string) =
 
 method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
 
+  debug "<<< onGetMessageById", requestId, messageId
+
   if self.getMessageRequestId != requestId:
     return
 
