@@ -125,7 +125,7 @@ Item {
                 imageSrc: communityData.image
                 accessType: communityData.access
                 loginType: root.store.loginType
-                walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
+                walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
                 permissionsModel: {
                     root.store.prepareTokenModelForCommunity(communityData.id)
                     return root.store.permissionsModel

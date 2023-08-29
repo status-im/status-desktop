@@ -158,7 +158,7 @@ StackLayout {
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
             rootStore: root.rootStore
-            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
+            walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: sectionItemModel
@@ -185,7 +185,7 @@ StackLayout {
             property string communityId
 
             loginType: root.rootStore.loginType
-            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
+            walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
             permissionsModel: {
                 root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
                 return root.rootStore.permissionsModel
@@ -221,5 +221,4 @@ StackLayout {
             }
         }
     }
-
 }

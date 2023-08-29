@@ -356,7 +356,7 @@ Item {
                         // Used for Bridge to display 'To' network Protocol contract address
                         address: "" // TODO fill protocol contract address for 'to' network for Bridge
                         symbol: "" // TODO fill protocol name for Bridge
-                        networkName: transactionHeader.networknameOut
+                        networkName: transactionHeader.networkNameOut
                         shortNetworkName: d.networkShortNameOut
                         visible: !!subTitle && d.transactionType === Constants.TransactionType.Bridge
                     }

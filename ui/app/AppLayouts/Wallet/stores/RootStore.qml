@@ -44,7 +44,7 @@ QtObject {
         ]
     }
 
-    property var watchOnlyAccounts: SortFilterProxyModel {
+    property var nonWatchAccounts: SortFilterProxyModel {
         sourceModel: receiveAccounts
         proxyRoles: [
             ExpressionRole {

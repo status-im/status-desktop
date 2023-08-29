@@ -233,7 +233,7 @@ SettingsContentBase {
             }
 
             loginType: chatStore.loginType
-            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
+            walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
             permissionsModel: {
                 root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
                 return root.rootStore.permissionsModel
