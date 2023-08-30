@@ -1,5 +1,5 @@
 import # system libs
-  tables
+  tables, chronicles
 
 import # deps
   uuids
@@ -46,7 +46,8 @@ proc disconnect*(this: EventEmitter, handlerId: UUID) =
       this.events[k].del handlerId
 
 proc emit*(this:EventEmitter, name:string, args:Args): void  =
-  echo "Emitting ", name
+  if name != "signal:chronicles-log":
+    debug "Emitting event", name
   if this.events.hasKey(name):
     # collect the handlers before executing them
     # because of 'once' proc, we also mutate

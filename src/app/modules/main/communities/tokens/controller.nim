@@ -1,4 +1,4 @@
-import stint
+import stint, chronicles
 import ./io_interface as community_tokens_module_interface
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
@@ -138,5 +138,5 @@ proc getTokenMasterToken*(self: Controller, communityId: string): CommunityToken
   return self.communityTokensService.getTokenMasterToken(communityId)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
-  echo "getCommunityById from tokens module"
+  debug "getCommunityById from tokens module", communityId
   return self.communityService.getCommunityById(communityId)

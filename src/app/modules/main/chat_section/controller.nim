@@ -1,4 +1,4 @@
-import Tables, sugar, sequtils, strutils
+import Tables, sugar, sequtils, strutils, chronicles
 
 import io_interface
 
@@ -156,11 +156,11 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
-      echo "Chat section"
+      debug "Chat section", id=chat.id
       discard self.delegate.addOrUpdateChat(chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = false)
-      echo "Chat section done"
+      debug "Chat section done", id=chat.id
 
   self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
     var args = CreatedChatArgs(e)
@@ -383,7 +383,7 @@ proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
 proc getMyCommunity*(self: Controller): CommunityDto =
-  echo "getCommunityById from chat_section module"
+  debug "getCommunityById from chat_section module", communityId=self.sectionId
   return self.communityService.getCommunityById(self.sectionId)
 
 proc getCategories*(self: Controller, communityId: string): seq[Category] =

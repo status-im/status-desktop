@@ -1,4 +1,4 @@
-import chronicles, stint, tables
+import chronicles, stint, tables, chronicles
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
@@ -501,7 +501,7 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
-  echo "getCommunityById from main module"
+  debug "getCommunityById from main module", communityId
   return self.communityService.getCommunityById(communityId)
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =

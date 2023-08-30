@@ -1,4 +1,4 @@
-import Tables, stint
+import Tables, stint, chronicles
 import ./io_interface
 
 import ../../../global/app_signals
@@ -99,7 +99,7 @@ proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
-  echo "getCommunityById from activity_center module"
+  debug "getCommunityById from activity_center module", communityId
   return self.communityService.getCommunityById(communityId)
 
 proc getActivityCenterNotifications*(self: Controller): seq[ActivityCenterNotificationDto] =

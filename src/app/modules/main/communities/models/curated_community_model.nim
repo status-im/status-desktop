@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, chronicles
 import curated_community_item
 import ../../../shared_models/[token_permissions_model, token_permission_item]
 
@@ -162,6 +162,6 @@ QtObject:
   proc setPermissionItems*(self: CuratedCommunityModel, itemId: string, items: seq[TokenPermissionItem]) =
     let idx = self.findIndexById(itemId)
     if idx == -1:
-      echo "Tried to set permission items on an item that doesn't exist. Item ID: ", itemId
+      debug "Tried to set permission items on an item that doesn't exist. Item ID: ", itemId
       return
     self.items[idx].setPermissionModelItems(items)
