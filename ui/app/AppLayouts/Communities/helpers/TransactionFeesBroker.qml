@@ -46,6 +46,7 @@ QtObject {
             required property DeployFeesSubscriber subscriber
             readonly property var requestArgs: ({
                 type: TransactionFeesBroker.FeeType.Deploy,
+                communityId: subscriber.communityId,
                 chainId: subscriber.chainId,
                 accountAddress: subscriber.accountAddress,
                 tokenType: subscriber.tokenType,
@@ -156,7 +157,7 @@ QtObject {
         }
 
         function computeDeployFee(args, topic) {
-            communityTokensStore.computeDeployFee(args.chainId, args.accountAddress, args.tokenType, args.isOwnerDeployment, topic)
+            communityTokensStore.computeDeployFee(args.communityId, args.chainId, args.accountAddress, args.tokenType, args.isOwnerDeployment, topic)
         }
 
         function computeSelfDestructFee(args, topic) {

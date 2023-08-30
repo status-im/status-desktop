@@ -120,8 +120,8 @@ QtObject {
                     JSON.stringify(addresses), feeAccountAddress, requestId)
     }
 
-    function computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment, requestId) {
-        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment, requestId)
+    function computeDeployFee(communityId, chainId, accountAddress, tokenType, isOwnerDeployment, requestId) {
+        communityTokensModuleInst.computeDeployFee(communityId, chainId, accountAddress, tokenType, isOwnerDeployment, requestId)
     }
 
     /**

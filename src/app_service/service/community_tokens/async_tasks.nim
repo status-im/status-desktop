@@ -22,6 +22,10 @@ type
     chainId: int
     addressFrom: string
     requestId: string
+    ownerParams: JsonNode
+    masterParams: JsonNode
+    communityId: string
+    signerPubKey: string
 
 const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncDeployOwnerContractsFeesArg](argEncoded)
@@ -30,7 +34,12 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
     let response = eth.suggestedFees(arg.chainId).result
     feeTable[arg.chainId] = response.toSuggestedFeesDto()
-    let deployGas = community_tokens.deployOwnerTokenEstimate().result.getInt
+
+    # get deployment signature
+    let signatureResponse = community_tokens.createCommunityTokenDeploymentSignature(arg.chainId, arg.addressFrom, arg.communityId)
+    let signature = signatureResponse.result.getStr()
+
+    let deployGas = community_tokens.deployOwnerTokenEstimate(arg.chainId, arg.addressFrom, arg.ownerParams, arg.masterParams, signature, arg.communityId, arg.signerPubKey).result.getInt
     gasTable[(arg.chainId, "")] = deployGas
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),

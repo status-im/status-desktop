@@ -325,7 +325,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = OwnerTokenDeployedStatusArgs(e)
-    self.delegate.onOwnerTokenDeployStateChanged(args.communityId, args.chainId, args.ownerContractAddress, args.masterContractAddress, args.deployState)
+    self.delegate.onOwnerTokenDeployStateChanged(args.communityId, args.chainId, args.ownerContractAddress, args.masterContractAddress, args.deployState, args.transactionHash)
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_REMOVED) do(e: Args):
     let args = CommunityTokenRemovedArgs(e)
