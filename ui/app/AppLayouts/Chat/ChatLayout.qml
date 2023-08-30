@@ -23,10 +23,10 @@ StackLayout {
 
     property var sectionItemModel
 
-    readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
-    readonly property bool isAdmin: community.memberRole === Constants.memberRole.admin
-    readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
-    readonly property bool isControlNode: community.isControlNode
+    readonly property bool isOwner: sectionItemModel.memberRole === Constants.memberRole.owner
+    readonly property bool isAdmin: sectionItemModel.memberRole === Constants.memberRole.admin
+    readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
+    readonly property bool isControlNode: sectionItemModel.isControlNode
     readonly property bool isPrivilegedUser: isControlNode || isOwner || isAdmin || isTokenMasterOwner
 
     property bool communitySettingsDisabled
