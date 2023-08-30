@@ -217,6 +217,13 @@ Item {
                 if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
                     return true
                 }
+                if(!!root.sharedKeycardModule.keyPairForProcessing &&
+                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
+                    return true
             }
             if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication &&
                     !!root.sharedKeycardModule.keyPairForProcessing &&
@@ -386,6 +393,13 @@ Item {
                     }
                     return unknownKeyPairCompontnt
                 }
+                if(!!root.sharedKeycardModule.keyPairForProcessing &&
+                        (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
+                    return keyPairForProcessingComponent
             }
             if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
@@ -777,7 +791,8 @@ Item {
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode ||
-                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard ||
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                         return qsTr("Keycard inserted does not match the Keycard below")
                     }
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {

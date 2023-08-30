@@ -21,20 +21,22 @@ method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller)
   # this is used in case a keycard is not inserted in the moment when flow is run (we're animating an insertion)
   return self.resolveKeycardNextState(flowType, flowEvent, controller)
 
-method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   if self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    (self.flowType == FlowType.CreateCopyOfAKeycard and 
-    not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)):
+    (self.flowType == FlowType.CreateCopyOfAKeycard and
+    not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)) or
+    self.flowType == FlowType.FactoryReset and
+    not controller.getKeyPairForProcessing().isNil:
       # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
       let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
       if ensureKeycardPresenceState.isNil: # means the keycard is inserted
         let nextState = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
-        if not nextState.isNil and 
+        if not nextState.isNil and
           (nextState.stateType == StateType.KeycardEmpty or
           nextState.stateType == StateType.NotKeycard or
           nextState.stateType == StateType.KeycardEmptyMetadata):

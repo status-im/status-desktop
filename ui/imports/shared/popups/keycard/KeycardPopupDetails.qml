@@ -747,6 +747,7 @@ QtObject {
 
                     case Constants.keycardSharedState.keycardEmpty:
                     case Constants.keycardSharedState.factoryResetSuccess:
+                    case Constants.keycardSharedState.wrongKeycard:
                         return qsTr("Done")
                     }
                     break

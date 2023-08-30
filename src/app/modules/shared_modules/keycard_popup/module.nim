@@ -447,6 +447,8 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     return
   self.init()
   if flowToRun == FlowType.FactoryReset:
+    if keyUid.len > 0:
+      self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
