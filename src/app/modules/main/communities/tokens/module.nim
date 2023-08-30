@@ -146,6 +146,11 @@ method burnTokens*(self: Module, communityId: string, contractUniqueKey: string,
   self.tempContractAction = ContractAction.Burn
   self.authenticate()
 
+proc prepareTokenUri(self: Module, communityId: string): string =
+  let shardCluster = "1234"
+  let shardIndex = "5"
+  return shardCluster & "/" & shardIndex & "/" & utl.changeCommunityKeyCompression(communityId) & "/"
+
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                            supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
   let ownerToken = self.controller.getOwnerToken(communityId)
@@ -164,7 +169,7 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
-  self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempDeploymentParams.tokenUri = self.prepareTokenUri(communityId)
   self.tempDeploymentParams.ownerTokenAddress = ownerToken.address
   self.tempDeploymentParams.masterTokenAddress = masterToken.address
   self.tempTokenMetadata.tokenType = TokenType.ERC721
@@ -188,8 +193,8 @@ method deployOwnerToken*(self: Module, communityId: string, fromAddress: string,
   let communityDto = self.controller.getCommunityById(communityId)
   let commName = communityDto.name
   let commNameShort = try: commName[0 .. 2].toUpper except: commName.toUpper
-  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
-  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: self.prepareTokenUri(communityId))
+  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: self.prepareTokenUri(communityId))
   self.tempOwnerTokenMetadata.description = ownerDescription
   self.tempOwnerTokenMetadata.tokenType = TokenType.ERC721
   self.tempMasterTokenMetadata.description = masterDescription
@@ -208,7 +213,7 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
   self.tempDeploymentParams.supply = supply.parse(Uint256)
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.decimals = decimals
-  self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempDeploymentParams.tokenUri = self.prepareTokenUri(communityId)
   self.tempTokenMetadata.tokenType = TokenType.ERC20
   self.tempTokenMetadata.description = description
   self.tempTokenImageCropInfoJson = imageCropInfoJson
