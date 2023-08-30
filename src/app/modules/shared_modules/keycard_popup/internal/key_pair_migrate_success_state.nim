@@ -32,3 +32,10 @@ method executePrePrimaryStateCommand*(self: KeyPairMigrateSuccessState, controll
     if profileMigrated:
       info "restart the app because of successfully migrated profile keypair"
       quit() # quit the app
+
+method executePreSecondaryStateCommand*(self: KeyPairMigrateSuccessState, controller: Controller) =
+  if self.flowType == FlowType.MigrateFromKeycardToApp:
+    let profileMigrated = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    if profileMigrated:
+      return
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true, FlowType.FactoryReset)

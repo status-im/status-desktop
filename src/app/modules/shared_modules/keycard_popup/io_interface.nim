@@ -4,6 +4,37 @@ from app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyD
 from app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
 import app/modules/shared_models/keypair_item
 
+type FlowType* {.pure.} = enum
+  General = "General"
+  FactoryReset = "FactoryReset"
+  SetupNewKeycard = "SetupNewKeycard"
+  SetupNewKeycardNewSeedPhrase = "SetupNewKeycardNewSeedPhrase"
+  SetupNewKeycardOldSeedPhrase = "SetupNewKeycardOldSeedPhrase"
+  ImportFromKeycard = "ImportFromKeycard"
+  Authentication = "Authentication"
+  UnlockKeycard = "UnlockKeycard"
+  DisplayKeycardContent = "DisplayKeycardContent"
+  RenameKeycard = "RenameKeycard"
+  ChangeKeycardPin = "ChangeKeycardPin"
+  ChangeKeycardPuk = "ChangeKeycardPuk"
+  ChangePairingCode = "ChangePairingCode"
+  CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
+  MigrateFromKeycardToApp = "MigrateFromKeycardToApp"
+
+# For the following flows we don't run card syncing.
+const FlowsWeShouldNotTryAKeycardSyncFor* = @[
+  FlowType.General,
+  FlowType.FactoryReset,
+  FlowType.UnlockKeycard,
+  FlowType.SetupNewKeycard,
+  FlowType.SetupNewKeycardNewSeedPhrase,
+  FlowType.SetupNewKeycardOldSeedPhrase,
+  FlowType.ImportFromKeycard,
+  FlowType.Authentication,
+  FlowType.CreateCopyOfAKeycard,
+  FlowType.MigrateFromKeycardToApp
+]
+
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
 const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
 const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
@@ -43,42 +74,12 @@ type
 type
   SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
     lastStepInTheCurrentFlow*: bool
+    continueWithNextFlow*: FlowType
 
 type
   SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
     keyUid*: string
     additionalBip44Paths*: seq[string] # can be used in authentication flow to export additinal paths if needed except encryption path
-
-type FlowType* {.pure.} = enum
-  General = "General"
-  FactoryReset = "FactoryReset"
-  SetupNewKeycard = "SetupNewKeycard"
-  SetupNewKeycardNewSeedPhrase = "SetupNewKeycardNewSeedPhrase"
-  SetupNewKeycardOldSeedPhrase = "SetupNewKeycardOldSeedPhrase"
-  ImportFromKeycard = "ImportFromKeycard"
-  Authentication = "Authentication"
-  UnlockKeycard = "UnlockKeycard"
-  DisplayKeycardContent = "DisplayKeycardContent"
-  RenameKeycard = "RenameKeycard"
-  ChangeKeycardPin = "ChangeKeycardPin"
-  ChangeKeycardPuk = "ChangeKeycardPuk"
-  ChangePairingCode = "ChangePairingCode"
-  CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
-  MigrateFromKeycardToApp = "MigrateFromKeycardToApp"
-
-# For the following flows we don't run card syncing.
-const FlowsWeShouldNotTryAKeycardSyncFor* = @[
-  FlowType.General,
-  FlowType.FactoryReset,
-  FlowType.UnlockKeycard,
-  FlowType.SetupNewKeycard,
-  FlowType.SetupNewKeycardNewSeedPhrase,
-  FlowType.SetupNewKeycardOldSeedPhrase,
-  FlowType.ImportFromKeycard,
-  FlowType.Authentication,
-  FlowType.CreateCopyOfAKeycard,
-  FlowType.MigrateFromKeycardToApp
-]
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

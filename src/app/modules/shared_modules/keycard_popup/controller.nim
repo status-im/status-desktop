@@ -585,12 +585,13 @@ proc finishFlowTermination(self: Controller) =
   self.cleanTmpData()
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
 
-proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
+proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nextFlow = FlowType.General) =
   let flowType = self.delegate.getCurrentFlowType()
   self.cancelCurrentFlow()
   let (_, flowEvent) = self.getLastReceivedKeycardData()
   self.tmpFlowData = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
-    lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
+    lastStepInTheCurrentFlow: lastStepInTheCurrentFlow,
+    continueWithNextFlow: nextFlow)
   if lastStepInTheCurrentFlow:
     var exportedEncryptionPubKey: string
     if flowEvent.generatedWalletAccounts.len > 0:
