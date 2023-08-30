@@ -49,5 +49,6 @@ RadioButton {
         leftPadding: root.indicator && !root.mirrored ? root.indicator.width + root.spacing : 0
         rightPadding: root.indicator && root.mirrored ? root.indicator.width + root.spacing : 0
         visible: !!text
+        wrapMode: Text.Wrap
     }
 }
