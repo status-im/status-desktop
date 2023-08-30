@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 import json
 import io_interface
 
@@ -179,9 +179,9 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       if self.chatId == chat.id:
-        echo "Chat content"
+        debug "Chat content", chatId=chat.id
         self.delegate.onChatEdited(chat)
-        echo "Chat done"
+        debug "Chat done", chatId=chat.id
 
 proc getMyChatId*(self: Controller): string =
   return self.chatId
@@ -190,7 +190,7 @@ proc getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getCommunityDetails*(self: Controller): CommunityDto =
-  echo "getCommunityById from chat_content module"
+  debug "getCommunityById from chat_content module", communityId=self.sectionId
   return self.communityService.getCommunityById(self.sectionId)
 
 proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, largeImage: string] =

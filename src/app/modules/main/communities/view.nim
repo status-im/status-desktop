@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sequtils
+import NimQml, json, strutils, sequtils, chronicles
 
 import ./io_interface
 import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item,
@@ -319,7 +319,7 @@ QtObject:
       let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
       self.delegate.checkPermissions(communityId, sharedAddresses)
     except Exception as e:
-      echo "Error updating token model with addresses: ", e.msg
+      debug "Error updating token model with addresses: ", msg=e.msg
 
   proc getSpectatedCommunityPermissionModel(self: View): QVariant {.slot.} =
     return self.spectatedCommunityPermissionModelVariant
@@ -658,14 +658,14 @@ QtObject:
       let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
       self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, addressesArray, airdropAddress)
     except Exception as e:
-      echo "Error requesting to join community with authentication and shared addresses: ", e.msg
+      debug "Error requesting to join community with authentication and shared addresses: ", msg=e.msg
 
   proc editSharedAddressesWithAuthentication*(self: View, communityId: string, addressesToShare: string, airdropAddress: string) {.slot.} =
     try:
       let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
       self.delegate.editSharedAddressesWithAuthentication(communityId, addressesArray, airdropAddress)
     except Exception as e:
-      echo "Error editing shared addresses with authentication: ", e.msg
+      debug "Error editing shared addresses with authentication: ", msg=e.msg
 
   proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
     result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)

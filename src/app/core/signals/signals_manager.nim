@@ -34,8 +34,6 @@ QtObject:
       error "Invalid signal received", data = statusSignal
       return
 
-    trace "Raw signal data", data = $jsonSignal
-
     var signal:Signal
     try:
       signal = self.decode(jsonSignal)
@@ -56,14 +54,15 @@ QtObject:
     self.processSignal(signal)
 
   proc decode(self: SignalsManager, jsonSignal: JsonNode): Signal =
-    echo jsonSignal
     let signalString = jsonSignal{"type"}.getStr
     var signalType: SignalType
     try:
       signalType = parseEnum[SignalType](signalString)
     except CatchableError:
       raise newException(ValueError, "Unknown signal received: " & signalString)
-
+    
+    if signalType != SignalType.ChroniclesLogs:
+      debug "Status-go Signal", signal=jsonSignal
     result = case signalType:
       of SignalType.Message: MessageSignal.fromEvent(jsonSignal)
       of SignalType.MessageDelivered: MessageDeliveredSignal.fromEvent(jsonSignal)

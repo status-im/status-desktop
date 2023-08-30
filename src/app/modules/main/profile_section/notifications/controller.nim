@@ -80,9 +80,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
-      echo "notifications"
+      debug "notifications", chatId=chat.id
       self.delegate.addChat(chat)
-      echo "notifications done"
+      debug "notifications done", chatId=chat.id
 
   self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):
     var args = ChatRenameArgs(e)

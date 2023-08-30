@@ -1,4 +1,4 @@
-import stint, std/strutils
+import stint, std/strutils, chronicles
 import ./io_interface
 
 import ../../../core/signals/types
@@ -205,7 +205,7 @@ proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
-  echo "getCommunityById from communities module"
+  debug "getCommunityById from communities module", communityId=communityId
   result = self.communityService.getCommunityById(communityId)
 
 proc getCuratedCommunities*(self: Controller): seq[CommunityDto] =
