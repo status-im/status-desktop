@@ -21,6 +21,11 @@ Input {
 
     property bool validateMaximumAmount: false
     property string maximumAmount: "0"
+    property bool allowZero: true
+
+    property alias labelText: labelText.text
+
+    property string maximumExceededErrorText: qsTr("Amount exceeds balance")
 
     validationErrorTopMargin: 8
     fontPixelSize: 13
@@ -79,6 +84,12 @@ Input {
                 return
             }
 
+            if (!root.allowZero && amountNumber === 0) {
+                d.amount = "0"
+                root.validationError = qsTr("Amount must be greater than 0")
+                return
+            }
+
             const amount = SQUtils.AmountsArithmetic.fromNumber(
                              amountNumber, d.multiplierIndex)
 
@@ -90,7 +101,7 @@ Input {
                                       amount, maximumAmount) === 1
 
                 if (SQUtils.AmountsArithmetic.cmp(amount, maximumAmount) === 1) {
-                    root.validationError = qsTr("Amount exceeds balance")
+                    root.validationError = root.maximumExceededErrorText
                     return
                 }
             }
