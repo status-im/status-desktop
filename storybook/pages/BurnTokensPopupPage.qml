@@ -44,23 +44,49 @@ SplitView {
                 anchors.centerIn: parent
                 text: "Reopen"
 
-                onClicked: dialog.open()
+                onClicked: burnTokensPopup.open()
             }
 
             BurnTokensPopup {
-                id: dialog
+                id: burnTokensPopup
 
                 anchors.centerIn: parent
+                visible: true
+                modal: false
+                closePolicy: Popup.NoAutoClose
+
                 communityName: editorCommunity.text
                 tokenName: editorToken.text
                 remainingTokens: editorAmount.text
+                multiplierIndex: assetButton.checked ? 18 : 0
                 isAsset: assetButton.checked
-                tokenSource: assetButton.checked ? ModelsData.assets.socks :  ModelsData.collectibles.kitty1Big
+                tokenSource: assetButton.checked
+                             ? ModelsData.assets.socks
+                             : ModelsData.collectibles.kitty1Big
                 accounts: accountsModel
                 chainName: "Optimism"
 
                 onBurnClicked: logs.logEvent("BurnTokensPopup::onBurnClicked --> Burn amount: " + burnAmount)
                 onCancelClicked: logs.logEvent("BurnTokensPopup::onCancelClicked")
+
+                onBurnFeesRequested: {
+                    feeText = ""
+                    feeErrorText = ""
+                    isFeeLoading = true
+
+                    feeCalculationTimer.restart()
+                }
+            }
+
+            Timer {
+                id: feeCalculationTimer
+
+                interval: 1000
+
+                onTriggered: {
+                    burnTokensPopup.feeText = "0.0015 ETH ($75.43)"
+                    burnTokensPopup.isFeeLoading = false
+                }
             }
         }
 
@@ -79,6 +105,7 @@ SplitView {
         SplitView.preferredWidth: 300
 
         ColumnLayout {
+            anchors.fill: parent
 
             Label {
                 Layout.fillWidth: true
@@ -87,8 +114,8 @@ SplitView {
 
             TextField {
                 id: editorCommunity
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
+
+                Layout.fillWidth: true
                 text: "Community lovers"
             }
 
@@ -101,8 +128,8 @@ SplitView {
 
             TextField {
                 id: editorToken
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
+
+                Layout.fillWidth: true
                 text: "Anniversary"
             }
 
@@ -115,8 +142,8 @@ SplitView {
 
             TextField {
                 id: editorAmount
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
+
+                Layout.fillWidth: true
                 text: "123"
             }
 
@@ -138,6 +165,10 @@ SplitView {
                 id: collectibleButton
 
                 text: "Collectible"
+            }
+
+            Item {
+                Layout.fillHeight: true
             }
         }
     }

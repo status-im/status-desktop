@@ -1,23 +1,20 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 import QtGraphicalEffects 1.0
-import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Controls.Validators 0.1
-import StatusQ.Components 0.1
 
 import AppLayouts.Communities.panels 1.0
-import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
-import SortFilterProxyModel 0.2
+import shared.controls 1.0
+
 
 StatusDialog {
     id: root
@@ -54,13 +51,16 @@ StatusDialog {
             LocaleUtils.numberToLocaleString(remainingTokensFloat)
 
         property string accountAddress
-        property alias amountToBurn: amountToBurnInput.text
+
         readonly property bool isFeeError: root.feeErrorText !== ""
-        readonly property bool isFormValid: specificAmountButton.checked && amountToBurnInput.valid || allTokensButton.checked
+
+        readonly property bool isFormValid:
+            (specificAmountButton.checked && amountInput.valid && amountInput.text)
+            || allTokensButton.checked
 
         function initialize() {
             specificAmountButton.checked = true
-            amountToBurnInput.forceActiveFocus()
+            amountInput.forceActiveFocus()
         }
 
         function getVerticalPadding() {
@@ -72,7 +72,7 @@ StatusDialog {
         }
     }
 
-    implicitWidth: 600 // by design
+    width: 600 // by design
     implicitHeight: content.implicitHeight + footer.height + header.height + d.getVerticalPadding()
 
     contentItem: ColumnLayout {
@@ -83,21 +83,37 @@ StatusDialog {
         StatusBaseText {
             Layout.fillWidth: true
 
-            text: qsTr("How many of %1’s remaining %n %2 tokens would you like to burn?", "", d.remainingTokensFloat).arg(root.communityName).arg(root.tokenName)
+            text: {
+                if (Number.isInteger(d.remainingTokensFloat))
+                    return qsTr("How many of %1’s remaining %Ln %2 token(s) would you like to burn?",
+                                "", d.remainingTokensFloat).arg(root.communityName).arg(root.tokenName)
+
+                return qsTr("How many of %1’s remaining %2 %3 tokens would you like to burn?")
+                    .arg(root.communityName).arg(d.remainingTokensDisplayText).arg(root.tokenName)
+            }
+
             wrapMode: Text.WordWrap
             lineHeight: 1.2
             font.pixelSize: Style.current.primaryTextFontSize
         }
 
-        RowLayout {
+        Item {
             Layout.bottomMargin: 12
             Layout.leftMargin: -Style.current.halfPadding
+            Layout.fillWidth: true
 
-            spacing: 26
+            implicitHeight: childrenRect.height
+
+            readonly property int spacing: 26
 
             ColumnLayout {
+                id: specificAmountColumn
+
                 StatusRadioButton {
                     id: specificAmountButton
+
+                    Layout.preferredWidth: amountInput.Layout.preferredWidth
+                                           + amountInput.Layout.leftMargin
 
                     text: qsTr("Specific amount")
                     font.pixelSize: Style.current.primaryTextFontSize
@@ -106,46 +122,33 @@ StatusDialog {
                     onToggled: if(checked) amountToBurnInput.forceActiveFocus()
                 }
 
-                StatusInput {
-                    id: amountToBurnInput
+                AmountInput {
+                    id: amountInput
 
                     Layout.preferredWidth: 192
                     Layout.leftMargin: 30
-                    enabled: specificAmountButton.checked
-                    validationMode: StatusInput.ValidationMode.OnlyWhenDirty
-                    validators: [
-                        StatusValidator {
-                            validate: (value) => {
-                                const intAmount = parseInt(value)
+                    customHeight: 44
 
-                                if (!intAmount)
-                                    return false
+                    allowDecimals: root.multiplierIndex > 0
+                    maximumAmount: root.remainingTokens
+                    multiplierIndex: root.multiplierIndex
 
-                                const current = SQUtils.AmountsArithmetic.fromNumber(
-                                              intAmount, root.multiplierIndex)
-                                const remaining = SQUtils.AmountsArithmetic.fromString(
-                                              root.remainingTokens)
+                    validateMaximumAmount: true
+                    allowZero: false
 
-                                return SQUtils.AmountsArithmetic.cmp(current, remaining) <= 0
-                            }
-                            errorMessage: qsTr("Exceeds available remaining")
-                        },
-                        StatusValidator {
-                            validate: (value) => { return parseInt(value) !== 0 }
-                            errorMessage: qsTr("Amount must be greater than 0")
-                        },
-                        StatusRegularExpressionValidator {
-                            regularExpression: Constants.regularExpressions.numerical
-                            errorMessage: qsTr("Invalid characters (0-9 only)")
-                        }
-                    ]
+                    placeholderText: qsTr("Enter amount")
+                    labelText: ""
+
+                    maximumExceededErrorText: qsTr("Exceeds available remaining")
                 }
             }
 
             StatusRadioButton {
                 id: allTokensButton
 
-                Layout.alignment: Qt.AlignTop
+                anchors.left: specificAmountColumn.right
+                anchors.right: parent.right
+                anchors.leftMargin: parent.spacing
 
                 text: qsTr("All available remaining (%1)").arg(d.remainingTokensDisplayText)
                 font.pixelSize: Style.current.primaryTextFontSize
@@ -164,13 +167,12 @@ StatusDialog {
 
             readonly property bool triggerFeeReevaluation: {
                 specificAmountButton.checked
-                amountToBurnInput.text
-                allTokensButton.checked
+                amountInput.amount
                 feesBox.accountsSelector.currentIndex
 
-                if (root.opened) {
+                if (root.opened)
                     requestFeeDelayTimer.restart()
-                }
+
                 return true
             }
 
@@ -186,7 +188,10 @@ StatusDialog {
                 if (accountsSelector.currentIndex < 0)
                     return
 
-                const item = SQUtils.ModelUtils.get(accountsSelector.model, accountsSelector.currentIndex)
+                const item = SQUtils.ModelUtils.get(
+                               accountsSelector.model,
+                               accountsSelector.currentIndex)
+
                 d.accountAddress = item.address
             }
 
@@ -195,17 +200,15 @@ StatusDialog {
 
                 interval: 500
                 onTriggered: {
-                    if(specificAmountButton.checked) {
-                        if (!amountToBurnInput.text)
+                    if (specificAmountButton.checked) {
+                        if (!amountInput.valid)
                             return
 
-                        root.burnFeesRequested(
-                                    SQUtils.AmountsArithmetic.fromNumber(
-                                        parseInt(amountToBurnInput.text),
-                                        root.multiplierIndex),
-                                    d.accountAddress)
+                        root.burnFeesRequested(amountInput.amount,
+                                               d.accountAddress)
                     } else {
-                        root.burnFeesRequested(root.remainingTokens, d.accountAddress)
+                        root.burnFeesRequested(root.remainingTokens,
+                                               d.accountAddress)
                     }
                 }
             }
@@ -214,8 +217,8 @@ StatusDialog {
                 id: singleFeeModel
 
                 readonly property string title: root.feeLabel
-                readonly property string feeText: root.isFeeLoading ?
-                                                      "" : root.feeText
+                readonly property string feeText: root.isFeeLoading
+                                                  ? "" : root.feeText
                 readonly property bool error: d.isFeeError
             }
         }
@@ -223,7 +226,9 @@ StatusDialog {
 
     header: StatusDialogHeader {
         headline.title: qsTr("Burn %1 tokens").arg(root.tokenName)
-        headline.subtitle: qsTr("%n %1 remaining in smart contract", "", d.remainingTokensFloat).arg(root.tokenName)
+        headline.subtitle: qsTr("%1 %2 remaining in smart contract")
+            .arg(d.remainingTokensDisplayText).arg(root.tokenName)
+
         leftComponent: Rectangle {
             height: 40
             width: height
@@ -263,18 +268,15 @@ StatusDialog {
 
             StatusButton {
                 enabled: d.isFormValid && !d.isFeeError && !root.isFeeLoading
+                         && root.feeText !== ""
                 text: qsTr("Burn tokens")
                 type: StatusBaseButton.Type.Danger
+
                 onClicked: {
-                    if(specificAmountButton.checked) {
-                        root.burnClicked(
-                                    SQUtils.AmountsArithmetic.fromNumber(
-                                        parseInt(amountToBurnInput.text),
-                                        root.multiplierIndex),
-                                    d.accountAddress)
-                    } else {
+                    if (specificAmountButton.checked)
+                        root.burnClicked(amountInput.amount, d.accountAddress)
+                    else
                         root.burnClicked(root.remainingTokens, d.accountAddress)
-                    }
                 }
             }
         }
