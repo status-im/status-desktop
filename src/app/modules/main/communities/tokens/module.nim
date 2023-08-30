@@ -173,6 +173,13 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
 
+proc createOwnerAndMasterDeploymentParams(self: Module, communityId: string): (DeploymentParameters, DeploymentParameters) =
+  let communityDto = self.controller.getCommunityById(communityId)
+  let commName = communityDto.name
+  let commNameShort = try: commName[0 .. 2].toUpper except: commName.toUpper
+  return (DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/"),
+          DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/"))
+
 method deployOwnerToken*(self: Module, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
                         masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) =
   let ownerToken = self.controller.getOwnerToken(communityId)
@@ -185,11 +192,7 @@ method deployOwnerToken*(self: Module, communityId: string, fromAddress: string,
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
-  let communityDto = self.controller.getCommunityById(communityId)
-  let commName = communityDto.name
-  let commNameShort = try: commName[0 .. 2].toUpper except: commName.toUpper
-  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
-  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  (self.tempOwnerDeploymentParams, self.tempMasterDeploymentParams) = self.createOwnerAndMasterDeploymentParams(communityId)
   self.tempOwnerTokenMetadata.description = ownerDescription
   self.tempOwnerTokenMetadata.tokenType = TokenType.ERC721
   self.tempMasterTokenMetadata.description = masterDescription
@@ -250,9 +253,10 @@ method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
 method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
   self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
 
-method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) =
+method computeDeployFee*(self: Module, communityId: string, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) =
   if isOwnerDeployment:
-    self.controller.computeDeployOwnerContractsFee(chainId, accountAddress, requestId)
+    let (ownerDeploymentParams, masterDeploymentParams) = self.createOwnerAndMasterDeploymentParams(communityId)
+    self.controller.computeDeployOwnerContractsFee(chainId, accountAddress, communityId, ownerDeploymentParams, masterDeploymentParams, requestId)
   else:
     self.controller.computeDeployFee(chainId, accountAddress, tokenType, requestId)
 

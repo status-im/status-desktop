@@ -116,8 +116,8 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
   self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType, requestId)
 
-proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string, requestId: string) =
-  self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress, requestId)
+proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
+  self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress, communityId, ownerDeploymentParams, masterDeploymentParams, requestId)
 
 proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string, requestId: string) =
   self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom, requestId)

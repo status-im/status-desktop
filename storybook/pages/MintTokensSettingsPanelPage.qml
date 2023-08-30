@@ -94,6 +94,7 @@ SplitView {
             communityLogo: ModelsData.collectibles.doodles
             communityColor: "#FFC4E9"
             communityName: "Doodles" // It cannot be changed since owner token and tMaster token in tokenModel used are related to the `Doodles` community
+            communityId: ""
 
             // Profile type:
             isAdmin: adminChecked.checked

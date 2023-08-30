@@ -251,22 +251,32 @@ QtObject:
         if not receivedData.success:
           warn "Owner contracts not deployed", chainId=ownerTransactionDetails.ownerToken.chainId, address=ownerTransactionDetails.ownerToken.address
         var masterContractAddress = ownerTransactionDetails.masterToken.address
+        var ownerContractAddress = ownerTransactionDetails.ownerToken.address
 
         try:
           # get master token address from transaction logs
           if receivedData.success:
-            let response = tokens_backend.getMasterTokenContractAddressFromHash(ownerTransactionDetails.masterToken.chainId, receivedData.transactionHash)
+            var response = tokens_backend.getOwnerTokenContractAddressFromHash(ownerTransactionDetails.ownerToken.chainId, receivedData.transactionHash)
+            ownerContractAddress = response.result.getStr()
+            if ownerContractAddress == "":
+              raise newException(RpcException, "owner contract address is empty")
+            response = tokens_backend.getMasterTokenContractAddressFromHash(ownerTransactionDetails.masterToken.chainId, receivedData.transactionHash)
             masterContractAddress = response.result.getStr()
             if masterContractAddress == "":
               raise newException(RpcException, "master contract address is empty")
 
+          debug "Minted owner token contract address:", ownerContractAddress
+          debug "Minted master token contract address:", masterContractAddress
+
           # update master token address
           discard updateCommunityTokenAddress(ownerTransactionDetails.masterToken.chainId, ownerTransactionDetails.masterToken.address, masterContractAddress)
+          # update owner token address
+          discard updateCommunityTokenAddress(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, ownerContractAddress)
           #update db state for owner and master token
-          discard updateCommunityTokenState(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, deployState)
+          discard updateCommunityTokenState(ownerTransactionDetails.ownerToken.chainId, ownerContractAddress, deployState)
           discard updateCommunityTokenState(ownerTransactionDetails.masterToken.chainId, masterContractAddress, deployState)
           # now add owner token to community and publish update
-          var response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address)
+          var response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.ownerToken.chainId, ownerContractAddress)
           if response.error != nil:
             let error = Json.decode($response.error, RpcError)
             raise newException(RpcException, "error adding owner token: " & error.message)
@@ -280,7 +290,7 @@ QtObject:
           error "Error updating owner contracts state", message = getCurrentExceptionMsg()
 
         let data = OwnerTokenDeployedStatusArgs(communityId: ownerTransactionDetails.communityId, chainId: ownerTransactionDetails.ownerToken.chainId,
-                                                ownerContractAddress: ownerTransactionDetails.ownerToken.address,
+                                                ownerContractAddress: ownerContractAddress,
                                                 masterContractAddress: masterContractAddress,
                                                 deployState: deployState,
                                                 transactionHash: receivedData.transactionHash)
@@ -386,8 +396,11 @@ QtObject:
         addedCommunityToken.chainId,
       )
 
-  proc temporaryMasterContractAddress*(ownerContractAddress: string): string =
-    return ownerContractAddress & "-master"
+  proc temporaryMasterContractAddress*(ownerContractTransactionHash: string): string =
+    return ownerContractTransactionHash & "-master"
+
+  proc temporaryOwnerContractAddress*(ownerContractTransactionHash: string): string =
+    return ownerContractTransactionHash & "-owner"
 
   proc deployOwnerContracts*(self: Service, communityId: string, addressFrom: string, password: string,
       ownerDeploymentParams: DeploymentParameters, ownerTokenMetadata: CommunityTokensMetadataDto,
@@ -398,14 +411,21 @@ QtObject:
       if txData.source == parseAddress(ZERO_ADDRESS):
         return
 
-      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams, %txData, common_utils.hashPassword(password))
-      let ownerContractAddress = response.result["contractAddress"].getStr()
+      # set my pub key as signer
+      let signerPubKey = singletonInstance.userProfile.getPubKey()
+
+      # get deployment signature
+      let signatureResponse = tokens_backend.createCommunityTokenDeploymentSignature(chainId, addressFrom, communityId)
+      let signature = signatureResponse.result.getStr()
+
+      # deploy contract
+      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams,
+          signature, communityId, signerPubKey, %txData, common_utils.hashPassword(password))
       let transactionHash = response.result["transactionHash"].getStr()
-      debug "Deployed owner contract address ", ownerContractAddress=ownerContractAddress
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
-      var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, ownerContractAddress, communityId, addressFrom, PrivilegesLevel.Owner)
-      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(ownerContractAddress), communityId, addressFrom, PrivilegesLevel.TokenMaster)
+      var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, temporaryOwnerContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.Owner)
+      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.TokenMaster)
 
       var croppedImage = croppedImageJson.parseJson
       ownerToken.image = croppedImage{"imagePath"}.getStr
@@ -672,7 +692,7 @@ QtObject:
       #TODO: handle error - emit error signal
       error "Error loading fees", msg = e.msg
 
-  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, requestId: string) =
+  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
     try:
       let arg = AsyncDeployOwnerContractsFeesArg(
         tptr: cast[ByteAddress](asyncGetDeployOwnerContractsFeesTask),
@@ -680,7 +700,11 @@ QtObject:
         slot: "onDeployOwnerContractsFees",
         chainId: chainId,
         addressFrom: accountAddress,
-        requestId: requestId
+        requestId: requestId,
+        signerPubKey: singletonInstance.userProfile.getPubKey(),
+        communityId: communityId,
+        ownerParams: %ownerDeploymentParams,
+        masterParams: %masterDeploymentParams
       )
       self.threadpool.start(arg)
     except Exception as e:

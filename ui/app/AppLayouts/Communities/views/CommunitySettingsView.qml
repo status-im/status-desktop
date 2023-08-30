@@ -320,6 +320,7 @@ StatusSectionLayout {
                 rootStore.communityTokensStore
 
             // General community props
+            communityId: root.community.id
             communityName: root.community.name
             communityLogo: root.community.image
             communityColor: root.community.color

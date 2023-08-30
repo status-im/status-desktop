@@ -311,7 +311,7 @@ method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onOwnerTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState) {.base.} =
+method onOwnerTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) {.base.} =

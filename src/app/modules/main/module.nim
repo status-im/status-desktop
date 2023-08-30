@@ -1124,11 +1124,13 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
 
-method onOwnerTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState) =
+method onOwnerTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState, transactionHash: string) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     # update temporary master contract address first
-    item.updateCommunityTokenAddress(chainId, temporaryMasterContractAddress(ownerContractAddress), masterContractAddress)
+    if transactionHash != "":
+      item.updateCommunityTokenAddress(chainId, temporaryMasterContractAddress(transactionHash), masterContractAddress)
+      item.updateCommunityTokenAddress(chainId, temporaryOwnerContractAddress(transactionHash), ownerContractAddress)
     # then update states
     item.updateCommunityTokenDeployState(chainId, ownerContractAddress, deployState)
     item.updateCommunityTokenDeployState(chainId, masterContractAddress, deployState)

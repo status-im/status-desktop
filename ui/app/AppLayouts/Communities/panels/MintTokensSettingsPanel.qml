@@ -26,6 +26,7 @@ StackView {
     // General properties:
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
+    required property string communityId
     required property string communityName
     required property string communityLogo
     required property color communityColor
@@ -242,6 +243,7 @@ StackView {
                 
                 DeployFeesSubscriber {
                     id: feeSubscriber
+                    communityId: root.communityId
                     chainId: editOwnerTokenView.ownerToken.chainId
                     tokenType: editOwnerTokenView.ownerToken.type
                     isOwnerDeployment: editOwnerTokenView.ownerToken.isPrivilegedToken
@@ -394,6 +396,7 @@ StackView {
 
                         DeployFeesSubscriber {
                             id: deployFeeSubscriber
+                            communityId: root.communityId
                             chainId: editView.token.chainId
                             tokenType: editView.token.type
                             isOwnerDeployment: editView.token.isPrivilegedToken
@@ -442,6 +445,7 @@ StackView {
 
                 DeployFeesSubscriber {
                     id: feeSubscriber
+                    communityId: root.communityId
                     chainId: preview.token.chainId
                     tokenType: preview.token.type
                     isOwnerDeployment: preview.token.isPrivilegedToken

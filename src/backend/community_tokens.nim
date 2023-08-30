@@ -88,14 +88,22 @@ proc remoteDestructedAmount*(chainId: int, contractAddress: string): RpcResponse
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_remoteDestructedAmount", payload)
 
-proc deployOwnerTokenEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[]
+proc deployOwnerTokenEstimate*(chainId: int, addressFrom: string, ownerParams: JsonNode, masterParams: JsonNode, signature: string, communityId: string, signerPubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, addressFrom, ownerParams, masterParams, signature, communityId, signerPubKey]
   return core.callPrivateRPC("communitytokens_deployOwnerTokenEstimate", payload)
 
-proc deployOwnerToken*(chainId: int, ownerParams: JsonNode, masterParams: JsonNode, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[chainId, ownerParams, masterParams, txData, hashedPassword]
+proc deployOwnerToken*(chainId: int, ownerParams: JsonNode, masterParams: JsonNode, signature: string, communityId: string, signerPubKey: string, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, ownerParams, masterParams, signature, communityId, signerPubKey, txData, hashedPassword]
   return core.callPrivateRPC("communitytokens_deployOwnerToken", payload)
 
 proc getMasterTokenContractAddressFromHash*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[chainId, transactionHash]
   return core.callPrivateRPC("communitytokens_getMasterTokenContractAddressFromHash", payload)
+
+proc getOwnerTokenContractAddressFromHash*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, transactionHash]
+  return core.callPrivateRPC("communitytokens_getOwnerTokenContractAddressFromHash", payload)
+
+proc createCommunityTokenDeploymentSignature*(chainId: int, addressFrom: string, signerAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, addressFrom, signerAddress]
+  return core.callPrivateRPC("wakuext_createCommunityTokenDeploymentSignature", payload)

@@ -42,7 +42,7 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) {.base.} =
+method computeDeployFee*(self: AccessInterface, communityId: string, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string, requestId: string) {.base.} =
