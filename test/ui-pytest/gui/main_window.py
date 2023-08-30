@@ -18,6 +18,7 @@ from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.onboarding import AllowNotificationsView, WelcomeView, TouchIDAuthView, LoginView
 from gui.screens.settings import SettingsScreen
+from gui.screens.wallet import WalletScreen
 from scripts.tools.image import Image
 
 _logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class LeftPanel(QObject):
         self._communities_portal_button = Button('communities_Portal_navbar_StatusNavBarTabButton')
         self._community_template_button = Button('statusCommunityMainNavBarListView_CommunityNavBarButton')
         self._settings_button = Button('settings_navbar_StatusNavBarTabButton')
+        self._wallet_button = Button('wallet_navbar_StatusNavBarTabButton')
 
     @property
     @allure.step('Get communities names')
@@ -89,6 +91,10 @@ class LeftPanel(QObject):
         self._settings_button.click()
         return SettingsScreen().wait_until_appears()
 
+    @allure.step('Open Wallet section')
+    def open_wallet(self) -> WalletScreen:
+        self._wallet_button.click()
+        return WalletScreen().wait_until_appears()
 
 class MainWindow(Window):
 
