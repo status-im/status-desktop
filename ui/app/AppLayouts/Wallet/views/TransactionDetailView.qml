@@ -33,18 +33,27 @@ Item {
 
     onTransactionChanged: {
         d.decodedInputData = ""
-        if (!transaction || !transaction.input)
+        if (!transaction)
             return
-        d.loadingInputDate = true
-        RootStore.fetchDecodedTxData(transaction.txHash, transaction.input)
+
+        RootStore.fetchTxDetails(transaction.id, transaction.isMultiTransaction, transaction.isPending)
+        d.details = RootStore.getTxDetails()
+
+        if (!!d.details && !!d.details.input) {
+            d.loadingInputDate = true
+            RootStore.fetchDecodedTxData(d.details.txHash, d.details.input)
+        }
     }
 
     QtObject {
         id: d
+
+        property var details: null
+        readonly property bool isDetailsValid: details !== undefined && !!details
         readonly property bool isIncoming: transactionType === Constants.TransactionType.Received
         readonly property string networkShortName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
         readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : "network/Network=Custom"
-        readonly property int blockNumber: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.blockNumber) : 0
+        readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
         readonly property int toBlockNumber: 0 // TODO fill when bridge data is implemented
         readonly property string networkShortNameOut: networkShortName
         readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdOut) : ""
@@ -61,7 +70,7 @@ Item {
             if (!root.isTransactionValid || transactionHeader.isMultiTransaction)
                 return ""
             const formatted = RootStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
-            return symbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenAddress, 4))
+            return symbol || (!d.isDetailsValid || !d.details.contract) ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenAddress, 4))
         }
         readonly property string outFiatValueFormatted: {
             if (!root.isTransactionValid || !transactionHeader.isMultiTransaction || !outSymbol)
@@ -74,7 +83,7 @@ Item {
             const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0 // TODO use directly?
+        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(transaction.totalFees) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
 
@@ -89,7 +98,7 @@ Item {
     Connections {
         target: RootStore.walletSectionInst
         function onTxDecoded(txHash: string, dataDecoded: string) {
-            if (!root.isTransactionValid || txHash !== root.transaction.txHash)
+            if (!root.isTransactionValid || (d.isDetailsValid && txHash !== d.details.txHash))
                 return
             if (!dataDecoded) {
                 d.loadingInputDate = false
@@ -168,7 +177,7 @@ Item {
                 nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
                 strikethrough: d.transactionType === Constants.TransactionType.Destroy
                 tokenId: root.isTransactionValid ? transaction.tokenID : ""
-                contractAddress: root.isTransactionValid ? transaction.contract : ""
+                contractAddress: d.isDetailsValid ? d.details.contract : ""
             }
 
             Column {
@@ -269,7 +278,7 @@ Item {
                     }
                     TransactionDataTile {
                         id: contractDeploymentTile
-                        readonly property bool hasValue: root.isTransactionValid && !!root.transaction.contract
+                        readonly property bool hasValue: d.isDetailsValid && !!d.details.contract
                                                          && transactionHeader.transactionStatus !== Constants.TransactionStatus.Pending
                                                          && transactionHeader.transactionStatus !== Constants.TransactionStatus.Failed
                         width: parent.width
@@ -281,11 +290,11 @@ Item {
                             } else if (!hasValue) {
                                 return qsTr("Awaiting contract address...")
                             }
-                            return qsTr("Contract created") + "\n" + transaction.contract
+                            return qsTr("Contract created") + "\n" + d.details.contract
                         }
                         buttonIconName: hasValue ? "more" : ""
                         statusListItemSubTitle.customColor: hasValue ? Theme.palette.directColor1 : Theme.palette.directColor5
-                        onButtonClicked: addressMenu.openContractMenu(this, transaction.contract, transactionHeader.networkName, d.symbol)
+                        onButtonClicked: addressMenu.openContractMenu(this, d.details.contract, transactionHeader.networkName, d.symbol)
                         components: [
                             Loader {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -308,18 +317,16 @@ Item {
                     TransactionDataTile {
                         width: parent.width
                         title: qsTr("Using")
-                        buttonIconName: "external"
-                        subTitle: "" // TODO fill protocol name for Swap and Bridge
-                        asset.name: "" // TODO fill protocol icon for Bridge and Swap e.g. Style.svg("network/Network=Arbitrum")
-                        onButtonClicked: {
-                            // TODO handle
-                        }
+                        subTitle: d.isDetailsValid ? d.details.protocol : ""
+                        asset.name: d.isDetailsValid && d.details.protocol ? Style.svg("protocol/Protocol=%1".arg(d.details.protocol)) : Style.svg("network/Network=Custom")
+                        iconSettings.bgRadius: iconSettings.bgWidth / 2
+//                        buttonIconName: "external" // TODO handle external link #11982
                         visible: !!subTitle
                     }
                     TransactionDataTile {
                         width: parent.width
                         title: qsTr("%1 Tx hash").arg(transactionHeader.networkName)
-                        subTitle: root.isTransactionValid ? root.transaction.txHash : ""
+                        subTitle: d.isDetailsValid ? d.details.txHash : ""
                         visible: !!subTitle
                         buttonIconName: "more"
                         onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortName)
@@ -342,7 +349,7 @@ Item {
                     }
                     TransactionContractTile {
                         // Used to display contract address for any network
-                        address: root.isTransactionValid ? transaction.contract : ""
+                        address: d.isDetailsValid ? d.details.contract : ""
                         symbol: {
                             if (!root.isTransactionValid)
                                 return ""
@@ -453,7 +460,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Nonce")
-                            subTitle: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.nonce) : ""
+                            subTitle: d.isDetailsValid ? d.details.nonce : ""
                             visible: !!subTitle
                         }
                     }
@@ -467,8 +474,8 @@ Item {
                                 return ""
                             } else if (!!d.decodedInputData) {
                                 return d.decodedInputData.substring(0, 200)
-                            } else if (root.isTransactionValid) {
-                                return String(root.transaction.input).substring(0, 200)
+                            } else if (d.isDetailsValid) {
+                                return String(d.details.input).substring(0, 200)
                             }
                             return ""
                         }
@@ -492,7 +499,7 @@ Item {
                         statusListItemTertiaryTitle.anchors.top: undefined
                         statusListItemTertiaryTitle.anchors.baseline: statusListItemTitle.baseline
                         statusListItemTertiaryTitle.font: statusListItemTitle.font
-                        onButtonClicked: addressMenu.openInputDataMenu(this, !!d.decodedInputData ? d.decodedInputData : root.transaction.input)
+                        onButtonClicked: addressMenu.openInputDataMenu(this, !!d.decodedInputData ? d.decodedInputData : d.details.input)
 
                         Loader {
                             anchors {
@@ -610,10 +617,10 @@ Item {
                         width: parent.width
                         title: d.symbol ? qsTr("Fees") : qsTr("Estimated max fee")
                         subTitle: {
-                            if (!root.isTransactionValid || transactionHeader.isNFT)
+                            if (!root.isTransactionValid || transactionHeader.isNFT || !!d.isDetailsValid)
                                 return ""
                             if (!d.symbol) {
-                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
                                 return RootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             }
 
@@ -631,7 +638,7 @@ Item {
                                 return ""
                             let fiatValue
                             if (!d.symbol) {
-                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
                                 fiatValue = RootStore.getFiatValue(maxFeeEth, Constants.ethToken, RootStore.currentCurrency)
                             } else {
                                 fiatValue = d.feeFiatValue
@@ -659,7 +666,7 @@ Item {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
                                 return RootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
                             } else if (showFee) {
                                 return RootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
@@ -673,7 +680,7 @@ Item {
                             if (fieldIsHidden)
                                 return ""
                             if (showMaxFee) {
-                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
                                 const maxFeeFiat = RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency)
                                 return RootStore.formatCurrencyAmount(maxFeeFiat, RootStore.currentCurrency)
                             } else if (showFee) {
@@ -718,7 +725,7 @@ Item {
                     icon.width: 20
                     icon.height: 20
                     size: StatusButton.Small
-                    onClicked: RootStore.copyToClipboard(transactionHeader.getDetailsString())
+                    onClicked: RootStore.copyToClipboard(transactionHeader.getDetailsString(d.details))
                 }
             }
         }

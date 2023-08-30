@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -55,6 +56,15 @@ StatusListItem {
     */
     property string buttonIconName
 
+    property StatusAssetSettings iconSettings: StatusAssetSettings {
+        name: root.asset.name
+        color: "transparent"
+        width: root.smallIcon ? 20 : 36
+        height: root.smallIcon ? 20 : 36
+        bgWidth: width
+        bgHeight: height
+    }
+
     signal buttonClicked()
 
     leftPadding: 12
@@ -94,13 +104,14 @@ StatusListItem {
     Component {
         id: iconComponent
         StatusRoundIcon {
-            asset: StatusAssetSettings {
-                name: root.asset.name
-                color: "transparent"
-                width: root.smallIcon ? 20 : 36
-                height: root.smallIcon ? 20 : 36
-                bgWidth: width
-                bgHeight: height
+            asset: root.iconSettings
+            layer.enabled: asset.bgRadius > 0
+            layer.effect: OpacityMask {
+                maskSource: Rectangle {
+                    width: root.iconSettings.bgWidth
+                    height: root.iconSettings.bgHeight
+                    radius: root.iconSettings.bgRadius
+                }
             }
         }
     }

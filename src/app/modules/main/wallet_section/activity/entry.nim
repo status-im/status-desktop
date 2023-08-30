@@ -47,7 +47,6 @@ QtObject:
       extradata: ExtraData
 
       totalFees: CurrencyAmount
-      maxTotalFees: CurrencyAmount
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
 
@@ -56,7 +55,6 @@ QtObject:
 
   proc delete*(self: ActivityEntry) =
     self.QObject.delete
-
 
   proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto, metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
@@ -83,7 +81,6 @@ QtObject:
     result.extradata = extradata
 
     result.totalFees = valueConvertor(stint.fromHex(UInt256, tr.totalFees), "Gwei")
-    result.maxTotalFees = valueConvertor(stint.fromHex(UInt256, tr.maxTotalFees), "Gwei")
     result.amountCurrency = valueConvertor(
       if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
       tr.symbol
@@ -121,6 +118,16 @@ QtObject:
     if not self.isMultiTransaction():
       raise newException(Defect, "ActivityEntry is not a MultiTransaction")
     return self.multi_transaction
+
+  proc getId*(self: ActivityEntry): string {.slot.} =
+    if self.isMultiTransaction():
+      return $self.multi_transaction.id
+    elif self.transaction != nil:
+      return self.transaction[].id
+    return ""
+
+  QtProperty[string] id:
+    read = getId
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
     return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
@@ -218,26 +225,6 @@ QtObject:
   QtProperty[QVariant] totalFees:
     read = getTotalFees
 
-  proc getMaxTotalFees*(self: ActivityEntry): QVariant {.slot.} =
-    if self.transaction == nil:
-      error "getMaxTotalFees: ActivityEntry is not an transaction entry"
-      return newQVariant(self.noAmount)
-    return newQVariant(self.maxTotalFees)
-
-  # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[QVariant] maxTotalFees:
-    read = getMaxTotalFees
-
-  proc getInput*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getInput: ActivityEntry is not an transactio entry"
-      return ""
-    return self.transaction[].input
-
-  # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[string] input:
-    read = getInput
-
   proc getTxType*(self: ActivityEntry): int {.slot.} =
     return self.metadata.activityType.int
 
@@ -245,6 +232,7 @@ QtObject:
     read = getTxType
 
   proc getTokenType*(self: ActivityEntry): string {.slot.} =
+    let s = if self.transaction != nil: self.transaction[].symbol else: ""
     if self.transaction != nil:
       return self.transaction[].typeValue
     if self.isInTransactionType() and self.metadata.tokenOut.isSome:
@@ -285,23 +273,6 @@ QtObject:
   QtProperty[string] tokenAddress:
     read = getTokenAddress
 
-  proc getContract*(self: ActivityEntry): string {.slot.} =
-    return if self.metadata.contractAddress.isSome(): "0x" & self.metadata.contractAddress.unsafeGet().toHex() else: ""
-
-  QtProperty[string] contract:
-    read = getContract
-
-  proc getTxHash*(self: ActivityEntry): string {.slot.} =
-    if self.transaction != nil and len(self.transaction[].txHash) > 0:
-      return self.transaction[].txHash
-    if self.metadata.transaction.isSome:
-      return self.metadata.transaction.unsafeGet().hash
-    return ""
-
-  # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[string] txHash:
-    read = getTxHash
-
   proc getTokenID*(self: ActivityEntry): string {.slot.} =
     if self.metadata.payloadType == backend.PayloadType.MultiTransaction:
       error "getTokenID: ActivityEntry is not a transaction"
@@ -320,26 +291,6 @@ QtObject:
 
   QtProperty[string] tokenID:
     read = getTokenID
-
-  # TODO: used only in details, move it to a entry_details.nim. See #11598
-  proc getNonce*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getNonce: ActivityEntry is not an transaction entry"
-      return ""
-    return $self.transaction[].nonce
-
-  QtProperty[string] nonce:
-    read = getNonce
-
-  proc getBlockNumber*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getBlockNumber: ActivityEntry is not an transaction entry"
-      return ""
-    return $self.transaction[].blockNumber
-
- # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[string] blockNumber:
-    read = getBlockNumber
 
   proc getOutAmount*(self: ActivityEntry): float {.slot.} =
     return float(self.extradata.outAmount)
