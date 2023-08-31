@@ -54,3 +54,12 @@ def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindo
         yield main_window.log_in(user_account)
     else:
         yield main_window.sign_up(user_account)
+
+
+@pytest.fixture
+def community(main_screen, request) -> dict:
+    community_params = request.param
+    communities_portal = main_screen.left_panel.open_communities_portal()
+    create_community_form = communities_portal.open_create_community_popup()
+    create_community_form.create(community_params)
+    return community_params
