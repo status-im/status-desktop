@@ -65,6 +65,9 @@ StackView {
     signal mintAsset(var assetItem)
     signal mintOwnerToken(var ownerToken, var tMasterToken)
 
+    signal kickUserRequested(string contactId)
+    signal banUserRequested(string contactId)
+
     signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
     signal burnFeesRequested(string tokenKey, string amount, string accountAddress)
     signal remotelyDestructFeesRequest(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
@@ -551,13 +554,19 @@ StackView {
             }
 
             onBanRequested: {
-                tokenMasterActionPopup.openPopup(
-                            TokenMasterActionPopup.ActionType.Ban, name)
+                if (token.isPrivilegedToken)
+                    tokenMasterActionPopup.openPopup(
+                                TokenMasterActionPopup.ActionType.Ban, name)
+                else
+                    kickBanPopup.openPopup(KickBanPopup.Mode.Ban, name, contactId)
             }
 
             onKickRequested: {
-                tokenMasterActionPopup.openPopup(
-                            TokenMasterActionPopup.ActionType.Kick, name)
+                if (token.isPrivilegedToken)
+                    tokenMasterActionPopup.openPopup(
+                                TokenMasterActionPopup.ActionType.Kick, name)
+                else
+                    kickBanPopup.openPopup(KickBanPopup.Mode.Kick, name, contactId)
             }
 
             TokenMasterActionPopup {
@@ -571,6 +580,28 @@ StackView {
                 function openPopup(type, userName) {
                     tokenMasterActionPopup.actionType = type
                     tokenMasterActionPopup.userName = userName
+                    open()
+                }
+            }
+
+            KickBanPopup {
+                id: kickBanPopup
+
+                property string contactId
+
+                communityName: root.communityName
+
+                onAccepted: {
+                    if (mode === KickBanPopup.Mode.Kick)
+                        root.kickUserRequested(contactId)
+                    else
+                        root.banUserRequested(contactId)
+                }
+
+                function openPopup(mode, userName, contactId) {
+                    kickBanPopup.mode = mode
+                    kickBanPopup.username = userName
+                    kickBanPopup.contactId = contactId
                     open()
                 }
             }

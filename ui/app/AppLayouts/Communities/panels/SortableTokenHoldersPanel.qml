@@ -31,8 +31,8 @@ Control {
     signal viewMessagesRequested(string contactId)
     signal airdropRequested(string address)
     signal remoteDestructRequested(string name, string address)
-    signal kickRequested(string name, string address)
-    signal banRequested(string name, string address)
+    signal kickRequested(string name, string contactId)
+    signal banRequested(string name, string contactId)
 
     signal generalAirdropRequested
 
@@ -202,8 +202,7 @@ Control {
             enabled: !menu.rawAddress
             type: StatusBaseButton.Type.Danger
 
-            onTriggered: root.kickRequested(menu.name,
-                                            menu.currentAddress)
+            onTriggered: root.kickRequested(menu.name, menu.contactId)
         }
 
         StatusAction {
@@ -214,8 +213,7 @@ Control {
             enabled: !menu.rawAddress
             type: StatusBaseButton.Type.Danger
 
-            onTriggered: root.banRequested(menu.name,
-                                           menu.currentAddress)
+            onTriggered: root.banRequested(menu.name, menu.contactId)
         }
     }
 }

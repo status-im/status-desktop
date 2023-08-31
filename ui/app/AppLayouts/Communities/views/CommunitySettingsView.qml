@@ -410,6 +410,9 @@ StatusSectionLayout {
                 // Set given addresses as recipients
                 airdropPanel.addAddresses(addresses)
             }
+
+            onKickUserRequested: root.rootStore.removeUserFromCommunity(contactId)
+            onBanUserRequested: root.rootStore.banUserFromCommunity(contactId)
         }
 
         AirdropsSettingsPanel {
