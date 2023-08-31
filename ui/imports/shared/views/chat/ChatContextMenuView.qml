@@ -231,7 +231,7 @@ StatusMenu {
         type: StatusAction.Type.Danger
         onTriggered: {
             if (root.chatType === Constants.chatType.privateGroupChat) {
-                root.leaveChat(root.chatId);
+                Global.openPopup(leaveGroupConfirmationDialogComponent);
             } else {
                 Global.openPopup(deleteChatConfirmationDialogComponent);
             }
@@ -271,6 +271,29 @@ StatusMenu {
             }
             onConfirmButtonClicked: {
                 root.clearChatHistory(root.chatId)
+                close()
+            }
+        }
+    }
+
+    Component {
+        id: leaveGroupConfirmationDialogComponent
+        ConfirmationDialog {
+            confirmButtonObjectName: "leaveGroupConfirmationDialogLeaveButton"
+            headerSettings.title: qsTr("Leave group")
+            confirmationText: qsTr("Are you sure you want to leave group chat <b>%1</b>?").arg(root.chatName)
+            confirmButtonLabel: qsTr("Leave")
+            showCancelButton: true
+            cancelBtnType: "normal"
+
+            onClosed: {
+                destroy()
+            }
+            onCancelButtonClicked: {
+                close()
+            }
+            onConfirmButtonClicked: {
+                root.leaveChat(root.chatId)
                 close()
             }
         }
