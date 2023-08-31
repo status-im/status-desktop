@@ -16,6 +16,7 @@ Loader {
     id: root
 
     property var store
+    property bool isERC721Transfer
     property bool isBridgeTx: false
     property bool interactive: true
     property var selectedAsset
@@ -35,10 +36,12 @@ Loader {
     onSelectedRecipientChanged: {
         root.isLoading()
         d.waitTimer.restart()
-        if(!root.isBridgeTx)
-            root.store.updatePreferredChains(root.selectedRecipient.preferredSharingChainIds)
-        else
-            root.store.setAllNetworksAsPreferredChains()
+        if(!isERC721Transfer) {
+            if(!root.isBridgeTx)
+                root.store.updateRoutePreferredChains(root.selectedRecipient.preferredSharingChainIds)
+            else
+                root.store.setAllNetworksAsRoutePreferredChains()
+        }
         if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
             switch(root.selectedRecipientType) {
             case TabAddressSelectorView.Type.SavedAddress: {
@@ -88,10 +91,10 @@ Loader {
                         if(!!root.item.input)
                             root.item.input.text = root.resolvedENSAddress
                         root.addressText = root.resolvedENSAddress
-                        store.splitAndFormatAddressPrefix(root.address, root.isBridgeTx)
+                        store.splitAndFormatAddressPrefix(root.address, !root.isBridgeTx && !isERC721Transfer)
                     } else {
                         let address = d.getAddress()
-                        let result = store.splitAndFormatAddressPrefix(address, root.isBridgeTx)
+                        let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isERC721Transfer)
                         if(!!result.address) {
                             root.addressText = result.address
                             if(!!root.item.input)

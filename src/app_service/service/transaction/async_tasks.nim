@@ -68,7 +68,7 @@ proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[Transactio
     if not firstSimplePath:
       firstSimplePath = true
       path.isFirstSimpleTx = true
-    if path.bridgeName != "Simple":
+    if path.bridgeName != "Transfer":
       if not firstBridgePath:
         firstBridgePath = false
         path.isFirstBridgeTx = true

@@ -24,8 +24,6 @@ import "../views"
 StatusDialog {
     id: popup
 
-    property bool isBridgeTx: false
-
     property string preSelectedRecipient
     property string preDefinedAmountToSend
     property var preSelectedHolding
@@ -44,7 +42,8 @@ StatusDialog {
     property var bestRoutes
     property alias addressText: recipientLoader.addressText
     property bool isLoading: false
-    property int sendType: isBridgeTx ? Constants.SendType.Bridge : Constants.SendType.Transfer
+    property int sendType: Constants.SendType.Transfer
+
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
         title: qsTr("Error sending the transaction")
@@ -60,20 +59,21 @@ StatusDialog {
                     recipientAddress,
                     d.selectedSymbol,
                     amountToSendInput.cryptoValueToSend,
-                    d.uuid)
+                    d.uuid,
+                    sendType)
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && d.isSelectedHoldingValidAsset && recipientLoader.ready && amountToSendInput.inputNumberValid) {
+        if(!!popup.selectedAccount && !!d.selectedHolding && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
-            let amount = Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, d.selectedHolding.decimals))
+            let amount = d.isERC721Transfer ? 1: Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, d.selectedHolding.decimals))
             popup.store.suggestedRoutes(amount.toString(16), popup.sendType)
         }
     })
 
     QtObject {
         id: d
-        readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
+        readonly property int errorType: !amountToSendInput.input.valid && !isERC721Transfer ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
                                                                            !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
@@ -88,7 +88,8 @@ StatusDialog {
         property string totalTimeEstimate
         property double totalFeesInFiat
         property double totalAmountToReceive
-
+        readonly property bool isBridgeTx: popup.sendType === Constants.SendType.Bridge
+        readonly property bool isERC721Transfer: popup.sendType === Constants.SendType.ERC721Transfer
         property var selectedHolding: null
         property var selectedHoldingType: Constants.HoldingType.Unknown
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.HoldingType.Asset
@@ -102,8 +103,8 @@ StatusDialog {
         }
 
         function setSelectedHolding(holding, holdingType) {
-            d.selectedHolding = holding
             d.selectedHoldingType = holdingType
+            d.selectedHolding = holding
             let selectorHolding = store.holdingToSelectorHolding(holding, holdingType)
             holdingSelector.setSelectedItem(selectorHolding, holdingType)
         }
@@ -114,10 +115,24 @@ StatusDialog {
         }
 
         function setHoveredHolding(holding, holdingType) {
-            d.hoveredHolding = holding
             d.hoveredHoldingType = holdingType
+            d.hoveredHolding = holding
             let selectorHolding = store.holdingToSelectorHolding(holding, holdingType)
             holdingSelector.setHoveredItem(selectorHolding, holdingType)
+        }
+
+        onSelectedHoldingChanged: {
+            if (d.selectedHoldingType === Constants.HoldingType.Asset) {
+                popup.sendType = Constants.SendType.Transfer
+                store.setSelectedAssetSymbol(selectedHolding.symbol)
+            } else if (d.selectedHoldingType === Constants.HoldingType.Collectible) {
+                popup.sendType = Constants.SendType.ERC721Transfer
+                amountToSendInput.input.text = 1
+                store.setSelectedAssetSymbol(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
+                store.setRouteEnabledFromChains(selectedHolding.chainId)
+                store.updateRoutePreferredChains(selectedHolding.chainId)
+            }
+            recalculateRoutesAndFees()
         }
     }
 
@@ -152,11 +167,13 @@ StatusDialog {
             recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
         }
 
-        if(popup.isBridgeTx) {
+        if(d.isBridgeTx) {
             recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
             recipientLoader.selectedRecipient = {address: popup.selectedAccount.address}
         }
     }
+
+    onClosed: popup.store.resetStoredProperties()
 
     header: AccountsModalHeader {
         anchors.top: parent.top
@@ -215,7 +232,7 @@ StatusDialog {
                             id: modalHeader
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                             verticalAlignment: Text.AlignVCenter
-                            text: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+                            text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                             font.pixelSize: 28
                             lineHeight: 38
                             lineHeightMode: Text.FixedHeight
@@ -230,7 +247,8 @@ StatusDialog {
                             assetsModel: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
                             collectiblesModel: popup.selectedAccount ? popup.nestedCollectiblesModel : null
                             currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
-                            visible: !!d.selectedHolding || !!d.hoveredHolding
+                            visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
+                                     (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
                             getNetworkIcon: function(chainId){
                                 return RootStore.getNetworkIcon(chainId)
                             }
@@ -242,9 +260,9 @@ StatusDialog {
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
-                            visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset
+                            visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer
                             title: {
-                                if(d.isHoveredHoldingValidAsset) {
+                                if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
                                     const balance = popup.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount) , d.hoveredHolding.symbol)
                                     return qsTr("Max: %1").arg(balance)
                                 }
@@ -288,11 +306,11 @@ StatusDialog {
                         }
                     }
                     RowLayout {
-                        visible: d.isSelectedHoldingValidAsset
+                        visible: d.isSelectedHoldingValidAsset && !d.isERC721Transfer
                         AmountToSend {
                             id: amountToSendInput
                             Layout.fillWidth:true
-                            isBridgeTx: popup.isBridgeTx
+                            isBridgeTx: d.isBridgeTx
                             interactive: popup.interactive
                             selectedSymbol: d.selectedSymbol
                             maxInputBalance: d.maxInputBalance
@@ -314,10 +332,11 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
-                            visible: !!popup.bestRoutes && popup.bestRoutes !== undefined && popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
+                            visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
+                                     popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
                             isLoading: popup.isLoading
                             selectedSymbol: d.selectedSymbol
-                            isBridgeTx: popup.isBridgeTx
+                            isBridgeTx: d.isBridgeTx
                             cryptoValueToReceive: d.totalAmountToReceive
                             inputIsFiat: amountToSendInput.inputIsFiat
                             minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
@@ -366,7 +385,7 @@ StatusDialog {
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: !isBridgeTx && !!d.selectedHolding
+                        visible: !d.isBridgeTx && !!d.selectedHolding
                         StatusBaseText {
                             id: label
                             elide: Text.ElideRight
@@ -378,7 +397,8 @@ StatusDialog {
                             id: recipientLoader
                             Layout.fillWidth: true
                             store: popup.store
-                            isBridgeTx: popup.isBridgeTx
+                            isERC721Transfer: d.isERC721Transfer
+                            isBridgeTx: d.isBridgeTx
                             interactive: popup.interactive
                             selectedAsset: d.selectedHolding
                             onIsLoading: popup.isLoading = true
@@ -398,7 +418,7 @@ StatusDialog {
                             recipientLoader.selectedRecipientType = type
                             recipientLoader.selectedRecipient = recipient
                         }
-                        visible: !recipientLoader.ready && !isBridgeTx && !!d.selectedHolding
+                        visible: !recipientLoader.ready && !d.isBridgeTx && !!d.selectedHolding
                     }
 
                     NetworkSelector {
@@ -419,7 +439,8 @@ StatusDialog {
                         visible: recipientLoader.ready && !!d.selectedHolding && amountToSendInput.inputNumberValid
                         errorType: d.errorType
                         isLoading: popup.isLoading
-                        isBridgeTx: popup.isBridgeTx
+                        isBridgeTx: d.isBridgeTx
+                        isERC721Transfer: d.isERC721Transfer
                     }
 
                     FeesView {
@@ -442,7 +463,7 @@ StatusDialog {
     }
 
     footer: SendModalFooter {
-        nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+        nextButtonText: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
         maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading

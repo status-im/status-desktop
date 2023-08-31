@@ -45,8 +45,8 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid) {
-        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid)
+    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, sendType) {
+        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, sendType)
     }
 
     function suggestedRoutes(amount, sendType) {
@@ -180,15 +180,19 @@ QtObject {
     }
 
     function toggleFromDisabledChains(chainId) {
-        fromNetworksModel.toggleDisabledChains(chainId)
+        fromNetworksModel.toggleRouteDisabledChains(chainId)
     }
 
     function toggleToDisabledChains(chainId) {
-        toNetworksModel.toggleDisabledChains(chainId)
+        toNetworksModel.toggleRouteDisabledChains(chainId)
     }
 
-    function setDisabledChains(chainId, disabled) {
-        toNetworksModel.setDisabledChains(chainId, disabled)
+    function setRouteDisabledChains(chainId, disabled) {
+        toNetworksModel.setRouteDisabledChains(chainId, disabled)
+    }
+
+    function setRouteEnabledFromChains(chainId) {
+        fromNetworksModel.setRouteEnabledFromChains(chainId)
     }
 
     function setSelectedAssetSymbol(symbol) {
@@ -199,16 +203,16 @@ QtObject {
       return fromNetworksModel.getNetworkName(chainId)
     }
 
-    function updatePreferredChains(chainIds) {
-       walletSectionSendInst.updatePreferredChains(chainIds)
+    function updateRoutePreferredChains(chainIds) {
+       walletSectionSendInst.updateRoutePreferredChains(chainIds)
     }
 
     function toggleShowUnPreferredChains() {
         walletSectionSendInst.toggleShowUnPreferredChains()
     }
 
-    function setAllNetworksAsPreferredChains() {
-        toNetworksModel.setAllNetworksAsPreferredChains()
+    function setAllNetworksAsRoutePreferredChains() {
+        toNetworksModel.setAllNetworksAsRoutePreferredChains()
     }
 
     function lockCard(chainId, amount, lock) {
@@ -220,7 +224,7 @@ QtObject {
     }
 
     // TODO: move to nim
-    function splitAndFormatAddressPrefix(text, isBridgeTx) {
+    function splitAndFormatAddressPrefix(text, updateInStore) {
         let address = ""
         let tempPreferredChains = []
         let chainFound = false
@@ -236,18 +240,17 @@ QtObject {
                 let chainColor = fromNetworksModel.getNetworkColor(word)
                 if(!!chainColor) {
                     chainFound = true
-                    if(!isBridgeTx)
-                        tempPreferredChains.push(fromNetworksModel.getNetworkChainId(word))
+                    tempPreferredChains.push(fromNetworksModel.getNetworkChainId(word))
                     editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(word)+':'
                 }
             }
         }
 
-        if(!isBridgeTx) {
+        if(updateInStore) {
             if(!chainFound)
-                updatePreferredChains(networksModule.getMainnetChainId())
+                updateRoutePreferredChains(networksModule.getMainnetChainId())
             else
-                updatePreferredChains(tempPreferredChains.join(":"))
+                updateRoutePreferredChains(tempPreferredChains.join(":"))
         }
 
         editedText +="</a></p>"
