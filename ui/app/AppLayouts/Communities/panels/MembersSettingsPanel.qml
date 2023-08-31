@@ -1,17 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-
 import utils 1.0
-import shared.controls.chat 1.0
 
 import AppLayouts.Communities.layouts 1.0
+import AppLayouts.Communities.popups 1.0
 
 SettingsPage {
     id: root
@@ -121,15 +115,17 @@ SettingsPage {
                 Layout.fillHeight: true
 
                 onKickUserClicked: {
-                    kickModal.userNameToKick = name
-                    kickModal.userIdToKick = id
-                    kickModal.open()
+                    kickBanPopup.mode = KickBanPopup.Mode.Kick
+                    kickBanPopup.username = name
+                    kickBanPopup.userId = id
+                    kickBanPopup.open()
                 }
 
                 onBanUserClicked: {
-                    banModal.userNameToBan = name
-                    banModal.userIdToBan = id
-                    banModal.open()
+                    kickBanPopup.mode = KickBanPopup.Mode.Ban
+                    kickBanPopup.username = name
+                    kickBanPopup.userId = id
+                    kickBanPopup.open()
                 }
             }
 
@@ -190,85 +186,18 @@ SettingsPage {
         }
     }
 
-    StatusModal {
-        id: banModal
+    KickBanPopup {
+        id: kickBanPopup
 
-        property string userNameToBan: ""
-        property string userIdToBan: ""
+        property string userId
 
-        readonly property string text: qsTr("Are you sure you ban <b>%1</b> from %2?").arg(userNameToBan).arg(root.communityName)
+        communityName: root.communityName
 
-        anchors.centerIn: parent
-        width: 400
-        headerSettings.title: qsTr("Ban %1").arg(userNameToBan)
-
-        contentItem: StatusBaseText {
-            id: banContentText
-            anchors.centerIn: parent
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-            padding: 15
-            wrapMode: Text.WordWrap
-            text: banModal.text
+        onAccepted: {
+            if (mode === KickBanPopup.Mode.Kick)
+                root.kickUserClicked(userId)
+            else
+                root.banUserClicked(userId)
         }
-
-        rightButtons: [
-            StatusButton {
-                text: qsTr("Cancel")
-                onClicked: banModal.close()
-                normalColor: "transparent"
-                hoverColor: "transparent"
-            },
-            StatusButton {
-                id: banButton
-                text: qsTr("Ban")
-                type: StatusBaseButton.Type.Danger
-                onClicked: {
-                    root.banUserClicked(banModal.userIdToBan)
-                    banModal.close()
-                }
-            }
-        ]
-    }
-
-    StatusModal {
-        id: kickModal
-
-        property string userNameToKick: ""
-        property string userIdToKick: ""
-
-        readonly property string text : qsTr("Are you sure you kick <b>%1</b> from %2?").arg(userNameToKick).arg(communityName)
-
-        anchors.centerIn: parent
-        width: 400
-        headerSettings.title: qsTr("Kick %1").arg(userNameToKick)
-
-        contentItem: StatusBaseText {
-            id: kickContentText
-            anchors.centerIn: parent
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-            padding: 15
-            wrapMode: Text.WordWrap
-            text: kickModal.text
-        }
-
-        rightButtons: [
-            StatusButton {
-                text: qsTr("Cancel")
-                onClicked: kickModal.close()
-                normalColor: "transparent"
-                hoverColor: "transparent"
-            },
-            StatusButton {
-                objectName: "CommunityMembers_KickModal_KickButton"
-                text: qsTr("Kick")
-                type: StatusBaseButton.Type.Danger
-                onClicked: {
-                    root.kickUserClicked(kickModal.userIdToKick)
-                    kickModal.close()
-                }
-            }
-        ]
     }
 }

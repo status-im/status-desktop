@@ -10,6 +10,7 @@ HoldingsDropdown 1.0 HoldingsDropdown.qml
 ImportControlNodePopup 1.0 ImportControlNodePopup.qml
 InDropdown 1.0 InDropdown.qml
 InviteFriendsToCommunityPopup 1.0 InviteFriendsToCommunityPopup.qml
+KickBanPopup 1.0 KickBanPopup.qml
 MembersDropdown 1.0 MembersDropdown.qml
 PermissionsDropdown 1.0 PermissionsDropdown.qml
 RecipientTypeSelectionDropdown 1.0 RecipientTypeSelectionDropdown.qml
