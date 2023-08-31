@@ -201,6 +201,7 @@ StatusMenu {
     }
 
     StatusAction {
+        id: clearHistoryMenuItem
         objectName: "clearHistoryMenuItem"
         text: qsTr("Clear History")
         icon.name: "close-circle"
@@ -211,8 +212,8 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "deleteOrLeaveMenuItem"
         id: deleteOrLeaveMenuItem
+        objectName: "deleteOrLeaveMenuItem"
         text: {
             if (root.isCommunityChat) {
                 return qsTr("Delete Channel")
