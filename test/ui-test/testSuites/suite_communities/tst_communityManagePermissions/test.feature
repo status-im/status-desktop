@@ -31,7 +31,7 @@ Background:
     Examples:
       |state| first_asset   |  second_asset  | amount | allowed_to    |in_general     |asset_title | second_asset_title|allowed_to_title  |
       |On   | Dai Stablecoin|  No            | 10     | becomeMember  |No             |10 DAI      | No                |Become member     |
-      |On   | Ether         |  No            | 1      | becomeAdmin   |No             |1 ETH       | No                |Become admin      |
+      |On   | Ether         |  No            | 1      | becomeAdmin   |No             |1 ETH       | No                |Become an admin   |
       |On   | Ether         |  Dai Stablecoin| 10     | viewAndPost   |#general       |10 ETH      | 10 DAI            |View and post     |
       |On   | Ether         |  Dai Stablecoin| 10     | viewOnly      |#general       |10 ETH      | 10 DAI            |View only         |
-      |Off  | No            |  No            | No     | becomeAdmin   |No             |No          | No                |Become admin      |
+      |Off  | No            |  No            | No     | becomeAdmin   |No             |No          | No                |Become an admin   |
