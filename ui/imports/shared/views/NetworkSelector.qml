@@ -30,6 +30,7 @@ Item {
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
+    property bool isERC721Transfer: false
     property var toNetworksList
     property int errorType: Constants.NoError
 
@@ -45,6 +46,7 @@ Item {
         id: tabBar
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
+        visible: !root.isERC721Transfer
         StatusSwitchTabButton {
             text: qsTr("Simple")
         }
@@ -58,12 +60,12 @@ Item {
 
     StackLayout {
         id: stackLayout
-        anchors.top: tabBar.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.top: !root.isERC721Transfer ? tabBar.bottom: parent.top
+        anchors.topMargin: !root.isERC721Transfer ? Style.current.bigPadding: 0
         height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Style.current.bigPadding:
                                    advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Style.current.bigPadding
         width: parent.width
-        currentIndex: tabBar.currentIndex === 0 ? 0 : 1
+        currentIndex: root.isERC721Transfer ? 0: tabBar.currentIndex === 0 ? 0 : 1
 
         Rectangle {
             id: simple
@@ -76,6 +78,7 @@ Item {
                 anchors.margins: Style.current.padding
                 width: stackLayout.width  - Style.current.bigPadding
                 isBridgeTx: root.isBridgeTx
+                isERC721Transfer: root.isERC721Transfer
                 amountToSend: root.amountToSend
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
@@ -85,7 +88,7 @@ Item {
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
-                    if(root.selectedAsset !== undefined)
+                    if(!!selectedAsset && root.selectedAsset !== undefined)
                         return parseFloat(store.getWei2Eth(wei, root.selectedAsset.decimals))
                 }
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
@@ -119,7 +122,7 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    if(selectedAsset !== undefined)
+                    if(!!selectedAsset && selectedAsset !== undefined)
                         return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
             }

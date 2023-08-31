@@ -15,11 +15,12 @@ import "../popups"
 Rectangle {
     id: root
 
-    property var sendModal
     property var walletStore
     property var networkConnectionStore
 
     signal launchShareAddressModal()
+    signal launchSendModal()
+    signal launchBridgeModal()
 
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
@@ -39,11 +40,7 @@ Rectangle {
             icon: "send"
             text: qsTr("Send")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
-            onClicked: function() {
-                sendModal.preSelectedHoldingID = walletStore.currentViewedHoldingID
-                sendModal.preSelectedHoldingType = walletStore.currentViewedHoldingType
-                sendModal.open()
-            }
+            onClicked: root.launchSendModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount
         }
@@ -61,12 +58,7 @@ Rectangle {
             buttonType: DisabledTooltipButton.Flat
             text: qsTr("Bridge")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
-            onClicked: function() {
-                sendModal.isBridgeTx = true
-                sendModal.preSelectedHoldingID = walletStore.currentViewedHoldingID
-                sendModal.preSelectedHoldingType = walletStore.currentViewedHoldingType
-                sendModal.open()
-            }
+            onClicked: root.launchBridgeModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount
         }

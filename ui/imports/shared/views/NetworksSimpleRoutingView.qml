@@ -20,6 +20,7 @@ RowLayout {
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
+    property bool isERC721Transfer: false
     property var selectedAccount
     property var toNetworksList
     property var weiToEth: function(wei) {}
@@ -100,6 +101,8 @@ RowLayout {
             implicitWidth: 410
             title: model.chainName
             subTitle: {
+                if(root.isERC721Transfer)
+                    return ""
                 let amountOut = root.weiToEth(model.amountOut)
                 return root.formatCurrencyAmount(amountOut, store.selectedAssetSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
             }
@@ -140,7 +143,7 @@ RowLayout {
                 onClicked: gasRectangle.toggle()
             }
             onCheckedChanged: {
-                store.setDisabledChains(chainId, !gasRectangle.checked)
+                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
                 if(checked)
                     root.reCalculateSuggestedRoute()
             }
@@ -150,7 +153,7 @@ RowLayout {
                 height: card.height
             }
             Component.onCompleted: {
-                store.setDisabledChains(chainId, !gasRectangle.checked)
+                store.setRouteDisabledChains(chainId, !gasRectangle.checked)
                 if(index === (repeater.count -1))
                     root.reCalculateSuggestedRoute()
             }

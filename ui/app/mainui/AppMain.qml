@@ -1347,12 +1347,13 @@ Item {
             property bool isBridgeTx
             property string preSelectedHoldingID
             property var preSelectedHoldingType
-
+            property int sendType: -1
             sourceComponent: SendModal {
                 onlyAssets: false
                 onClosed: {
                     sendModal.closed()
                     sendModal.isBridgeTx = false
+                    sendModal.sendType = -1
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
                 }
@@ -1364,6 +1365,9 @@ Item {
                 if(isBridgeTx) {
                     item.isBridgeTx = sendModal.isBridgeTx
                 }
+  		if(sendModal.sendType >= 0) {
+                    item.sendType = sendModal.sendType
+		}
                 if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
                     item.preSelectedHoldingID = sendModal.preSelectedHoldingID
                     item.preSelectedHoldingType = sendModal.preSelectedHoldingType

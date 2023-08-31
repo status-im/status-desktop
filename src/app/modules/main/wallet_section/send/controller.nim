@@ -93,8 +93,8 @@ proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token:
   return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string) =
-  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
+    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: int) =
+  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()

@@ -178,21 +178,21 @@ QtObject:
           self.items[i].amountOut = path.getAmountOut()
         self.dataChanged(index, index, @[ModelRole.AmountOut.int])
 
-  proc getDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
+  proc getRouteDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
     var disbaledChains: seq[int] = @[]
     for item in self.items:
       if not item.getIsEnabled():
         disbaledChains.add(item.getChainId())
     return disbaledChains
 
-  proc getLockedChainIds*(self: NetworkModel): string =
+  proc getRouteLockedChainIds*(self: NetworkModel): string =
     var jsonObject = newJObject()
     for item in self.items:
       if item.getLocked():
         jsonObject[$item.getChainId()] = %* ("0x" & item.getLockedAmount())
     return $jsonObject
 
-  proc updatePreferredChains*(self: NetworkModel, chainIds: string) =
+  proc updateRoutePreferredChains*(self: NetworkModel, chainIds: string) =
     try:
       for i in 0 ..< self.items.len:
         let index = self.createIndex(i, 0, nil)
@@ -211,28 +211,28 @@ QtObject:
     except:
       discard
 
-  proc getPreferredNetworkChainIds*(self: NetworkModel): seq[int] =
+  proc getRoutePreferredNetworkChainIds*(self: NetworkModel): seq[int] =
     var preferredChains: seq[int] = @[]
     for item in self.items:
       if item.getIsPreferred():
         preferredChains.add(item.getChainId())
     return preferredChains
 
-  proc disableUnpreferredChains*(self: NetworkModel) =
+  proc disableRouteUnpreferredChains*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
         self.items[i].isEnabled = false
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc enableUnpreferredChains*(self: NetworkModel) =
+  proc enableRouteUnpreferredChains*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
         self.items[i].isEnabled = true
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc setAllNetworksAsPreferredChains*(self: NetworkModel) {.slot.} =
+  proc setAllNetworksAsRoutePreferredChains*(self: NetworkModel) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
       self.items[i].isPreferred = true
@@ -256,19 +256,27 @@ QtObject:
         return item.getChainName()
     return ""
 
-  proc toggleDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
+  proc toggleRouteDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
         self.items[i].isEnabled = not self.items[i].getIsEnabled()
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc setDisabledChains*(self: NetworkModel, chainId: int, disabled: bool) {.slot.} =
+  proc setRouteDisabledChains*(self: NetworkModel, chainId: int, disabled: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
         self.items[i].isEnabled = not disabled
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+
+  proc setRouteEnabledFromChains*(self: NetworkModel, chainId: int) {.slot.} =
+    for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      self.items[i].isEnabled = false
+      if(self.items[i].getChainId() == chainId):
+        self.items[i].isEnabled = true
+      self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
   proc lockCard*(self: NetworkModel, chainId: int, amount: string, lock: bool) {.slot.} =
     for i in 0 ..< self.items.len:

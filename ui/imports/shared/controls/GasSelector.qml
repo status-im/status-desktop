@@ -117,7 +117,7 @@ Item {
                 property double tokenFees: modelData.tokenFees
                 property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedTokenSymbol, root.currentCurrency)
                 subTitle: root.formatCurrencyAmount(tokenFees, root.selectedTokenSymbol)
-                visible: modelData.bridgeName !== "Simple"
+                visible: modelData.bridgeName !== "Transfer"
                 statusListItemSubTitle.width: 100
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 components: [

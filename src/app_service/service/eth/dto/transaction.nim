@@ -23,6 +23,8 @@ type
     amountOutMin*: Option[UInt256]   # (optional) amountOutMin in case of a bridge hop transaction
     bonderFee*: Option[string]      # (optional) bonderFee in case of a bridge hop transaction
 
+    tokenID*: Option[UInt256]     # (optional) chainID in case of a ERC721 transaction
+
 proc `%`*(x: TransactionDataDto): JsonNode =
   result = newJobject()
   result["from"] = %x.source
@@ -55,18 +57,22 @@ proc `%`*(x: TransactionDataDto): JsonNode =
     result["amountOutMin"] = %x.amountOutMin.unsafeGet
   if x.bonderFee.isSome:
     result["bonderFee"] = %x.bonderFee.unsafeGet
+  if x.tokenID.isSome:
+    result["tokenID"] = %x.tokenID.unsafeGet
 
 type TransactionBridgeDto* = object
   bridgeName*: string
   chainID*: int
-  simpleTx*: TransactionDataDto
+  transferTx*: TransactionDataDto
   hopTx*: TransactionDataDto
   cbridgeTx*: TransactionDataDto
+  eRC721TransferTx*: TransactionDataDto
 
 proc `%`*(x: TransactionBridgeDto): JsonNode =
   result = newJobject()
   result["bridgeName"] = %x.bridgeName
   result["chainID"] = %x.chainID
-  result["simpleTx"] = %x.simpleTx
+  result["transferTx"] = %x.transferTx
   result["hopTx"] = %x.hopTx
   result["cbridgeTx"] = %x.cbridgeTx
+  result["eRC721TransferTx"] = %x.eRC721TransferTx

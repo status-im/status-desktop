@@ -144,12 +144,24 @@ Item {
 
         footer: WalletFooter {
             visible: !root.showAllAccounts
-            sendModal: root.sendModalPopup
             width: parent.width
             height: root.showAllAccounts ? implicitHeight : 61
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
+            onLaunchSendModal: {
+                root.sendModalPopup.sendType = Constants.SendType.Transfer
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.open()
+            }
+            onLaunchBridgeModal: {
+                root.sendModalPopup.isBridgeTx = true
+                root.sendModalPopup.sendType = Constants.SendType.Bridge
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.open()
+            }
         }
     }
 

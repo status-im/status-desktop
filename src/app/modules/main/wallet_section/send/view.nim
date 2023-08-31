@@ -146,9 +146,9 @@ QtObject:
   proc updateNetworksDisabledChains(self: View) =
     # if the setting to show unpreferred chains is toggled, add all unpreferred chains to disabled chains list
     if not self.showUnPreferredChains:
-      self.toNetworksModel.disableUnpreferredChains()
+      self.toNetworksModel.disableRouteUnpreferredChains()
     else:
-      self.toNetworksModel.enableUnpreferredChains()
+      self.toNetworksModel.enableRouteUnpreferredChains()
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksModel.getAllNetworksChainIds():
@@ -173,8 +173,8 @@ QtObject:
     self.transactionSent(chainId, txHash, uuid, error)
 
   proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid)
+    value: string, uuid: string, sendType: int) {.slot.} =
+      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, sendType)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
@@ -190,8 +190,8 @@ QtObject:
       discard
 
     return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(),
-      parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getDisabledNetworkChainIds(),
-      self.toNetworksModel.getDisabledNetworkChainIds(), self.toNetworksModel.getPreferredNetworkChainIds(), sendType,  self.fromNetworksModel.getLockedChainIds())
+      parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(), sendType,  self.fromNetworksModel.getRouteLockedChainIds())
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)
@@ -223,8 +223,8 @@ QtObject:
     self.setSelectetReceiveAccount(account)
     self.delegate.setSelectedReceiveAccountIndex(idx)
 
-  proc updatePreferredChains*(self: View, chainIds: string) {.slot.} =
-    self.toNetworksModel.updatePreferredChains(chainIds)
+  proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
+    self.toNetworksModel.updateRoutePreferredChains(chainIds)
 
   proc getSelectedSenderAccountAddress*(self: View): string =
     return self.selectedSenderAccount.address()

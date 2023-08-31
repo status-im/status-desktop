@@ -30,6 +30,7 @@ type TmpSendTransactionDetails = object
   value: string
   paths: seq[TransactionPathDto]
   uuid: string
+  sendType: int
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -241,12 +242,13 @@ method viewDidLoad*(self: Module) =
 method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
   return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
 
-method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string) =
+method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string, sendType: int) =
   self.tmpSendTransactionDetails.fromAddr = from_addr
   self.tmpSendTransactionDetails.toAddr = to_addr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
   self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
+  self.tmpSendTransactionDetails.sendType = sendType
 
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
@@ -282,7 +284,7 @@ method onUserAuthenticated*(self: Module, password: string) =
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
       self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-      self.tmpSendTransactionDetails.paths, password
+      self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType
     )
 
 method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: string) =
