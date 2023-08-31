@@ -49,13 +49,13 @@ proc init*(self: Controller) =
     self.communityTokensModule.onUserAuthenticated(args.password)
   self.events.on(SIGNAL_COMPUTE_DEPLOY_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
-    self.communityTokensModule.onDeployFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
+    self.communityTokensModule.onDeployFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode, args.requestId)
   self.events.on(SIGNAL_COMPUTE_SELF_DESTRUCT_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
-    self.communityTokensModule.onSelfDestructFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
+    self.communityTokensModule.onSelfDestructFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode, args.requestId)
   self.events.on(SIGNAL_COMPUTE_BURN_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
-    self.communityTokensModule.onBurnFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
+    self.communityTokensModule.onBurnFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode, args.requestId)
   self.events.on(SIGNAL_COMPUTE_AIRDROP_FEE) do(e:Args):
     let args = AirdropFeesArgs(e)
     self.communityTokensModule.onAirdropFeesComputed(args)
@@ -97,8 +97,8 @@ proc removeCommunityToken*(self: Controller, communityId: string, chainId: int, 
 proc airdropTokens*(self: Controller, communityId: string, password: string, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
   self.communityTokensService.airdropTokens(communityId, password, tokensAndAmounts, walletAddresses, addressFrom)
 
-proc computeAirdropFee*(self: Controller, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
-  self.communityTokensService.computeAirdropFee(tokensAndAmounts, walletAddresses, addressFrom)
+proc computeAirdropFee*(self: Controller, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string, requestId: string) =
+  self.communityTokensService.computeAirdropFee(tokensAndAmounts, walletAddresses, addressFrom, requestId)
 
 proc selfDestructCollectibles*(self: Controller, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
   self.communityTokensService.selfDestructCollectibles(communityId, password, walletAndAmounts, contractUniqueKey, addressFrom)
@@ -113,20 +113,20 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(communityId)
 
-proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType) =
-  self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType)
+proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
+  self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType, requestId)
 
-proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string) =
-  self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress)
+proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string, requestId: string) =
+  self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress, requestId)
 
-proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
-  self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom)
+proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string, requestId: string) =
+  self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom, requestId)
 
 proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): CommunityTokenDto =
   return self.communityTokensService.findContractByUniqueId(contractUniqueKey)
 
-proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
-  self.communityTokensService.computeBurnFee(contractUniqueKey, amount, addressFrom)
+proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
+  self.communityTokensService.computeBurnFee(contractUniqueKey, amount, addressFrom, requestId)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

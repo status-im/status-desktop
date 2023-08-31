@@ -117,11 +117,11 @@ method airdropTokens*(self: Module, communityId: string, tokensJsonString: strin
   self.tempContractAction = ContractAction.Airdrop
   self.authenticate()
 
-method computeAirdropFee*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) =
+method computeAirdropFee*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string, requestId: string) =
   let tokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
   if len(tokenAndAmountList) == 0:
     return
-  self.controller.computeAirdropFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]), addressFrom)
+  self.controller.computeAirdropFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]), addressFrom, requestId)
 
 proc getWalletAndAmountListFromJson(self: Module, collectiblesToBurnJsonString: string): seq[WalletAndAmount] =
   let collectiblesToBurnJson = collectiblesToBurnJsonString.parseJson
@@ -238,30 +238,30 @@ method onUserAuthenticated*(self: Module, password: string) =
                 self.tempMasterDeploymentParams, self.tempMasterTokenMetadata,
                 self.tempTokenImageCropInfoJson, self.tempChainId)
 
-method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
-  self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int)
+method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
+  self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
 
-method onSelfDestructFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
-  self.view.updateSelfDestructFee(ethCurrency, fiatCurrency, errorCode.int)
+method onSelfDestructFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
+  self.view.updateSelfDestructFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
 
 method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
   self.view.updateAirdropFees(%args)
 
-method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
-  self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int)
+method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
+  self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
 
-method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool) =
+method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) =
   if isOwnerDeployment:
-    self.controller.computeDeployOwnerContractsFee(chainId, accountAddress)
+    self.controller.computeDeployOwnerContractsFee(chainId, accountAddress, requestId)
   else:
-    self.controller.computeDeployFee(chainId, accountAddress, tokenType)
+    self.controller.computeDeployFee(chainId, accountAddress, tokenType, requestId)
 
-method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) =
+method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string, requestId: string) =
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
-  self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom)
+  self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom, requestId)
 
-method computeBurnFee*(self: Module, contractUniqueKey: string, amount: string, addressFrom: string) =
-  self.controller.computeBurnFee(contractUniqueKey, amount.parse(Uint256), addressFrom)
+method computeBurnFee*(self: Module, contractUniqueKey: string, amount: string, addressFrom: string, requestId: string) =
+  self.controller.computeBurnFee(contractUniqueKey, amount.parse(Uint256), addressFrom, requestId)
 
 proc createUrl(self: Module, chainId: int, transactionHash: string): string =
   let network = self.controller.getNetwork(chainId)

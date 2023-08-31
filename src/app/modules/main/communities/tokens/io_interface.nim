@@ -15,7 +15,7 @@ method load*(self: AccessInterface) {.base.} =
 method airdropTokens*(self: AccessInterface, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeAirdropFee*(self: AccessInterface, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.base.} =
+method computeAirdropFee*(self: AccessInterface, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method selfDestructCollectibles*(self: AccessInterface, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) {.base.} =
@@ -42,25 +42,25 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool) {.base.} =
+method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) {.base.} =
+method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeBurnFee*(self: AccessInterface, contractUniqueKey: string, amount: string, addressFrom: string) {.base.} =
+method computeBurnFee*(self: AccessInterface, contractUniqueKey: string, amount: string, addressFrom: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
+method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSelfDestructFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
+method onSelfDestructFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAirdropFeesComputed*(self: AccessInterface, args: AirdropFeesArgs) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onBurnFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
+method onBurnFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =

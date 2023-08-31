@@ -165,6 +165,7 @@ type
     fiatCurrency*: CurrencyAmount
     errorCode*: ComputeFeeErrorCode
     contractUniqueKey*: string # used for minting
+    requestId*: string
 
 proc `%`*(self: ComputeFeeArgs): JsonNode =
     result = %* {
@@ -186,13 +187,15 @@ type
     totalEthFee*: CurrencyAmount
     totalFiatFee*: CurrencyAmount
     errorCode*: ComputeFeeErrorCode
+    requestId*: string
 
 proc `%`*(self: AirdropFeesArgs): JsonNode =
     result = %* {
       "fees": computeFeeArgsToJsonArray(self.fees),
       "totalEthFee": self.totalEthFee.toJsonNode(),
       "totalFiatFee": self.totalFiatFee.toJsonNode(),
-      "errorCode": self.errorCode.int
+      "errorCode": self.errorCode.int,
+      "requestId": self.requestId,
     }
 
 type
@@ -639,7 +642,7 @@ QtObject:
     except RpcException:
       error "Error airdropping tokens", message = getCurrentExceptionMsg()
 
-  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
+  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string, requestId: string) =
     try:
       self.tempTokensAndAmounts = collectiblesAndAmounts
       let arg = AsyncGetMintFees(
@@ -648,10 +651,12 @@ QtObject:
         slot: "onAirdropFees",
         collectiblesAndAmounts: collectiblesAndAmounts,
         walletAddresses: walletAddresses,
-        addressFrom: addressFrom
+        addressFrom: addressFrom,
+        requestId: requestId
       )
       self.threadpool.start(arg)
     except Exception as e:
+      #TODO: handle error - emit error signal
       error "Error loading airdrop fees", msg = e.msg
 
   proc getFiatValue*(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
@@ -661,7 +666,7 @@ QtObject:
     let price = self.tokenService.getTokenPrice(cryptoSymbol, currentCurrency)
     return cryptoBalance * price
 
-  proc computeDeployFee*(self: Service, chainId: int, accountAddress: string, tokenType: TokenType) =
+  proc computeDeployFee*(self: Service, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
     try:
       if tokenType != TokenType.ERC20 and tokenType != TokenType.ERC721:
         error "Error loading fees: unknown token type", tokenType = tokenType
@@ -672,23 +677,27 @@ QtObject:
         slot: "onDeployFees",
         chainId: chainId,
         addressFrom: accountAddress,
-        tokenType: tokenType
+        tokenType: tokenType,
+        requestId: requestId
       )
       self.threadpool.start(arg)
     except Exception as e:
+      #TODO: handle error - emit error signal
       error "Error loading fees", msg = e.msg
 
-  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string) =
+  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, requestId: string) =
     try:
       let arg = AsyncDeployOwnerContractsFeesArg(
         tptr: cast[ByteAddress](asyncGetDeployOwnerContractsFeesTask),
         vptr: cast[ByteAddress](self.vptr),
         slot: "onDeployOwnerContractsFees",
         chainId: chainId,
-        addressFrom: accountAddress
+        addressFrom: accountAddress,
+        requestId: requestId
       )
       self.threadpool.start(arg)
     except Exception as e:
+      #TODO: handle error - emit error signal
       error "Error loading fees", msg = e.msg
 
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =
@@ -755,7 +764,7 @@ QtObject:
     except Exception as e:
       error "Remote self destruct error", msg = e.msg
 
-  proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
+  proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string, requestId: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
@@ -769,7 +778,8 @@ QtObject:
         chainId: contract.chainId,
         contractAddress: contract.address,
         tokenIds: tokenIds,
-        addressFrom: addressFrom
+        addressFrom: addressFrom,
+        requestId: requestId
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -816,7 +826,7 @@ QtObject:
     except Exception as e:
       error "Burn error", msg = e.msg
 
-  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
+  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let arg = AsyncGetBurnFees(
@@ -826,7 +836,8 @@ QtObject:
         chainId: contract.chainId,
         contractAddress: contract.address,
         amount: amount,
-        addressFrom: addressFrom
+        addressFrom: addressFrom,
+        requestId: requestId
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -887,11 +898,12 @@ QtObject:
       error "Error converting to fee table", message = getCurrentExceptionMsg()
 
   proc parseFeeResponseAndEmitSignal(self:Service, response: string, signalName: string) =
+    let responseJson = response.parseJson()
     try:
-      let responseJson = response.parseJson()
       let errorMessage = responseJson{"error"}.getStr
       if errorMessage != "":
         let data = self.createComputeFeeArgsWithError(errorMessage)
+        data.requestId = responseJson{"requestId"}.getStr
         self.events.emit(signalName, data)
         return
       let gasTable = responseJson{"gasTable"}.toGasTable
@@ -903,10 +915,12 @@ QtObject:
       let gasUnits = toSeq(gasTable.values())[0]
       let suggestedFees = toSeq(feeTable.values())[0]
       let data = self.createComputeFeeArgs(gasUnits, suggestedFees, chainId, addressFrom)
+      data.requestId = responseJson{"requestId"}.getStr
       self.events.emit(signalName, data)
     except Exception:
       error "Error creating fee args", message = getCurrentExceptionMsg()
       let data = self.createComputeFeeArgsWithError(getCurrentExceptionMsg())
+      data.requestId = responseJson{"requestId"}.getStr
       self.events.emit(signalName, data)
 
   proc onDeployOwnerContractsFees*(self:Service, response: string) {.slot.} =
@@ -927,10 +941,11 @@ QtObject:
     var allComputeFeeArgs: seq[ComputeFeeArgs]
     var dataToEmit = AirdropFeesArgs()
     dataToEmit.errorCode =  ComputeFeeErrorCode.Success
+    let responseJson = response.parseJson()
 
     try:
-      let responseJson = response.parseJson()
       let errorMessage = responseJson{"error"}.getStr
+      let requestId = responseJson{"requestId"}.getStr
       if errorMessage != "":
         for collectibleAndAmount in self.tempTokensAndAmounts:
           let args = self.createComputeFeeArgsWithError(errorMessage)
@@ -940,6 +955,7 @@ QtObject:
         dataToEmit.totalEthFee = ethTotal
         dataToEmit.totalFiatFee = fiatTotal
         dataToEmit.errorCode = self.getErrorCodeFromMessage(errorMessage)
+        dataToEmit.requestId = requestId
         self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
         return
 
@@ -981,10 +997,14 @@ QtObject:
       let (ethTotal, fiatTotal) = self.createCurrencyAmounts(totalEthVal, totalFiatVal)
       dataToEmit.totalEthFee = ethTotal
       dataToEmit.totalFiatFee = fiatTotal
+      dataToEmit.requestId = requestId
       self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
     except Exception as e:
       error "Error computing airdrop fees", msg = e.msg
+      dataToEmit.errorCode = ComputeFeeErrorCode.Other
+      dataToEmit.requestId = responseJson{"requestId"}.getStr
+      self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
   proc fetchCommunityOwners*(self: Service,  communityToken: CommunityTokenDto) =
     if communityToken.tokenType != TokenType.ERC721:

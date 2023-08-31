@@ -36,8 +36,8 @@ QtObject:
   proc airdropTokens*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.airdropTokens(communityId, tokensJsonString, walletsJsonString, addressFrom)
 
-  proc computeAirdropFee*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) {.slot.} =
-    self.communityTokensModule.computeAirdropFee(communityId, tokensJsonString, walletsJsonString, addressFrom)
+  proc computeAirdropFee*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string, requestId: string) {.slot.} =
+    self.communityTokensModule.computeAirdropFee(communityId, tokensJsonString, walletsJsonString, addressFrom, requestId)
 
   proc selfDestructCollectibles*(self: View, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.selfDestructCollectibles(communityId, collectiblesToBurnJsonString, contractUniqueKey, addressFrom)
@@ -45,28 +45,28 @@ QtObject:
   proc burnTokens*(self: View, communityId: string, contractUniqueKey: string, amount: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.burnTokens(communityId, contractUniqueKey, amount, addressFrom)
 
-  proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
-  proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
+  proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
+  proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
   proc airdropFeesUpdated*(self: View, json: string) {.signal.}
-  proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
+  proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
 
-  proc computeDeployFee*(self: View, chainId: int, accountAddress: string, tokenType: int, isOwnerDeployment: bool) {.slot.} =
-    self.communityTokensModule.computeDeployFee(chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown), isOwnerDeployment)
+  proc computeDeployFee*(self: View, chainId: int, accountAddress: string, tokenType: int, isOwnerDeployment: bool, requestId: string) {.slot.} =
+    self.communityTokensModule.computeDeployFee(chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown), isOwnerDeployment, requestId)
 
-  proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) {.slot.} =
-    self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey, addressFrom)
+  proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string, requestId: string) {.slot.} =
+    self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey, addressFrom, requestId)
 
-  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: string, addressFrom: string) {.slot.} =
-    self.communityTokensModule.computeBurnFee(contractUniqueKey, amount, addressFrom)
+  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: string, addressFrom: string, requestId: string) {.slot.} =
+    self.communityTokensModule.computeBurnFee(contractUniqueKey, amount, addressFrom, requestId)
 
-  proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
-    self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
+  proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int, responseId: string) =
+    self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode, responseId)
 
-  proc updateBurnFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
-    self.burnFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
+  proc updateBurnFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int, responseId: string) =
+    self.burnFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode, responseId)
 
-  proc updateSelfDestructFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
-    self.selfDestructFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
+  proc updateSelfDestructFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int, responseId: string) =
+    self.selfDestructFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode, responseId)
 
   proc updateAirdropFees*(self: View, args: JsonNode) =
     self.airdropFeesUpdated($args)
