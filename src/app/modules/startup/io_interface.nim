@@ -115,6 +115,9 @@ method setSelectedLoginAccount*(self: AccessInterface, item: login_acc_item.Item
 method onNodeLogin*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onProfileConverted*(self: AccessInterface, success: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method emitAccountLoginError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

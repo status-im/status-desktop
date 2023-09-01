@@ -391,21 +391,21 @@ proc verifyPassword*(self: Controller, password: string): bool =
     return
   return self.accountsService.verifyPassword(password)
 
-proc convertSelectedKeyPairToKeycardAccount*(self: Controller, keycardUid: string, password: string) =
+proc convertRegularProfileKeypairToKeycard*(self: Controller, keycardUid: string, currentPassword: string) =
   if not serviceApplicable(self.accountsService):
     return
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  self.accountsService.convertToKeycardAccount(keycardUid, currentPassword = password,
+  self.accountsService.convertRegularProfileKeypairToKeycard(keycardUid, currentPassword = currentPassword,
     newPassword = acc.derivedAccounts.encryption.publicKey)
+
+proc convertKeycardProfileKeypairToRegular*(self: Controller, seedPhrase: string, currentPassword: string, newPassword: string) =
+  if not serviceApplicable(self.accountsService):
+    return
+  self.accountsService.convertKeycardProfileKeypairToRegular(seedPhrase, currentPassword, newPassword)
 
 proc getConvertingProfileSuccess*(self: Controller): bool =
   return self.tmpConvertingProfileSuccess
-
-proc getLoggedInAccount*(self: Controller): AccountDto =
-  if not serviceApplicable(self.accountsService):
-    return
-  return self.accountsService.getLoggedInAccount()
 
 proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
   if not serviceApplicable(self.keycardService):
@@ -804,14 +804,12 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
     return
   if(not singletonInstance.userProfile.getUsingBiometricLogin()):
     return
-  let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.tryToObtainData(loggedInAccount.keyUid)
+  self.keychainService.tryToObtainData(singletonInstance.userProfile.getKeyUid())
 
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
   if not serviceApplicable(self.keychainService):
     return
-  let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.storeData(loggedInAccount.keyUid, password)
+  self.keychainService.storeData(singletonInstance.userProfile.getKeyUid(), password)
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.walletAccountService.getCurrencyFormat(symbol)
