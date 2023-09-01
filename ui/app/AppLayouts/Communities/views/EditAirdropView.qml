@@ -34,27 +34,41 @@ StatusScrollView {
 
     // A model containing accounts from which the fee can be paid:
     required property var accountsModel
-
-    // JS object specifing fees for the airdrop operation, should be set to
-    // provide response to airdropFeesRequested signal.
-    //
-    // The expected structure is as follows:
-    // {
-    //    fees: [{
-    //      ethFee: {CurrencyAmount JSON},
-    //      fiatFee: {CurrencyAmount JSON},
-    //      contractUniqueKey: string,
-    //      errorCode: ComputeFeeErrorCode (int)
-    //    }],
-    //    totalEthFee: {CurrencyAmount JSON},
-    //    totalFiatFee: {CurrencyAmount JSON},
-    //    errorCode: ComputeFeeErrorCode (int)
-    // }
-    property var airdropFees: null
+ 
+    // Text to display as total fee
+    required property string totalFeeText
+    // Text to display in case of error
+    required property string feeErrorText
+    // Array containing the fees for each token
+    // [{contractUniqueKey: string, feeText: string}]
+    required property var feesPerSelectedContract
+    // Bool property indicating whether the fees are available
+    required property bool feesAvailable
 
     property int viewWidth: 560 // by design
 
     readonly property var selectedHoldingsModel: ListModel {}
+    // Array containing the contract keys and amounts of the tokens to be airdropped
+    readonly property alias selectedContractKeysAndAmounts: d.selectedContractKeysAndAmounts
+    // Array containing the addresses to which the tokens will be airdropped
+    readonly property alias selectedAddressesToAirdrop: d.selectedAddressesToAirdrop
+    // The address of the account from which the fee will be paid
+    readonly property alias selectedFeeAccount: d.selectedFeeAccount
+    // Bool property indicating whether the fees are shown
+    readonly property bool showingFees: d.showFees
+
+    onFeesPerSelectedContractChanged: {
+        feesModel.clear()
+        feesPerSelectedContract.forEach(entry => {
+            feesModel.append({
+                contractUniqueKey: entry.contractUniqueKey,
+                title: qsTr("Airdrop %1 on %2")
+                                    .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "symbol"))
+                                    .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "networkText")),
+                feeText: entry.feeText
+            })
+        })
+    }
 
     ModelChangeTracker {
         id: holdingsModelTracker
@@ -80,19 +94,11 @@ StatusScrollView {
 
     signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
 
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses, string feeAccountAddress)
-
     signal navigateToMintTokenSettings(bool isAssetType)
 
     function selectToken(key, amount, type) {
         if(selectedHoldingsModel)
             selectedHoldingsModel.clear()
-
-        const tokenModel = type === Constants.TokenType.ERC20 ?
-                             root.assetsModel : root.collectiblesModel
-
-        const modelItem = PermissionsHelpers.getTokenByKey(
-                            tokenModel, key)
 
         const entry = d.prepareEntry(key, amount, type)
         entry.valid = true
@@ -103,51 +109,6 @@ StatusScrollView {
         addresses.addAddresses(_addresses)
     }
 
-    onAirdropFeesChanged: {
-        if (root.airdropFees === null)
-            return
-
-        const fees = root.airdropFees.fees
-        const errorCode = root.airdropFees.errorCode
-
-        function buildFeeString(ethFee, fiatFee) {
-            return `${LocaleUtils.currencyAmountToLocaleString(ethFee)} (${LocaleUtils.currencyAmountToLocaleString(fiatFee)})`
-        }
-
-        d.feesError = ""
-        d.totalFee = ""
-
-        if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
-            d.feesError = qsTr("Infura error")
-            return
-        }
-
-        if (errorCode === Constants.ComputeFeeErrorCode.Success ||
-                errorCode === Constants.ComputeFeeErrorCode.Balance) {
-            fees.forEach(fee => {
-                const idx = ModelUtils.indexOf(
-                                 feesModel, "contractUniqueKey",
-                                 fee.contractUniqueKey)
-
-                feesModel.set(idx, {
-                    feeText: buildFeeString(fee.ethFee, fee.fiatFee)
-                })
-            })
-
-            d.totalFee = buildFeeString(
-                        root.airdropFees.totalEthFee,
-                        root.airdropFees.totalFiatFee)
-
-            if (errorCode === Constants.ComputeFeeErrorCode.Balance) {
-                d.feesError = qsTr("Your account does not have enough ETH to pay the gas fee for this airdrop. Try adding some ETH to your account.")
-            }
-
-            return
-        }
-
-        d.feesError = qsTr("Unknown error")
-    }
-
     QtObject {
         id: d
 
@@ -155,25 +116,32 @@ StatusScrollView {
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
 
-        property string feesError
-        property string totalFee
-
-        readonly property bool isFeeLoading:
-            root.airdropFees === null ||
-            (root.airdropFees.errorCode !== Constants.ComputeFeeErrorCode.Success &&
-             root.airdropFees.errorCode !== Constants.ComputeFeeErrorCode.Balance)
-
         readonly property bool showFees: root.selectedHoldingsModel.count > 0
                                          && airdropRecipientsSelector.valid
                                          && airdropRecipientsSelector.count > 0
 
-        readonly property int totalRevision: holdingsModelTracker.revision
-                                             + addressesModelTracker.revision
-                                             + membersModelTracker.revision
-                                             + feesBox.accountsSelector.currentIndex
-                                             + (d.showFees ? 1 : 0)
+        readonly property var selectedContractKeysAndAmounts: {
+            //Depedencies:
+            root.selectedHoldingsModel
+            holdingsModelTracker.revision
 
-        onTotalRevisionChanged: Qt.callLater(() => d.resetFees())
+            return ModelUtils.modelToArray(
+                                    root.selectedHoldingsModel,
+                                    ["contractUniqueKey", "amount"])
+        }
+
+        readonly property var selectedAddressesToAirdrop: {
+            //Dependecies:
+            addresses
+            addressesModelTracker.revision
+
+            return ModelUtils.modelToArray(
+                                 addresses, ["address"]).map(e => e.address)
+                                 .concat([...selectedKeysFilter.keys])
+        }
+
+        readonly property string selectedFeeAccount: ModelUtils.get(root.accountsModel,
+                                                        feesBox.accountIndex).address
 
         function prepareEntry(key, amount, type) {
             const tokenModel = type === Constants.TokenType.ERC20
@@ -198,61 +166,6 @@ StatusScrollView {
                 accountName: modelItem.accountName,
                 symbol: modelItem.symbol
             }
-        }
-
-        function rebuildFeesModel() {
-            feesModel.clear()
-
-            const airdropTokens = ModelUtils.modelToArray(
-                                    root.selectedHoldingsModel,
-                                    ["contractUniqueKey", "accountName",
-                                     "symbol", "amount", "tokenText",
-                                     "networkText"])
-
-            airdropTokens.forEach(entry => {
-                feesModel.append({
-                    contractUniqueKey: entry.contractUniqueKey,
-                    title: qsTr("Airdrop %1 on %2")
-                                     .arg(entry.symbol)
-                                     .arg(entry.networkText),
-                    feeText: ""
-                })
-            })
-        }
-
-        function requestFees() {
-            const airdropTokens = ModelUtils.modelToArray(
-                                    root.selectedHoldingsModel,
-                                    ["contractUniqueKey", "amount"])
-
-            const contractKeysAndAmounts = airdropTokens.map(item => ({
-                amount: item.amount,
-                contractUniqueKey: item.contractUniqueKey
-            }))
-            const addressesArray = ModelUtils.modelToArray(
-                                     addresses, ["address"]).map(e => e.address)
-            
-            const airdropAddresses = [...selectedKeysFilter.keys]
-
-            const accountItem = ModelUtils.get(root.accountsModel,
-                                               feesBox.accountIndex)
-
-            airdropFeesRequested(contractKeysAndAmounts, addressesArray.concat(airdropAddresses),
-                                 accountItem.address)
-        }
-
-        function resetFees() {
-            root.airdropFees = null
-            d.feesError = ""
-            d.totalFee = ""
-
-            if (!d.showFees) {
-                feesModel.clear()
-                return
-            }
-
-            d.rebuildFeesModel()
-            d.requestFees()
         }
     }
 
@@ -622,10 +535,10 @@ StatusScrollView {
             model: feesModel
             accountsSelector.model: root.accountsModel
 
-            totalFeeText: d.totalFee
+            totalFeeText: root.totalFeeText
             placeholderText: qsTr("Add valid “What” and “To” values to see fees")
 
-            accountErrorText: d.feesError
+            accountErrorText: root.feeErrorText
         }
 
         WarningPanel {
@@ -646,7 +559,7 @@ StatusScrollView {
             Layout.fillWidth: true
             Layout.topMargin: Style.current.bigPadding
             text: qsTr("Create airdrop")
-            enabled: root.isFullyFilled && !d.isFeeLoading && d.feesError === ""
+            enabled: root.isFullyFilled && root.feesAvailable && root.feeErrorText === ""
 
             onClicked: {
                 const accountItem = ModelUtils.get(root.accountsModel,
@@ -666,8 +579,8 @@ StatusScrollView {
 
             model: feesModel
 
-            totalFeeText: d.totalFee
-            errorText: d.feesError
+            totalFeeText: root.totalFeeText
+            errorText: root.feeErrorText
 
             onOpened: {
                 const title1 = qsTr("Sign transaction - Airdrop %n token(s)", "",
@@ -676,8 +589,6 @@ StatusScrollView {
                                     addresses.count + airdropRecipientsSelector.membersModel.count)
 
                 title = `${title1} ${title2}`
-
-                d.resetFees()
             }
 
             onSignTransactionClicked: {

@@ -104,8 +104,6 @@ SplitView {
                 assetsModel: AssetsModel {}
                 collectiblesModel: ListModel {}
 
-                accountsModel: ListModel {}
-
                 CollectiblesModel {
                     id: collectiblesModel
                 }
