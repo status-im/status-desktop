@@ -5,11 +5,22 @@ import subprocess
 import time
 
 import allure
+import psutil
 
 import configs
 from configs.system import IS_WIN
 
 _logger = logging.getLogger(__name__)
+
+
+def find_process_by_port(port: int) -> int:
+    for proc in psutil.process_iter():
+        try:
+            for conns in proc.connections(kind='inet'):
+                if conns.laddr.port == port:
+                    return proc.pid
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
 
 
 @allure.step('Kill process')
