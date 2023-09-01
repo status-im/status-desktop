@@ -266,30 +266,6 @@ proc init*(self: Controller) =
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
 
-  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactUpdated(args.contactId)
-
-  self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
-    let args = ContactsStatusUpdatedArgs(e)
-    self.delegate.contactsStatusUpdated(args.statusUpdates)
-
-  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactUpdated(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
-
-  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
-
-  self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
-
   self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
     self.delegate.mnemonicBackedUp()
 
