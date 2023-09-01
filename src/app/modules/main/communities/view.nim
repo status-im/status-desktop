@@ -1,7 +1,7 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item,
+import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,
   token_permissions_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
