@@ -10,7 +10,7 @@ class ChannelPopup(BasePopup):
     def __init__(self):
         super(ChannelPopup, self).__init__()
         self._name_text_edit = TextEdit('createOrEditCommunityChannelNameInput_TextEdit')
-        self._description_text_sdit = TextEdit('createOrEditCommunityChannelDescriptionInput_TextEdit')
+        self._description_text_edit = TextEdit('createOrEditCommunityChannelDescriptionInput_TextEdit')
         self._save_create_button = Button('createOrEditCommunityChannelBtn_StatusButton')
         self._emoji_button = Button('createOrEditCommunityChannel_EmojiButton')
 
@@ -23,7 +23,7 @@ class NewChannelPopup(ChannelPopup):
 
     def create(self, name: str, description: str, emoji: str = None):
         self._name_text_edit.text = name
-        self._description_text_sdit.text = description
+        self._description_text_edit.text = description
         if emoji is not None:
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)
@@ -36,7 +36,7 @@ class EditChannelPopup(ChannelPopup):
     def edit(self, name: str, description: str = None, emoji: str = None):
         self._name_text_edit.text = name
         if description is not None:
-            self._description_text_sdit.text = description
+            self._description_text_edit.text = description
         if emoji is not None:
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)

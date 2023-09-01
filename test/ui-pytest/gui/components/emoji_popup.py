@@ -17,7 +17,7 @@ class EmojiPopup(BasePopup):
         self._search_text_edit.wait_until_appears(timeout_msec)
         return self
 
-    @allure.step('Select emojy')
+    @allure.step('Select emoji')
     def select(self, name: str):
         self._search_text_edit.text = name
         self._emoji_item.real_name['objectName'] = 'statusEmoji_' + name
