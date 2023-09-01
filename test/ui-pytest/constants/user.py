@@ -10,3 +10,6 @@ user_account_three = UserAccount('Nervous', 'TesTEr16843/!@00', [])
 
 
 UserCommunity = namedtuple('Community', ['name', 'description', 'members', 'image'])
+
+
+account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
