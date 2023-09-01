@@ -226,5 +226,7 @@
         <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
         <file>StatusQ/Components/StatusInfoBoxPanel.qml</file>
         <file>StatusQ/Controls/StatusWarningBox.qml</file>
+        <file>StatusQ/Core/Utils/Subscription.qml</file>
+        <file>StatusQ/Core/Utils/SubscriptionBroker.qml</file>
     </qresource>
 </RCC>

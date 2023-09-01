@@ -20,7 +20,6 @@ StackView {
     required property bool isTokenMasterOwner
     required property bool isAdmin
     readonly property bool isPrivilegedTokenOwnerProfile: root.isOwner || root.isTokenMasterOwner
-    readonly property alias airdropFeesSubscriber: d.aidropFeeSubscriber
 
     // Owner and TMaster token related properties:
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
@@ -38,8 +37,8 @@ StackView {
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
     signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses, string feeAccountAddress)
     signal navigateToMintTokenSettings(bool isAssetType)
+    signal registerAirdropFeeSubscriber(var feeSubscriber)
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -132,7 +131,6 @@ StackView {
                 Component.onCompleted: {
                     d.selectToken.connect(view.selectToken)
                     d.addAddresses.connect(view.addAddresses)
-                    d.aidropFeeSubscriber = feesSubscriber
                 }
 
                 AirdropFeesSubscriber {
@@ -142,6 +140,7 @@ StackView {
                     contractKeysAndAmounts: view.selectedContractKeysAndAmounts
                     addressesToAirdrop: view.selectedAddressesToAirdrop
                     feeAccountAddress: view.selectedFeeAccount
+                    Component.onCompleted: root.registerAirdropFeeSubscriber(feesSubscriber)
                 }
             }
         }

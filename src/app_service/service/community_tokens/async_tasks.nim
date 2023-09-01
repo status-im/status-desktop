@@ -100,8 +100,9 @@ const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
       "gasTable": tableToJsonArray(gasTable),
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
+      "error": "",
       "requestId": arg.requestId,
-      "error": "" })
+    })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
@@ -130,8 +131,9 @@ const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       "gasTable": tableToJsonArray(gasTable),
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
-      "requestId": arg.requestId,
-      "error": "" })
+      "error": "",
+      "requestId": arg.requestId
+    })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
@@ -163,15 +165,16 @@ const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
         arg.walletAddresses, collectibleAndAmount.amount).result.getInt
       gasTable[(chainId, collectibleAndAmount.communityToken.address)] = gas
     arg.finish(%* {
-      "requestId": arg.requestId,
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
       "addressFrom": arg.addressFrom,
-      "error": "" })
+      "error": "",
+      "requestId": arg.requestId
+    })
   except Exception as e:
     let output = %* {
-      "requestId": arg.requestId,
-      "error": e.msg
+      "error": e.msg,
+      "requestId": arg.requestId
     }
     arg.finish(output)
 

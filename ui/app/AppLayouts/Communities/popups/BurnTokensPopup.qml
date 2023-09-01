@@ -27,6 +27,9 @@ StatusDialog {
     property url tokenSource
     property string chainName
 
+    readonly property alias amountToBurn: d.amountToBurn
+    readonly property alias selectedAccountAddress: d.accountAddress
+    
     // Fees related properties:
     property string feeText
     property string feeErrorText: ""
@@ -38,7 +41,6 @@ StatusDialog {
 
     signal burnClicked(string burnAmount, string accountAddress)
     signal cancelClicked
-    signal burnFeesRequested(string burnAmount, string accountAddress)
 
     QtObject {
         id: d
@@ -51,6 +53,8 @@ StatusDialog {
             LocaleUtils.numberToLocaleString(remainingTokensFloat)
 
         property string accountAddress
+        property string amountToBurn: !isFormValid ? "" :
+                                        specificAmountButton.checked ? amountInput.amount : root.remainingTokens
 
         readonly property bool isFeeError: root.feeErrorText !== ""
 
@@ -119,7 +123,7 @@ StatusDialog {
                     font.pixelSize: Style.current.primaryTextFontSize
                     ButtonGroup.group: radioGroup
 
-                    onToggled: if(checked) amountToBurnInput.forceActiveFocus()
+                    onToggled: if(checked) amountInput.forceActiveFocus()
                 }
 
                 AmountInput {
@@ -164,18 +168,6 @@ StatusDialog {
 
         FeesBox {
             id: feesBox
-
-            readonly property bool triggerFeeReevaluation: {
-                specificAmountButton.checked
-                amountInput.amount
-                feesBox.accountsSelector.currentIndex
-
-                if (root.opened)
-                    requestFeeDelayTimer.restart()
-
-                return true
-            }
-
             Layout.fillWidth: true
 
             placeholderText: qsTr("Choose number of tokens to burn to see gas fees")
@@ -193,24 +185,6 @@ StatusDialog {
                                accountsSelector.currentIndex)
 
                 d.accountAddress = item.address
-            }
-
-            Timer {
-                id: requestFeeDelayTimer
-
-                interval: 500
-                onTriggered: {
-                    if (specificAmountButton.checked) {
-                        if (!amountInput.valid)
-                            return
-
-                        root.burnFeesRequested(amountInput.amount,
-                                               d.accountAddress)
-                    } else {
-                        root.burnFeesRequested(root.remainingTokens,
-                                               d.accountAddress)
-                    }
-                }
             }
 
             QtObject {

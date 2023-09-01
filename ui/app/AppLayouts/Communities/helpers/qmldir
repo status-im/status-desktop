@@ -1,2 +1,8 @@
 singleton PermissionsHelpers 1.0 PermissionsHelpers.qml
+AirdropFeesSubscriber 1.0 AirdropFeesSubscriber.qml
+BurnTokenFeesSubscriber 1.0 BurnTokenFeesSubscriber.qml
+DeployFeesSubscriber 1.0 DeployFeesSubscriber.qml
+SelfDestructFeesSubscriber 1.0 SelfDestructFeesSubscriber.qml
+SingleFeeSubscriber 1.0 SingleFeeSubscriber.qml
 TokenObject 1.0 TokenObject.qml
+TransactionFeesBroker 1.0 TransactionFeesBroker.qml

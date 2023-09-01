@@ -59,13 +59,18 @@ StatusScrollView {
 
     onFeesPerSelectedContractChanged: {
         feesModel.clear()
-        feesPerSelectedContract.forEach(entry => {
+        
+        let feeSource = feesPerSelectedContract
+        if(!feeSource || feeSource.length === 0) // if no fees are available, show the placeholder text based on selection
+            feeSource = ModelUtils.modelToArray(root.selectedHoldingsModel, ["contractUniqueKey"])
+
+        feeSource.forEach(entry => {
             feesModel.append({
                 contractUniqueKey: entry.contractUniqueKey,
                 title: qsTr("Airdrop %1 on %2")
                                     .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "symbol"))
                                     .arg(ModelUtils.getByKey(root.selectedHoldingsModel, "contractUniqueKey", entry.contractUniqueKey, "networkText")),
-                feeText: entry.feeText
+                feeText: entry.feeText ?? ""
             })
         })
     }

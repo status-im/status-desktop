@@ -30,13 +30,12 @@ SplitView {
     }
 
     Timer {
-        id: feesTimer
-
-        interval: 1000
-
-        onTriggered: {
-            panel.isFeeLoading = false
-            panel.feeText = "0,0002 ETH (123,15 USD)"
+        id: timer
+        function delay(delayTime, cb) {
+            timer.interval = delayTime;
+            timer.repeat = false;
+            timer.triggered.connect(cb);
+            timer.start();
         }
     }
 
@@ -47,6 +46,24 @@ SplitView {
 
         MintTokensSettingsPanel {
             id: panel
+
+            readonly property var singleTransactionFee: {
+                "ethCurrency": {
+                    "objectName":"",
+                    "amount":0.000007900500349933282,
+                    "symbol":"ETH",
+                    "displayDecimals":4,
+                    "stripTrailingZeroes":false
+                },
+                "fiatCurrency": {
+                    "objectName":"",
+                    "amount":0.012852533720433712,
+                    "symbol":"USD",
+                    "displayDecimals":2,
+                    "stripTrailingZeroes":false
+                },
+                "errorCode":0
+            }
 
             MintedTokensModel {
                 id: mintedTokensModel
@@ -105,14 +122,9 @@ SplitView {
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + tokenKey)
-
-            onDeployFeesRequested: {
-                feeText = ""
-                feeErrorText = ""
-                isFeeLoading = true
-
-                feesTimer.restart()
-            }
+            onRegisterDeployFeesSubscriber: timer.delay(2000, () => feeSubscriber.feesResponse = panel.singleTransactionFee)
+            onRegisterSelfDestructFeesSubscriber: timer.delay(2000, () => feeSubscriber.feesResponse = panel.singleTransactionFee)
+            onRegisterBurnTokenFeesSubscriber: timer.delay(2000, () => feeSubscriber.feesResponse = panel.singleTransactionFee)
         }
     }
 
