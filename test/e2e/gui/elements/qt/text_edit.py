@@ -26,8 +26,9 @@ class TextEdit(QObject):
         return self
 
     @allure.step('Clear {0}')
-    def clear(self):
+    def clear(self, verify: bool = True):
         self.object.clear()
-        assert driver.waitFor(lambda: not self.text), \
+        if verify:
+            assert driver.waitFor(lambda: not self.text), \
             f'Clear text field failed, value in field: "{self.text}"'
         return self
