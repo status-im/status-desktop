@@ -373,6 +373,8 @@ QtObject {
                     case Constants.keycardSharedState.migrateKeypairToApp:
                     case Constants.keycardSharedState.enterSeedPhrase:
                     case Constants.keycardSharedState.wrongSeedPhrase:
+                    case Constants.keycardSharedState.createPassword:
+                    case Constants.keycardSharedState.confirmPassword:
                         return true
                     }
                     break
@@ -471,6 +473,9 @@ QtObject {
 
                 case Constants.keycardSharedFlow.migrateFromKeycardToApp:
                     switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.biometrics:
+                        return qsTr("I prefer to use my password")
+
                     case Constants.keycardSharedState.keyPairMigrateSuccess:
                         if (!root.sharedKeycardModule.migratingProfileKeyPair())
                             return qsTr("Factory reset this Keycard")
@@ -594,8 +599,10 @@ QtObject {
                         return qsTr("Next")
 
                     case Constants.keycardSharedState.migratingKeypairToKeycard:
-                    case Constants.keycardSharedState.keyPairMigrateFailure:
                         return qsTr("Done")
+
+                    case Constants.keycardSharedState.keyPairMigrateFailure:
+                        return qsTr("Close app")
 
                     case Constants.keycardSharedState.keyPairMigrateSuccess:
                         if (root.sharedKeycardModule.migratingProfileKeyPair())
@@ -1019,8 +1026,17 @@ QtObject {
                     case Constants.keycardSharedState.migratingKeypairToApp:
                         return qsTr("Done")
 
+                    case Constants.keycardSharedState.createPassword:
+                        return qsTr("Create Password")
+
+                    case Constants.keycardSharedState.confirmPassword:
+                        return qsTr("Finalize Status Password Creation")
+
                     case Constants.keycardSharedState.keyPairMigrateFailure:
-                        return qsTr("Close")
+                        return qsTr("Close app")
+
+                    case Constants.keycardSharedState.biometrics:
+                        return qsTr("Yes, use Touch ID")
 
                     case Constants.keycardSharedState.keyPairMigrateSuccess:
                         if (root.sharedKeycardModule.migratingProfileKeyPair())
@@ -1174,6 +1190,8 @@ QtObject {
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
                     case Constants.keycardSharedState.enterSeedPhrase:
+                    case Constants.keycardSharedState.createPassword:
+                    case Constants.keycardSharedState.confirmPassword:
                         return root.primaryButtonEnabled
                     }
                     break

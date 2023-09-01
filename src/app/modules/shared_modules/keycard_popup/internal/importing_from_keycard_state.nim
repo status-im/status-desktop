@@ -19,16 +19,16 @@ proc addAccountsToWallet(self: ImportingFromKeycardState, controller: Controller
       address: account.getAddress(),
       keyUid: kpForProcessing.getKeyUid(),
       publicKey: account.getPubKey(),
-      walletType: SEED, 
-      path: account.getPath(), 
+      walletType: SEED,
+      path: account.getPath(),
       name: account.getName(),
-      colorId: account.getColorId(), 
+      colorId: account.getColorId(),
       emoji: account.getEmoji()
     ))
   return controller.addNewSeedPhraseKeypair(
     seedPhrase = "",
-    keyUid = kpForProcessing.getKeyUid(), 
-    keypairName = kpForProcessing.getName(), 
+    keyUid = kpForProcessing.getKeyUid(),
+    keypairName = kpForProcessing.getName(),
     rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
     accounts = walletAccounts
   )
@@ -49,7 +49,7 @@ method getNextPrimaryState*(self: ImportingFromKeycardState, controller: Control
     self.doMigration(controller)
     return nil
 
-method getNextSecondaryState*(self: ImportingFromKeycardState, controller: Controller): State =
+method getNextTertiaryState*(self: ImportingFromKeycardState, controller: Controller): State =
   if self.flowType == FlowType.ImportFromKeycard:
     if controller.getAddingMigratedKeypairSuccess():
       return createState(StateType.ImportingFromKeycardSuccess, self.flowType, nil)

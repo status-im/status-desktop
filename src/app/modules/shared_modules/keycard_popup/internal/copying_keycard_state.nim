@@ -31,13 +31,13 @@ method executePrePrimaryStateCommand*(self: CopyingKeycardState, controller: Con
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     self.buildKeypairAndAddToMigratedKeypairs(controller)
 
-method executePreSecondaryStateCommand*(self: CopyingKeycardState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process.
+method executePreTertiaryStateCommand*(self: CopyingKeycardState, controller: Controller) =
+  ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if controller.getAddingMigratedKeypairSuccess():
       self.runStoreMetadataFlow(controller)
 
-method getNextSecondaryState*(self: CopyingKeycardState, controller: Controller): State =
+method getNextTertiaryState*(self: CopyingKeycardState, controller: Controller): State =
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if not controller.getAddingMigratedKeypairSuccess():
       return createState(StateType.CopyingKeycardFailure, self.flowType, nil)

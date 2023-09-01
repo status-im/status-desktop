@@ -30,6 +30,9 @@ StatusListItem {
     property bool keyPairCardLocked: false
     property var keyPairAccounts
 
+    property bool displayAdditionalInfoForProfileKeypair: true
+    property string additionalInfoForProfileKeypair: qsTr("Moving this key pair will require you to use your Keycard to login")
+
     signal keyPairSelected()
     signal removeAccount(int index, string name)
     signal accountClicked(int index)
@@ -60,8 +63,8 @@ StatusListItem {
         return t
     }
 
-    beneathTagsTitle: root.keyPairType === Constants.keycard.keyPairType.profile?
-                          qsTr("Moving this key pair will require you to use your Keycard to login") :
+    beneathTagsTitle: root.keyPairType === Constants.keycard.keyPairType.profile && root.displayAdditionalInfoForProfileKeypair?
+                          root.additionalInfoForProfileKeypair :
                           !root.canBeSelected?
                               qsTranslate("", "Contains account(s) with Keycard incompatible derivation paths", root.keyPairAccounts.count.toString()) :
                               ""

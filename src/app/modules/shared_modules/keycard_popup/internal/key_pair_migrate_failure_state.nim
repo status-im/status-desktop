@@ -11,9 +11,19 @@ proc delete*(self: KeyPairMigrateFailureState) =
 method executePrePrimaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.MigrateFromKeycardToApp:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+      let profileMigrated = controller.getSelectedKeyPairIsProfile()
+      if not profileMigrated:
+        controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+        return
+      info "quit the app because of profile migration failure"
+      quit() # quit the app
 
 method executeCancelCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.MigrateFromKeycardToApp:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+      let profileMigrated = controller.getSelectedKeyPairIsProfile()
+      if not profileMigrated:
+        controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+        return
+      info "quit the app because of profile migration failure"
+      quit() # quit the app
