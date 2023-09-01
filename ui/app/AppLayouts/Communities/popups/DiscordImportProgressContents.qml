@@ -20,6 +20,8 @@ StatusScrollView {
 
     property var store
 
+    property bool importingSingleChannel
+
     signal close()
 
     enum ImportStatus {
@@ -36,9 +38,9 @@ StatusScrollView {
             visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings ||
                      d.status === DiscordImportProgressContents.ImportStatus.StoppedWithErrors
             type: StatusButton.Danger
-            text: qsTr("Delete community & restart import")
+            text: root.importingSingleChannel ? qsTr("Delete channel & restart import") : qsTr("Delete community & restart import")
             onClicked: {
-                // TODO display a confirmation and open CreateCommunityPopup again
+                // TODO display a confirmation and restart the whole flow
                 root.close()
             }
         },
@@ -68,10 +70,11 @@ StatusScrollView {
         StatusButton {
             visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedSuccessfully ||
                      d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
-            text: qsTr("Visit your new community")
+            text: root.importingSingleChannel ? qsTr("Visit your new channel") : qsTr("Visit your new community")
             onClicked: {
                 root.close()
-                root.store.setActiveCommunity(root.store.discordImportCommunityId)
+                if (!root.importingSingleChannel)
+                    root.store.setActiveCommunity(root.store.discordImportCommunityId)
             }
         }
     ]
@@ -85,11 +88,11 @@ StatusScrollView {
         readonly property var helperInfo: {
             "import.communityCreation": {
                 icon: "network",
-                text: qsTr("Setting up your community")
+                text: root.importingSingleChannel ? qsTr("Setting up your new channel") : qsTr("Setting up your community")
             },
             "import.channelsCreation": {
                 icon: "channel",
-                text: qsTr("Importing channels")
+                text: root.importingSingleChannel ? qsTr("Importing Discord channel") : qsTr("Importing channels")
             },
             "import.importMessages": {
                 icon: "receive",
@@ -101,7 +104,7 @@ StatusScrollView {
             },
             "import.initializeCommunity": {
                 icon: "communities",
-                text: qsTr("Initializing community")
+                text: root.importingSingleChannel ? qsTr("Initializing channel") : qsTr("Initializing community")
             }
         }
 
@@ -137,7 +140,7 @@ StatusScrollView {
             if (importStopped)
                 return ""
             if (progress <= 0.0)
-              return qsTr("Pending...")
+                return qsTr("Pending...")
 
             return qsTr("Importing from file %1 of %2...").arg(currentChunk).arg(totalChunksCount)
         }
@@ -279,17 +282,18 @@ StatusScrollView {
                 text: {
                     switch (d.status) {
                     case DiscordImportProgressContents.ImportStatus.InProgress:
-                        return qsTr("Importing ‘%1’ from Discord...").arg(root.store.discordImportCommunityName)
+                        return qsTr("Importing ‘%1’ from Discord...").arg(root.importingSingleChannel ? root.store.discordImportChannelName : root.store.discordImportCommunityName)
                     case DiscordImportProgressContents.ImportStatus.Stopped:
-                        return qsTr("Importing ‘%1’ from Discord stopped...").arg(root.store.discordImportCommunityName)
+                        return qsTr("Importing ‘%1’ from Discord stopped...").arg(root.importingSingleChannel ? root.store.discordImportChannelName : root.store.discordImportCommunityName)
                     case DiscordImportProgressContents.ImportStatus.StoppedWithErrors:
-                        return qsTr("Importing ‘%1’ stopped due to a critical issue...").arg(root.store.discordImportCommunityName)
+                        return qsTr("Importing ‘%1’ stopped due to a critical issue...").arg(root.importingSingleChannel ? root.store.discordImportChannelName : root.store.discordImportCommunityName)
                     case DiscordImportProgressContents.ImportStatus.CompletedWithWarnings:
-                        return qsTr("‘%1’ was imported with %n issue(s).", "", root.store.discordImportWarningsCount).arg(root.store.discordImportCommunityName)
+                        return qsTr("‘%1’ was imported with %n issue(s).", "", root.store.discordImportWarningsCount)
+                          .arg(root.importingSingleChannel ? root.store.discordImportChannelName : root.store.discordImportCommunityName)
                     case DiscordImportProgressContents.ImportStatus.CompletedSuccessfully:
-                        return qsTr("‘%1’ was successfully imported from Discord.").arg(root.store.discordImportCommunityName)
+                        return qsTr("‘%1’ was successfully imported from Discord.").arg(root.importingSingleChannel ? root.store.discordImportChannelName : root.store.discordImportCommunityName)
                     default:
-                        return qsTr("Your Discord community import is in progress...")
+                        return qsTr("Your Discord import is in progress...")
                     }
                 }
             }
@@ -329,7 +333,7 @@ StatusScrollView {
             wrapMode: Text.WordWrap
             font.pixelSize: 13
             text: d.status === DiscordImportProgressContents.ImportStatus.InProgress ?
-                      qsTr("This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the Community is ready for you.") :
+                      qsTr("This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the %1 is ready for you.").arg(root.importingSingleChannel ? qsTr("Channel") : qsTr("Community")) :
                       qsTr("If there were any issues with your import you can upload new JSON files via the community page at any time.")
         }
     }
@@ -339,13 +343,16 @@ StatusScrollView {
         ConfirmationDialog {
             id: cancelConfirmationPopup
             headerSettings.title: qsTr("Are you sure you want to cancel the import?")
-            confirmationText: qsTr("Your new Status community will be deleted and all information entered will be lost.")
+            confirmationText: qsTr("Your new Status %1 will be deleted and all information entered will be lost.").arg(root.importingSingleChannel ? qsTr("channel") : qsTr("community"))
             showCancelButton: true
             cancelBtnType: "default"
-            confirmButtonLabel: qsTr("Delete community")
-            cancelButtonLabel: qsTr("Continue importing")
+            confirmButtonLabel: root.importingSingleChannel ? qsTr("Delete channel & cancel import") : qsTr("Delete community")
+            cancelButtonLabel: root.importingSingleChannel ? qsTr("Cancel") : qsTr("Continue importing")
             onConfirmButtonClicked: {
-                root.store.requestCancelDiscordCommunityImport(root.store.discordImportCommunityId)
+                if (root.importingSingleChannel)
+                    root.store.requestCancelDiscordChannelImport(root.store.discordImportChannelName)
+                else
+                    root.store.requestCancelDiscordCommunityImport(root.store.discordImportCommunityId)
                 cancelConfirmationPopup.close()
                 root.close()
             }

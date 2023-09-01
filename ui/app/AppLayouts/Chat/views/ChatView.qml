@@ -30,6 +30,7 @@ StatusSectionLayout {
 
     property RootStore rootStore
     property var createChatPropertiesStore
+    property var communitiesStore
     property var sectionItemModel
 
     property var emojiPopup
@@ -238,6 +239,7 @@ StatusSectionLayout {
             communitySectionModule: root.rootStore.chatCommunitySectionModule
             communityData: sectionItemModel
             store: root.rootStore
+            communitiesStore: root.communitiesStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
             onInfoButtonClicked: root.communityInfoButtonClicked()

@@ -742,15 +742,18 @@ Item {
                     readonly property int warnings: appMain.communitiesStore.discordImportWarningsCount
                     readonly property string communityId: appMain.communitiesStore.discordImportCommunityId
                     readonly property string communityName: appMain.communitiesStore.discordImportCommunityName
+                    readonly property string channelId: appMain.communitiesStore.discordImportChannelId
+                    readonly property string channelName: appMain.communitiesStore.discordImportChannelName
+                    readonly property string channelOrCommunityName: channelName || communityName
 
                     active: !cancelled && (inProgress || finished || stopped)
                     type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
                     text: {
                         if (finished || stopped) {
                             if (errors)
-                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(communityName)
+                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(channelOrCommunityName)
 
-                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
                             if (warnings)
                                 result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
                             else
@@ -759,7 +762,7 @@ Item {
                             return result
                         }
                         if (inProgress) {
-                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
                             if (warnings)
                                 result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
                             else
@@ -770,16 +773,17 @@ Item {
 
                         return ""
                     }
-                    onLinkActivated: popups.openDiscordImportProgressPopup()
+                    onLinkActivated: popups.openDiscordImportProgressPopup(!!channelId)
                     progressValue: progress
                     closeBtnVisible: finished || stopped
-                    buttonText: finished && !errors ? qsTr("Visit your Community") : ""
+                    buttonText: finished && !errors ? !!channelId ? qsTr("Visit your new channel") : qsTr("Visit your Community") : ""
                     onClicked: function() {
-                        appMain.communitiesStore.setActiveCommunity(communityId)
+                        if (!!channelId)
+                            rootStore.setActiveSectionChat(communityId, channelId)
+                        else
+                            appMain.communitiesStore.setActiveCommunity(communityId)
                     }
-                    onCloseClicked: {
-                        hide();
-                    }
+                    onCloseClicked: hide()
                 }
 
                 ModuleWarning {
@@ -1247,6 +1251,7 @@ Item {
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
+                                communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
                                 rootStore: ChatStores.RootStore {
