@@ -47,6 +47,8 @@ QtObject:
       discordDataExtractionInProgress: bool
       discordImportCommunityId: string
       discordImportCommunityName: string
+      discordImportChannelId: string
+      discordImportChannelName: string
       discordImportCommunityImage: string
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
@@ -481,6 +483,8 @@ QtObject:
     self.setDiscordImportWarningsCount(0)
     self.setDiscordImportCommunityId("")
     self.setDiscordImportCommunityName("")
+    self.discordImportChannelId = ""
+    self.discordImportChannelName = ""
     self.setDiscordImportCommunityImage("")
     self.setDiscordImportHasCommunityImage(false)
     self.setDiscordImportInProgress(false)
@@ -608,6 +612,30 @@ QtObject:
       let item = self.discordChannelsModel.getItem(id)
       if self.discordChannelsModel.allChannelsByCategoryUnselected(item.getCategoryId()):
         self.discordCategoriesModel.unselectItem(item.getCategoryId())
+
+  proc discordImportChannelChanged*(self: View) {.signal.}
+
+  proc toggleOneDiscordChannel*(self: View, id: string) {.slot.} =
+    let item = self.discordChannelsModel.getItem(id)
+    self.discordChannelsModel.selectOneItem(id)
+    self.discordCategoriesModel.selectOneItem(item.getCategoryId())
+    self.discordImportChannelId = id
+    self.discordImportChannelName = item.getName()
+    self.discordImportChannelChanged()
+
+  proc getDiscordImportChannelId(self: View): string {.slot.} =
+    return self.discordImportChannelId
+
+  QtProperty[string] discordImportChannelId:
+    read = getDiscordImportChannelId
+    notify = discordImportChannelChanged
+
+  proc getDiscordImportChannelName(self: View): string {.slot.} =
+    return self.discordImportChannelName
+
+  QtProperty[string] discordImportChannelName:
+    read = getDiscordImportChannelName
+    notify = discordImportChannelChanged
 
   proc tokenListModel*(self: View): TokenListModel =
     result = self.tokenListModel

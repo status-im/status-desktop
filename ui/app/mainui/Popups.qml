@@ -244,8 +244,8 @@ QtObject {
         openPopup(editSharedAddressesPopupComponent, {communityId: communityId, isEditMode: true})
     }
 
-    function openDiscordImportProgressPopup() {
-        openPopup(discordImportProgressDialog)
+    function openDiscordImportProgressPopup(importingSingleChannel) {
+        openPopup(discordImportProgressDialog, {importingSingleChannel: importingSingleChannel})
     }
 
     function openRemoveContactConfirmationPopup(displayName, publicKey) {

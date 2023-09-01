@@ -724,7 +724,7 @@ QtObject:
       return
 
     if not self.communities.hasKey(communityId):
-      error "requested community doesn't exists", communityId
+      error "requested community doesn't exist", communityId
       return
 
     return self.communities[communityId]
@@ -1004,10 +1004,10 @@ QtObject:
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, "Error creating community: " & error.message)
+        raise newException(RpcException, "Error importing discord community: " & error.message)
 
     except Exception as e:
-      error "Error creating community", msg = e.msg
+      error "Error importing discord community", msg = e.msg
 
   proc createCommunity*(
       self: Service,
@@ -1941,7 +1941,7 @@ QtObject:
     try:
       discard status_go.requestCancelDiscordCommunityImport(communityId)
     except Exception as e:
-      error "Error extracting discord channels and categories", msg = e.msg
+      error "Error canceling discord community import", msg = e.msg
 
   proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
     try:

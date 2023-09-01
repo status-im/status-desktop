@@ -36,6 +36,7 @@ Item {
     property var emojiPopup
 
     property var store
+    property var communitiesStore
     property bool hasAddedContacts: false
     property var communityData
 
@@ -174,6 +175,13 @@ Item {
         }
 
         StatusAction {
+            objectName: "importCommunityChannelBtn"
+            text: qsTr("Create channel via Discord import")
+            icon.name: "download"
+            onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
+        }
+
+        StatusAction {
             objectName: "createCommunityCategoryBtn"
             text: qsTr("Create category")
             icon.name: "channel-category"
@@ -246,6 +254,13 @@ Item {
                     icon.name: "channel"
                     enabled: root.isSectionAdmin
                     onTriggered: Global.openPopup(createChannelPopup)
+                }
+
+                StatusAction {
+                    objectName: "importCommunityChannelBtn"
+                    text: qsTr("Create channel via Discord import")
+                    icon.name: "download"
+                    onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
                 }
 
                 StatusAction {
@@ -523,7 +538,7 @@ Item {
     Component {
         id: createChannelPopup
         CreateChannelPopup {
-            anchors.centerIn: parent
+            communitiesStore: root.communitiesStore
             emojiPopup: root.emojiPopup
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
                     chCategoryId) {

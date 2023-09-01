@@ -20,6 +20,7 @@ StackLayout {
     property var createChatPropertiesStore
     readonly property var contactsStore: rootStore.contactsStore
     readonly property var permissionsStore: rootStore.permissionsStore
+    property var communitiesStore
 
     property var sectionItemModel
 
@@ -118,6 +119,7 @@ StackLayout {
             contactsStore: root.contactsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
+            communitiesStore: root.communitiesStore
             sectionItemModel: root.sectionItemModel
             amIMember: chatItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
