@@ -24,7 +24,7 @@ QtObject:
       ephemeralNotificationModelVariant: QVariant
       tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
 
-  proc activeSectionChanged*(self:View) {.signal.}
+  proc activeSectionSet*(self: View, item: SectionItem)
 
   proc delete*(self: View) =
     self.model.delete
@@ -61,7 +61,7 @@ QtObject:
   proc editItem*(self: View, item: SectionItem) =
     self.model.editItem(item)
     if (self.activeSection.getId() == item.id):
-      self.activeSection.setActiveSectionData(item)
+      self.activeSectionSet(item)
 
   proc model*(self: View): SectionModel =
     return self.model
@@ -127,6 +127,8 @@ QtObject:
 
   proc activeSection*(self: View): SectionDetails =
     return self.activeSection
+
+  proc activeSectionChanged*(self:View) {.signal.}
 
   proc getActiveSection(self: View): QVariant {.slot.} =
     return self.activeSectionVariant
