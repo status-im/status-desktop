@@ -31,6 +31,8 @@ proc isPredefinedKeycardDataFlagSet*(currValue: string, value: PredefinedKeycard
     return (currNum and value.int) == value.int
 
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
+  if stateToBeCreated == StateType.Biometrics:
+    return newBiometricsState(flowType, backState)
   if stateToBeCreated == StateType.BiometricsPasswordFailed:
     return newBiometricsPasswordFailedState(flowType, backState)
   if stateToBeCreated == StateType.BiometricsPinFailed:
@@ -45,12 +47,16 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newChangingKeycardPinState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPuk:
     return newChangingKeycardPukState(flowType, backState)
+  if stateToBeCreated == StateType.ConfirmPassword:
+    return newConfirmPasswordState(flowType, backState)
   if stateToBeCreated == StateType.CopyToKeycard:
     return newCopyToKeycardState(flowType, backState)
   if stateToBeCreated == StateType.CopyingKeycard:
     return newCopyingKeycardState(flowType, backState)
   if stateToBeCreated == StateType.CreatePairingCode:
     return newCreatePairingCodeState(flowType, backState)
+  if stateToBeCreated == StateType.CreatePassword:
+    return newCreatePasswordState(flowType, backState)
   if stateToBeCreated == StateType.CreatePin:
     return newCreatePinState(flowType, backState)
   if stateToBeCreated == StateType.CreatePuk:
@@ -199,3 +205,13 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newWrongSeedPhraseState(flowType, backState)
 
   error "No implementation available for state ", state=stateToBeCreated
+
+proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State =
+  if currentState.isNil:
+    return nil
+  var state = currentState
+  while not state.isNil:
+    if state.stateType == targetedStateType:
+      return state
+    state = state.getBackState
+  return nil

@@ -111,6 +111,9 @@ method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
 method onSecondaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onTertiaryActionClicked*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -127,6 +130,12 @@ method setPuk*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPassword*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setNewPassword*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getNewPassword*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeycardName*(self: AccessInterface, value: string) {.base.} =

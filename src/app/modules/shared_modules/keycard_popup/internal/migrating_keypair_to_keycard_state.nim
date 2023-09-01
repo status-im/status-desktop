@@ -40,8 +40,8 @@ method executePrePrimaryStateCommand*(self: MigratingKeypairToKeycardState, cont
       return
     self.doMigration(controller)
 
-method executePreSecondaryStateCommand*(self: MigratingKeypairToKeycardState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process.
+method executePreTertiaryStateCommand*(self: MigratingKeypairToKeycardState, controller: Controller) =
+  ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.SetupNewKeycard:
     if controller.getSelectedKeyPairIsProfile():
       if not self.authenticationDone:
@@ -63,7 +63,7 @@ method executePreSecondaryStateCommand*(self: MigratingKeypairToKeycardState, co
         if self.addingMigratedKeypairOk:
           self.runStoreMetadataFlow(controller)
 
-method getNextSecondaryState*(self: MigratingKeypairToKeycardState, controller: Controller): State =
+method getNextTertiaryState*(self: MigratingKeypairToKeycardState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
     if controller.getSelectedKeyPairIsProfile():
       if self.authenticationDone and not self.authenticationOk or

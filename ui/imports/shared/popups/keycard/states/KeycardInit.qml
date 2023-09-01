@@ -15,7 +15,11 @@ Item {
 
     property var sharedKeycardModule
 
-    Component.onCompleted: {
+    onStateChanged: {
+        if (state != d.processingStateName) {
+            return
+        }
+
         if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
@@ -30,6 +34,10 @@ Item {
 
     QtObject {
         id: d
+
+        readonly property string processingStateName: "processing"
+        readonly property string processingSuccessStateName: "processing-success"
+        readonly property string processingFailureStateName: "processing-failure"
 
         readonly property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
         readonly property bool copyFromAKeycardPartDone: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
@@ -65,6 +73,7 @@ Item {
             keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
             keyPairAccounts: root.sharedKeycardModule.keyPairForProcessing.accounts
             keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
+            displayAdditionalInfoForProfileKeypair: root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.migrateFromKeycardToApp
         }
     }
 
@@ -589,7 +598,7 @@ Item {
             }
         },
         State {
-            name: "processing"
+            name: d.processingStateName
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
@@ -993,7 +1002,7 @@ Item {
             }
         },
         State {
-            name: "processing-success"
+            name: d.processingSuccessStateName
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
@@ -1083,7 +1092,7 @@ Item {
             }
         },
         State {
-            name: "processing-failure"
+            name: d.processingFailureStateName
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
@@ -1394,6 +1403,31 @@ Item {
                 color: Theme.palette.directColor1
                 Layout.leftMargin: 2 * Style.current.xlPadding
                 Layout.rightMargin: 2* Style.current.xlPadding
+                Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.biometrics
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometrics
+            PropertyChanges {
+                target: title
+                text: qsTr("Biometrics")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+                horizontalAlignment: Text.AlignHCenter
+            }
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/biometrics-success")
+                pattern: ""
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("Would you like to use Touch ID\nto login to Status?")
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
             }
         }

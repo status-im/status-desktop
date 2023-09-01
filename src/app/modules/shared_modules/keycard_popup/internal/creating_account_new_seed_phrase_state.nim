@@ -49,16 +49,16 @@ proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Co
       address: account.getAddress(),
       keyUid: kpForProcessing.getKeyUid(),
       publicKey: account.getPubKey(),
-      walletType: SEED, 
-      path: account.getPath(), 
+      walletType: SEED,
+      path: account.getPath(),
       name: account.getName(),
-      colorId: account.getColorId(), 
+      colorId: account.getColorId(),
       emoji: account.getEmoji()
     ))
   return controller.addNewSeedPhraseKeypair(
     seedPhrase = "",
-    keyUid = kpForProcessing.getKeyUid(), 
-    keypairName = kpForProcessing.getName(), 
+    keyUid = kpForProcessing.getKeyUid(),
+    keypairName = kpForProcessing.getName(),
     rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
     accounts = walletAccounts
   )
@@ -81,25 +81,25 @@ method executePrePrimaryStateCommand*(self: CreatingAccountNewSeedPhraseState, c
     self.resolvePaths(controller)
     controller.runDeriveAccountFlow(bip44Paths = self.paths, controller.getPin())
 
-method executePreSecondaryStateCommand*(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process, in this case after `addKeycardOrAccounts`. 
+method executePreTertiaryStateCommand*(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
+  ## Tertiary action is called after each async action during migration process, in this case after `addKeycardOrAccounts`.
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
     if controller.getAddingMigratedKeypairSuccess():
       self.runStoreMetadataFlow(controller)
 
-method getNextSecondaryState*(self: CreatingAccountNewSeedPhraseState, controller: Controller): State =
+method getNextTertiaryState*(self: CreatingAccountNewSeedPhraseState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
     if not controller.getAddingMigratedKeypairSuccess():
       return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
 
-method resolveKeycardNextState*(self: CreatingAccountNewSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: CreatingAccountNewSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.ExportPublic:
-        if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+        if keycardFlowType == ResponseTypeValueKeycardFlowResult and
           keycardEvent.error.len == 0:
             if not self.resolveAddresses(controller, keycardEvent):
               return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
@@ -108,7 +108,7 @@ method resolveKeycardNextState*(self: CreatingAccountNewSeedPhraseState, keycard
             self.doMigration(controller)
             return nil # returning nil, cause we need to remain in this state
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
-      if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      if keycardFlowType == ResponseTypeValueKeycardFlowResult and
         keycardEvent.error.len == 0:
           return createState(StateType.CreatingAccountNewSeedPhraseSuccess, self.flowType, nil)
       return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
