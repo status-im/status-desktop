@@ -656,8 +656,10 @@ QtObject:
       )
       self.threadpool.start(arg)
     except Exception as e:
-      #TODO: handle error - emit error signal
       error "Error loading airdrop fees", msg = e.msg
+      var dataToEmit = AirdropFeesArgs()
+      dataToEmit.errorCode =  ComputeFeeErrorCode.Other
+      self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
   proc getFiatValue*(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
     if (cryptoSymbol == ""):

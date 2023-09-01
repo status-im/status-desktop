@@ -27,11 +27,17 @@ StatusDialog {
     property string feeLabel: qsTr("Remotely destruct %1 token on %2").arg(root.collectibleName).arg(root.chainName)
 
     readonly property alias tokenCount: d.tokenCount
+    readonly property string selectedAccount: d.accountAddress
+    readonly property var selectedWalletsAndAmounts: {
+        //depedency
+        d.tokenCount
+        return ModelUtils.modelToArray(d.walletsAndAmountsList)
+    }
 
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
+
     signal remotelyDestructClicked(var walletsAndAmounts, string accountAddress)
-    signal remotelyDestructFeesRequested(var walletsAndAmounts, string accountAddress)
 
     QtObject {
         id: d
@@ -74,17 +80,6 @@ StatusDialog {
                               d.walletsAndAmountsList, "amount")
             const sum = amounts.reduce((a, b) => a + b, 0)
             d.tokenCount = sum
-
-            if (sum > 0)
-                sendFeeRequest()
-        }
-
-        function sendFeeRequest() {
-            const walletsAndAmounts = ModelUtils.modelToArray(
-                                        d.walletsAndAmountsList)
-
-            root.remotelyDestructFeesRequested(walletsAndAmounts,
-                                               d.accountAddress)
         }
     }
 
@@ -126,10 +121,6 @@ StatusDialog {
                 const item = ModelUtils.get(accountsSelector.model,
                                             accountsSelector.currentIndex)
                 d.accountAddress = item.address
-
-                // Whenever a change in the form happens, new fee calculation:
-                if (d.tokenCount > 0)
-                    d.sendFeeRequest()
             }
 
             QtObject {

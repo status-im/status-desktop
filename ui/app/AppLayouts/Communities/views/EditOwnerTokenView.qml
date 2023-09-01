@@ -69,7 +69,6 @@ StatusScrollView {
         .arg(communityName).arg(ownerToken.chainName)
 
     signal mintClicked
-    signal deployFeesRequested
 
     QtObject {
         id: d
@@ -175,8 +174,6 @@ StatusScrollView {
                 onAddressChanged: {
                     ownerToken.accountAddress = address
                     tMasterToken.accountAddress = address
-
-                    requestFeeDelayTimer.restart()
                 }
                 control.onDisplayTextChanged: {
                     ownerToken.accountName = control.displayText
@@ -324,16 +321,7 @@ StatusScrollView {
                 tMasterToken.chainId = network.chainId
                 tMasterToken.chainName = network.chainName
                 tMasterToken.chainIcon = network.iconUrl
-
-                requestFeeDelayTimer.restart()
             }
         }
-    }
-
-    Timer {
-        id: requestFeeDelayTimer
-
-        interval: 500
-        onTriggered: root.deployFeesRequested()
     }
 }

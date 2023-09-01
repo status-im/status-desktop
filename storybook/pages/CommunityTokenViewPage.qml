@@ -62,6 +62,9 @@ SplitView {
 
                 token: tokenObject
                 tokenOwnersModel: TokenHoldersModel {}
+                feeText: "0.01"
+                feeErrorText: ""
+                isFeeLoading: false
 
                 accounts: WalletAccountsModel {}
                 

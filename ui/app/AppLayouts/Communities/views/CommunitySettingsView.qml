@@ -309,29 +309,6 @@ StatusSectionLayout {
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
 
-            function setFeesInfo(ethCurrency, fiatCurrency, errorCode) {
-                if (errorCode === Constants.ComputeFeeErrorCode.Success
-                        || errorCode === Constants.ComputeFeeErrorCode.Balance) {
-
-                    const valueStr = LocaleUtils.currencyAmountToLocaleString(ethCurrency)
-                        + "(" + LocaleUtils.currencyAmountToLocaleString(fiatCurrency) + ")"
-                    mintPanel.feeText = valueStr
-
-                    if (errorCode === Constants.ComputeFeeErrorCode.Balance)
-                        mintPanel.feeErrorText = qsTr("Not enough funds to make transaction")
-
-                    mintPanel.isFeeLoading = false
-
-                    return
-                } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
-                    mintPanel.feeErrorText = qsTr("Infura error")
-                    mintPanel.isFeeLoading = true
-                    return
-                }
-                mintPanel.feeErrorText = qsTr("Unknown error")
-                mintPanel.isFeeLoading = true
-            }
-
             // General community props
             communityName: root.community.name
             communityLogo: root.community.image
@@ -356,22 +333,11 @@ StatusSectionLayout {
             allNetworks: communityTokensStore.allNetworks
             accounts: root.walletAccountsModel
 
-            onDeployFeesRequested: {
-                feeText = ""
-                feeErrorText = ""
-                isFeeLoading = true
+            onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
 
-                communityTokensStore.computeDeployFee(
-                    chainId, accountAddress, tokenType, !(mintPanel.isOwnerTokenDeployed && mintPanel.isTMasterTokenDeployed))
-            }
+            onRegisterSelfDestructFeesSubscriber: d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
 
-            onBurnFeesRequested: {
-                feeText = ""
-                feeErrorText = ""
-                isFeeLoading = true
-
-                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
-            }
+            onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
             onMintCollectible:
                 communityTokensStore.deployCollectible(
@@ -384,16 +350,9 @@ StatusSectionLayout {
                 communityTokensStore.deployOwnerToken(
                     root.community.id, ownerToken, tMasterToken)
 
-            onRemotelyDestructFeesRequest:
-                communityTokensStore.computeSelfDestructFee(
-                    walletsAndAmounts, tokenKey, accountAddress)
-
             onRemotelyDestructCollectibles:
                 communityTokensStore.remoteSelfDestructCollectibles(
                     root.community.id, walletsAndAmounts, tokenKey, accountAddress)
-
-            onSignBurnTransactionOpened:
-                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
 
             onBurnToken:
                 communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
@@ -514,20 +473,16 @@ StatusSectionLayout {
             membersModel: community.members
 
             accountsModel: root.walletAccountsModel
-
             onAirdropClicked: communityTokensStore.airdrop(
-                                  root.community.id, airdropTokens, addresses,
-                                  feeAccountAddress)
-
+                                   root.community.id, airdropTokens, addresses,
+                                   feeAccountAddress)
+                                   
             onNavigateToMintTokenSettings: {
                 root.goTo(Constants.CommunitySettingsSections.MintTokens)
                 mintPanel.openNewTokenForm(isAssetType)
             }
 
-            onAirdropFeesRequested:
-                communityTokensStore.computeAirdropFee(
-                    root.community.id, contractKeysAndAmounts, addresses,
-                    feeAccountAddress)
+            onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
         }
     }
 
@@ -544,6 +499,10 @@ StatusSectionLayout {
             readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
             readonly property bool admin: root.community.memberRole === Constants.memberRole.admin
             readonly property bool tokenMaster: root.community.memberRole === Constants.memberRole.tokenMaster
+        }
+
+        readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
+            communityTokensStore: root.rootStore.communityTokensStore
         }
 
         function goTo(section: int, subSection: int) {
@@ -694,22 +653,6 @@ StatusSectionLayout {
 
     Connections {
         target: rootStore.communityTokensStore
-
-        function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onAirdropFeeUpdated(airdropFees) {
-            airdropPanel.airdropFees = airdropFees
-        }
 
         function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
             if (root.community.id !== communityId)

@@ -12,10 +12,10 @@ QtObject {
     property var enabledNetworks: networksModule.enabled
     property var allNetworks: networksModule.all
 
-    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
-    signal selfDestructFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
+    signal selfDestructFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
     signal airdropFeeUpdated(var airdropFees)
-    signal burnFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+    signal burnFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
 
     signal deploymentStateChanged(string communityId, int status, string url)
     signal ownerTokenDeploymentStateChanged(string communityId, int status, string url)
@@ -63,16 +63,20 @@ QtObject {
     readonly property Connections connections: Connections {
         target: communityTokensModuleInst
 
-        function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+        function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
+            root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId)
         }
 
-        function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            root.selfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+        function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
+            root.selfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId)
         }
 
         function onAirdropFeesUpdated(jsonFees) {
             root.airdropFeeUpdated(JSON.parse(jsonFees))
+        }
+
+        function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
+            root.burnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId)
         }
 
         function onDeploymentStateChanged(communityId, status, url) {
@@ -98,14 +102,22 @@ QtObject {
         function onBurnStateChanged(communityId, tokenName, status, url) {
             root.burnStateChanged(communityId, tokenName, status, url)
         }
-
-        function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            root.burnFeeUpdated(ethCurrency, fiatCurrency, errorCode)
-        }
     }
 
-    function computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment) {
-        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment)
+        // Burn:
+    function computeBurnFee(tokenKey, amount, accountAddress, requestId) {
+        console.assert(typeof amount === "string")
+        communityTokensModuleInst.computeBurnFee(tokenKey, amount, accountAddress, requestId)
+    }
+
+    function computeAirdropFee(communityId, contractKeysAndAmounts, addresses, feeAccountAddress, requestId) {
+        communityTokensModuleInst.computeAirdropFee(
+                    communityId, JSON.stringify(contractKeysAndAmounts),
+                    JSON.stringify(addresses), feeAccountAddress, requestId)
+    }
+
+    function computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment, requestId) {
+        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment, requestId)
     }
 
     /**
@@ -117,18 +129,12 @@ QtObject {
       *   }
       * ]
       */
-    function computeSelfDestructFee(walletsAndAmounts, tokenKey, accountAddress) {
-        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(walletsAndAmounts), tokenKey, accountAddress)
+    function computeSelfDestructFee(walletsAndAmounts, tokenKey, accountAddress, requestId) {
+        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(walletsAndAmounts), tokenKey, accountAddress, requestId)
     }
 
     function remoteSelfDestructCollectibles(communityId, walletsAndAmounts, tokenKey, accountAddress) {
         communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(walletsAndAmounts), tokenKey, accountAddress)
-    }
-
-    // Burn:
-    function computeBurnFee(tokenKey, amount, accountAddress) {
-        console.assert(typeof amount === "string")
-        communityTokensModuleInst.computeBurnFee(tokenKey, amount, accountAddress)
     }
 
     function burnToken(communityId, tokenKey, burnAmount, accountAddress) {
@@ -139,11 +145,5 @@ QtObject {
     // Airdrop tokens:
     function airdrop(communityId, airdropTokens, addresses, feeAccountAddress) {
         communityTokensModuleInst.airdropTokens(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses), feeAccountAddress)
-    }
-
-    function computeAirdropFee(communityId, contractKeysAndAmounts, addresses, feeAccountAddress) {
-        communityTokensModuleInst.computeAirdropFee(
-                    communityId, JSON.stringify(contractKeysAndAmounts),
-                    JSON.stringify(addresses), feeAccountAddress)
     }
 }
