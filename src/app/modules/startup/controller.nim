@@ -188,6 +188,11 @@ proc init*(self: Controller) =
     self.delegate.emitAccountLoginError(args.error)
   self.connectionIds.add(handlerId)
 
+  handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
+    let args = ResultArgs(e)
+    self.delegate.onProfileConverted(args.success)
+  self.connectionIds.add(handlerId)
+
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
@@ -512,9 +517,11 @@ proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
-proc convertToRegularAccount*(self: Controller): string =
+proc convertKeycardProfileKeypairToRegular*(self: Controller) =
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
-  return self.accountsService.convertToRegularAccount(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey, self.getPassword())
+  self.accountsService.convertKeycardProfileKeypairToRegular(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey,
+    self.getPassword())
+
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid

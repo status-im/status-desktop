@@ -27,7 +27,7 @@ proc doMigration(self: MigratingKeypairToKeycardState, controller: Controller) =
 proc doConversion(self: MigratingKeypairToKeycardState, controller: Controller) =
   let password = controller.getPassword()
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()
-  controller.convertSelectedKeyPairToKeycardAccount(selectedKeyPairDto.keycardUid, password)
+  controller.convertRegularProfileKeypairToKeycard(selectedKeyPairDto.keycardUid, password)
 
 proc runStoreMetadataFlow(self: MigratingKeypairToKeycardState, controller: Controller) =
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()

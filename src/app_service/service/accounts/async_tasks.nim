@@ -1,23 +1,67 @@
 #################################################
-# Async convert profile keypair
+# Async convert profile keypair from regular to keycard keypair
 #################################################
 
 type
-  ConvertToKeycardAccountTaskArg* = ref object of QObjectTaskArg
-    accountDataJson: JsonNode 
-    settingsJson: JsonNode 
+  ConvertRegularProfileKeypairToKeycardTaskArg* = ref object of QObjectTaskArg
+    accountDataJson: JsonNode
+    settingsJson: JsonNode
     keycardUid: string
     hashedCurrentPassword: string
     newPassword: string
 
-const convertToKeycardAccountTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[ConvertToKeycardAccountTaskArg](argEncoded)
+const convertRegularProfileKeypairToKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[ConvertRegularProfileKeypairToKeycardTaskArg](argEncoded)
   try:
-    let response = status_account.convertToKeycardAccount(arg.accountDataJson, arg.settingsJson, 
+    var response: RpcResponse[JsonNode]
+    if arg.accountDataJson.isNil or arg.settingsJson.isNil:
+      response.error.message = "at least one json object is not prepared well"
+      error "error: ", errDescription=response.error.message
+    elif arg.keycardUid.len == 0:
+      response.error.message = "provided keycardUid must not be empty"
+      error "error: ", errDescription=response.error.message
+    elif arg.hashedCurrentPassword.len == 0:
+      response.error.message = "provided password must not be empty"
+      error "error: ", errDescription=response.error.message
+    elif arg.newPassword.len == 0:
+      response.error.message = "provided new password must not be empty"
+      error "error: ", errDescription=response.error.message
+    else:
+      response = status_account.convertRegularProfileKeypairToKeycard(arg.accountDataJson, arg.settingsJson,
       arg.keycardUid, arg.hashedCurrentPassword, arg.newPassword)
     arg.finish(response)
   except Exception as e:
-    error "error converting profile keypair: ", message = e.msg  
+    error "error converting profile keypair to keycard keypair: ", errDescription=e.msg
+    arg.finish("")
+
+#################################################
+# Async convert profile keypair from keycard to regular keypair
+#################################################
+
+type
+  ConvertKeycardProfileKeypairToRegularTaskArg* = ref object of QObjectTaskArg
+    mnemonic: string
+    currentPassword: string
+    hashedNewPassword: string
+
+const convertKeycardProfileKeypairToRegularTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[ConvertKeycardProfileKeypairToRegularTaskArg](argEncoded)
+  try:
+    var response: RpcResponse[JsonNode]
+    if arg.mnemonic.len == 0:
+      response.error.message = "provided mnemonic must not be empty"
+      error "error: ", errDescription=response.error.message
+    elif arg.currentPassword.len == 0:
+      response.error.message = "provided password must not be empty"
+      error "error: ", errDescription=response.error.message
+    elif arg.hashedNewPassword.len == 0:
+      response.error.message = "provided new password must not be empty"
+      error "error: ", errDescription=response.error.message
+    else:
+      response = status_account.convertKeycardProfileKeypairToRegular(arg.mnemonic, arg.currentPassword, arg.hashedNewPassword)
+    arg.finish(response)
+  except Exception as e:
+    error "error converting profile keypair to regular keypair: ", errDescription=e.msg
     arg.finish("")
 
 

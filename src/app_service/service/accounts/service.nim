@@ -723,7 +723,7 @@ QtObject:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc convertToKeycardAccount*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
+  proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
     var accountDataJson = %* {
       "key-uid": self.getLoggedInAccount().keyUid,
       "kdfIterations": KDF_ITERATIONS
@@ -732,16 +732,11 @@ QtObject:
 
     self.addKeycardDetails(keycardUid, settingsJson, accountDataJson)
 
-    if(accountDataJson.isNil or settingsJson.isNil):
-      let description = "at least one json object is not prepared well"
-      error "error: ", procName="convertToKeycardAccount", errDesription = description
-      return
-
     let hashedCurrentPassword = hashPassword(currentPassword)
-    let arg = ConvertToKeycardAccountTaskArg(
-      tptr: cast[ByteAddress](convertToKeycardAccountTask),
+    let arg = ConvertRegularProfileKeypairToKeycardTaskArg(
+      tptr: cast[ByteAddress](convertRegularProfileKeypairToKeycardTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "onConvertToKeycardAccount",
+      slot: "onConvertRegularProfileKeypairToKeycard",
       accountDataJson: accountDataJson,
       settingsJson: settingsJson,
       keycardUid: keycardUid,
@@ -752,7 +747,7 @@ QtObject:
     DB_BLOCKED_DUE_TO_PROFILE_MIGRATION = true
     self.threadpool.start(arg)
 
-  proc onConvertToKeycardAccount*(self: Service, response: string) {.slot.} =
+  proc onConvertRegularProfileKeypairToKeycard*(self: Service, response: string) {.slot.} =
     var result = false
     try:
       let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
@@ -761,24 +756,38 @@ QtObject:
         if(errMsg.len == 0):
           result = true
         else:
-          error "error: ", procName="convertToKeycardAccount", errDesription = errMsg
+          error "error: ", procName="onConvertRegularProfileKeypairToKeycard", errDesription = errMsg
     except Exception as e:
-      error "error handilng migrated keypair response", errDesription=e.msg
+      error "error handilng migrated keypair response", procName="onConvertRegularProfileKeypairToKeycard", errDesription=e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
-  proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string =
-    let hashedPassword = hashPassword(newPassword)
+  proc convertKeycardProfileKeypairToRegular*(self: Service, mnemonic: string, currentPassword: string, newPassword: string) =
+    let hashedNewPassword = hashPassword(newPassword)
+    let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
+      tptr: cast[ByteAddress](convertKeycardProfileKeypairToRegularTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onConvertKeycardProfileKeypairToRegular",
+      mnemonic: mnemonic,
+      currentPassword: currentPassword,
+      hashedNewPassword: hashedNewPassword
+    )
+
+    DB_BLOCKED_DUE_TO_PROFILE_MIGRATION = true
+    self.threadpool.start(arg)
+
+  proc onConvertKeycardProfileKeypairToRegular*(self: Service, response: string) {.slot.} =
+    var result = false
     try:
-      let response = status_account.convertToRegularAccount(mnemonic, currentPassword, hashedPassword)
-      var errMsg = ""
-      if(response.result.contains("error")):
-        errMsg = response.result["error"].getStr
-        if errMsg.len > 0:
-          error "error: ", procName="convertToRegularAccount", errDesription = errMsg
-      return errMsg
+      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
+      if(rpcResponse.result.contains("error")):
+        let errMsg = rpcResponse.result["error"].getStr
+        if(errMsg.len == 0):
+          result = true
+        else:
+          error "error: ", procName="onConvertKeycardProfileKeypairToRegular", errDesription = errMsg
     except Exception as e:
-      error "error converting to regular account: ", message = e.msg
-      return e.msg
+      error "error handilng migrated keypair response", procName="onConvertKeycardProfileKeypairToRegular", errDesription=e.msg
+    self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc verifyPassword*(self: Service, password: string): bool =
     try:

@@ -370,22 +370,22 @@ proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subacco
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc convertToKeycardAccount*(account: JsonNode, settings: JsonNode, keycardUid: string, password: string, newPassword: string):
+proc convertRegularProfileKeypairToKeycard*(account: JsonNode, settings: JsonNode, keycardUid: string, password: string, newPassword: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let response = status_go.convertToKeycardAccount($account, $settings, keycardUid, password, newPassword)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error doing rpc request", methodName = "convertToKeycardAccount", exception=e.msg
+    error "error doing rpc request", methodName = "convertRegularProfileKeypairToKeycard", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc convertToRegularAccount*(mnemonic: string, currPassword: string, newPassword: string):
+proc convertKeycardProfileKeypairToRegular*(mnemonic: string, currPassword: string, newPassword: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let response = status_go.convertToRegularAccount(mnemonic, currPassword, newPassword)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error doing rpc request", methodName = "convertToRegularAccount", exception=e.msg
+    error "error doing rpc request", methodName = "convertKeycardProfileKeypairToRegular", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail, large: string, nodeCfgObj: string):
