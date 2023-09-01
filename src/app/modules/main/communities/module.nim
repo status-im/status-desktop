@@ -145,6 +145,11 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
   )
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
+  # TODO: unite bannedMembers, pendingMemberRequests and declinedMemberRequests
+  var bannedMembers: seq[MemberItem] = @[]
+  for memberId, communityMemberState in c.pendingAndBannedMembers:
+    bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
+
   return initItem(
       c.id,
       SectionType.Community,
@@ -175,9 +180,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.members.map(proc(member: ChatMember): MemberItem =
         result = self.createMemberItem(member.id, "", MembershipRequestState.Accepted)),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
-      # TODO: pending and banned members 
-      bannedMembers = c.getBannedMembersIds().map(proc(bannedMemberId: string): MemberItem =
-        result = self.createMemberItem(bannedMemberId, "", MembershipRequestState.Banned)),
+      bannedMembers = bannedMembers,
       pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =

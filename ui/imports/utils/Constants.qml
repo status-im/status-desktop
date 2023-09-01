@@ -1184,6 +1184,7 @@ QtObject {
         Banned,
         Kicked,
         BannedPending,
+        UnbannedPending,
         KickedPending
     }
 

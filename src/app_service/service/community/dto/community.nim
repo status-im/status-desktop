@@ -454,6 +454,18 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     for tokenObj in communityTokensMetadataObj:
       result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
 
+proc toMembershipRequestState*(state: CommunityMemberState): MembershipRequestState =
+  case state:
+    of CommunityMemberState.Banned:
+      return MembershipRequestState.Banned
+    of CommunityMemberState.BanPending:
+      return MembershipRequestState.BannedPending
+    of CommunityMemberState.UnbanPending:
+      return MembershipRequestState.UnbannedPending
+    of CommunityMemberState.KickPending:
+      return MembershipRequestState.KickedPending
+  return MembershipRequestState.None
+
 proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
   result = CommunityMembershipRequestDto()
   discard jsonObj.getProp("id", result.id)
