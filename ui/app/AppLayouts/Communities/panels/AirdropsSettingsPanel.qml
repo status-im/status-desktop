@@ -5,6 +5,7 @@ import StatusQ.Controls 0.1
 
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
 
@@ -19,6 +20,7 @@ StackView {
     required property bool isTokenMasterOwner
     required property bool isAdmin
     readonly property bool isPrivilegedTokenOwnerProfile: root.isOwner || root.isTokenMasterOwner
+    readonly property alias airdropFeesSubscriber: d.aidropFeeSubscriber
 
     // Owner and TMaster token related properties:
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
@@ -31,11 +33,6 @@ StackView {
 
     required property var membersModel
     required property var accountsModel
-
-    // JS object specifing fees for the airdrop operation, should be set to
-    // provide response to airdropFeesRequested signal.
-    // Refer EditAirdropView::airdropFees for details.
-    property var airdropFees: null
 
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
@@ -64,7 +61,7 @@ StackView {
         id: d
 
         readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
-
+        property AirdropFeesSubscriber aidropFeeSubscriber: null
         signal selectToken(string key, string amount, int type)
         signal addAddresses(var addresses)
     }
@@ -80,7 +77,6 @@ StackView {
 
                 text: qsTr("New Airdrop")
                 enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
-
                 onClicked: root.push(newAirdropView, StackView.Immediate)
             }
         ]
@@ -121,10 +117,10 @@ StackView {
                 collectiblesModel: root.collectiblesModel
                 membersModel: root.membersModel
                 accountsModel: root.accountsModel
-
-                Binding on airdropFees {
-                    value: root.airdropFees
-                }
+                totalFeeText: feesSubscriber.totalFee
+                feeErrorText: feesSubscriber.feesError
+                feesPerSelectedContract: feesSubscriber.feesPerContract
+                feesAvailable: !!feesSubscriber.airdropFeesResponse
 
                 onAirdropClicked: {
                     root.airdropClicked(airdropTokens, addresses, feeAccountAddress)
@@ -136,7 +132,16 @@ StackView {
                 Component.onCompleted: {
                     d.selectToken.connect(view.selectToken)
                     d.addAddresses.connect(view.addAddresses)
-                    airdropFeesRequested.connect(root.airdropFeesRequested)
+                    d.aidropFeeSubscriber = feesSubscriber
+                }
+
+                AirdropFeesSubscriber {
+                    id: feesSubscriber
+                    enabled: view.visible && view.showingFees
+                    communityId: view.communityDetails.id
+                    contractKeysAndAmounts: view.selectedContractKeysAndAmounts
+                    addressesToAirdrop: view.selectedAddressesToAirdrop
+                    feeAccountAddress: view.selectedFeeAccount
                 }
             }
         }

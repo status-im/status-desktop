@@ -99,32 +99,35 @@ SplitView {
 
         interval: 2000
 
-        property var response
+        property var feesPerContract: []
+
+        function createAmount(amount, symbol, decimals) {
+            return {
+                amount, symbol,
+                displayDecimals: decimals, stripTrailingZeroes: false
+            }
+        }
 
         function requestMockedFees(contractKeysAndAmounts) {
-            const fees = []
+            if (!loader.item)
+                return
+            
+            const view = loader.item
+            view.feesAvailable = false
+            view.totalFeeText = ""
+            view.feeErrorText = ""
+            view.feesPerSelectedContract = []
 
-            function createAmount(amount, symbol, decimals) {
-                return {
-                    amount, symbol,
-                    displayDecimals: decimals, stripTrailingZeroes: false
-                }
-            }
+            const fees = []
 
             contractKeysAndAmounts.forEach(entry => {
                 fees.push({
-                    ethFee: createAmount(0.0002120115, "ETH", 4),
-                    fiatFee: createAmount(123.15, "USD", 2),
-                    errorCode: 0,
-                    contractUniqueKey: entry.contractUniqueKey
+                    contractUniqueKey: entry.contractUniqueKey,
+                    feeText: "0.0002120115 ETH (123.15 USD)"
                 })
             })
 
-            response = {
-                fees, errorCode: feesErrorsButtonGroup.checkedButton.code,
-                totalEthFee: createAmount(0.0002120115 * fees.length, "ETH", 4),
-                totalFiatFee: createAmount(123.15 * fees.length, "USD", 2)
-            }
+            feesPerContract = fees
 
             restart()
         }
@@ -134,7 +137,10 @@ SplitView {
                 return
 
             const view = loader.item
-            view.airdropFees = response
+            view.totalFeeText = createAmount(0.0002120115 * feesPerContract.length, "ETH", 4) + "(" ,createAmount(123.15 * feesPerContract.length, "USD", 2),"USD)"
+            view.feeErrorText = feesErrorsButtonGroup.checkedButton.code ? feesErrorsButtonGroup.checkedButton.text : ""
+            view.feesAvailable = true
+            view.feesPerSelectedContract = feesCalculationTimer.feesPerContract
         }
     }
 
@@ -252,6 +258,14 @@ SplitView {
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
                 membersModel: members
+                totalFeeText: ""
+                feeErrorText: ""
+                feesPerSelectedContract: []
+                feesAvailable: false
+
+                onShowingFeesChanged: {
+                    feesCalculationTimer.requestMockedFees(loader.item.selectedContractKeysAndAmounts)
+                }
 
                 accountsModel: ListModel {
                     ListElement {
@@ -283,15 +297,6 @@ SplitView {
                                    "membersPubKeys", "feeAccountAddress"],
                                   arguments)
                 }
-
-                onAirdropFeesRequested: {
-                    logs.logEvent("EditAirdropView::airdropFeesRequested",
-                                  ["contractKeysAndAmounts", "addresses",
-                                   "feeAccountAddress"],
-                                  arguments)
-
-                    feesCalculationTimer.requestMockedFees(contractKeysAndAmounts)
-                }
             }
         }
     }
@@ -317,6 +322,12 @@ SplitView {
                 id: feesErrorsButtonGroup
 
                 buttons: feesErrorsRow.children
+                onCheckedButtonChanged: {
+                    if(!loader.item)
+                        return
+
+                    feesCalculationTimer.requestMockedFees(loader.item.selectedContractKeysAndAmounts)
+                }
             }
 
             RowLayout {
