@@ -2,6 +2,8 @@ import NimQml, sequtils, strutils, stint, sugar
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/token_model
+import app/modules/shared_models/collectibles_model as collectibles
+import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 
 QtObject:
   type
@@ -10,6 +12,9 @@ QtObject:
       accounts: AccountsModel
       # this one doesn't include watch accounts and its what the user switches when using the sendModal
       senderAccounts: AccountsModel
+      # list of collectibles owned by the selected sender account
+      collectiblesModel: collectibles.Model
+      nestedCollectiblesModel: nested_collectibles.Model
       # for send modal
       selectedSenderAccount: AccountItem
       fromNetworksModel: NetworkModel
@@ -43,6 +48,8 @@ QtObject:
     result.fromNetworksModel = newNetworkModel()
     result.toNetworksModel = newNetworkModel()
     result.transactionRoutes = newTransactionRoutes()
+    result.collectiblesModel = delegate.getCollectiblesModel()
+    result.nestedCollectiblesModel = delegate.getNestedCollectiblesModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -61,6 +68,20 @@ QtObject:
     read = getSenderAccounts
     notify = senderAccountsChanged
 
+  proc collectiblesModelChanged*(self: View) {.signal.}
+  proc getCollectiblesModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectiblesModel)
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesModel
+    notify = collectiblesModelChanged
+
+  proc nestedCollectiblesModelChanged*(self: View) {.signal.}
+  proc getNestedCollectiblesModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.nestedCollectiblesModel)
+  QtProperty[QVariant] nestedCollectiblesModel:
+    read = getNestedCollectiblesModel
+    notify = nestedCollectiblesModelChanged
+
   proc selectedSenderAccountChanged*(self: View) {.signal.}
   proc getSelectedSenderAccount(self: View): QVariant {.slot.} =
     return newQVariant(self.selectedSenderAccount)
@@ -71,6 +92,9 @@ QtObject:
   QtProperty[QVariant] selectedSenderAccount:
     read = getSelectedSenderAccount
     notify = selectedSenderAccountChanged
+
+  proc getSenderAddressByIndex*(self: View, index: int): string {.slot.} =
+    return self.senderAccounts.getItemByIndex(index).address()
 
   proc selectedReceiveAccountChanged*(self: View) {.signal.}
   proc getSelectedReceiveAccount(self: View): QVariant {.slot.} =

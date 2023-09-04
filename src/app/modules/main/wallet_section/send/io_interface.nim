@@ -1,6 +1,8 @@
 import stint
 import ../../../shared_models/currency_amount
 import app_service/service/transaction/dto
+import app/modules/shared_models/collectibles_model as collectibles
+import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -56,4 +58,10 @@ method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) =
   raise newException(ValueError, "No implementation available")
 
 method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) =
+  raise newException(ValueError, "No implementation available")
+
+method getCollectiblesModel*(self: AccessInterface): collectibles.Model =
+  raise newException(ValueError, "No implementation available")
+
+method getNestedCollectiblesModel*(self: AccessInterface): nested_collectibles.Model =
   raise newException(ValueError, "No implementation available")

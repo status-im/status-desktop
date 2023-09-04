@@ -23,6 +23,7 @@ QtObject:
       chainIds: seq[int]
 
       requestId: int32
+      autofetch: bool
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -30,33 +31,15 @@ QtObject:
   proc delete*(self: Controller) =
     self.QObject.delete
 
-  proc getModel*(self: Controller): QVariant {.slot.} =
+  proc getModel*(self: Controller): Model =
+    return self.model
+
+  proc getModelAsVariant*(self: Controller): QVariant {.slot.} =
     return newQVariant(self.model)
 
   QtProperty[QVariant] model:
-    read = getModel
+    read = getModelAsVariant
 
-  proc processFilterOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
-    defer: self.model.setIsFetching(false)
-
-    let res = fromJson(response, backend_collectibles.FilterOwnedCollectiblesResponse)
-
-    let isError = res.errorCode != ErrorCodeSuccess
-    defer: self.model.setIsError(isError)
-
-    if isError:
-      error "error fetching collectibles entries: ", res.errorCode
-      return
-    
-    try: 
-      let items = res.collectibles.map(header => collectibleToItem(header))
-      self.model.setItems(items, res.offset, res.hasMore)
-    except Exception as e:
-      error "Error converting activity entries: ", e.msg
-
-  proc resetModel*(self: Controller) {.slot.} =
-    self.model.setItems(@[], 0, true)
-    self.fetchFromStart = true
 
   proc loadMoreItems(self: Controller) {.slot.} =
     if self.model.getIsFetching():
@@ -77,6 +60,33 @@ QtObject:
       self.fetchFromStart = true
       error "error fetching collectibles entries: ", response.error
 
+  proc processFilterOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
+    defer: self.model.setIsFetching(false)
+
+    let res = fromJson(response, backend_collectibles.FilterOwnedCollectiblesResponse)
+
+    let isError = res.errorCode != ErrorCodeSuccess
+    defer: self.model.setIsError(isError)
+
+    if isError:
+      error "error fetching collectibles entries: ", res.errorCode
+      return
+    
+    try: 
+      let items = res.collectibles.map(header => collectibleToItem(header))
+      self.model.setItems(items, res.offset, res.hasMore)
+    except Exception as e:
+      error "Error converting activity entries: ", e.msg
+
+    if self.autofetch and res.hasMore:
+      self.loadMoreItems()
+
+  proc resetModel*(self: Controller) {.slot.} =
+    self.model.setItems(@[], 0, true)
+    self.fetchFromStart = true
+    if self.autofetch:
+      self.loadMoreItems()
+
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
       self.processFilterOwnedCollectiblesResponse(jsonObj)
@@ -87,14 +97,15 @@ QtObject:
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc () =
-      self.resetModel()
       self.model.setIsUpdating(false)
+      self.resetModel()
     )
 
-  proc newController*(requestId: int32, events: EventEmitter): Controller =
+  proc newController*(requestId: int32, autofetch: bool, events: EventEmitter): Controller =
     new(result, delete)
 
     result.requestId = requestId
+    result.autofetch = autofetch
 
     result.model = newModel()
     result.fetchFromStart = true

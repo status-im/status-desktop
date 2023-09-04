@@ -19,5 +19,7 @@ proc collectibleToItem*(c: backend.CollectibleHeader, isPinned: bool = false) : 
     c.imageUrl,
     c.backgroundColor,
     c.collectionName,
+    c.collectionSlug,
+    c.collectionImageUrl,
     isPinned
   )
