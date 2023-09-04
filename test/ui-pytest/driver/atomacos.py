@@ -2,6 +2,7 @@ import time
 from copy import deepcopy
 
 import configs.timeouts
+from scripts.utils import local_system
 
 if configs.system.IS_MAC:
     from atomacos._a11y import _running_apps_with_bundle_id
@@ -26,7 +27,11 @@ def attach_atomac(timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC):
             )
         return atomacos.NativeUIElement.from_pid(apps[-1].processIdentifier())
 
-    atomator = from_bundle_id(BUNDLE_ID)
+    if configs.DEV_BUILD:
+        pid = local_system.find_process_by_port(configs.squish.AUT_PORT)
+        atomator = atomacos.getAppRefByPid(pid)
+    else:
+        atomator = from_bundle_id(BUNDLE_ID)
     started_at = time.monotonic()
     while not hasattr(atomator, 'AXMainWindow'):
         time.sleep(1)

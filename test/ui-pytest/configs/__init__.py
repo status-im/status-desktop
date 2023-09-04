@@ -1,7 +1,7 @@
 import logging
 
 from scripts.utils.system_path import SystemPath
-from . import testpath, timeouts, testrail, system
+from . import testpath, timeouts, testrail, squish, system
 
 _logger = logging.getLogger(__name__)
 

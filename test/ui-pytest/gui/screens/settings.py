@@ -3,7 +3,7 @@ import typing
 import allure
 
 import driver
-from constants import UserCommunity
+from constants import UserCommunityInfo
 from driver import objects_access
 from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
@@ -40,7 +40,7 @@ class CommunitiesSettingsView(QObject):
 
     @property
     @allure.step('Get communities')
-    def communities(self) -> typing.List[UserCommunity]:
+    def communities(self) -> typing.List[UserCommunityInfo]:
         _communities = []
         for obj in driver.findAllObjects(self._community_item.real_name):
             container = driver.objectMap.realName(obj)
@@ -49,7 +49,7 @@ class CommunitiesSettingsView(QObject):
             self._community_template_description.real_name['container'] = container
             self._community_template_members.real_name['container'] = container
 
-            _communities.append(UserCommunity(
+            _communities.append(UserCommunityInfo(
                 self._community_template_name.text,
                 self._community_template_description.text,
                 self._community_template_members.text,
@@ -65,7 +65,7 @@ class CommunitiesSettingsView(QObject):
         raise LookupError(f'Community item: {name} not found')
 
     @allure.step('Open community info')
-    def get_community_info(self, name: str) -> UserCommunity:
+    def get_community_info(self, name: str) -> UserCommunityInfo:
         for community in self.communities:
             if community.name == name:
                 return community

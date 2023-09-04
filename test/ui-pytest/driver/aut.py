@@ -14,7 +14,7 @@ class AUT:
             self,
             app_path: system_path.SystemPath = configs.APP_DIR,
             host: str = '127.0.0.1',
-            port: int = 61500
+            port: int = configs.squish.AUT_PORT
     ):
         super(AUT, self).__init__()
         self.path = app_path
