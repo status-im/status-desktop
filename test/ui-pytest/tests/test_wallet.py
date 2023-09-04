@@ -8,6 +8,7 @@ import configs.timeouts
 import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
+from gui.screens.settings import KeycardSettingsView
 from gui.main_window import MainWindow
 
 pytestmark = allure.suite("Wallet")
@@ -117,3 +118,19 @@ def test_manage_watch_only_account(main_screen: MainWindow, address: str, color:
             time.sleep(1)
             if time.monotonic() - started_at > 15:
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+
+
+@allure.testcase('', '')
+@pytest.mark.case()
+def test_keycard(main_screen: MainWindow):
+    with step('Choose continue in keycard settings'):
+        wallet = main_screen.left_panel.open_wallet()
+        SigningPhrasePopup().wait_until_appears().confirm_phrase()
+        account_popup = wallet.left_panel.open_add_account_popup()
+        account_popup.continue_in_keycard_settings()
+        account_popup.wait_until_hidden()
+
+    with (step('Verify that keycard settings view opened and all keycard settings available')):
+        keycard_view = KeycardSettingsView()
+        keycard_view.check_keycard_screen_loaded()
+        keycard_view.all_keycard_options_available()

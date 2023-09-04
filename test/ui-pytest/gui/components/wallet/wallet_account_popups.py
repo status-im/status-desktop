@@ -2,7 +2,7 @@ import allure
 
 import driver
 from gui.components.base_popup import BasePopup
-from gui.components.emoji_popup import EmojiPopup
+# from gui.components.emoji_popup import EmojiPopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.check_box import CheckBox
 from gui.elements.qt.text_edit import TextEdit
@@ -17,6 +17,8 @@ class AccountPopup(BasePopup):
         self._name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountName')
         self._emoji_button = Button('mainWallet_AddEditAccountPopup_AccountEmojiPopupButton')
         self._color_radiobutton = QObject('color_StatusColorRadioButton')
+        # keycard
+        self._use_keycard_button = QObject('mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption')
         # origin
         self._origin_combobox = QObject('mainWallet_AddEditAccountPopup_SelectedOrigin')
         self._watch_only_account_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
@@ -51,7 +53,7 @@ class AccountPopup(BasePopup):
     @allure.step('Set emoji for account')
     def set_emoji(self, value: str):
         self._emoji_button.click()
-        EmojiPopup().wait_until_appears().select(value)
+        # EmojiPopup().wait_until_appears().select(value)
         return self
 
     @allure.step('Set eth address for account added from context menu')
@@ -69,4 +71,11 @@ class AccountPopup(BasePopup):
     @allure.step('Save added account')
     def save(self):
         self._add_account_button.wait_until_appears().click()
+        return self
+
+    @allure.step('Click continue in keycard settings')
+    def continue_in_keycard_settings(self):
+        self._origin_combobox.click()
+        self._new_master_key_origin_item.click()
+        self._use_keycard_button.click()
         return self
