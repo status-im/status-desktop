@@ -1047,7 +1047,7 @@ QtObject {
         Failed,
         Pending,
         Complete,
-        Finished
+        Finalised
     }
 
     // Mirrors src/backend/activity.nim ActivityType
@@ -1073,6 +1073,13 @@ QtObject {
         ThisMonth,
         LastMonth,
         Custom
+    }
+
+    readonly property QtObject time: QtObject {
+        readonly property int hoursIn7Days: 168
+        readonly property int hoursInDay: 24
+        readonly property int secondsIn7Days: 604800
+        readonly property int secondsInHour: 3600
     }
 
     readonly property QtObject walletSection: QtObject {

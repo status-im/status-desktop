@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Wallet 1.0
+
 import utils 1.0
 import shared 1.0
 
@@ -131,8 +133,8 @@ StatusListItem {
             case Constants.TransactionStatus.Pending:
                 return Style.svg("transaction/pending")
             case Constants.TransactionStatus.Complete:
-                return Style.svg("transaction/verified")
-            case Constants.TransactionStatus.Finished:
+                return Style.svg("transaction/confirmed")
+            case Constants.TransactionStatus.Finalised:
                 return Style.svg("transaction/finished")
             case Constants.TransactionStatus.Failed:
                 return Style.svg("transaction/failed")
@@ -232,15 +234,16 @@ StatusListItem {
 
         if (root.isNFT) {
             details += qsTr("Token ID") + endl + modelData.tokenID + endl2
-            details += qsTr("Token name") + endl + modelData.nftName + endl2
+            if (!!modelData.nftName) {
+                details += qsTr("Token name") + endl + modelData.nftName + endl2
+            }
         }
 
         // PROGRESS
-        const isLayer1 = rootStore.getNetworkLayer(modelData.chainId) === 1
+        const networkLayer = rootStore.getNetworkLayer(modelData.chainId) === 1
         // A block on layer1 is every 12s
-        const confirmationTimeStamp = isLayer1 ? modelData.timestamp + 12 * 4 : modelData.timestamp
-        // A block on layer1 is every 12s
-        const finalisationTimeStamp = isLayer1 ? modelData.timestamp + 12 * 64 : modelData.timestamp + 604800 // 7 days in seconds
+        const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
+        const finalisationTimeStamp = WalletUtils.calculateFinalisationTimestamp(networkLayer, modelData.timestamp)
         switch(transactionStatus) {
         case Constants.TransactionStatus.Pending:
             details += qsTr("Status") + endl
@@ -250,17 +253,17 @@ StatusListItem {
             details += qsTr("Status") + endl
             details += qsTr("Failed on %1").arg(root.networkName) + endl2
             break
-        case Constants.TransactionStatus.Verified: {
+        case Constants.TransactionStatus.Complete: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
             const epoch = parseFloat(Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber).toFixed(0)).toLocaleString()
-            details += qsTr("Finalised in epoch %1").arg(epoch.toFixed(0)) + endl2
             details += qsTr("Signed") + endl + root.timestampString + endl2
+            details += qsTr("Signed") + endl + timestampString + endl2
             details += qsTr("Confirmed") + endl
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
             break
         }
-        case Constants.TransactionStatus.Finished: {
+        case Constants.TransactionStatus.Finalised: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
             const epoch = Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber)
@@ -412,7 +415,7 @@ StatusListItem {
                 const feeCrypto = rootStore.formatCurrencyAmount(feeEthValue, "ETH")
                 const feeFiat = rootStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
-            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && isLayer1)) {
+            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && networkLayer === 1)) {
                 valuesString += qsTr("Total %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
             } else if (type === Constants.TransactionType.ContractDeployment) {
                 const isPending = root.transactionStatus === Constants.TransactionStatus.Pending

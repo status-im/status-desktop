@@ -33,4 +33,18 @@ QtObject {
 
         return prefixStr
     }
+
+    function calculateConfirmationTimestamp(chainLayer, timestamp) {
+        if (chainLayer === 1) {
+            return timestamp + 12 * 4 // A block on layer1 is every 12s
+        }
+        return timestamp
+    }
+
+    function calculateFinalisationTimestamp(chainLayer, timestamp) {
+        if (chainLayer === 1) {
+            return timestamp + 12 * 64 // A block on layer1 is every 12s
+        }
+        return timestamp + Constants.time.secondsIn7Days
+    }
 }
