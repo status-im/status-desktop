@@ -54,6 +54,8 @@ type
     animationMediaType*: string
     backgroundColor*: string
     collectionName*: string
+    collectionSlug*: string
+    collectionImageUrl*: string
 
   # Mirrors services/wallet/collectibles/types.go CollectibleDetails
   CollectibleDetails* = ref object of RootObj
@@ -250,7 +252,9 @@ proc `$`*(self: CollectibleHeader): string =
     animationUrl:{self.animationUrl},
     animationMediaType:{self.animationMediaType},
     backgroundColor:{self.backgroundColor},
-    collectionName:{self.collectionName}
+    collectionName:{self.collectionName},
+    collectionSlug:{self.collectionSlug},
+    collectionImageUrl:{self.collectionImageUrl}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
@@ -262,6 +266,8 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {
   result.animationMediaType = t["animation_media_type"].getStr()
   result.backgroundColor = t["background_color"].getStr()
   result.collectionName = t["collection_name"].getStr()
+  result.collectionSlug = t["collection_slug"].getStr()
+  result.collectionImageUrl = t["collection_image_url"].getStr()
 
 # CollectibleDetails
 proc `$`*(self: CollectibleDetails): string =
@@ -276,7 +282,7 @@ proc `$`*(self: CollectibleDetails): string =
     backgroundColor:{self.backgroundColor},
     collectionName:{self.collectionName},
     collectionSlug:{self.collectionSlug},
-    collectionImageUrl:{self.collectionImageUrl},
+    collectionImageUrl:{self.collectionImageUrl}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails {.inline.} =

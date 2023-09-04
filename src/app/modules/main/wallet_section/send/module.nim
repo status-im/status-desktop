@@ -13,6 +13,11 @@ import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
 
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_models/collectibles_model as collectibles
+import app/modules/shared_models/collectibles_nested_model as nested_collectibles
+import backend/collectibles as backend_collectibles
+
 export io_interface
 
 const cancelledRequest* = "cancelled"
@@ -31,7 +36,10 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
-    controller: Controller
+    controller: controller.Controller
+    # Get the list of owned collectibles by the currently selected account
+    collectiblesController: collectiblesc.Controller
+    nestedCollectiblesModel: nested_collectibles.Model
     moduleLoaded: bool
     tmpSendTransactionDetails: TmpSendTransactionDetails
     senderCurrentAccountIndex: int
@@ -52,8 +60,15 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.view = newView(result)
   result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService, transactionService)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.WalletSend),
+    autofetch = true,
+    events = events
+  )
+  result.nestedCollectiblesModel = nested_collectibles.newModel(result.collectiblesController.getModel())
+  result.view = newView(result)
+
   result.moduleLoaded = false
   result.senderCurrentAccountIndex = 0
   result.receiveCurrentAccountIndex = 0
@@ -61,6 +76,8 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
   self.controller.delete
+  self.nestedCollectiblesModel.delete
+  self.collectiblesController.delete
 
 method convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkItem =
   result = initNetworkItem(
@@ -297,8 +314,21 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   self.view.switchSenderAccountByAddress(addresses[0])
   self.view.switchReceiveAccountByAddress(addresses[0])
 
+proc updateCollectiblesFilter*(self: Module) =
+  let addresses = @[self.view.getSenderAddressByIndex(self.senderCurrentAccountIndex)]
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.globalFilterChanged(addresses, chainIds)
+
 method setSelectedSenderAccountIndex*(self: Module, index: int) =
   self.senderCurrentAccountIndex = index
+  self.updateCollectiblesFilter()
 
 method setSelectedReceiveAccountIndex*(self: Module, index: int) =
   self.receiveCurrentAccountIndex = index
+
+method getCollectiblesModel*(self: Module): collectibles.Model =
+  return self.collectiblesController.getModel()
+
+method getNestedCollectiblesModel*(self: Module): nested_collectibles.Model =
+  return self.nestedCollectiblesModel
+

@@ -14,7 +14,9 @@ type
     MediaUrl
     MediaType
     BackgroundColor
+    CollectionUid
     CollectionName
+    CollectionSlug
     IsLoading
     IsPinned
 
@@ -145,7 +147,9 @@ QtObject:
       CollectibleRole.MediaType.int:"mediaType",
       CollectibleRole.ImageUrl.int:"imageUrl",
       CollectibleRole.BackgroundColor.int:"backgroundColor",
+      CollectibleRole.CollectionUid.int:"collectionUid",
       CollectibleRole.CollectionName.int:"collectionName",
+      CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.IsPinned.int:"isPinned",
     }.toTable
@@ -180,8 +184,12 @@ QtObject:
         result = newQVariant(item.getImageUrl())
       of CollectibleRole.BackgroundColor:
         result = newQVariant(item.getBackgroundColor())
+      of CollectibleRole.CollectionUid:
+        result = newQVariant(item.getCollectionId())
       of CollectibleRole.CollectionName:
         result = newQVariant(item.getCollectionName())
+      of CollectibleRole.CollectionSlug:
+        result = newQVariant(item.getCollectionSlug())
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
       of CollectibleRole.IsPinned:
@@ -194,6 +202,26 @@ QtObject:
       else:
         error "Invalid role for loading item"
         result = newQVariant()
+
+  proc rowData(self: Model, index: int, column: string): string {.slot.} =
+    if (index >= self.items.len):
+      return
+    let item = self.items[index]
+    case column:
+      of "uid": result = item.getId()
+      of "chainId": result = $item.getChainId()
+      of "contractAddress": result = item.getContractAddress()
+      of "tokenId": result = item.getTokenId().toString()
+      of "name": result = item.getName()
+      of "mediaUrl": result = item.getMediaUrl()
+      of "mediaType": result = item.getMediaType()
+      of "imageUrl": result = item.getImageUrl()
+      of "backgroundColor": result = item.getBackgroundColor()
+      of "collectionUid": result = item.getCollectionId()
+      of "collectionName": result = item.getCollectionName()
+      of "collectionSlug": result = item.getCollectionSlug()
+      of "isLoading": result = $false
+      of "isPinned": result = $item.getIsPinned()
 
   proc appendCollectibleItems(self: Model, newItems: seq[Item]) =
     if len(newItems) == 0:
@@ -270,6 +298,9 @@ QtObject:
       self.appendLoadingItems()
     else:
       self.removeLoadingItems()
+
+  proc getItems*(self: Model): seq[Item] =
+    return self.items
 
   proc setItems*(self: Model, newItems: seq[Item], offset: int, hasMore: bool) =
     if offset == 0:

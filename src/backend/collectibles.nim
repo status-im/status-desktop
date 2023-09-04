@@ -12,6 +12,7 @@ type
   CollectiblesRequestID* = enum
     WalletAccount
     ProfileShowcase
+    WalletSend
 
 # Declared in services/wallet/collectibles/service.go
 const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ownership-update-started"
@@ -39,7 +40,6 @@ type
   GetCollectiblesDetailsResponse* = object
     collectibles*: seq[CollectibleDetails]
     errorCode*: ErrorCode
-
 
 # Responses
 proc fromJson*(e: JsonNode, T: typedesc[FilterOwnedCollectiblesResponse]): FilterOwnedCollectiblesResponse {.inline.} =

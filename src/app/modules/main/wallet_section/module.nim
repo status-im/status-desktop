@@ -122,7 +122,11 @@ proc newModule*(
   result.transactionService = transactionService
   result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events)
   result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events)
-  result.collectiblesController = collectiblesc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), events)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
+    autofetch = false,
+    events = events
+  )
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
