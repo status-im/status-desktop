@@ -28,6 +28,7 @@ const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED* = "includeWatchOnlyAccounts"
+const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 
 logScope:
   topics = "settings-service"
@@ -116,6 +117,9 @@ QtObject:
           if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
             self.settings.includeWatchOnlyAccount = settingsField.value.getBool
             self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
+          if settingsField.name == PROFILE_MIGRATION_NEEDED:
+            self.settings.profileMigrationNeeded = settingsField.value.getBool
+            self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
 
       if receivedData.socialLinksInfo.links.len > 0 or
         receivedData.socialLinksInfo.removed:
@@ -978,3 +982,6 @@ QtObject:
     if(self.saveSetting(INCLUDE_WATCH_ONLY_ACCOUNT, newValue)):
       self.settings.includeWatchOnlyAccount = newValue
       self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: newValue))
+
+  proc getProfileMigrationNeeded*(self: Service): bool =
+    self.settings.profileMigrationNeeded

@@ -45,6 +45,7 @@ const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 const INCLUDE_WATCH_ONLY_ACCOUNT* = "include-watch-only-account?"
+const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -137,6 +138,7 @@ type
     notificationsVolume*: int
     notificationsMessagePreview*: int
     includeWatchOnlyAccount*: bool
+    profileMigrationNeeded*: bool
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -191,6 +193,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
   discard jsonObj.getProp(INCLUDE_WATCH_ONLY_ACCOUNT, result.includeWatchOnlyAccount)
+  discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 
   var pinnedMailserverObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):

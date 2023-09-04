@@ -7,6 +7,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      forceFlow: bool # used to disable any possibility of closing the popup, the user is forced to complete the flow or forcibly close the app (no other way to close the popup)
       disablePopup: bool # used to disable popup after each action, to block users do multiple clikcs which the action is ongoing
       currentState: StateWrapper
       currentStateVariant: QVariant
@@ -44,6 +45,7 @@ QtObject:
     result.currentState = newStateWrapper()
     result.currentStateVariant = newQVariant(result.currentState)
     result.remainingAttempts = -1
+    result.forceFlow = false
     result.disablePopup = false
 
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
@@ -51,6 +53,16 @@ QtObject:
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
     signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
+
+  proc forceFlowChanged*(self: View) {.signal.}
+  proc getForceFlow*(self: View): bool {.slot.} =
+    return self.forceFlow
+  QtProperty[bool] forceFlow:
+    read = getForceFlow
+    notify = forceFlowChanged
+  proc setForceFlow*(self: View, value: bool) =
+    self.forceFlow = value
+    self.forceFlowChanged()
 
   proc diablePopupChanged*(self: View) {.signal.}
   proc getDisablePopup*(self: View): bool {.slot.} =

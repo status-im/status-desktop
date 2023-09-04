@@ -261,6 +261,15 @@ method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, com
 method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getKeycardSharedModuleForAuthentication*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDisplayKeycardSharedModuleForAuthentication*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSharedKeycarModuleForAuthenticationTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -271,6 +280,12 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
   raise newException(ValueError, "No implementation available")
 
 method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Paths: seq[string] = @[]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSharedKeycarModuleRunningKeycardFlowsPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkAndPerformProfileMigrationIfNeeded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onMyRequestAdded*(self: AccessInterface) {.base.} =

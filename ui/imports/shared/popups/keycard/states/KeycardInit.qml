@@ -1371,6 +1371,11 @@ Item {
                 target: title
                 text: {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp) {
+                        if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
+                            if (root.sharedKeycardModule.forceFlow) {
+                                return qsTr("Your profile keypair has been\nmigrated from Keycard to Status")
+                            }
+                        }
                         return qsTr("Are you sure you want to migrate\nthis keypair to Status?")
                     }
                     return ""
@@ -1388,11 +1393,23 @@ Item {
                 target: message
                 text: {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp) {
+                        if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
+                            if (root.sharedKeycardModule.forceFlow) {
+                                return qsTr("In order to continue using this profile on this device, you need to enter the keypairs seed phrase and create a new password to log in with on this device.")
+                            }
+
+                            let t = qsTr("%1 is your default Status keypair.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                            t += qsTr(" Migrating this keypair will mean you will no longer require this Keycard to login to Status or")
+                            t += qsTr(" transact with the keypair’s derived account(s).", "", root.sharedKeycardModule.keyPairForProcessing.accounts.count)
+                            t += qsTr(" The keypair and account(s) will be fully removed from Keycard and stored on device.", "", root.sharedKeycardModule.keyPairForProcessing.accounts.count)
+                            return t
+                        }
+
                         let t = qsTr("%1 keypair and its derived account(s) will be fully removed from Keycard and stored on device.",
                                      "",
                                      root.sharedKeycardModule.keyPairForProcessing.accounts.count)
                         .arg(root.sharedKeycardModule.keyPairForProcessing.name)
-                        t += qsTr("This will make your keypair and derived account(s) less secure as you will no longer require this Keycard to transact.",
+                        t += qsTr(" This will make your keypair and derived account(s) less secure as you will no longer require this Keycard to transact.",
                                   "",
                                   root.sharedKeycardModule.keyPairForProcessing.accounts.count)
                         return t

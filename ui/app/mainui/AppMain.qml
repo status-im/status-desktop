@@ -71,6 +71,14 @@ Item {
             popups.openProfilePopup(publicKey)
         }
 
+        function onDisplayKeycardSharedModuleForAuthentication() {
+            keycardPopupForAuthentication.active = true
+        }
+
+        function onDestroyKeycardSharedModuleForAuthentication() {
+            keycardPopupForAuthentication.active = false
+        }
+
         function onDisplayKeycardSharedModuleFlow() {
             keycardPopup.active = true
         }
@@ -1556,6 +1564,18 @@ Item {
             console.error('Could not parse the whitelist for sites', e)
         }
         Global.settingsLoaded()
+    }
+
+    Loader {
+        id: keycardPopupForAuthentication
+        active: false
+        sourceComponent: KeycardPopup {
+            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthentication
+        }
+
+        onLoaded: {
+            keycardPopupForAuthentication.item.open()
+        }
     }
 
     Loader {

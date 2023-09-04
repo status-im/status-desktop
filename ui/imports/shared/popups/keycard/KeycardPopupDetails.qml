@@ -375,14 +375,14 @@ QtObject {
                     case Constants.keycardSharedState.wrongSeedPhrase:
                     case Constants.keycardSharedState.createPassword:
                     case Constants.keycardSharedState.confirmPassword:
-                        return true
+                        return !root.sharedKeycardModule.forceFlow
                     }
                     break
                 }
 
                 return false
             }
-            enabled: !root.disableActionPopupButtons
+            enabled: !root.sharedKeycardModule.forceFlow && !root.disableActionPopupButtons
             onClicked: {
                 root.cancelBtnClicked();
             }

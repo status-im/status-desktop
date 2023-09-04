@@ -57,7 +57,8 @@ method getNextPrimaryState*(self: WrongSeedPhraseState, controller: Controller):
       return createState(StateType.CreatePin, self.flowType, nil)
     return self
 
-method getNextSecondaryState*(self: WrongSeedPhraseState, controller: Controller): State =
+method getNextTertiaryState*(self: WrongSeedPhraseState, controller: Controller): State =
+  ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
     if migratingProfile:
