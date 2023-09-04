@@ -81,3 +81,4 @@ type ChainIdForUrlArgs* = ref object of Args
   chainId*: int
   success*: bool
   url*: string
+  isMainUrl*: bool

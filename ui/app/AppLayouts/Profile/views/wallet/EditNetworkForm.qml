@@ -13,7 +13,7 @@ ColumnLayout {
 
     property var network
     property var networksModule
-    signal evaluateRpcEndPoint(string url)
+    signal evaluateRpcEndPoint(string url, bool isMainUrl)
     signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl)
 
     enum EvaluationState {
@@ -21,29 +21,28 @@ ColumnLayout {
         Pending,
         Verified,
         InvalidURL,
-        PingUnsuccessful
+        PingUnsuccessful,
+        SameAsOther
     }
 
     QtObject {
         id: d
-        property int evaluationStatus: EditNetworkForm.UnTouched
+        property int evaluationStatusMainRpc: EditNetworkForm.UnTouched
         property int evaluationStatusFallBackRpc: EditNetworkForm.UnTouched
-        property var evaluateRpcEndPoint: Backpressure.debounce(root, 400, function (value) {
+        property var evaluateRpcEndPoint: Backpressure.debounce(root, 400, function (value, isMainUrl) {
             if(!Utils.isURL(value)) {
-                if(value === mainRpcInput.text) {
-                    d.evaluationStatus = EditNetworkForm.InvalidURL
-                }
-                else if(value === failoverRpcUrlInput.text) {
+                if(isMainUrl)
+                    d.evaluationStatusMainRpc = EditNetworkForm.InvalidURL
+                else
                     d.evaluationStatusFallBackRpc = EditNetworkForm.InvalidURL
-                }
                 return
             }
-            root.evaluateRpcEndPoint(value)
+            root.evaluateRpcEndPoint(value, isMainUrl)
         })
 
         function revertValues() {
             warningCheckbox.checked = false
-            d.evaluationStatus = EditNetworkForm.UnTouched
+            d.evaluationStatusMainRpc = EditNetworkForm.UnTouched
             d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
             if(!!network) {
                 mainRpcInput.text = network.rpcURL
@@ -61,6 +60,8 @@ ColumnLayout {
                 return  qsTr("RPC appears to be either offline or this is not a valid JSON RPC endpoint URL")
             case EditNetworkForm.Verified:
                 return qsTr("RPC successfully reached")
+            case EditNetworkForm.SameAsOther:
+                return qsTr("Main and failover JSON RPC URLs are the same")
             default: return ""
             }
         }
@@ -70,17 +71,20 @@ ColumnLayout {
 
     Connections {
         target: networksModule
-        function onChainIdFetchedForUrl(url, chainId, success) {
+        function onChainIdFetchedForUrl(url, chainId, success, isMainUrl) {
             let status = EditNetworkForm.PingUnsuccessful
             if(success) {
-                status = EditNetworkForm.Verified
+                if((isMainUrl && url === network.fallbackURL) ||
+                        (!isMainUrl && url === network.rpcURL)) {
+                  status = EditNetworkForm.SameAsOther
+                }
+                else
+                    status = EditNetworkForm.Verified
             }
-            if(url === mainRpcInput.text) {
-                d.evaluationStatus = status
-            }
-            else if(url === failoverRpcUrlInput.text) {
-                d.evaluationStatusFallBackRpc = status
-            }
+            if(isMainUrl)
+                d.evaluationStatusMainRpc = status
+            else
+                d.evaluationStatusFallBackRpc = status            
         }
     }
 
@@ -135,26 +139,37 @@ ColumnLayout {
                 if (!network) {
                     return ""
                 }
-                if (network.originalRpcURL == network.rpcURL) {
+                if (network.originalRpcURL === network.rpcURL) {
                     return network.rpcURL.replace(/(.*\/).*/, '$1')
                 }
                 return network.rpcURL
             }
             onTextChanged: {
-                if(!!text && text !== network.rpcURL.replace(/(.*\/).*/, '$1')) {
-                    d.evaluationStatus = EditNetworkForm.Pending
-                    Qt.callLater(d.evaluateRpcEndPoint, text);
+                if(!!text &&
+                        (network.originalRpcURL === network.rpcURL && text !== network.rpcURL.replace(/(.*\/).*/, '$1')) ||
+                        (network.originalRpcURL !== network.rpcURL && text !== network.rpcURL)) {
+                    d.evaluationStatusMainRpc = EditNetworkForm.Pending
+                    Qt.callLater(d.evaluateRpcEndPoint, text, true);
                 }
             }
-            errorMessageCmp.horizontalAlignment: d.evaluationStatus === EditNetworkForm.Pending ||
-                                                 d.evaluationStatus === EditNetworkForm.Verified ?
+            errorMessageCmp.horizontalAlignment: d.evaluationStatusMainRpc === EditNetworkForm.Pending ||
+                                                 d.evaluationStatusMainRpc === EditNetworkForm.Verified ||
+                                                     d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther ?
                                                      Text.AlignLeft: Text.AlignRight
-            errorMessageCmp.visible: d.evaluationStatus !== EditNetworkForm.UnTouched
-            errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatus, text)
-            errorMessageCmp.color: d.evaluationStatus === EditNetworkForm.Pending ?
-                                       Theme.palette.baseColor1:
-                                       d.evaluationStatus === EditNetworkForm.Verified ?
-                                           Theme.palette.successColor1 : Theme.palette.dangerColor1
+            errorMessageCmp.visible: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched
+            errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusMainRpc, text)
+            errorMessageCmp.color: {
+                switch(d.evaluationStatusMainRpc) {
+                case EditNetworkForm.Pending:
+                    return Theme.palette.baseColor1
+                case EditNetworkForm.SameAsOther:
+                    return  Theme.palette.warningColor1
+                case EditNetworkForm.Verified:
+                    return Theme.palette.successColor1
+                default: return Theme.palette.dangerColor1
+
+                }
+            }
         }
     }
 
@@ -166,27 +181,36 @@ ColumnLayout {
             if (!network) {
                 return ""
             }
-            if (network.originalFallbackURL == network.fallbackURL) {
+            if (network.originalFallbackURL === network.fallbackURL) {
                 return network.fallbackURL.replace(/(.*\/).*/, '$1')
             }
             return network.fallbackURL
         }
         onTextChanged: {
-            if(!!text && text !== network.fallbackURL.replace(/(.*\/).*/, '$1')) {
+            if(!!text &&
+                    (network.originalFallbackURL === network.fallbackURL && text !== network.fallbackURL.replace(/(.*\/).*/, '$1')) ||
+                    (network.originalFallbackURL !== network.fallbackURL && text !== network.fallbackURL)) {
                 d.evaluationStatusFallBackRpc = EditNetworkForm.Pending
-                Qt.callLater(d.evaluateRpcEndPoint, text);
+                Qt.callLater(d.evaluateRpcEndPoint, text, false);
             }
         }
         errorMessageCmp.horizontalAlignment: d.evaluationStatusFallBackRpc === EditNetworkForm.Pending ||
-                                             d.evaluationStatusFallBackRpc === EditNetworkForm.Verified ?
+                                             d.evaluationStatusFallBackRpc === EditNetworkForm.Verified ||
+                                             d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther ?
                                                  Text.AlignLeft: Text.AlignRight
         errorMessageCmp.visible: d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
         errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusFallBackRpc, text)
-        errorMessageCmp.color: d.evaluationStatusFallBackRpc === EditNetworkForm.Pending ?
-                                   Theme.palette.baseColor1:
-                                   d.evaluationStatusFallBackRpc === EditNetworkForm.Verified ?
-                                       Theme.palette.successColor1 : Theme.palette.dangerColor1
-
+        errorMessageCmp.color: {
+            switch(d.evaluationStatusFallBackRpc) {
+            case EditNetworkForm.Pending:
+                return Theme.palette.baseColor1
+            case EditNetworkForm.SameAsOther:
+                return  Theme.palette.warningColor1
+            case EditNetworkForm.Verified:
+                return Theme.palette.successColor1
+            default: return Theme.palette.dangerColor1
+            }
+        }
     }
 
     StatusInput {
@@ -212,12 +236,12 @@ ColumnLayout {
         StatusButton {
             text: qsTr("Revert to default")
             normalColor: "transparent"
-            enabled: d.evaluationStatus !== EditNetworkForm.UnTouched || d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
+            enabled: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched || d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
             onClicked: d.revertValues()
         }
         StatusButton {
             text: qsTr("Save Changes")
-            enabled: (d.evaluationStatus === EditNetworkForm.Verified || d.evaluationStatusFallBackRpc === EditNetworkForm.Verified) && warningCheckbox.checked
+            enabled: (d.evaluationStatusMainRpc === EditNetworkForm.Verified || d.evaluationStatusFallBackRpc === EditNetworkForm.Verified || d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther || d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther) && warningCheckbox.checked
             onClicked: root.updateNetworkValues(network.chainId, mainRpcInput.text, failoverRpcUrlInput.text)
         }
     }
