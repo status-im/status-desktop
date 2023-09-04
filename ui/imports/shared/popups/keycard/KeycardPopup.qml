@@ -13,8 +13,10 @@ StatusModal {
     property var emojiPopup
 
     width: Constants.keycard.general.popupWidth
-    closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
+    closePolicy: root.sharedKeycardModule.forceFlow || d.disableActionPopupButtons || d.disableCloseButton?
+                     Popup.NoAutoClose :
+                     Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    hasCloseButton: !root.sharedKeycardModule.forceFlow && !d.disableActionPopupButtons && !d.disableCloseButton
 
     headerSettings.title: {
         switch (root.sharedKeycardModule.currentState.flowType) {
@@ -45,6 +47,10 @@ StatusModal {
         case Constants.keycardSharedFlow.createCopyOfAKeycard:
             return qsTr("Create a backup copy of this Keycard")
         case Constants.keycardSharedFlow.migrateFromKeycardToApp:
+            // in the context of `migrateFromKeycardToApp` flow, `forceFlow` is set to `true` on paired devices
+            if (root.sharedKeycardModule.forceFlow) {
+                return qsTr("Enable password login on this device")
+            }
             return qsTr("Migrate a keypair from Keycard to Status")
         }
 

@@ -120,7 +120,7 @@ method onCancelActionClicked*(self: AccessInterface) {.base.} =
 method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") {.base.} =
+method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "",  forceFlow = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =

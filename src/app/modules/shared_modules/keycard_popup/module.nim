@@ -460,7 +460,7 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
-method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") =
+method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "", forceFlow = false) =
   ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account
   ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then
   ## default key uid is always the key uid of the logged in user.
@@ -469,6 +469,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     error "sm_cannot run an general flow"
     return
   self.init()
+  self.view.setForceFlow(forceFlow)
   if flowToRun == FlowType.FactoryReset:
     if keyUid.len > 0:
       self.prepareKeyPairForProcessing(keyUid)
@@ -562,7 +563,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     return
   if flowToRun == FlowType.MigrateFromKeycardToApp:
     if keyUid.len == 0:
-      error "sm_cannot run a migration from keycar to app flow without knowing in advance a keypair being migrated"
+      error "sm_cannot run a migration from keycard to app flow without knowing in advance a keypair being migrated"
       self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
       return
     self.prepareKeyPairForProcessing(keyUid)

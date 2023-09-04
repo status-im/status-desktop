@@ -231,6 +231,11 @@ method load*(self: Module) =
     if not args.success:
       return
     self.notifyFilterChanged()
+  self.events.on(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
     self.notifyFilterChanged()
   self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):

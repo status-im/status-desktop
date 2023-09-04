@@ -478,6 +478,8 @@ proc finishAppLoading*(self: AppController) =
     self.startupModule.delete
     self.startupModule = nil
 
+  self.mainModule.checkAndPerformProfileMigrationIfNeeded()
+
 proc logout*(self: AppController) =
   self.generalService.logout()
 
