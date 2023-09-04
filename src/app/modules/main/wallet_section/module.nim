@@ -169,7 +169,7 @@ method notifyFilterChanged(self: Module) =
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
+  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.collectiblesController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], includeWatchOnly, self.filter.allAddresses)

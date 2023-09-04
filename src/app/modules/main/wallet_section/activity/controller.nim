@@ -53,6 +53,7 @@ QtObject:
       addresses: seq[string]
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
+      allChainsSelected: bool
 
       requestId: int32
 
@@ -152,7 +153,8 @@ QtObject:
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
 
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    let chains = if not self.allChainsSelected: self.chainIds else: @[]
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](chains), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       error "error fetching activity entries: ", response.error
       self.status.setLoadingData(false)
@@ -160,7 +162,8 @@ QtObject:
 
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+    let chains = if not self.allChainsSelected: self.chainIds else: @[]
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](chains), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching activity entries: ", response.error
@@ -255,6 +258,7 @@ QtObject:
 
     result.addresses = @[]
     result.chainIds = @[]
+    result.allChainsSelected = true
 
     result.setup()
 
@@ -340,8 +344,9 @@ QtObject:
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
 
-  proc setFilterChains*(self: Controller, chainIds: seq[int]) =
+  proc setFilterChains*(self: Controller, chainIds: seq[int], allEnabled: bool) =
     self.chainIds = chainIds
+    self.allChainsSelected = allEnabled
     self.status.setIsFilterDirty(true)
 
     self.updateAssetsIdentities()
@@ -379,11 +384,11 @@ QtObject:
   QtProperty[QVariant] status:
     read = getStatus
 
-  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
+  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int], allChainsEnabled: bool) =
     if (self.addresses == addresses and self.chainIds == chainIds):
       return
     self.setFilterAddresses(addresses)
-    self.setFilterChains(chainIds)
+    self.setFilterChains(chainIds, allChainsEnabled)
 
   proc noLimitTimestamp*(self: Controller): int {.slot.} =
     return backend_activity.noLimitTimestampForPeriod
