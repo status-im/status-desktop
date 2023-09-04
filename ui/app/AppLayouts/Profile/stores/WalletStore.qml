@@ -72,8 +72,8 @@ QtObject {
         root.walletModule.runKeypairImportPopup(keyUid, mode)
     }
 
-    function evaluateRpcEndPoint(url) {
-        return networksModule.fetchChainIdForUrl(url)
+    function evaluateRpcEndPoint(url, isMainUrl) {
+        return networksModule.fetchChainIdForUrl(url, isMainUrl)
     }
 
     function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {

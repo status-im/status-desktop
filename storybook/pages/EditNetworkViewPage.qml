@@ -67,7 +67,7 @@ SplitView {
         signal urlVerified(string url, int status)
         property string url
 
-        function evaluateRpcEndPoint(url) {
+        function evaluateRpcEndPoint(url, isMainUrl) {
             networkModule.url = url
             d.timer.restart()
         }

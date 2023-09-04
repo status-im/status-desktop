@@ -164,6 +164,7 @@ const deleteKeycardAccountsTask*: Task = proc(argEncoded: string) {.gcsafe, nimc
 type
   FetchChainIdForUrlTaskArg* = ref object of QObjectTaskArg
     url: string
+    isMainUrl: bool
 
 const fetchChainIdForUrlTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchChainIdForUrlTaskArg](argEncoded)
@@ -172,14 +173,16 @@ const fetchChainIdForUrlTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     arg.finish(%*{
       "success": true,
       "chainId": response.result.getInt,
-      "url": arg.url
+      "url": arg.url,
+      "isMainUrl": arg.isMainUrl
     })
   except Exception as e:
     error "error when fetching chaind id from url: ", message = e.msg
     arg.finish(%*{
       "success": false,
       "chainId": -1,
-      "url": arg.url
+      "url": arg.url,
+      "isMainUrl": arg.isMainUrl
     })
 
 #################################################
