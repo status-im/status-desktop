@@ -415,3 +415,6 @@ method setPermissionsCheckOngoing*(self: Module, value: bool) =
 
 method getPermissionsCheckOngoing*(self: Module): bool =
   self.view.getPermissionsCheckOngoing()
+
+method stopLoadingFirstMessage*(self: Module) =
+  self.messagesModule.stopLoadingFirstMessage() 
