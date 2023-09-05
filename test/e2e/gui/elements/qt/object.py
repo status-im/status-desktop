@@ -1,5 +1,6 @@
 import logging
 import time
+import typing
 
 import allure
 
@@ -115,3 +116,15 @@ class QObject(BaseObject):
                 return False
 
         assert driver.waitFor(lambda: _hover(), timeout_msec)
+
+    @allure.step('Open context menu')
+    def open_context_menu(
+            self,
+            x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
+            y: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
+    ):
+        self.click(
+            x or self.width // 2,
+            y or self.height // 2,
+            driver.Qt.RightButton
+        )
