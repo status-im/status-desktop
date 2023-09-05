@@ -44,8 +44,9 @@ Rectangle {
     property bool isImage: false
     property bool isEdit: false
 
-    property int messageLimit: 2000
-    property int messageLimitVisible: 200
+    property int messageLimit: 2000 // actual message limit, we don't allow sending more than that
+    property int messageLimitSoft: 200 // we start showing a char counter when this no. of chars left in the message
+    property int messageLimitHard: 20000 // still cut-off attempts to paste beyond this limit, for app usability reasons
 
     property int chatType
 
@@ -333,11 +334,18 @@ Rectangle {
 
             if (messageInputField.length <= messageLimit) {
                 checkForInlineEmojis(true);
-                control.sendMessage(event)
+                control.sendMessage(event);
                 control.hideExtendedArea();
-                event.accepted = true
+                event.accepted = true;
                 return;
             }
+            else
+            {
+                // pop-up a warning message when typing over the limit
+                messageLengthLimitTooltip.visible = true;
+                // TODO: should we also prevent the user from typing over messagelimitHard?
+            }
+
             if (event) {
                 event.accepted = true
                 console.error("Attempting to send a message exceeding length limit")
@@ -427,8 +435,6 @@ Rectangle {
                 validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
             } else if (QClipboardProxy.hasText) {
-                messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
-
                 // cursor position must be stored in a helper property because setting readonly to true causes change
                 // of the cursor position to the end of the input
                 d.copyTextStart = messageInputField.cursorPosition
@@ -436,6 +442,15 @@ Rectangle {
 
                 const clipboardText = Utils.plainText(QClipboardProxy.text)
                 const copiedText = Utils.plainText(d.copiedTextPlain)
+
+                // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
+                if ((messageInputField.getText(0, messageInputField.length).length + clipboardText.length) > control.messageLimitHard)
+                {
+                    event.accepted = false;
+                    return;
+                }
+
+                messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
                 if (copiedText === clipboardText) {
                     if (d.copiedTextPlain.includes("@")) {
                         d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
@@ -467,6 +482,7 @@ Rectangle {
                     ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(QClipboardProxy.text) + "</div>")
                     : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
                 }
+                event.accepted = true
             }
         }
 
@@ -1294,9 +1310,6 @@ Rectangle {
                                     } else {
                                         checkForInlineEmojis()
                                     }
-                                } else {
-                                    const removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
-                                    remove(removeFrom, cursorPosition);
                                 }
 
                                 d.updateMentionsPositions()
@@ -1400,9 +1413,26 @@ Rectangle {
                             property int remainingChars: -1
                             leftPadding: Style.current.halfPadding
                             rightPadding: Style.current.halfPadding
-                            visible: ((messageInputField.length >= control.messageLimitVisible) && (messageInputField.length <= control.messageLimit))
-                            color: (remainingChars <= messageLimitVisible) ? Style.current.danger : Style.current.textColor
+                            visible: messageInputField.length >= control.messageLimit - control.messageLimitSoft
+                            color: {
+                                if ( remainingChars > control.messageLimitSoft )
+                                    return Style.current.textColor
+                                else if (remainingChars  >= 0)
+                                    return Style.current.warning
+                                else
+                                    return Style.current.danger
+                            }
                             text: visible ? remainingChars.toString() : ""
+
+                            StatusQ.StatusToolTip {
+                                id: messageLengthLimitTooltip
+                                text: qsTr("Maximum message character count is " + control.messageLimit)
+                                //FIXME: The popup fails to show when hovering the parent
+                                visible: parent.hovered && parent.visible
+                                orientation: StatusQ.StatusToolTip.Orientation.Top
+//                                offset: Style.current.halfPadding
+//                                y: parent.height + 12
+                            }
                         }
 
                         Row {
