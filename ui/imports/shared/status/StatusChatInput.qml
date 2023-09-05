@@ -55,7 +55,7 @@ Rectangle {
 
     property var fileUrlsAndSources: []
 
-    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this proeprty?
+    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
     property alias suggestions: suggestionsBox
 
@@ -274,7 +274,7 @@ Rectangle {
     }
 
     function insertInTextInput(start, text) {
-        // Repace new lines with entities because `insert` gets rid of them
+        // Replace new lines with entities because `insert` gets rid of them
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
@@ -529,7 +529,7 @@ Rectangle {
     function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
-        // calulate the new selection start and end positions
+        // Calculate the new selection start and end positions
         var newSelectionStart = messageInputField.selectionStart -  unwrapWith.length
         var newSelectionEnd = messageInputField.selectionEnd-messageInputField.selectionStart + newSelectionStart
 
@@ -910,7 +910,7 @@ Rectangle {
         control.fileUrlsAndSources = imageArea.imageSource
     }
 
-    // Use this to validate and show the images. The concatanation of previous selected images is done automatically
+    // Use this to validate and show the images. The concatenation of previous selected images is done automatically
     // Returns true if the images were valid and added
     function validateImagesAndShowImageArea(imagePaths) {
         const validImages = validateImages(imagePaths)
