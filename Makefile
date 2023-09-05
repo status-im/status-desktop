@@ -40,6 +40,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	status-keycard-go \
 	statusq-sanity-checker \
 	run-statusq-sanity-checker \
+        statusq-tests \
+        run-statusq-tests \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -300,6 +302,25 @@ statusq-sanity-checker:
 run-statusq-sanity-checker: statusq-sanity-checker
 	echo -e "\033[92mRunning:\033[39m StatusQ SanityChecker"
 	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
+
+statusq-tests:
+	echo -e "\033[92mConfiguring:\033[39m StatusQ Unit Tests"
+	cmake \
+		-DSTATUSQ_BUILD_SANDBOX=OFF \
+		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
+		-DSTATUSQ_BUILD_TESTS=ON \
+		-B $(STATUSQ_BUILD_PATH) \
+		-S $(STATUSQ_SOURCE_PATH) \
+		$(HANDLE_OUTPUT)
+	echo -e "\033[92mBuilding:\033[39m StatusQ Unit Tests"
+	cmake \
+		--build $(STATUSQ_BUILD_PATH) \
+                --target TestStatusQ \
+		$(HANDLE_OUTPUT)
+
+run-statusq-tests: statusq-tests
+	echo -e "\033[92mRunning:\033[39m StatusQ Unit Tests"
+	$(STATUSQ_BUILD_PATH)/bin/TestStatusQ
 
 ##
 ##	DOtherSide
