@@ -312,13 +312,13 @@ Loader {
             Global.openMenu(addReactionContextMenu, root, {}, point)
         }
 
-        function onImageClicked(image, mouse, imageSource) {
+        function onImageClicked(image, mouse, imageSource, url = "") {
             switch (mouse.button) {
             case Qt.LeftButton:
-                Global.openImagePopup(image)
+                Global.openImagePopup(image, url)
                 break;
             case Qt.RightButton:
-                Global.openMenu(imageContextMenuComponent, image, { imageSource })
+                Global.openMenu(imageContextMenuComponent, image, { imageSource, url })
                 break;
             }
         }
@@ -762,8 +762,8 @@ Loader {
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
-                        onImageClicked: (image, mouse, imageSource) => {
-                            d.onImageClicked(image, mouse, imageSource)
+                        onImageClicked: (image, mouse, imageSource, url) => {
+                            d.onImageClicked(image, mouse, imageSource, url)
                         }
                     }
                 }

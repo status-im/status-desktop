@@ -90,7 +90,7 @@ ColumnLayout {
         asset.name: "copy"
         iconButton.onClicked: {
             let link = Utils.getCommunityShareLink(root.community.id)
-            root.rootStore.copyToClipboard(link)
+            Utils.copyToClipboard(link)
             tooltip.visible = !tooltip.visible
         }
     }

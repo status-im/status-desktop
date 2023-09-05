@@ -106,9 +106,8 @@ QtObject {
         openPopup(downloadPageComponent, popupProperties)
     }
 
-    function openImagePopup(image) {
-        var popup = imagePopupComponent.createObject(popupParent)
-        popup.openPopup(image)
+    function openImagePopup(image, url) {
+        openPopup(imagePopupComponent, {image: image, url: url})
     }
 
     function openProfilePopup(publicKey: string, parentPopup, cb) {

@@ -24,7 +24,7 @@ ColumnLayout {
 
     property bool isCurrentUser: false
 
-    signal imageClicked(var image, var mouse, var imageSource)
+    signal imageClicked(var image, var mouse, var imageSource, string url)
 
     Repeater {
         id: linksRepeater
@@ -86,8 +86,8 @@ ColumnLayout {
                 id: linkImage
 
                 readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
+                readonly property string urlLink: url
                 property bool localAnimationEnabled: true
-
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
                 source: thumbnailUrl
@@ -101,7 +101,7 @@ ColumnLayout {
                     if (isAnimated && !playing)
                         localAnimationEnabled = true
                     else
-                        root.imageClicked(linkImage.imageAlias, mouse, source)
+                        root.imageClicked(linkImage.imageAlias, mouse, source, urlLink)
                 }
                 imageAlias.cache: localAnimationEnabled // GIFs can only loop/play properly with cache enabled
                 Loader {

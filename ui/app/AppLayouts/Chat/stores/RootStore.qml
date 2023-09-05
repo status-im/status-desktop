@@ -231,11 +231,6 @@ QtObject {
         stickersModuleInst.send(channelId, hash, replyTo, pack, url)
     }
 
-    // TODO: This seems to be better in Utils.qml
-    function copyToClipboard(text) {
-        globalUtilsInst.copyToClipboard(text)
-    }
-
     function isCurrentUser(pubkey) {
         return userProfileInst.pubKey === pubkey
     }

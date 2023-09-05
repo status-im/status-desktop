@@ -12,6 +12,8 @@ Popup {
     id: root
 
     property var store
+    property var image
+    property string url: ""
 
     modal: true
     Overlay.modal: Rectangle {
@@ -26,23 +28,18 @@ Popup {
     }
     padding: 0
 
-    function setPopupData(image) {
-        messageImage.source = image.source;
+    onOpened: {
+        messageImage.source = root.image.source;
         const maxHeight = Global.applicationWindow.height - 80
         const maxWidth = Global.applicationWindow.width - 80
 
-        if (image.sourceSize.width >= maxWidth || image.sourceSize.height >= maxHeight) {
+        if (root.image.sourceSize.width >= maxWidth || root.image.sourceSize.height >= maxHeight) {
             this.width = maxWidth
             this.height = maxHeight
         } else {
             this.width = image.sourceSize.width
             this.height = image.sourceSize.height
         }
-    }
-
-    function openPopup(image) {
-        setPopupData(image);
-        open()
     }
 
     contentItem: AnimatedImage {
@@ -64,7 +61,7 @@ Popup {
                 if (mouse.button === Qt.RightButton)
                     Global.openMenu(imageContextMenu,
                                     messageImage,
-                                    { imageSource: messageImage.source })
+                                    { imageSource: messageImage.source, url: root.url})
             }
         }
     }
