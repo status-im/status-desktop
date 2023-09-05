@@ -340,6 +340,7 @@ QtObject:
     self.items[index].icon = icon
     self.items[index].trustStatus = trustStatus
     let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.Icon.int,
@@ -355,6 +356,7 @@ QtObject:
     self.items[index].emoji = emoji
     self.items[index].color = color
     let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.Description.int,
@@ -509,6 +511,7 @@ QtObject:
       return
     self.items[index].lastMessageTimestamp = lastMessageTimestamp
     let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
 
   proc reorderChats*(
