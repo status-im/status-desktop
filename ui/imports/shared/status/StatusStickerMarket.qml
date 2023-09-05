@@ -13,6 +13,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
+import shared.popups.send 1.0
 
 //TODO remove this dependency!
 import AppLayouts.Chat.stores 1.0

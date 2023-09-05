@@ -45,11 +45,7 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                if (root.state === Constants.addressRequested) {
-                    Global.openPopup(selectAccountModalComponent);
-                } else if (root.state === Constants.transactionRequested) {
-                    Global.openPopup(signTxComponent)
-                }
+                // ToDo launch send modal from here
             }
         }
     }
@@ -91,43 +87,6 @@ Item {
         height: 220
         onConfirmButtonClicked: {
             gasEstimateErrorPopup.close();
-        }
-    }
-
-    Component {
-        id: signTxComponent
-        SignTransactionModal {
-            anchors.centerIn: parent
-            store: root.store
-            contactsStore: root.contactsStore
-            msgId: messageId
-            isARequest: true
-            chainId: root.store.getChainIdForChat()
-            onClosed: destroy()
-            onOpenGasEstimateErrorPopup: {
-                gasEstimateErrorPopup.confirmationText = message + qsTr("Decline");
-                gasEstimateErrorPopup.open();
-                return;
-            }
-            selectedAccount: {}
-            selectedRecipient: root.selectedRecipient
-            selectedAsset: token
-            selectedAmount: tokenAmount
-            selectedFiatAmount: fiatValue
-        }
-    }
-
-    Component {
-        id: selectAccountModalComponent
-        SelectAccountModal {
-            id: selectAccountModal
-            anchors.centerIn: parent
-            accounts: root.store.accounts
-            currency: root.store.currentCurrency
-            onSelectAndShareAddressButtonClicked: {
-                root.store.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
-                selectAccountModal.close()
-            }
         }
     }
 }

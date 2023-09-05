@@ -15,6 +15,7 @@ import utils 1.0
 
 import shared.controls 1.0
 import shared.popups 1.0
+import shared.popups.send.controls 1.0
 
 import AppLayouts.stores 1.0
 import "../stores"

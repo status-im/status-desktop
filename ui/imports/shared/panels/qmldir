@@ -1,7 +1,6 @@
 AcceptRejectOptionsButtonsPanel 1.0 AcceptRejectOptionsButtonsPanel.qml
 Address 1.0 Address.qml
 AddressRequiredValidator 1.0 AddressRequiredValidator.qml
-BalanceValidator 1.0 BalanceValidator.qml
 ChatsLoadingPanel 1.0 ChatsLoadingPanel.qml
 ConnectionWarnings 1.0 ConnectionWarnings.qml
 DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml
@@ -22,9 +21,6 @@ Separator 1.0 Separator.qml
 SeparatorWithIcon 1.0 SeparatorWithIcon.qml
 SequenceColumnLayout 1.0 SequenceColumnLayout.qml
 SplitViewHandle 1.0 SplitViewHandle.qml
-HoldingItemSelector 1.0 HoldingItemSelector.qml
-HoldingSelector 1.0 HoldingSelector.qml
-HoldingTypes 1.0 HoldingTypes.qml
 StatusAssetSelector 1.0 StatusAssetSelector.qml
 StyledText 1.0 StyledText.qml
 TextWithLabel 1.0 TextWithLabel.qml

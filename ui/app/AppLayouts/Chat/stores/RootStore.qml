@@ -595,22 +595,6 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionSendInst.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
-    }
-
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
-        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
-    }
-
-    function suggestedFees(chainId) {
-        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
-    }
-
-    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
-        walletSectionSendInst.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }
