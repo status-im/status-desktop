@@ -98,6 +98,7 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx].selected = false
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 
@@ -105,6 +106,7 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx].selected = true
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 

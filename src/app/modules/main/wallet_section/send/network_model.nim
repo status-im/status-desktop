@@ -154,6 +154,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].tokenBalance = tokenBalance
         self.dataChanged(index, index, @[ModelRole.TokenBalance.int])
 
@@ -172,6 +173,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if path.getToNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         if self.items[i].getAmountOut().len != 0:
           self.items[i].amountOut = $(parseInt(self.items[i].getAmountOut()) + parseInt(path.getAmountOut()))
         else:
@@ -196,6 +198,7 @@ QtObject:
     try:
       for i in 0 ..< self.items.len:
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isPreferred = false
         self.items[i].isEnabled = false
         if chainIds.len == 0:
@@ -222,6 +225,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = false
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
@@ -229,12 +233,14 @@ QtObject:
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = true
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
   proc setAllNetworksAsRoutePreferredChains*(self: NetworkModel) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
+      defer: index.delete
       self.items[i].isPreferred = true
       self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
 
@@ -260,6 +266,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = not self.items[i].getIsEnabled()
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
@@ -267,6 +274,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = not disabled
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
@@ -282,6 +290,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].locked = lock
         self.dataChanged(index, index, @[ModelRole.Locked.int])
         if self.items[i].getLocked():

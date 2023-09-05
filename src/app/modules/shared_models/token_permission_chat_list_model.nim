@@ -72,5 +72,6 @@ QtObject:
       if self.items[i].getKey() == chatId:
         self.items[i] = initTokenPermissionChatListItem(chatId, newName)
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.ChannelName.int])
         return
