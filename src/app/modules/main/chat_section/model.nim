@@ -539,6 +539,7 @@ QtObject:
 
       self.items[index].position = updatedChat.position
       let modelIndex = self.createIndex(index, 0, nil)
+      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, roles)
 
   proc reorderCategoryById*(
