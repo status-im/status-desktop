@@ -117,6 +117,11 @@ class QObject(BaseObject):
 
         assert driver.waitFor(lambda: _hover(), timeout_msec)
 
+    @allure.step('Hover and return')
+    def hover_and_return(self):
+        driver.mouseMove(self.center.x, self.center.y)
+        return self
+
     @allure.step('Open context menu')
     def open_context_menu(
             self,
