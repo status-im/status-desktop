@@ -106,4 +106,5 @@ QtObject:
     self.items[ind].isPending = pendingStatus
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.IsPending.int])

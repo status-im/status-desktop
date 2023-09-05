@@ -49,6 +49,8 @@ QtObject:
 
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
+    defer: topLeft.delete
+    defer: bottomRight.delete
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
 
   method rowCount*(self: Model, index: QModelIndex = nil): int = self.activityCenterNotifications.len
@@ -113,6 +115,7 @@ QtObject:
       if (acnViewItem.id == notificationId):
         acnViewItem.read = false
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
@@ -123,6 +126,7 @@ QtObject:
       if (acnViewItem.id == notificationId):
         acnViewItem.read = true
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
@@ -140,7 +144,9 @@ QtObject:
     i = 0
     for index in indexesToDelete:
       let indexUpdated = index - i
-      self.beginRemoveRows(newQModelIndex(), indexUpdated, indexUpdated)
+      let modelIndex = newQModelIndex()
+      defer: modelIndex.delete
+      self.beginRemoveRows(modelIndex, indexUpdated, indexUpdated)
       self.activityCenterNotifications.delete(indexUpdated)
       self.endRemoveRows()
       i = i + 1
@@ -151,13 +157,17 @@ QtObject:
     self.endResetModel()
 
   proc addActivityNotificationItemToList*(self: Model, activityCenterNotification: Item, addToCount: bool = true) =
-    self.beginInsertRows(newQModelIndex(), 0, 0)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginInsertRows(modelIndex, 0, 0)
     self.activityCenterNotifications.insert(activityCenterNotification, 0)
     self.endInsertRows()
 
     if self.activityCenterNotifications.len > 1:
       let topLeft = self.createIndex(0, 0, nil)
       let bottomRight = self.createIndex(1, 0, nil)
+      defer: topLeft.delete
+      defer: bottomRight.delete
       self.dataChanged(topLeft, bottomRight, @[NotifRoles.Timestamp.int, NotifRoles.PreviousTimestamp.int])
 
   proc addActivityNotificationItemsToList*(self: Model, activityCenterNotifications: seq[Item]) =

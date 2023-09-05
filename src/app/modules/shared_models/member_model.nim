@@ -161,7 +161,9 @@ QtObject:
       result = newQVariant(item.membershipRequestState.int)
 
   proc addItem*(self: Model, item: MemberItem) =
-    self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginInsertRows(modelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
@@ -196,6 +198,7 @@ QtObject:
     self.items[ind].localNickname = localNickname
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.EnsName.int,
@@ -210,6 +213,7 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -244,6 +248,7 @@ QtObject:
     self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.IsEnsVerified.int,
@@ -286,6 +291,7 @@ QtObject:
     self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.EnsName.int,
@@ -308,6 +314,7 @@ QtObject:
 
     self.items[idx].onlineStatus = onlineStatus
     let index = self.createIndex(idx, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.OnlineStatus.int
     ])
@@ -322,6 +329,7 @@ QtObject:
 
     self.items[idx].airdropAddress = airdropAddress
     let index = self.createIndex(idx, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.AirdropAddress.int
     ])
@@ -345,6 +353,7 @@ QtObject:
 
     self.items[idx].requestToJoinLoading = requestToJoinLoading
     let index = self.createIndex(idx, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.RequestToJoinLoading.int
     ])

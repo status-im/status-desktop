@@ -117,7 +117,9 @@ QtObject:
       result = newQVariant(item.colorHash)
 
   proc add*(self: Model, item: Item) =
-    self.beginInsertRows(newQModelIndex(), self.resultList.len, self.resultList.len)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginInsertRows(modelIndex, self.resultList.len, self.resultList.len)
     self.resultList.add(item)
     self.endInsertRows()
 

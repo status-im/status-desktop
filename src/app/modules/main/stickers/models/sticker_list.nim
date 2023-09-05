@@ -48,7 +48,9 @@ QtObject:
   proc addStickerToList*(self: StickerList, sticker: Item) =
     if(self.stickers.any(proc(existingSticker: Item): bool = return existingSticker.getHash == sticker.getHash)):
       return
-    self.beginInsertRows(newQModelIndex(), 0, 0)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginInsertRows(modelIndex, 0, 0)
     self.stickers.insert(sticker, 0)
     self.endInsertRows()
 
@@ -62,6 +64,8 @@ QtObject:
     let idx = self.findIndexByPackId(packId)
     if idx == -1:
       return
-    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginRemoveRows(modelIndex, idx, idx)
     self.stickers.delete(idx)
     self.endRemoveRows()
