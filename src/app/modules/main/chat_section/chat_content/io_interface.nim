@@ -139,3 +139,6 @@ method setPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} 
 
 method getPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method stopLoadingFirstMessage*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

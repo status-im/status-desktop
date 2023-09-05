@@ -435,12 +435,16 @@ method activeItemSet*(self: Module, itemId: string) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method getChatContentModule*(self: Module, chatId: string): QVariant =
-  if(not self.chatContentModules.contains(chatId)):
+method getChatContentModule(self: Module, chatId: string): chat_content_module.AccessInterface =
+  if not self.chatContentModules.contains(chatId):
     error "unexisting chat key", chatId, methodName="getChatContentModule"
-    return
+    return nil
+  return self.chatContentModules[chatId]
 
-  return self.chatContentModules[chatId].getModuleAsVariant()
+method getChatContentModuleVariant*(self: Module, chatId: string): QVariant =
+  let module = self.getChatContentModule(chatId)
+  if module != nil:
+    result = module.getModuleAsVariant()
 
 proc updateParentBadgeNotifications(self: Module) =
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
@@ -894,6 +898,7 @@ method onJoinedCommunity*(self: Module) =
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
+  self.getChatContentModule(chat.id).stopLoadingFirstMessage()
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
