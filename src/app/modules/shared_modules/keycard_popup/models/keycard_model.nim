@@ -47,7 +47,9 @@ QtObject:
     self.lockedItemsCountChanged()
 
   proc addItem*(self: KeycardModel, item: KeycardItem) =
-    self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
+    let modelIndex = newQModelIndex()
+    defer: modelIndex.delete
+    self.beginInsertRows(modelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()

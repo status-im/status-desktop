@@ -93,6 +93,7 @@ QtObject:
       return
     self.items[ind].receivedMessageAtPosition(position)
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
 
   proc evaluateWhetherToProcessReceivedData*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]): bool =
@@ -119,6 +120,7 @@ QtObject:
     self.items[ind].totalMessages = totalMessages
     self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
 
   proc removeSection*(self: Model, entity: string) =

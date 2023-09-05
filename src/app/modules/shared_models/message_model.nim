@@ -360,6 +360,7 @@ QtObject:
           oldItem.quotedMessageText = newItem.unparsedText
           oldItem.quotedMessageContentType = newItem.contentType
           let index = self.createIndex(i, 0, nil)
+          defer: index.delete
           self.dataChanged(index, index, @[
             ModelRole.QuotedMessageFrom.int,
             ModelRole.QuotedMessageAuthorDisplayName.int,
@@ -420,6 +421,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
         let ind = self.createIndex(i, 0, nil)
+        defer: ind.delete
         var item = self.items[i]
         item.quotedMessageText = ""
         item.quotedMessageParsedText = ""
@@ -481,6 +483,7 @@ QtObject:
       return
     self.items[ind].outgoingStatus = status
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.OutgoingStatus.int])
 
   proc itemSending*(self: Model, messageId: string) =
@@ -501,6 +504,7 @@ QtObject:
       return
     self.items[ind].resendError = error
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.ResendError.int])
 
   proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
@@ -512,6 +516,7 @@ QtObject:
     self.items[ind].addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
   proc removeReaction*(self: Model, messageId: string, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
@@ -522,6 +527,7 @@ QtObject:
     self.items[ind].removeReaction(emojiId, reactionId, didIRemoveThisReaction)
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
   proc pinUnpinMessage*(self: Model, messageId: string, pin: bool, pinnedBy: string) =
@@ -533,6 +539,7 @@ QtObject:
     self.items[ind].pinnedBy = pinnedBy
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Pinned.int, ModelRole.PinnedBy.int])
 
   proc getMessageByIdAsJson*(self: Model, messageId: string): JsonNode =
@@ -573,6 +580,7 @@ QtObject:
 
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, roles)
 
   proc setEditModeOn*(self: Model, messageId: string)  =
@@ -583,6 +591,7 @@ QtObject:
     self.items[ind].editMode = true
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.EditMode.int])
 
   proc setEditModeOff*(self: Model, messageId: string)  =
@@ -593,6 +602,7 @@ QtObject:
     self.items[ind].editMode = false
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.EditMode.int])
 
   proc updateEditedMsg*(
@@ -620,6 +630,7 @@ QtObject:
     self.items[ind].parsedText = updatedParsedText
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.MessageText.int,
       ModelRole.UnparsedText.int,
@@ -637,6 +648,7 @@ QtObject:
         self.items[i].quotedMessageText = updatedRawMsg
         self.items[i].quotedMessageContentType = contentType
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[
           ModelRole.QuotedMessageText.int,
           ModelRole.QuotedMessageParsedText.int,
@@ -712,6 +724,7 @@ QtObject:
       if not item.seen:
         item.seen = true
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Seen.int])
 
   proc markAsSeen*(self: Model, messages: seq[string]) =
@@ -723,6 +736,7 @@ QtObject:
       if messagesSet.contains(currentItemID):
         self.items[i].seen = true
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Seen.int])
         messagesSet.excl(currentItemID)
 
@@ -751,6 +765,7 @@ QtObject:
         item.albumMessageIds = albumMessagesIds
         
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.AlbumMessageImages.int])
         return true
     return false

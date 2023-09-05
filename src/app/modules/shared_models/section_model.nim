@@ -339,6 +339,8 @@ QtObject:
 
       let topIndex = self.createIndex(topInd, 0, nil)
       let bottomIndex = self.createIndex(bottomInd, 0, nil)
+      defer: topIndex.delete
+      defer: bottomIndex.delete
       self.dataChanged(topIndex, bottomIndex, @[ModelRole.Enabled.int])
 
     # This signal is emitted to update buttons visibility in the left navigation bar,
