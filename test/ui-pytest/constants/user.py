@@ -21,3 +21,5 @@ default_community_params = {
 
 UserCommunityInfo = namedtuple('CommunityInfo', ['name', 'description', 'members', 'image'])
 UserChannel = namedtuple('Channel', ['name', 'image', 'selected'])
+
+account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
