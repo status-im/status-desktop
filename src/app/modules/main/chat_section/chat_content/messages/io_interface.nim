@@ -182,3 +182,6 @@ method reevaluateViewLoadingState*(self: AccessInterface) {.base.} =
 
 method onGetMessageById*(self: AccessInterface, requestId: UUID, messageId: string, message: MessageDto, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method stopLoadingFirstMessage*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

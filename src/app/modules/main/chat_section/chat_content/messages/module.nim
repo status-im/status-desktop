@@ -198,19 +198,23 @@ proc createChatIdentifierItem(self: Module): Item =
     albumImagesCount = 0,
   )
 
+proc resetMessageSearch(self: Module) =
+  self.controller.clearSearchedMessageId()
+  self.controller.resetLoadingMessagesPerPageFactor()
+  self.view.setMessageSearchOngoing(false)
+  self.reevaluateViewLoadingState()
+
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
   let searchedMessageId = self.controller.getSearchedMessageId()
-  if(searchedMessageId.len > 0):
-    let index = self.view.model().findIndexForMessageId(searchedMessageId)
-    if(index != -1):
-      self.controller.clearSearchedMessageId()
-      self.controller.resetLoadingMessagesPerPageFactor()
-      self.view.emitScrollToMessageSignal(index)
-      self.view.setMessageSearchOngoing(false)
-      self.reevaluateViewLoadingState()
-    else:
-      self.controller.increaseLoadingMessagesPerPageFactor()
-      self.loadMoreMessages()
+  if searchedMessageId.len == 0:
+    return
+  let index = self.view.model().findIndexForMessageId(searchedMessageId)
+  if(index != -1):
+    self.resetMessageSearch()
+    self.view.emitScrollToMessageSignal(index)
+  else:
+    self.controller.increaseLoadingMessagesPerPageFactor()
+    self.loadMoreMessages()
 
 proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
@@ -784,3 +788,8 @@ method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
     self.initialMessagesLoaded = true
 
   self.reevaluateViewLoadingState()
+
+method stopLoadingFirstMessage*(self: Module) =
+  if self.controller.getSearchedMessageId() != self.view.model().getFirstUnseenMessageId():
+    return
+  self.resetMessageSearch()

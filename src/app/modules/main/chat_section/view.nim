@@ -164,7 +164,7 @@ QtObject:
     self.tmpChatId = chatId
 
   proc getChatContentModule*(self: View): QVariant {.slot.} =
-    var chatContentVariant = self.delegate.getChatContentModule(self.tmpChatId)
+    var chatContentVariant = self.delegate.getChatContentModuleVariant(self.tmpChatId)
     self.tmpChatId = ""
     if(chatContentVariant.isNil):
       return newQVariant()

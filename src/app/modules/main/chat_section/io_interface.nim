@@ -171,7 +171,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method setActiveItem*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatContentModule*(self: AccessInterface, chatId: string): QVariant {.base.} =
+method getChatContentModuleVariant*(self: AccessInterface, chatId: string): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isCommunity*(self: AccessInterface): bool {.base.} =
