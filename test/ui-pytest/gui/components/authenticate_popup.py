@@ -5,7 +5,6 @@ from gui.elements.qt.text_edit import TextEdit
 from gui.elements.qt.object import QObject
 
 
-
 class AuthenticatePopup(QObject):
 
     def __init__(self):
@@ -13,7 +12,7 @@ class AuthenticatePopup(QObject):
         self._password_text_edit = TextEdit('sharedPopup_Password_Input')
         self._primary_button = Button('sharedPopup_Primary_Button')
 
-    @allure.step('Authenticate in popup')
+    @allure.step('Authenticate action with password')
     def authenticate(self, password: str, attempt: int = 2):
         self._password_text_edit.text = password
         self._primary_button.click()
@@ -21,6 +20,6 @@ class AuthenticatePopup(QObject):
             self._primary_button.wait_until_hidden()
         except AssertionError as err:
             if attempt:
-                self.authenticate(password, attempt-1)
+                self.authenticate(password, attempt - 1)
             else:
                 raise err

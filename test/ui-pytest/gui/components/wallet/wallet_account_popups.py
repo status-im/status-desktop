@@ -70,9 +70,16 @@ class AccountPopup(BasePopup):
         self._address_text_edit.text = value
         return self
 
+    @allure.step('Set private key for account')
+    def set_origin_private_key(self, value: str):
+        self._origin_combobox.click()
+        self._new_master_key_origin_item.click()
+        AddNewAccountPopup().wait_until_appears().import_private_key(value)
+        return self
+
     @allure.step('Set derivation path for account')
     def set_derivation_path(self, value: str, index: int, password: str):
-        self._edit_derivation_path_button.hover_and_return().click()
+        self._edit_derivation_path_button.hover().click()
         AuthenticatePopup().wait_until_appears().authenticate(password)
         if value in [_.value for _ in constants.wallet.DerivationPath]:
             self._derivation_path_combobox_button.click()
@@ -92,6 +99,24 @@ class AccountPopup(BasePopup):
     def save(self):
         self._add_account_button.wait_until_appears().click()
         return self
+
+
+class AddNewAccountPopup(BasePopup):
+
+    def __init__(self):
+        super(AddNewAccountPopup, self).__init__()
+        self._import_private_key_button = Button('mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption')
+        self._private_key_text_edit = TextEdit('mainWallet_AddEditAccountPopup_PrivateKey')
+        self._private_key_name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_PrivateKeyName')
+        self._continue_button = Button('mainWallet_AddEditAccountPopup_PrimaryButton')
+
+    @allure.step('Import private key')
+    def import_private_key(self, private_key: str) -> str:
+        self._import_private_key_button.click()
+        self._private_key_text_edit.text = private_key
+        self._private_key_name_text_edit.text = private_key[:5]
+        self._continue_button.click()
+        return private_key[:5]
 
 
 class GeneratedAddressesList(QObject):
