@@ -157,6 +157,7 @@ QtObject:
     self.items[ind].otherMessages = otherMessages
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.MuteAllMessages.int, ModelRole.PersonalMentions.int,
       ModelRole.GlobalMentions.int, ModelRole.OtherMessages.int, ModelRole.Customized.int])
 
@@ -168,4 +169,5 @@ QtObject:
     self.items[ind].name = name
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Name.int])

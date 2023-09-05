@@ -211,6 +211,7 @@ QtObject:
     self.items[ind].localNickname = localNickname
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.EnsName.int,
@@ -226,6 +227,7 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
     self.itemChanged(pubKey)
 
@@ -253,6 +255,7 @@ QtObject:
     self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.EnsName.int,
@@ -276,6 +279,7 @@ QtObject:
     self.items[ind].incomingVerificationStatus = requestStatus
 
     let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.IncomingVerificationStatus.int
     ])
@@ -288,6 +292,8 @@ QtObject:
 
     let first = self.createIndex(ind, 0, nil)
     let last = self.createIndex(ind, 0, nil)
+    defer: first.delete
+    defer: last.delete
     self.items[ind].isUntrustworthy = isUntrustworthy
     self.dataChanged(first, last, @[ModelRole.IsUntrustworthy.int])
     self.itemChanged(pubKey)

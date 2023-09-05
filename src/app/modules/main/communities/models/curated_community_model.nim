@@ -136,6 +136,7 @@ QtObject:
     let idx = self.findIndexById(item.getId())
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx] = item
       self.dataChanged(index, index, @[
         ModelRole.Name.int,
