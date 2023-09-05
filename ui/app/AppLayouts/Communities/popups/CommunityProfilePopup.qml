@@ -69,7 +69,7 @@ StatusModal {
                                              : Global.leaveCommunityRequested(root.community.name, root.community.id, root.community.outroMessage)
                 }
                 onCopyToClipboard: {
-                    root.store.copyToClipboard(link);
+                    Utils.copyToClipboard(link);
                 }
             }
         }

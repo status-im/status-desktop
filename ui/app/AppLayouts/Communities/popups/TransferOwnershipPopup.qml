@@ -56,7 +56,7 @@ StatusDialog {
                 objectName: "copyCommunityPrivateKeyButton"
                 onClicked: {
                     text = qsTr("Copied")
-                    root.store.copyToClipboard(root.privateKey)
+                    Utils.copyToClipboard(root.privateKey)
                 }
             }
         }
