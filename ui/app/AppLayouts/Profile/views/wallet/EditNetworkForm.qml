@@ -65,6 +65,28 @@ ColumnLayout {
             default: return ""
             }
         }
+
+        function getErrorMessageColor(status) {
+            switch(status) {
+            case EditNetworkForm.Pending:
+                return Theme.palette.baseColor1
+            case EditNetworkForm.SameAsOther:
+                return  Theme.palette.warningColor1
+            case EditNetworkForm.Verified:
+                return Theme.palette.successColor1
+            default: return Theme.palette.dangerColor1
+            }
+        }
+
+        function getErrorMessageAlignment(status) {
+            switch(status) {
+            case EditNetworkForm.Pending:
+            case EditNetworkForm.Verified:
+            case EditNetworkForm.SameAsOther:
+                return  Text.AlignLeft
+            default: return Text.AlignRight
+            }
+        }
     }
 
     onVisibleChanged: if(!visible) {d.revertValues()}
@@ -152,24 +174,10 @@ ColumnLayout {
                     Qt.callLater(d.evaluateRpcEndPoint, text, true);
                 }
             }
-            errorMessageCmp.horizontalAlignment: d.evaluationStatusMainRpc === EditNetworkForm.Pending ||
-                                                 d.evaluationStatusMainRpc === EditNetworkForm.Verified ||
-                                                     d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther ?
-                                                     Text.AlignLeft: Text.AlignRight
+            errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusMainRpc)
             errorMessageCmp.visible: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched
             errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusMainRpc, text)
-            errorMessageCmp.color: {
-                switch(d.evaluationStatusMainRpc) {
-                case EditNetworkForm.Pending:
-                    return Theme.palette.baseColor1
-                case EditNetworkForm.SameAsOther:
-                    return  Theme.palette.warningColor1
-                case EditNetworkForm.Verified:
-                    return Theme.palette.successColor1
-                default: return Theme.palette.dangerColor1
-
-                }
-            }
+            errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusMainRpc)
         }
     }
 
@@ -194,23 +202,10 @@ ColumnLayout {
                 Qt.callLater(d.evaluateRpcEndPoint, text, false);
             }
         }
-        errorMessageCmp.horizontalAlignment: d.evaluationStatusFallBackRpc === EditNetworkForm.Pending ||
-                                             d.evaluationStatusFallBackRpc === EditNetworkForm.Verified ||
-                                             d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther ?
-                                                 Text.AlignLeft: Text.AlignRight
+        errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusFallBackRpc)
         errorMessageCmp.visible: d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
         errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusFallBackRpc, text)
-        errorMessageCmp.color: {
-            switch(d.evaluationStatusFallBackRpc) {
-            case EditNetworkForm.Pending:
-                return Theme.palette.baseColor1
-            case EditNetworkForm.SameAsOther:
-                return  Theme.palette.warningColor1
-            case EditNetworkForm.Verified:
-                return Theme.palette.successColor1
-            default: return Theme.palette.dangerColor1
-            }
-        }
+        errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusFallBackRpc)
     }
 
     StatusInput {

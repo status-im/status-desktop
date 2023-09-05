@@ -15,6 +15,7 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
+import shared.popups.send 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.popups 1.0

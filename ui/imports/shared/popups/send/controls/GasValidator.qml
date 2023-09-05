@@ -8,7 +8,7 @@ import StatusQ.Components 0.1
 
 import utils 1.0
 
-import "../panels"
+import shared.panels 1.0
 
 Column {
     id: root

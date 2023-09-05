@@ -6,7 +6,7 @@ import Models 1.0
 import Storybook 1.0
 import utils 1.0
 
-import shared.popups 1.0
+import shared.popups.send 1.0
 import shared.stores 1.0
 
 import StatusQ.Core.Utils 0.1

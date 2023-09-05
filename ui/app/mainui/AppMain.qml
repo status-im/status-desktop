@@ -23,6 +23,7 @@ import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.status 1.0
 import shared.stores 1.0
+import shared.popups.send 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1

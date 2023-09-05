@@ -7,7 +7,6 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.stores 1.0
-import shared.panels 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -17,9 +16,10 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
-import "../panels"
-import "../controls"
-import "../views"
+import "./panels"
+import "./controls"
+import "./views"
+import "./stores"
 
 StatusDialog {
     id: popup
@@ -473,11 +473,6 @@ StatusDialog {
         pending: d.isPendingTx || popup.isLoading
         visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
-    }
-
-    Component {
-        id: transactionSettingsConfirmationPopupComponent
-        TransactionSettingsConfirmationPopup {}
     }
 
     Connections {

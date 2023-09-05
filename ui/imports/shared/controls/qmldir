@@ -2,14 +2,10 @@ AddressInput 1.0 AddressInput.qml
 AmountInput 1.0 AmountInput.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
 AssetDelegate 1.0 AssetDelegate.qml
-CollectibleNestedDelegate 1.0 CollectibleNestedDelegate.qml
 ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 FormGroup 1.0 FormGroup.qml
-GasSelector 1.0 GasSelector.qml
-GasSelectorButton 1.0 GasSelectorButton.qml
-GasValidator 1.0 GasValidator.qml
 Input 1.0 Input.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 RecipientSelector 1.0 RecipientSelector.qml
@@ -28,7 +24,6 @@ TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionAddress 1.0 TransactionAddress.qml
 TransactionAddressTile 1.0 TransactionAddressTile.qml
 TransactionDataTile 1.0 TransactionDataTile.qml
-TransactionFormGroup 1.0 TransactionFormGroup.qml
 EmojiHash 1.0 EmojiHash.qml
 InformationTile 1.0 InformationTile.qml
 SocialLinkPreview 1.0 SocialLinkPreview.qml
@@ -45,5 +40,4 @@ GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
 ErrorDetails 1.0 ErrorDetails.qml
 CopyButton 1.0 CopyButton.qml
 DisabledTooltipButton 1.0 DisabledTooltipButton.qml
-WalletAccountListItem 1.0 WalletAccountListItem.qml
 ImportKeypairInfo 1.0 ImportKeypairInfo.qml
