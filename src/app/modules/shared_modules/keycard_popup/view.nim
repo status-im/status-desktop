@@ -50,6 +50,7 @@ QtObject:
     signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
+    signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
 
   proc diablePopupChanged*(self: View) {.signal.}
   proc getDisablePopup*(self: View): bool {.slot.} =
@@ -108,6 +109,9 @@ QtObject:
 
   proc onSecondaryActionClicked*(self: View) {.slot.} =
     self.delegate.onSecondaryActionClicked()
+
+  proc onTertiaryActionClicked*(self: View) {.slot.} =
+    self.delegate.onTertiaryActionClicked()
 
   proc keyPairModel*(self: View): KeyPairModel =
     return self.keyPairModel
@@ -183,6 +187,12 @@ QtObject:
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
 
+  proc setNewPassword*(self: View, value: string) {.slot.} =
+    self.delegate.setNewPassword(value)
+
+  proc getNewPassword*(self: View): string {.slot.} =
+    self.delegate.getNewPassword()
+
   proc getNameFromKeycard*(self: View): string {.slot.} =
     return self.delegate.getNameFromKeycard()
 
@@ -206,7 +216,7 @@ QtObject:
 
   proc validSeedPhrase*(self: View, value: string): bool {.slot.} =
     return self.delegate.validSeedPhrase(value)
-  
+
   proc migratingProfileKeyPair*(self: View): bool {.slot.} =
     return self.delegate.migratingProfileKeyPair()
 

@@ -375,7 +375,7 @@ method startAppAfterDelay*[T](self: Module[T]) =
   if not self.view.fetchingDataModel().allMessagesLoaded():
     let currStateObj = self.view.currentStartupStateObj()
     if currStateObj.isNil:
-      error "cannot determine current startup state"
+      error "cannot determine current startup state", procName="startAppAfterDelay"
       quit() # quit the app
     self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
   self.moveToStartupState()
@@ -392,10 +392,22 @@ proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupEr
   self.moveToStartupState()
   self.emitAccountLoginError(error)
 
+method onProfileConverted*[T](self: Module[T], success: bool) =
+  if not success:
+    self.logoutAndDisplayError("", StartupErrorType.ConvertToRegularAccError)
+    return
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot determine current startup state", procName="onProfileConverted"
+    quit() # quit the app
+  self.delegate.logout()
+  self.moveToStartupState()
+  self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
+
 method onNodeLogin*[T](self: Module[T], error: string) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
-    error "cannot determine current startup state"
+    error "cannot determine current startup state", procName="onNodeLogin"
     quit() # quit the app
 
   if error.len == 0:
@@ -409,12 +421,8 @@ method onNodeLogin*[T](self: Module[T], error: string) =
           self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
           return
     elif currStateObj.flowType() == state.FlowType.LostKeycardConvertToRegularAccount:
-        let err = self.controller.convertToRegularAccount()
-        if err.len > 0:
-          self.logoutAndDisplayError(err, StartupErrorType.ConvertToRegularAccError)
-          return
-        self.delegate.logout()
-        self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
+      self.controller.convertKeycardProfileKeypairToRegular()
+      return
     else:
       let err = self.delegate.userLoggedIn()
       if err.len > 0:

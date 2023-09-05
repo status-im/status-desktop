@@ -14,15 +14,21 @@ method executePrePrimaryStateCommand*(self: MigratingKeypairToAppState, controll
     let sp = controller.getSeedPhrase()
     let password = controller.getPassword()
     let kpForProcessing = controller.getKeyPairForProcessing()
+    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    if migratingProfile:
+      let newPassword = controller.getNewPassword()
+      controller.tryToStoreDataToKeychain(newPassword)
+      controller.convertKeycardProfileKeypairToRegular(sp, password, newPassword)
+      return
     controller.migrateNonProfileKeycardKeypairToApp(kpForProcessing.getKeyUid(), sp, password,
       doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser())
 
-method executePreSecondaryStateCommand*(self: MigratingKeypairToAppState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process.
+method executePreTertiaryStateCommand*(self: MigratingKeypairToAppState, controller: Controller) =
+  ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.MigrateFromKeycardToApp:
-    self.migrationOk = controller.getAddingMigratedKeypairSuccess()
+    self.migrationOk = controller.getConvertingProfileSuccess()
 
-method getNextSecondaryState*(self: MigratingKeypairToAppState, controller: Controller): State =
+method getNextTertiaryState*(self: MigratingKeypairToAppState, controller: Controller): State =
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     if not self.migrationOk:
       return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)

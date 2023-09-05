@@ -71,8 +71,8 @@ StatusScrollView {
     signal viewMessagesRequested(string contactId)
 
     signal remoteDestructRequested(string name, string address)
-    signal kickRequested(string name, string address)
-    signal banRequested(string name, string address)
+    signal kickRequested(string name, string contactId)
+    signal banRequested(string name, string contactId)
 
     signal deployFeesRequested
 
@@ -217,8 +217,8 @@ StatusScrollView {
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(name, address)
 
-            onKickRequested: root.kickRequested(name, address)
-            onBanRequested: root.banRequested(name, address)
+            onKickRequested: root.kickRequested(name, contactId)
+            onBanRequested: root.banRequested(name, contactId)
         }
     }
 }

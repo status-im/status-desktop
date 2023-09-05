@@ -48,6 +48,7 @@ type
     tmpPukMatch: bool
     tmpValidPuk: bool
     tmpPassword: string
+    tmpNewPassword: string
     tmpPairingCode: string
     tmpSelectedKeyPairIsProfile: bool
     tmpSelectedKeycardDto: KeycardDto
@@ -182,19 +183,19 @@ proc init*(self: Controller, fullConnect = true) =
     handlerId = self.events.onWithUUID(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
       let args = KeycardArgs(e)
       self.tmpAddingMigratedKeypairSuccess = args.success
-      self.delegate.onSecondaryActionClicked()
+      self.delegate.onTertiaryActionClicked()
     self.connectionIds.add(handlerId)
 
     handlerId = self.events.onWithUUID(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
       let args = KeycardArgs(e)
       self.tmpAddingMigratedKeypairSuccess = args.success
-      self.delegate.onSecondaryActionClicked()
+      self.delegate.onTertiaryActionClicked()
     self.connectionIds.add(handlerId)
 
     handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
       let args = ResultArgs(e)
       self.tmpConvertingProfileSuccess = args.success
-      self.delegate.onSecondaryActionClicked()
+      self.delegate.onTertiaryActionClicked()
     self.connectionIds.add(handlerId)
 
     handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
@@ -283,6 +284,12 @@ proc setPassword*(self: Controller, value: string) =
 
 proc getPassword*(self: Controller): string =
   return self.tmpPassword
+
+proc setNewPassword*(self: Controller, value: string) =
+  self.tmpNewPassword = value
+
+proc getNewPassword*(self: Controller): string =
+  return self.tmpNewPassword
 
 proc setPairingCode*(self: Controller, value: string) =
   self.tmpPairingCode = value
@@ -391,21 +398,21 @@ proc verifyPassword*(self: Controller, password: string): bool =
     return
   return self.accountsService.verifyPassword(password)
 
-proc convertSelectedKeyPairToKeycardAccount*(self: Controller, keycardUid: string, password: string) =
+proc convertRegularProfileKeypairToKeycard*(self: Controller, keycardUid: string, currentPassword: string) =
   if not serviceApplicable(self.accountsService):
     return
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  self.accountsService.convertToKeycardAccount(keycardUid, currentPassword = password,
+  self.accountsService.convertRegularProfileKeypairToKeycard(keycardUid, currentPassword = currentPassword,
     newPassword = acc.derivedAccounts.encryption.publicKey)
+
+proc convertKeycardProfileKeypairToRegular*(self: Controller, seedPhrase: string, currentPassword: string, newPassword: string) =
+  if not serviceApplicable(self.accountsService):
+    return
+  self.accountsService.convertKeycardProfileKeypairToRegular(seedPhrase, currentPassword, newPassword)
 
 proc getConvertingProfileSuccess*(self: Controller): bool =
   return self.tmpConvertingProfileSuccess
-
-proc getLoggedInAccount*(self: Controller): AccountDto =
-  if not serviceApplicable(self.accountsService):
-    return
-  return self.accountsService.getLoggedInAccount()
 
 proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
   if not serviceApplicable(self.keycardService):
@@ -804,14 +811,12 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
     return
   if(not singletonInstance.userProfile.getUsingBiometricLogin()):
     return
-  let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.tryToObtainData(loggedInAccount.keyUid)
+  self.keychainService.tryToObtainData(singletonInstance.userProfile.getKeyUid())
 
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
   if not serviceApplicable(self.keychainService):
     return
-  let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.storeData(loggedInAccount.keyUid, password)
+  self.keychainService.storeData(singletonInstance.userProfile.getKeyUid(), password)
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.walletAccountService.getCurrencyFormat(symbol)

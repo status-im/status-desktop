@@ -697,6 +697,21 @@ QtObject {
             SharedAddressesPopup {
                 id: editSharedAddressesPopup
 
+                readonly property var oldSharedAddresses: root.rootStore.myRevealedAddressesForCurrentCommunity
+                readonly property string oldAirdropAddress: root.rootStore.myRevealedAirdropAddressForCurrentCommunity
+
+                onOldSharedAddressesChanged: {
+                    editSharedAddressesPopup.setOldSharedAddresses(
+                        editSharedAddressesPopup.oldSharedAddresses
+                    )
+                }
+
+                onOldAirdropAddressChanged: {
+                    editSharedAddressesPopup.setOldAirdropAddress(
+                        editSharedAddressesPopup.oldAirdropAddress
+                    )
+                }
+
                 property string communityId
 
                 readonly property var chatStore: ChatStore.RootStore {
@@ -710,9 +725,6 @@ QtObject {
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
-                // FIXME get these from the community settings (from the initial "join" call)
-                //selectedSharedAddresses: [???]
-                //selectedAirdropAddress: "???"
                 loginType: chatStore.loginType
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 permissionsModel: {

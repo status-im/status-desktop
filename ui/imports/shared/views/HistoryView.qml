@@ -29,7 +29,7 @@ ColumnLayout {
     property var overview
     property bool showAllAccounts: false
 
-    signal launchTransactionDetail(var transaction)
+    signal launchTransactionDetail(var transaction, int entryIndex)
 
     onVisibleChanged: {
         if (!visible)
@@ -356,7 +356,7 @@ ColumnLayout {
                 if (mouse.button === Qt.RightButton) {
                     delegateMenu.openMenu(this, mouse, modelData)
                 } else {
-                    launchTransactionDetail(modelData)
+                    launchTransactionDetail(modelData, index)
                 }
             }
         }

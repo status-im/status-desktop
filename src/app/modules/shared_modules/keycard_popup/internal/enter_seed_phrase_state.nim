@@ -14,15 +14,17 @@ proc newEnterSeedPhraseState*(flowType: FlowType, backState: State): EnterSeedPh
 proc delete*(self: EnterSeedPhraseState) =
   self.State.delete
 
+method executePreBackStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
+  controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
+
 method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
+  controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
   let sp = controller.getSeedPhrase()
   if self.flowType == FlowType.SetupNewKeycard:
     let keyUid = controller.getKeyUidForSeedPhrase(sp)
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getSelectedKeyPairDto().keyUid
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), sp)
-    else:
-      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp)
     if self.verifiedSeedPhrase:
@@ -42,28 +44,27 @@ method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Co
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), sp)
-    else:
-      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.UnlockKeycard:
     controller.setUnlockUsingSeedPhrase(true)
     let keyUid = controller.getKeyUidForSeedPhrase(sp)
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getKeyPairForProcessing().getKeyUid()
-    if not self.verifiedSeedPhrase:
-      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     let keyUid = controller.getKeyUidForSeedPhrase(sp)
     self.verifiedSeedPhrase = controller.validSeedPhrase(sp) and keyUid == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
+      let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+      if migratingProfile:
+        return
       controller.authenticateUser()
-    else:
-      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
 method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.verifiedSeedPhrase:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
       return createState(StateType.WrongSeedPhrase, self.flowType, nil)
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if not self.verifiedSeedPhrase:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
       return createState(StateType.WrongSeedPhrase, self.flowType, self.getBackState)
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if not self.verifiedSeedPhrase:
@@ -74,15 +75,24 @@ method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller):
       ## but we need to check that with designers.
       return createState(StateType.SeedPhraseAlreadyInUse, self.flowType, self)
   if self.flowType == FlowType.UnlockKeycard:
-    if self.verifiedSeedPhrase:
-      return createState(StateType.CreatePin, self.flowType, nil)
-    return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+    if not self.verifiedSeedPhrase:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+      return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+    return createState(StateType.CreatePin, self.flowType, nil)
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     if not self.verifiedSeedPhrase:
-      return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+      return createState(StateType.WrongSeedPhrase, self.flowType, self.getBackState)
+    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    if not migratingProfile:
+      return
+    return createState(StateType.CreatePassword, self.flowType, self)
 
 method getNextSecondaryState*(self: EnterSeedPhraseState, controller: Controller): State =
   if self.flowType == FlowType.MigrateFromKeycardToApp:
+    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    if migratingProfile:
+      return
     return createState(StateType.MigratingKeypairToApp, self.flowType, nil)
 
 method executeCancelCommand*(self: EnterSeedPhraseState, controller: Controller) =

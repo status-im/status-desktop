@@ -247,8 +247,8 @@ QtObject {
         walletSectionInst.fetchDecodedTxData(txHash, input)
     }
 
-    function fetchTxDetails(id, isMultiTx, isPending) {
-        walletSectionInst.activityController.fetchTxDetails(id, isMultiTx, isPending)
+    function fetchTxDetails(modelIndex) {
+        walletSectionInst.activityController.fetchTxDetails(modelIndex)
     }
 
     function getTxDetails() {

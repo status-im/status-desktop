@@ -1,8 +1,10 @@
-import NimQml, Tables, strutils, strformat, sequtils, logging
+import NimQml, Tables, strutils, strformat, sequtils, logging, options
 
 import ./entry
 
 import app/modules/shared_models/currency_amount
+import backend/activity as backend
+import backend/backend as importing_transactionidentity_comp
 
 type
   ModelRole {.pure.} = enum
@@ -11,7 +13,7 @@ type
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      entries: seq[ActivityEntry]
+      entries: seq[entry.ActivityEntry]
       hasMore: bool
 
   proc delete(self: Model) =
@@ -23,13 +25,21 @@ QtObject:
 
   proc newModel*(): Model =
     new(result, delete)
+
     result.entries = @[]
-    result.setup
     result.hasMore = true
+
+    result.setup
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.entries.len:
       result &= fmt"""[{i}]:({$self.entries[i]})"""
+
+  proc getEntry*(self: Model, index: int): entry.ActivityEntry =
+    if index < 0 or index >= self.entries.len:
+      return nil
+
+    return self.entries[index]
 
   proc countChanged(self: Model) {.signal.}
 
@@ -68,12 +78,12 @@ QtObject:
     self.hasMore = hasMore
     self.hasMoreChanged()
 
-  proc resetModel*(self: Model, newEntries: seq[ActivityEntry]) =
+  proc resetModel*(self: Model, newEntries: seq[entry.ActivityEntry]) =
     self.beginResetModel()
     self.entries = newEntries
     self.endResetModel()
 
-  proc setEntries*(self: Model, newEntries: seq[ActivityEntry], offset: int, hasMore: bool) =
+  proc setEntries*(self: Model, newEntries: seq[entry.ActivityEntry], offset: int, hasMore: bool) =
     if offset == 0:
       self.resetModel(newEntries)
     else:
@@ -83,11 +93,33 @@ QtObject:
       if offset != self.entries.len:
         error "offset != self.entries.len"
         return
+
       self.beginInsertRows(parentModelIndex, self.entries.len, self.entries.len + newEntries.len - 1)
       self.entries.add(newEntries)
       self.endInsertRows()
+
     self.countChanged()
     self.setHasMore(hasMore)
+
+  proc sameIdentity(e: entry.ActivityEntry, d: backend.Data): bool =
+    let m = e.getMetadata()
+    if m.getPayloadType() != d.payloadType:
+      return false
+
+    if m.getPayloadType() == MultiTransaction:
+      return m.getMultiTransactionId().get(0) == d.id.get()
+
+    return m.getTransactionIdentity().isSome() and d.transaction.isSome() and m.getTransactionIdentity().get() == d.transaction.get()
+
+  proc updateEntries*(self: Model, updates: seq[backend.Data]) =
+    for i in countdown(self.entries.high, 0):
+      for j in countdown(updates.high, 0):
+        if sameIdentity(self.entries[i], updates[j]):
+          if updates[j].nftName.isSome():
+            self.entries[i].setNftName(updates[j].nftName.get())
+          if updates[j].nftUrl.isSome():
+            self.entries[i].setNftImageUrl(updates[j].nftUrl.get())
+          break
 
   proc getHasMore*(self: Model): bool {.slot.} =
     return self.hasMore

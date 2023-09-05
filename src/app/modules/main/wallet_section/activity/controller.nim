@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, sugar, options, strutils
+import NimQml, logging, std/json, sequtils, sugar, options, strutils, locks
 import tables, stint, sets
 
 import model
@@ -33,11 +33,11 @@ proc toRef*[T](obj: T): ref T =
 const FETCH_BATCH_COUNT_DEFAULT = 10
 const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
 
-# TODO: implement passing of collectibles
 QtObject:
   type
     Controller* = ref object of QObject
       model: Model
+
       recipientsModel: RecipientsModel
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
@@ -74,138 +74,45 @@ QtObject:
   QtProperty[QVariant] recipientsModel:
     read = getRecipientsModel
 
-  proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: MultiTransactionDto): ExtraData =
-    # TODO: Use symbols from backendEntry when they're available
-    result.inSymbol = item.toAsset
-    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
-    result.outSymbol = item.fromAsset
-    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
+  proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
+    if metadata.symbolIn.isSome():
+      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+    if metadata.symbolOut.isSome():
+      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
-  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref TransactionDto): ExtraData =
-    # TODO: Use symbols from backendEntry when they're available
-    result.inSymbol = item[].symbol
-    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
-    result.outSymbol = item[].symbol
-    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
-
-  proc getResolvedSymbol(self: Controller, transaction: TransactionDto): string =
-    if transaction.symbol != "":
-      result = transaction.symbol
-    else:
-      let contractSymbol = self.tokenService.findTokenSymbolByAddress(transaction.contract)
-      if contractSymbol != "":
-        result = contractSymbol
-      else:
-        result = "ETH"
+  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
+    if metadata.symbolIn.isSome():
+      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+    if metadata.symbolOut.isSome():
+      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
-    var multiTransactionsIds: seq[int] = @[]
-    var transactionIdentities: seq[backend.TransactionIdentity] = @[]
-    var pendingTransactionIdentities: seq[backend.TransactionIdentity] = @[]
-
-    # Extract metadata required to fetch details
-    # TODO: see #11598. Temporary here to show the working API. Details for each entry will be done as required
-    # on a detail request from UI after metadata is extended to include the required info
-    for backendEntry in backendEntities:
-      case backendEntry.payloadType:
-        of MultiTransaction:
-          multiTransactionsIds.add(backendEntry.id)
-        of SimpleTransaction:
-          transactionIdentities.add(backendEntry.transaction.get())
-        of PendingTransaction:
-          pendingTransactionIdentities.add(backendEntry.transaction.get())
-
-    var multiTransactions = initTable[int, MultiTransactionDto]()
-    if len(multiTransactionsIds) > 0:
-      let mts = transaction_service.getMultiTransactions(multiTransactionsIds)
-      for mt in mts:
-        multiTransactions[mt.id] = mt
-
-    var transactions = initTable[TransactionIdentity, ref TransactionDto]()
-    if len(transactionIdentities) > 0:
-      let response = backend.getTransfersForIdentities(transactionIdentities)
-      let res = response.result
-      if response.error != nil or res.kind != JArray or res.len == 0:
-        error "failed fetching transaction details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
-
-      let transactionsDtos = res.getElems().map(x => x.toTransactionDto())
-      for dto in transactionsDtos:
-        transactions[TransactionIdentity(chainId: dto.chainId, hash: dto.id, address: dto.address)] = toRef(dto)
-
-    var pendingTransactions = initTable[TransactionIdentity, ref TransactionDto]()
-    if len(pendingTransactionIdentities) > 0:
-      let response = backend.getPendingTransactionsForIdentities(pendingTransactionIdentities)
-      let res = response.result
-      if response.error != nil or res.kind != JArray or res.len == 0:
-        error "failed fetching pending transactions details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
-
-      let pendingTransactionsDtos = res.getElems().map(x => x.toPendingTransactionDto())
-      for dto in pendingTransactionsDtos:
-        pendingTransactions[TransactionIdentity(chainId: dto.chainId, hash: dto.id, address: dto.address)] = toRef(dto)
-
-    # Merge detailed transaction info in order
-    result = newSeqOfCap[entry.ActivityEntry](multiTransactions.len + transactions.len + pendingTransactions.len)
-
     let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
       return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
-                                  self.currencyService.getCurrencyFormat(symbol))
-
-    var mtIndex = 0
-    var tIndex = 0
-    var ptIndex = 0
+                                self.currencyService.getCurrencyFormat(symbol))
     for backendEntry in backendEntities:
-      case backendEntry.payloadType:
+      var ae: entry.ActivityEntry
+      case backendEntry.getPayloadType():
         of MultiTransaction:
-          let id = multiTransactionsIds[mtIndex]
-          if multiTransactions.hasKey(id):
-            let mt = multiTransactions[id]
-            let extraData = self.buildMultiTransactionExtraData(backendEntry, mt)
-            result.add(entry.newMultiTransactionActivityEntry(mt, backendEntry, extraData, amountToCurrencyConvertor))
-          else:
-            error "failed to find multi transaction with id: ", id
-          mtIndex += 1
-        of SimpleTransaction:
-          let identity = transactionIdentities[tIndex]
-          if transactions.hasKey(identity):
-            let tr = transactions[identity]
-            tr.symbol = self.getResolvedSymbol(tr[])
-            let extraData = self.buildTransactionExtraData(backendEntry, tr)
-            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData, amountToCurrencyConvertor))
-          else:
-            error "failed to find transaction with identity: ", identity
-          tIndex += 1
-        of PendingTransaction:
-          let identity = pendingTransactionIdentities[ptIndex]
-          if pendingTransactions.hasKey(identity):
-            let tr = pendingTransactions[identity]
-            tr.symbol = self.getResolvedSymbol(tr[])
-            let extraData = self.buildTransactionExtraData(backendEntry, tr)
-            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData, amountToCurrencyConvertor))
-          else:
-            error "failed to find pending transaction with identity: ", identity
-          ptIndex += 1
+          let extraData = self.buildMultiTransactionExtraData(backendEntry)
+          ae = entry.newMultiTransactionActivityEntry(backendEntry, extraData, amountToCurrencyConvertor)
+        of SimpleTransaction, PendingTransaction:
+          let extraData = self.buildTransactionExtraData(backendEntry)
+          ae = entry.newTransactionActivityEntry(backendEntry, self.addresses, extraData, amountToCurrencyConvertor)
+      result.add(ae)
 
-  proc fetchTxDetails*(self: Controller, id: string, isMultiTx: bool, isPending: bool) {.slot.} =
-    self.activityDetails = newActivityDetails(id, isMultiTx)
-    if isPending:
+  proc fetchTxDetails*(self: Controller, entryIndex: int) {.slot.} =
+    let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
+      return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
+                                    self.currencyService.getCurrencyFormat(symbol))
+
+    let entry = self.model.getEntry(entryIndex)
+    if entry == nil:
+      error "failed to find entry with index: ", entryIndex
       return
 
     try:
-      let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
-        return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
-                                    self.currencyService.getCurrencyFormat(symbol))
-      if isMultiTx:
-        let res = backend_activity.getMultiTxDetails(parseInt(id))
-        if res.error != nil:
-          error "failed to fetch multi tx details: ", id
-          return
-        self.activityDetails = newActivityDetails(res.result, amountToCurrencyConvertor)
-      else:
-        let res = backend_activity.getTxDetails(id)
-        if res.error != nil:
-          error "failed to fetch tx details: ", id
-          return
-        self.activityDetails = newActivityDetails(res.result, amountToCurrencyConvertor)
+      self.activityDetails = newActivityDetails(entry.getMetadata(), amountToCurrencyConvertor)
     except Exception as e:
       let errDescription = e.msg
       error "error: ", errDescription
@@ -229,6 +136,7 @@ QtObject:
       return
 
     let entries = self.backendToPresentation(res.activities)
+
     self.model.setEntries(entries, res.offset, res.hasMore)
 
     if len(entries) > 0:
@@ -237,7 +145,9 @@ QtObject:
   proc updateFilter*(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
     self.status.setIsFilterDirty(false)
+
     self.model.resetModel(@[])
+
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
@@ -250,7 +160,6 @@ QtObject:
 
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
-
     let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
@@ -286,6 +195,17 @@ QtObject:
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onFilteringDone(proc (jsonObj: JsonNode) =
       self.processResponse(jsonObj)
+    )
+
+    self.eventsHandler.onFilteringUpdateDone(proc (jn: JsonNode) =
+      if jn.kind != JArray:
+        error "expected an array"
+
+      var entries = newSeq[backend_activity.Data](jn.len)
+      for i in 0 ..< jn.len:
+        entries[i] = fromJson(jn[i], backend_activity.Data)
+
+      self.model.updateEntries(entries)
     )
 
     self.eventsHandler.onGetRecipientsDone(proc (jsonObj: JsonNode) =

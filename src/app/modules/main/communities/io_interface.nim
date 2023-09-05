@@ -223,3 +223,7 @@ method onCommunityCheckPermissionsToJoinFailed*(self: AccessInterface, community
 
 method onCommunityCheckAllChannelPermissionsFailed*(self: AccessInterface, communityId: string, ValueErrorerror: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, communityId: string, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount]) {.base.} =
+  raise newException(ValueError, "No implementation available")

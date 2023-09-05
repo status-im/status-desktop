@@ -43,6 +43,20 @@ QtObject {
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
+
+    readonly property var myRevealedAddressesForCurrentCommunity: {
+        try {
+            let revealedAddresses = root.communitiesModuleInst.myRevealedAddressesStringForCurrentCommunity
+            let revealedAddressArray = JSON.parse(revealedAddresses)
+            return revealedAddressArray.map(addr => addr.toLowerCase())
+        } catch (e) {
+            console.error("Error parsing my revealed addresses", e)
+        }
+        return []
+    }
+    readonly property string myRevealedAirdropAddressForCurrentCommunity:
+        root.communitiesModuleInst.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
+
     property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList

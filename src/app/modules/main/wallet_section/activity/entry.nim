@@ -1,12 +1,10 @@
 import NimQml, json, strformat, sequtils, strutils, logging, stint
 
-import backend/transactions
 import backend/activity as backend
 import app/modules/shared_models/currency_amount
 
 import app/global/global_singleton
 
-import app_service/service/transaction/dto
 import app_service/service/currency/dto as currency
 import app_service/service/currency/service
 
@@ -19,36 +17,22 @@ type
   ExtraData* = object
     inAmount*: float64
     outAmount*: float64
-    # TODO: Fields below should come from the metadata. see #11597
-    inSymbol*: string
-    outSymbol*: string
 
   AmountToCurrencyConvertor* = proc (amount: UInt256, symbol: string): CurrencyAmount
 
-# It is used to display an activity history entry in the QML UI
-#
-# TODO remove this legacy after the NFT is served async; see #11598
-# TODO add all required metadata from filtering; see #11597
-#
-# Looking into going away from carying the whole detailed data and just keep the required data for the UI
-# and request the detailed data on demand
-#
-# Outdated: The ActivityEntry contains one of the following instances transaction, pending transaction or multi-transaction
+# Used to display an activity history header entry in the QML UI
 QtObject:
   type
     ActivityEntry* = ref object of QObject
-      # TODO: these should be removed; see #11598
-      multi_transaction: MultiTransactionDto
-      transaction: ref TransactionDto
-      isPending: bool
-
       valueConvertor: AmountToCurrencyConvertor
       metadata: backend.ActivityEntry
       extradata: ExtraData
 
-      totalFees: CurrencyAmount
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
+
+      nftName: string
+      nftImageURL: string
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -56,78 +40,63 @@ QtObject:
   proc delete*(self: ActivityEntry) =
     self.QObject.delete
 
-  proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto, metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
+  proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
-    result.multi_transaction = mt
-    result.transaction = nil
-    result.isPending = false
     result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
     result.noAmount = newCurrencyAmount()
     result.amountCurrency = valueConvertor(
       if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
-      if metadata.activityType == backend.ActivityType.Receive: mt.toAsset else: mt.fromAsset,
+      if metadata.activityType == backend.ActivityType.Receive: metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
     )
     result.setup()
 
-  proc newTransactionActivityEntry*(tr: ref TransactionDto, metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
+  proc newTransactionActivityEntry*(metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
-    result.multi_transaction = nil
-    result.transaction = tr
-    result.isPending = metadata.payloadType == backend.PayloadType.PendingTransaction
     result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
 
-    result.totalFees = valueConvertor(stint.fromHex(UInt256, tr.totalFees), "Gwei")
     result.amountCurrency = valueConvertor(
       if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
-      tr.symbol
+      if metadata.activityType == backend.ActivityType.Receive: metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
     )
     result.noAmount = newCurrencyAmount()
 
     result.setup()
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
-    return self.multi_transaction != nil
+    return self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction
 
   QtProperty[bool] isMultiTransaction:
     read = isMultiTransaction
 
   proc isPendingTransaction*(self: ActivityEntry): bool {.slot.} =
-    return (not self.isMultiTransaction()) and self.isPending
+    return self.metadata.getPayloadType() == backend.PayloadType.PendingTransaction
 
   QtProperty[bool] isPendingTransaction:
     read = isPendingTransaction
 
   proc `$`*(self: ActivityEntry): string =
-    let mtStr = if self.multi_transaction != nil: $(self.multi_transaction.id) else: "0"
-    let trStr = if self.transaction != nil: $(self.transaction[]) else: "nil"
-
     return fmt"""ActivityEntry(
-      multi_transaction.id:{mtStr},
-      transaction:{trStr},
-      isPending:{self.isPending}
+      metadata:{$self.metadata},
     )"""
 
   proc isInTransactionType(self: ActivityEntry): bool =
     return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
 
-  proc getMultiTransaction*(self: ActivityEntry): MultiTransactionDto =
-    if not self.isMultiTransaction():
-      raise newException(Defect, "ActivityEntry is not a MultiTransaction")
-    return self.multi_transaction
-
+  # TODO: is this the right way to pass transaction identity? Why not use the instance?
   proc getId*(self: ActivityEntry): string {.slot.} =
     if self.isMultiTransaction():
-      return $self.multi_transaction.id
-    elif self.transaction != nil:
-      return self.transaction[].id
-    return ""
+      return $(self.metadata.getMultiTransactionId().get())
+    return $(self.metadata.getTransactionIdentity().get().hash)
 
   QtProperty[string] id:
     read = getId
+
+  proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
+    return self.metadata
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
     return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
@@ -142,13 +111,13 @@ QtObject:
     read = getRecipient
 
   proc getInSymbol*(self: ActivityEntry): string {.slot.} =
-    return self.extradata.inSymbol
+    return self.metadata.symbolIn.get("")
 
   QtProperty[string] inSymbol:
     read = getInSymbol
 
   proc getOutSymbol*(self: ActivityEntry): string {.slot.} =
-    return self.extradata.outSymbol
+    return self.metadata.symbolOut.get("")
 
   QtProperty[string] outSymbol:
     read = getOutSymbol
@@ -178,7 +147,7 @@ QtObject:
 
   QtProperty[int] chainIdIn:
     read = getChainIdIn
-    
+
   proc getChainIdOut*(self: ActivityEntry): int {.slot.} =
     return self.metadata.chainIdOut.get(ChainId(0)).int
 
@@ -199,31 +168,33 @@ QtObject:
   QtProperty[bool] isNFT:
     read = getIsNFT
 
-  proc getNFTName*(self: ActivityEntry): string {.slot.} =
-    # TODO: complete this async #11597
-    return ""
+  proc nftNameChanged*(self: ActivityEntry) {.signal.}
 
-  # TODO: lazy load this in activity history service. See #11597
+  proc getNftName*(self: ActivityEntry): string {.slot.} =
+    return self.nftName
+
+  proc setNftName*(self: ActivityEntry, nftName: string) =
+    self.nftName = nftName
+    self.nftNameChanged()
+
   QtProperty[string] nftName:
-    read = getNFTName
+    read = getNftName
+    write = setNftName
+    notify = nftNameChanged
 
-  proc getNFTImageURL*(self: ActivityEntry): string {.slot.} =
-    # TODO: complete this async #11597
-    return ""
+  proc nftImageUrlChanged*(self: ActivityEntry) {.signal.}
 
-  # TODO: lazy load this in activity history service. See #11597
-  QtProperty[string] nftImageURL:
-    read = getNFTImageURL
+  proc getNftImageUrl*(self: ActivityEntry): string {.slot.} =
+    return self.nftImageUrl
 
-  proc getTotalFees*(self: ActivityEntry): QVariant {.slot.} =
-    if self.transaction == nil:
-      error "getTotalFees: ActivityEntry is not an transaction entry"
-      return newQVariant(self.noAmount)
-    return newQVariant(self.totalFees)
+  proc setNftImageUrl*(self: ActivityEntry, nftImageUrl: string) =
+    self.nftImageUrl = nftImageUrl
+    self.nftImageUrlChanged()
 
-  # TODO: lazy load this in activity history service. See #11597
-  QtProperty[QVariant] totalFees:
-    read = getTotalFees
+  QtProperty[string] nftImageUrl:
+    read = getNftImageUrl
+    write = setNftImageUrl
+    notify = nftImageUrlChanged
 
   proc getTxType*(self: ActivityEntry): int {.slot.} =
     return self.metadata.activityType.int
@@ -231,20 +202,6 @@ QtObject:
   QtProperty[int] txType:
     read = getTxType
 
-  proc getTokenType*(self: ActivityEntry): string {.slot.} =
-    let s = if self.transaction != nil: self.transaction[].symbol else: ""
-    if self.transaction != nil:
-      return self.transaction[].typeValue
-    if self.isInTransactionType() and self.metadata.tokenOut.isSome:
-      return $self.metadata.tokenOut.unsafeGet().tokenType
-    if self.metadata.tokenIn.isSome:
-      return $self.metadata.tokenIn.unsafeGet().tokenType
-    return ""
-
-  # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[string] tokenType:
-    read = getTokenType
-    
   proc getTokenInAddress*(self: ActivityEntry): string {.slot.} =
     if self.metadata.tokenIn.isSome:
       let address = self.metadata.tokenIn.unsafeGet().address
@@ -274,13 +231,13 @@ QtObject:
     read = getTokenAddress
 
   proc getTokenID*(self: ActivityEntry): string {.slot.} =
-    if self.metadata.payloadType == backend.PayloadType.MultiTransaction:
+    if self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction:
       error "getTokenID: ActivityEntry is not a transaction"
       return ""
 
     var tokenId: Option[TokenID]
     if self.isInTransactionType():
-      if self.metadata.tokenIn.isSome(): 
+      if self.metadata.tokenIn.isSome():
         tokenId = self.metadata.tokenIn.unsafeGet().tokenId
     elif self.metadata.tokenOut.isSome():
         tokenId = self.metadata.tokenOut.unsafeGet().tokenId

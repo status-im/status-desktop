@@ -116,7 +116,7 @@ Column {
                                           return qsTr("Pending")
                                       case Constants.TransactionStatus.Complete:
                                           return qsTr("Complete")
-                                      case Constants.TransactionStatus.Finished:
+                                      case Constants.TransactionStatus.Finalised:
                                           return qsTr("Finalised")
                                       default:
                                           console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])

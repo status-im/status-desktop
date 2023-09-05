@@ -89,6 +89,12 @@ method setPuk*[T](self: Module[T], value: string) =
 method setPassword*[T](self: Module[T], value: string) =
   self.controller.setPassword(value)
 
+method setNewPassword*[T](self: Module[T], value: string) =
+  self.controller.setNewPassword(value)
+
+method getNewPassword*[T](self: Module[T]): string =
+  return self.controller.getNewPassword()
+
 method getKeyPairForProcessing*[T](self: Module[T]): KeyPairItem =
   return self.view.getKeyPairForProcessing()
 
@@ -366,6 +372,23 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
   currStateObj.executePostSecondaryStateCommand(self.controller)
   debug "sm_secondary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
+method onTertiaryActionClicked*[T](self: Module[T]) =
+  let currStateObj = self.view.currentStateObj()
+  if currStateObj.isNil:
+    error "sm_cannot resolve current state"
+    return
+  debug "sm_tertiary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
+  currStateObj.executePreTertiaryStateCommand(self.controller)
+  let nextState = currStateObj.getNextTertiaryState(self.controller)
+  if nextState.isNil:
+    return
+  self.preStateActivities(nextState.flowType(), nextState.stateType())
+  self.reEvaluateKeyPairForProcessing(currStateObj.flowType(), currStateObj.stateType())
+  self.view.setCurrentState(nextState)
+  currStateObj.executePostTertiaryStateCommand(self.controller)
+  debug "sm_tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
   if self.controller.keycardSyncingInProgress():
     self.handleKeycardSyncing()
@@ -628,10 +651,10 @@ method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
     return
   if flowType == FlowType.SetupNewKeycard:
     self.controller.setPassword(password)
-    self.onSecondaryActionClicked()
+    self.onTertiaryActionClicked()
   if flowType == FlowType.MigrateFromKeycardToApp:
     self.controller.setPassword(password)
-    self.onSecondaryActionClicked()
+    self.onTertiaryActionClicked()
 
 method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string, errorType: string) =
   let currStateObj = self.view.currentStateObj()

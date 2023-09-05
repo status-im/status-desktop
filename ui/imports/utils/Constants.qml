@@ -127,6 +127,7 @@ QtObject {
     }
 
     readonly property QtObject keycardSharedState: QtObject {
+        readonly property string biometrics: "Biometrics"
         readonly property string noPCSCService: "NoPCSCService"
         readonly property string noState: "NoState"
         readonly property string pluginReader: "PluginReader"
@@ -173,6 +174,8 @@ QtObject {
         readonly property string migratingKeypairToKeycard: "MigratingKeypairToKeycard"
         readonly property string enterPassword: "EnterPassword"
         readonly property string wrongPassword: "WrongPassword"
+        readonly property string createPassword: "CreatePassword"
+        readonly property string confirmPassword: "ConfirmPassword"
         readonly property string biometricsPasswordFailed: "BiometricsPasswordFailed"
         readonly property string biometricsPinFailed: "BiometricsPinFailed"
         readonly property string biometricsPinInvalid: "BiometricsPinInvalid"
@@ -1047,7 +1050,7 @@ QtObject {
         Failed,
         Pending,
         Complete,
-        Finished
+        Finalised
     }
 
     // Mirrors src/backend/activity.nim ActivityType
@@ -1073,6 +1076,13 @@ QtObject {
         ThisMonth,
         LastMonth,
         Custom
+    }
+
+    readonly property QtObject time: QtObject {
+        readonly property int hoursIn7Days: 168
+        readonly property int hoursInDay: 24
+        readonly property int secondsIn7Days: 604800
+        readonly property int secondsInHour: 3600
     }
 
     readonly property QtObject walletSection: QtObject {

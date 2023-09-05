@@ -60,3 +60,7 @@ QtObject:
   proc secondaryActionClicked*(self: StateWrapper) {.signal.}
   proc doSecondaryAction*(self: StateWrapper) {.slot.} =
     self.secondaryActionClicked()
+
+  proc tertiaryActionClicked*(self: StateWrapper) {.signal.}
+  proc doTertiaryAction*(self: StateWrapper) {.slot.} =
+    self.tertiaryActionClicked()
