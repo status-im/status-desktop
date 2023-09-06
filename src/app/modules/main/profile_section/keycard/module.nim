@@ -105,17 +105,15 @@ proc createSharedKeycardModule(self: Module) =
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
     self.walletAccountService, self.keychainService)
 
-method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType) =
-  echo "onSharedKeycarModuleFlowTerminated  lastStepInTheCurrentFlow=", lastStepInTheCurrentFlow, "  nextFlow=", nextFlow
+method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType,
+  forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) =
   if self.isSharedKeycardModuleFlowRunning():
-    echo "onSharedKeycarModuleFlowTerminated  isSharedKeycardModuleFlowRunning=true"
     if nextFlow == keycard_shared_module.FlowType.General:
       self.view.emitDestroyKeycardSharedModuleFlow()
       self.keycardSharedModule.delete
       self.keycardSharedModule = nil
       return
-    let keyUid = self.keycardSharedModule.getKeyPairForProcessing().getKeyUid()
-    self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset, keyUid)
+    self.keycardSharedModule.runFlow(nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow)
 
 method onDisplayKeycardSharedModuleFlow*(self: Module) =
   self.view.emitDisplayKeycardSharedModuleFlow()

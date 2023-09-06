@@ -1,13 +1,16 @@
 import parseutils, sequtils, sugar, chronicles
-import ../../../../global/global_singleton
-import ../../../../../app_service/service/keycard/constants
-from ../../../../../app_service/service/keycard/service import KCSFlowType
-from ../../../../../app_service/service/keycard/service import PINLengthForStatusApp
-from ../../../../../app_service/service/keycard/service import PUKLengthForStatusApp
-import ../../../../../app_service/common/account_constants
-import ../../../../../app_service/service/wallet_account/dto/[keypair_dto]
+
+import app/global/global_singleton
+import app_service/service/keycard/constants
+import app_service/common/account_constants
+import app_service/service/wallet_account/dto/[keypair_dto]
+import app/modules/shared_models/[keypair_model]
+
+from app_service/service/keycard/service import KCSFlowType
+from app_service/service/keycard/service import PINLengthForStatusApp
+from app_service/service/keycard/service import PUKLengthForStatusApp
+
 import ../controller
-import ../../../shared_models/[keypair_model]
 import state
 
 logScope:
@@ -94,6 +97,7 @@ include max_pin_retries_reached_state
 include max_puk_retries_reached_state
 include max_pairing_slots_reached_state
 include migrate_keypair_to_app_state
+include migrate_keypair_to_keycard_state
 include migrating_keypair_to_app_state
 include migrating_keypair_to_keycard_state
 include no_pcsc_service_state

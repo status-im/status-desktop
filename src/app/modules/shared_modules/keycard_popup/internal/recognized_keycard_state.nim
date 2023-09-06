@@ -27,13 +27,14 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     return createState(StateType.EnterSeedPhrase, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.UnlockKeycardOptions, self.flowType, nil)
-  if self.flowType == FlowType.ImportFromKeycard or 
+  if self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromAppToKeycard:
       return createState(StateType.EnterPin, self.flowType, nil)
 
 method executeCancelCommand*(self: RecognizedKeycardState, controller: Controller) =

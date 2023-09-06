@@ -49,6 +49,7 @@ type StateType* {.pure.} = enum
   KeyPairMigrateSuccess = "KeyPairMigrateSuccess"
   KeyPairMigrateFailure = "KeyPairMigrateFailure"
   MigrateKeypairToApp = "MigrateKeypairToApp"
+  MigrateKeypairToKeycard = "MigrateKeypairToKeycard"
   MigratingKeypairToApp = "MigratingKeypairToApp"
   MigratingKeypairToKeycard = "MigratingKeypairToKeycard"
   EnterPassword = "EnterPassword"

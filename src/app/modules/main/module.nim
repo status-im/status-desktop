@@ -1342,11 +1342,15 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
   if not self.keycardSharedModule.isNil:
     return self.keycardSharedModule.getModuleAsVariant()
 
-method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType,
+  forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) =
   if not self.keycardSharedModule.isNil:
-    self.view.emitDestroyKeycardSharedModuleFlow()
-    self.keycardSharedModule.delete
-    self.keycardSharedModule = nil
+    if nextFlow == keycard_shared_module.FlowType.General:
+      self.view.emitDestroyKeycardSharedModuleFlow()
+      self.keycardSharedModule.delete
+      self.keycardSharedModule = nil
+      return
+    self.keycardSharedModule.runFlow(nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow)
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
@@ -1360,6 +1364,16 @@ proc runStopUsingKeycardForProfilePopup[T](self: Module[T]) =
     self.walletAccountService, self.keychainService)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromKeycardToApp,
     singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
+
+proc runStartUsingKeycardForProfilePopup[T](self: Module[T]) =
+  if not self.keycardSharedModule.isNil:
+    info "shared keycard module is already running, cannot run start using keycard flow"
+    return
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER,
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
+    self.walletAccountService, self.keychainService)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromAppToKeycard,
+    singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
 ################################################################################
 
 method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
@@ -1371,8 +1385,9 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
   if not migrationNeeded:
     if not self.keycardSharedModule.isNil:
       let currentFlow = self.keycardSharedModule.getCurrentFlowType()
-      if currentFlow == FlowType.MigrateFromKeycardToApp:
-        self.keycardSharedModule.onCancelActionClicked()
+      if currentFlow == FlowType.MigrateFromKeycardToApp or
+        currentFlow == FlowType.MigrateFromAppToKeycard:
+          self.keycardSharedModule.onCancelActionClicked()
     return
   if profileKeypair.keycards.len > 0:
     if not self.keycardSharedModule.isNil:
@@ -1383,8 +1398,14 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
     info "run stop using keycard flow for the profile, cause profile was migrated on paired device"
     self.runStopUsingKeycardForProfilePopup()
     return
-  ## TODO: we need to add a flow to handle migration to a Keycard
+  if not self.keycardSharedModule.isNil:
+    let currentFlow = self.keycardSharedModule.getCurrentFlowType()
+    if currentFlow == FlowType.MigrateFromAppToKeycard:
+      return
+    self.keycardSharedModule.onCancelActionClicked()
   info "run migrate to a Keycard flow for the profile, cause profile was migrated on paired device"
+  self.runStartUsingKeycardForProfilePopup()
+
 
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)

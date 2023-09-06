@@ -1,13 +1,13 @@
 import NimQml, chronicles, json, strutils, sequtils, tables
 
-import ../../common/types as common_types
-import ../../common/social_links
-import ../../common/utils as common_utils
-import ../../../app/core/eventemitter
-import ../../../app/core/fleets/fleet_configuration
-import ../../../app/core/signals/types
-import ../../../backend/settings as status_settings
-import ../../../backend/status_update as status_update
+import app_service/common/types as common_types
+import app_service/common/social_links
+import app_service/common/utils as common_utils
+import app/core/eventemitter
+import app/core/fleets/fleet_configuration
+import app/core/signals/types
+import backend/settings as status_settings
+import backend/status_update as status_update
 
 import ./dto/settings as settings_dto
 import ../stickers/dto/stickers as stickers_dto

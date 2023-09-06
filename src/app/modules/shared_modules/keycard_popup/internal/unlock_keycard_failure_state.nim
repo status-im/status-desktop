@@ -10,6 +10,10 @@ proc delete*(self: UnlockKeycardFailureState) =
 
 method executePrePrimaryStateCommand*(self: UnlockKeycardFailureState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
+    if controller.getReturnToFlow() == FlowType.MigrateFromAppToKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true, nextFlow = FlowType.MigrateFromAppToKeycard,
+        forceFlow = controller.getForceFlow(), nextKeyUid = controller.getKeyPairForProcessing().getKeyUid())
+      return
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
 method executeCancelCommand*(self: UnlockKeycardFailureState, controller: Controller) =

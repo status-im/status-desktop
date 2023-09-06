@@ -8,6 +8,11 @@ proc newMaxPairingSlotsReachedState*(flowType: FlowType, backState: State): MaxP
 proc delete*(self: MaxPairingSlotsReachedState) =
   self.State.delete
 
+method executePrePrimaryStateCommand*(self: MaxPairingSlotsReachedState, controller: Controller) =
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true, nextFlow = FlowType.UnlockKeycard, forceFlow = controller.getForceFlow(),
+      nextKeyUid = controller.getKeyPairForProcessing().getKeyUid(), returnToFlow = FlowType.MigrateFromAppToKeycard)
+
 method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
@@ -39,5 +44,6 @@ method executeCancelCommand*(self: MaxPairingSlotsReachedState, controller: Cont
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromAppToKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

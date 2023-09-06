@@ -124,6 +124,7 @@ QtObject {
         readonly property string changePairingCode: "ChangePairingCode"
         readonly property string createCopyOfAKeycard: "CreateCopyOfAKeycard"
         readonly property string migrateFromKeycardToApp: "MigrateFromKeycardToApp"
+        readonly property string migrateFromAppToKeycard: "MigrateFromAppToKeycard"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -170,6 +171,7 @@ QtObject {
         readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
         readonly property string keyPairMigrateFailure: "KeyPairMigrateFailure"
         readonly property string migrateKeypairToApp: "MigrateKeypairToApp"
+        readonly property string migrateKeypairToKeycard: "MigrateKeypairToKeycard"
         readonly property string migratingKeypairToApp: "MigratingKeypairToApp"
         readonly property string migratingKeypairToKeycard: "MigratingKeypairToKeycard"
         readonly property string enterPassword: "EnterPassword"
