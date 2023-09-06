@@ -16,6 +16,7 @@ from gui.elements.qt.object import QObject
 
 GENERATED_PAGES_LIMIT = 20
 
+
 class AccountPopup(BasePopup):
     def __init__(self):
         super(AccountPopup, self).__init__()
@@ -28,6 +29,7 @@ class AccountPopup(BasePopup):
         self._watch_only_account_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
         self._new_master_key_origin_item = QObject('mainWallet_AddEditAccountPopup_OriginOptionNewMasterKey')
         self._existing_origin_item = QObject('addAccountPopup_OriginOption_StatusListItem')
+        self._use_keycard_button = QObject('mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption')
         # derivation
         self._address_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress')
         self._add_account_button = Button('mainWallet_AddEditAccountPopup_PrimaryButton')
@@ -109,6 +111,13 @@ class AccountPopup(BasePopup):
                 self._non_eth_checkbox.set(True)
         else:
             self._derivation_path_text_edit.type_text(str(index))
+        return self
+
+    @allure.step('Click continue in keycard settings')
+    def continue_in_keycard_settings(self):
+        self._origin_combobox.click()
+        self._new_master_key_origin_item.click()
+        self._use_keycard_button.click()
         return self
 
     @allure.step('Save added account')
