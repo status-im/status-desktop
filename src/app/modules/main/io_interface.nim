@@ -1,24 +1,25 @@
 import NimQml, stint
 
-import ../../../app_service/service/settings/service as settings_service
-import ../../../app_service/service/node_configuration/service as node_configuration_service
-import ../../../app_service/service/contacts/service as contacts_service
-import ../../../app_service/service/chat/service as chat_service
-import ../../../app_service/service/community/service as community_service
-import ../../../app_service/service/message/service as message_service
-import ../../../app_service/service/gif/service as gif_service
-import ../../../app_service/service/mailservers/service as mailservers_service
-import ../../../app_service/service/community_tokens/service as community_token_service
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/token/service as token_service
-import ../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../app_service/service/community_tokens/community_collectible_owner
-from ../../../app_service/common/types import StatusType, ContractTransactionStatus
+import app_service/service/settings/service as settings_service
+import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/message/service as message_service
+import app_service/service/gif/service as gif_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/community_tokens/service as community_token_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/community_tokens/community_collectible_owner
+from app_service/common/types import StatusType, ContractTransactionStatus
 
-import ../../global/app_signals
-import ../../core/eventemitter
-import ../../core/notifications/details
-import ../shared_models/section_item
+import app/global/app_signals
+import app/core/eventemitter
+import app/core/notifications/details
+import app/modules/shared_models/section_item
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -276,7 +277,8 @@ method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
 method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool,
+  nextFlow: keycard_shared_module.FlowType, forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Paths: seq[string] = @[]) {.base.} =

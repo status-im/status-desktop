@@ -32,6 +32,7 @@ Item {
             case Constants.keycardSharedState.keyPairMigrateSuccess:
             case Constants.keycardSharedState.keyPairMigrateFailure:
             case Constants.keycardSharedState.migrateKeypairToApp:
+            case Constants.keycardSharedState.migrateKeypairToKeycard:
             case Constants.keycardSharedState.migratingKeypairToApp:
             case Constants.keycardSharedState.migratingKeypairToKeycard:
             case Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess:

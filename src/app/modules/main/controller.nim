@@ -420,7 +420,8 @@ proc init*(self: Controller) =
       self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED, Args())
       return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER:
-      self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+      self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow, args.continueWithNextFlow,
+        args.forceFlow, args.continueWithKeyUid, args.returnToFlow)
       return
     if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER or
       self.authenticateUserFlowRequestedBy.len == 0:

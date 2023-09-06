@@ -39,7 +39,8 @@ method executePreSecondaryStateCommand*(self: WrongPinState, controller: Control
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromAppToKeycard:
       if controller.getPin().len == PINLengthForStatusApp:
         controller.enterKeycardPin(controller.getPin())
   if self.flowType == FlowType.Authentication:
@@ -303,3 +304,21 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         controller.setPinForKeycardCopy(controller.getPin())
         controller.setMetadataForKeycardCopy(keycardEvent.cardMetadata)
         return createState(StateType.PinVerified, self.flowType, nil)
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    if keycardFlowType == ResponseTypeValueEnterPIN and
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorPIN:
+        controller.setRemainingAttempts(keycardEvent.pinRetries)
+        if keycardEvent.pinRetries > 0:
+          return self
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+        return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+          return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      controller.setKeycardUid(keycardEvent.instanceUID)
+      controller.setNewPassword(keycardEvent.encryptionKey.publicKey)
+      return createState(StateType.PinVerified, self.flowType, nil)

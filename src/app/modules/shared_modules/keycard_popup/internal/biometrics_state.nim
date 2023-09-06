@@ -19,6 +19,10 @@ proc doAuthentication(self: BiometricsState, controller: Controller) =
     if not migratingProfile:
       return
     controller.authenticateUser()
+    return
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    controller.authenticateUser()
+    return
 
 method executePrePrimaryStateCommand*(self: BiometricsState, controller: Controller) =
   self.storeToKeychain = true
@@ -35,8 +39,11 @@ method executePreTertiaryStateCommand*(self: BiometricsState, controller: Contro
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
 method getNextTertiaryState*(self: BiometricsState, controller: Controller): State =
+  ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
     if not migratingProfile:
       return
     return createState(StateType.MigratingKeypairToApp, self.flowType, nil)
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    return createState(StateType.MigratingKeypairToKeycard, self.flowType, nil)

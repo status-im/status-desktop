@@ -13,19 +13,21 @@ type
 const convertRegularProfileKeypairToKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ConvertRegularProfileKeypairToKeycardTaskArg](argEncoded)
   try:
-    var response: RpcResponse[JsonNode]
+    var errMsg: string
     if arg.accountDataJson.isNil or arg.settingsJson.isNil:
-      response.error.message = "at least one json object is not prepared well"
-      error "error: ", errDescription=response.error.message
+      errMsg = "at least one json object is not prepared well"
     elif arg.keycardUid.len == 0:
-      response.error.message = "provided keycardUid must not be empty"
-      error "error: ", errDescription=response.error.message
+      errMsg = "provided keycardUid must not be empty"
     elif arg.hashedCurrentPassword.len == 0:
-      response.error.message = "provided password must not be empty"
-      error "error: ", errDescription=response.error.message
+      errMsg = "provided password must not be empty"
     elif arg.newPassword.len == 0:
-      response.error.message = "provided new password must not be empty"
-      error "error: ", errDescription=response.error.message
+      errMsg = "provided new password must not be empty"
+
+    var response: RpcResponse[JsonNode]
+    if errMsg.len > 0:
+      response.result = newJNull()
+      response.error = RpcError(message: errMsg)
+      error "error: ", errDescription=errMsg
     else:
       response = status_account.convertRegularProfileKeypairToKeycard(arg.accountDataJson, arg.settingsJson,
       arg.keycardUid, arg.hashedCurrentPassword, arg.newPassword)

@@ -210,6 +210,12 @@ proc switchToWalletSection*(self: Controller) =
 proc rebuildKeycards*(self: Controller) =
   self.events.emit(SIGNAL_KEYCARD_REBUILD, Args())
 
+proc getReturnToFlow*(self: Controller): FlowType =
+  return self.delegate.getReturnToFlow()
+
+proc getForceFlow*(self: Controller): bool =
+  return self.delegate.getForceFlow()
+
 proc getKeycardData*(self: Controller): string =
   return self.delegate.getKeycardData()
 
@@ -398,13 +404,22 @@ proc verifyPassword*(self: Controller, password: string): bool =
     return
   return self.accountsService.verifyPassword(password)
 
-proc convertRegularProfileKeypairToKeycard*(self: Controller, keycardUid: string, currentPassword: string) =
+proc convertRegularProfileKeypairToKeycard*(self: Controller) =
   if not serviceApplicable(self.accountsService):
     return
-  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
-  singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  self.accountsService.convertRegularProfileKeypairToKeycard(keycardUid, currentPassword = currentPassword,
-    newPassword = acc.derivedAccounts.encryption.publicKey)
+  var newPassword: string
+  var keycardUid: string
+  let seedPhrase = self.getSeedPhrase()
+  if seedPhrase.len > 0:
+    let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
+    newPassword = acc.derivedAccounts.encryption.publicKey
+    keycardUid = self.getSelectedKeyPairDto().keycardUid
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
+  else:
+    keycardUid = self.getKeycardUid()
+    newPassword = self.getNewPassword()
+
+  self.accountsService.convertRegularProfileKeypairToKeycard(keycardUid, currentPassword = self.getPassword(), newPassword)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller, seedPhrase: string, currentPassword: string, newPassword: string) =
   if not serviceApplicable(self.accountsService):
@@ -537,6 +552,12 @@ proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = ""
   self.cancelCurrentFlow()
   self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, pin, puk, factoryReset)
 
+proc runLoginFlow*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.cancelCurrentFlow()
+  self.keycardService.startLoginFlow()
+
 # This flow is not in use any more for authentication purpose, will be use later for signing a transaction, but
 # we still do not support that. Going to keep this code, but as a comment.
 #
@@ -592,13 +613,17 @@ proc finishFlowTermination(self: Controller) =
   self.cleanTmpData()
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
 
-proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nextFlow = FlowType.General) =
+proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nextFlow = FlowType.General, forceFlow = false,
+  nextKeyUid = "", returnToFlow = FlowType.General) =
   let flowType = self.delegate.getCurrentFlowType()
   self.cancelCurrentFlow()
   let (_, flowEvent) = self.getLastReceivedKeycardData()
   self.tmpFlowData = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow,
-    continueWithNextFlow: nextFlow)
+    continueWithNextFlow: nextFlow,
+    forceFlow: forceFlow,
+    continueWithKeyUid: nextKeyUid,
+    returnToFlow: returnToFlow)
   if lastStepInTheCurrentFlow:
     var exportedEncryptionPubKey: string
     if flowEvent.generatedWalletAccounts.len > 0:

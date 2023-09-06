@@ -73,7 +73,8 @@ Item {
             keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
             keyPairAccounts: root.sharedKeycardModule.keyPairForProcessing.accounts
             keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
-            displayAdditionalInfoForProfileKeypair: root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.migrateFromKeycardToApp
+            displayAdditionalInfoForProfileKeypair: root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.migrateFromKeycardToApp &&
+                                                    root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.migrateFromAppToKeycard
         }
     }
 
@@ -117,6 +118,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredHeight: Constants.keycard.shared.imageHeight
             Layout.preferredWidth: Constants.keycard.shared.imageWidth
+            visible: pattern != "" || source != ""
 
             onAnimationCompleted: {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
@@ -328,6 +330,23 @@ Item {
                     return true
                 }
             }
+            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                    return true
+                }
+            }
 
             return false
         }
@@ -507,6 +526,23 @@ Item {
             if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToApp ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
+                    return keyPairForProcessingComponent
+                }
+            }
+            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeypairToKeycard ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
                     return keyPairForProcessingComponent
@@ -804,6 +840,9 @@ Item {
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                         return qsTr("Keycard inserted does not match the Keycard below")
                     }
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                        return qsTr("Keycard inserted does not match the Keycard below,\nplease remove and try and again")
+                    }
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {
                         return qsTr("Keycard inserted does not match the Keycard you're trying to unlock")
                     }
@@ -830,7 +869,13 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("This Keycard already stores keys\nbut doesn't store any metadata")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                        return qsTr("This Keycard already stores keys\nbut doesn't store any metadata,\nplease remove and try and again")
+                    }
+
+                    return qsTr("This Keycard already stores keys\nbut doesn't store any metadata")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
@@ -852,7 +897,13 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("There is no key pair on this Keycard")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                        return qsTr("There is no key pair on this Keycard,\nplease remove and try and again")
+                    }
+
+                    return qsTr("There is no key pair on this Keycard")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
@@ -1074,6 +1125,9 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess) {
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromKeycardToApp) {
                             return qsTr("Keypair was removed from Keycard and is now stored on device.\nYou no longer need this Keycard to transact with the below accounts.")
+                        }
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.migrateFromAppToKeycard) {
+                            return qsTr("To complete migration close Status and sign in with your Keycard")
                         }
                         return qsTr("To complete migration close Status and log in with your new Keycard")
                     }
@@ -1387,7 +1441,8 @@ Item {
             }
             PropertyChanges {
                 target: image
-                visible: false
+                pattern: ""
+                source: ""
             }
             PropertyChanges {
                 target: message
@@ -1413,6 +1468,50 @@ Item {
                                   "",
                                   root.sharedKeycardModule.keyPairForProcessing.accounts.count)
                         return t
+                    }
+                    return ""
+                }
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.directColor1
+                Layout.leftMargin: 2 * Style.current.xlPadding
+                Layout.rightMargin: 2* Style.current.xlPadding
+                Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.migrateKeypairToKeycard
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard
+            PropertyChanges {
+                target: title
+                text: {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard) {
+                        if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
+                            if (root.sharedKeycardModule.forceFlow) {
+                                return qsTr("Your profile keypair has been\nmigrated from Status to Keycard")
+                            }
+                        }
+                    }
+                    return ""
+                }
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+                horizontalAlignment: Text.AlignHCenter
+            }
+            PropertyChanges {
+                target: image
+                pattern: ""
+                source: ""
+            }
+            PropertyChanges {
+                target: message
+                text: {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToKeycard) {
+                        if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
+                            if (root.sharedKeycardModule.forceFlow) {
+                                return qsTr("In order to continue using this profile on this device, you need to login using the Keycard that this profile keypair was migrated to.")
+                            }
+                        }
                     }
                     return ""
                 }
