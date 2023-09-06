@@ -165,7 +165,13 @@ QtObject {
     }
 
     function getLatestBlockNumber(chainId) {
+        // NOTE returns hex
         return walletSection.getLatestBlockNumber(chainId)
+    }
+
+    function getEstimatedLatestBlockNumber(chainId) {
+        // NOTE returns decimal
+        return walletSection.getEstimatedLatestBlockNumber(chainId)
     }
 
     function setFilterAddress(address) {

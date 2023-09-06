@@ -446,6 +446,12 @@ QtObject:
       return response.result{"number"}.getStr
     except Exception as e:
       error "Error getting latest block number", message = e.msg
+    
+  proc getEstimatedLatestBlockNumber*(self: Service, chainId: int): string =
+    try:
+      return $eth.getEstimatedLatestBlockNumber(chainId).result
+    except Exception as e:
+      error "Error getting estimated latest block number", message = e.msg
       return ""
 
 proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =

@@ -374,6 +374,9 @@ method getChainIdForChat*(self: Module): int =
 method getLatestBlockNumber*(self: Module, chainId: int): string =
   return self.transactionService.getLatestBlockNumber(chainId)
 
+method getEstimatedLatestBlockNumber*(self: Module, chainId: int): string =
+  return self.transactionService.getEstimatedLatestBlockNumber(chainId)
+
 method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
   self.transactionService.fetchDecodedTxData(txHash, data)
 
