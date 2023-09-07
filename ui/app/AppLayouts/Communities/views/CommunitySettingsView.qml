@@ -481,10 +481,20 @@ StatusSectionLayout {
                 sourceComponent: SortFilterProxyModel {
 
                     sourceModel: airdropPanel.communityTokens
-                    filters: ValueFilter {
-                        roleName: "tokenType"
-                        value: Constants.TokenType.ERC721
-                    }
+                    filters: [
+                        ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC721
+                        },
+                        ExpressionFilter {
+                            function getPrivileges(privilegesLevel) {
+                                return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
+                                        (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                            }
+
+                            expression: { return getPrivileges(model.privilegesLevel) }
+                        }
+                    ]
                     proxyRoles: [
                         ExpressionRole {
                             name: "category"
