@@ -22,3 +22,12 @@ class Scroll(QObject):
                 raise LookupError(f'Object not found: {element}')
         if hasattr(element.object, 'y'):
             driver.flick(self.object, 0, int(element.object.y))
+
+    @allure.step('Scroll down to object')
+    def vertical_down_to(self, element: QObject, timeout_sec: int = 5):
+        started_at = time.monotonic()
+        step = 100
+        while not element.is_visible:
+            driver.flick(self.object, 0, step)
+            if time.monotonic() - started_at > timeout_sec:
+                raise LookupError(f'Object not found: {element}')
