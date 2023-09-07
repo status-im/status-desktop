@@ -74,20 +74,6 @@ QtObject:
       ModelRole.ThumbnailDataUri.int:"thumbnailDataUri",
     }.toTable
 
-  method allLinkPreviewRoles(self: Model): seq[int] =
-    return @[
-      ModelRole.Url.int,
-      ModelRole.Unfurled.int,
-      ModelRole.Hostname.int,
-      ModelRole.Title.int,
-      ModelRole.Description.int,
-      ModelRole.LinkType.int,
-      ModelRole.ThumbnailWidth.int,
-      ModelRole.ThumbnailHeight.int,
-      ModelRole.ThumbnailUrl.int,
-      ModelRole.ThumbnailDataUri.int,
-    ]
-
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
@@ -148,4 +134,4 @@ QtObject:
       item.linkPreview = linkPreviews[item.linkPreview.url]
       let modelIndex = self.createIndex(row, 0, nil)
       defer: modelIndex.delete
-      self.dataChanged(modelIndex, modelIndex, self.allLinkPreviewRoles())
+      self.dataChanged(modelIndex, modelIndex)

@@ -74,9 +74,8 @@ QtObject:
         item.colorId = account.colorId
         item.emoji = account.emoji
         let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int])
-        self.dataChanged(index, index, @[ModelRole.ColorId.int])
-        self.dataChanged(index, index, @[ModelRole.Emoji.int])
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int])
         break
       i.inc
 

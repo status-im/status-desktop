@@ -123,6 +123,5 @@ QtObject:
     defer: bottomRight.delete
 
     self.items[index] = item
-    self.dataChanged(topLeft, bottomRight, @[ModelRole.Name.int, ModelRole.Url.int, ModelRole.ImageUrl.int])
+    self.dataChanged(topLeft, bottomRight)
     self.modelChanged()
-
