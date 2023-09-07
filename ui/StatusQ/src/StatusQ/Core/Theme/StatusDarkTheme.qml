@@ -50,6 +50,7 @@ ThemePalette {
     indirectColor1: getColor('black')
     indirectColor2: getColor('black', 0.7)
     indirectColor3: getColor('black', 0.4)
+    indirectColor4: getColor('graphite3')
 
     miscColor1: getColor('blue5')
     miscColor2: getColor('purple')

@@ -48,6 +48,7 @@ ThemePalette {
     indirectColor1: getColor('white')
     indirectColor2: getColor('white', 0.7)
     indirectColor3: getColor('white', 0.4)
+    indirectColor4: getColor('white')
 
     miscColor1: getColor('blue2')
     miscColor2: getColor('purple')

@@ -16,7 +16,7 @@ StatusBaseButton {
 
     disabledColor: Theme.palette.baseColor2
 
-    textColor: type === StatusBaseButton.Type.Primary ? Theme.palette.white :
+    textColor: type === StatusBaseButton.Type.Primary ? Theme.palette.indirectColor4 :
                                                         type === StatusBaseButton.Type.Normal ? Theme.palette.primaryColor1 :
                                                                                                 type === StatusBaseButton.Type.Warning ? Theme.palette.warningColor1
                                                                                                                                        : Theme.palette.dangerColor1
