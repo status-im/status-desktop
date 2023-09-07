@@ -116,6 +116,8 @@ class QObject(BaseObject):
                 return False
 
         assert driver.waitFor(lambda: _hover(), timeout_msec)
+        return self
+
 
     @allure.step('Open context menu')
     def open_context_menu(
