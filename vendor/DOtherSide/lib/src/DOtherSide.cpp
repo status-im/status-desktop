@@ -1301,8 +1301,11 @@ void dos_qabstractitemmodel_dataChanged(::DosQAbstractItemModel *vptr,
     auto model = dynamic_cast<DOS::DosIQAbstractItemModelImpl *>(object);
     auto topLeft = static_cast<const QModelIndex *>(topLeftIndex);
     auto bottomRight = static_cast<const QModelIndex *>(bottomRightIndex);
-    auto roles = QVector<int>(rolesArrayPtr, rolesArrayPtr + rolesArrayLength);
-    model->publicDataChanged(*topLeft, *bottomRight, roles);
+    if (rolesArrayPtr && rolesArrayLength > 0) {
+        model->publicDataChanged(*topLeft, *bottomRight, {rolesArrayPtr, rolesArrayPtr + rolesArrayLength});
+    } else {
+        model->publicDataChanged(*topLeft, *bottomRight);
+    }
 }
 
 DosQModelIndex *dos_qabstractitemmodel_createIndex(::DosQAbstractItemModel *vptr,

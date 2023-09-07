@@ -143,14 +143,12 @@ QtObject:
   proc reset*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
+      defer: index.delete
       self.items[i].amountIn = ""
       self.items[i].amountOut = ""
       self.items[i].resetToNetworks()
       self.items[i].hasGas = true
-      self.dataChanged(index, index, @[ModelRole.AmountIn.int])
-      self.dataChanged(index, index, @[ModelRole.ToNetworks.int])
-      self.dataChanged(index, index, @[ModelRole.HasGas.int])
-      self.dataChanged(index, index, @[ModelRole.AmountOut.int])
+      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.AmountOut.int])
 
   proc updateTokenBalanceForSymbol*(self: NetworkModel, chainId: int, tokenBalance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
@@ -163,14 +161,12 @@ QtObject:
     for i in 0 ..< self.items.len:
       if path.getfromNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].amountIn = path.getAmountIn()
         self.items[i].toNetworks = path.getToNetwork()
         self.items[i].hasGas = hasGas
         self.items[i].locked = path.getAmountInLocked()
-        self.dataChanged(index, index, @[ModelRole.AmountIn.int])
-        self.dataChanged(index, index, @[ModelRole.ToNetworks.int])
-        self.dataChanged(index, index, @[ModelRole.HasGas.int])
-        self.dataChanged(index, index, @[ModelRole.Locked.int])
+        self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int])
 
   proc updateToNetworks*(self: NetworkModel, path: SuggestedRouteItem) =
     for i in 0 ..< self.items.len:
@@ -211,8 +207,7 @@ QtObject:
             if $self.items[i].getChainId() == chainID:
               self.items[i].isPreferred = true
               self.items[i].isEnabled = true
-        self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.dataChanged(index, index, @[ModelRole.IsPreferred.int, ModelRole.IsEnabled.int])
     except:
       discard
 

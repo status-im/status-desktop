@@ -114,8 +114,8 @@ QtObject:
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)
-      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int,
-      ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])
+      defer: index.delete
+      self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
@@ -147,5 +147,5 @@ QtObject:
       self.countChanged()
     else:
       let index = self.createIndex(ind, 0, nil)
-      self.dataChanged(index, index, @[ModelRole.EmojiId.int, ModelRole.DidIReactWithThisEmoji.int,
-      ModelRole.NumberOfReactions.int, ModelRole.JsonArrayOfUsersReactedWithThisEmoji.int])
+      defer: index.delete
+      self.dataChanged(index, index)

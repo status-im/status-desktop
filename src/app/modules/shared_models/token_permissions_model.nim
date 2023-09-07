@@ -145,11 +145,11 @@ QtObject:
     self.items[idx].tokenCriteriaMet = item.tokenCriteriaMet
 
     let index = self.createIndex(idx, 0, nil)
+    defer: index.delete
     self.dataChanged(index, index, @[
-      ModelRole.Id.int,
-      ModelRole.Key.int,
       ModelRole.Type.int,
       ModelRole.TokenCriteria.int,
+      ModelRole.ChatList.int,
       ModelRole.IsPrivate.int,
       ModelRole.TokenCriteriaMet.int
     ])

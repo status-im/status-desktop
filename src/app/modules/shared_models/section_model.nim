@@ -272,38 +272,7 @@ QtObject:
     self.items[index] = item
     let dataIndex = self.createIndex(index, 0, nil)
     defer: dataIndex.delete
-    self.dataChanged(dataIndex, dataIndex, @[
-      ModelRole.Name.int,
-      ModelRole.MemberRole.int,
-      ModelRole.IsControlNode.int,
-      ModelRole.Description.int,
-      ModelRole.IntroMessage.int,
-      ModelRole.OutroMessage.int,
-      ModelRole.Image.int,
-      ModelRole.BannerImageData.int,
-      ModelRole.Icon.int,
-      ModelRole.Color.int,
-      ModelRole.Tags.int,
-      ModelRole.HasNotification.int,
-      ModelRole.NotificationsCount.int,
-      ModelRole.IsMember.int,
-      ModelRole.CanJoin.int,
-      ModelRole.Joined.int,
-      ModelRole.Spectated.int,
-      ModelRole.Access.int,
-      ModelRole.EnsOnly.int,
-      ModelRole.Muted.int, 
-      ModelRole.MembersModel.int,
-      ModelRole.PendingRequestsToJoinModel.int,
-      ModelRole.HistoryArchiveSupportEnabled.int,
-      ModelRole.PinMessageAllMembersEnabled.int,
-      ModelRole.BannedMembersModel.int,
-      ModelRole.Encrypted.int,
-      ModelRole.CommunityTokensModel.int,
-      ModelRole.PendingMemberRequestsModel.int,
-      ModelRole.DeclinedMemberRequestsModel.int,
-      ModelRole.AmIBanned.int,
-      ])
+    self.dataChanged(dataIndex, dataIndex)
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
     if nth >= 0 and nth < self.items.len:
@@ -454,4 +423,3 @@ QtObject:
 
     for pubkey, revealedAccounts in communityMembersAirdropAddress.pairs:
       self.items[index].members.setAirdropAddress(pubkey, revealedAccounts)
-      
