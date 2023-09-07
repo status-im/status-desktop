@@ -320,7 +320,6 @@ Item {
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     chatType: root.activeChatType
-                    suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
 
                     textInput.onTextChanged: {
                         d.updateLinkPreviews()
