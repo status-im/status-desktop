@@ -9,6 +9,8 @@ import constants
 import driver
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
+from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
+from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = allure.suite("Wallet")
@@ -251,3 +253,47 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account,
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {new_name} is still displayed even it should not be'
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
+@pytest.mark.case(703505)
+@pytest.mark.parametrize('first_network, second_network, third_network, message_turned_on, message_turned_off', [
+                             pytest.param('Mainnet', 'Optimism', 'Arbitrum', 'Testnet mode turned on', 'Testnet mode turned off')
+                         ])
+def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second_network: str, third_network: str,
+                             message_turned_on: str, message_turned_off: str):
+    with step('Started to turn on Testnet mode but cancel it'):
+        networks = main_screen.left_panel.open_settings().open_wallet_settings().open_networks()
+        assert networks.get_testnet_mode_button_checked_state() is False
+        networks.switch_testnet_mode().cancel()
+
+    with step('Verify that Testnet mode not turned on'):
+        assert networks.get_testnet_mode_button_checked_state() is False
+
+    with step('Turn on Testnet mode'):
+        networks.switch_testnet_mode().turn_on_testnet_mode()
+
+    with step('Verify that Testnet mode turned on'):
+        WalletToastMessage().get_toast_message(message_turned_on)
+        TestnetModeBanner().wait_until_appears()
+        assert networks.get_testnet_mode_button_checked_state() is True
+
+    with step('Verify that all networks are in the list and text for testnet active is shown on each'):
+        assert networks.testnet_items_amount == 3
+        assert driver.waitFor(
+            lambda: first_network in networks.networks_names,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {first_network} not found'
+        assert driver.waitFor(
+            lambda: second_network in networks.networks_names,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {second_network} not found'
+        assert driver.waitFor(
+            lambda: third_network in networks.networks_names,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {third_network} not found'
+
+    with step('Turn off Testnet mode in wallet settings'):
+        networks.switch_testnet_mode().turn_off_testnet_mode()
+
+    with step('Verify that Testnet mode turned off'):
+        WalletToastMessage().get_toast_message(message_turned_off)
+        TestnetModeBanner().wait_until_hidden()
+        assert networks.get_testnet_mode_button_checked_state() is False

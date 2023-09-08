@@ -5,6 +5,7 @@ import allure
 import driver
 from constants import UserCommunityInfo
 from driver import objects_access
+from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
 from gui.elements.qt.text_label import TextLabel
@@ -25,6 +26,11 @@ class SettingsScreen(QObject):
     def open_communities_settings(self):
         self._open_settings(12)
         return CommunitiesSettingsView()
+
+    @allure.step('Open wallet settings')
+    def open_wallet_settings(self):
+        self._open_settings(4)
+        return WalletSettingsView()
 
 
 class CommunitiesSettingsView(QObject):
@@ -75,3 +81,46 @@ class CommunitiesSettingsView(QObject):
     def open_community_overview_settings(self, name: str):
         driver.mouseClick(self._get_community_item(name))
         return CommunitySettingsScreen().wait_until_appears()
+
+
+class WalletSettingsView(QObject):
+
+    def __init__(self):
+        super().__init__('mainWindow_WalletView')
+        self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
+
+    def open_networks(self):
+        self._wallet_network_button.click()
+        return NetworkWalletSettings().wait_until_appears()
+
+
+class NetworkWalletSettings(WalletSettingsView):
+
+    def __init__(self):
+        super(NetworkWalletSettings, self).__init__()
+        self._wallet_networks_item = QObject('settingsContentBaseScrollView_WalletNetworkDelegate')
+        self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
+        self._testnet_mode_button = Button('settings_Wallet_NetworksView_TestNet_Toggle')
+
+    @property
+    @allure.step('Get wallet networks items')
+    def networks_names(self) -> typing.List[str]:
+        return [str(network.title) for network in driver.findAllObjects(self._wallet_networks_item.real_name)]
+
+    @property
+    @allure.step('Get amount of testnet active items')
+    def testnet_items_amount(self) -> int:
+        items_amount = 0
+        for item in driver.findAllObjects(self._testnet_text_item.real_name):
+            if item.text == 'Goerli testnet active':
+                items_amount += 1
+        return items_amount
+
+    @allure.step('Switch testnet mode')
+    def switch_testnet_mode(self):
+        self._testnet_mode_button.click()
+        return TestnetModePopup().wait_until_appears()
+
+    @allure.step('Check state of testnet mode switch')
+    def get_testnet_mode_button_checked_state(self):
+        return self._testnet_mode_button.is_checked

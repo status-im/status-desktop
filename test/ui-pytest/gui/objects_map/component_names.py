@@ -199,3 +199,16 @@ mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption = {"container": 
 mainWallet_AddEditAccountPopup_PrivateKey = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "AddAccountPopup-PrivateKeyInput", "type": "StatusPasswordInput", "visible": True}
 mainWallet_AddEditAccountPopup_PrivateKeyNameComponent = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "AddAccountPopup-PrivateKeyName", "type": "StatusInput", "visible": True}
 mainWallet_AddEditAccountPopup_PrivateKeyName = {"container": mainWallet_AddEditAccountPopup_PrivateKeyNameComponent, "type": "TextEdit", "unnamed": 1, "visible": True}
+
+# Testnet mode popup
+turn_on_testnet_mode_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn on testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
+turn_off_testnet_mode_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn off testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
+add_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Testnet mode banner
+mainWindow_testnetBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "testnetBanner", "type": "ModuleWarning", "visible": True}
+mainWindow_Turn_off_Button = {"checkable": False, "container": statusDesktop_mainWindow, "id": "button", "text": "Turn off", "type": "Button", "unnamed": 1, "visible": True}
+
+# Wallet toast message
+mainWallet_Ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
+ephemeralNotificationList_StatusToastMessage = {"container": mainWallet_Ephemeral_Notification_List, "type": "StatusToastMessage", "unnamed": 1, "visible": True}
