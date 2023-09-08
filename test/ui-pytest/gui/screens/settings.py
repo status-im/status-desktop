@@ -10,6 +10,7 @@ from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
 from gui.elements.qt.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
+from scripts.tools.image import Image
 
 
 class SettingsScreen(QObject):
@@ -88,10 +89,17 @@ class WalletSettingsView(QObject):
     def __init__(self):
         super().__init__('mainWindow_WalletView')
         self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
+        self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
 
+    @allure.step('Open networks in wallet settings')
     def open_networks(self):
         self._wallet_network_button.click()
         return NetworkWalletSettings().wait_until_appears()
+
+    @allure.step('Open account order in wallet settings')
+    def open_account_order(self):
+        self._account_order_button.click()
+        return EditAccountOrderSettings().wait_until_appears()
 
 
 class NetworkWalletSettings(WalletSettingsView):
@@ -124,3 +132,41 @@ class NetworkWalletSettings(WalletSettingsView):
     @allure.step('Check state of testnet mode switch')
     def get_testnet_mode_button_checked_state(self):
         return self._testnet_mode_button.is_checked
+
+class EditAccountOrderSettings(WalletSettingsView):
+
+    def __init__(self):
+        super(EditAccountOrderSettings, self).__init__()
+        self._account_item = QObject('settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem')
+
+    @property
+    @allure.step('Get accounts')
+    def accounts(self) -> typing.List[dict]:
+        _accounts = []
+        for account_item in driver.findAllObjects(self._account_item.real_name):
+            _account = {}
+            for child in objects_access.walk_children(account_item):
+                if getattr(child, 'objectName', '') == 'identicon':
+                    _account['icon'] = Image(driver.objectMap.realName(child))
+                    _account['name'] = str(account_item.title)
+                    break
+            _accounts.append(_account)
+        return _accounts
+
+    @allure.step('Get account in accounts list')
+    def _get_account_item(self, name: str):
+        for obj in driver.findAllObjects(self._account_item.real_name):
+            if getattr(obj, 'title', '') == name:
+                return obj
+        raise LookupError(f'Account item: {name} not found')
+
+    @allure.step('Get eye icon on watch-only account')
+    def get_eye_icon(self, name: str):
+        for child in objects_access.walk_children(self._get_account_item(name)):
+            if getattr(child, 'objectName', '') == 'show-icon':
+                return child
+        raise LookupError(f'Eye icon not found on {name} account item')
+
+    @allure.step('Drag account to change the order')
+    def drag_account(self, name: str, dx: int, dy: int):
+        driver.mouseDrag(self._get_account_item(name), 10, 10, dx, dy, driver.Qt.NoModifier, driver.Qt.LeftButton)
