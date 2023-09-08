@@ -19,7 +19,3 @@ if APP_DIR is None:
 if system.IS_WIN and 'bin' not in APP_DIR:
     exit('Please use launcher from "bin" folder in "APP_DIR"')
 APP_DIR = SystemPath(APP_DIR)
-
-# Application will be stuck after the first test execution if set to False
-# We need to investigate more time on it.
-ATTACH_MODE = True

@@ -108,7 +108,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703039', 'Import: 12 word seed phrase')
 @pytest.mark.case(703039)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_default])
+@pytest.mark.parametrize('user_account', [constants.user.user_account_two])
 def test_import_seed_phrase(keys_screen, main_window, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()

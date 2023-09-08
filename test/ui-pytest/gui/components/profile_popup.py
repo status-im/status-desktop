@@ -1,4 +1,5 @@
 import allure
+import pyperclip
 
 import constants
 import driver
@@ -18,6 +19,7 @@ class ProfilePopup(BasePopup):
         self._edit_profile_button = Button('ProfilePopup_editButton')
         self._chat_key_text_label = TextLabel('https_status_app_StatusBaseText')
         self._emoji_hash = QObject('profileDialog_userEmojiHash_EmojiHash')
+        self._chat_key_copy_button = Button('copy_icon_StatusIcon')
 
     @property
     @allure.step('Get profile image')
@@ -52,6 +54,12 @@ class ProfilePopup(BasePopup):
     @allure.step('Get emoji hash image')
     def emoji_hash(self) -> Image:
         return self._emoji_hash.image
+
+    @property
+    @allure.step('Get chat key')
+    def chat_key(self) -> str:
+        self._chat_key_copy_button.click()
+        return pyperclip.paste()
 
     @allure.step('Verify: user image contains text')
     def is_user_image_contains(self, text: str):

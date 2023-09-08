@@ -7,7 +7,7 @@ from allure import step
 import configs.timeouts
 import constants
 import driver
-from gui.components.authenticate_popup import AuthenticatePopup
+from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 

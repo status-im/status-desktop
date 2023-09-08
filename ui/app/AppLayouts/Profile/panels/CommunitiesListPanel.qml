@@ -114,6 +114,7 @@ StatusListView {
                             moreMenu.close()
                             root.inviteFriends(model)
                         }
+                        objectName: "invitePeople"
                     }
                     StatusAction {
                         text: qsTr("Edit Shared Addresses")

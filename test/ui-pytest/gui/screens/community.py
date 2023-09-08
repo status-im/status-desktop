@@ -6,6 +6,7 @@ from allure_commons._allure import step
 import driver
 from constants import UserChannel
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
+from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.delete_popup import DeletePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.list import List
@@ -23,6 +24,7 @@ class CommunityScreen(QObject):
         self.left_panel = LeftPanel()
         self.tool_bar = ToolBar()
         self.chat = Chat()
+        self.right_panel = Members()
 
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
@@ -109,6 +111,7 @@ class LeftPanel(QObject):
         self._channel_icon_template = QObject('channel_identicon_StatusSmartIdenticon')
         self._channel_or_category_button = Button('mainWindow_createChannelOrCategoryBtn_StatusBaseText')
         self._create_channel_menu_item = Button('create_channel_StatusMenuItem')
+        self._join_community_button = Button('mainWindow_Join_Community_StatusButton')
 
     @property
     @allure.step('Get community logo')
@@ -124,6 +127,11 @@ class LeftPanel(QObject):
     @allure.step('Get community members label')
     def members(self) -> str:
         return self._members_text_label.text
+
+    @property
+    @allure.step('Get Join button visible attribute')
+    def is_join_community_visible(self) -> bool:
+        return self._join_community_button.is_visible
 
     @property
     @allure.step('Get channels')
@@ -165,6 +173,11 @@ class LeftPanel(QObject):
                 return
         raise LookupError('Channel not found')
 
+    @allure.step('Open join community popup')
+    def open_welcome_community_popup(self):
+        self._join_community_button.click()
+        return WelcomeCommunityPopup().wait_until_appears()
+
 
 class Chat(QObject):
 
@@ -188,3 +201,15 @@ class Chat(QObject):
     @allure.step('Get channel welcome note')
     def channel_welcome_note(self) -> str:
         return self._channel_welcome_label.text
+
+
+class Members(QObject):
+
+    def __init__(self):
+        super().__init__('mainWindow_UserListPanel')
+        self._member_item = QObject('userListPanel_StatusMemberListItem')
+
+    @property
+    @allure.step('Get all members')
+    def members(self) -> typing.List[str]:
+        return [str(member.statusListItemTitle.text) for member in driver.findAllObjects(self._member_item.real_name)]

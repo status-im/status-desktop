@@ -22,6 +22,7 @@ channel_identicon_StatusSmartIdenticon = {"container": None, "id": "identicon", 
 channel_name_StatusBaseText = {"container": None, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_createChannelOrCategoryBtn_StatusBaseText = {"container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "createChannelOrCategoryBtn", "type": "StatusBaseText", "visible": True}
 create_channel_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "createCommunityChannelBtn", "type": "StatusMenuItem", "visible": True}
+mainWindow_Join_Community_StatusButton = {"checkable": False, "container": mainWindow_communityColumnView_CommunityColumnView, "id": "joinCommunityButton", "text": "Join Community", "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # Tool Bar
 mainWindow_statusToolBar_StatusToolBar = {"container": mainWindow_communityLoader_Loader, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
@@ -76,3 +77,7 @@ communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox = {"checkable": Tr
 communityEditPanelScrollView_editCommunityIntroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityIntroInput", "type": "TextEdit", "visible": True}
 communityEditPanelScrollView_editCommunityOutroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityOutroInput", "type": "TextEdit", "visible": True}
 mainWindow_Save_changes_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "text": "Save changes", "type": "StatusButton", "visible": True}
+
+# User List Panel
+mainWindow_UserListPanel = {"container": statusDesktop_mainWindow, "type": "UserListPanel", "unnamed": 1, "visible": True}
+userListPanel_StatusMemberListItem = {"container": mainWindow_UserListPanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}

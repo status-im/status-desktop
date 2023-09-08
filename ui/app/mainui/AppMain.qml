@@ -495,6 +495,7 @@ Item {
                             text: qsTr("Invite People")
                             icon.name: "share-ios"
                             enabled: model.canManageUsers
+                            objectName: "invitePeople"
                             onTriggered: {
                                 popups.openInviteFriendsToCommunityPopup(model,
                                                                          communityContextMenu.chatCommunitySectionModule,

@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 class Window(QObject):
 
     def prepare(self) -> 'Window':
+        self.show()
         self.maximize()
         self.on_top_level()
         return self
@@ -19,11 +20,6 @@ class Window(QObject):
     def maximize(self):
         assert driver.toplevel_window.maximize(self.real_name), 'Maximize failed'
         _logger.info(f'Window {getattr(self.object, "title", "")} is maximized')
-
-    @allure.step("Minimize {0}")
-    def minimize(self):
-        assert driver.toplevel_window.minimize(self.real_name), 'Minimize failed'
-        _logger.info(f'Window {getattr(self.object, "title", "")} is minimized')
 
     @allure.step("Set focus on {0}")
     def set_focus(self):
@@ -38,3 +34,11 @@ class Window(QObject):
     @allure.step("Close {0}")
     def close(self):
         driver.toplevel_window.close(self.real_name)
+
+    @allure.step("Show {0}")
+    def show(self):
+        driver.waitForObjectExists(self.real_name).setVisible(True)
+
+    @allure.step("Hide {0}")
+    def hide(self):
+        driver.waitForObjectExists(self.real_name).setVisible(False)
