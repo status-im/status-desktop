@@ -628,7 +628,7 @@ Item {
                         width: parent.width
                         title: d.symbol ? qsTr("Fees") : qsTr("Estimated max fee")
                         subTitle: {
-                            if (!root.isTransactionValid || transactionHeader.isNFT || !!d.isDetailsValid)
+                            if (!root.isTransactionValid || transactionHeader.isNFT || !d.isDetailsValid)
                                 return ""
                             if (!d.symbol) {
                                 const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
@@ -639,7 +639,7 @@ Item {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
                             case Constants.TransactionType.Bridge:
-                                return d.details ? LocaleUtils.currencyAmountToLocaleString(d.details.totalFees) : ""
+                                return LocaleUtils.currencyAmountToLocaleString(d.details.totalFees)
                             default:
                                 return ""
                             }
