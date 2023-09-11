@@ -16,8 +16,8 @@ Item {
     id: root
 
     property var assets: null
-    signal tokenSelected(var selectedToken)
-    signal tokenHovered(var selectedToken, bool hovered)
+    signal tokenSelected(string symbol)
+    signal tokenHovered(string symbol, bool hovered)
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
@@ -84,8 +84,8 @@ Item {
                 delegate: TokenBalancePerChainDelegate {
                     width: ListView.view.width
                     getNetworkIcon: root.getNetworkIcon
-                    onTokenSelected: root.tokenSelected(selectedToken)
-                    onTokenHovered: root.tokenHovered(selectedToken, hovered)
+                    onTokenSelected: root.tokenSelected(symbol)
+                    onTokenHovered: root.tokenHovered(symbol, hovered)
                 }
             }
         }

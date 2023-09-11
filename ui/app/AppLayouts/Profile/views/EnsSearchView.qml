@@ -66,7 +66,8 @@ Item {
             sendType: Constants.SendType.ENSSetPubKey
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedAsset: store.getAsset(connectEnsModal.store.assets, "ETH")
+            preSelectedHolding: store.getAsset(connectEnsModal.store.assets, Constants.ethToken)
+            preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()
