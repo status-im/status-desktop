@@ -1,0 +1,9 @@
+
+configs/_local.py
+
+.idea/
+/squish_server.ini
+
+*.pyc
+
+tmp/

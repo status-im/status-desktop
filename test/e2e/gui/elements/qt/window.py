@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 class Window(QObject):
 
     def prepare(self) -> 'Window':
+        self.show()
         self.maximize()
         self.on_top_level()
         return self
@@ -38,3 +39,11 @@ class Window(QObject):
     @allure.step("Close {0}")
     def close(self):
         driver.toplevel_window.close(self.real_name)
+
+    @allure.step("Show {0}")
+    def show(self):
+        driver.waitForObjectExists(self.real_name).setVisible(True)
+
+    @allure.step("Hide {0}")
+    def hide(self):
+        driver.waitForObjectExists(self.real_name).setVisible(False)

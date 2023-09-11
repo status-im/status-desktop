@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 import configs
@@ -7,33 +5,39 @@ import constants
 from constants import UserAccount
 from driver.aut import AUT
 from gui.main_window import MainWindow
-from gui.screens.onboarding import LoginView
 from scripts.utils import system_path
-
-
-@pytest.fixture()
-def aut() -> AUT:
-    if not configs.APP_DIR.exists():
-        pytest.exit(f"Application not found: {configs.APP_DIR}")
-    _aut = AUT()
-    yield _aut
+from scripts.utils.system_path import SystemPath
 
 
 @pytest.fixture
 def user_data(request) -> system_path.SystemPath:
-    user_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}' / 'data'
     if hasattr(request, 'param'):
         fp = request.param
-        if isinstance(fp, str):
-            fp = configs.testpath.TEST_USER_DATA / fp / 'data'
         assert fp.is_dir()
-        fp.copy_to(user_data)
-    yield user_data
+        return fp
+
+
+@pytest.fixture
+def aut(user_data) -> AUT:
+    if not configs.APP_DIR.exists():
+        pytest.exit(f"Application not found: {configs.APP_DIR}")
+    _aut = AUT(user_data=user_data)
+    yield _aut
+
+
+@pytest.fixture()
+def multiple_instance():
+    def _aut(user_data: SystemPath = None) -> AUT:
+        if not configs.APP_DIR.exists():
+            pytest.exit(f"Application not found: {configs.APP_DIR}")
+        return AUT(user_data=user_data)
+
+    yield _aut
 
 
 @pytest.fixture
 def main_window(aut: AUT, user_data):
-    aut.launch(f'-d={user_data.parent}')
+    aut.launch()
     yield MainWindow().wait_until_appears().prepare()
     aut.detach().stop()
 
@@ -44,22 +48,11 @@ def user_account(request) -> UserAccount:
         user_account = request.param
         assert isinstance(user_account, UserAccount)
     else:
-        user_account = constants.user.user_account_default
+        user_account = constants.user.user_account_one
     yield user_account
 
 
 @pytest.fixture
 def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindow:
-    if LoginView().is_visible:
-        yield main_window.log_in(user_account)
-    else:
-        yield main_window.sign_up(user_account)
-
-
-@pytest.fixture
-def community(main_screen, request) -> dict:
-    community_params = request.param
-    communities_portal = main_screen.left_panel.open_communities_portal()
-    create_community_form = communities_portal.open_create_community_popup()
-    create_community_form.create(community_params)
-    return community_params
+    main_window.authorize_user(user_account)
+    return main_window

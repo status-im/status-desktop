@@ -14,8 +14,8 @@ _logger = logging.getLogger(__name__)
 
 class QObject(BaseObject):
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self, name, real_name: [str, dict] = None):
+        super().__init__(name, real_name)
         self._image = Image(self.real_name)
 
     def __str__(self):
@@ -80,7 +80,7 @@ class QObject(BaseObject):
     @allure.step('Get visible {0}')
     def is_visible(self) -> bool:
         try:
-            return driver.waitForObject(self.real_name, 0).visible
+            return driver.waitForObjectExists(self.real_name, 0).visible
         except (AttributeError, LookupError, RuntimeError):
             return False
 

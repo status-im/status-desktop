@@ -1,6 +1,5 @@
 import logging
 import typing
-from subprocess import CalledProcessError
 
 import configs.testpath
 from scripts.utils import local_system
@@ -35,7 +34,7 @@ class SquishServer:
     def stop(self):
         if self.pid is not None:
             local_system.kill_process(self.pid)
-            self.pid = None
+        self.pid = None
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):

@@ -11,9 +11,12 @@ _logger = logging.getLogger(__name__)
 
 class BaseObject:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, real_name: [str, dict] = None):
         self.symbolic_name = name
-        self.real_name = getattr(objects_map, name)
+        if real_name:
+            self.real_name = real_name
+        else:
+            self.real_name = getattr(objects_map, name)
 
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'

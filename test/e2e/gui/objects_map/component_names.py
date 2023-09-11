@@ -1,8 +1,7 @@
 from objectmaphelper import *
 
-from .main_names import statusDesktop_mainWindow
-from .main_names import statusDesktop_mainWindow_overlay
-from .main_names import statusDesktop_mainWindow_overlay_popup2
+from .main_names import statusDesktop_mainWindow_overlay, statusDesktop_mainWindow, \
+    statusDesktop_mainWindow_overlay_popup2
 
 # Scroll
 o_Flickable = {"container": statusDesktop_mainWindow_overlay, "type": "Flickable", "unnamed": 1, "visible": True}
@@ -61,6 +60,8 @@ ProfilePopup_SendContactRequestButton = {"container": statusDesktop_mainWindow_o
 profileDialog_userEmojiHash_EmojiHash = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+copy_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "StatusIcon", "visible": True}
+
 
 # Welcome Status Popup
 agreeToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "agreeToUse", "type": "StatusCheckBox", "unnamed": 1, "visible": True}
@@ -92,11 +93,36 @@ createCommunityIntroMessageInput_TextEdit = {"container": statusDesktop_mainWind
 createCommunityOutroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityOutroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityFinalBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityFinalBtn", "type": "StatusButton", "visible": True}
 
-# Community channel popup:
+# Community Channel Popup:
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelDescriptionInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelBtn", "type": "StatusButton", "visible": True}
 createOrEditCommunityChannel_EmojiButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusChannelPopup_emojiButton", "type": "StatusRoundButton", "visible": True}
+
+# Invite Contacts Popup
+communityProfilePopupInviteFrindsPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteFrindsPanel_ColumnLayout", "type": "ProfilePopupInviteFriendsPanel", "visible": True}
+communityProfilePopupInviteMessagePanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteMessagePanel_ColumnLayout", "type": "ProfilePopupInviteMessagePanel", "visible": True}
+o_StatusMemberListItem = {"container": communityProfilePopupInviteFrindsPanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+next_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_NextButton", "text": "Next", "type": "StatusButton", "visible": True}
+communityProfilePopupInviteMessagePanel_MessageInput_TextEdit = {"container": communityProfilePopupInviteMessagePanel, "objectName": "CommunityProfilePopupInviteMessagePanel_MessageInput", "type": "TextEdit", "visible": True}
+send_1_invite_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "text": "Send 1 invite", "type": "StatusButton", "visible": True}
+o_StatusMemberListItem_2 = {"container": communityProfilePopupInviteMessagePanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+
+# Welcome community
+headerTitle_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
+image_StatusImage = {"container": statusDesktop_mainWindow_overlay, "id": "image", "type": "StatusImage", "unnamed": 1, "visible": True}
+intro_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Intro", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+select_addresses_to_share_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusFlatButton", "unnamed": 1, "visible": True}
+join_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+
+""" Settings """
+
+# Send Contact Request
+sendContactRequestModal_ChatKey_Input_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_ChatKey_Input", "type": "TextEdit", "visible": True}
+sendContactRequestModal_SayWhoYouAre_Input_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_SayWhoYouAre_Input", "type": "TextEdit", "visible": True}
+send_Contact_Request_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton", "visible": True}
+
+
 
 """ Common """
 
@@ -154,6 +180,12 @@ mainWallet_AddEditAccountPopup_AccountEmoji = {"container": statusDesktop_mainWi
 # Delete Popup
 o_StatusDialogBackground = {"container": statusDesktop_mainWindow_overlay, "type": "StatusDialogBackground", "unnamed": 1, "visible": True}
 delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "type": "StatusButton", "visible": True}
+
+# Authenticate Popup
+keycardSharedPopupContent_KeycardPopupContent = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardSharedPopupContent", "type": "KeycardPopupContent", "visible": True}
+password_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "type": "PlaceholderText", "unnamed": 1, "visible": True}
+authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "PrimaryButton", "type": "StatusButton", "visible": True}
+
 
 # Shared Popup
 sharedPopup_Popup_Content = {"container": statusDesktop_mainWindow, "objectName": "KeycardSharedPopupContent", "type": "Item"}
