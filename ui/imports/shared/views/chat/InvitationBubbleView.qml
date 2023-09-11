@@ -144,7 +144,7 @@ Control {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-
+                    objectName: "communityName"
                     text: d.communityName
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -154,7 +154,7 @@ Control {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-
+                    objectName: "communityDescription"
                     text: d.communityDescription
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     color: Theme.palette.directColor1
@@ -162,7 +162,7 @@ Control {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-
+                    objectName: "communityMembers"
                     text: qsTr("%n member(s)", "", d.communityNbMembers)
                     font.pixelSize: 13
                     font.weight: Font.Medium
