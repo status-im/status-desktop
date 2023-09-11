@@ -21,7 +21,7 @@ proc newCurrencyFormatDto*(
 proc newCurrencyFormatDto*(symbol: string = ""): CurrencyFormatDto =
   return CurrencyFormatDto(
     symbol: symbol,
-    displayDecimals: 8,
+    displayDecimals: if len(symbol) == 0: 0 else: 8,
     stripTrailingZeroes: true
   )
 

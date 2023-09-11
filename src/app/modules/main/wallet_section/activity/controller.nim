@@ -82,10 +82,10 @@ QtObject:
       result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
   proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
-    if metadata.symbolIn.isSome():
-      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
-    if metadata.symbolOut.isSome():
-      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
+    if metadata.symbolIn.isSome() or metadata.amountIn > 0:
+      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
+    if metadata.symbolOut.isSome() or metadata.amountOut > 0:
+      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
 
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
     let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =

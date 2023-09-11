@@ -250,13 +250,13 @@ QtObject:
     read = getTokenID
 
   proc getOutAmount*(self: ActivityEntry): float {.slot.} =
-    return float(self.extradata.outAmount)
+    return self.extradata.outAmount
 
   QtProperty[float] outAmount:
     read = getOutAmount
 
   proc getInAmount*(self: ActivityEntry): float {.slot.} =
-    return float(self.extradata.inAmount)
+    return self.extradata.inAmount
 
   QtProperty[float] inAmount:
     read = getInAmount
