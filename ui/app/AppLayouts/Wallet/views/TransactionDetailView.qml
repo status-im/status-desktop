@@ -163,7 +163,8 @@ Item {
             WalletTxProgressBlock {
                 id: progressBlock
                 width: Math.min(513, root.width)
-                readonly property int latestBlockNumber: root.isTransactionValid && !pending && !error ? RootStore.hex2Dec(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId)) : 0
+                readonly property int latestBlockNumber: root.isTransactionValid && !pending && !error ? WalletStores.RootStore.getEstimatedLatestBlockNumber(root.transaction.chainId) : 0
+                readonly property int latestBlockNumberIn: root.isTransactionValid && !pending && !error && transactionHeader.isMultiTransaction && d.isBridge ? WalletStores.RootStore.getEstimatedLatestBlockNumber(root.transaction.chainIdIn) : 0
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
                 outNetworkLayer: root.isTransactionValid ? Number(RootStore.getNetworkLayer(transactionHeader.isMultiTransaction ? root.transaction.chainIdOut : root.transaction.chainId)) : 0
@@ -173,7 +174,7 @@ Item {
                 outChainName: transactionHeader.isMultiTransaction ? transactionHeader.networkNameOut : transactionHeader.networkName
                 inChainName: transactionHeader.isMultiTransaction && d.isBridge ? transactionHeader.networkNameIn : ""
                 outNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
-                inNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
+                inNetworkConfirmations: root.isTransactionValid && latestBlockNumberIn > 0 ? latestBlockNumberIn - d.blockNumber : 0
             }
 
             Separator {
