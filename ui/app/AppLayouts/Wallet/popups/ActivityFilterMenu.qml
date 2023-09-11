@@ -70,6 +70,7 @@ StatusMenu {
         }
         ActivityTypeFilterSubMenu {
             id: typeMenu
+            implicitWidth: 230
             onBack: root.open()
             typeFilters: root.typeFilters
             onActionTriggered: updateTypeFilter(type, allFiltersCount)

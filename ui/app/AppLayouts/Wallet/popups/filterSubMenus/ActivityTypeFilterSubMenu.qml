@@ -53,12 +53,23 @@ StatusMenu {
     }
 
     ActivityTypeCheckBox {
-        id: buyCheckbox
-        title: qsTr("Buy")
+        id: contractDeploymentCheckbox
+        title: qsTr("Contract Deployment")
+        assetSettings.name: "contract_deploy"
+        buttonGroup: typeButtonGroup
+        allChecked: root.allChecked
+        type: Constants.TransactionType.ContractDeployment
+        checked: root.allChecked || typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
+    }
+
+    ActivityTypeCheckBox {
+        id: mintCheckbox
+        title: qsTr("Mint")
         assetSettings.name: "token"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
-        type: Constants.TransactionType.Buy
+        type: Constants.TransactionType.Mint
         checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }

@@ -40,6 +40,9 @@ QtObject:
   proc delete*(self: ActivityEntry) =
     self.QObject.delete
 
+  proc isInTransactionType(self: ActivityEntry): bool =
+    return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
+
   proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
     result.valueConvertor = valueConvertor
@@ -47,8 +50,8 @@ QtObject:
     result.extradata = extradata
     result.noAmount = newCurrencyAmount()
     result.amountCurrency = valueConvertor(
-      if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
-      if metadata.activityType == backend.ActivityType.Receive: metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
+      if result.isInTransactionType(): metadata.amountIn else: metadata.amountOut,
+      if result.isInTransactionType(): metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
     )
     result.setup()
 
@@ -59,8 +62,8 @@ QtObject:
     result.extradata = extradata
 
     result.amountCurrency = valueConvertor(
-      if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
-      if metadata.activityType == backend.ActivityType.Receive: metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
+      if result.isInTransactionType(): metadata.amountIn else: metadata.amountOut,
+      if result.isInTransactionType(): metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
     )
     result.noAmount = newCurrencyAmount()
 
@@ -82,9 +85,6 @@ QtObject:
     return fmt"""ActivityEntry(
       metadata:{$self.metadata},
     )"""
-
-  proc isInTransactionType(self: ActivityEntry): bool =
-    return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
 
   # TODO: is this the right way to pass transaction identity? Why not use the instance?
   proc getId*(self: ActivityEntry): string {.slot.} =
