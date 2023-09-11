@@ -23,9 +23,25 @@ def find_process_by_port(port: int) -> int:
             pass
 
 
+def wait_for_close(pid: int, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+    started_at = time.monotonic()
+    while True:
+        if pid in [proc.pid for proc in psutil.process_iter()]:
+            time.sleep(1)
+            if time.monotonic() - started_at > timeout_sec:
+                raise RuntimeError(f'Process with PID: {pid} not closed')
+        else:
+            break
+
+
 @allure.step('Kill process')
-def kill_process(pid):
-    os.kill(pid, signal.SIGILL if IS_WIN else signal.SIGKILL)
+def kill_process(pid, verify: bool = False):
+    try:
+        os.kill(pid, signal.SIGILL if IS_WIN else signal.SIGKILL)
+    except ProcessLookupError as err:
+        _logger.debug(err)
+    if verify:
+        wait_for_close(pid)
 
 
 @allure.step('System execute command')

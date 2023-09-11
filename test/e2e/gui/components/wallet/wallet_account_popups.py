@@ -3,7 +3,7 @@ import allure
 import configs
 import constants.wallet
 import driver
-from gui.components.authenticate_popup import AuthenticatePopup
+from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.qt.button import Button
