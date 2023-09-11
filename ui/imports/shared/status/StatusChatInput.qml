@@ -24,8 +24,6 @@ Rectangle {
     id: control
     objectName: "statusChatInput"
 
-    signal sendTransactionCommandButtonClicked()
-    signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal keyUpPress()
@@ -172,7 +170,6 @@ Rectangle {
             }
         }
 
-        property bool chatCommandsPopupOpen: false
         property Menu textFormatMenu: null
 
         function copyMentions(start, end) {
@@ -1021,35 +1018,6 @@ Rectangle {
     }
 
     Component {
-        id: chatCommandsPopupComponent
-
-        ChatCommandsPopup {
-            id: chatCommandsPopup
-            x: 8
-            y: -height
-            onSendTransactionCommandButtonClicked: {
-                control.sendTransactionCommandButtonClicked()
-                close()
-            }
-            onReceiveTransactionCommandButtonClicked: {
-                control.receiveTransactionCommandButtonClicked()
-                close()
-            }
-            onClosed: {
-                chatCommandsBtn.highlighted = false
-                destroy()
-            }
-            onOpened: {
-                chatCommandsBtn.highlighted = true
-            }
-            Component.onDestruction: {
-                if (d.chatCommandsPopupOpen)
-                    d.chatCommandsPopupOpen = false;
-            }
-        }
-    }
-
-    Component {
         id: gifPopupComponent
 
         StatusGifPopup {
@@ -1080,26 +1048,6 @@ Rectangle {
         id: layout
         anchors.fill: parent
         spacing: 4
-
-        // TODO remove that Loader when the Chat Commands are re-implemented and fixed
-        Loader {
-            id: chatCommandsBtnLoader
-            active: false
-            sourceComponent: StatusQ.StatusFlatRoundButton {
-                id: chatCommandsBtn
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                Layout.alignment: Qt.AlignBottom
-                Layout.bottomMargin: 4
-                icon.name: "chat-commands"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                onClicked: {
-                    d.chatCommandsPopupOpen ? Global.closePopup() : Global.openPopup(chatCommandsPopup);
-                    d.chatCommandsPopupOpen = !d.chatCommandsPopupOpen;
-                }
-                visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
-            }
-        }
 
         StatusQ.StatusFlatRoundButton {
             id: imageBtn
@@ -1534,6 +1482,5 @@ Rectangle {
                 }
             }
         }
-
     }
 }

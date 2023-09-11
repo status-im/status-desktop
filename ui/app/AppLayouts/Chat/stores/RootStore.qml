@@ -624,10 +624,6 @@ QtObject {
         return globalUtilsInst.wei2Eth(wei,18)
     }
 
-    function getEth2Wei(eth) {
-         return globalUtilsInst.eth2Wei(eth, 18)
-    }
-
     function getEtherscanLink() {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }
