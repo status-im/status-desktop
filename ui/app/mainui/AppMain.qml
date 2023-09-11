@@ -1345,18 +1345,29 @@ Item {
             }
             property var selectedAccount
             property bool isBridgeTx
+            property string preSelectedHoldingID
+            property var preSelectedHoldingType
+
             sourceComponent: SendModal {
+                onlyAssets: false
                 onClosed: {
                     sendModal.closed()
                     sendModal.isBridgeTx = false
+                    sendModal.preSelectedHoldingID = ""
+                    sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
                 }
             }
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
                     item.selectedAccount = sendModal.selectedAccount
                 }
-                if(isBridgeTx)
+                if(isBridgeTx) {
                     item.isBridgeTx = sendModal.isBridgeTx
+                }
+                if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
+                    item.preSelectedHoldingID = sendModal.preSelectedHoldingID
+                    item.preSelectedHoldingType = sendModal.preSelectedHoldingType
+                }
             }
         }
 

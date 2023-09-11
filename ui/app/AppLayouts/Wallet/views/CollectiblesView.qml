@@ -16,7 +16,7 @@ Item {
     property var collectiblesModel
     width: parent.width
 
-    signal collectibleClicked(int chainId, string contractAddress, string tokenId)
+    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
 
     Loader {
         id: contentLoader
@@ -64,7 +64,7 @@ Item {
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
                 isLoading: !!model.isLoading
 
-                onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId)
+                onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.uid)
             }
 
             ScrollBar.vertical: StatusScrollBar {}

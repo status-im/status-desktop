@@ -118,6 +118,24 @@ QtObject {
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
 
+    function resetCurrentViewedHolding() {
+        currentViewedHoldingID = ""
+        currentViewedHoldingType = null
+    }
+
+    function setCurrentViewedHoldingType(type) {
+        currentViewedHoldingID = ""
+        currentViewedHoldingType = type
+    }
+
+    function setCurrentViewedHolding(id, type) {
+        currentViewedHoldingID = id
+        currentViewedHoldingType = type
+    }
+
+    property string currentViewedHoldingID: ""
+    property var currentViewedHoldingType
+
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
     // Then in the View of WalletModule we may have either QtProperty or

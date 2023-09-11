@@ -1211,4 +1211,8 @@ QtObject {
         Link = 0,
         Image = 1
     }
+
+    enum HoldingType {
+        Unknown, Asset, Collectible
+    }
 }

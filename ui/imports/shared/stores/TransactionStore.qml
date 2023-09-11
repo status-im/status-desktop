@@ -6,6 +6,8 @@ import shared.stores 1.0
 
 import utils 1.0
 
+import StatusQ.Core.Utils 0.1
+
 QtObject {
     id: root
 
@@ -19,6 +21,8 @@ QtObject {
     property var senderAccounts: walletSectionSendInst.senderAccounts
     property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
     property var accounts: walletSectionSendInst.accounts
+    property var collectiblesModel: walletSectionSendInst.collectiblesModel
+    property var nestedCollectiblesModel: walletSectionSendInst.nestedCollectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var tmpActivityController: walletSection.tmpActivityController
     property var savedAddressesModel: SortFilterProxyModel {
@@ -103,6 +107,68 @@ QtObject {
                 }
         }
         return {}
+    }
+
+    function getCollectible(uid) {
+        const idx = ModelUtils.indexOf(collectiblesModel, "uid", uid)
+        if (idx < 0) {
+            return {}
+        }
+        return ModelUtils.get(collectiblesModel, idx)
+    }
+
+    function getSelectorCollectible(uid) {
+        const idx = ModelUtils.indexOf(nestedCollectiblesModel, "uid", uid)
+        if (idx < 0) {
+            return {}
+        }
+        return ModelUtils.get(nestedCollectiblesModel, idx)
+    }
+
+    function getHolding(holdingId, holdingType) {
+        if (holdingType === Constants.HoldingType.Asset) {
+            return getAsset(selectedSenderAccount.assets, holdingId)
+        } else if (holdingType === Constants.HoldingType.Collectible) {
+            return getCollectible(holdingId)
+        } else {
+            return {}
+        }
+    }
+
+    function getSelectorHolding(holdingId, holdingType) {
+        if (holdingType === Constants.HoldingType.Asset) {
+            return getAsset(selectedSenderAccount.assets, holdingId)
+        } else if (holdingType === Constants.HoldingType.Collectible) {
+            return getSelectorCollectible(holdingId)
+        } else {
+            return {}
+        }
+    }
+
+    function assetToSelectorAsset(asset) {
+        return asset
+    }
+    
+    function collectibleToSelectorCollectible(collectible) {
+        return {
+            uid: collectible.uid,
+            chainId: collectible.chainId,
+            name: collectible.name,
+            iconUrl: collectible.imageUrl,
+            collectionUid: collectible.collectionUid,
+            collectionName: collectible.collectionName,
+            isCollection: false
+        }
+    }
+
+    function holdingToSelectorHolding(holding, holdingType) {
+        if (holdingType === Constants.HoldingType.Asset) {
+            return assetToSelectorAsset(holding)
+        } else if (holdingType === Constants.HoldingType.Collectible) {
+            return collectibleToSelectorCollectible(holding)
+        } else {
+            return {}
+        }
     }
 
     function switchSenderAccount(index) {

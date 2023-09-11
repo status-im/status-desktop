@@ -64,7 +64,8 @@ StatusSectionLayout {
         property Component sendTransactionModalComponent: SendModal {
             anchors.centerIn: parent
             selectedAccount: WalletStore.dappBrowserAccount
-            preSelectedAsset: store.getAsset(WalletStore.dappBrowserAccount.assets, "ETH")
+            preSelectedHolding: store.getAsset(WalletStore.dappBrowserAccount.assets, "ETH")
+            preSelectedHoldingType: Constants.HoldingType.Asset
         }
 
         property Component signMessageModalComponent: SignMessageModal {}

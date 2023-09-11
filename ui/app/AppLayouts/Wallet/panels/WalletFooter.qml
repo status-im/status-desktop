@@ -40,6 +40,8 @@ Rectangle {
             text: qsTr("Send")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: function() {
+                sendModal.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                sendModal.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 sendModal.open()
             }
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
@@ -61,6 +63,8 @@ Rectangle {
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: function() {
                 sendModal.isBridgeTx = true
+                sendModal.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                sendModal.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 sendModal.open()
             }
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText

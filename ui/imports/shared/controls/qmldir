@@ -2,6 +2,7 @@ AddressInput 1.0 AddressInput.qml
 AmountInput 1.0 AmountInput.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
 AssetDelegate 1.0 AssetDelegate.qml
+CollectibleNestedDelegate 1.0 CollectibleNestedDelegate.qml
 ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
