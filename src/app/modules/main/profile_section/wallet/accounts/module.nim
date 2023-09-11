@@ -180,7 +180,8 @@ method load*(self: Module) =
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
-    self.view.setIncludeWatchOnlyAccount(self.controller.isIncludeWatchOnlyAccount())
+    let args = SettingsBoolValueArgs(e)
+    self.view.setIncludeWatchOnlyAccount(args.value)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
     let args = AccountArgs(e)

@@ -116,7 +116,7 @@ QtObject:
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
           if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
             self.settings.includeWatchOnlyAccount = settingsField.value.getBool
-            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
+            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: self.settings.includeWatchOnlyAccount))
           if settingsField.name == PROFILE_MIGRATION_NEEDED:
             self.settings.profileMigrationNeeded = settingsField.value.getBool
             self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
