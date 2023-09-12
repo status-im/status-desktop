@@ -197,6 +197,7 @@ Item {
             text: qsTr("Invite people")
             icon.name: "share-ios"
             enabled: communityData.canManageUsers && adminPopupMenu.showInviteButton
+            objectName: "invitePeople"
             onTriggered: {
                 Global.openInviteFriendsToCommunityPopup(root.communityData,
                                                          root.communitySectionModule,
@@ -276,6 +277,7 @@ Item {
                     text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
+                    objectName: "invitePeople"
                     onTriggered: {
                         Global.openInviteFriendsToCommunityPopup(root.communityData,
                                                                  root.communitySectionModule,
