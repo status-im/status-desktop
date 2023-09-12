@@ -28,6 +28,7 @@ SplitView {
             }
 
             assets: WalletAssetsModel {}
+            collectibles: WalletNestedCollectiblesModel {}
         }
     }
 

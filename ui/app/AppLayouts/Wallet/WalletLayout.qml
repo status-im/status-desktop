@@ -156,7 +156,6 @@ Item {
                 root.sendModalPopup.open()
             }
             onLaunchBridgeModal: {
-                root.sendModalPopup.isBridgeTx = true
                 root.sendModalPopup.sendType = Constants.SendType.Bridge
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType

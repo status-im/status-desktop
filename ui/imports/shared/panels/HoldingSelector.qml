@@ -83,11 +83,11 @@ Item {
         readonly property string uppercaseSearchText: searchText.toUpperCase()
 
         property var assetTextFn: function (asset) {
-            return asset.symbol ? asset.symbol : ""
+            return !!asset && asset.symbol ? asset.symbol : ""
         }
 
         property var assetIconSourceFn: function (asset) {
-            return asset.symbol ? Style.png("tokens/%1".arg(asset.symbol)) : ""
+            return !!asset && asset.symbol ? Style.png("tokens/%1".arg(asset.symbol)) : ""
         }
 
         property var assetComboBoxModel: SortFilterProxyModel {
@@ -115,7 +115,7 @@ Item {
         }
 
         property var collectibleIconSourceFn: function (item) {
-            return item.iconUrl ? item.iconUrl : ""
+            return !!item && item.iconUrl ? item.iconUrl : ""
         }
 
         property var collectibleComboBoxModel: SortFilterProxyModel {
@@ -148,9 +148,6 @@ Item {
         readonly property int headerTopMargin: 5
         readonly property int tabBarTopMargin: 20
         readonly property int tabBarHeight: 35
-        readonly property int backButtonWidth: 56
-        readonly property int backButtonHeight: 24
-        readonly property int backButtonToContentSpace: 8
         readonly property int bottomInset: 20
         readonly property int assetContentIconSize: 21
         readonly property int collectibleContentIconSize: 28
@@ -237,48 +234,14 @@ Item {
                     }
                 }
             }
-            Rectangle {
+            CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 40
                 visible: d.isBrowsingCollection
-
-                color: "transparent"
-                border.color: Theme.palette.baseColor2
-                border.width: 1
-
-                RowLayout{
-                    anchors.fill: parent
-
-                    StatusIconTextButton {
-                        id: backButton
-
-                        Layout.preferredWidth: d.backButtonWidth
-                        Layout.preferredHeight: d.backButtonHeight
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        Layout.leftMargin: d.padding
-
-                        statusIcon: "previous"
-                        icon.width: 16
-                        icon.height: 16
-                        text: qsTr("Back")
-
-                        onClicked: {
-                            if (!d.isCurrentBrowsingTypeAsset) {
-                                root.collectiblesModel.currentCollectionUid = ""
-                            }
-                        }
-                    }
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        Layout.rightMargin: d.padding
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignRight
-                        text: "%1 %2".arg(collectiblesModel.count).arg(d.currentBrowsingCollectionName)
-                        font.pixelSize: 13
-                        lineHeight: 18
-                        lineHeightMode: Text.FixedHeight
-                        color: Theme.palette.baseColor1
+                count: collectiblesModel.count
+                name: d.currentBrowsingCollectionName
+                onBackClicked: {
+                    if (!d.isCurrentBrowsingTypeAsset) {
+                        root.collectiblesModel.currentCollectionUid = ""
                     }
                 }
             }

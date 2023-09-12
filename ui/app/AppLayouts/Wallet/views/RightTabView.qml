@@ -111,6 +111,9 @@ Item {
                     width: implicitWidth
                     text: qsTr("Activity")
                 }
+                onCurrentIndexChanged: {
+                    RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.HoldingType.Collectible : Constants.HoldingType.Asset)
+                }
             }
             StackLayout {
                 Layout.fillWidth: true
