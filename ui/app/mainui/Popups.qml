@@ -28,6 +28,7 @@ QtObject {
     required property var popupParent
     required property var rootStore
     property var communitiesStore
+    property var devicesStore
     property bool isDevBuild
 
     property var activePopupComponents: []
@@ -276,15 +277,12 @@ QtObject {
         openPopup(testnetModal)
     }
 
-    function openExportControlNodePopup(communityName, privateKey, cb) {
-        openPopup(exportControlNodePopup, {
-            communityName: communityName,
-            privateKey: privateKey
-        }, cb)
+    function openExportControlNodePopup(community) {
+        openPopup(exportControlNodePopup, { community })
     }
 
-    function openImportControlNodePopup(community, cb) {
-        openPopup(importControlNodePopup, {community: community}, cb)
+    function openImportControlNodePopup(community) {
+        openPopup(importControlNodePopup, { community })
     }
 
     readonly property list<Component> _components: [
@@ -680,6 +678,7 @@ QtObject {
         Component {
             id: exportControlNodePopup
             ExportControlNodePopup {
+                devicesStore: root.devicesStore
                 onClosed: destroy()
             }
         },
@@ -688,6 +687,7 @@ QtObject {
             id: importControlNodePopup
             ImportControlNodePopup {
                 onClosed: destroy()
+                onImportControlNode: console.warn("!!! TODO importControlNode for community:", community.name) // FIXME implement moving (importing) the control node
             }
         },
 

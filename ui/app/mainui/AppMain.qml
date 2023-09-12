@@ -205,6 +205,7 @@ Item {
         popupParent: appMain
         rootStore: appMain.rootStore
         communitiesStore: appMain.communitiesStore
+        devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         isDevBuild: !production
     }
 
@@ -341,16 +342,6 @@ Item {
                                        true,
                                        Constants.ephemeralNotificationType.normal,
                                        "")
-        }
-
-        function onCommunityPrivateKeyRemoved(communityId) {
-            const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
-            Global.displayToastMessage(qsTr("This device is no longer the control node for the %1 Community").arg(community.name),
-                                "",
-                                "info",
-                                false,
-                                Constants.ephemeralNotificationType.normal,
-                                "")
         }
     }
 

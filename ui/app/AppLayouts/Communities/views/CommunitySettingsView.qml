@@ -218,23 +218,14 @@ StatusSectionLayout {
                 if(!root.isControlNode)
                     return
 
-                root.rootStore.authenticateWithCallback((authenticated) => {
-                    if(!authenticated)
-                        return
-
-                    Global.openExportControlNodePopup(root.community.name, root.chatCommunitySectionModule.exportCommunity(root.community.id), (popup) => {
-                        popup.onDeletePrivateKey.connect(() => {
-                            root.rootStore.removePrivateKey(root.community.id)
-                        })  
-                    })
-                })
+                Global.openExportControlNodePopup(root.community)
             }
 
             onImportControlNodeClicked: {
                 if(root.isControlNode)
                     return
 
-                Global.openImportControlNodePopup(root.community, d.importControlNodePopupOpened)
+                Global.openImportControlNodePopup(root.community)
             }
         }
 
@@ -531,44 +522,6 @@ StatusSectionLayout {
                     break
                 }
             }
-        }
-
-        function requestCommunityInfoWithCallback(privateKey, callback) {
-            if(!callback) return
-
-            //success
-            root.rootStore.communityAdded.connect(function communityAddedHandler(communityId) {
-                root.rootStore.communityAdded.disconnect(communityAddedHandler)
-                let community = null
-                try {
-                    const communityJson = root.rootStore.getSectionByIdJson(communityId)
-                    community = JSON.parse(communityJson)
-                } catch (e) {
-                    console.warn("Error parsing community json: ", communityJson, " error: ", e.message)
-                }
-
-                callback(community)
-            })
-
-            //error
-            root.rootStore.importingCommunityStateChanged.connect(function communityImportingStateChangedHandler(communityId, status) {
-                root.rootStore.importingCommunityStateChanged.disconnect(communityImportingStateChangedHandler)
-                if(status === Constants.communityImportingError) {
-                    callback(null)
-                }
-            })
-
-            root.rootStore.requestCommunityInfo(privateKey, false)
-        }
-
-        function importControlNodePopupOpened(popup) {
-            popup.requestCommunityInfo.connect((privateKey) => {
-                requestCommunityInfoWithCallback(privateKey, popup.setCommunityInfo)
-            })
-
-            popup.importControlNode.connect((privateKey) => {
-                root.rootStore.importCommunity(privateKey)
-            })
         }
     }
 
