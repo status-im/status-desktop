@@ -643,10 +643,6 @@ QtObject {
         communitiesModuleInst.authenticateWithCallback()
     }
 
-    function removePrivateKey(communityId) {
-        root.communitiesModuleInst.removePrivateKey(communityId)
-    }
-
     readonly property Connections communitiesModuleConnections: Connections {
       target: communitiesModuleInst
       function onImportingCommunityStateChanged(communityId, state, errorMsg) {

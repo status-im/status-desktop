@@ -46,8 +46,8 @@ QtObject {
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
     signal openDeleteMessagePopup(string messageId, var messageStore)
     signal openDownloadImageDialog(string imageSource)
-    signal openExportControlNodePopup(string communityName, string privateKey, var cb)
-    signal openImportControlNodePopup(var community, var cb)
+    signal openExportControlNodePopup(var community)
+    signal openImportControlNodePopup(var community)
     signal contactRenamed(string publicKey)
 
     signal openLink(string link)

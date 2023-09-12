@@ -148,7 +148,6 @@ StackLayout {
             leftPadding: 64
             bottomPadding: 64
             topPadding: 0
-            loginType: root.loginType
             communityName: root.name
             isControlNode: root.isControlNode
             onExportControlNodeClicked: root.exportControlNodeClicked()

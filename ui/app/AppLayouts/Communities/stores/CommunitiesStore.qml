@@ -60,8 +60,6 @@ QtObject {
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
-    signal communityPrivateKeyRemoved(string communityId)
-
     signal communityInfoAlreadyRequested()
 
     function createCommunity(args = {
@@ -252,10 +250,6 @@ QtObject {
 
         function onCommunityInfoAlreadyRequested() {
           root.communityInfoAlreadyRequested()
-        }
-
-        function onCommunityPrivateKeyRemoved(communityId) {
-            root.communityPrivateKeyRemoved(communityId)
         }
     }
 }

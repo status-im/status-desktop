@@ -32,27 +32,6 @@ SplitView {
                 text: "Control node on/off"
                 checked: true
             }
-
-            ColumnLayout {
-                Label {
-                    Layout.fillWidth: true
-                    text: "Login type::"
-                }
-
-                RadioButton {
-                    checked: true
-                    text: qsTr("Password")
-                    onCheckedChanged: if(checked) footer.loginType = Constants.LoginType.Password
-                }
-                RadioButton {
-                    text: qsTr("Biometrics")
-                    onCheckedChanged: if(checked) footer.loginType = Constants.LoginType.Biometrics
-                }
-                RadioButton {
-                    text: qsTr("Keycard")
-                    onCheckedChanged: if(checked) footer.loginType = Constants.LoginType.Keycard
-                }
-            }
         }
     }
 }

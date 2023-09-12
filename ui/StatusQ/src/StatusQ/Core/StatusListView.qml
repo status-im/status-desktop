@@ -21,7 +21,7 @@ import StatusQ.Controls 0.1
 
             model: someModel
 
-            // For a vertical list bind the imlicitHeight to contentHeight
+            // For a vertical list bind the implicitHeight to contentHeight
             implicitHeight: contentHeight
 
             delegate: DelegateItem {

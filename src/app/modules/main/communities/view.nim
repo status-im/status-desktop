@@ -118,7 +118,6 @@ QtObject:
 
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
-  proc communityPrivateKeyRemoved*(self: View, communityId: string) {.signal.}
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}
   proc discordImportErrorsCountChanged*(self: View) {.signal.}
   proc communityAccessRequested*(self: View, communityId: string) {.signal.}
@@ -539,9 +538,6 @@ QtObject:
 
   proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isCommunityRequestPending(communityId)
-
-  proc removePrivateKey*(self: View, communityId: string) {.slot.} =
-    self.delegate.removePrivateKey(communityId)
 
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)

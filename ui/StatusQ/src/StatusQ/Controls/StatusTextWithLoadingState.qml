@@ -54,7 +54,7 @@ StatusBaseText {
         anchors.left: parent.left
         anchors.leftMargin: root.leftPadding
         anchors.verticalCenter: parent.verticalCenter
-        active: root.loading
+        active: root.loading && root.text
         sourceComponent: LoadingComponent {
             anchors.centerIn: parent
             radius: textMetrics.font.pixelSize === 15 ? 4 : 8
