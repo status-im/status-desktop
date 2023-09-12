@@ -355,6 +355,7 @@ QtObject:
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
     result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
+    result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
   proc setLocalAccountSettingsFile(self: Service) =
