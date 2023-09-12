@@ -7,6 +7,8 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Wallet.helpers 1.0
+
 import utils 1.0
 
 import "../views"
@@ -29,27 +31,12 @@ StatusComboBox {
 
     function setChain(chainId) {
         if(!multiSelection && !!d.currentModel && d.currentModel.count > 0) {
-            // Find given chain id:
-            var chainIdExists = false
-            if(chainId) {
-                if(!!root.layer1Networks && ModelUtils.contains(root.layer1Networks, "chainId", chainId)) {
-                    d.currentModel = root.layer1Networks
-                    chainIdExists = true
-                } else if(!!root.layer2Networks && ModelUtils.contains(root.layer2Networks, "chainId", chainId)) {
-                    d.currentModel = root.layer2Networks
-                    chainIdExists = true
-                }
-            }
-
-            // Set chain:
-            if(chainIdExists) {
-                d.currentIndex = ModelUtils.indexOf(d.currentModel, "chainId", chainId)
-            }
-            else {
-                 // Default value if not specified
-                d.currentModel = root.layer2Networks
-                d.currentIndex = 0
-            }
+            d.currentModel = NetworkModelHelpers.getLayerNetworkModelByChainId(root.layer1Networks,
+                                                                               root.layer2Networks,
+                                                                               chainId) ?? root.layer2Networks
+            d.currentIndex = NetworkModelHelpers.getChainIndexByChainId(root.layer1Networks,
+                                                                        root.layer2Networks,
+                                                                        chainId)
 
             // Notify change:
             root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
@@ -59,8 +46,8 @@ StatusComboBox {
     QtObject {
         id: d
 
-        readonly property string selectedChainName: ModelUtils.get(d.currentModel, d.currentIndex, "chainName") ?? ""
-        readonly property string selectedIconUrl: ModelUtils.get(d.currentModel, d.currentIndex, "iconUrl") ?? ""
+        readonly property string selectedChainName: NetworkModelHelpers.getChainName(d.currentModel, d.currentIndex)
+        readonly property string selectedIconUrl: NetworkModelHelpers.getChainIconUrl(d.currentModel, d.currentIndex)
         readonly property bool allSelected: (!!root.enabledNetworks && !!root.allNetworks) ? root.enabledNetworks.count === root.allNetworks.count :
                                                                                              false
         readonly property bool noneSelected: (!!root.enabledNetworks) ? root.enabledNetworks.count === 0 : false

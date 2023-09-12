@@ -141,9 +141,7 @@ StatusScrollView {
             bottomPadding: Style.current.padding
         }
 
-        // TO BE REMOVED: It will be removed with the new fees panel
         CustomLabelDescriptionComponent {
-
             label: qsTr("Select account")
             description: qsTr("This account will be where you receive your Owner token and will also be the account that pays the token minting gas fees.")
         }
@@ -198,7 +196,7 @@ StatusScrollView {
             id: networkSelector
 
             label: qsTr("Select network")
-            description: qsTr("The network on which these tokens will be minted.")
+            description: qsTr("The network you select will be where all your community’s tokens reside. Once set, this setting can’t be changed and tokens can’t move to other networks.")
         }
 
         FeesBox {
@@ -215,30 +213,6 @@ StatusScrollView {
             }
 
             showAccountsSelector: false
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.halfPadding
-
-            StatusIcon {
-                Layout.preferredWidth: d.iconSize
-                Layout.preferredHeight: d.iconSize
-                Layout.alignment: Qt.AlignTop
-
-                color: Theme.palette.baseColor1
-                icon: "info"
-            }
-
-            StatusBaseText {
-                Layout.fillWidth: true
-
-                wrapMode: Text.Wrap
-                font.pixelSize: Style.current.primaryTextFontSize
-                color: Theme.palette.baseColor1
-                lineHeight: 1.2
-                text: qsTr("Make sure you’re happy with the blockchain network selected before minting these tokens as they can’t be moved to a different network later.")
-            }
         }
 
         StatusButton {
@@ -308,8 +282,14 @@ StatusScrollView {
             layer1Networks: root.layer1Networks
             layer2Networks: root.layer2Networks
             enabledNetworks: root.enabledNetworks
-
             multiSelection: false
+            control.topPadding: 10
+            control.background: Rectangle {
+                height: 44
+                radius: 8
+                color: "transparent"
+                border.color: Theme.palette.directColor7
+            }
 
             onToggleNetwork: (network) => {
                 // Set Owner Token network properties:

@@ -11,6 +11,10 @@ SplitView {
     id: root
     Logs { id: logs }
 
+    readonly property string ethereumName : "Ethereum Mainnet"
+    readonly property string optimismName : "Optimism"
+    readonly property string arbitrumName : "Arbitrum"
+
     SplitView {
 
         orientation: Qt.Vertical
@@ -41,7 +45,18 @@ SplitView {
 
                     multiSelection: multiSelectionCheckBox.checked
 
-                    onToggleNetwork: logs.logEvent("onToggleNetwork: " + network.chainName)
+                    onToggleNetwork: {
+
+                        logs.logEvent("onToggleNetwork: " + network.chainName)
+                        if(network.chainName === root.ethereumName)
+                            ethRadioBtn.checked = true
+
+                        else if(network.chainName === root.optimismName)
+                            optRadioBtn.checked = true
+
+                        else if(network.chainName === root.arbitrumName)
+                            arbRadioBtn.checked = true
+                    }
                 }
             }
         }
@@ -80,36 +95,20 @@ SplitView {
                 RadioButton {
                     id: ethRadioBtn
 
-                    text: "Ethereum Mainnet"
+                    text: root.ethereumName
                     onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.ethNet)
                 }
                 RadioButton {
-                    text: "Optimism"
+                    id: optRadioBtn
+
+                    text: root.optimismName
                     onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.optimismNet)
                 }
                 RadioButton {
-                    text: "Arbitrum"
+                    id: arbRadioBtn
+
+                    text: root.arbitrumName
                     onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.arbitrumNet)
-                }
-                RadioButton {
-                    text: "Hermez"
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.hermezNet)
-                }
-                RadioButton {
-                    text: "Testnet"
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.testnetNet)
-                }
-                RadioButton {
-                    text: "Custom"
-                    onCheckedChanged: if(checked) networkFilter.setChain(NetworksModel.customNet)
-                }
-                RadioButton {
-                    text: "Undefined"
-                    onCheckedChanged: if(checked) networkFilter.setChain()
-                }
-                RadioButton {
-                    text: "Not existing network id"
-                    onCheckedChanged: if(checked) networkFilter.setChain(77)
                 }
             }
         }
