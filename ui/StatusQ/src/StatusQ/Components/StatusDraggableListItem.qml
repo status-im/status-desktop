@@ -364,6 +364,7 @@ ItemDelegate {
     Component {
         id: letterIdenticonComponent
         StatusLetterIdenticon {
+            objectName: "identicon"
             width: root.icon.width
             height: root.icon.height
             emoji: root.hasEmoji ? root.icon.name : ""
