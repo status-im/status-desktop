@@ -28,7 +28,7 @@ StatusDialog {
     property string preDefinedAmountToSend
     property var preSelectedHolding
     property string preSelectedHoldingID
-    property var preSelectedHoldingType
+    property int preSelectedHoldingType
     property bool interactive: true
     property alias onlyAssets: holdingSelector.onlyAssets
 
@@ -123,7 +123,8 @@ StatusDialog {
 
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.HoldingType.Asset) {
-                popup.sendType = Constants.SendType.Transfer
+                if(popup.sendType !== Constants.SendType.Bridge)
+                    popup.sendType = Constants.SendType.Transfer
                 store.setSelectedAssetSymbol(selectedHolding.symbol)
             } else if (d.selectedHoldingType === Constants.HoldingType.Collectible) {
                 popup.sendType = Constants.SendType.ERC721Transfer
@@ -151,6 +152,7 @@ StatusDialog {
         amountToSendInput.input.input.edit.forceActiveFocus()
 
         if (popup.preSelectedHoldingType !== Constants.HoldingType.Unknown) {
+            tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
             if(!!popup.preSelectedHolding) {
                 d.setSelectedHolding(popup.preSelectedHolding, popup.preSelectedHoldingType)
             } else if (!!popup.preSelectedHoldingID) {
@@ -288,6 +290,8 @@ StatusDialog {
 
                         visible: !d.selectedHolding
                         assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
+                        collectibles: popup.selectedAccount ? popup.nestedCollectiblesModel : null
+                        onlyAssets: holdingSelector.onlyAssets
                         searchTokenSymbolByAddressFn: function (address) {
                             return store.findTokenSymbolByAddress(address)
                         }
@@ -295,11 +299,11 @@ StatusDialog {
                             return RootStore.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
-                            d.setSelectedHoldingId(symbol, Constants.HoldingType.Asset)
+                            d.setSelectedHoldingId(symbol, holdingType)
                         }
                         onTokenHovered: {
                             if(hovered) {
-                                d.setHoveredHoldingId(symbol, Constants.HoldingType.Asset)
+                                d.setHoveredHoldingId(symbol, holdingType)
                             } else {
                                 d.setHoveredHoldingId("", Constants.HoldingType.Unknown)
                             }

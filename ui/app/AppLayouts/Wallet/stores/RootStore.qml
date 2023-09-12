@@ -134,7 +134,7 @@ QtObject {
     }
 
     property string currentViewedHoldingID: ""
-    property var currentViewedHoldingType
+    property int currentViewedHoldingType
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).

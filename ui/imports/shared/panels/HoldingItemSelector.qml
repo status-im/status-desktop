@@ -53,23 +53,20 @@ Item {
     implicitHeight: comboBox.implicitHeight
 
     onSelectedItemChanged: {
-        if (!!selectedItem) {
-            d.iconSource = itemIconSourceFn(selectedItem) ?? defaultIconSource
-            d.text = itemTextFn(selectedItem) ?? placeholderText
-        }
+        d.iconSource = itemIconSourceFn(selectedItem) ?? defaultIconSource
+        d.text = itemTextFn(selectedItem) ?? placeholderText
     }
 
     onHoveredItemChanged: {
-        if (!!hoveredItem) {
-            d.iconSource = itemIconSourceFn(hoveredItem) ?? defaultIconSource
-            d.text = itemTextFn(hoveredItem) ?? placeholderText
-        }
+        d.iconSource = itemIconSourceFn(hoveredItem) ?? defaultIconSource
+        d.text = itemTextFn(hoveredItem) ?? placeholderText
     }
 
     QtObject {
         id: d
 
         property string iconSource: ""
+        onIconSourceChanged: tokenIcon.image.source = iconSource
         property string text: ""
         readonly property bool isItemSelected: !!root.selectedItem || !!root.hoveredItem
 
@@ -102,6 +99,7 @@ Item {
             id: rowLayout
             implicitHeight: 38
             StatusRoundedImage {
+                id: tokenIcon
                 Layout.preferredWidth: root.contentIconSize
                 Layout.preferredHeight: root.contentIconSize
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft

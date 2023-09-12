@@ -16,6 +16,7 @@ QtObject {
     property var mainModuleInst: mainModule
     property var walletSectionSendInst: walletSectionSend
 
+    property var assets: walletSectionAssets.assets
     property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
     property var toNetworksModel: walletSectionSendInst.toNetworksModel
     property var senderAccounts: walletSectionSendInst.senderAccounts
@@ -96,7 +97,7 @@ QtObject {
 
     function getAsset(assetsList, symbol) {
         for(var i=0; i< assetsList.count;i++) {
-            if(symbol === assetsList.rowData(i, "symbol"))
+            if(symbol === assetsList.rowData(i, "symbol")) {
                 return {
                     name: assetsList.rowData(i, "name"),
                     symbol: assetsList.rowData(i, "symbol"),
@@ -105,6 +106,7 @@ QtObject {
                     balances: assetsList.rowData(i, "balances"),
                     decimals: assetsList.rowData(i, "decimals")
                 }
+            }
         }
         return {}
     }
@@ -221,6 +223,7 @@ QtObject {
 
     function resetStoredProperties() {
         walletSectionSendInst.resetStoredProperties()
+        nestedCollectiblesModel.currentCollectionUid = ""
     }
 
     // TODO: move to nim
