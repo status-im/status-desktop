@@ -12,6 +12,7 @@ import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.views 1.0
+import AppLayouts.Wallet.helpers 1.0
 
 import shared.controls 1.0
 
@@ -271,14 +272,36 @@ StackView {
         SettingsPage {
             id: newTokenPage
 
+            readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
+            readonly property var chainModel: NetworkModelHelpers.getLayerNetworkModelByChainId(root.layer1Networks,
+                                                                                                root.layer2Networks,
+                                                                                                ownerTokenChainId) ?? root.layer2Networks
+            readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.layer1Networks,
+                                                                                         root.layer2Networks,
+                                                                                         ownerTokenChainId)
+            readonly property string chainName: NetworkModelHelpers.getChainName(chainModel, chainIndex)
+            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(chainModel, chainIndex)
+
             property TokenObject asset: TokenObject{
                 type: Constants.TokenType.ERC20
                 multiplierIndex: 18
+
+                // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
+                chainId: newTokenPage.ownerTokenChainId
+                chainName: newTokenPage.chainName
+                chainIcon: newTokenPage.chainIcon
             }
 
             property TokenObject collectible: TokenObject {
                 type: Constants.TokenType.ERC721
+
+                // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
+                chainId: newTokenPage.ownerTokenChainId
+                chainName: newTokenPage.chainName
+                chainIcon: newTokenPage.chainIcon
             }
+
+
 
             property bool isAssetView: false
             property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
@@ -343,8 +366,6 @@ StackView {
                         viewWidth: root.viewWidth
                         layer1Networks: root.layer1Networks
                         layer2Networks: root.layer2Networks
-                        enabledNetworks: root.enabledNetworks
-                        allNetworks: root.allNetworks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
                         tokensModelWallet: root.tokensModelWallet

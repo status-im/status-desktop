@@ -38,8 +38,6 @@ StatusScrollView {
     // Network related properties:
     property var layer1Networks
     property var layer2Networks
-    property var enabledNetworks
-    property var allNetworks
 
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
@@ -76,10 +74,6 @@ StatusScrollView {
     padding: 0
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
-
-    Component.onCompleted: {
-        networkSelector.setChain(root.token.chainId)
-    }
 
     ColumnLayout {
         id: mainLayout
@@ -122,8 +116,8 @@ StatusScrollView {
             validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please name your token name (use A-Z and 0-9, hyphens and underscores only)")
             regexValidator.errorMessage: d.hasEmoji(text) ?
-                                         qsTr("Your token name is too cool (use A-Z and 0-9, hyphens and underscores only)") :
-                                         qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
+                                             qsTr("Your token name is too cool (use A-Z and 0-9, hyphens and underscores only)") :
+                                             qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             extraValidator.validate: function (value) {
                 // If minting failed, we can retry same deployment, so same name allowed
                 const allowRepeatedName = root.token.deployState === Constants.ContractTransactionStatus.Failed
@@ -145,7 +139,7 @@ StatusScrollView {
             label: qsTr("Description")
             text: root.token.description
             charLimit: 280
-            placeholderText: root.isAssetView ? qsTr("Describe your asset") : qsTr("Describe your collectible")
+            placeholderText: root.isAssetView ? qsTr("Describe your asset (will be shown in hodler’s wallets)") : qsTr("Describe your collectible (will be shown in hodler’s wallets)")
             input.multiline: true
             input.verticalAlignment: Qt.AlignTop
             input.placeholder.verticalAlignment: Qt.AlignTop
@@ -169,7 +163,7 @@ StatusScrollView {
             validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please enter your token symbol (use A-Z only)")
             regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your token symbol is too cool (use A-Z only)") :
-                qsTr("Your token symbol contains invalid characters (use A-Z only)")
+                                                            qsTr("Your token symbol contains invalid characters (use A-Z only)")
             regexValidator.regularExpression: Constants.regularExpressions.capitalOnly
             extraValidator.validate: function (value) {
                 // If minting failed, we can retry same deployment, so same symbol allowed
@@ -180,10 +174,11 @@ StatusScrollView {
 
                 // Otherwise, no repeated names allowed:
                 return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) &&
-                       !SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text))
+                        !SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text))
             }
             extraValidator.errorMessage: SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text) ?
-                qsTr("This token symbol is already in use") : qsTr("You have used this token symbol before")
+                                             qsTr("This token symbol is already in use") :
+                                             qsTr("You have used this token symbol before")
 
             onTextChanged: {
                 const cursorPos = input.edit.cursorPosition
@@ -194,11 +189,53 @@ StatusScrollView {
             }
         }
 
-        CustomNetworkFilterRowComponent {
-            id: networkSelector
+        StatusBaseText {
+            text: qsTr("Network")
+            color: Theme.palette.directColor1
+            font.pixelSize: Theme.primaryTextFontSize
+        }
 
-            label: qsTr("Select network")
-            description: qsTr("The network on which this token will be minted")
+        Rectangle {
+            Layout.preferredHeight: 44
+            Layout.fillWidth: true
+            radius: 8
+            color: "transparent"
+            border.color: Theme.palette.directColor7
+
+            RowLayout {
+                id: networkRow
+
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 16
+
+                StatusSmartIdenticon {
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.leftMargin: Style.current.padding
+
+                    asset.height: 24
+                    asset.width: asset.height
+                    asset.isImage: true
+                    asset.name: Style.svg(token.chainIcon)
+                    active: true
+                    visible: active
+                }
+
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.fillWidth: true
+                    Layout.rightMargin: Style.current.padding
+
+                    font.pixelSize: 13
+                    font.weight: Font.Medium
+                    elide: Text.ElideRight
+                    lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
+                    verticalAlignment: Text.AlignVCenter
+                    text: token.chainName
+                    color: Theme.palette.baseColor1
+                    visible: !!text
+                }
+            }
         }
 
         CustomSwitchRowComponent {
@@ -221,12 +258,12 @@ StatusScrollView {
             visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
             text: SQUtils.AmountsArithmetic.toNumber(root.token.supply,
-                                                          root.token.multiplierIndex)
+                                                     root.token.multiplierIndex)
 
             placeholderText: qsTr("e.g. 300")
             minLengthValidator.errorMessage: qsTr("Please enter a total finite supply")
             regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your total finite supply is too cool (use 0-9 only)") :
-                qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
+                                                            qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 999999999 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
@@ -274,7 +311,7 @@ StatusScrollView {
             validationMode: StatusInput.ValidationMode.Always
             minLengthValidator.errorMessage: qsTr("Please enter how many decimals your token should have")
             regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your decimal amount is too cool (use 0-9 only)") :
-                qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
+                                                            qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
@@ -308,8 +345,8 @@ StatusScrollView {
 
                 function onAccountAddressChanged() {
                     const idx = SQUtils.ModelUtils.indexOf(
-                                        feesBox.accountsSelector.model, "address",
-                                        root.token.accountAddress)
+                                  feesBox.accountsSelector.model, "address",
+                                  root.token.accountAddress)
 
                     feesBox.accountsSelector.currentIndex = idx
                 }
@@ -412,43 +449,6 @@ StatusScrollView {
 
         StatusSwitch {
             id: switch_
-        }
-    }
-
-    component CustomNetworkFilterRowComponent: RowLayout {
-        id: networkComponent
-
-        property string label
-        property string description
-
-        function setChain(chainId) { netFilter.setChain(chainId) }
-
-        Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
-        spacing: 32
-
-        CustomLabelDescriptionComponent {
-            label: networkComponent.label
-            description: networkComponent.description
-        }
-
-        NetworkFilter {
-            id: netFilter
-
-            Layout.preferredWidth: 160
-
-            allNetworks: root.allNetworks
-            layer1Networks: root.layer1Networks
-            layer2Networks: root.layer2Networks
-            enabledNetworks: root.enabledNetworks
-
-            multiSelection: false
-
-            onToggleNetwork: (network) => {
-                root.token.chainId = network.chainId
-                root.token.chainName = network.chainName
-                root.token.chainIcon = network.iconUrl
-            }
         }
     }
 }
