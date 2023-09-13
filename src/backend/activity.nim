@@ -476,6 +476,7 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
 rpc(filterActivityAsync, "wallet"):
   requestId: int32
   addresses: seq[string]
+  allAddresses: bool
   chainIds: seq[ChainId]
   filter: ActivityFilter
   offset: int

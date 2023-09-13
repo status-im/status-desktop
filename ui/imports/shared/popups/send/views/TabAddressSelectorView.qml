@@ -174,7 +174,7 @@ Item {
 
             function updateRecentsActivity() {
                 if(root.selectedAccount) {
-                    root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address]))
+                    root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address], false))
                 }
                 root.store.tmpActivityController.updateFilter()
             }
