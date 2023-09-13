@@ -1,5 +1,7 @@
+CalloutCard 1.0 CalloutCard.qml
 FetchMoreMessagesButton 1.0 FetchMoreMessagesButton.qml
 GapComponent 1.0 GapComponent.qml
+LinkPreviewCard 1.0 LinkPreviewCard.qml
 UsernameLabel 1.0 UsernameLabel.qml
 DateGroup 1.0 DateGroup.qml
 UserImage 1.0 UserImage.qml
@@ -10,7 +12,6 @@ Retry 1.0 Retry.qml
 SendTransactionButton 1.0 SendTransactionButton.qml
 StateBubble 1.0 StateBubble.qml
 GasSelectorButton 1.0 GasSelectorButton.qml
-MessageBorder 1.0 MessageBorder.qml
 EmojiReaction 1.0 EmojiReaction.qml
 ProfileHeader 1.0 ProfileHeader.qml
 VerificationLabel 1.0 VerificationLabel.qml
