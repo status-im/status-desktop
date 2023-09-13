@@ -15,7 +15,6 @@ import app/core/signals/types
 
 import backend/activity as backend_activity
 import backend/backend as backend
-import backend/transactions
 
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
@@ -23,8 +22,6 @@ import app_service/service/token/service as token_service
 
 import app/modules/shared/wallet_utils
 import app/modules/shared_models/currency_amount
-
-import app_service/service/transaction/dto
 
 proc toRef*[T](obj: T): ref T =
   new(result)
@@ -51,6 +48,7 @@ QtObject:
       filterTokenCodes: HashSet[string]
 
       addresses: seq[string]
+      allAddressesSelected: bool
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
       allChainsSelected: bool
@@ -154,7 +152,7 @@ QtObject:
     self.status.setNewDataAvailable(false)
 
     let chains = if not self.allChainsSelected: self.chainIds else: @[]
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](chains), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](chains), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       error "error fetching activity entries: ", response.error
       self.status.setLoadingData(false)
@@ -163,7 +161,7 @@ QtObject:
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
     let chains = if not self.allChainsSelected: self.chainIds else: @[]
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](chains), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](chains), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching activity entries: ", response.error
@@ -257,6 +255,7 @@ QtObject:
     result.filterTokenCodes = initHashSet[string]()
 
     result.addresses = @[]
+    result.allAddressesSelected = false
     result.chainIds = @[]
     result.allChainsSelected = true
 
@@ -320,13 +319,14 @@ QtObject:
 
     self.updateAssetsIdentities()
 
-  proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
+  proc setFilterAddresses*(self: Controller, addresses: seq[string], allAddressesSelected: bool) =
     self.addresses = addresses
+    self.allAddressesSelected = allAddressesSelected
     self.status.setIsFilterDirty(true)
 
     self.updateStartTimestamp()
 
-  proc setFilterAddressesJson*(self: Controller, jsonArray: string) {.slot.}  =
+  proc setFilterAddressesJson*(self: Controller, jsonArray: string, allAddressesSelected: bool) {.slot.}  =
     let addressesJson = parseJson(jsonArray)
     if addressesJson.kind != JArray:
       error "invalid array of json strings"
@@ -339,7 +339,7 @@ QtObject:
         return
       addresses.add(addressesJson[i].getStr())
 
-    self.setFilterAddresses(addresses)
+    self.setFilterAddresses(addresses, allAddressesSelected)
 
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
@@ -384,10 +384,10 @@ QtObject:
   QtProperty[QVariant] status:
     read = getStatus
 
-  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int], allChainsEnabled: bool) =
-    if (self.addresses == addresses and self.chainIds == chainIds):
+  proc globalFilterChanged*(self: Controller, addresses: seq[string], allAddressesSelected: bool, chainIds: seq[int], allChainsEnabled: bool) =
+    if (self.addresses == addresses and self.allAddressesSelected == allAddressesSelected and self.chainIds == chainIds):
       return
-    self.setFilterAddresses(addresses)
+    self.setFilterAddresses(addresses, allAddressesSelected)
     self.setFilterChains(chainIds, allChainsEnabled)
 
   proc noLimitTimestamp*(self: Controller): int {.slot.} =
