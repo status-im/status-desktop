@@ -2,5 +2,4 @@ import logging
 
 LOG_LEVEL = logging.DEBUG
 DEV_BUILD = False
-ATTACH_MODE = False
 APP_DIR = None

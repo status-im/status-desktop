@@ -2,6 +2,7 @@ import time
 from copy import deepcopy
 
 import configs.timeouts
+import driver
 from scripts.utils import local_system
 
 if configs.system.IS_MAC:
@@ -27,11 +28,8 @@ def attach_atomac(timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC):
             )
         return atomacos.NativeUIElement.from_pid(apps[-1].processIdentifier())
 
-    if configs.DEV_BUILD:
-        pid = local_system.find_process_by_port(configs.squish.AUT_PORT)
-        atomator = atomacos.getAppRefByPid(pid)
-    else:
-        atomator = from_bundle_id(BUNDLE_ID)
+    pid = driver.currentApplicationContext().pid
+    atomator = atomacos.getAppRefByPid(pid)
     started_at = time.monotonic()
     while not hasattr(atomator, 'AXMainWindow'):
         time.sleep(1)

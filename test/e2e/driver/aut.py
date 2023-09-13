@@ -26,7 +26,7 @@ class AUT:
         self.port = int(port)
         self.ctx = None
         self.pid = None
-        self.aut_id = self.path.name if IS_LIN else self.path.stem
+        self.aut_id = f'AUT_{datetime.now():%H%M%S}'
         self.app_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}'
         self.user_data = user_data
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
@@ -43,7 +43,7 @@ class AUT:
     @allure.step('Attach Squish to Test Application')
     def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, attempt: int = 2):
         if self.ctx is None:
-            self.ctx = context.attach('AUT', timeout_sec)
+            self.ctx = context.attach(self.aut_id, timeout_sec)
         try:
             squish.setApplicationContext(self.ctx)
         except TypeError as err:
@@ -71,7 +71,9 @@ class AUT:
         SquishServer().set_aut_timeout()
 
         if configs.ATTACH_MODE:
-            SquishServer().add_attachable_aut('AUT', self.port)
+            if local_system.find_process_by_port(self.port):
+                self.port += 100
+            SquishServer().add_attachable_aut(self.aut_id, self.port)
             command = [
                 configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
                 f'--port={self.port}',

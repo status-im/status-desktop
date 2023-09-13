@@ -18,3 +18,4 @@ def start_squish_server():
                 pytest.exit(err)
     yield squish_server
     squish_server.stop()
+    squish_server.config.unlink()
