@@ -402,6 +402,7 @@ Column {
             StatusAction {
                 text: qsTr("Invite People")
                 icon.name: "share-ios"
+                objectName: "invitePeople"
             }
 
             StatusAction {
