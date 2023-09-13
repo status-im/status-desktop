@@ -593,16 +593,6 @@ StatusSectionLayout {
     }
 
     Component {
-        id: transferOwnershipPopup
-
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            store: root.rootStore
-            onClosed: destroy()
-        }
-    }
-
-    Component {
         id: noPermissionsPopupCmp
 
         NoPermissionsToJoinPopup {
