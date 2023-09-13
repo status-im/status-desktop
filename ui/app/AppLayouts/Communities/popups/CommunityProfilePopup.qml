@@ -59,10 +59,6 @@ StatusModal {
                 headerImageSource: root.community.image
                 community: root.community
 
-                onTransferOwnershipButtonClicked: Global.openPopup(transferOwnershiproot, {
-                    privateKey: communitySectionModule.exportCommunity(root.community.id),
-                    store: root.store
-                })
                 onLeaveButtonClicked: {
                     root.close();
                     root.community.spectated ? communitySectionModule.leaveCommunity()
@@ -71,13 +67,6 @@ StatusModal {
                 onCopyToClipboard: {
                     Utils.copyToClipboard(link);
                 }
-            }
-        }
-
-        Component {
-            id: transferOwnershiproot
-            TransferOwnershipPopup {
-                destroyOnClose: true
             }
         }
     }

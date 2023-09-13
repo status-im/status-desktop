@@ -470,26 +470,6 @@ Item {
                         }
                 }
             } // Loader
-
-            Loader {
-                active: root.communityData.memberRole === Constants.memberRole.owner &&
-                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
-                width: parent.width
-                height: item.height
-                sourceComponent: Component {
-                        BackUpCommuntyBannerPanel {
-                            id: backupBanner
-                            communityId: communityData.id
-                            onBackupButtonClicked: {
-                                Global.openPopup(transferOwnershipPopup, {
-                                    privateKey: communitySectionModule.exportCommunity(communityData.id),
-                                    store: root.store
-                                })
-                            }
-                        }
-                }
-            } // Loader
         } // Column
 
         background: Item {
@@ -592,20 +572,5 @@ Item {
         title: qsTr("Error deleting the category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    Component {
-        id: transferOwnershipPopup
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            onClosed: {
-                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
-                if (hiddenBannerIds.includes(root.store.activeCommunity.id)) {
-                    return
-                }
-                hiddenBannerIds.push(root.store.activeCommunity.id)
-                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-            }
-        }
     }
 }
