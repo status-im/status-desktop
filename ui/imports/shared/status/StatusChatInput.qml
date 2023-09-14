@@ -1094,6 +1094,12 @@ Rectangle {
             color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
             radius: 20
 
+            StatusQ.StatusToolTip {
+                id: messageLengthLimitTooltip
+                text: qsTr("Maximum message character count is " + control.messageLimit)
+                orientation: StatusQ.StatusToolTip.Orientation.Top
+            }
+
             Component {
                 id: textFormatMenuComponent
 
@@ -1434,14 +1440,6 @@ Rectangle {
                                 onExited: {
                                     messageLengthLimitTooltip.close()
                                 }
-                            }
-
-                            StatusQ.StatusToolTip {
-                                id: messageLengthLimitTooltip
-                                text: qsTr("Maximum message character count is " + control.messageLimit)
-                                orientation: StatusQ.StatusToolTip.Orientation.Top
-//                                offset: Style.current.halfPadding
-//                                y: parent.height + 12
                             }
                         }
 
