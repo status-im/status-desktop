@@ -3,13 +3,13 @@ from collections import namedtuple
 import configs
 
 UserAccount = namedtuple('User', ['name', 'password', 'seed_phrase'])
-user_account_one = UserAccount('squisher', '*P@ssw0rd*', [
+user_account_one = UserAccount('squisher', '0000000000', [
     'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
 ])
-user_account_two = UserAccount('athletic', '*P@ssw0rd*', [
+user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
 ])
-user_account_three = UserAccount('Nervous', 'TesTEr16843/!@00', [])
+user_account_three = UserAccount('nervous', '000000000', [])
 
 community_params = {
     'name': 'Name',

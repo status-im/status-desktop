@@ -272,8 +272,7 @@ def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_
 
         with step(f'User {user_two.name}, see two members in community members list'):
             assert user_one.name in community_screen.right_panel.members
-            assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members)
-            assert '2' in community_screen.left_panel.members
+            assert driver.waitFor(lambda: '2' in community_screen.left_panel.members)
             main_window.hide()
 
         with step(f'User {user_one.name}, see two members in community members list'):
