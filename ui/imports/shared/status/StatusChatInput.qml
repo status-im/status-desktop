@@ -1421,10 +1421,8 @@ Rectangle {
                             rightPadding: Style.current.halfPadding
                             visible: messageInputField.length >= control.messageLimit - control.messageLimitSoft
                             color: {
-                                if ( remainingChars > control.messageLimitSoft )
+                                if (remainingChars  >= 0)
                                     return Style.current.textColor
-                                else if (remainingChars  >= 0)
-                                    return Style.current.warning
                                 else
                                     return Style.current.danger
                             }
