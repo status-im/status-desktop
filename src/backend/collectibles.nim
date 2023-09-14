@@ -16,6 +16,7 @@ type
 
 # Declared in services/wallet/collectibles/service.go
 const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ownership-update-started"
+const eventCollectiblesOwnershipUpdatePartial*: string = "wallet-collectibles-ownership-update-partial"
 const eventCollectiblesOwnershipUpdateFinished*: string = "wallet-collectibles-ownership-update-finished"
 const eventCollectiblesOwnershipUpdateFinishedWithError*: string = "wallet-collectibles-ownership-update-finished-with-error"
 

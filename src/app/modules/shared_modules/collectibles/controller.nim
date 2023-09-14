@@ -1,5 +1,5 @@
 import NimQml, std/json, sequtils, sugar, strutils
-import stint, logging
+import stint, logging, Tables
 
 import app/modules/shared_models/collectibles_model
 import app/modules/shared_models/collectibles_utils
@@ -22,6 +22,8 @@ QtObject:
       addresses: seq[string]
       chainIds: seq[int]
 
+      stateTable: Table[string, Table[int, bool]] # Table[address][chainID] -> isUpdating
+
       requestId: int32
       autofetch: bool
 
@@ -39,7 +41,6 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModelAsVariant
-
 
   proc loadMoreItems(self: Controller) {.slot.} =
     if self.model.getIsFetching():
@@ -87,17 +88,47 @@ QtObject:
     if self.autofetch:
       self.loadMoreItems()
 
+  proc resetUpdateState*(self: Controller) =
+    # Initialize state table
+    # We assume that ownership is initially not being updated. This will change if an
+    # update starts or a partial update is received.
+    # TODO: Get the update state at the time of filter switch from the backend?
+    self.stateTable = initTable[string, Table[int, bool]]()
+    for address in self.addresses:
+      self.stateTable[address] = initTable[int, bool]()
+      for chainID in self.chainIds:
+        self.stateTable[address][chainID] = false
+    self.model.setIsUpdating(false)
+
+  proc setUpdateState*(self: Controller, address: string, chainID: int, isUpdating: bool) =
+    if not self.stateTable.hasKey(address) or not self.stateTable[address].hasKey(chainID):
+      return
+    self.stateTable[address][chainID] = isUpdating
+
+    # If any address+chainID is updating, then the whole model is updating
+    for address, chainIDsPerAddress in self.stateTable.pairs:
+      for chainID, isUpdating in chainIDsPerAddress:
+        if isUpdating:
+          self.model.setIsUpdating(true)
+          return
+    self.model.setIsUpdating(false)
+
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
       self.processFilterOwnedCollectiblesResponse(jsonObj)
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc () =
-      self.model.setIsUpdating(true)
+    self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc (address: string, chainID: int) =
+      self.setUpdateState(address, chainID, true)
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc () =
-      self.model.setIsUpdating(false)
+    self.eventsHandler.onCollectiblesOwnershipUpdatePartial(proc (address: string, chainID: int) =
+      self.setUpdateState(address, chainID, true)
+      self.resetModel()
+    )
+
+    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc (address: string, chainID: int) =
+      self.setUpdateState(address, chainID, false)
       self.resetModel()
     )
 
@@ -127,6 +158,8 @@ QtObject:
 
     self.chainIds = chainIds
     self.addresses = addresses
+
+    self.resetUpdateState()
   
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
