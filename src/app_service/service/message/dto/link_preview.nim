@@ -1,5 +1,6 @@
 import json, strformat, tables
 include ../../../common/json_utils
+include ./link_preview_thumbnail
 
 type
   LinkType* {.pure.} = enum
@@ -12,12 +13,6 @@ proc toLinkType*(value: int): LinkType =
   except RangeDefect:
     return LinkType.Link
 
-type
-  LinkPreviewThumbnail* = object
-    width*: int
-    height*: int
-    url*: string
-    dataUri*: string
 
 type
   LinkPreview* = ref object
@@ -35,12 +30,6 @@ proc initLinkPreview*(url: string): LinkPreview =
   result = LinkPreview()
   result.url = url
 
-proc toLinkPreviewThumbnail*(jsonObj: JsonNode): LinkPreviewThumbnail =
-  result = LinkPreviewThumbnail()
-  discard jsonObj.getProp("width", result.width)
-  discard jsonObj.getProp("height", result.height)
-  discard jsonObj.getProp("url", result.url)
-  discard jsonObj.getProp("dataUri", result.dataUri)
 
 proc toLinkPreview*(jsonObj: JsonNode): LinkPreview =
   result = LinkPreview()
@@ -54,14 +43,6 @@ proc toLinkPreview*(jsonObj: JsonNode): LinkPreview =
   var thumbnail: JsonNode
   if jsonObj.getProp("thumbnail", thumbnail):
     result.thumbnail = toLinkPreviewThumbnail(thumbnail)
-
-proc `$`*(self: LinkPreviewThumbnail): string =
-  result = fmt"""LinkPreviewThumbnail(
-    width: {self.width},
-    height: {self.height},
-    urlLength: {self.url.len},
-    dataUriLength: {self.dataUri.len}
-  )"""
 
 proc `$`*(self: LinkPreview): string =
   result = fmt"""LinkPreview(
