@@ -8,6 +8,7 @@ import backend/collectibles as backend_collectibles
 
 type EventCallbackProc = proc (eventObject: JsonNode)
 type WalletEventCallbackProc = proc (data: WalletSignal)
+type OwnershipUpdateCallbackProc = proc (address: string, chainID: int)
 
 # EventsHandler responsible for catching collectibles related backend events and reporting them
 QtObject:
@@ -20,8 +21,9 @@ QtObject:
       subscribedAddresses: HashSet[string]
       subscribedChainIDs: HashSet[int]
 
-      collectiblesOwnershipUpdateStartedFn: proc()
-      collectiblesOwnershipUpdateFinishedFn: proc()
+      collectiblesOwnershipUpdateStartedFn: OwnershipUpdateCallbackProc
+      collectiblesOwnershipUpdatePartialFn: OwnershipUpdateCallbackProc
+      collectiblesOwnershipUpdateFinishedFn: OwnershipUpdateCallbackProc
 
       requestId: int32
 
@@ -34,10 +36,13 @@ QtObject:
   proc onOwnedCollectiblesFilteringDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_collectibles.eventOwnedCollectiblesFilteringDone] = handler
 
-  proc onCollectiblesOwnershipUpdateStarted*(self: EventsHandler, handler: proc()) =
+  proc onCollectiblesOwnershipUpdateStarted*(self: EventsHandler, handler: OwnershipUpdateCallbackProc) =
     self.collectiblesOwnershipUpdateStartedFn = handler
 
-  proc onCollectiblesOwnershipUpdateFinished*(self: EventsHandler, handler: proc()) =
+  proc onCollectiblesOwnershipUpdatePartial*(self: EventsHandler, handler: OwnershipUpdateCallbackProc) =
+    self.collectiblesOwnershipUpdatePartialFn = handler
+
+  proc onCollectiblesOwnershipUpdateFinished*(self: EventsHandler, handler: OwnershipUpdateCallbackProc) =
     self.collectiblesOwnershipUpdateFinishedFn = handler
 
   proc handleApiEvents(self: EventsHandler, e: Args) =
@@ -72,12 +77,17 @@ QtObject:
     self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateStarted] = proc (data: WalletSignal) =
       if self.collectiblesOwnershipUpdateStartedFn == nil or self.shouldIgnoreEvent(data):
         return
-      self.collectiblesOwnershipUpdateStartedFn()
+      self.collectiblesOwnershipUpdateStartedFn(data.accounts[0], data.chainID)
+
+    self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdatePartial] = proc (data: WalletSignal) =
+      if self.collectiblesOwnershipUpdatePartialFn == nil or self.shouldIgnoreEvent(data):
+        return
+      self.collectiblesOwnershipUpdatePartialFn(data.accounts[0], data.chainID)
 
     self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateFinished] = proc (data: WalletSignal) =
       if self.collectiblesOwnershipUpdateFinishedFn == nil or self.shouldIgnoreEvent(data):
         return
-      self.collectiblesOwnershipUpdateFinishedFn()
+      self.collectiblesOwnershipUpdateFinishedFn(data.accounts[0], data.chainID)
 
   proc newEventsHandler*(requestId: int32, events: EventEmitter): EventsHandler =
     new(result, delete)
