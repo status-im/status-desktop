@@ -1240,6 +1240,7 @@ Item {
                                     }
                                 }
 
+                                sendModalPopup: sendModal
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
@@ -1337,6 +1338,7 @@ Item {
                 this.active = false
             }
             property var selectedAccount
+            property var preSelectedHolding
             property string preSelectedHoldingID
             property int preSelectedHoldingType
             property int sendType: -1
@@ -1347,6 +1349,8 @@ Item {
                     sendModal.sendType = -1
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
+                    sendModal.preSelectedHolding = undefined
+                    sendModal.selectedAccount = undefined
                 }
             }
             onLoaded: {
@@ -1359,6 +1363,9 @@ Item {
                 if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
                     item.preSelectedHoldingID = sendModal.preSelectedHoldingID
                     item.preSelectedHoldingType = sendModal.preSelectedHoldingType
+                }
+                if(!!preSelectedHolding) {
+                    item.preSelectedHolding = preSelectedHolding
                 }
             }
         }

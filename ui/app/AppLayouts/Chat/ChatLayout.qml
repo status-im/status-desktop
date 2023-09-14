@@ -23,6 +23,7 @@ StackLayout {
     property var communitiesStore
 
     property var sectionItemModel
+    property var sendModalPopup
 
     readonly property bool isOwner: sectionItemModel.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: sectionItemModel.memberRole === Constants.memberRole.admin
@@ -167,6 +168,7 @@ StackLayout {
             id: communitySettingsView
             rootStore: root.rootStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            sendModalPopup: root.sendModalPopup
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: sectionItemModel
