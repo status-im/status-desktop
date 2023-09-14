@@ -142,7 +142,7 @@ StatusDialog {
     */
     property alias rightButtons: footerImpl.rightButtons
     /*!
-       \qmlproperty rightButtons
+       \qmlproperty leftButtons
         This property helps user assign the left buttons on the footer.
         This doesn't not apply to the advanced footer!
     */

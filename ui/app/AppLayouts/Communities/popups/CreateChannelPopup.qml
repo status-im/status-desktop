@@ -16,6 +16,7 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.panels 1.0
 
 StatusStackModal {
     id: root
@@ -150,7 +151,7 @@ StatusStackModal {
 
     readonly property StatusButton deleteChannelButton: StatusButton {
         objectName: "deleteCommunityChannelBtn"
-        visible: isEdit && isDeleteable && !isDiscordImport
+        visible: isEdit && isDeleteable && !isDiscordImport && typeof(replaceItem) === "undefined"
         text: qsTr("Delete channel")
         type: StatusBaseButton.Type.Danger
         onClicked: root.deleteCommunityChannel()
@@ -555,56 +556,30 @@ StatusStackModal {
                     Layout.fillWidth: true
                 }
 
-                StatusBaseText {
+                ColorPicker {
+                    id: colorDialog
                     Layout.fillWidth: true
-                    text: qsTr("Channel colour")
-                }
+                    title: qsTr("Channel colour")
+                    color: root.isEdit && root.channelColor ? root.channelColor : Theme.palette.primaryColor1
+                    onPick: root.replace(colorPanel)
 
-                Item {
-                    Layout.preferredHeight: 8
-                    Layout.fillWidth: true
-                }
-
-                Item {
-                    height: colorSelectorButton.height + 16
-                    Layout.fillWidth: true
-
-                    StatusPickerButton {
-                        id: colorSelectorButton
-
-                        property string validationError: ""
-
-                        width: parent.width
-                        bgColor: colorDialog.colorSelected ? colorDialog.color : Theme.palette.baseColor2
-                        contentColor: colorDialog.colorSelected ? Theme.palette.white : Theme.palette.baseColor1
-                        text: colorDialog.colorSelected ? colorDialog.color.toString().toUpperCase() : qsTr("Pick a colour")
-
-                        onClicked: colorDialog.open()
-                        onTextChanged: {
-                            if (colorDialog.colorSelected) {
-                                validationError = Utils.validateAndReturnError(text, communityColorValidator)
+                    Component {
+                        id: colorPanel
+                        ColorPanel {
+                            title: qsTr("Channel colour")
+                            buttonText: qsTr("Select Colour")
+                            Component.onCompleted: color = colorDialog.color
+                            onAccepted: {
+                                colorDialog.color = color
+                                root.replaceItem = undefined
                             }
                         }
                     }
+                }
 
-                    StatusColorDialog {
-                        id: colorDialog
-                        anchors.centerIn: parent
-                        property bool colorSelected: root.isEdit && root.channelColor
-                        headerSettings.title: qsTr("Channel Colour")
-                        standardColors: Theme.palette.communityColorsArray
-                        color: root.isEdit && root.channelColor ? root.channelColor : Theme.palette.primaryColor1
-                        onAccepted: colorSelected = true
-                    }
-
-                    StatusBaseText {
-                        text: colorSelectorButton.validationError
-                        visible: !!text
-                        color: Theme.palette.dangerColor1
-                        anchors.top: colorSelectorButton.bottom
-                        anchors.topMargin: 4
-                        anchors.right: colorSelectorButton.right
-                    }
+                Item {
+                    Layout.preferredHeight: 16
+                    Layout.fillWidth: true
                 }
 
                 StatusInput {
