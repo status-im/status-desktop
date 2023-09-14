@@ -119,7 +119,7 @@ class MainWindow(Window):
         self.left_panel = LeftPanel()
 
     @allure.step('Sign Up user')
-    def sign_up(self, user_account: UserAccount = constants.user.community_params):
+    def sign_up(self, user_account: UserAccount = constants.user.user_account_one):
         if configs.system.IS_MAC:
             AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
