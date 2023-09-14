@@ -342,7 +342,7 @@ Rectangle {
             else
             {
                 // pop-up a warning message when typing over the limit
-                messageLengthLimitTooltip.visible = true;
+                messageLengthLimitTooltip.open();
                 // TODO: should we also prevent the user from typing over messagelimitHard?
             }
 
@@ -1095,6 +1095,7 @@ Rectangle {
                 id: messageLengthLimitTooltip
                 text: qsTr("Maximum message character count is " + control.messageLimit)
                 orientation: StatusQ.StatusToolTip.Orientation.Top
+                timeout: 3000 // show for 3 seconds
             }
 
             Component {
@@ -1433,7 +1434,7 @@ Rectangle {
                                     messageLengthLimitTooltip.open()
                                 }
                                 onExited: {
-                                    messageLengthLimitTooltip.close()
+                                    messageLengthLimitTooltip.hide()
                                 }
                             }
                         }
