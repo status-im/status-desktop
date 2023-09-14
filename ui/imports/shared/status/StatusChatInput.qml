@@ -1424,11 +1424,21 @@ Rectangle {
                             }
                             text: visible ? remainingChars.toString() : ""
 
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    messageLengthLimitTooltip.open()
+                                }
+                                onExited: {
+                                    messageLengthLimitTooltip.close()
+                                }
+                            }
+
                             StatusQ.StatusToolTip {
                                 id: messageLengthLimitTooltip
                                 text: qsTr("Maximum message character count is " + control.messageLimit)
-                                //FIXME: The popup fails to show when hovering the parent
-                                visible: parent.hovered && parent.visible
                                 orientation: StatusQ.StatusToolTip.Orientation.Top
 //                                offset: Style.current.halfPadding
 //                                y: parent.height + 12
