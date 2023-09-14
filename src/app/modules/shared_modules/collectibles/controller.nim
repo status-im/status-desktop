@@ -22,7 +22,7 @@ QtObject:
       addresses: seq[string]
       chainIds: seq[int]
 
-      stateTable: Table[string, Table[int, bool]] # Table[address][chainID] -> isUpdating
+      ownershipStatus: Table[string, Table[int, OwnershipStatus]] # Table[address][chainID] -> OwnershipStatus
 
       requestId: int32
       autofetch: bool
@@ -41,6 +41,63 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModelAsVariant
+
+
+  proc checkModelState(self: Controller) =
+    var overallState = OwnershipStateIdle
+
+    # If any address+chainID is error, then the whole model is error
+    # Otherwise, if any address+chainID is updating, then the whole model is updating
+    # Otherwise, the model is idle
+    for address, statusPerChainID in self.ownershipStatus.pairs:
+      for chainID, status in statusPerChainID:
+        if status.state == OwnershipStateError:
+          overallState = OwnershipStateError
+          break
+        elif status.state == OwnershipStateUpdating:
+          overallState = OwnershipStateUpdating
+          break
+
+    case overallState:
+      of OwnershipStateIdle:
+        self.model.setIsUpdating(false)
+        self.model.setIsError(false)
+      of OwnershipStateUpdating:
+        self.model.setIsUpdating(true)
+        self.model.setIsError(false)
+      of OwnershipStateError:
+        self.model.setIsUpdating(false)
+        self.model.setIsError(true)
+
+  proc resetOwnershipStatus(self: Controller) =
+    # Initialize state table
+    self.ownershipStatus = initTable[string, Table[int, OwnershipStatus]]()
+    for address in self.addresses:
+      self.ownershipStatus[address] = initTable[int, OwnershipStatus]()
+      for chainID in self.chainIds:
+        self.ownershipStatus[address][chainID] = OwnershipStatus(
+          state: OwnershipStateUpdating,
+          timestamp: invalidTimestamp
+        )
+    self.model.setIsUpdating(true)
+
+  proc setOwnershipStatus(self: Controller, statusPerAddressAndChainID: Table[string, Table[int, OwnershipStatus]]) =
+    for address, statusPerChainID in statusPerAddressAndChainID.pairs:
+      if not self.ownershipStatus.hasKey(address):
+        continue
+      for chainID, status in statusPerChainID:
+        if not self.ownershipStatus[address].hasKey(chainID):
+          continue
+        self.ownershipStatus[address][chainID] = status
+
+    self.checkModelState()
+
+  proc setOwnershipState(self: Controller, address: string, chainID: int, state: OwnershipState) =
+    if not self.ownershipStatus.hasKey(address) or not self.ownershipStatus[address].hasKey(chainID):
+      return
+    self.ownershipStatus[address][chainID].state = state
+
+    self.checkModelState()
 
   proc loadMoreItems(self: Controller) {.slot.} =
     if self.model.getIsFetching():
@@ -67,10 +124,10 @@ QtObject:
     let res = fromJson(response, backend_collectibles.FilterOwnedCollectiblesResponse)
 
     let isError = res.errorCode != ErrorCodeSuccess
-    defer: self.model.setIsError(isError)
 
     if isError:
       error "error fetching collectibles entries: ", res.errorCode
+      self.model.setIsError(true)
       return
     
     try: 
@@ -79,39 +136,16 @@ QtObject:
     except Exception as e:
       error "Error converting activity entries: ", e.msg
 
+    self.setOwnershipStatus(res.ownershipStatus)
+
     if self.autofetch and res.hasMore:
       self.loadMoreItems()
 
-  proc resetModel*(self: Controller) {.slot.} =
+  proc resetModel(self: Controller) {.slot.} =
     self.model.setItems(@[], 0, true)
     self.fetchFromStart = true
     if self.autofetch:
       self.loadMoreItems()
-
-  proc resetUpdateState*(self: Controller) =
-    # Initialize state table
-    # We assume that ownership is initially not being updated. This will change if an
-    # update starts or a partial update is received.
-    # TODO: Get the update state at the time of filter switch from the backend?
-    self.stateTable = initTable[string, Table[int, bool]]()
-    for address in self.addresses:
-      self.stateTable[address] = initTable[int, bool]()
-      for chainID in self.chainIds:
-        self.stateTable[address][chainID] = false
-    self.model.setIsUpdating(false)
-
-  proc setUpdateState*(self: Controller, address: string, chainID: int, isUpdating: bool) =
-    if not self.stateTable.hasKey(address) or not self.stateTable[address].hasKey(chainID):
-      return
-    self.stateTable[address][chainID] = isUpdating
-
-    # If any address+chainID is updating, then the whole model is updating
-    for address, chainIDsPerAddress in self.stateTable.pairs:
-      for chainID, isUpdating in chainIDsPerAddress:
-        if isUpdating:
-          self.model.setIsUpdating(true)
-          return
-    self.model.setIsUpdating(false)
 
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
@@ -119,17 +153,21 @@ QtObject:
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc (address: string, chainID: int) =
-      self.setUpdateState(address, chainID, true)
+      self.setOwnershipState(address, chainID, OwnershipStateUpdating)
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdatePartial(proc (address: string, chainID: int) =
-      self.setUpdateState(address, chainID, true)
+      self.setOwnershipState(address, chainID, OwnershipStateUpdating)
       self.resetModel()
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc (address: string, chainID: int) =
-      self.setUpdateState(address, chainID, false)
+      self.setOwnershipState(address, chainID, OwnershipStateIdle)
       self.resetModel()
+    )
+
+    self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(proc (address: string, chainID: int) =
+      self.setOwnershipState(address, chainID, OwnershipStateError)
     )
 
   proc newController*(requestId: int32, autofetch: bool, events: EventEmitter): Controller =
@@ -159,7 +197,7 @@ QtObject:
     self.chainIds = chainIds
     self.addresses = addresses
 
-    self.resetUpdateState()
+    self.resetOwnershipStatus()
   
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
