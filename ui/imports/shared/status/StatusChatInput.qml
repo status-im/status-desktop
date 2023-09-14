@@ -1084,10 +1084,7 @@ Rectangle {
         Rectangle {
             id: messageInput
 
-            readonly property int defaultInputFieldHeight: 40
-
             Layout.fillWidth: true
-
             implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
             implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
 
@@ -1225,7 +1222,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.minimumHeight: (messageInputField.contentHeight + messageInputField.topPadding + messageInputField.bottomPadding)
-                    Layout.maximumHeight: 112
+                    Layout.maximumHeight: 200
                     spacing: Style.current.radius
                     StatusScrollView {
                         id: inputScrollView
