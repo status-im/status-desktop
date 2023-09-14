@@ -10,7 +10,7 @@ import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
 import ../../global/utils as utils
-import ../../../constants
+import ../../../constants as main_constants
 
 import chat_section/model as chat_model
 import chat_section/item as chat_item
@@ -479,7 +479,7 @@ method load*[T](
     hasNotification = false,
     notificationsCount = 0,
     active = false,
-    enabled = WALLET_ENABLED,
+    enabled = main_constants.WALLET_ENABLED,
   )
   self.view.model().addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
@@ -1052,6 +1052,11 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
+method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdateDto]) =
+  for s in statusUpdates:
+    let status = toOnlineStatus(s.statusType)
+    self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
+
 method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: CommunityTokenDto) =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
@@ -1132,6 +1137,21 @@ method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, me
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
+
+method contactUpdated*[T](self: Module[T], publicKey: string) =
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  self.view.activeSection().updateMember(
+    publicKey,
+    contactDetails.dto.displayName,
+    contactDetails.dto.name,
+    contactDetails.dto.ensVerified,
+    contactDetails.dto.localNickname,
+    contactDetails.dto.alias,
+    contactDetails.icon,
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
+    )
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
