@@ -29,6 +29,7 @@ StackView {
     required property string communityName
     required property string communityLogo
     required property color communityColor
+    property var sendModalPopup
 
     // User profile props:
     required property bool isOwner
@@ -655,10 +656,8 @@ StackView {
                 burnTokensPopup.close()
             }
 
+            communityName: root.communityName
             visible: {
-                if(tokenViewPage.isOwnerTokenItem)
-                    // Always hidden
-                    return false
                 if(tokenViewPage.isTMasterTokenItem)
                     // Only footer if owner profile
                     return root.isOwner
@@ -673,10 +672,13 @@ StackView {
                                      !!view.tokenOwnersModel &&
                                      view.tokenOwnersModel.count > 0
 
-            burnEnabled: deployStateCompleted
+            burnEnabled: deployStateCompleted            
+            sendOwnershipEnabled: deployStateCompleted
 
-            remotelyDestructVisible: token.remotelyDestruct
-            burnVisible: !token.infiniteSupply
+            sendOwnershipVisible: tokenViewPage.isOwnerTokenItem
+            airdropVisible: !tokenViewPage.isOwnerTokenItem
+            remotelyDestructVisible: !tokenViewPage.isOwnerTokenItem && token.remotelyDestruct
+            burnVisible: !tokenViewPage.isOwnerTokenItem && !token.infiniteSupply
 
             onAirdropClicked: root.airdropToken(
                                   view.airdropKey,
@@ -685,6 +687,11 @@ StackView {
 
             onRemotelyDestructClicked: remotelyDestructPopup.open()
             onBurnClicked: burnTokensPopup.open()
+            onSendOwnershipClicked: Global.openTransferOwnershipPopup(root.communityName,
+                                                                      root.communityLogo,
+                                                                      tokenViewPage.token,
+                                                                      root.accounts,
+                                                                      root.sendModalPopup)
 
             // helper properties to pass data through popups
             property var walletsAndAmounts

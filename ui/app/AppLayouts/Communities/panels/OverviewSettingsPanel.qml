@@ -6,17 +6,22 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import shared.popups 1.0
+
 
 import utils 1.0
 
 StackLayout {
     id: root
 
+    required property bool isOwner
     property string communityId
     property string name
     property string description
@@ -32,6 +37,7 @@ StackLayout {
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
     property string previousPageName: (currentIndex === 1) ? qsTr("Overview") : ""
+    property var sendModalPopup
 
     property bool archiveSupporVisible: true
     property bool editable: false
@@ -39,6 +45,9 @@ StackLayout {
     property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
+    property var tokensModel
+    property var accounts // Wallet accounts model. Expected roles: address, name, color, emoji, walletType
+    readonly property var ownerToken: SQUtils.ModelUtils.getByKey(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner)
 
     property string overviewChartData: ""
 
@@ -97,6 +106,21 @@ StackLayout {
                 }
 
                 Item { Layout.fillWidth: true }
+
+                StatusButton {
+                    Layout.preferredHeight: 38
+                    Layout.alignment: Qt.AlignTop
+                    objectName: "communityOverviewSettingsTransferOwnershipButton"
+                    visible: root.isOwner && !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
+                    text: qsTr("Transfer ownership")
+                    size: StatusBaseButton.Size.Small
+
+                    onClicked: Global.openTransferOwnershipPopup(root.name,
+                                                                 root.logoImageData,
+                                                                 root.ownerToken,
+                                                                 root.accounts,
+                                                                 root.sendModalPopup)
+                }
 
                 StatusButton {
                     Layout.preferredHeight: 38

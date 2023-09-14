@@ -65,6 +65,7 @@ QtObject {
         Global.openExportControlNodePopup.connect(openExportControlNodePopup)
         Global.openImportControlNodePopup.connect(openImportControlNodePopup)
         Global.openEditSharedAddressesFlow.connect(openEditSharedAddressesPopup)
+        Global.openTransferOwnershipPopup.connect(openTransferOwnershipPopup)
     }
 
     property var currentPopup
@@ -283,6 +284,10 @@ QtObject {
 
     function openImportControlNodePopup(community) {
         openPopup(importControlNodePopup, { community })
+    }
+
+    function openTransferOwnershipPopup(communityName, communityLogo, token, accounts, sendModalPopup) {
+        openPopup(transferOwnershipPopup, { communityName, communityLogo, token, accounts, sendModalPopup })
     }
 
     readonly property list<Component> _components: [
@@ -737,6 +742,13 @@ QtObject {
                     editSharedAddressesPopup.communityId, sharedAddresses)
                 onSaveSelectedAddressesClicked: root.rootStore.editSharedAddressesWithAuthentication(
                     editSharedAddressesPopup.communityId, sharedAddresses, airdropAddress)
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: transferOwnershipPopup
+            TransferOwnershipPopup {
                 onClosed: destroy()
             }
         }

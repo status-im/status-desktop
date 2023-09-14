@@ -35,6 +35,7 @@ StatusSectionLayout {
     property var community
     property var transactionStore: TransactionStore {}
     property bool communitySettingsDisabled
+    property var sendModalPopup
 
     required property var walletAccountsModel // name, address, emoji, color
 
@@ -161,6 +162,7 @@ StatusSectionLayout {
             readonly property string sectionIcon: "show"
             readonly property bool sectionEnabled: true
 
+            isOwner: root.isOwner
             communityId: root.community.id
             name: root.community.name
             description: root.community.description
@@ -181,6 +183,10 @@ StatusSectionLayout {
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
+
+            sendModalPopup: root.sendModalPopup
+            tokensModel: root.community.communityTokens
+            accounts: root.walletAccountsModel
 
             onCollectCommunityMetricsMessagesCount: {
                 rootStore.collectCommunityMetricsMessagesCount(intervals)
@@ -305,6 +311,7 @@ StatusSectionLayout {
             communityName: root.community.name
             communityLogo: root.community.image
             communityColor: root.community.color
+            sendModalPopup: root.sendModalPopup
 
             // User profile props
             isOwner: root.isOwner
