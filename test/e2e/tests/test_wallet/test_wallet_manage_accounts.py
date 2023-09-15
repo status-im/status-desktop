@@ -3,13 +3,17 @@ import time
 import allure
 import pytest
 from allure import step
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
 
 import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
+from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
+from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings import KeycardSettingsView
+from scripts.tools import image
+
 
 pytestmark = allure.suite("Wallet")
 

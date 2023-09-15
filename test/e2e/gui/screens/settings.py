@@ -5,10 +5,11 @@ import allure
 
 import configs.timeouts
 import driver
-from constants import UserCommunityInfo
+from constants import UserCommunityInfo, wallet_account_list_item
 from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.settings.send_contact_request_popup import SendContactRequest
+from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.list import List
 from gui.elements.qt.object import QObject
@@ -38,6 +39,11 @@ class LeftPanel(QObject):
     def open_communities_settings(self) -> 'CommunitiesSettingsView':
         self._open_settings(12)
         return CommunitiesSettingsView()
+
+    @allure.step('Open wallet settings')
+    def open_wallet_settings(self):
+        self._open_settings(4)
+        return WalletSettingsView()
 
 
 class SettingsScreen(QObject):
@@ -204,3 +210,99 @@ class KeycardSettingsView(QObject):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC ), f'Check whats new keycard button not visible'
         assert driver.waitFor(lambda: self._factory_reset_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC ), f'Factory reset keycard button not visible'
+
+
+class WalletSettingsView(QObject):
+
+    def __init__(self):
+        super().__init__('mainWindow_WalletView')
+        self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
+        self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
+
+    @allure.step('Open networks in wallet settings')
+    def open_networks(self):
+        self._wallet_network_button.click()
+        return NetworkWalletSettings().wait_until_appears()
+
+    @allure.step('Open account order in wallet settings')
+    def open_account_order(self):
+        self._account_order_button.click()
+        return EditAccountOrderSettings().wait_until_appears()
+
+
+class NetworkWalletSettings(WalletSettingsView):
+
+    def __init__(self):
+        super(NetworkWalletSettings, self).__init__()
+        self._wallet_networks_item = QObject('settingsContentBaseScrollView_WalletNetworkDelegate')
+        self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
+        self._testnet_mode_button = Button('settings_Wallet_NetworksView_TestNet_Toggle')
+
+    @property
+    @allure.step('Get wallet networks items')
+    def networks_names(self) -> typing.List[str]:
+        return [str(network.title) for network in driver.findAllObjects(self._wallet_networks_item.real_name)]
+
+    @property
+    @allure.step('Get amount of testnet active items')
+    def testnet_items_amount(self) -> int:
+        items_amount = 0
+        for item in driver.findAllObjects(self._testnet_text_item.real_name):
+            if item.text == 'Goerli testnet active':
+                items_amount += 1
+        return items_amount
+
+    @allure.step('Switch testnet mode')
+    def switch_testnet_mode(self):
+        self._testnet_mode_button.click()
+        return TestnetModePopup().wait_until_appears()
+
+    @allure.step('Check state of testnet mode switch')
+    def get_testnet_mode_button_checked_state(self):
+        return self._testnet_mode_button.is_checked
+
+
+class EditAccountOrderSettings(WalletSettingsView):
+
+    def __init__(self):
+        super(EditAccountOrderSettings, self).__init__()
+        self._account_item = QObject('settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem')
+        self._accounts_list = QObject('statusDesktop_mainWindow')
+
+    @property
+    @allure.step('Get accounts')
+    def accounts(self) -> typing.List[wallet_account_list_item]:
+        _accounts = []
+        for account_item in driver.findAllObjects(self._account_item.real_name):
+            element = QObject(name='', real_name=driver.objectMap.realName(account_item))
+            name = str(account_item.title)
+            icon = None
+            for child in objects_access.walk_children(account_item):
+                if getattr(child, 'objectName', '') == 'identicon':
+                    icon = Image(driver.objectMap.realName(child))
+                    break
+            _accounts.append(wallet_account_list_item(name, icon, element))
+
+        return sorted(_accounts, key=lambda account: account.object.y)
+
+    @allure.step('Get account in accounts list')
+    def _get_account_item(self, name: str):
+        for obj in driver.findAllObjects(self._account_item.real_name):
+            if getattr(obj, 'title', '') == name:
+                return obj
+        raise LookupError(f'Account item: {name} not found')
+
+    @allure.step('Get eye icon on watch-only account')
+    def get_eye_icon(self, name: str):
+        for child in objects_access.walk_children(self._get_account_item(name)):
+            if getattr(child, 'objectName', '') == 'show-icon':
+                return child
+        raise LookupError(f'Eye icon not found on {name} account item')
+
+    @allure.step('Drag account to change the order')
+    def drag_account(self, name: str, index: int):
+        assert driver.waitFor(lambda: len([account for account in self.accounts if account.name == name]) == 1), \
+            'Account not found or found more then one'
+        bounds = [account for account in self.accounts if account.name == name][0].object.bounds
+        d_bounds = self.accounts[index].object.bounds
+        driver.mouse.press_and_move(self._accounts_list.object, bounds.x, bounds.y, d_bounds.x, d_bounds.y)

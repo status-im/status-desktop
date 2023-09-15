@@ -24,3 +24,4 @@ UserCommunityInfo = namedtuple('CommunityInfo', ['name', 'description', 'members
 UserChannel = namedtuple('Channel', ['name', 'image', 'selected'])
 
 account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
+wallet_account_list_item = namedtuple('WalletAccountListItem', ['name', 'icon', 'object'])
