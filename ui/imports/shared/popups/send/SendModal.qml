@@ -7,6 +7,7 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.stores 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -19,7 +20,6 @@ import StatusQ.Popups.Dialog 0.1
 import "./panels"
 import "./controls"
 import "./views"
-import "./stores"
 
 StatusDialog {
     id: popup
@@ -34,8 +34,8 @@ StatusDialog {
 
     property alias modalHeader: modalHeader.text
 
-    property var store: TransactionStore{}
-    property var currencyStore: store.currencyStore
+    property TransactionStore store: TransactionStore {}
+    property CurrenciesStore currencyStore: store.currencyStore
     property var selectedAccount: store.selectedSenderAccount
     property var collectiblesModel: store.collectiblesModel
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
@@ -64,10 +64,12 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!d.selectedHolding && recipientLoader.ready && amountToSendInput.inputNumberValid) {
+        if(!!popup.selectedAccount && !!holdingSelector.selectedItem
+                && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
-            let amount = d.isERC721Transfer ? 1: Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, d.selectedHolding.decimals))
-            popup.store.suggestedRoutes(amount.toString(16), popup.sendType)
+
+            popup.store.suggestedRoutes(d.isERC721Transfer ? "1" : amountToSendInput.cryptoValueToSend,
+                                        popup.sendType)
         }
     })
 
@@ -242,6 +244,7 @@ StatusDialog {
                             color: Theme.palette.directColor1
                             Layout.maximumWidth: contentWidth
                         }
+
                         HoldingSelector {
                             id: holdingSelector
                             Layout.fillWidth: true
@@ -287,18 +290,26 @@ StatusDialog {
                         visible: d.isSelectedHoldingValidAsset && !d.isERC721Transfer
                         AmountToSend {
                             id: amountToSendInput
-                            Layout.fillWidth:true
+
+                            Layout.fillWidth: true
                             isBridgeTx: d.isBridgeTx
                             interactive: popup.interactive
                             selectedSymbol: d.selectedSymbol
                             maxInputBalance: d.maxInputBalance
                             currentCurrency: popup.currencyStore.currentCurrency
+
+                            multiplierIndex: holdingSelector.selectedItem
+                                             ? holdingSelector.selectedItem.decimals
+                                             : 0
+
                             getFiatValue: function(cryptoValue) {
                                 return selectedSymbol ? popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
                             }
+
                             getCryptoValue: function(fiatValue) {
                                 return selectedSymbol ? popup.currencyStore.getCryptoValue(fiatValue, selectedSymbol, currentCurrency) : 0.0
                             }
+
                             formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
@@ -431,6 +442,7 @@ StatusDialog {
 
                     NetworkSelector {
                         id: networkSelector
+
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
@@ -439,7 +451,7 @@ StatusDialog {
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
                         ensAddressOrEmpty: recipientLoader.isENSValid ? recipientLoader.resolvedENSAddress : ""
-                        amountToSend: amountToSendInput.cryptoValueToSend
+                        amountToSend: amountToSendInput.cryptoValueToSendFloat
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
                         minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                         selectedAsset: d.selectedHolding

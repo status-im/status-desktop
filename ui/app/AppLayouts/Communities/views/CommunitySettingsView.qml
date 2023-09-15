@@ -15,7 +15,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
 import shared.views.chat 1.0
-import shared.popups.send.stores 1.0
+import shared.stores.send 1.0
 import utils 1.0
 
 import AppLayouts.Communities.controls 1.0

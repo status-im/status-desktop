@@ -18,17 +18,22 @@ StatusListItem {
     QtObject {
         id: d
 
-        readonly property int indexesThatCanBeShown: Math.floor((root.statusListItemInlineTagsSlot.availableWidth - compactRow.width)/statusListItemInlineTagsSlot.children[0].width)-1
+        readonly property int indexesThatCanBeShown:
+            Math.floor((root.statusListItemInlineTagsSlot.availableWidth
+                        - compactRow.width) / statusListItemInlineTagsSlot.children[0].width) - 1
 
         function selectToken() {
-            root.tokenSelected({name, symbol, totalBalance, totalCurrencyBalance, balances, decimals})
+            root.tokenSelected({name, symbol, totalRawBalance, totalBalance,
+                                   totalCurrencyBalance, balances, decimals})
         }
     }
 
     Connections {
         target: root.sensor
         function onContainsMouseChanged() {
-            root.tokenHovered({name, symbol, totalBalance, totalCurrencyBalance, balances, decimals}, root.sensor.containsMouse)
+            root.tokenHovered({name, symbol, totalRawBalance, totalBalance,
+                                  totalCurrencyBalance, balances, decimals},
+                              root.sensor.containsMouse)
         }
     }
 

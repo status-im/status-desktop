@@ -109,7 +109,7 @@ Item {
                            (root.errorMode || !advancedInput.valid) && advancedInputCurrencyAmount > 0 ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
-                    disableText:  qsTr("Disable")
+                    disableText: qsTr("Disable")
                     enableText: qsTr("Enable")
                     advancedMode: root.customMode
                     disabled: !model.isEnabled
@@ -133,7 +133,6 @@ Item {
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-            amountToSend: root.amountToSend
             errorType: root.errorType
             visible: root.errorType === Constants.NoRoute
         }
