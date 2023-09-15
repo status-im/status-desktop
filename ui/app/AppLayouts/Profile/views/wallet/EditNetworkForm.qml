@@ -22,7 +22,8 @@ ColumnLayout {
         Verified,
         InvalidURL,
         PingUnsuccessful,
-        SameAsOther
+        SameAsOther,
+        Empty
     }
 
     QtObject {
@@ -167,6 +168,10 @@ ColumnLayout {
                 return network.rpcURL
             }
             onTextChanged: {
+                if (text === "") {
+                    d.evaluationStatusMainRpc = EditNetworkForm.Empty
+                    return
+                }
                 if(!!text &&
                         (network.originalRpcURL === network.rpcURL && text !== network.rpcURL.replace(/(.*\/).*/, '$1')) ||
                         (network.originalRpcURL !== network.rpcURL && text !== network.rpcURL)) {
@@ -176,8 +181,14 @@ ColumnLayout {
             }
             errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusMainRpc)
             errorMessageCmp.visible: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched
-            errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusMainRpc, text)
+
             errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusMainRpc)
+            errorMessageCmp.text: {
+                if (text === "") {
+                    return qsTr("Main JSON RPC URL is required")
+                }
+                return d.getUrlStatusText(d.evaluationStatusMainRpc, text)
+            }
         }
     }
 
@@ -195,6 +206,11 @@ ColumnLayout {
             return network.fallbackURL
         }
         onTextChanged: {
+            if (text === "") {
+                d.evaluationStatusFallBackRpc = EditNetworkForm.Empty
+                return
+            }
+
             if(!!text &&
                     (network.originalFallbackURL === network.fallbackURL && text !== network.fallbackURL.replace(/(.*\/).*/, '$1')) ||
                     (network.originalFallbackURL !== network.fallbackURL && text !== network.fallbackURL)) {
@@ -236,7 +252,14 @@ ColumnLayout {
         }
         StatusButton {
             text: qsTr("Save Changes")
-            enabled: (d.evaluationStatusMainRpc === EditNetworkForm.Verified || d.evaluationStatusFallBackRpc === EditNetworkForm.Verified || d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther || d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther) && warningCheckbox.checked
+            enabled: (
+                d.evaluationStatusMainRpc === EditNetworkForm.Verified || 
+                d.evaluationStatusFallBackRpc === EditNetworkForm.Verified || 
+                d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther || 
+                d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther ||
+                d.evaluationStatusFallBackRpc === EditNetworkForm.Empty
+                ) && warningCheckbox.checked
+
             onClicked: root.updateNetworkValues(network.chainId, mainRpcInput.text, failoverRpcUrlInput.text)
         }
     }
