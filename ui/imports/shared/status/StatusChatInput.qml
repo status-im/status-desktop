@@ -617,51 +617,6 @@ Rectangle {
         return result
     }
 
-    function setFormatInInput(formationFunction, startTag, endTag, formationChar, numFormationChars) {
-        const inputText = getFormattedText()
-        const plainInputText = messageInputField.getText(0, messageInputField.length)
-
-        let lengthDifference
-
-        try {
-            const result = formationFunction(inputText)
-
-            if (!result) {
-                return
-            }
-            const parsed = JSON.parse(result)
-
-            let substring
-            let nbEmojis
-            parsed.forEach(function (match) {
-                match[1] += 1
-                const truncatedInputText = inputText.substring(0, match[1] + numFormationChars)
-                const truncatedPlainText = plainInputText.substring(0, messageInputField.cursorPosition)
-
-                const lengthDifference = truncatedInputText.length - truncatedPlainText.length
-
-                nbEmojis = StatusQUtils.Emoji.nbEmojis(truncatedInputText)
-
-
-                match[1] += (nbEmojis * -2)
-                match[0] += (nbEmojis * -2)
-                substring = inputText.substring(match[0], match[1])
-
-                if (plainInputText.charAt(match[0] - 1) !== formationChar) {
-                    match[0] -= lengthDifference
-                    match[1] -= lengthDifference
-                } else {
-                    match[1] -= lengthDifference
-                }
-
-                messageInputField.remove(match[0], match[1])
-                insertInTextInput(match[0], `${startTag}${substring}${endTag}`)
-            })
-        } catch (e) {
-            //
-        }
-    }
-
     function onRelease(event) {
         if ((event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.MetaModifier)) // these are likely shortcuts with no meaningful text
             return
