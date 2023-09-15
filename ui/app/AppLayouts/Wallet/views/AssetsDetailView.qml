@@ -141,7 +141,7 @@ Item {
                             yAxisId: 'y-axis-1',
                             backgroundColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 0.2)' : 'rgba(67, 96, 223, 0.2)',
                             borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
-                            borderWidth: 3,
+                            borderWidth: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? 3 : 2,
                             pointRadius: 0,
                             data: RootStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
                             parsing: false,
@@ -155,6 +155,11 @@ Item {
                     responsive: true,
                     legend: {
                         display: false
+                    },
+                    elements: {
+                        line: {
+                            cubicInterpolationMode: 'monotone' // without it interpolation makes the line too curvy that can extend horizontally farther then data points
+                        }
                     },
                     //TODO enable zoom
                     //zoom: {
@@ -173,8 +178,9 @@ Item {
                                 if (label) {
                                     label += ': ';
                                 }
-                                label += tooltipItem.yLabel.toFixed(2);
-                                return label.slice(0,label.indexOf(":")+1) + " %1".arg(RootStore.currencyStore.currentCurrencySymbol) + label.slice(label.indexOf(":") + 2, label.length);
+
+                                const value = LocaleUtils.currencyAmountToLocaleString({ amount: tooltipItem.yLabel.toFixed(2), symbol: RootStore.currencyStore.currentCurrencySymbol })
+                                return label + value
                             }
                         }
                     },
@@ -182,6 +188,7 @@ Item {
                         xAxes: [{
                                 id: 'x-axis-1',
                                 position: 'bottom',
+                                type: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? 'category' : 'time',
                                 gridLines: {
                                     drawOnChartArea: false,
                                     drawBorder: false,
@@ -195,6 +202,9 @@ Item {
                                     minRotation: 0,
                                     maxTicksLimit: graphDetail.maxTicksLimit,
                                 },
+                                time: {
+                                    minUnit: 'day' // for '7days' timeframe, otherwise labels are '10PM', '10AM', '10PM', etc
+                                }
                             }],
                         yAxes: [{
                                 position: 'left',
