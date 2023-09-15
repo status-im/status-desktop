@@ -5,7 +5,6 @@ import squish
 
 import configs
 import driver
-from configs.system import IS_LIN
 from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
@@ -28,7 +27,8 @@ class AUT:
         self.pid = None
         self.aut_id = f'AUT_{datetime.now():%H%M%S}'
         self.app_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}'
-        self.user_data = user_data
+        if user_data is not None:
+            user_data.copy_to(self.app_data / 'data')
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
 
     def __str__(self):
@@ -64,10 +64,7 @@ class AUT:
         local_system.kill_process(self.pid, verify=True)
 
     @allure.step("Start application")
-    def launch(self) -> 'AUT':
-        if self.user_data is not None:
-            self.user_data.copy_to(self.app_data / 'data')
-
+    def launch(self, ) -> 'AUT':
         SquishServer().set_aut_timeout()
 
         if configs.ATTACH_MODE:
@@ -90,3 +87,8 @@ class AUT:
         self.pid = self.ctx.pid
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         return self
+
+    @allure.step('Restart application')
+    def restart(self):
+        self.detach().stop()
+        self.launch()

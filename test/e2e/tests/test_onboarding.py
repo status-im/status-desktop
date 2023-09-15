@@ -7,6 +7,7 @@ from allure import step
 import configs.timeouts
 import constants
 import driver
+from driver.aut import AUT
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.welcome_status_popup import WelcomeStatusPopup
 from gui.components.picture_edit_popup import shift_image
@@ -109,7 +110,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703039', 'Import: 12 word seed phrase')
 @pytest.mark.case(703039)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_two])
-def test_import_seed_phrase(keys_screen, main_window, user_account):
+def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         profile_view = input_view.input_seed_phrase(user_account.seed_phrase)
@@ -130,3 +131,6 @@ def test_import_seed_phrase(keys_screen, main_window, user_account):
         user_canvas = main_window.left_panel.open_user_canvas()
         profile_popup = user_canvas.open_profile_popup()
         assert profile_popup.user_name == user_account.name
+
+    aut.restart()
+    main_window.authorize_user(user_account)
