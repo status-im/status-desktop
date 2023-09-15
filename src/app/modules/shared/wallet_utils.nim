@@ -1,4 +1,4 @@
-import tables, sequtils, sugar
+import tables, sequtils, stint, sugar
 
 import ../shared_models/[balance_item, currency_amount, token_item, token_model, wallet_account_item]
 
@@ -19,6 +19,7 @@ proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : Currenc
 
 proc balanceToItemBalanceItem*(b: BalanceDto, format: CurrencyFormatDto) : balance_item.Item =
   return balance_item.initItem(
+    b.rawBalance,
     currencyAmountToItem(b.balance, format),
     b.address,
     b.chainId
@@ -78,6 +79,7 @@ proc walletTokenToItem*(
   return token_item.initItem(
     t.name,
     t.symbol,
+    t.getRawBalance(chainIds).toString(10),
     currencyAmountToItem(t.getBalance(chainIds), tokenFormat),
     currencyAmountToItem(t.getCurrencyBalance(chainIds, currency), currencyFormat),
     currencyAmountToItem(t.getBalance(enabledChainIds), tokenFormat),

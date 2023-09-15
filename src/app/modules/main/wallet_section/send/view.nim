@@ -181,9 +181,9 @@ QtObject:
       self.transactionRoutes = routes
       self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
   proc suggestedRoutes*(self: View, amount: string, sendType: int): string {.slot.} =
-    var parsedAmount = stint.u256("0")
+    var parsedAmount = stint.u256(0)
     try:
-      parsedAmount = fromHex(Stuint[256], amount)
+      parsedAmount = amount.parse(Uint256)
     except Exception as e:
       discard
 

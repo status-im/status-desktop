@@ -1,15 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-
-import AppLayouts.Profile.views 1.0
-
-import Storybook 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import shared.popups.send.views 1.0
 
-import utils 1.0
-import shared.views 1.0
+import Storybook 1.0
 
 SplitView {
     id: root
@@ -33,7 +29,11 @@ SplitView {
                 isBridgeTx: false
                 interactive: true
                 selectedSymbol: "Crypto"
-                maxInputBalance: inputIsFiat ? getFiatValue(root.maxCryptoBalance) : root.maxCryptoBalance
+
+                inputIsFiat: fiatInput.checked
+
+                maxInputBalance: inputIsFiat ? getFiatValue(root.maxCryptoBalance)
+                                             : root.maxCryptoBalance
                 currentCurrency: "Fiat"
                 getFiatValue: function(cryptoValue) {
                     return cryptoValue * root.rate
@@ -108,8 +108,14 @@ SplitView {
                 Layout.preferredWidth: 200
                 text: "6"
             }
+
+            CheckBox {
+                id: fiatInput
+
+                text: "Fiat input value"
+            }
         }
     }
 }
 
-// category: Views
+// category: Components

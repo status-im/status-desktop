@@ -261,7 +261,7 @@ QtObject:
   ) =
     try:
       var paths: seq[TransactionBridgeDto] = @[]
-      let amountToSend = conversion.eth2Wei(parseFloat(value), 18)
+      let amountToSend = value.parse(Uint256)
       let toAddress = parseAddress(to_addr)
 
       for route in routes:
@@ -320,11 +320,11 @@ QtObject:
       if(routes.len > 0):
         chainID = routes[0].fromNetwork.chainID
 
-      var amountToSend: Stuint[256]
       var toAddress: Address
       var tokenSym = tokenSymbol
+      let amountToSend = value.parse(Uint256)
+
       if isERC721Transfer:
-        amountToSend = value.parse(Stuint[256])
         let contract_tokenId = tokenSym.split(":")
         if contract_tokenId.len == 2:
           toAddress = parseAddress(contract_tokenId[0])
@@ -332,7 +332,6 @@ QtObject:
       else:
         let network = self.networkService.getNetwork(chainID)
         let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSym)
-        amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
         toAddress = token.address
 
       let transfer = Transfer(

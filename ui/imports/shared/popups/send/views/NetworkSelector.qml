@@ -79,7 +79,6 @@ Item {
                 width: stackLayout.width  - Style.current.bigPadding
                 isBridgeTx: root.isBridgeTx
                 isERC721Transfer: root.isERC721Transfer
-                amountToSend: root.amountToSend
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store

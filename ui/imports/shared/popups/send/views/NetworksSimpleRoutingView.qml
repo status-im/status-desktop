@@ -16,7 +16,6 @@ RowLayout {
     id: root
 
     property var store
-    property double amountToSend
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
@@ -82,7 +81,6 @@ RowLayout {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
             Layout.rightMargin: Style.current.padding
-            amountToSend: root.amountToSend
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
         }

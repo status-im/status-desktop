@@ -3,6 +3,7 @@ import QtQuick 2.15
 ListModel {
     readonly property var data: [
         {
+            totalRawBalance: "32330",
             totalBalance: ({
                 displayDecimals: true,
                 stripTrailingZeroes: true,
@@ -32,6 +33,7 @@ ListModel {
             allChecked: true
         },
         {
+            totalRawBalance: "32434330",
             totalBalance: ({
                 displayDecimals: true,
                 stripTrailingZeroes: true,

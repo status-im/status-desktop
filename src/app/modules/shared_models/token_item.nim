@@ -9,6 +9,7 @@ type
   Item* = object
     name: string
     symbol: string
+    totalRawBalance: string
     totalBalance: CurrencyAmount
     totalCurrencyBalance: CurrencyAmount
     enabledNetworkCurrencyBalance: CurrencyAmount
@@ -32,7 +33,7 @@ type
     loading: bool
 
 proc initItem*(
-  name, symbol: string,
+  name, symbol, totalRawBalance: string,
   totalBalance: CurrencyAmount,
   totalCurrencyBalance: CurrencyAmount,
   enabledNetworkBalance: CurrencyAmount,
@@ -57,6 +58,7 @@ proc initItem*(
 ): Item =
   result.name = name
   result.symbol = symbol
+  result.totalRawBalance = totalRawBalance
   result.totalBalance = totalBalance
   result.totalCurrencyBalance = totalCurrencyBalance
   result.enabledNetworkBalance = enabledNetworkBalance
@@ -84,6 +86,7 @@ proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
     name: {self.name},
     symbol: {self.symbol},
+    totalRawBalance: {self.totalRawBalance},
     totalBalance: {self.totalBalance},
     totalCurrencyBalance: {self.totalCurrencyBalance},
     enabledNetworkBalance: {self.enabledNetworkBalance},
@@ -110,6 +113,7 @@ proc initLoadingItem*(): Item =
   return initItem(
     name = "",
     symbol = "",
+    totalRawBalance = "0",
     totalBalance = newCurrencyAmount(),
     totalCurrencyBalance = newCurrencyAmount(),
     enabledNetworkBalance = newCurrencyAmount(),
@@ -138,6 +142,9 @@ proc getName*(self: Item): string =
 
 proc getSymbol*(self: Item): string =
   return self.symbol
+
+proc getTotalRawBalance*(self: Item): string =
+  return self.totalRawBalance
 
 proc getTotalBalance*(self: Item): CurrencyAmount =
   return self.totalBalance

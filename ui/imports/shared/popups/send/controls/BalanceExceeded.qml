@@ -13,7 +13,6 @@ import StatusQ.Core.Theme 0.1
 ColumnLayout {
     id: balancedExceededError
 
-    property double amountToSend: 0
     property bool isLoading: false
     property int errorType: Constants.NoError
 
@@ -40,7 +39,6 @@ ColumnLayout {
         visible: !isLoading
     }
     Loader {
-        id: loadingComponent
         Layout.alignment: Qt.AlignLeft
         Layout.preferredHeight: 32
         Layout.fillWidth: true
