@@ -1,3 +1,4 @@
+import chronicles
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
@@ -16,8 +17,14 @@ const asyncLoadDevicesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
 
 const asyncInputConnectionStringTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
-  let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON)
-  arg.finish(response)
+  try: 
+    let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON)
+    arg.finish(response)
+  except Exception as e:
+    error "inputConnectionStringForBootstrapping failed", errorMessage = e.msg
+    arg.finish(%* {
+      "error": "unexpected error occured: " & e.msg
+    })
 
 const asyncInputConnectionStringForImportingKeystoreTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
