@@ -326,20 +326,21 @@ Rectangle {
     }
 
     function onKeyPress(event) {
+        let messageLength = messageInputField.getText(0, messageInputField.length).length;
+
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
             }
-
-            if (messageInputField.getText(0, messageInputField.length).length <= messageLimit) {
+            if (messageLength <= messageLimit) {
                 checkForInlineEmojis(true);
                 control.sendMessage(event);
                 control.hideExtendedArea();
                 event.accepted = true;
                 return;
             }
-            else if (messageInputField.getText(0, messageInputField.length).length  <= messageLimitHard) {
+            else if (messageLength <= messageLimitHard) {
                 // pop-up a warning message when trying to send a message over the limit
                 messageLengthLimitTooltip.open();
                 event.accepted = true;
@@ -433,16 +434,9 @@ Rectangle {
                 validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
             } else if (QClipboardProxy.hasText) {
-                // cursor position must be stored in a helper property because setting readonly to true causes change
-                // of the cursor position to the end of the input
-                d.copyTextStart = messageInputField.cursorPosition
-                messageInputField.readOnly = true
-
                 const clipboardText = Utils.plainText(QClipboardProxy.text)
-                const copiedText = Utils.plainText(d.copiedTextPlain)
-
                 // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
-                if ((messageInputField.getText(0, messageInputField.length).length + clipboardText.length) > control.messageLimitHard)
+                if ((messageLength + clipboardText.length) > control.messageLimitHard)
                 {
                     messageLengthLimitTooltip.open();
                     event.accepted = false;
@@ -450,6 +444,13 @@ Rectangle {
                 }
 
                 messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+
+                // cursor position must be stored in a helper property because setting readonly to true causes change
+                // of the cursor position to the end of the input
+                d.copyTextStart = messageInputField.cursorPosition
+                messageInputField.readOnly = true
+
+                const copiedText = Utils.plainText(d.copiedTextPlain)
                 if (copiedText === clipboardText) {
                     if (d.copiedTextPlain.includes("@")) {
                         d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
