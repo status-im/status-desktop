@@ -31,27 +31,22 @@ ChartStoreBase {
         switch(timeRange) {
             case ChartStoreBase.TimeRange.Weekly:
                 root.weeklyData = balanceData
-                root.weeklyTimeRange = timeRangeData
                 root.weeklyMaxTicks = 0
             break;
             case ChartStoreBase.TimeRange.Monthly:
                 root.monthlyData = balanceData
-                root.monthlyTimeRange = timeRangeData
                 root.monthlyMaxTicks = 0
             break;
             case ChartStoreBase.TimeRange.HalfYearly:
                 root.halfYearlyData = balanceData
-                root.halfYearlyTimeRange = timeRangeData
                 root.halfYearlyMaxTicks = 0
             break;
             case ChartStoreBase.TimeRange.Yearly:
                 root.yearlyData = balanceData
-                root.yearlyTimeRange = timeRangeData
                 root.yearlyMaxTicks = 0
             break;
             case ChartStoreBase.TimeRange.All:
                 root.allData = balanceData
-                root.allTimeRange = timeRangeData
                 root.allTimeRangeTicks = 0
             break;
             default:
@@ -92,20 +87,13 @@ ChartStoreBase {
                 return
             }
 
-            var tmpTimeRange = []
             var tmpDataValues = []
             for(let i = 0; i < response.historicalData.length; i++) {
                 let dataEntry = response.historicalData[i]
-
-                let dateString = response.timeInterval == ChartStoreBase.TimeRange.Weekly || response.timeInterval == ChartStoreBase.TimeRange.Monthly
-                    ? LocaleUtils.getDayMonth(dataEntry.time * 1000)
-                    : LocaleUtils.getMonthYear(dataEntry.time * 1000)
-                tmpTimeRange.push(dateString)
-
-                tmpDataValues.push(dataEntry.value)
+                tmpDataValues.push({ x: new Date(dataEntry.time * 1000), y: dataEntry.value })
             }
 
-            root.setData(response.address, response.tokenSymbol, response.currencySymbol, response.timeInterval, tmpTimeRange, tmpDataValues)
+            root.setData(response.address, response.tokenSymbol, response.currencySymbol, response.timeInterval, [], tmpDataValues)
         }
     }
 }
