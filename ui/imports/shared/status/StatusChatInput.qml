@@ -332,27 +332,25 @@ Rectangle {
                 return
             }
 
-            if (messageInputField.length <= messageLimit) {
+            if (messageInputField.getText(0, messageInputField.length).length <= messageLimit) {
                 checkForInlineEmojis(true);
                 control.sendMessage(event);
                 control.hideExtendedArea();
                 event.accepted = true;
                 return;
             }
-            else
-            {
-                // pop-up a warning message when typing over the limit
+            else if (messageInputField.getText(0, messageInputField.length).length  <= messageLimitHard) {
+                // pop-up a warning message when trying to send a message over the limit
                 messageLengthLimitTooltip.open();
-                // TODO: should we also prevent the user from typing over messagelimitHard?
+                event.accepted = true;
+                return;
             }
+        }
 
-            if (event) {
-                event.accepted = true
-                console.error("Attempting to send a message exceeding length limit")
-            }
-        } else if (event.key === Qt.Key_Escape && control.isReply) {
-            control.isReply = false
-            event.accepted = true
+        if (event.key === Qt.Key_Escape && control.isReply) {
+            control.isReply = false;
+            event.accepted = true;
+            return;
         }
 
         const symbolPressed = event.text.length > 0 &&
@@ -446,6 +444,7 @@ Rectangle {
                 // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
                 if ((messageInputField.getText(0, messageInputField.length).length + clipboardText.length) > control.messageLimitHard)
                 {
+                    messageLengthLimitTooltip.open();
                     event.accepted = false;
                     return;
                 }
