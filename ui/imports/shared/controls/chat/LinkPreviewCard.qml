@@ -43,10 +43,7 @@ CalloutCard {
         ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: 12
-            Layout.bottomMargin: 12
-            Layout.leftMargin: 12
-            Layout.rightMargin: 12
+            Layout.margins: 12
             
             RowLayout {
                 Layout.fillWidth: true
