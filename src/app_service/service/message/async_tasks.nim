@@ -201,7 +201,7 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
     let isSupportedImage = any(parsedWhiteListImgExtensions, proc (extenstion: string): bool = path.endsWith(extenstion))
     let isListed = parsedWhiteListUrls.hasKey(domain)
     let isProfileLink = path.startsWith(profileLinkPrefix)
-    let processUrl = not isProfileLink and (isListed or isSupportedImage)
+    let processUrl = isListed or isSupportedImage
 
     if domain == "" or processUrl == false:
       continue

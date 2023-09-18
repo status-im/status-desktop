@@ -7,6 +7,7 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import shared.status 1.0
 import shared.panels 1.0
@@ -228,7 +229,7 @@ ColumnLayout {
             required property bool success
             required property bool isStatusDeepLink
             readonly property bool isImage: result.contentType ? result.contentType.startsWith("image/") : false
-
+            readonly property bool isUserProfileLink: link.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase())
             readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
             readonly property string title: result && result.title ? result.title : ""
             readonly property string hostname: result && result.site ? result.site : ""
@@ -247,18 +248,44 @@ ColumnLayout {
                         name: "loadImage"
                         when: tempLoader.unfurl && tempLoader.isImage
                         PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
+                    },
+                    State {
+                        name: "userProfileLink"
+                        when: unfurl && isUserProfileLink && isStatusDeepLink
+                        PropertyChanges { target: tempLoader; sourceComponent: unfurledProfileLinkComponent }
                     }
-//                    State {
-//                        name: "loadLinkPreview"
-//                        when: unfurl && !isImage && !isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: unfurledLinkComponent }
-//                    },
 //                    State {
 //                        name: "statusInvitation"
 //                        when: unfurl && isStatusDeepLink
 //                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
 //                    }
                 ]
+            }
+        }
+    }
+
+    Component {
+        id: unfurledProfileLinkComponent
+        UserProfileCard {
+            id: unfurledProfileLink
+            readonly property var contact: Utils.parseContactUrl(parent.link)
+            readonly property var contactDetails: Utils.getContactDetailsAsJson(contact.publicKey)
+
+            readonly property string nickName: contactDetails ? contactDetails.localNickname : ""
+            readonly property string ensName: contactDetails ? contactDetails.name : ""
+            readonly property string displayName: contact && contact.displayName ? contact.displayName : 
+                                     contactDetails && contactDetails.displayName ? contactDetails.displayName : ""
+            readonly property string aliasName: contactDetails ? contactDetails.alias : ""
+
+            leftTail: !root.isCurrentUser
+            userName: ProfileUtils.displayName(nickName, ensName, displayName, aliasName)
+                      
+            userPublicKey: contactDetails && contactDetails.publicKey ? contactDetails.publicKey : ""
+            userBio: contactDetails && contactDetails.bio ? contactDetails.bio : ""
+            userImage: contactDetails && contactDetails.thumbnailImage ? contactDetails.thumbnailImage : ""
+            ensVerified: contactDetails && contactDetails.ensVerified ? contactDetails.ensVerified : false
+            onClicked: {
+                Global.openProfilePopup(userPublicKey)
             }
         }
     }

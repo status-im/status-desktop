@@ -3,6 +3,7 @@ FetchMoreMessagesButton 1.0 FetchMoreMessagesButton.qml
 GapComponent 1.0 GapComponent.qml
 LinkPreviewCard 1.0 LinkPreviewCard.qml
 UsernameLabel 1.0 UsernameLabel.qml
+UserProfileCard 1.0 UserProfileCard.qml
 DateGroup 1.0 DateGroup.qml
 UserImage 1.0 UserImage.qml
 MessageMouseArea 1.0 MessageMouseArea.qml
