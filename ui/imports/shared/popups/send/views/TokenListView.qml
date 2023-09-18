@@ -82,7 +82,7 @@ Item {
             Column {
                 id: column
                 width: parent.width
-                topPadding: 20
+                topPadding: root.onlyAssets ? 0 : 20
 
                 StatusTabBar {
                     visible: !root.onlyAssets
@@ -162,7 +162,7 @@ Item {
     Component {
         id: tokenHeader
         SearchBoxWithRightIcon {
-            showTopBorder: true
+            showTopBorder: !root.onlyAssets
             width: parent.width
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateAssetSearchText, text)

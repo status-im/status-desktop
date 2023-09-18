@@ -148,7 +148,13 @@ QtObject:
       self.items[i].amountOut = ""
       self.items[i].resetToNetworks()
       self.items[i].hasGas = true
-      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.AmountOut.int])
+      self.items[i].isEnabled = true
+      self.items[i].isPreferred = true
+      self.items[i].locked =  false
+      self.items[i].lockedAmount = ""
+      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int,
+        ModelRole.AmountOut.int, ModelRole.IsEnabled.int, ModelRole.IsPreferred.int, ModelRole.Locked.int,
+        ModelRole.LockedAmount.int])
 
   proc updateTokenBalanceForSymbol*(self: NetworkModel, chainId: int, tokenBalance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
