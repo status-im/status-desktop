@@ -1048,7 +1048,7 @@ Rectangle {
 
             StatusQ.StatusToolTip {
                 id: messageLengthLimitTooltip
-                text: qsTr("Maximum message character count is " + control.messageLimit)
+                text: qsTr("Maximum message character count is %1").arg(control.messageLimit)
                 orientation: StatusQ.StatusToolTip.Orientation.Top
                 timeout: 3000 // show for 3 seconds
             }
