@@ -1349,8 +1349,9 @@ Item {
             property string preSelectedHoldingID
             property int preSelectedHoldingType
             property int sendType: -1
+            property bool onlyAssets: false
             sourceComponent: SendModal {
-                onlyAssets: false
+                onlyAssets: sendModal.onlyAssets
                 onClosed: {
                     sendModal.closed()
                     sendModal.sendType = -1

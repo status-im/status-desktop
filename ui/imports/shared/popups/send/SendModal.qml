@@ -283,32 +283,6 @@ StatusDialog {
                             }
                         }
                     }
-                    TokenListView {
-                        id: tokenListRect
-
-                        Layout.fillWidth: true
-
-                        visible: !d.selectedHolding
-                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
-                        collectibles: popup.selectedAccount ? popup.nestedCollectiblesModel : null
-                        onlyAssets: holdingSelector.onlyAssets
-                        searchTokenSymbolByAddressFn: function (address) {
-                            return store.findTokenSymbolByAddress(address)
-                        }
-                        getNetworkIcon: function(chainId){
-                            return RootStore.getNetworkIcon(chainId)
-                        }
-                        onTokenSelected: {
-                            d.setSelectedHoldingId(symbol, holdingType)
-                        }
-                        onTokenHovered: {
-                            if(hovered) {
-                                d.setHoveredHoldingId(symbol, holdingType)
-                            } else {
-                                d.setHoveredHoldingId("", Constants.HoldingType.Unknown)
-                            }
-                        }
-                    }
                     RowLayout {
                         visible: d.isSelectedHoldingValidAsset && !d.isERC721Transfer
                         AmountToSend {
@@ -381,6 +355,36 @@ StatusDialog {
                     width: scrollView.availableWidth
                     spacing: Style.current.bigPadding
                     anchors.left: parent.left
+
+                    TokenListView {
+                        id: tokenListRect
+
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Style.current.bigPadding
+                        anchors.rightMargin: Style.current.bigPadding
+
+                        visible: !d.selectedHolding
+                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
+                        collectibles: popup.selectedAccount ? popup.nestedCollectiblesModel : null
+                        onlyAssets: holdingSelector.onlyAssets
+                        searchTokenSymbolByAddressFn: function (address) {
+                            return store.findTokenSymbolByAddress(address)
+                        }
+                        getNetworkIcon: function(chainId){
+                            return RootStore.getNetworkIcon(chainId)
+                        }
+                        onTokenSelected: {
+                            d.setSelectedHoldingId(symbol, holdingType)
+                        }
+                        onTokenHovered: {
+                            if(hovered) {
+                                d.setHoveredHoldingId(symbol, holdingType)
+                            } else {
+                                d.setHoveredHoldingId("", Constants.HoldingType.Unknown)
+                            }
+                        }
+                    }
 
                     ColumnLayout {
                         spacing: 8

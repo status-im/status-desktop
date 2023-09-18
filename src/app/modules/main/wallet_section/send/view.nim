@@ -181,8 +181,6 @@ QtObject:
       self.transactionRoutes = routes
       self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
   proc suggestedRoutes*(self: View, amount: string, sendType: int): string {.slot.} =
-    self.fromNetworksModel.reset()
-    self.toNetworksModel.reset()
     var parsedAmount = stint.u256("0")
     try:
       parsedAmount = fromHex(Stuint[256], amount)
