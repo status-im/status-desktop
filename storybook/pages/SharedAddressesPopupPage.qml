@@ -62,12 +62,13 @@ SplitView {
             }
 
             Binding on selectedAirdropAddress {
-                value: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+                value: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"
                 when: ctrlEditMode.checked
             }
 
             onShareSelectedAddressesClicked: logs.logEvent("::shareSelectedAddressesClicked", ["airdropAddress", "sharedAddresses"], arguments)
             onSaveSelectedAddressesClicked: logs.logEvent("::saveSelectedAddressesClicked", ["airdropAddress", "sharedAddresses"], arguments)
+            onSharedAddressesChanged: logs.logEvent("::sharedAddressesChanged", ["airdropAddress", "sharedAddresses"], arguments)
             onClosed: destroy()
         }
     }
