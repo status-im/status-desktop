@@ -572,10 +572,13 @@ QtObject:
 
   proc getMessageByMessageId*(self: Service, messageId: string): GetMessageResult =
     try:
+      result = GetMessageResult()
       let msgResponse = status_go.getMessageByMessageId(messageId)
-      if msgResponse.error.isNil:
-        result.message = msgResponse.result.toMessageDto()
+      if not msgResponse.error.isNil:
+        let error = Json.decode($msgResponse.error, RpcError)
+        raise newException(RpcException, "Error resending chat message: " & error.message)
 
+      result.message = msgResponse.result.toMessageDto()
       if result.message.id.len == 0:
         result.error = "message with id: " & messageId & " doesn't exist"
         return
