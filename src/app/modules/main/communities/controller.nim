@@ -111,6 +111,11 @@ proc init*(self: Controller) =
       self.delegate.communityEdited(community)
       self.delegate.curatedCommunityEdited(community)
 
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_UPDATED) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
+      self.delegate.curatedCommunityEdited(community)
+
   self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
