@@ -340,7 +340,7 @@ Rectangle {
                 event.accepted = true;
                 return;
             }
-            else if (messageLength <= messageLimitHard) {
+            else {
                 // pop-up a warning message when trying to send a message over the limit
                 messageLengthLimitTooltip.open();
                 event.accepted = true;
@@ -439,7 +439,7 @@ Rectangle {
                 if ((messageLength + clipboardText.length) > control.messageLimitHard)
                 {
                     messageLengthLimitTooltip.open();
-                    event.accepted = false;
+                    event.accepted = true;
                     return;
                 }
 
