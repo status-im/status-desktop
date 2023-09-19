@@ -232,7 +232,7 @@ QtObject {
 
     function getFeeEthValue(feeCurrency) {
         if (!feeCurrency || feeCurrency.symbol !== "Gwei")
-            return qsTr("N/A")
+            return 0
         return currencyStore.getGasEthValue(feeCurrency.amount / Math.pow(10, feeCurrency.displayDecimals), 1)
     }
 
