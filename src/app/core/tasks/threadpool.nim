@@ -51,8 +51,8 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall.} =
 
   let messageType = parsed{"$type"}.getStr
     
-  # TODO re-add the taskArg to the log once all the passwords in the app are hashed before being sent to another thread
-  debug "[threadpool task thread] initiating task", messageType=messageType, threadid=getThreadId()
+  debug "[threadpool task thread] initiating task", messageType=messageType,
+    threadid=getThreadId(), task=taskArg
 
   try:
     let task = cast[Task](parsed{"tptr"}.getInt)
