@@ -17,27 +17,41 @@ SplitView {
     QtObject {
         id: d
 
-        property var messagesModel: ListModel {
+        readonly property var messagesModel: ListModel {
             ListElement {
-                timestamp: 1656937930
+                timestamp: 1656937930123
+                senderId: "zq123456789"
                 senderDisplayName: "simon"
                 profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                               nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
                 contentType: StatusMessage.ContentType.Text
-                message:  "Hello, this is awesome! Feels like decentralized Discord!"
+                message: "Hello, this is awesome! Feels like decentralized Discord! And it even supports HTML markup, like <b>bold</b>, <i>italics</i> or <u>underline</u>"
                 isContact: true
+                isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
             }
             ListElement {
-                timestamp: 1657937930
+                timestamp: 1657937930135
+                senderId: "zqABCDEFG"
                 senderDisplayName: "Mark Cuban"
                 contentType: StatusMessage.ContentType.Text
                 message: "I know a lot of you really seem to get off or be validated by arguing with strangers online but please know it's a complete waste of your time and energy"
                 isContact: false
+                isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             }
+            ListElement {
+                timestamp: 1667937930159
+                senderId: "zqdeadbeef"
+                senderDisplayName: "replicator.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Test reply; the original text above should have a horizontal gradient mask"
+                isContact: true
+                isAReply: true
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+            }
         }
-        property var colorHash: ListModel {
+        readonly property var colorHash: ListModel {
             ListElement { colorId: 13; segmentLength: 5 }
             ListElement { colorId: 31; segmentLength: 5 }
             ListElement { colorId: 10; segmentLength: 1 }
@@ -59,29 +73,46 @@ SplitView {
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
             ListView {
-                anchors.margins: 50
+                anchors.margins: 16
                 anchors.fill: parent
                 spacing: 16
                 model: d.messagesModel
                 delegate: StatusMessage {
                     width: ListView.view.width
                     timestamp: model.timestamp
-                    messageDetails: StatusMessageDetails {
+                    messageDetails {
+                        readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")
                         messageText: model.message
                         contentType: model.contentType
+                        sender.id: isEnsVerified ? "" : model.senderId
                         sender.displayName: model.senderDisplayName
                         sender.isContact: model.isContact
                         sender.trustIndicator: model.trustIndicator
-                        sender.profileImage: StatusProfileImageSettings {
-                            width: 40
-                            height: 40
+                        sender.isEnsVerified: isEnsVerified
+                        sender.profileImage {
                             name: model.profileImage || ""
-                            colorId: 1
+                            colorId: index
                             colorHash: d.colorHash
                         }
                     }
-                    onSenderNameClicked: logs.logEvent("StatusMessage::onSenderNameClicked(): ")
-                    onProfilePictureClicked: logs.logEvent("StatusMessage::profilePictureClicked(): ")
+
+                    isAReply: model.isAReply
+                    replyDetails {
+                        amISender: true
+                        sender.id: "0xdeadbeef"
+                        sender.profileImage {
+                            width: 20
+                            height: 20
+                            name: ModelsData.icons.dribble
+                            colorHash: d.colorHash
+                        }
+                        messageText: ModelsData.descriptions.mediumLoremIpsum
+                    }
+
+                    onSenderNameClicked: logs.logEvent("StatusMessage::senderNameClicked")
+                    onProfilePictureClicked: logs.logEvent("StatusMessage::profilePictureClicked")
+                    onReplyProfileClicked: logs.logEvent("StatusMessage::replyProfileClicked")
+                    onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
                 }
             }
         }
@@ -94,11 +125,6 @@ SplitView {
 
             logsView.logText: logs.logText
         }
-    }
-
-    Pane {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
     }
 }
 

@@ -106,8 +106,8 @@ Item {
                 }
 
                 Item {
-                    implicitWidth: messageContentsLayout.implicitWidth
-                    implicitHeight: messageContentsLayout.implicitHeight
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: messageContentsLayout.implicitHeight
 
                     ColumnLayout {
                         id: messageContentsLayout
