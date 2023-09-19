@@ -1,3 +1,3 @@
 # desktop-qa-automation
 
-https://www.notion.so/Setup-Environment-e5d88399027042a0992e85fd9b0e5167?pvs=4
+https://www.notion.so/Pytest-framework-8705e8ad28994330ae4ced9dccd87394
