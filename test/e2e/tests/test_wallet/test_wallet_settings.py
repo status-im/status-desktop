@@ -118,3 +118,22 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == second_name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name)
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703416', 'Account order: reordering is not possible having a single account')
+@pytest.mark.case(703416)
+@pytest.mark.parametrize('default_name, text_on_top', [
+                          pytest.param('Status account', 'This account looks a little lonely. Add another account'
+                                                         ' to enable re-ordering.')
+                         ])
+def test_change_account_order_not_possible(main_screen: MainWindow, default_name: str, text_on_top: str):
+    with step('Open edit account order view'):
+        account_order = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_order()
+
+    with step('Verify that only default account displayed'):
+        assert len(account_order.accounts) == 1
+        assert account_order.accounts[0].name == default_name
+
+    with step('Back button is present and text on top is correct'):
+        assert account_order.text_labels_from_edit_account_order_settings[0] == text_on_top
+        assert account_order.is_back_button_present() is True

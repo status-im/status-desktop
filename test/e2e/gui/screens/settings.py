@@ -268,6 +268,16 @@ class EditAccountOrderSettings(WalletSettingsView):
         super(EditAccountOrderSettings, self).__init__()
         self._account_item = QObject('settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem')
         self._accounts_list = QObject('statusDesktop_mainWindow')
+        self._text_item = QObject('settingsContentBaseScrollView_StatusBaseText')
+        self._back_button = Button('main_toolBar_back_button')
+
+    @property
+    @allure.step('Get edit account order recommendations')
+    def account_recommendations(self):
+        account_recommendations = []
+        for obj in driver.findAllObjects(self._text_item.real_name):
+            account_recommendations.append(obj.text)
+        return account_recommendations
 
     @property
     @allure.step('Get accounts')
@@ -306,3 +316,7 @@ class EditAccountOrderSettings(WalletSettingsView):
         bounds = [account for account in self.accounts if account.name == name][0].object.bounds
         d_bounds = self.accounts[index].object.bounds
         driver.mouse.press_and_move(self._accounts_list.object, bounds.x, bounds.y, d_bounds.x, d_bounds.y)
+
+    @allure.step('Verify that back button is present')
+    def is_back_button_present(self) -> bool:
+        return self._back_button.is_visible
