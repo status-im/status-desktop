@@ -398,7 +398,7 @@ QtObject:
       if txData.source == parseAddress(ZERO_ADDRESS):
         return
 
-      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams, %txData, password)
+      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams, %txData, common_utils.hashPassword(password))
       let ownerContractAddress = response.result["contractAddress"].getStr()
       let transactionHash = response.result["transactionHash"].getStr()
       debug "Deployed owner contract address ", ownerContractAddress=ownerContractAddress
@@ -446,9 +446,9 @@ QtObject:
       var response: RpcResponse[JsonNode]
       case tokenMetadata.tokenType
       of TokenType.ERC721:
-        response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, password)
+        response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
       of TokenType.ERC20:
-        response = tokens_backend.deployAssets(chainId, %deploymentParams, %txData, password)
+        response = tokens_backend.deployAssets(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
       else:
         error "Contract deployment error - unknown token type", tokenType=tokenMetadata.tokenType
         return
@@ -608,7 +608,7 @@ QtObject:
         if txData.source == parseAddress(ZERO_ADDRESS):
           return
         debug "Airdrop tokens ", chainId=collectibleAndAmount.communityToken.chainId, address=collectibleAndAmount.communityToken.address, amount=collectibleAndAmount.amount
-        let response = tokens_backend.mintTokens(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
+        let response = tokens_backend.mintTokens(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, common_utils.hashPassword(password), walletAddresses, collectibleAndAmount.amount)
         let transactionHash = response.result.getStr()
         debug "Airdrop transaction hash ", transactionHash=transactionHash
 
@@ -728,7 +728,7 @@ QtObject:
         return
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
-      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, password, tokenIds)
+      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password), tokenIds)
       let transactionHash = response.result.getStr()
       debug "Remote destruct transaction hash ", transactionHash=transactionHash
 
@@ -793,7 +793,7 @@ QtObject:
       var contract = self.findContractByUniqueId(contractUniqueKey)
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
-      let response = tokens_backend.burn(contract.chainId, contract.address, %txData, password, amount)
+      let response = tokens_backend.burn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password), amount)
       let transactionHash = response.result.getStr()
       debug "Burn transaction hash ", transactionHash=transactionHash
 

@@ -9,7 +9,7 @@ export response_type
 logScope:
   topics = "rpc-privacy"
 
-proc changeDatabaseHashedPassword*(keyUID: string, oldHashedPassword: string, newHashedPassword: string): RpcResponse[JsonNode]
+proc changeDatabasePassword*(keyUID: string, oldHashedPassword: string, newHashedPassword: string): RpcResponse[JsonNode]
   {.raises: [Exception].} =
   try:
     let response = status_go.changeDatabasePassword(keyUID, oldHashedPassword, newHashedPassword)
@@ -17,12 +17,6 @@ proc changeDatabaseHashedPassword*(keyUID: string, oldHashedPassword: string, ne
   except RpcException as e:
     error "error", methodName = "changeDatabasePassword", exception=e.msg
     raise newException(RpcException, e.msg)
-
-proc changeDatabasePassword*(keyUID: string, password: string, newPassword: string): RpcResponse[JsonNode]
-  {.raises: [Exception].} =
-    let hashedPassword = hashPassword(password)
-    let hashedNewPassword = hashPassword(newPassword)
-    return changeDatabaseHashedPassword(keyUID, hashedPassword, hashedNewPassword)
 
 proc getLinkPreviewWhitelist*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []

@@ -38,11 +38,10 @@ proc requestToJoinCommunity*(
     addressesToShare: seq[string],
     airdropAddress: string,
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
-  var passwordToSend = password
   result = callPrivateRPC("requestToJoinCommunity".prefix, %*[{
     "communityId": communityId,
     "ensName": ensName,
-    "password": if passwordToSend != "": utils.hashPassword(password) else: "",
+    "password": password,
     "addressesToReveal": addressesToShare,
     "airdropAddress": airdropAddress,
   }])
@@ -53,10 +52,9 @@ proc editSharedAddresses*(
     addressesToShare: seq[string],
     airdropAddress: string,
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
-  var passwordToSend = password
   result = callPrivateRPC("editSharedAddressesForCommunity".prefix, %*[{
     "communityId": communityId,
-    "password": if passwordToSend != "": utils.hashPassword(password) else: "",
+    "password": password,
     "addressesToReveal": addressesToShare,
     "airdropAddress": airdropAddress,
   }])

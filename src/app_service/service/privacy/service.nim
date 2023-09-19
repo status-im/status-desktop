@@ -9,6 +9,8 @@ import ../../../app/core/eventemitter
 import ../../../backend/eth as status_eth
 import ../../../backend/privacy as status_privacy
 
+import ../../common/utils as common_utils
+
 logScope:
   topics = "privacy-service"
 
@@ -89,7 +91,7 @@ QtObject:
         return
 
       let loggedInAccount = self.accountsService.getLoggedInAccount()
-      let response = status_privacy.changeDatabasePassword(loggedInAccount.keyUid, password, newPassword)
+      let response = status_privacy.changeDatabasePassword(loggedInAccount.keyUid, common_utils.hashPassword(password), common_utils.hashPassword(newPassword))
 
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr

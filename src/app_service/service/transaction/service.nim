@@ -7,6 +7,7 @@ import ../../../backend/eth
 
 import ../ens/utils as ens_utils
 import ../../common/conversion as common_conversion
+import ../../common/utils as common_utils
 
 import ../../../app/core/[main]
 import ../../../app/core/signals/types
@@ -290,7 +291,7 @@ QtObject:
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
-        password,
+        common_utils.hashPassword(password),
       )
 
       if response.result{"hashes"} != nil:
@@ -367,7 +368,7 @@ QtObject:
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
-        password,
+        common_utils.hashPassword(password),
       )
 
       if response.result{"hashes"} != nil:

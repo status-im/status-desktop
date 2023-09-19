@@ -417,10 +417,9 @@ proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): 
     error "error doing rpc request", methodName = "loginWithKeycard", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc verifyAccountPassword*(address: string, password: string, keystoreDir: string):
+proc verifyAccountPassword*(address: string, hashedPassword: string, keystoreDir: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
-    let hashedPassword = hashPassword(password)
     let response = status_go.verifyAccountPassword(keystoreDir, address, hashedPassword)
     result.result = Json.decode(response, JsonNode)
 
