@@ -40,7 +40,9 @@ type
     layer* {.serializedFieldName("layer").}: int
     chainName* {.serializedFieldName("chainName").}: string
     rpcURL* {.serializedFieldName("rpcUrl").}: string
+    originalRpcURL* {.serializedFieldName("originalRpcUrl").}: string
     fallbackURL* {.serializedFieldName("fallbackUrl").}: string
+    originalFallbackURL* {.serializedFieldName("originalFallbackURL").}: string
     blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
     iconURL* {.serializedFieldName("iconUrl").}: string
     nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
