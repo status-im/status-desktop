@@ -174,6 +174,7 @@ const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
+const SIGNAL_CURATED_COMMUNITIES_UPDATED* = "curatedCommunitiesUpdated"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
 const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
@@ -285,6 +286,11 @@ QtObject:
           self.communities[receivedData.community.id].listedInDirectory and not
           self.communities[receivedData.community.id].isAvailable:
         self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CommunityArgs(community: self.communities[receivedData.community.id]))
+
+    self.events.on(SignalType.CuratedCommunitiesUpdated.event) do(e: Args):
+      var receivedData = CuratedCommunitiesSignal(e)
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_UPDATED,
+        CommunitiesArgs(communities: receivedData.communities))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
