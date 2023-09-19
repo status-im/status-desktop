@@ -598,7 +598,7 @@ QtObject:
 
   proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
     try:
-      let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
+      let response = status_account.verifyAccountPassword(account, utils.hashPassword(password), self.keyStoreDir)
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
         if(errMsg.len == 0):
@@ -686,7 +686,7 @@ QtObject:
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
     # Reencryption (can freeze and take up to 30 minutes)
     let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
-    discard status_privacy.changeDatabaseHashedPassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
+    discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
     self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage)

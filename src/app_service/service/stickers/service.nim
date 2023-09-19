@@ -23,6 +23,7 @@ import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
 import ../../common/types
+import ../../common/utils as common_utils
 import ../eth/utils as status_utils
 
 export StickerDto
@@ -213,7 +214,7 @@ QtObject:
       chainId = self.networkService.getNetworkForStickers().chainId
       txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
     try:
-      let transactionResponse = status_stickers.buy(chainId, %txData, packId, password)
+      let transactionResponse = status_stickers.buy(chainId, %txData, packId, common_utils.hashPassword(password))
       let transactionHash = transactionResponse.result.getStr()
       let sntContract = self.getStatusToken()
       self.transactionService.watchTransaction(

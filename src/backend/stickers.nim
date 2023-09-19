@@ -1,6 +1,5 @@
 import json
 import ./eth
-import ../app_service/common/utils
 import ./core, ./response_type
 import web3/[ethtypes, conversions]
 
@@ -40,8 +39,8 @@ proc buyEstimate*(chainId: int, fromAccount: Address, packId: string): RpcRespon
   let payload = %* [chainId, $fromAccount, packId]
   return core.callPrivateRPC("stickers_buyEstimate", payload)
 
-proc buy*(chainId: int, txData: JsonNode, packId: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, txData, packID, utils.hashPassword(password)]
+proc buy*(chainId: int, txData: JsonNode, packId: string, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, txData, packID, hashedPassword]
   return core.callPrivateRPC("stickers_buy", payload)
 
 proc clearRecentStickers*(): RpcResponse[JsonNode] {.raises: [Exception].} =

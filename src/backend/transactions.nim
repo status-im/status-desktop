@@ -73,8 +73,8 @@ proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
 
-proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [multiTransactionCommand, data, hashPassword(password)]
+proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [multiTransactionCommand, data, hashedPassword]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
 
 proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] {.raises: [Exception].} =

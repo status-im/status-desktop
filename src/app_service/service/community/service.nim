@@ -16,6 +16,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/communities as status_go
 
 import ../../../app_service/common/types
+import ../../../app_service/common/utils
 
 include ./async_tasks
 
@@ -1484,7 +1485,7 @@ QtObject:
         slot: "onAsyncRequestToJoinCommunityDone",
         communityId: communityId,
         ensName: ensName,
-        password: password,
+        password: if password != "": utils.hashPassword(password) else: "",
         addressesToShare: addressesToShare,
         airdropAddress: airdropAddress,
       )
@@ -1518,7 +1519,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncEditSharedAddressesDone",
       communityId: communityId,
-      password: password,
+      password: if password != "": utils.hashPassword(password) else: "",
       addressesToShare: addressesToShare,
       airdropAddress: airdropAddress,
     )

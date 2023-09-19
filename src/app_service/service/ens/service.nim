@@ -11,6 +11,7 @@ import ../../../backend/ens as status_ens
 import ../../../backend/backend as status_go_backend
 
 import ../../common/conversion as common_conversion
+import ../../common/utils as common_utils
 import utils as ens_utils
 import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
@@ -293,7 +294,7 @@ QtObject:
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      let resp = status_ens.setPubKey(chainId, %txData, password, ensUsername.addDomain(),
+      let resp = status_ens.setPubKey(chainId, %txData, common_utils.hashPassword(password), ensUsername.addDomain(),
         singletonInstance.userProfile.getPubKey())
       let hash = resp.result.getStr
 
@@ -347,7 +348,7 @@ QtObject:
       if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
         userNameNoDomain = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
 
-      let resp = status_ens.release(chainId, %txData, password, userNameNoDomain)
+      let resp = status_ens.release(chainId, %txData, common_utils.hashPassword(password), userNameNoDomain)
       let hash = resp.result.getStr
 
       let ensUsernamesAddress = self.getEnsRegisteredAddress()
@@ -392,7 +393,7 @@ QtObject:
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      let resp = status_ens.register(chainId, %txData, password, username,
+      let resp = status_ens.register(chainId, %txData, common_utils.hashPassword(password), username,
         singletonInstance.userProfile.getPubKey())
       let hash = resp.result.getStr
       let sntContract = self.getStatusToken()
