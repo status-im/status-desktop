@@ -44,9 +44,9 @@ Rectangle {
     property bool isImage: false
     property bool isEdit: false
 
-    property int messageLimit: 2000 // actual message limit, we don't allow sending more than that
-    property int messageLimitSoft: 200 // we start showing a char counter when this no. of chars left in the message
-    property int messageLimitHard: 20000 // still cut-off attempts to paste beyond this limit, for app usability reasons
+    readonly property int messageLimit: 2000 // actual message limit, we don't allow sending more than that
+    readonly property int messageLimitSoft: 200 // we start showing a char counter when this no. of chars left in the message
+    readonly property int messageLimitHard: 20000 // still cut-off attempts to paste beyond this limit, for app usability reasons
 
     property int chatType
 
@@ -326,7 +326,8 @@ Rectangle {
     }
 
     function onKeyPress(event) {
-        let messageLength = messageInputField.getText(0, messageInputField.length).length;
+        // get text without HTML formatting
+        const messageLength = messageInputField.getText(0, messageInputField.length).length;
 
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
@@ -1048,7 +1049,7 @@ Rectangle {
 
             StatusQ.StatusToolTip {
                 id: messageLengthLimitTooltip
-                text: qsTr("Maximum message character count is %1").arg(control.messageLimit)
+                text: qsTr("Maximum message character count is %n", "", control.messageLimit)
                 orientation: StatusQ.StatusToolTip.Orientation.Top
                 timeout: 3000 // show for 3 seconds
             }
