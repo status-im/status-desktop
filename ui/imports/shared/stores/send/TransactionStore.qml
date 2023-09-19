@@ -226,40 +226,14 @@ QtObject {
         nestedCollectiblesModel.currentCollectionUid = ""
     }
 
-    // TODO: move to nim
     function splitAndFormatAddressPrefix(text, updateInStore) {
-        let address = ""
-        let tempPreferredChains = []
-        let chainFound = false
-        let splitWords = plainText(text).split(':')
-        let editedText = ""
-
-        for(var i=0; i<splitWords.length; i++) {
-            const word = splitWords[i]
-            if(word.startsWith("0x")) {
-                address = word
-                editedText += word
-            } else {
-                let chainColor = fromNetworksModel.getNetworkColor(word)
-                if(!!chainColor) {
-                    chainFound = true
-                    tempPreferredChains.push(fromNetworksModel.getNetworkChainId(word))
-                    editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(word)+':'
-                }
-            }
-        }
-
-        if(updateInStore) {
-            if(!chainFound)
-                updateRoutePreferredChains(networksModule.getMainnetChainId())
-            else
-                updateRoutePreferredChains(tempPreferredChains.join(":"))
-        }
-
-        editedText +="</a></p>"
         return {
-            formattedText: editedText,
-            address: address
+            formattedText: walletSectionSendInst.splitAndFormatAddressPrefix(text, updateInStore),
+            address: walletSectionSendInst.getAddressFromFormattedString(text)
         }
+    }
+
+    function getShortChainIds(chainShortNames) {
+        return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
 }

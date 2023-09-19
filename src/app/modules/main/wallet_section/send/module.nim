@@ -334,3 +334,26 @@ method getCollectiblesModel*(self: Module): collectibles.Model =
 method getNestedCollectiblesModel*(self: Module): nested_collectibles.Model =
   return self.nestedCollectiblesModel
 
+method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: bool): string {.slot.} =
+  var tempPreferredChains: seq[int]
+  var chainFound = false
+  var editedText = ""
+
+  for word in plainText(text).split(':'):
+    if word.startsWith("0x"):
+      editedText = editedText & word
+    else:
+      let chainColor = self.view.getNetworkColor(word)
+      if not chainColor.isEmptyOrWhitespace():
+        chainFound = true
+        tempPreferredChains.add(self.view.getNetworkChainId(word))
+        editedText = editedText & "<span style='color: " & chainColor & "'>" & word & "</span>" & ":"
+
+  if updateInStore:
+    if not chainFound:
+      self.view.updateRoutePreferredChains(self.view.getLayer1NetworkChainId())
+    else:
+      self.view.updateRoutePreferredChains(tempPreferredChains.join(":"))
+
+  editedText = "<a><p>" & editedText & "</a></p>"
+  return editedText

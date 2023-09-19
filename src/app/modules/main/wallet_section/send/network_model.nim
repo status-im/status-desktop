@@ -166,25 +166,30 @@ QtObject:
 
   proc updateFromNetworks*(self: NetworkModel, path: SuggestedRouteItem, hasGas: bool) =
     for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.items[i].amountIn = ""
+      self.items[i].resetToNetworks
+      self.items[i].hasGas = true
+      self.items[i].locked = false
       if path.getfromNetwork() == self.items[i].getChainId():
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].amountIn = path.getAmountIn()
         self.items[i].toNetworks = path.getToNetwork()
         self.items[i].hasGas = hasGas
         self.items[i].locked = path.getAmountInLocked()
-        self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int])
+      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int])
 
   proc updateToNetworks*(self: NetworkModel, path: SuggestedRouteItem) =
     for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.items[i].amountOut = ""
       if path.getToNetwork() == self.items[i].getChainId():
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         if self.items[i].getAmountOut().len != 0:
           self.items[i].amountOut = $(parseInt(self.items[i].getAmountOut()) + parseInt(path.getAmountOut()))
         else:
           self.items[i].amountOut = path.getAmountOut()
-        self.dataChanged(index, index, @[ModelRole.AmountOut.int])
+      self.dataChanged(index, index, @[ModelRole.AmountOut.int])
 
   proc getRouteDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
     var disbaledChains: seq[int] = @[]
@@ -303,3 +308,8 @@ QtObject:
           self.items[i].lockedAmount = amount
           self.dataChanged(index, index, @[ModelRole.LockedAmount.int])
 
+  proc getLayer1Network*(self: NetworkModel): int =
+    for item in self.items:
+      if item.getLayer() == 1:
+        return item.getChainId()
+    return 0

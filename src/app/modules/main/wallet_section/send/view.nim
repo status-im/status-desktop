@@ -228,8 +228,6 @@ QtObject:
     return self.selectedSenderAccount.address()
 
   proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], totalFeesInEth: float) =
-    self.fromNetworksModel.reset()
-    self.toNetworksModel.reset()
     for path in paths:
       let fromChainId = path.getfromNetwork()
       let hasGas = self.selectedSenderAccount.getAssets().hasGas(fromChainId, self.fromNetworksModel.getNetworkNativeGasSymbol(fromChainId), totalFeesInEth)
@@ -242,3 +240,30 @@ QtObject:
     self.transactionRoutes = newTransactionRoutes()
     self.selectedAssetSymbol = ""
     self.showUnPreferredChains = false
+
+  proc getLayer1NetworkChainId*(self: View): string =
+    return $self.fromNetworksModel.getLayer1Network()
+
+  proc getNetworkColor*(self: View, shortName : string): string =
+    return self.fromNetworksModel.getNetworkColor(shortName)
+
+  proc getNetworkChainId*(self: View, shortName : string): int =
+    return self.fromNetworksModel.getNetworkChainId(shortName)
+
+  proc splitAndFormatAddressPrefix(self: View, text : string, updateInStore: bool): string {.slot.} =
+    return self.delegate.splitAndFormatAddressPrefix(text, updateInStore)
+
+  proc getAddressFromFormattedString(self: View, text : string): string {.slot.} =
+    var splitWords = plainText(text).split(':')
+    for i in countdown(splitWords.len-1, 0):
+      if splitWords[i].startsWith("0x"):
+        return splitWords[i]
+    return ""
+
+  proc getShortChainIds(self: View, chainShortNames : string): string {.slot.} =
+    if chainShortNames.isEmptyOrWhitespace():
+      return ""
+    var preferredChains: seq[int]
+    for shortName in chainShortNames.split(':'):
+      preferredChains.add(self.fromNetworksModel.getNetworkChainId(shortName))
+    return preferredChains.join(":")
