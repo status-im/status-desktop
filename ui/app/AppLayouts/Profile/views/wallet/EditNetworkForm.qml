@@ -46,8 +46,8 @@ ColumnLayout {
             d.evaluationStatusMainRpc = EditNetworkForm.UnTouched
             d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
             if(!!network) {
-                mainRpcInput.text = network.rpcURL
-                failoverRpcUrlInput.text = network.fallbackURL
+                mainRpcInput.text = d.mask(network.originalRpcURL)
+                failoverRpcUrlInput.text = d.mask(network.originalFallbackURL)
             }
         }       
 
@@ -87,6 +87,13 @@ ColumnLayout {
                 return  Text.AlignLeft
             default: return Text.AlignRight
             }
+        }
+
+        function mask(rpcUrl) {
+            // Mask the last part of the URL
+            return rpcUrl.replace(/(\/)([^\/]+)$/, (match, p1, p2) => {
+                return p1 + p2.replace(/./g, '*');
+            });
         }
     }
 
@@ -163,7 +170,7 @@ ColumnLayout {
                     return ""
                 }
                 if (network.originalRpcURL === network.rpcURL) {
-                    return network.rpcURL.replace(/(.*\/).*/, '$1')
+                    return d.mask(network.rpcURL)
                 }
                 return network.rpcURL
             }
@@ -172,9 +179,12 @@ ColumnLayout {
                     d.evaluationStatusMainRpc = EditNetworkForm.Empty
                     return
                 }
-                if(!!text &&
-                        (network.originalRpcURL === network.rpcURL && text !== network.rpcURL.replace(/(.*\/).*/, '$1')) ||
-                        (network.originalRpcURL !== network.rpcURL && text !== network.rpcURL)) {
+
+                if (!!text && d.mask(network.originalRpcURL) === text) {
+                    d.evaluationStatusMainRpc = EditNetworkForm.Verified
+                }
+
+                if(!!text && d.mask(network.originalRpcURL) !== text) {
                     d.evaluationStatusMainRpc = EditNetworkForm.Pending
                     Qt.callLater(d.evaluateRpcEndPoint, text, true);
                 }
@@ -201,7 +211,7 @@ ColumnLayout {
                 return ""
             }
             if (network.originalFallbackURL === network.fallbackURL) {
-                return network.fallbackURL.replace(/(.*\/).*/, '$1')
+                return d.mask(network.fallbackURL)
             }
             return network.fallbackURL
         }
@@ -211,9 +221,11 @@ ColumnLayout {
                 return
             }
 
-            if(!!text &&
-                    (network.originalFallbackURL === network.fallbackURL && text !== network.fallbackURL.replace(/(.*\/).*/, '$1')) ||
-                    (network.originalFallbackURL !== network.fallbackURL && text !== network.fallbackURL)) {
+            if (!!text && d.mask(network.originalFallbackURL) === text) {
+                d.evaluationStatusFallBackRpc = EditNetworkForm.Verified
+            }
+
+            if(!!text && d.mask(network.originalFallbackURL) !== text) {
                 d.evaluationStatusFallBackRpc = EditNetworkForm.Pending
                 Qt.callLater(d.evaluateRpcEndPoint, text, false);
             }
@@ -247,7 +259,6 @@ ColumnLayout {
         StatusButton {
             text: qsTr("Revert to default")
             normalColor: "transparent"
-            enabled: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched || d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
             onClicked: d.revertValues()
         }
         StatusButton {
@@ -260,7 +271,18 @@ ColumnLayout {
                 d.evaluationStatusFallBackRpc === EditNetworkForm.Empty
                 ) && warningCheckbox.checked
 
-            onClicked: root.updateNetworkValues(network.chainId, mainRpcInput.text, failoverRpcUrlInput.text)
+            onClicked: {
+                let main = mainRpcInput.text
+                let fallback = failoverRpcUrlInput.text
+                if (main === d.mask(network.originalRpcURL)) {
+                    main = network.originalRpcURL
+                }
+
+                if (fallback === d.mask(network.originalFallbackURL)) {
+                    fallback = network.originalFallbackURL
+                }
+                root.updateNetworkValues(network.chainId, main, fallback)
+            }
         }
     }
 }
