@@ -450,7 +450,7 @@ StatusDialog {
                         store: popup.store
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
-                        ensAddressOrEmpty: recipientLoader.isENSValid ? recipientLoader.resolvedENSAddress : ""
+                        ensAddressOrEmpty: recipientLoader.resolvedENSAddress
                         amountToSend: amountToSendInput.cryptoValueToSendFloat
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
                         minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals

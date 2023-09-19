@@ -65,3 +65,6 @@ method getCollectiblesModel*(self: AccessInterface): collectibles.Model =
 
 method getNestedCollectiblesModel*(self: AccessInterface): nested_collectibles.Model =
   raise newException(ValueError, "No implementation available")
+
+method splitAndFormatAddressPrefix*(self: AccessInterface, text : string, updateInStore: bool): string {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -23,9 +23,8 @@ Loader {
     property var selectedRecipient: null
     property int selectedRecipientType
 
-    readonly property bool ready: (d.isAddressValid || root.isENSValid) && !d.isPending
+    readonly property bool ready: (d.isAddressValid || !!resolvedENSAddress) && !d.isPending
     property string addressText
-    property bool isENSValid: false
     property string resolvedENSAddress
 
     signal recalculateRoutesAndFees()
@@ -35,84 +34,74 @@ Loader {
 
     onSelectedRecipientChanged: {
         root.isLoading()
-        d.waitTimer.restart()
-        if(!isERC721Transfer) {
-            if(!root.isBridgeTx)
-                root.store.updateRoutePreferredChains(root.selectedRecipient.preferredSharingChainIds)
-            else
-                root.store.setAllNetworksAsRoutePreferredChains()
-        }
         if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
+            let preferredChainIds = []
             switch(root.selectedRecipientType) {
+            case  TabAddressSelectorView.Type.Account: {
+                root.addressText = root.selectedRecipient.address
+                preferredChainIds = root.selectedRecipient.preferredSharingChainIds
+                break
+            }
             case TabAddressSelectorView.Type.SavedAddress: {
-                if (root.selectedRecipient.ens.length > 0) {
-                    d.isPending = true
-                    return  store.resolveENS(root.selectedRecipient.ens)
+                root.addressText = root.selectedRecipient.address
+                if (!!root.selectedRecipient.ens && root.selectedRecipient.ens.length > 0) {
+                    root.resolvedENSAddress = root.selectedRecipient.ens
                 }
+                preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
             }
             case TabAddressSelectorView.Type.RecentsAddress: {
                 let isIncoming = root.selectedRecipient.txType === Constants.TransactionType.Receive
                 root.addressText = isIncoming ? root.selectedRecipient.sender : root.selectedRecipient.recipient
                 root.item.input.text = root.addressText
-                return
+                break
             }
             case TabAddressSelectorView.Type.Address: {
+                root.addressText = root.selectedRecipient.address
                 root.item.input.text = root.selectedRecipient.address
                 break
             }
             }
-            root.addressText = root.selectedRecipient.address
+
+            // set preferred chains
+            if(!isERC721Transfer) {
+                if(root.isBridgeTx)
+                    root.store.setAllNetworksAsRoutePreferredChains()
+                else
+                    root.store.updateRoutePreferredChains(preferredChainIds)
+            }
+
+            recalculateRoutesAndFees()
         }
     }
 
     QtObject {
         id: d
         property bool isAddressValid: Utils.isValidAddress(root.addressText)
-        readonly property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
+        readonly property var resolveENS: Backpressure.debounce(root, 1500, function (ensName) {
             store.resolveENS(ensName)
         })
         property bool isPending: false
         function clearValues() {
             root.addressText = ""
-            root.isENSValid = false
             root.resolvedENSAddress = ""
             root.selectedRecipientType = TabAddressSelectorView.Type.None
             root.selectedRecipient = null
         }
         property Timer waitTimer: Timer {
             interval: 1500
-            onTriggered: {
-                if(!!root.item) {
-                    if (d.isPending) {
-                        return
-                    }
-                    if (root.isENSValid)  {
-                        if(!!root.item.input)
-                            root.item.input.text = root.resolvedENSAddress
-                        root.addressText = root.resolvedENSAddress
-                        store.splitAndFormatAddressPrefix(root.address, !root.isBridgeTx && !isERC721Transfer)
-                    } else {
-                        let address = d.getAddress()
-                        let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isERC721Transfer)
-                        if(!!result.address) {
-                            root.addressText = result.address
-                            if(!!root.item.input)
-                                root.item.input.text = result.formattedText
-                        }
-                    }
-                    root.recalculateRoutesAndFees()
-                }
-            }
+            onTriggered: d.evaluateAndSetPreferredChains()
         }
 
-        function getAddress() {
-            if(root.selectedRecipientType === TabAddressSelectorView.Type.SavedAddress || root.selectedRecipientType === TabAddressSelectorView.Type.Account){
-                return root.item.chainShortNames + root.selectedRecipient.address
+        function evaluateAndSetPreferredChains() {
+            let address = !!root.item.input && !!root.store.plainText(root.item.input.text) ? root.store.plainText(root.item.input.text): ""
+            let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isERC721Transfer)
+            if(!!result.address) {
+                root.addressText = result.address
+                if(!!root.item.input)
+                    root.item.input.text = result.formattedText
             }
-            else {
-                return !!root.item.input && !!root.store.plainText(root.item.input.text) ? root.store.plainText(root.item.input.text): ""
-            }
+            root.recalculateRoutesAndFees()
         }
     }
 
@@ -196,7 +185,7 @@ Loader {
                     Layout.preferredHeight: 16
                     icon: "tiny/checkmark"
                     color: Theme.palette.primaryColor1
-                    visible: !!store.plainText(recipientInput.text)
+                    visible: root.ready
                 }
                 ClearButton {
                     Layout.preferredWidth: 24
@@ -215,10 +204,12 @@ Loader {
                 }
                 else {
                     root.isLoading()
-                    d.waitTimer.restart()
-                    if(!Utils.isValidAddress(plainText)) {
+                    if(Utils.isValidEns(plainText)) {
                         d.isPending = true
                         d.resolveENS(plainText)
+                    }
+                    else {
+                        d.waitTimer.restart()
                     }
                 }
             }
@@ -231,9 +222,11 @@ Loader {
             d.isPending = false
             if(Utils.isValidAddress(resolvedAddress)) {
                 root.resolvedENSAddress = resolvedAddress
-                root.isENSValid = true
+                root.addressText = root.resolvedENSAddress
+                if(!!root.item.input)
+                    root.item.input.text = root.resolvedENSAddress
+                d.evaluateAndSetPreferredChains()
             }
-            d.waitTimer.restart()
         }
     }
 }

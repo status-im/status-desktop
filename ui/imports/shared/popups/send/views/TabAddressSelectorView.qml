@@ -33,7 +33,6 @@ Item {
 
     enum Type {
         Address,
-        Contact,
         Account,
         SavedAddress,
         RecentsAddress,
