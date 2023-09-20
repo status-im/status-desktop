@@ -113,9 +113,10 @@ QtObject:
     read = getMediaType
 
   proc getBackgroundColor*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
-      return ""
-    return self.data.backgroundColor
+    var color = "transparent"
+    if self.data != nil and self.data.backgroundColor != "":
+      color = "#" & self.data.backgroundColor
+    return color
 
   QtProperty[string] backgroundColor:
     read = getBackgroundColor
