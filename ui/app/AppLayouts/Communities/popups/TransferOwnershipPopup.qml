@@ -24,7 +24,7 @@ StatusDialog {
     property string communityLogo
 
     // Transaction related props:
-    property var token
+    property var token // Expected roles: accountAddress, key, chainId, name, artworkSource
     property var accounts
     property var sendModalPopup
 
@@ -109,8 +109,8 @@ StatusDialog {
 
                 onClicked: {
                     // Pre-populated dialog with the relevant Owner token info:
-                    root.sendModalPopup.sendType = Constants.SendType.Transfer
-                    root.sendModalPopup.selectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
+                    root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
+                    root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
                     root.sendModalPopup.preSelectedHolding = {
                         uid : token.key,
                         chainId: token.chainId,

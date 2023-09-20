@@ -63,6 +63,8 @@ Item {
                 fallbackImageUrl: model.imageUrl ?? ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
                 isLoading: !!model.isLoading
+                privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
+                ornamentColor: model.communityColor ?? "transparent"
 
                 onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.uid)
             }
