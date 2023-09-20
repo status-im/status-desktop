@@ -61,13 +61,25 @@ class LeftPanel(QObject):
         self._profile_button.click()
         return UserCanvas().wait_until_appears()
 
+    @allure.step('Set user to online')
+    def set_user_to_online(self):
+        self.open_user_canvas().set_user_state_online()
+
     @allure.step('Verify: User is online')
     def user_is_online(self) -> bool:
         return self.user_badge_color == '#4ebc60'
 
+    @allure.step('Set user to offline')
+    def set_user_to_offline(self):
+        self.open_user_canvas().set_user_state_offline()
+
     @allure.step('Verify: User is offline')
     def user_is_offline(self):
         return self.user_badge_color == '#7f8990'
+
+    @allure.step('Set user to automatic')
+    def set_user_to_automatic(self):
+        self.open_user_canvas().set_user_automatic_state()
 
     @allure.step('Verify: User is set to automatic')
     def user_is_set_to_automatic(self):

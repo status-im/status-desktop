@@ -8,12 +8,14 @@ import driver
 from constants import UserCommunityInfo, wallet_account_list_item
 from driver import objects_access
 from driver.objects_access import walk_children
+from gui.components.change_password_popup import ChangePasswordPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.list import List
 from gui.elements.qt.object import QObject
 from gui.elements.qt.scroll import Scroll
+from gui.elements.qt.text_edit import TextEdit
 from gui.elements.qt.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
@@ -24,26 +26,31 @@ class LeftPanel(QObject):
 
     def __init__(self):
         super().__init__('mainWindow_LeftTabView')
-        self._settings_section_template = QObject('scrollView_AppMenuItem_StatusNavigationListItem')
+        self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
 
-    def _open_settings(self, index: int):
-        self._settings_section_template.real_name['objectName'] = f'{index}-AppMenuItem'
+    def _open_settings(self, index: int, section_name: str):
+        self._settings_section_template.real_name['objectName'] = f'{index}-{section_name}MenuItem'
         self._settings_section_template.click()
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
-        self._open_settings(3)
+        self._open_settings(3, 'App')
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
     def open_communities_settings(self) -> 'CommunitiesSettingsView':
-        self._open_settings(12)
+        self._open_settings(12, 'App')
         return CommunitiesSettingsView()
 
     @allure.step('Open wallet settings')
     def open_wallet_settings(self):
-        self._open_settings(4)
+        self._open_settings(4, 'App')
         return WalletSettingsView()
+
+    @allure.step('Open profile settings')
+    def open_profile_settings(self):
+        self._open_settings(0, 'Main')
+        return ProfileSettingsView()
 
 
 class SettingsScreen(QObject):
@@ -51,6 +58,37 @@ class SettingsScreen(QObject):
     def __init__(self):
         super().__init__('mainWindow_ProfileLayout')
         self.left_panel = LeftPanel()
+
+
+class ProfileSettingsView(QObject):
+
+    def __init__(self):
+        super().__init__('mainWindow_MyProfileView')
+        self._scroll_view = Scroll('settingsContentBaseScrollView_Flickable')
+        self._display_name_text_field = TextEdit('displayName_TextEdit')
+        self._save_button = Button('settingsSave_StatusButton')
+        self._change_password_button = Button('change_password_button')
+
+    @property
+    @allure.step('Get display name')
+    def display_name(self) -> str:
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        return self._display_name_text_field.text
+
+    @allure.step('Set user name')
+    def set_name(self, value: str):
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        self._display_name_text_field.text = value
+        self.save_changes()
+
+    @allure.step('Save changes')
+    def save_changes(self):
+        self._save_button.click()
+
+    @allure.step('Open change password form')
+    def open_change_password_popup(self):
+        self._change_password_button.click()
+        return ChangePasswordPopup().wait_until_appears()
 
 
 class MessagingSettingsView(QObject):

@@ -7,6 +7,7 @@ from gui.components.base_popup import BasePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
 from gui.elements.qt.text_label import TextLabel
+from gui.screens.settings import ProfileSettingsView
 from scripts.tools.image import Image
 
 
@@ -68,3 +69,8 @@ class ProfilePopup(BasePopup):
             15, 15, self._profile_image.image.width - 30, self._profile_image.image.height - 30
         )
         return self.profile_image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)
+
+    @allure.step('Click edit profile button')
+    def edit_profile(self):
+        self._edit_profile_button.click()
+        return ProfileSettingsView()
