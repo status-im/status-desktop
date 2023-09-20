@@ -51,7 +51,6 @@ QtObject:
       allAddressesSelected: bool
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
-      allChainsSelected: bool
 
       requestId: int32
 
@@ -151,8 +150,7 @@ QtObject:
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
 
-    let chains = if not self.allChainsSelected: self.chainIds else: @[]
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](chains), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       error "error fetching activity entries: ", response.error
       self.status.setLoadingData(false)
@@ -160,8 +158,8 @@ QtObject:
 
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
-    let chains = if not self.allChainsSelected: self.chainIds else: @[]
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](chains), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching activity entries: ", response.error
@@ -257,7 +255,6 @@ QtObject:
     result.addresses = @[]
     result.allAddressesSelected = false
     result.chainIds = @[]
-    result.allChainsSelected = true
 
     result.setup()
 
@@ -346,7 +343,6 @@ QtObject:
 
   proc setFilterChains*(self: Controller, chainIds: seq[int], allEnabled: bool) =
     self.chainIds = chainIds
-    self.allChainsSelected = allEnabled
     self.status.setIsFilterDirty(true)
 
     self.updateAssetsIdentities()
