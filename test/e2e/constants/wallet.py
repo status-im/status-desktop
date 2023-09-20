@@ -7,3 +7,7 @@ class DerivationPath(Enum):
     ETHEREUM_ROPSTEN = 'Ethereum Testnet (Ropsten)'
     ETHEREUM_LEDGER = 'Ethereum (Ledger)'
     ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
+
+
+class WalletNetworkSettings(Enum):
+    TESTNET_SUBTITLE = 'Switch entire Status app to testnet only mode'

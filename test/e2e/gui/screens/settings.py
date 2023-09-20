@@ -275,11 +275,21 @@ class NetworkWalletSettings(WalletSettingsView):
         self._wallet_networks_item = QObject('settingsContentBaseScrollView_WalletNetworkDelegate')
         self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
         self._testnet_mode_button = Button('settings_Wallet_NetworksView_TestNet_Toggle')
+        self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
+        self._back_button = Button('main_toolBar_back_button')
 
     @property
     @allure.step('Get wallet networks items')
     def networks_names(self) -> typing.List[str]:
         return [str(network.title) for network in driver.findAllObjects(self._wallet_networks_item.real_name)]
+
+    @allure.step('Verify Testnet toggle subtitle')
+    def get_testnet_toggle_subtitle(self):
+        return self._testnet_mode_title.text
+
+    @allure.step('Verify back to Wallet settings button')
+    def is_back_to_wallet__settings_button_present(self):
+        return self._back_button.is_visible
 
     @property
     @allure.step('Get amount of testnet active items')

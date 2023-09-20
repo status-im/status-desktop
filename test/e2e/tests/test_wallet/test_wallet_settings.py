@@ -8,6 +8,7 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
 from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from constants.wallet import WalletNetworkSettings
 from gui.main_window import MainWindow
 from scripts.tools import image
 
@@ -15,14 +16,23 @@ from scripts.tools import image
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)
 @pytest.mark.parametrize('first_network, second_network, third_network, message_turned_on, message_turned_off', [
-                             pytest.param('Mainnet', 'Optimism', 'Arbitrum', 'Testnet mode turned on', 'Testnet mode turned off')
-                         ])
+    pytest.param('Mainnet', 'Optimism', 'Arbitrum', 'Testnet mode turned on', 'Testnet mode turned off')
+])
 def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second_network: str, third_network: str,
                              message_turned_on: str, message_turned_off: str):
     with step('Started to turn on Testnet mode but cancel it'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
         assert networks.get_testnet_mode_button_checked_state() is False
         networks.switch_testnet_mode().cancel()
+
+    with step('Verify that Testnet toggle has subtitle'):
+        subtitle = networks.get_testnet_toggle_subtitle()
+        assert subtitle == WalletNetworkSettings.TESTNET_SUBTITLE.value, \
+            f"Testnet title is incorrect, current subtitle is {subtitle}"
+
+    with step('Back button is present and text on top is correct'):
+        assert networks.is_back_to_wallet_settings_button_present() is True, \
+            f"Back to Wallet settings button is not visible on Networks screen"
 
     with step('Verify that Testnet mode not turned on'):
         assert networks.get_testnet_mode_button_checked_state() is False
@@ -56,14 +66,15 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
         assert networks.get_testnet_mode_button_checked_state() is False
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415', 'Account order: account order could be changed with drag&drop')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
+                 'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
 @pytest.mark.parametrize('address, default_name, name, color, emoji, second_name, second_color, second_emoji', [
-                          pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
-                                       'WatchOnly', '#2a4af5', 'sunglasses', 'Generated', '#216266', 'thumbsup')
-                         ])
+    pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
+                 'WatchOnly', '#2a4af5', 'sunglasses', 'Generated', '#216266', 'thumbsup')
+])
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
-                                               name: str, color: str, emoji: str, second_name: str , second_color: str,
+                                               name: str, color: str, emoji: str, second_name: str, second_color: str,
                                                second_emoji: str):
     with step('Create watch-only wallet account'):
         wallet = main_screen.left_panel.open_wallet()
@@ -120,12 +131,13 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name)
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703416', 'Account order: reordering is not possible having a single account')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703416',
+                 'Account order: reordering is not possible having a single account')
 @pytest.mark.case(703416)
 @pytest.mark.parametrize('default_name, text_on_top', [
-                          pytest.param('Status account', 'This account looks a little lonely. Add another account'
-                                                         ' to enable re-ordering.')
-                         ])
+    pytest.param('Status account', 'This account looks a little lonely. Add another account'
+                                   ' to enable re-ordering.')
+])
 def test_change_account_order_not_possible(main_screen: MainWindow, default_name: str, text_on_top: str):
     with step('Open edit account order view'):
         account_order = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_order()
