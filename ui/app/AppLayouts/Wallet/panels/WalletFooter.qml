@@ -18,6 +18,10 @@ Rectangle {
     property var walletStore
     property var networkConnectionStore
 
+    // Community-token related properties:
+    required property bool isCommunityOwnershipTransfer
+    property string communityName: ""
+
     signal launchShareAddressModal()
     signal launchSendModal()
     signal launchBridgeModal()
@@ -38,7 +42,7 @@ Rectangle {
             buttonType: DisabledTooltipButton.Flat
             aliasedObjectName: "walletFooterSendButton"
             icon: "send"
-            text: qsTr("Send")
+            text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchSendModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
@@ -60,11 +64,13 @@ Rectangle {
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount
+            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer
         }
         
         StatusFlatButton {
             id: buySellBtn
+
+            visible: !root.isCommunityOwnershipTransfer
             icon.name: "token"
             text: qsTr("Buy")
             onClicked: function () {

@@ -32,6 +32,7 @@ StatusDialog {
     property int preSelectedSendType
     property bool interactive: true
     property alias onlyAssets: holdingSelector.onlyAssets
+    property var preSelectedAccount: store.selectedSenderAccount
 
     property alias modalHeader: modalHeader.text
 
@@ -55,7 +56,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!store.selectedSenderAccount && !!holdingSelector.selectedItem
+        if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
                 && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
             popup.store.suggestedRoutes(d.isERC721Transfer ? "1" : amountToSendInput.cryptoValueToSend)
@@ -163,7 +164,7 @@ StatusDialog {
 
         if(d.isBridgeTx) {
             recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
-            recipientLoader.selectedRecipient = {address: store.selectedSenderAccount.address}
+            recipientLoader.selectedRecipient = {address: popup.preSelectedAccount.address}
         }
     }
 
@@ -177,7 +178,7 @@ StatusDialog {
 
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
-        selectedAccount: !!store.selectedSenderAccount ? store.selectedSenderAccount: {}
+        selectedAccount: !!popup.preSelectedAccount ? popup.preSelectedAccount: {}
         getNetworkShortNames: function(chainIds) {return store.getNetworkShortNames(chainIds)}
         onSelectedIndexChanged: {
             store.switchSenderAccount(selectedIndex)
@@ -243,8 +244,8 @@ StatusDialog {
                             id: holdingSelector
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            assetsModel:store.selectedSenderAccount && store.selectedSenderAccount.assets ? store.selectedSenderAccount.assets : null
-                            collectiblesModel: store.selectedSenderAccount ? popup.nestedCollectiblesModel : null
+                            assetsModel: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
+                            collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                             currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
                             visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
                                      (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
@@ -370,8 +371,8 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
 
                         visible: !d.selectedHolding
-                        assets: store.selectedSenderAccount && store.selectedSenderAccount.assets ? store.selectedSenderAccount.assets : null
-                        collectibles: store.selectedSenderAccount ? popup.nestedCollectiblesModel : null
+                        assets: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
+                        collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         onlyAssets: holdingSelector.onlyAssets
                         searchTokenSymbolByAddressFn: function (address) {
                             return store.findTokenSymbolByAddress(address)
@@ -427,7 +428,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
-                        selectedAccount: store.selectedSenderAccount
+                        selectedAccount: popup.preSelectedAccount
                         onRecipientSelected:  {
                             recipientLoader.selectedRecipientType = type
                             recipientLoader.selectedRecipient = recipient
@@ -444,7 +445,7 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
                         interactive: popup.interactive
-                        selectedAccount: store.selectedSenderAccount
+                        selectedAccount: popup.preSelectedAccount
                         ensAddressOrEmpty: recipientLoader.resolvedENSAddress
                         amountToSend: amountToSendInput.cryptoValueToSendFloat
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals

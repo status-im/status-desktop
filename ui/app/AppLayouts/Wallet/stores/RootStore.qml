@@ -120,7 +120,7 @@ QtObject {
 
     function resetCurrentViewedHolding() {
         currentViewedHoldingID = ""
-        currentViewedHoldingType = null
+        currentViewedHoldingType = Constants.HoldingType.Unknown
     }
 
     function setCurrentViewedHoldingType(type) {
@@ -135,6 +135,7 @@ QtObject {
 
     property string currentViewedHoldingID: ""
     property int currentViewedHoldingType
+    readonly property var currentViewedCollectible: collectiblesStore.detailedCollectible
 
     // This should be exposed to the UI via "walletModule", WalletModule should use
     // Accounts Service which keeps the info about that (isFirstTimeAccountLogin).
@@ -289,7 +290,7 @@ QtObject {
     }
 
     function getNetworkShortNames(chainIds) {
-       return networksModule.getNetworkShortNames(chainIds)
+        return networksModule.getNetworkShortNames(chainIds)
     }
 
     function updateWalletAccountPreferredChains(address, preferredChainIds) {

@@ -1336,11 +1336,14 @@ Item {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
+
+            property var preSelectedAccount
             property var preSelectedHolding
             property string preSelectedHoldingID
             property int preSelectedHoldingType
             property int preSelectedSendType: Constants.SendType.Unknown
             property bool onlyAssets: false
+
             sourceComponent: SendModal {
                 onlyAssets: sendModal.onlyAssets
                 onClosed: {
@@ -1349,9 +1352,13 @@ Item {
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
                     sendModal.preSelectedHolding = undefined
+                    sendModal.preSelectedAccount = undefined
                 }
             }
             onLoaded: {
+                if (!!sendModal.preSelectedAccount) {
+                    item.preSelectedAccount = sendModal.preSelectedAccount
+                }
                 if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
                     item.preSelectedSendType = sendModal.preSelectedSendType
                 }
