@@ -150,14 +150,14 @@ Item {
             networkConnectionStore: root.networkConnectionStore
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
             onLaunchSendModal: {
-                root.sendModalPopup.sendType = Constants.SendType.Transfer
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = false
                 root.sendModalPopup.open()
             }
             onLaunchBridgeModal: {
-                root.sendModalPopup.sendType = Constants.SendType.Bridge
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
                 root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
                 root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
                 root.sendModalPopup.onlyAssets = true

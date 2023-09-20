@@ -23,14 +23,14 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method getTokenBalanceOnChain*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string {.base.} =
+method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRoutesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string, sendType: int) {.base.} =
+    tokenSymbol: string, value: string, uuid: string, sendType: SendType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =

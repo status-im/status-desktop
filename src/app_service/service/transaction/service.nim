@@ -310,10 +310,10 @@ QtObject:
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
-    sendType: int
+    sendType: SendType
   ) =
     try:
-      let isERC721Transfer = sendType == ord(ERC721Transfer)
+      let isERC721Transfer = sendType == ERC721Transfer
       var paths: seq[TransactionBridgeDto] = @[]
       var chainID = 0
 
@@ -387,7 +387,7 @@ QtObject:
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
     password: string,
-    sendType: int
+    sendType: SendType
   ) =
     try:
       var chainID = 0
@@ -424,7 +424,7 @@ QtObject:
       error "error handling suggestedRoutesReady response", errDesription=e.msg
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),

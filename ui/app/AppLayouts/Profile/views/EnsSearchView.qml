@@ -63,7 +63,7 @@ Item {
             id: connectEnsModal
             modalHeader: qsTr("Connect username with your pubkey")
             interactive: false
-            sendType: Constants.SendType.ENSSetPubKey
+            preSelectedSendType: Constants.SendType.ENSSetPubKey
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
             preSelectedHolding: store.getAsset(connectEnsModal.store.assets, Constants.ethToken)
@@ -75,7 +75,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndSetPubKey(
                                 root.ensUsernamesStore.chainId,
                                 ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 "",
