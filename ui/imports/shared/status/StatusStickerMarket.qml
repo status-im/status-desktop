@@ -200,7 +200,7 @@ Item {
             required property string packId
 
             interactive: false
-            sendType: Constants.SendType.StickersBuy
+            preSelectedSendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
             preSelectedHolding: store.getAsset(buyStickersModal.store.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
@@ -211,7 +211,7 @@ Item {
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     let maxFeePerGas = path.gasFees.maxFeePerGasM
                     root.store.stickersStore.authenticateAndBuy(packId,
-                                                 selectedAccount.address,
+                                                 store.selectedSenderAccount.address,
                                                  path.gasAmount,
                                                  eip1559Enabled ? "" : path.gasFees.gasPrice,
                                                  eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

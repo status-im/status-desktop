@@ -984,7 +984,8 @@ QtObject {
         ENSSetPubKey,
         StickersBuy,
         Bridge,
-        ERC721Transfer
+        ERC721Transfer,
+        Unknown
     }
 
     enum ErrorType {

@@ -48,7 +48,7 @@ Item {
         sourceComponent: SendModal {
             id: buyEnsModal
             interactive: false
-            sendType: Constants.SendType.ENSRegister
+            preSelectedSendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
             preSelectedHolding: store.getAsset(buyEnsModal.store.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
@@ -61,7 +61,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndRegisterEns(
                                 root.ensUsernamesStore.chainId,
                                 username,
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

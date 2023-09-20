@@ -118,7 +118,7 @@ Item {
             id: releaseEnsModal
             modalHeader: qsTr("Release your username")
             interactive: false
-            sendType: Constants.SendType.ENSRelease
+            preSelectedSendType: Constants.SendType.ENSRelease
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
             preSelectedHolding: store.getAsset(releaseEnsModal.store.assets, Constants.ethToken)
@@ -131,7 +131,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndReleaseEns(
                                 root.chainId,
                                 root.username,
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

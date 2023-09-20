@@ -29,6 +29,7 @@ StatusDialog {
     property var preSelectedHolding
     property string preSelectedHoldingID
     property int preSelectedHoldingType
+    property int preSelectedSendType
     property bool interactive: true
     property alias onlyAssets: holdingSelector.onlyAssets
 
@@ -36,13 +37,10 @@ StatusDialog {
 
     property TransactionStore store: TransactionStore {}
     property CurrenciesStore currencyStore: store.currencyStore
-    property var selectedAccount: store.selectedSenderAccount
     property var collectiblesModel: store.collectiblesModel
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
     property var bestRoutes
-    property alias addressText: recipientLoader.addressText
     property bool isLoading: false
-    property int sendType: Constants.SendType.Transfer
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -52,24 +50,15 @@ StatusDialog {
     }
 
     property var sendTransaction: function() {
-        let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : recipientLoader.resolvedENSAddress
         d.isPendingTx = true
-        popup.store.authenticateAndTransfer(
-                    popup.selectedAccount.address,
-                    recipientAddress,
-                    d.selectedSymbol,
-                    amountToSendInput.cryptoValueToSend,
-                    d.uuid,
-                    sendType)
+        popup.store.authenticateAndTransfer(amountToSendInput.cryptoValueToSend, d.uuid)
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!holdingSelector.selectedItem
+        if(!!store.selectedSenderAccount && !!holdingSelector.selectedItem
                 && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
-
-            popup.store.suggestedRoutes(d.isERC721Transfer ? "1" : amountToSendInput.cryptoValueToSend,
-                                        popup.sendType)
+            popup.store.suggestedRoutes(d.isERC721Transfer ? "1" : amountToSendInput.cryptoValueToSend)
         }
     })
 
@@ -82,16 +71,15 @@ StatusDialog {
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.totalCurrencyBalance.amount : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.totalBalance.amount : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string selectedSymbol: store.selectedAssetSymbol
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.currencyStore.currentCurrency : selectedSymbol
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.currencyStore.currentCurrency : store.selectedAssetSymbol
         readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
         property double totalFeesInFiat
         property double totalAmountToReceive
-        readonly property bool isBridgeTx: popup.sendType === Constants.SendType.Bridge
-        readonly property bool isERC721Transfer: popup.sendType === Constants.SendType.ERC721Transfer
+        readonly property bool isBridgeTx: store.sendType === Constants.SendType.Bridge
+        readonly property bool isERC721Transfer: store.sendType === Constants.SendType.ERC721Transfer
         property var selectedHolding: null
         property var selectedHoldingType: Constants.HoldingType.Unknown
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.HoldingType.Asset
@@ -125,11 +113,11 @@ StatusDialog {
 
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.HoldingType.Asset) {
-                if(popup.sendType !== Constants.SendType.Bridge)
-                    popup.sendType = Constants.SendType.Transfer
+                if(store.sendType !== Constants.SendType.Bridge)
+                    store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetSymbol(selectedHolding.symbol)
             } else if (d.selectedHoldingType === Constants.HoldingType.Collectible) {
-                popup.sendType = Constants.SendType.ERC721Transfer
+                store.setSendType(Constants.SendType.ERC721Transfer)
                 amountToSendInput.input.text = 1
                 store.setSelectedAssetSymbol(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
                 store.setRouteEnabledFromChains(selectedHolding.chainId)
@@ -148,10 +136,12 @@ StatusDialog {
         color: Theme.palette.baseColor3
     }
 
-    onSelectedAccountChanged: popup.recalculateRoutesAndFees()
-
     onOpened: {
         amountToSendInput.input.input.edit.forceActiveFocus()
+
+        if(popup.preSelectedSendType !== Constants.SendType.Unknown) {
+            store.setSendType(popup.preSelectedSendType)
+        }
 
         if (popup.preSelectedHoldingType !== Constants.HoldingType.Unknown) {
             tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
@@ -173,7 +163,7 @@ StatusDialog {
 
         if(d.isBridgeTx) {
             recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
-            recipientLoader.selectedRecipient = {address: popup.selectedAccount.address}
+            recipientLoader.selectedRecipient = {address: store.selectedSenderAccount.address}
         }
     }
 
@@ -187,9 +177,13 @@ StatusDialog {
 
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
-        selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
+        selectedAccount: !!store.selectedSenderAccount ? store.selectedSenderAccount: {}
         getNetworkShortNames: function(chainIds) {return store.getNetworkShortNames(chainIds)}
-        onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
+        onSelectedIndexChanged: {
+            store.switchSenderAccount(selectedIndex)
+            d.setSelectedHoldingId(d.selectedHolding.symbol, d.selectedHoldingType)
+            popup.recalculateRoutesAndFees()
+        }
     }
 
 
@@ -249,8 +243,8 @@ StatusDialog {
                             id: holdingSelector
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            assetsModel: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
-                            collectiblesModel: popup.selectedAccount ? popup.nestedCollectiblesModel : null
+                            assetsModel:store.selectedSenderAccount && store.selectedSenderAccount.assets ? store.selectedSenderAccount.assets : null
+                            collectiblesModel: store.selectedSenderAccount ? popup.nestedCollectiblesModel : null
                             currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
                             visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
                                      (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
@@ -294,7 +288,7 @@ StatusDialog {
                             Layout.fillWidth: true
                             isBridgeTx: d.isBridgeTx
                             interactive: popup.interactive
-                            selectedSymbol: d.selectedSymbol
+                            selectedSymbol: store.selectedAssetSymbol
                             maxInputBalance: d.maxInputBalance
                             currentCurrency: popup.currencyStore.currentCurrency
 
@@ -324,7 +318,7 @@ StatusDialog {
                             visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                      popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
                             isLoading: popup.isLoading
-                            selectedSymbol: d.selectedSymbol
+                            selectedSymbol: store.selectedAssetSymbol
                             isBridgeTx: d.isBridgeTx
                             cryptoValueToReceive: d.totalAmountToReceive
                             inputIsFiat: amountToSendInput.inputIsFiat
@@ -376,8 +370,8 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
 
                         visible: !d.selectedHolding
-                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
-                        collectibles: popup.selectedAccount ? popup.nestedCollectiblesModel : null
+                        assets: store.selectedSenderAccount && store.selectedSenderAccount.assets ? store.selectedSenderAccount.assets : null
+                        collectibles: store.selectedSenderAccount ? popup.nestedCollectiblesModel : null
                         onlyAssets: holdingSelector.onlyAssets
                         searchTokenSymbolByAddressFn: function (address) {
                             return store.findTokenSymbolByAddress(address)
@@ -422,6 +416,7 @@ StatusDialog {
                             selectedAsset: d.selectedHolding
                             onIsLoading: popup.isLoading = true
                             onRecalculateRoutesAndFees: popup.recalculateRoutesAndFees()
+                            onAddressTextChanged: store.setSelectedRecipient(addressText)
                         }
                     }
 
@@ -432,7 +427,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
-                        selectedAccount: popup.selectedAccount
+                        selectedAccount: store.selectedSenderAccount
                         onRecipientSelected:  {
                             recipientLoader.selectedRecipientType = type
                             recipientLoader.selectedRecipient = recipient
@@ -449,7 +444,7 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
                         interactive: popup.interactive
-                        selectedAccount: popup.selectedAccount
+                        selectedAccount: store.selectedSenderAccount
                         ensAddressOrEmpty: recipientLoader.resolvedENSAddress
                         amountToSend: amountToSendInput.cryptoValueToSendFloat
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
@@ -470,7 +465,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         visible: recipientLoader.ready && !!d.selectedHolding && networkSelector.advancedOrCustomMode && amountToSendInput.inputNumberValid
-                        selectedTokenSymbol: d.selectedSymbol
+                        selectedTokenSymbol: store.selectedAssetSymbol
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
                         store: popup.store

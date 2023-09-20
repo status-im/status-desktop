@@ -4,6 +4,7 @@ import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./netw
 import app/modules/shared_models/token_model
 import app/modules/shared_models/collectibles_model as collectibles
 import app/modules/shared_models/collectibles_nested_model as nested_collectibles
+import app_service/service/transaction/dto as transaction_dto
 
 QtObject:
   type
@@ -22,6 +23,8 @@ QtObject:
       transactionRoutes: TransactionRoutes
       selectedAssetSymbol: string
       showUnPreferredChains: bool
+      sendType: transaction_dto.SendType
+      selectedRecipient: string
       # for receive modal
       selectedReceiveAccount: AccountItem
 
@@ -143,6 +146,28 @@ QtObject:
     read = getShowUnPreferredChains
     notify = showUnPreferredChainsChanged
 
+  proc sendTypeChanged*(self: View) {.signal.}
+  proc getSendType(self: View): int {.slot.} =
+    return ord(self.sendType)
+  proc setSendType(self: View, sendType: int) {.slot.} =
+    self.sendType = (SendType)sendType
+    self.sendTypeChanged()
+  QtProperty[int] sendType:
+    write = setSendType
+    read = getSendType
+    notify = sendTypeChanged
+
+  proc selectedRecipientChanged*(self: View) {.signal.}
+  proc getSelectedRecipient(self: View): string {.slot.} =
+    return self.selectedRecipient
+  proc setSelectedRecipient(self: View, selectedRecipient: string) {.slot.} =
+    self.selectedRecipient = selectedRecipient
+    self.selectedRecipientChanged()
+  QtProperty[string] selectedRecipient:
+    read = getSelectedRecipient
+    write = setSelectedRecipient
+    notify = selectedRecipientChanged
+
   proc updateNetworksDisabledChains(self: View) =
     # if the setting to show unpreferred chains is toggled, add all unpreferred chains to disabled chains list
     if not self.showUnPreferredChains:
@@ -172,15 +197,14 @@ QtObject:
   proc transactionWasSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.slot} =
     self.transactionSent(chainId, txHash, uuid, error)
 
-  proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, sendType: int) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, sendType)
+  proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetSymbol, value, uuid, self.sendType)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
-      self.transactionRoutes = routes
-      self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
-  proc suggestedRoutes*(self: View, amount: string, sendType: int): string {.slot.} =
+    self.transactionRoutes = routes
+    self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
+  proc suggestedRoutes*(self: View, amount: string): string {.slot.} =
     var parsedAmount = stint.u256(0)
     try:
       parsedAmount = amount.parse(Uint256)
@@ -189,7 +213,7 @@ QtObject:
 
     return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(),
       parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
-      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(), sendType,  self.fromNetworksModel.getRouteLockedChainIds())
+      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(), self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)
@@ -235,6 +259,8 @@ QtObject:
       self.toNetworksModel.updateToNetworks(path)
 
   proc resetStoredProperties*(self: View) {.slot.} =
+    self.sendType = transaction_dto.SendType.Transfer
+    self.selectedRecipient = ""
     self.fromNetworksModel.reset()
     self.toNetworksModel.reset()
     self.transactionRoutes = newTransactionRoutes()

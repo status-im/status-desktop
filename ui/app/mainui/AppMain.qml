@@ -1328,38 +1328,32 @@ Item {
             id: sendModal
             active: false
 
-            function open(address = "") {
+            function open() {
                 this.active = true
-                this.item.addressText = address;
                 this.item.open()
             }
             function closed() {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
-            property var selectedAccount
             property var preSelectedHolding
             property string preSelectedHoldingID
             property int preSelectedHoldingType
-            property int sendType: -1
+            property int preSelectedSendType: Constants.SendType.Unknown
             property bool onlyAssets: false
             sourceComponent: SendModal {
                 onlyAssets: sendModal.onlyAssets
                 onClosed: {
                     sendModal.closed()
-                    sendModal.sendType = -1
+                    sendModal.preSelectedSendType = Constants.SendType.Unknown
                     sendModal.preSelectedHoldingID = ""
                     sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
                     sendModal.preSelectedHolding = undefined
-                    sendModal.selectedAccount = undefined
                 }
             }
             onLoaded: {
-                if (!!sendModal.selectedAccount) {
-                    item.selectedAccount = sendModal.selectedAccount
-                }
-                if(sendModal.sendType >= 0) {
-                    item.sendType = sendModal.sendType
+                if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
+                    item.preSelectedSendType = sendModal.preSelectedSendType
                 }
                 if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
                     item.preSelectedHoldingID = sendModal.preSelectedHoldingID

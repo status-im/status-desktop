@@ -37,6 +37,16 @@ QtObject {
     }
     property string selectedAssetSymbol: walletSectionSendInst.selectedAssetSymbol
     property bool showUnPreferredChains: walletSectionSendInst.showUnPreferredChains
+    property int sendType: walletSectionSendInst.sendType
+    property string selectedRecipient: walletSectionSendInst.selectedRecipient
+
+    function setSendType(sendType) {
+        walletSectionSendInst.setSendType(sendType)
+    }
+
+    function setSelectedRecipient(recipientAddress) {
+        walletSectionSendInst.setSelectedRecipient(recipientAddress)
+    }
 
     function getEtherscanLink(chainID) {
         return networksModule.all.getBlockExplorerURL(chainID)
@@ -46,12 +56,12 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, sendType) {
-        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, sendType)
+    function authenticateAndTransfer(amount, uuid) {
+        walletSectionSendInst.authenticateAndTransfer(amount, uuid)
     }
 
-    function suggestedRoutes(amount, sendType) {
-        walletSectionSendInst.suggestedRoutes(amount, sendType)
+    function suggestedRoutes(amount) {
+        walletSectionSendInst.suggestedRoutes(amount)
     }
 
     function resolveENS(value) {

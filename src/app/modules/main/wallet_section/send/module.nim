@@ -30,7 +30,7 @@ type TmpSendTransactionDetails = object
   value: string
   paths: seq[TransactionPathDto]
   uuid: string
-  sendType: int
+  sendType: SendType
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -242,7 +242,7 @@ method viewDidLoad*(self: Module) =
 method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
   return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
 
-method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string, sendType: int) =
+method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType) =
   self.tmpSendTransactionDetails.fromAddr = from_addr
   self.tmpSendTransactionDetails.toAddr = to_addr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
@@ -290,7 +290,7 @@ method onUserAuthenticated*(self: Module, password: string) =
 method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: string) =
   self.view.transactionWasSent(chainId, txHash, uuid, error)
 
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string =
+method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
   return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
