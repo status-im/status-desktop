@@ -16,8 +16,9 @@ ColumnLayout {
     property string nftName
     property string nftUrl
     property string tokenId
-    property string contractAddress
+    property string tokenAddress
     property bool strikethrough: false
+    property bool areTestNetworksEnabled: false
 
     spacing: Style.current.padding
 
@@ -100,8 +101,11 @@ ColumnLayout {
                     icon.name: "external"
                     type: StatusRoundButton.Type.Quinary
                     radius: 8
-                    visible: nftPreviewSensor.hovered && !!root.tokenId && !!root.contractAddress
-                    onClicked: Global.openLink("https://etherscan.io/nft/%1/%2".arg(root.contractAddress).arg(root.tokenId))
+                    visible: nftPreviewSensor.hovered && !!root.tokenId && !!root.tokenAddress
+                    onClicked: {
+                        const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
+                        Global.openLink("%1/nft/%2/%3".arg(link).arg(root.tokenAddress).arg(root.tokenId))
+                    }
                 }
             }
         }

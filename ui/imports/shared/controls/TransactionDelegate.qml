@@ -504,8 +504,8 @@ StatusListItem {
             return qsTr("Via %1 on %2").arg(name).arg(networkName)
         case Constants.TransactionType.Mint:
             if (allAccounts)
-                return qsTr("%1 via %2 in %4").arg(transactionValue).arg(networkName).arg(toAddress)
-            return qsTr("%1 via %2").arg(transactionValue).arg(networkName).arg(networkName)
+                return qsTr("%1 via %2 in %3").arg(transactionValue).arg(networkName).arg(toAddress)
+            return qsTr("%1 via %2").arg(transactionValue).arg(networkName)
         default:
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)

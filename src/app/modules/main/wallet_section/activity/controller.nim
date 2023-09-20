@@ -30,6 +30,9 @@ proc toRef*[T](obj: T): ref T =
 const FETCH_BATCH_COUNT_DEFAULT = 10
 const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
 
+type
+  CollectiblesToTokenConverter* = proc (id: string): backend_activity.Token
+
 QtObject:
   type
     Controller* = ref object of QObject
@@ -54,6 +57,8 @@ QtObject:
       allChainsSelected: bool
 
       requestId: int32
+
+      collectiblesToTokenConverter: CollectiblesToTokenConverter
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -238,7 +243,8 @@ QtObject:
   proc newController*(requestId: int32,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
-                      events: EventEmitter): Controller =
+                      events: EventEmitter,
+                      collectiblesConverter: CollectiblesToTokenConverter): Controller =
     new(result, delete)
 
     result.requestId = requestId
@@ -258,6 +264,8 @@ QtObject:
     result.allAddressesSelected = false
     result.chainIds = @[]
     result.allChainsSelected = true
+
+    result.collectiblesToTokenConverter = collectiblesConverter
 
     result.setup()
 
@@ -286,6 +294,20 @@ QtObject:
       addresses[i] = addressesJson[i].getStr()
 
     self.currentActivityFilter.counterpartyAddresses = addresses
+
+  proc setFilterCollectibles*(self: Controller, collectiblesArrayJsonString: string) {.slot.} =
+    let collectiblesJson = parseJson(collectiblesArrayJsonString)
+    if collectiblesJson.kind != JArray:
+      error "invalid array of json strings"
+      return
+
+    var collectibles = newSeq[backend_activity.Token]()
+    for i in 0 ..< collectiblesJson.len:
+      let uid = collectiblesJson[i].getStr()
+      let token = self.collectiblesToTokenConverter(uid)
+      collectibles.add(token)
+
+    self.currentActivityFilter.collectibles = collectibles
 
   # Depends on self.filterTokenCodes and self.chainIds, so should be called after updating them
   proc updateAssetsIdentities(self: Controller) =
