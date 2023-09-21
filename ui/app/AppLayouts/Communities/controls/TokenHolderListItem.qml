@@ -36,8 +36,8 @@ ItemDelegate {
 
     property var contactDetails: null
 
-    readonly property string addressElided: StatusQUtils.Utils.elideText(root.walletAddress, 6, 3).replace(
-                                                "0x", "0" + String.fromCodePoint(0x00D7))
+    readonly property string addressElided:
+        StatusQUtils.Utils.elideAndFormatWalletAddress(root.walletAddress)
 
     signal clicked(var mouse)
 
