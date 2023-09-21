@@ -721,6 +721,7 @@ StackView {
 
                 SelfDestructFeesSubscriber {
                     id: remotelyDestructFeeSubscriber
+
                     walletsAndAmounts: remotelyDestructPopup.selectedWalletsAndAmounts
                     accountAddress: remotelyDestructPopup.selectedAccount
                     tokenKey: view.token.key
@@ -729,65 +730,18 @@ StackView {
                 }
             }
 
-            AlertPopup {
-                id: alertPopup
-
-                title: qsTr("Remotely destruct %n token(s)", "",
-                            remotelyDestructPopup.tokenCount)
-                acceptBtnText: qsTr("Remotely destruct")
-                alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
-
-                onAcceptClicked: {
-                    signTransactionPopup.isRemotelyDestructTransaction = true
-                    signTransactionPopup.open()
-                }
-            }
-
-            SignTokenTransactionsPopup {
-                id: signTransactionPopup
-
-                property bool isRemotelyDestructTransaction
-                property var feeSubscriber: isRemotelyDestructTransaction
-                                             ? remotelyDestructPopup.feeSubscriber
-                                             : burnTokensPopup.feeSubscriber
-
-                readonly property string tokenKey: tokenViewPage.token.key
-
-                function signTransaction() {
-                    if(signTransactionPopup.isRemotelyDestructTransaction)
-                        root.remotelyDestructCollectibles(footer.walletsAndAmounts,
-                                                          tokenKey, footer.accountAddress)
-                    else
-                        root.burnToken(tokenKey, footer.burnAmount, footer.accountAddress)
-
-                    footer.closePopups()
-                }
-
-                title: signTransactionPopup.isRemotelyDestructTransaction
-                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(tokenName)
-                       : qsTr("Sign transaction - Burn %1 tokens").arg(tokenName)
-
-                tokenName: footer.token.name
-                accountName: footer.token.accountName
-                networkName: footer.token.chainName
-                feeText: feeSubscriber.feeText
-                isFeeLoading: feeSubscriber.feeText === "" && feeSubscriber.feeErrorText === ""
-                errorText: feeSubscriber.feeErrorText
-
-                onSignTransactionClicked: signTransaction()
-            }
-
             BurnTokensPopup {
                 id: burnTokensPopup
-                
+
                 property alias feeSubscriber: burnTokensFeeSubscriber
+
                 communityName: root.communityName
                 tokenName: footer.token.name
                 remainingTokens: footer.token.remainingTokens
                 multiplierIndex: footer.token.multiplierIndex
                 tokenSource: footer.token.artworkSource
                 chainName: footer.token.chainName
-                
+
                 onAmountToBurnChanged: burnTokensFeeSubscriber.updateAmount()
 
                 feeText: burnTokensFeeSubscriber.feeText
@@ -805,6 +759,7 @@ StackView {
 
                 BurnTokenFeesSubscriber {
                     id: burnTokensFeeSubscriber
+
                     readonly property var updateAmount: Backpressure.debounce(burnTokensFeeSubscriber, 500, () => {
                         burnTokensFeeSubscriber.amount = burnTokensPopup.amountToBurn
                     })
@@ -813,6 +768,64 @@ StackView {
                     accountAddress: burnTokensPopup.selectedAccountAddress
                     enabled: burnTokensPopup.visible || signTransactionPopup.visible
                     Component.onCompleted: root.registerBurnTokenFeesSubscriber(burnTokensFeeSubscriber)
+                }
+            }
+
+            AlertPopup {
+                id: alertPopup
+
+                title: qsTr("Remotely destruct %n token(s)", "",
+                            remotelyDestructPopup.tokenCount)
+                acceptBtnText: qsTr("Remotely destruct")
+                alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
+
+                onAcceptClicked: {
+                    signTransactionPopup.isRemotelyDestructTransaction = true
+                    signTransactionPopup.open()
+                }
+            }
+
+            SignMultiTokenTransactionsPopup {
+                id: signTransactionPopup
+
+                property bool isRemotelyDestructTransaction
+
+                readonly property string tokenName: footer.token.name
+
+                title: isRemotelyDestructTransaction
+                       ? qsTr("Sign transaction - Remotely destruct %1 token").arg(tokenName)
+                       : qsTr("Sign transaction - Burn %1 tokens").arg(tokenName)
+
+                accountName: footer.token.accountName
+
+                totalFeeText: isRemotelyDestructTransaction
+                              ? remotelyDestructPopup.feeText
+                              : burnTokensPopup.feeText
+
+                errorText: isRemotelyDestructTransaction
+                           ? remotelyDestructPopup.feeErrorText
+                           : burnTokensPopup.feeErrorText
+
+                model: QtObject {
+                    readonly property string title:
+                        signTransactionPopup.isRemotelyDestructTransaction
+                        ? qsTr("Remotely destruct %Ln %1 token(s) on %2", "",
+                               remotelyDestructPopup.tokenCount)
+                          .arg(remotelyDestructPopup.collectibleName)
+                          .arg(remotelyDestructPopup.chainName)
+                        : burnTokensPopup.feeLabel
+                    readonly property string feeText: signTransactionPopup.totalFeeText
+                    readonly property bool error: signTransactionPopup.errorText !== ""
+                }
+
+                onSignTransactionClicked: {
+                    if(signTransactionPopup.isRemotelyDestructTransaction)
+                        root.remotelyDestructCollectibles(footer.walletsAndAmounts,
+                                                          tokenKey, footer.accountAddress)
+                    else
+                        root.burnToken(tokenKey, footer.burnAmount, footer.accountAddress)
+
+                    footer.closePopups()
                 }
             }
         }
