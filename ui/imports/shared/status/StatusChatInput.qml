@@ -437,7 +437,8 @@ Rectangle {
             } else if (QClipboardProxy.hasText) {
                 const clipboardText = Utils.plainText(QClipboardProxy.text)
                 // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
-                if ((messageLength + clipboardText.length) > control.messageLimitHard)
+                const selectionLength = messageInputField.selectionEnd - messageInputField.selectionStart;
+                if ((messageLength + clipboardText.length - selectionLength) > control.messageLimitHard)
                 {
                     messageLengthLimitTooltip.open();
                     event.accepted = true;
