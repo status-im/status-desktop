@@ -575,7 +575,7 @@ StatusScrollView {
             }
         }
 
-        SignMultiTokenTransactionsPopup {
+        SignTransactionsPopup {
             id: feesPopup
 
             property string accountAddress

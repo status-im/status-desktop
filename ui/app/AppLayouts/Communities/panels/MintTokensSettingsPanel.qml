@@ -245,7 +245,7 @@ StackView {
                     Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
                 }
 
-                SignMultiTokenTransactionsPopup {
+                SignTransactionsPopup {
                     id: signMintPopup
 
                     title: qsTr("Sign transaction - Mint %1 tokens").arg(
@@ -445,7 +445,7 @@ StackView {
                     Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
                 }
 
-                SignMultiTokenTransactionsPopup {
+                SignTransactionsPopup {
                     id: signMintPopup
 
                     title: qsTr("Sign transaction - Mint %1 token").arg(
@@ -785,7 +785,7 @@ StackView {
                 }
             }
 
-            SignMultiTokenTransactionsPopup {
+            SignTransactionsPopup {
                 id: signTransactionPopup
 
                 property bool isRemotelyDestructTransaction
