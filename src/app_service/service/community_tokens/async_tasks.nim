@@ -209,3 +209,108 @@ const fetchCollectibleOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, n
       "error": e.msg
     }
     arg.finish(output)
+
+type
+  GetCommunityTokensDetailsArg = ref object of QObjectTaskArg
+    communityId*: string
+
+const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetCommunityTokensDetailsArg](argEncoded)
+
+  try:
+    proc getRemainingSupply(chainId: int, contractAddress: string): string =
+      let response = tokens_backend.remainingSupply(chainId, contractAddress)
+      return response.result.getStr()
+
+    proc getPendingTransactions(): seq[TransactionDto] =
+      let response = backend.getPendingTransactions().result
+      if (response.kind == JArray and response.len > 0):
+        return response.getElems().map(x => x.toPendingTransactionDto())
+
+      return @[]
+
+    proc getCommunityTokenBurnState(chainId: int, contractAddress: string): ContractTransactionStatus =
+      let allPendingTransactions = getPendingTransactions()
+      
+      let burnTransactions = allPendingTransactions.filter(x => x.typeValue == $PendingTransactionTypeDto.BurnCommunityToken)
+
+      for transaction in burnTransactions:
+        try:
+          let communityToken = toCommunityTokenDto(parseJson(transaction.additionalData))
+          if communityToken.chainId == chainId and communityToken.address == contractAddress:
+            return ContractTransactionStatus.InProgress
+        except Exception:
+          discard
+      return ContractTransactionStatus.Completed
+
+    proc getRemoteDestructedAddresses(chainId: int, contractAddress: string): seq[string] =
+      let allPendingTransactions = getPendingTransactions()
+      let remoteDestructTransactions = allPendingTransactions.filter(x => x.typeValue == $PendingTransactionTypeDto.RemoteDestructCollectible)
+      for transaction in remoteDestructTransactions:
+        let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(transaction.additionalData))
+        if remoteDestructTransactionDetails.chainId == chainId and remoteDestructTransactionDetails.contractAddress == contractAddress:
+          return remoteDestructTransactionDetails.addresses
+
+    proc getCommunityToken(communityTokens: seq[CommunityTokenDto], chainId: int, address: string): CommunityTokenDto =
+      for token in communityTokens:
+        if token.chainId == chainId and token.address == address:
+          return token
+
+    proc getRemoteDestructedAmount(communityTokens: seq[CommunityTokenDto],chainId: int, contractAddress: string): string =
+      let tokenType = getCommunityToken(communityTokens, chainId, contractAddress).tokenType
+      if tokenType != TokenType.ERC721:
+        return "0"
+      let response = tokens_backend.remoteDestructedAmount(chainId, contractAddress)
+      return response.result.getStr()
+
+    proc createTokenItemJson(communityTokens: seq[CommunityTokenDto], tokenDto: CommunityTokenDto): JsonNode =
+      try:
+        let remainingSupply = if tokenDto.infiniteSupply:
+            "0"
+          else:
+            getRemainingSupply(tokenDto.chainId, tokenDto.address)
+
+        let burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
+        let remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
+        
+        let destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
+
+        return %* {
+          "address": tokenDto.address,
+          "remainingSupply": remainingSupply,
+          "burnState": burnState.int,
+          "remoteDestructedAddresses": %* (remoteDestructedAddresses),
+          "destructedAmount": destructedAmount,
+          "error": "",
+        }
+      except Exception as e:
+        return %* {
+          "error": e.msg,
+        }
+
+    let response = tokens_backend.getCommunityTokens(arg.communityId)
+
+    if not response.error.isNil:
+      raise newException(ValueError, "Error getCommunityTokens" & response.error.message)
+
+    let communityTokens = parseCommunityTokens(response)
+
+    let communityTokenJsonItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): JsonNode =
+      result = createTokenItemJson(communityTokens, tokenDto)
+      if result["error"].getStr != "":
+        raise newException(ValueError, "Error creating token item" & result["error"].getStr)
+    )
+
+    let output = %* {
+      "communityTokensResponse": response,
+      "communityTokenJsonItems": communityTokenJsonItems,
+      "communityId": arg.communityId,
+      "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+      "communityId": arg.communityId,
+      "error": e.msg
+    }
+    arg.finish(output)

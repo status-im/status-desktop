@@ -255,16 +255,54 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenIte
   let destructedAmount = self.controller.getRemoteDestructedAmount(tokenDto.chainId, tokenDto.address)
   result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, burnState, remoteDestructedAddresses, remainingSupply, destructedAmount)
 
+proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, communityTokenJsonItems: JsonNode) : TokenItem =
+  # These 3 values come from local caches so they can be done sync
+  let network = self.controller.getNetwork(tokenDto.chainId)
+  let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
+  let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
+
+  var tokenDetails: JsonNode
+
+  for details in communityTokenJsonItems.items:
+    if details["address"].getStr ==  tokenDto.address:
+      tokenDetails = details
+      break
+  
+  if tokenDetails.kind == JNull:
+    error "Token details not found for token", name = tokenDto.name, address = tokenDto.address
+    return
+
+  let remainingSupply = tokenDetails["remainingSupply"].getStr
+  let burnState = tokenDetails["burnState"].getInt
+  let remoteDestructedAddresses = map(tokenDetails["remoteDestructedAddresses"].getElems(),
+    proc(remoteDestructAddress: JsonNode): string = remoteDestructAddress.getStr)
+  let destructedAmount = tokenDetails["destructedAmount"].getStr
+
+  result = initTokenItem(
+    tokenDto,
+    network,
+    tokenOwners,
+    ownerAddressName,
+    ContractTransactionStatus(burnState),
+    remoteDestructedAddresses,
+    stint.parse(remainingSupply, Uint256),
+    stint.parse(destructedAmount, Uint256),
+  )
+
+method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
+    communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) =
+  let communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
+    result = self.createTokenItemImproved(tokenDto, communityTokenJsonItems)
+  )
+  self.view.model().setTokenItems(communityId, communityTokensItems)
+
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
   var communityTokensItems: seq[TokenItem]
   if (isCommunity):
     communityDetails = self.controller.getCommunityById(channelGroup.id)
-    let communityTokens = self.controller.getCommunityTokens(channelGroup.id)
-    communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
-      result = self.createTokenItem(tokenDto)
-    )
+    self.controller.getCommunityTokensDetailsAsync(channelGroup.id)
     # Get community members' revealed accounts
     # We will update the model later when we finish loading the accounts
     if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:

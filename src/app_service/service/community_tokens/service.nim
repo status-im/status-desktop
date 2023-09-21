@@ -13,6 +13,7 @@ import ../wallet_account/service as wallet_account_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
 from backend/collectibles_types import CollectibleOwner
+import ../../../backend/backend
 
 import ../../../backend/response_type
 
@@ -33,39 +34,10 @@ export community_token_owner
 
 const ethSymbol = "ETH"
 
-type
-  CommunityTokenAndAmount* = object
-    communityToken*: CommunityTokenDto
-    amount*: Uint256 # for assets the value is converted to wei
-
-type
-  ContractTuple* = tuple
-    chainId: int
-    address: string
-
-proc `%`*(self: ContractTuple): JsonNode =
-  result = %* {
-    "address": self.address,
-    "chainId": self.chainId
-  }
-
-proc toContractTuple*(json: JsonNode): ContractTuple =
-  return (json["chainId"].getInt, json["address"].getStr)
-
-type
-  ChainWalletTuple* = tuple
-    chainId: int
-    address: string
-
 include async_tasks
 
 logScope:
   topics = "community-tokens-service"
-
-type
-  WalletAndAmount* = object
-    walletAddress*: string
-    amount*: int
 
 type
   CommunityTokenDeployedStatusArgs* = ref object of Args
@@ -114,50 +86,6 @@ type
     transactionHash*: string
     status*: ContractTransactionStatus
 
-type
-  RemoteDestroyTransactionDetails* = object
-    chainId*: int
-    contractAddress*: string
-    addresses*: seq[string]
-
-proc `%`*(self: RemoteDestroyTransactionDetails): JsonNode =
-  result = %* {
-    "contractAddress": self.contractAddress,
-    "chainId": self.chainId,
-    "addresses": self.addresses
-  }
-
-type
-  OwnerTokenDeploymentTransactionDetails* = object
-    ownerToken*: ContractTuple
-    masterToken*: ContractTuple
-    communityId*: string
-
-proc `%`*(self: OwnerTokenDeploymentTransactionDetails): JsonNode =
-  result = %* {
-    "ownerToken": %self.ownerToken,
-    "masterToken": %self.masterToken,
-    "communityId": self.communityId
-  }
-
-proc toOwnerTokenDeploymentTransactionDetails*(jsonObj: JsonNode): OwnerTokenDeploymentTransactionDetails =
-  result = OwnerTokenDeploymentTransactionDetails()
-  try:
-    result.ownerToken = (jsonObj["ownerToken"]["chainId"].getInt, jsonObj["ownerToken"]["address"].getStr)
-    result.masterToken = (jsonObj["masterToken"]["chainId"].getInt, jsonObj["masterToken"]["address"].getStr)
-    result.communityId = jsonObj["communityId"].getStr
-  except Exception as e:
-    error "Error parsing OwnerTokenDeploymentTransactionDetails json", msg=e.msg
-
-proc toRemoteDestroyTransactionDetails*(json: JsonNode): RemoteDestroyTransactionDetails =
-  return RemoteDestroyTransactionDetails(chainId: json["chainId"].getInt, contractAddress: json["contractAddress"].getStr, addresses: to(json["addresses"], seq[string]))
-
-type
-  ComputeFeeErrorCode* {.pure.} = enum
-    Success,
-    Infura,
-    Balance,
-    Other
 
 type
   ComputeFeeArgs* = ref object of Args
@@ -205,6 +133,12 @@ type
     chainId*: int
     owners*: seq[CommunityCollectibleOwner]
 
+type
+  CommunityTokensDetailsArgs* =  ref object of Args
+    communityId*: string
+    communityTokens*: seq[CommunityTokenDto]
+    communityTokenJsonItems*: JsonNode
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
 const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED* = "communityTokenDeploymentStarted"
@@ -220,6 +154,7 @@ const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "removeCommunityTokenFailed"
 const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokenRemoved"
 const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "ownerTokenDeployStatus"
 const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "ownerTokenDeploymentStarted"
+const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokenDetailsLoaded"
 
 const SIGNAL_DEPLOY_OWNER_TOKEN* = "deployOwnerToken"
 
@@ -542,6 +477,34 @@ QtObject:
     except RpcException:
         error "Error getting all community tokens", message = getCurrentExceptionMsg()
 
+  proc getCommunityTokensDetailsAsync*(self: Service, communityId: string) =
+    let arg = GetCommunityTokensDetailsArg(
+      tptr: cast[ByteAddress](getCommunityTokensDetailsTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onCommunityTokensDetailsLoaded",
+      communityId: communityId
+    )
+    self.threadpool.start(arg)
+
+  proc onCommunityTokensDetailsLoaded*(self:Service, response: string) {.slot.} =
+    try:
+      let responseJson = response.parseJson()
+
+      if responseJson["error"].getStr != "":
+        raise newException(ValueError, responseJson["error"].getStr)
+
+      let communityTokens = parseCommunityTokens(responseJson["communityTokensResponse"]["result"])
+      let communityTokenJsonItems = responseJson["communityTokenJsonItems"]
+
+      self.events.emit(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED,
+        CommunityTokensDetailsArgs(
+          communityId: responseJson["communityId"].getStr,
+          communityTokens: communityTokens,
+          communityTokenJsonItems: communityTokenJsonItems,
+        ))
+    except RpcException as e:
+      error "Error getting community tokens details", message = e.msg
+
   proc removeCommunityToken*(self: Service, communityId: string, chainId: int, address: string) =
     try:
       let response = tokens_backend.removeCommunityToken(chainId, address)
@@ -579,8 +542,8 @@ QtObject:
 
   proc getRemoteDestructedAddresses*(self: Service, chainId: int, contractAddress: string): seq[string] =
     try:
-      let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.RemoteDestructCollectible)
-      for transaction in burnTransactions:
+      let remoteDestructTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.RemoteDestructCollectible)
+      for transaction in remoteDestructTransactions:
         let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(transaction.additionalData))
         if remoteDestructTransactionDetails.chainId == chainId and remoteDestructTransactionDetails.contractAddress == contractAddress:
           return remoteDestructTransactionDetails.addresses

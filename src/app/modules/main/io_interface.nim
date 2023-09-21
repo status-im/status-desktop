@@ -1,4 +1,4 @@
-import NimQml, stint
+import NimQml, stint, json
 
 import app_service/service/settings/service as settings_service
 import app_service/service/node_configuration/service as node_configuration_service
@@ -368,6 +368,10 @@ method insertMockedKeycardAction*(self: AccessInterface, cardIndex: int) {.base.
   raise newException(ValueError, "No implementation available")
 
 method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokensDetailsLoaded*(self: AccessInterface, communityId: string,
+    communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
