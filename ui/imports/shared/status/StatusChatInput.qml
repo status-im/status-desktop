@@ -328,7 +328,6 @@ Rectangle {
     function onKeyPress(event) {
         // get text without HTML formatting
         const messageLength = messageInputField.getText(0, messageInputField.length).length;
-        console.log("messageLength: " + messageLength);
 
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
@@ -1267,7 +1266,6 @@ Rectangle {
                             }
 
                             onTextChanged: {
-                                console.log("onTextChanged: length: " + length)
                                 if (length <= control.messageLimit) {
                                     if (length === 0) {
                                         mentionsPos = [];
