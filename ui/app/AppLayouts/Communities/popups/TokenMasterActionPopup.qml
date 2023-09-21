@@ -45,6 +45,9 @@ StatusDialog {
 
     property var accountsModel
     readonly property alias selectedAccount: d.accountAddress
+    readonly property alias selectedAccountName: d.accountName
+
+    readonly property alias deleteMessages: deleteMessagesSwitch.checked
 
     readonly property string feeLabel: qsTr("Remotely destruct 1 TokenMaster token on %1").arg(
                                            root.networkName)
@@ -52,6 +55,13 @@ StatusDialog {
     signal remotelyDestructClicked
     signal kickClicked
     signal banClicked
+
+    QtObject {
+        id: d
+
+        property string accountAddress: ""
+        property string accountName: ""
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -155,6 +165,7 @@ StatusDialog {
                 const item = ModelUtils.get(accountsSelector.model,
                                             accountsSelector.currentIndex)
                 d.accountAddress = item.address
+                d.accountName = item.name
             }
         }
     }
@@ -190,11 +201,5 @@ StatusDialog {
                 }
             }
         }
-    }
-
-    QtObject {
-        id: d
-
-        property string accountAddress: ""
     }
 }

@@ -71,8 +71,8 @@ StatusScrollView {
     signal viewMessagesRequested(string contactId)
 
     signal remoteDestructRequested(string name, string address)
-    signal kickRequested(string name, string contactId)
-    signal banRequested(string name, string contactId)
+    signal kickRequested(string name, string contactId, string address)
+    signal banRequested(string name, string contactId, string address)
 
     QtObject {
         id: d
@@ -213,8 +213,8 @@ StatusScrollView {
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(name, address)
 
-            onKickRequested: root.kickRequested(name, contactId)
-            onBanRequested: root.banRequested(name, contactId)
+            onKickRequested: root.kickRequested(name, contactId, address)
+            onBanRequested: root.banRequested(name, contactId, address)
         }
     }
 }

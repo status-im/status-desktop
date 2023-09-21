@@ -137,6 +137,14 @@ QtObject {
         communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(walletsAndAmounts), tokenKey, accountAddress)
     }
 
+    function remotelyDestructAndBan(communityId, contactId, tokenKey, accountAddress, deleteMessages) {
+        console.warn("remotelyDestructAndBan, not implemented yet!")
+    }
+
+    function remotelyDestructAndKick(communityId, contactId, tokenKey, accountAddress) {
+        console.warn("remotelyDestructAndKick, not implemented yet!")
+    }
+
     function burnToken(communityId, tokenKey, burnAmount, accountAddress) {
         console.assert(typeof burnAmount === "string")
         communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount, accountAddress)
