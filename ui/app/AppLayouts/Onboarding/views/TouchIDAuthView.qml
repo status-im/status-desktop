@@ -83,6 +83,7 @@ Item {
             spacing: Style.current.bigPadding
             StatusButton {
                 id: button
+                objectName: "touchIdYesUseTouchIDButton"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Yes, use Touch ID")
                 onClicked: {
