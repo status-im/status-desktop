@@ -910,6 +910,7 @@ Rectangle {
 
     Connections {
         target: Global.dragArea
+        enabled: control.visible
         ignoreUnknownSignals: true
         function onDroppedOnValidScreen(drop) {
             let dropUrls = drop.urls
