@@ -36,7 +36,7 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            SignMultiTokenTransactionsPopup {
+            SignTransactionsPopup {
                 id: dialog
 
                 model: LimitProxyModel {
@@ -59,8 +59,8 @@ SplitView {
                 errorText: errorTextField.text
                 totalFeeText: totalCheckBox.checked ? totalFeeTextField.text : ""
 
-                onSignTransactionClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onSignTransactionClicked")
-                onCancelClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onCancelClicked")
+                onSignTransactionClicked: logs.logEvent("SignTransactionsPopup::onSignTransactionClicked")
+                onCancelClicked: logs.logEvent("SignTransactionsPopup::onCancelClicked")
             }
         }
 
