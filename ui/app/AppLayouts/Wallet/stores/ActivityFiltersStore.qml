@@ -191,14 +191,12 @@ QtObject {
     // To-do: Get list of collectibles with activity from backend
     property var collectiblesList: walletSection.collectiblesController.model
     property var collectiblesFilter: []
-    function toggleCollectibles(id) {
+    function toggleCollectibles(uid) {
         // update filters
-        collectiblesFilter = d.toggleFilterState(collectiblesFilter, id, collectiblesList.count)
-        // TODO go side filtering is pending
-        //      activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
-        //      activityController.updateFilter()
+        collectiblesFilter = d.toggleFilterState(collectiblesFilter, uid, collectiblesList.count)
+        activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
+        activityController.updateFilter()
     }
-
 
     property var recentsList: activityController.recipientsModel
     property bool loadingRecipients: activityController.status.loadingRecipients
@@ -251,7 +249,7 @@ QtObject {
         activityController.setFilterStatus(JSON.stringify(statusFilters))
         activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
-        // TODO call update filter for collectibles
+        activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
 
         activityController.updateFilter()
     }
@@ -266,7 +264,6 @@ QtObject {
         collectiblesFilter = []
         recentsFilters = []
         savedAddressFilters = []
-        // TODO reset filter for collectibles
 
         applyAllFilters()
     }

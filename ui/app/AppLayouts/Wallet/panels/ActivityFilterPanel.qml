@@ -25,6 +25,10 @@ Column {
         activityFilterStore.updateFilterBase()
     }
 
+    function resetView() {
+        activityFilterMenu.resetView()
+    }
+
     Flow {
         width: parent.width
 
@@ -157,10 +161,27 @@ Column {
         Repeater {
             model: activityFilterStore.collectiblesFilter
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: activityFilterStore.collectiblesList.getName(modelData)
-                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(modelData)
+                id: collectibleTag
+                property string uid: modelData
+                readonly property bool isValid: tagPrimaryLabel.text.length > 0
+                tagPrimaryLabel.text: activityFilterStore.collectiblesList.getName(uid)
+                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(uid)
                 iconAsset.color: "transparent"
-                onClosed: activityFilterStore.toggleCollectibles(model.id)
+                onClosed: activityFilterStore.toggleCollectibles(uid)
+
+                Connections {
+                    // Collectibles model is fetched asynchronousl, so data might not be available
+                    target: activityFilterStore.collectiblesList
+                    enabled: !collectibleTag.isValid
+                    function onIsFetchingChanged() {
+                        if (activityFilterStore.collectiblesList.isFetching)
+                            return
+                        collectibleTag.uid = ""
+                        collectibleTag.uid = modelData
+                        if (!collectibleTag.isValid)
+                            activityFilterStore.collectiblesList.loadMore()
+                    }
+                }
             }
         }
 
@@ -228,7 +249,7 @@ Column {
         collectiblesList: activityFilterStore.collectiblesList
         collectiblesFilter: activityFilterStore.collectiblesFilter
         onUpdateTokensFilter: activityFilterStore.toggleToken(tokenSymbol)
-        onUpdateCollectiblesFilter: activityFilterStore.toggleCollectibles(id)
+        onUpdateCollectiblesFilter: activityFilterStore.toggleCollectibles(uid)
 
         store: root.store
         recentsList: activityFilterStore.recentsList

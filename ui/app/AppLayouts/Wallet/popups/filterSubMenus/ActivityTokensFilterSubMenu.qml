@@ -26,15 +26,20 @@ StatusMenu {
 
     signal back()
     signal tokenToggled(string tokenSymbol)
-    signal collectibleToggled(double id)
+    signal collectibleToggled(string uid)
 
     property var searchTokenSymbolByAddressFn: function (address) { return "" } // TODO
 
     implicitWidth: 289
 
+    function resetView() {
+        tokensSearchBox.reset()
+        collectiblesSearchBox.reset()
+    }
+
     QtObject {
         id: d
-        property bool isFetching: root.collectiblesList.isFetching
+        readonly property bool isFetching: root.collectiblesList.isFetching
     }
 
     contentItem: ColumnLayout {
@@ -99,12 +104,14 @@ StatusMenu {
                     Layout.fillHeight: true
                     spacing: 0
                     model: SortFilterProxyModel {
+                        id: tokenProxyModel
                         sourceModel: root.tokensList
                         filters: ExpressionFilter {
+                            readonly property string tokenSearchValue: tokensSearchBox.text.toUpperCase()
+                            readonly property string tokenSymbolByAddress: root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
                             enabled: root.tokensList.count > 0
                             expression: {
-                                const tokenSymbolByAddress = root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
-                                return symbol.startsWith(tokensSearchBox.text.toUpperCase()) || name.toUpperCase().startsWith(tokensSearchBox.text.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                                return symbol.startsWith(tokenSearchValue) || name.toUpperCase().startsWith(tokenSearchValue) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                             }
                         }
                     }
@@ -155,28 +162,30 @@ StatusMenu {
                     spacing: 0
                     reuseItems: true
                     model: SortFilterProxyModel {
+                        id: collectibleProxyModel
                         sourceModel: root.collectiblesList
                         filters: ExpressionFilter {
                             enabled: root.collectiblesList.count > 0 && !!collectiblesSearchBox.text
+                            readonly property string searchText: collectiblesSearchBox.text.toUpperCase()
                             expression: {
-                                const searchText = collectiblesSearchBox.text.toUpperCase()
-                                return name.toUpperCase().startsWith(searchText)
+                                return String(name).toUpperCase().startsWith(searchText)
                             }
                         }
                     }
                     delegate: ActivityTypeCheckBox {
+                        required property var model
                         width: ListView.view.width
                         height: 44
-                        title: model.name
-                        assetSettings.name: model.imageUrl
+                        title: model.name ?? ""
+                        assetSettings.name: model.imageUrl ?? ""
                         assetSettings.isImage: true
                         assetSettings.bgWidth: 32
                         assetSettings.bgHeight: 32
                         assetSettings.bgRadius: assetSettings.bgHeight/2
                         buttonGroup: collectibleButtonGroup
                         allChecked: root.allCollectiblesChecked
-                        checked: root.allCollectiblesChecked || root.collectiblesFilter.includes(model.id)
-                        onActionTriggered: root.collectibleToggled(model.id)
+                        checked: !loading && (root.allCollectiblesChecked || root.collectiblesFilter.includes(model.uid))
+                        onActionTriggered: root.collectibleToggled(model.uid)
                         loading: d.isFetching
                     }
                 }

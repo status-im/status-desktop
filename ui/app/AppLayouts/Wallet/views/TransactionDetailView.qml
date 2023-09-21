@@ -40,7 +40,7 @@ Item {
 
         property var details: null
         readonly property bool isDetailsValid: details !== undefined && !!details
-        readonly property bool isIncoming: transactionType === Constants.TransactionType.Received
+        readonly property bool isIncoming: transactionType === Constants.TransactionType.Received || transactionType === Constants.TransactionType.ContractDeployment
         readonly property string networkShortName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
         readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : "network/Network=Custom"
         readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
@@ -188,7 +188,8 @@ Item {
                 nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
                 strikethrough: d.transactionType === Constants.TransactionType.Destroy
                 tokenId: root.isTransactionValid ? transaction.tokenID : ""
-                contractAddress: d.isDetailsValid ? d.details.contract : ""
+                tokenAddress: root.isTransactionValid ? transaction.tokenAddress : ""
+                areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
             }
 
             Column {
@@ -561,6 +562,7 @@ Item {
 
                 RowLayout {
                     width: parent.width
+                    visible: amountSentTile.visible || amountReceiveTile.visible || feesTile.visible || totalTile.visible
                     StatusBaseText {
                         Layout.alignment: Qt.AlignLeft
                         font.pixelSize: 15
@@ -580,6 +582,7 @@ Item {
 
                 DetailsPanel {
                     TransactionDataTile {
+                        id: amountSentTile
                         width: parent.width
                         title: qsTr("Amount sent")
                         subTitle: transactionHeader.isMultiTransaction ? d.outCryptoValueFormatted : d.cryptoValueFormatted
@@ -598,6 +601,7 @@ Item {
                         }
                     }
                     TransactionDataTile {
+                        id: amountReceiveTile
                         width: parent.width
                         title: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending ? qsTr("Amount to receive") : qsTr("Amount received")
                         subTitle: {
@@ -625,6 +629,7 @@ Item {
                         visible: !!subTitle
                     }
                     TransactionDataTile {
+                        id: feesTile
                         width: parent.width
                         title: d.symbol ? qsTr("Fees") : qsTr("Estimated max fee")
                         subTitle: {
@@ -659,6 +664,7 @@ Item {
                         visible: !!subTitle
                     }
                     TransactionDataTile {
+                        id: totalTile
                         width: parent.width
                         readonly property bool fieldIsHidden: (transactionHeader.isNFT && d.isIncoming) || !d.symbol
                         readonly property bool showMaxFee: d.transactionType === Constants.TransactionType.ContractDeployment && transactionHeader.transactionStatus === Constants.TransactionStatus.Pending

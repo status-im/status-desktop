@@ -30,6 +30,7 @@ Item {
     function resetView() {
         stack.currentIndex = 0
         root.currentTabIndex = 0
+        historyView.resetView()
     }
 
     function resetStack() {
@@ -141,6 +142,7 @@ Item {
                     }
                 }
                 HistoryView {
+                    id: historyView
                     overview: RootStore.overview
                     showAllAccounts: root.showAllAccounts
                     onLaunchTransactionDetail: function (entry, entryIndex) {

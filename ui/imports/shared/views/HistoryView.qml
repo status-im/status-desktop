@@ -31,6 +31,12 @@ ColumnLayout {
 
     signal launchTransactionDetail(var transaction, int entryIndex)
 
+    function resetView() {
+        if (!!filterPanelLoader.item) {
+            filterPanelLoader.item.resetView()
+        }
+    }
+
     onVisibleChanged: {
         if (!visible)
             return

@@ -8,6 +8,7 @@ import events_handler
 import app/core/eventemitter
 
 import backend/collectibles as backend_collectibles
+import backend/activity as backend_activity
 
 const FETCH_BATCH_COUNT_DEFAULT = 50
 
@@ -123,7 +124,7 @@ QtObject:
 
     let res = fromJson(response, backend_collectibles.FilterOwnedCollectiblesResponse)
 
-    let isError = res.errorCode != ErrorCodeSuccess
+    let isError = res.errorCode != backend_collectibles.ErrorCodeSuccess
 
     if isError:
       error "error fetching collectibles entries: ", res.errorCode
@@ -203,3 +204,6 @@ QtObject:
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
 
     self.resetModel()
+
+  proc getActivityToken*(self: Controller, id: string): backend_activity.Token =
+    return self.model.getActivityToken(id)

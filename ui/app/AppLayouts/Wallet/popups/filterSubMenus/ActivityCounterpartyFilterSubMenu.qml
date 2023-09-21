@@ -40,6 +40,10 @@ StatusMenu {
 
     Component.onCompleted: root.updateRecipientsModel()
 
+    function resetView() {
+        searchBox.reset()
+    }
+
     contentItem: ColumnLayout {
         spacing: 12
 

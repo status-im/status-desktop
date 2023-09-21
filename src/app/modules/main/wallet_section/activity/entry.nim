@@ -206,7 +206,7 @@ QtObject:
     if self.metadata.tokenIn.isSome:
       let address = self.metadata.tokenIn.unsafeGet().address
       if address.isSome:
-        return toHex(address.unsafeGet())
+        return "0x" & toHex(address.unsafeGet())
     return ""
 
   QtProperty[string] tokenInAddress:
@@ -216,7 +216,7 @@ QtObject:
     if self.metadata.tokenOut.isSome:
       let address = self.metadata.tokenOut.unsafeGet().address
       if address.isSome:
-        return toHex(address.unsafeGet())
+        return "0x" & toHex(address.unsafeGet())
     return ""
 
   QtProperty[string] tokenOutAddress:

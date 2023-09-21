@@ -35,6 +35,8 @@ import app_service/service/network_connection/service as network_connection_serv
 import app_service/service/devices/service as devices_service
 
 import backend/collectibles as backend_collectibles
+import backend/activity as backend_activity
+
 
 logScope:
   topics = "wallet-section-module"
@@ -120,13 +122,16 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events)
-  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events)
-  result.collectiblesController = collectiblesc.newController(
+  let collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
     autofetch = false,
     events = events
   )
+  result.collectiblesController = collectiblesController
+  let collectiblesToTokenConverter = proc(id: string): backend_activity.Token =
+    return collectiblesController.getActivityToken(id)
+  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events, collectiblesToTokenConverter)
+  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events, collectiblesToTokenConverter)
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 

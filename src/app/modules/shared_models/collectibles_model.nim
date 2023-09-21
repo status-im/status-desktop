@@ -2,6 +2,8 @@ import NimQml, Tables, strutils, strformat, sequtils, stint
 import logging
 
 import ./collectibles_item, ./collectible_trait_model
+import web3/ethtypes as eth
+import backend/activity as backend_activity
 
 type
   CollectibleRole* {.pure.} = enum
@@ -323,3 +325,19 @@ QtObject:
       if(cmpIgnoreCase(item.getId(), id) == 0):
         return item.getName()
     return ""
+
+  proc getActivityToken*(self: Model, id: string): backend_activity.Token =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getId(), id) == 0):
+        result.tokenType = backend_activity.TokenType.Erc721
+        result.chainId = backend_activity.ChainId(item.getChainId())
+        var contract = item.getContractAddress()
+        if len(contract) > 0:
+          var address: eth.Address
+          address = eth.fromHex(eth.Address, contract)
+          result.address = some(address)
+        var tokenId = item.getTokenId()
+        if tokenId > 0:
+          result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
+        return result
+    return result
