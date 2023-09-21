@@ -1,4 +1,5 @@
 import NimQml, json, strformat, sequtils, strutils, stint, strutils
+import options
 
 import backend/collectibles as backend
 import collectible_trait_model
@@ -156,6 +157,46 @@ QtObject:
 
   QtProperty[string] networkShortName:
     read = getNetworkShortName
+
+  proc getCommunityId*(self: CollectibleDetailsEntry): string {.slot.} =
+    if self.data == nil or isNone(self.data.communityInfo):
+      return ""
+    return self.data.communityInfo.get().communityId
+
+  QtProperty[string] communityId:
+    read = getCommunityId
+
+  proc getCommunityName*(self: CollectibleDetailsEntry): string {.slot.} =
+    if self.data == nil or isNone(self.data.communityInfo):
+      return ""
+    return self.data.communityInfo.get().communityName
+
+  QtProperty[string] communityName:
+    read = getCommunityName
+
+  proc getCommunityColor*(self: CollectibleDetailsEntry): string {.slot.} =
+    if self.data == nil or isNone(self.data.communityInfo):
+      return ""
+    return self.data.communityInfo.get().communityColor
+
+  QtProperty[string] communityColor:
+    read = getCommunityColor
+
+  proc getCommunityImage*(self: CollectibleDetailsEntry): string {.slot.} =
+    if self.data == nil or isNone(self.data.communityInfo):
+      return ""
+    return self.data.communityInfo.get().communityImage
+
+  QtProperty[string] communityImage:
+    read = getCommunityImage
+
+  proc getCommunityPrivilegesLevel*(self: CollectibleDetailsEntry): int {.slot.} =
+    if self.data == nil or isNone(self.data.communityInfo):
+      return 0
+    return int(self.data.communityInfo.get().privilegesLevel)
+
+  QtProperty[int] communityPrivilegesLevel:
+    read = getCommunityPrivilegesLevel
 
   proc getNetworkColor*(self: CollectibleDetailsEntry): string {.slot.} =
     return self.extradata.networkColor

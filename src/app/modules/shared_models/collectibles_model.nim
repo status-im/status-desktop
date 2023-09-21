@@ -21,6 +21,11 @@ type
     CollectionSlug
     IsLoading
     IsPinned
+    # Community-related roles
+    CommunityId
+    CommunityName
+    CommunityColor
+    CommunityPrivilegesLevel
 
 const loadingItemsCount = 10
 
@@ -154,6 +159,10 @@ QtObject:
       CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.IsPinned.int:"isPinned",
+      CollectibleRole.CommunityId.int:"communityId",
+      CollectibleRole.CommunityName.int:"communityName",
+      CollectibleRole.CommunityColor.int:"communityColor",
+      CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -196,6 +205,14 @@ QtObject:
         result = newQVariant(false)
       of CollectibleRole.IsPinned:
         result = newQVariant(item.getIsPinned())
+      of CollectibleRole.CommunityId:
+        result = newQVariant(item.getCommunityId())
+      of CollectibleRole.CommunityName:
+        result = newQVariant(item.getCommunityName())
+      of CollectibleRole.CommunityColor:
+        result = newQVariant(item.getCommunityColor())
+      of CollectibleRole.CommunityPrivilegesLevel:
+        result = newQVariant(item.getCommunityPrivilegesLevel())
     else:
       # Loading item
       case enumRole:
@@ -224,6 +241,10 @@ QtObject:
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
       of "isPinned": result = $item.getIsPinned()
+      of "communityId": result = item.getCommunityId()
+      of "communityName": result = item.getCommunityName()
+      of "communityColor": result = item.getCommunityColor()
+      of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
 
   proc appendCollectibleItems(self: Model, newItems: seq[Item]) =
     if len(newItems) == 0:

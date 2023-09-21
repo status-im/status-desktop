@@ -1,5 +1,9 @@
 import json, strformat
-import stint, Tables
+import stint, Tables, options
+import community_tokens_types
+
+const communityHeaderField = "community_header"
+const communityInfoField = "community_info"
 
 type
   # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
@@ -34,6 +38,7 @@ type
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleData
   CollectibleData* = ref object of RootObj
     id* : CollectibleUniqueID
+    communityId*: string
     name*: string
     description*: string
     permalink*: string
@@ -44,6 +49,13 @@ type
     backgroundColor*: string
     tokenUri*: string
     collectionData*: CollectionData
+
+  # Mirrors services/wallet/collectibles/types.go CommunityHeader
+  CollectibleCommunityHeader* = ref object of RootObj
+    communityId*: string
+    communityName*: string
+    communityColor*: string
+    privilegesLevel*: PrivilegesLevel
 
   # Mirrors services/wallet/collectibles/types.go CollectibleHeader
   CollectibleHeader* = ref object of RootObj
@@ -56,6 +68,15 @@ type
     collectionName*: string
     collectionSlug*: string
     collectionImageUrl*: string
+    communityHeader*: Option[CollectibleCommunityHeader]
+
+  # Mirrors services/wallet/thirdparty/collectible_types.go CollectiblesCommunityInfo
+  CollectibleCommunityInfo* = ref object of RootObj
+    communityId*: string
+    communityName*: string
+    communityColor*: string
+    communityImage*: string
+    privilegesLevel*: PrivilegesLevel
 
   # Mirrors services/wallet/collectibles/types.go CollectibleDetails
   CollectibleDetails* = ref object of RootObj
@@ -71,6 +92,7 @@ type
     collectionName*: string
     collectionSlug*: string
     collectionImageUrl*: string
+    communityInfo*: Option[CollectibleCommunityInfo]
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -209,6 +231,7 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CollectionData]): ref CollectionData
 proc `$`*(self: CollectibleData): string =
   return fmt"""CollectibleData(
     id:{self.id},
+    communityId:{self.communityId},
     name:{self.name},
     description:{self.description},
     permalink:{self.permalink},
@@ -229,6 +252,7 @@ proc getCollectibleTraits*(t: JsonNode): seq[CollectibleTrait] =
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData {.inline.} =
   result = CollectibleData()
   result.id = fromJson(t["id"], CollectibleUniqueID)
+  result.communityId = t["community_id"].getStr()
   result.name = t["name"].getStr()
   result.description = t["description"].getStr()
   result.permalink = t["permalink"].getStr()
@@ -243,6 +267,26 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleData]): ref CollectibleDa
   result = new(CollectibleData)
   result[] = fromJson(t, CollectibleData)
 
+# CollectibleCommunityHeader
+proc `$`*(self: CollectibleCommunityHeader): string =
+  return fmt"""CollectibleCommunityHeader(
+    communityId:{self.communityId},
+    communityName:{self.communityName},
+    communityColor:{self.communityColor},
+    privilegesLevel:{self.privilegesLevel}
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleCommunityHeader]): CollectibleCommunityHeader {.inline.} =
+  result = CollectibleCommunityHeader()
+  result.communityId = t["community_id"].getStr
+  result.communityName = t["community_name"].getStr
+  result.communityColor = t["community_color"].getStr
+  result.privilegesLevel = PrivilegesLevel(t["privileges_level"].getInt)
+
+proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleCommunityHeader]): ref CollectibleCommunityHeader {.inline.} =
+  result = new(CollectibleCommunityHeader)
+  result[] = fromJson(t, CollectibleCommunityHeader)
+
 # CollectibleHeader
 proc `$`*(self: CollectibleHeader): string =
   return fmt"""CollectibleHeader(
@@ -254,7 +298,8 @@ proc `$`*(self: CollectibleHeader): string =
     backgroundColor:{self.backgroundColor},
     collectionName:{self.collectionName},
     collectionSlug:{self.collectionSlug},
-    collectionImageUrl:{self.collectionImageUrl}
+    collectionImageUrl:{self.collectionImageUrl},
+    communityHeader:{self.communityHeader}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
@@ -268,6 +313,30 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {
   result.collectionName = t["collection_name"].getStr()
   result.collectionSlug = t["collection_slug"].getStr()
   result.collectionImageUrl = t["collection_image_url"].getStr()
+  if t.contains(communityHeaderField) and t[communityHeaderField].kind != JNull:
+    result.communityHeader = some(fromJson(t[communityHeaderField], CollectibleCommunityHeader))
+
+# CollectibleCommunityInfo
+proc `$`*(self: CollectibleCommunityInfo): string =
+  return fmt"""CollectibleCommunityInfo(
+    communityId:{self.communityId},
+    communityName:{self.communityName},
+    communityColor:{self.communityColor},
+    communityImage:{self.communityImage},
+    privilegesLevel:{self.privilegesLevel}
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleCommunityInfo]): CollectibleCommunityInfo {.inline.} =
+  result = CollectibleCommunityInfo()
+  result.communityId = t["community_id"].getStr
+  result.communityName = t["community_name"].getStr
+  result.communityColor = t["community_color"].getStr
+  result.communityImage = t["community_image"].getStr
+  result.privilegesLevel = PrivilegesLevel(t["privileges_level"].getInt)
+
+proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleCommunityInfo]): ref CollectibleCommunityInfo {.inline.} =
+  result = new(CollectibleCommunityInfo)
+  result[] = fromJson(t, CollectibleCommunityInfo)
 
 # CollectibleDetails
 proc `$`*(self: CollectibleDetails): string =
@@ -282,7 +351,8 @@ proc `$`*(self: CollectibleDetails): string =
     backgroundColor:{self.backgroundColor},
     collectionName:{self.collectionName},
     collectionSlug:{self.collectionSlug},
-    collectionImageUrl:{self.collectionImageUrl}
+    collectionImageUrl:{self.collectionImageUrl},
+    communityInfo:{self.communityInfo}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails {.inline.} =
@@ -298,6 +368,8 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails
   result.collectionName = t["collection_name"].getStr()
   result.collectionSlug = t["collection_slug"].getStr()
   result.collectionImageUrl = t["collection_image_url"].getStr()
+  if t.contains(communityInfoField) and t[communityInfoField].kind != JNull:
+    result.communityInfo = some(fromJson(t[communityInfoField], CollectibleCommunityInfo))
 
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleDetails]): ref CollectibleDetails {.inline.} =
   result = new(CollectibleDetails)
