@@ -15,6 +15,10 @@ type
     collectionImageUrl: string
     isLoading: bool
     isPinned: bool
+    communityId: string
+    communityName: string
+    communityColor: string
+    communityPrivilegesLevel: int
 
 proc initItem*(
   chainId: int,
@@ -28,7 +32,12 @@ proc initItem*(
   collectionName: string,
   collectionSlug: string,
   collectionImageUrl: string,
-  isPinned: bool
+  isPinned: bool,
+  communityId: string,
+  communityName: string,
+  communityColor: string,
+  communityPrivilegesLevel: int
+
 ): Item =
   result.chainId = chainId
   result.contractAddress = contractAddress
@@ -43,9 +52,13 @@ proc initItem*(
   result.collectionImageUrl = collectionImageUrl
   result.isLoading = false
   result.isPinned = isPinned
+  result.communityId = communityId
+  result.communityName = communityName
+  result.communityColor = communityColor
+  result.communityPrivilegesLevel = communityPrivilegesLevel
 
 proc initItem*: Item =
-  result = initItem(0, "", u256(0), "", "", "", "", "transparent", "Collectibles", "", "", false)
+  result = initItem(0, "", u256(0), "", "", "", "", "transparent", "Collectibles", "", "", false, "", "", "", 0)
 
 proc initLoadingItem*: Item =
   result = initItem()
@@ -66,6 +79,10 @@ proc `$`*(self: Item): string =
     collectionImageUrl: {self.collectionImageUrl},
     isLoading: {self.isLoading},
     isPinned: {self.isPinned},
+    communityId: {self.communityId},
+    communityName: {self.communityName},
+    communityColor: {self.communityColor},
+    communityPrivilegesLevel: {self.communityPrivilegesLevel},
     ]"""
 
 proc getChainId*(self: Item): int =
@@ -114,3 +131,15 @@ proc getIsLoading*(self: Item): bool =
 
 proc getIsPinned*(self: Item): bool =
   return self.isPinned
+
+proc getCommunityId*(self: Item): string =
+  return self.communityId
+
+proc getCommunityName*(self: Item): string =
+  return self.communityName
+
+proc getCommunityColor*(self: Item): string =
+  return self.communityColor
+
+proc getCommunityPrivilegesLevel*(self: Item): int =
+  return self.communityPrivilegesLevel
