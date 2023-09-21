@@ -432,6 +432,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED) do(e: Args):
     self.delegate.checkAndPerformProfileMigrationIfNeeded()
 
+  self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
+    let args = CommunityTokensDetailsArgs(e)
+    self.delegate.onCommunityTokensDetailsLoaded(args.communityId, args.communityTokens, args.communityTokenJsonItems)
+
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
@@ -494,8 +498,8 @@ proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpda
 proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
   self.contactsService.getVerificationRequestFrom(publicKey)
 
-proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
-  self.communityTokensService.getCommunityTokens(communityId)
+proc getCommunityTokensDetailsAsync*(self: Controller, communityId: string) =
+  self.communityTokensService.getCommunityTokensDetailsAsync(communityId)
 
 proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
   return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)

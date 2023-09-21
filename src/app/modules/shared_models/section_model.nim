@@ -3,7 +3,7 @@ import NimQml, Tables, strutils, strformat
 import json
 
 import section_item, member_model
-import ../main/communities/tokens/models/token_item
+import ../main/communities/tokens/models/[token_item, token_model]
 
 type
   ModelRole {.pure.} = enum
@@ -425,3 +425,10 @@ QtObject:
 
     for pubkey, revealedAccounts in communityMembersAirdropAddress.pairs:
       self.items[index].members.setAirdropAddress(pubkey, revealedAccounts)
+
+  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) = 
+    let index = self.getItemIndex(id)
+    if (index == -1):
+      return
+
+    self.items[index].communityTokens.setItems(communityTokensItems)
