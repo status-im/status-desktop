@@ -67,6 +67,11 @@ StackView {
     signal remotelyDestructCollectibles(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
                                         string tokenKey,
                                         string accountAddress)
+
+    signal remotelyDestructAndBan(string contactId, string tokenKey, string accountAddress,
+                                  bool removeMessages)
+    signal remotelyDestructAndKick(string contactId, string tokenKey, string accountAddress)
+
     signal burnToken(string tokenKey, string amount, string accountAddress)
     signal airdropToken(string tokenKey, string amount, int type, var addresses)
     signal deleteToken(string tokenKey)
@@ -551,28 +556,31 @@ StackView {
                                   view.token.type, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
             }
 
+            onViewProfileRequested: {
+                Global.openProfilePopup(contactId)
+            }
+
+            onViewMessagesRequested: {
+                // TODO: https://github.com/status-im/status-desktop/issues/11860
+                console.warn("View Messages is not implemented yet")
+            }
+
             onRemoteDestructRequested: {
                 if (token.isPrivilegedToken) {
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.RemotelyDestruct, name, address)
+                                TokenMasterActionPopup.ActionType.RemotelyDestruct,
+                                name, address, "")
                 } else {
                     remotelyDestructPopup.open()
                     // TODO: set the address selected in the popup's list
                 }
             }
 
-            onViewProfileRequested: {
-                Global.openProfilePopup(contactId)
-            }
-            onViewMessagesRequested: {
-                // TODO: https://github.com/status-im/status-desktop/issues/11860
-                console.warn("View Messages is not implemented yet")
-            }
-
             onBanRequested: {
                 if (token.isPrivilegedToken)
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.Ban, name)
+                                TokenMasterActionPopup.ActionType.Ban, name,
+                                address, contactId)
                 else
                     kickBanPopup.openPopup(KickBanPopup.Mode.Ban, name, contactId)
             }
@@ -580,7 +588,8 @@ StackView {
             onKickRequested: {
                 if (token.isPrivilegedToken)
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.Kick, name)
+                                TokenMasterActionPopup.ActionType.Kick, name,
+                                address, contactId)
                 else
                     kickBanPopup.openPopup(KickBanPopup.Mode.Kick, name, contactId)
             }
@@ -589,6 +598,7 @@ StackView {
                 id: tokenMasterActionPopup
 
                 property string address: ""
+                property string contactId: ""
 
                 communityName: root.communityName
                 networkName: view.token.chainName
@@ -598,24 +608,79 @@ StackView {
                 feeErrorText: selfDestructFeesSubscriber.feeErrorText
                 isFeeLoading: !selfDestructFeesSubscriber.feesResponse
 
-                function openPopup(type, userName, address) {
+                function openPopup(type, userName, address, contactId) {
                     tokenMasterActionPopup.actionType = type
                     tokenMasterActionPopup.userName = userName ||
                             SQUtils.Utils.elideAndFormatWalletAddress(address)
                     tokenMasterActionPopup.address = address
+                    tokenMasterActionPopup.contactId = contactId
                     open()
                 }
 
+                onRemotelyDestructClicked: signPopup.open()
+                onKickClicked: signPopup.open()
+                onBanClicked: signPopup.open()
+
                 SelfDestructFeesSubscriber {
                     id: selfDestructFeesSubscriber
+
                     walletsAndAmounts: [{ 
                         walletAddress: tokenMasterActionPopup.address, 
-                        amount: 1 
+                        amount: 1
                     }]
                     accountAddress: tokenMasterActionPopup.selectedAccount
                     tokenKey: view.token.key
                     enabled: tokenMasterActionPopup.opened
-                    Component.onCompleted: root.registerSelfDestructFeesSubscriber(selfDestructFeesSubscriber)
+                    Component.onCompleted: root.registerSelfDestructFeesSubscriber(
+                                               selfDestructFeesSubscriber)
+                }
+
+                SignTransactionsPopup {
+                    id: signPopup
+
+                    title: qsTr("Sign transaction - Remotely-destruct TokenMaster token")
+
+                    totalFeeText: tokenMasterActionPopup.feeText
+                    errorText: tokenMasterActionPopup.feeErrorText
+
+                    accountName: tokenMasterActionPopup.selectedAccountName
+
+                    model: QtObject {
+                        readonly property string title: tokenMasterActionPopup.feeLabel
+                        readonly property string feeText: tokenMasterActionPopup.feeText
+                        readonly property bool error: tokenMasterActionPopup.feeErrorText !== ""
+                    }
+
+                    onSignTransactionClicked: {
+                        // https://bugreports.qt.io/browse/QTBUG-91917
+                        var contactId = tokenMasterActionPopup.contactId
+                        var tokenKey = tokenViewPage.token.key
+                        var accountAddress = tokenMasterActionPopup.selectedAccount
+
+                        switch (tokenMasterActionPopup.actionType) {
+                        case TokenMasterActionPopup.ActionType.RemotelyDestruct:
+                            var tokenToDestruct = {
+                                walletAddress: tokenMasterActionPopup.address,
+                                amount: 1
+                            }
+
+                            root.remotelyDestructCollectibles(
+                                        [tokenToDestruct],
+                                        tokenKey, accountAddress)
+                            break
+                        case TokenMasterActionPopup.ActionType.Kick:
+                            root.remotelyDestructAndKick(contactId, tokenKey,
+                                                         accountAddress)
+                            break
+                        case TokenMasterActionPopup.ActionType.Ban:
+                            root.remotelyDestructAndBan(contactId, tokenKey,
+                                                        accountAddress,
+                                                        tokenMasterActionPopup.deleteMessages)
+                            break
+                        }
+
+                        tokenMasterActionPopup.close()
+                    }
                 }
             }
 

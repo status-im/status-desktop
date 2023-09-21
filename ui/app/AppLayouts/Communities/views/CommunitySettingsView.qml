@@ -353,6 +353,14 @@ StatusSectionLayout {
                 communityTokensStore.remoteSelfDestructCollectibles(
                     root.community.id, walletsAndAmounts, tokenKey, accountAddress)
 
+            onRemotelyDestructAndBan:
+                communityTokensStore.remotelyDestructAndBan(
+                    root.community.id, contactId, tokenKey, accountAddress)
+
+            onRemotelyDestructAndKick:
+                communityTokensStore.remotelyDestructAndKick(
+                    root.community.id, contactId, tokenKey, accountAddress)
+
             onBurnToken:
                 communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
 
