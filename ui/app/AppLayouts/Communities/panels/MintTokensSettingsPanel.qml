@@ -600,7 +600,8 @@ StackView {
 
                 function openPopup(type, userName, address) {
                     tokenMasterActionPopup.actionType = type
-                    tokenMasterActionPopup.userName = userName
+                    tokenMasterActionPopup.userName = userName ||
+                            SQUtils.Utils.elideAndFormatWalletAddress(address)
                     tokenMasterActionPopup.address = address
                     open()
                 }
