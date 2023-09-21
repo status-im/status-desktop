@@ -328,6 +328,7 @@ Rectangle {
     function onKeyPress(event) {
         // get text without HTML formatting
         const messageLength = messageInputField.getText(0, messageInputField.length).length;
+        console.log("messageLength: " + messageLength);
 
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
@@ -1050,7 +1051,8 @@ Rectangle {
 
             StatusQ.StatusToolTip {
                 id: messageLengthLimitTooltip
-                text: qsTr("Maximum message character count is %n", "", control.messageLimit)
+                text: messageInputField.length >= control.messageLimitHard ? qsTr("Please reduce the message length")
+                      : qsTr("Maximum message character count is %n", "", control.messageLimit)
                 orientation: StatusQ.StatusToolTip.Orientation.Top
                 timeout: 3000 // show for 3 seconds
             }
@@ -1265,12 +1267,17 @@ Rectangle {
                             }
 
                             onTextChanged: {
+                                console.log("onTextChanged: length: " + length)
                                 if (length <= control.messageLimit) {
                                     if (length === 0) {
                                         mentionsPos = [];
                                     } else {
                                         checkForInlineEmojis()
                                     }
+                                } else if (length > control.messageLimitHard) {
+                                    const removeFrom = (cursorPosition < messageLimitHard) ? cursorWhenPressed : messageLimitHard;
+                                    remove(removeFrom, cursorPosition);
+                                    messageLengthLimitTooltip.open();
                                 }
 
                                 d.updateMentionsPositions()
