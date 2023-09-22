@@ -163,8 +163,17 @@ Column {
             delegate: ActivityFilterTagItem {
                 id: collectibleTag
                 property string uid: modelData
-                readonly property bool isValid: tagPrimaryLabel.text.length > 0
-                tagPrimaryLabel.text: activityFilterStore.collectiblesList.getName(uid)
+                readonly property string name: activityFilterStore.collectiblesList.getName(uid)
+                readonly property bool isValid: name.length > 0
+                tagPrimaryLabel.text: {
+                    if (!!name)
+                        return name
+                    // Fallback, get tokenId from uid
+                    const data = uid.split("+")
+                    if (data.length === 3)
+                        return "#" + data[2]
+                    return ""
+                }
                 iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(uid)
                 iconAsset.color: "transparent"
                 onClosed: activityFilterStore.toggleCollectibles(uid)
@@ -174,7 +183,7 @@ Column {
                     target: activityFilterStore.collectiblesList
                     enabled: !collectibleTag.isValid
                     function onIsFetchingChanged() {
-                        if (activityFilterStore.collectiblesList.isFetching)
+                        if (activityFilterStore.collectiblesList.isFetching || !activityFilterStore.collectiblesList.hasMore)
                             return
                         collectibleTag.uid = ""
                         collectibleTag.uid = modelData
