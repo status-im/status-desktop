@@ -46,7 +46,7 @@ Item {
         readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
         readonly property int toBlockNumber: 0 // TODO fill when bridge data is implemented
         readonly property string networkShortNameOut: networkShortName
-        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdOut) : ""
+        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdIn) : ""
         readonly property string symbol: isTransactionValid ? transaction.symbol : ""
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
@@ -282,9 +282,9 @@ Item {
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
                             if (d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge) {
-                                addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortNameOut)
+                                addressMenu.openEthAddressMenu(this, addresses[0], [d.networkShortNameIn, d.networkShortNameOut])
                             } else {
-                                addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
+                                addressMenu.openSenderMenu(this, addresses[0], [d.networkShortName])
                             }
                         }
                     }
@@ -306,7 +306,7 @@ Item {
                         }
                         buttonIconName: hasValue ? "more" : ""
                         statusListItemSubTitle.customColor: hasValue ? Theme.palette.directColor1 : Theme.palette.directColor5
-                        onButtonClicked: addressMenu.openContractMenu(this, d.details.contract, transactionHeader.networkName, d.symbol)
+                        onButtonClicked: addressMenu.openContractMenu(this, d.details.contract, [d.networkShortName], d.symbol)
                         components: [
                             Loader {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -323,7 +323,7 @@ Item {
                         addresses: root.isTransactionValid && visible ? [root.transaction.recipient] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
-                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], d.networkShortName)
+                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], [d.networkShortName])
                         visible: d.transactionType !== Constants.TransactionType.ContractDeployment && d.transactionType !== Constants.TransactionType.Swap && d.transactionType !== Constants.TransactionType.Bridge && d.transactionType !== Constants.TransactionType.Destroy
                     }
                     TransactionDataTile {
@@ -341,7 +341,7 @@ Item {
                         subTitle: d.isDetailsValid ? d.details.txHash : ""
                         visible: !!subTitle
                         buttonIconName: "more"
-                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortName)
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortName])
                     }
                     TransactionDataTile {
                         width: parent.width
@@ -349,7 +349,7 @@ Item {
                         subTitle: "" // TODO fill tx hash for Bridge
                         visible: !!subTitle
                         buttonIconName: "more"
-                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortNameIn)
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortNameIn])
                     }
                     TransactionContractTile {
                         // Used for Bridge and Swap to display 'From' network Protocol contract address
