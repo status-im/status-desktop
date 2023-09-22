@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared 1.0
@@ -24,6 +25,26 @@ SettingsContentBase {
         onClicked: {
             root.store.checkForUpdates()
         }
+    }
+
+    component LinkItem: StatusListItem {
+        Layout.fillWidth: true
+        components: [
+            StatusIcon {
+                icon: "external-link"
+                color: Theme.palette.directColor1
+            }
+        ]
+    }
+
+    component DocumentItem: StatusListItem {
+        Layout.fillWidth: true
+        components: [
+            StatusIcon {
+                icon: "next"
+                color: Theme.palette.directColor1
+            }
+        ]
     }
 
     ColumnLayout {
@@ -53,7 +74,6 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 15
                 text: qsTr("Current Version")
             }
 
@@ -70,7 +90,7 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 text: qsTr("Status Go Version")
             }
 
@@ -82,124 +102,80 @@ SettingsContentBase {
                 icon.name: "info"
                 text: qsTr("Release Notes")
                 visible: root.store.isProduction
-                onClicked: {
-                    root.store.getReleaseNotes()
-                }
+                onClicked: root.store.getReleaseNotes()
             }
         } // Column
 
-        StatusListItem {
-            title: qsTr("Our Principles")
+        ColumnLayout {
             Layout.fillWidth: true
-            implicitHeight: 64
-            components: [
-                StatusIcon {
-                    icon: "next"
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: root.store.openLink("https://status.im/about/#our-principles")
-        }
+            Layout.topMargin: Style.current.padding
 
-        Column {
-            Layout.fillWidth: true
-            spacing: 4
+            LinkItem {
+                title: qsTr("Status Manifesto")
+                Layout.fillWidth: true
+                onClicked: root.store.openLink("https://status.app/manifesto")
+            }
+
+            StatusDialogDivider {
+                Layout.fillWidth: true
+            }
+
             StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
                 text: qsTr("Status desktop’s GitHub Repositories")
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                font.pixelSize: 15
                 color: Style.current.secondaryText
             }
 
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("Status Desktop")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://github.com/status-im/status-desktop")
-                }
+            LinkItem {
+                title: qsTr("status-desktop")
+                onClicked: root.store.openLink("https://github.com/status-im/status-desktop")
             }
 
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("Status Go")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://github.com/status-im/status-go")
-                }
+            LinkItem {
+                title: qsTr("status-go")
+                onClicked: root.store.openLink("https://github.com/status-im/status-go")
             }
 
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("StatusQ")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://github.com/status-im/statusq")
-                }
+            LinkItem {
+                title: qsTr("StatusQ")
+                onClicked: root.store.openLink("https://github.com/status-im/status-desktop/tree/master/ui/StatusQ")
             }
 
-            StatusFlatButton {
+            LinkItem {
+                title: qsTr("go-waku")
+                onClicked: root.store.openLink("https://github.com/status-im/go-waku")
+            }
+
+            StatusDialogDivider {
                 Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("go-waku")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://github.com/status-im/go-waku")
-                }
+            }
+
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
+                text: qsTr("Legal & Privacy Documents")
+                color: Style.current.secondaryText
+            }
+
+            DocumentItem {
+                title: qsTr("Terms of Use")
+                onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
+                                                                Constants.settingsSubsection.about_terms)
+            }
+
+            DocumentItem {
+                title: qsTr("Privacy Statement")
+                onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
+                                                                Constants.settingsSubsection.about_privacy)
+            }
+
+            LinkItem {
+                title: qsTr("Software License")
+                onClicked: root.store.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
             }
         }
-
-        Column {
-            Layout.fillWidth: true
-            spacing: 4
-            StatusBaseText {
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                text: qsTr("Legal & Privacy Documents")
-                font.pixelSize: 15
-                color: Style.current.secondaryText
-            }
-
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("Terms of Use")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://status.im/terms-of-use/")
-                }
-            }
-
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("Privacy Policy")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://status.im/privacy-policy/")
-                }
-            }
-
-            StatusFlatButton {
-                Layout.fillWidth: true
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                text: qsTr("Software License")
-                icon.width: 0
-                onClicked: {
-                    root.store.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
-                }
-            }
-        } // Column
     }
 }

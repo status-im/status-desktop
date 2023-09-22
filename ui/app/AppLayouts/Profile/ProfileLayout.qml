@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared 1.0
@@ -18,6 +18,7 @@ import StatusQ.Core 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 StatusSectionLayout {
     id: root
@@ -37,6 +38,10 @@ StatusSectionLayout {
         switch (Global.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
+            break;
+        case Constants.settingsSubsection.about_privacy:
+        case Constants.settingsSubsection.about_terms:
+            Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.about)
             break;
         case Constants.settingsSubsection.wallet:
             walletView.item.resetStack()
@@ -96,6 +101,8 @@ StatusSectionLayout {
 
             if (currentIndex === Constants.settingsSubsection.contacts) {
                 root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+            } else if (currentIndex === Constants.settingsSubsection.about_privacy || currentIndex === Constants.settingsSubsection.about_terms) {
+                root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
@@ -334,6 +341,46 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            sourceComponent: SettingsContentBase {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                sectionTitle: "Status Software Terms of Use"
+                contentWidth: d.contentWidth
+
+                StatusBaseText {
+                    width: d.contentWidth
+                    wrapMode: Text.Wrap
+                    textFormat: Text.MarkdownText
+                    text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
+                }
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            sourceComponent: SettingsContentBase {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                sectionTitle: "Status Software Privacy Statement"
+                contentWidth: d.contentWidth
+
+                StatusBaseText {
+                    width: d.contentWidth
+                    wrapMode: Text.Wrap
+                    textFormat: Text.MarkdownText
+                    text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
+                }
             }
         }
     }
