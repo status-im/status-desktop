@@ -5,13 +5,12 @@
 #include <QQmlEngine>
 #include <QQmlFileSelector>
 
-StringUtilsInternal::StringUtilsInternal(QQmlEngine *engine, QObject* parent)
+StringUtilsInternal::StringUtilsInternal(QQmlEngine* engine, QObject* parent)
     : m_engine(engine)
     , QObject(parent)
-{
-}
+{ }
 
-QString StringUtilsInternal::escapeHtml(const QString &unsafe) const
+QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
 {
     return unsafe.toHtmlEscaped();
 }
