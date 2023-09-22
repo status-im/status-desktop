@@ -24,6 +24,7 @@ class WalletScreen(QObject):
         super().__init__('mainWindow_WalletLayout')
         self.left_panel = LeftPanel()
 
+
 class LeftPanel(QObject):
 
     def __init__(self):
@@ -99,7 +100,7 @@ class LeftPanel(QObject):
             return AccountPopup().wait_until_appears()
         except AssertionError as err:
             if attempt:
-                self.open_add_account_popup(attempt-1)
+                self.open_add_account_popup(attempt - 1)
             else:
                 raise err
 
@@ -124,6 +125,7 @@ class LeftPanel(QObject):
                 return self.delete_account(account_name, attempt - 1)
             else:
                 raise
+
 
 class SavedAdressesView(QObject):
 

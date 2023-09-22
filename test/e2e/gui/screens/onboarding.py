@@ -32,16 +32,16 @@ class AllowNotificationsView(QObject):
         self.wait_until_hidden()
 
 
-class WelcomeView(QObject):
+class WelcomeToStatusView(QObject):
 
     def __init__(self):
-        super(WelcomeView, self).__init__('mainWindow_WelcomeView')
-        self._new_user_button = Button('mainWindow_I_am_new_to_Status_StatusBaseText')
-        self._existing_user_button = Button('mainWindow_I_already_use_Status_StatusBaseText')
+        super(WelcomeToStatusView, self).__init__('mainWindow_WelcomeView')
+        self._i_am_new_to_status_button = Button('mainWindow_I_am_new_to_Status_StatusBaseText')
+        self._i_already_use_status_button = Button('mainWindow_I_already_use_Status_StatusBaseText')
 
     @allure.step('Open Keys view')
     def get_keys(self) -> 'KeysView':
-        self._new_user_button.click()
+        self._i_am_new_to_status_button.click()
         time.sleep(1)
         return KeysView().wait_until_appears()
 
@@ -81,9 +81,9 @@ class KeysView(OnboardingView):
         return ImportSeedPhraseView().wait_until_appears()
 
     @allure.step('Go back')
-    def back(self) -> WelcomeView:
+    def back(self) -> WelcomeToStatusView:
         self._back_button.click()
-        return WelcomeView().wait_until_appears()
+        return WelcomeToStatusView().wait_until_appears()
 
 
 class ImportSeedPhraseView(OnboardingView):
@@ -313,16 +313,22 @@ class ConfirmPasswordView(OnboardingView):
         return CreatePasswordView().wait_until_appears()
 
 
-class TouchIDAuthView(OnboardingView):
+class BiometricsView(OnboardingView):
 
     def __init__(self):
-        super(TouchIDAuthView, self).__init__('mainWindow_TouchIDAuthView')
+        super(BiometricsView, self).__init__('mainWindow_TouchIDAuthView')
+        self._yes_use_touch_id_button = Button('mainWindow_touchIdYesUseTouchIDButton')
         self._prefer_password_button = Button('mainWindow_touchIdIPreferToUseMyPasswordText')
 
     @allure.step('Select prefer password')
     def prefer_password(self):
         self._prefer_password_button.click()
         self.wait_until_hidden()
+
+    @allure.step('Verify TouchID button')
+    def is_touch_id_button_visible(self):
+        return self._yes_use_touch_id_button.is_visible
+
 
 
 class LoginView(QObject):

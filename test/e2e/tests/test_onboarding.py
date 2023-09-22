@@ -9,10 +9,10 @@ import constants
 import driver
 from driver.aut import AUT
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.welcome_status_popup import WelcomeStatusPopup
+from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.picture_edit_popup import shift_image
 from gui.components.splash_screen import SplashScreen
-from gui.screens.onboarding import AllowNotificationsView, WelcomeView, TouchIDAuthView, KeysView
+from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 from scripts.tools import image
 
 _logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ def keys_screen(main_window) -> KeysView:
         if configs.system.IS_MAC:
             AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeView().wait_until_appears()
+        wellcome_screen = WelcomeToStatusView().wait_until_appears()
         return wellcome_screen.get_keys()
 
 
@@ -73,10 +73,11 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         confirm_password_view = create_password_view.create_password(password)
         confirm_password_view.confirm_password(password)
         if configs.system.IS_MAC:
-            TouchIDAuthView().wait_until_appears().prefer_password()
+            assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
+            BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            WelcomeStatusPopup().confirm()
+            BetaConsentPopup().confirm()
 
     with step('Open User Canvas and verify user info'):
 
@@ -122,10 +123,10 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account):
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.IS_MAC:
-            TouchIDAuthView().wait_until_appears().prefer_password()
+            BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            WelcomeStatusPopup().confirm()
+            BetaConsentPopup().confirm()
 
     with step('Verify that the user logged in via seed phrase correctly'):
         user_canvas = main_window.left_panel.open_user_canvas()

@@ -9,7 +9,7 @@ import driver
 from constants import UserAccount
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.welcome_status_popup import WelcomeStatusPopup
+from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.user_canvas import UserCanvas
 from gui.elements.qt.button import Button
@@ -18,7 +18,7 @@ from gui.elements.qt.window import Window
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.messages import MessagesScreen
-from gui.screens.onboarding import AllowNotificationsView, WelcomeView, TouchIDAuthView, LoginView
+from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, LoginView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 from scripts.tools.image import Image
@@ -135,7 +135,7 @@ class MainWindow(Window):
         if configs.system.IS_MAC:
             AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeView().wait_until_appears()
+        wellcome_screen = WelcomeToStatusView().wait_until_appears()
         profile_view = wellcome_screen.get_keys().generate_new_keys()
         profile_view.set_display_name(user_account.name)
         details_view = profile_view.next()
@@ -143,10 +143,10 @@ class MainWindow(Window):
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.IS_MAC:
-            TouchIDAuthView().wait_until_appears().prefer_password()
+            BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            WelcomeStatusPopup().confirm()
+            BetaConsentPopup().confirm()
         return self
 
     @allure.step('Log in user')
@@ -154,7 +154,7 @@ class MainWindow(Window):
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            WelcomeStatusPopup().wait_until_appears().confirm()
+            BetaConsentPopup().wait_until_appears().confirm()
         return self
 
     @allure.step('Authorize user')
