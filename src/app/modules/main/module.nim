@@ -910,6 +910,9 @@ method communityJoined*[T](
   communityTokensService: community_tokens_service.Service,
   setActive: bool = false,
 ) =
+  if self.channelGroupModules.contains(community.id):
+    # The community is already spectated
+    return
   var firstCommunityJoined = false
   if (self.channelGroupModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
