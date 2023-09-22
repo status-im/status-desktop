@@ -1,7 +1,8 @@
 import NimQml, json, os, chronicles, random, strutils
 import keycard_go
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import app/global/global_singleton
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 import ../../../constants as status_const
 
 import constants
@@ -147,6 +148,50 @@ QtObject:
     self.currentFlow = KCSFlowType.NoFlow
     if self.doLogging:
       debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
+
+  ##########################################################
+  ## Used in test env only, for testing keycard flows
+  proc registerMockedKeycard*(self: Service, cardIndex: int, readerState: int, keycardState: int,
+  mockedKeycard: string, mockedKeycardHelper: string) =
+    if not singletonInstance.localAppSettings.getTestEnvironment():
+      error "registerMockedKeycard can be used only in test env"
+      return
+    let response = keycard_go.mockedLibRegisterKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+    if self.doLogging:
+      debug "mockedLibRegisterKeycard", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, readerState=readerState, keycardState=keycardState, mockedKeycard=mockedKeycard, mockedKeycardHelper=mockedKeycardHelper, response=response
+
+  proc pluginMockedReaderAction*(self: Service) =
+    if not singletonInstance.localAppSettings.getTestEnvironment():
+      error "pluginMockedReaderAction can be used only in test env"
+      return
+    let response = keycard_go.mockedLibReaderPluggedIn()
+    if self.doLogging:
+      debug "mockedLibReaderPluggedIn", kcServiceCurrFlow=($self.currentFlow), response=response
+
+  proc unplugMockedReaderAction*(self: Service) =
+    if not singletonInstance.localAppSettings.getTestEnvironment():
+      error "unplugMockedReaderAction can be used only in test env"
+      return
+    let response = keycard_go.mockedLibReaderUnplugged()
+    if self.doLogging:
+      debug "mockedLibReaderUnplugged", kcServiceCurrFlow=($self.currentFlow), response=response
+
+  proc insertMockedKeycardAction*(self: Service, cardIndex: int) =
+    if not singletonInstance.localAppSettings.getTestEnvironment():
+      error "insertMockedKeycardAction can be used only in test env"
+      return
+    let response = keycard_go.mockedLibKeycardInserted(cardIndex)
+    if self.doLogging:
+      debug "mockedLibKeycardInserted", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, response=response
+
+  proc removeMockedKeycardAction*(self: Service) =
+    if not singletonInstance.localAppSettings.getTestEnvironment():
+      error "removeMockedKeycardAction can be used only in test env"
+      return
+    let response = keycard_go.mockedLibKeycardRemoved()
+    if self.doLogging:
+      debug "mockedLibKeycardRemoved", kcServiceCurrFlow=($self.currentFlow), response=response
+  ##########################################################
 
   proc generateRandomPUK*(self: Service): string =
     randomize()

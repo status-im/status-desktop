@@ -1,6 +1,7 @@
 import QtQuick 2.14
 
 import utils 1.0
+import shared.panels 1.0
 
 import "./states"
 
@@ -18,9 +19,26 @@ Item {
         property bool primaryButtonEnabled: false
     }
 
+    MockedKeycardLibFlowController {
+        id: mockedLibFlowController
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding
+        visible: localAppSettings.testEnvironment
+
+        relatedModule: mainModule
+    }
+
     Loader {
         id: loader
-        anchors.fill: parent
+
+        anchors.top: mockedLibFlowController.visible? mockedLibFlowController.bottom : parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+
         sourceComponent: {
             switch (root.sharedKeycardModule.currentState.stateType) {
             case Constants.keycardSharedState.biometrics:

@@ -41,3 +41,5 @@ TransactionAddressTile 1.0 TransactionAddressTile.qml
 TransactionDataTile 1.0 TransactionDataTile.qml
 TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
+MockedKeycardReaderStateSelector 1.0 MockedKeycardReaderStateSelector.qml
+MockedKeycardStateSelector 1.0 MockedKeycardStateSelector.qml

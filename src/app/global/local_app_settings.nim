@@ -1,4 +1,4 @@
-import NimQml, os
+import NimQml, strutils, os
 
 import ../../constants
 
@@ -142,7 +142,8 @@ QtObject:
 
 
   proc getTestEnvironment*(self: LocalAppSettings): bool {.slot.} =
-    return existsEnv(TEST_ENVIRONMENT_VAR)
+    let value = getEnv(TEST_ENVIRONMENT_VAR)
+    return value.toUpperAscii() == "TRUE" or value == "1"
 
   QtProperty[bool] testEnvironment:
     read = getTestEnvironment
@@ -150,7 +151,7 @@ QtObject:
   proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
-    
+
   proc setFakeLoadingScreenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(enabled))
     self.fakeLoadingScreenEnabledChanged()
