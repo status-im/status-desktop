@@ -32,7 +32,7 @@ class LeftPanel(QObject):
         self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
 
     def _open_settings(self, index: int):
-        self._settings_section_template.real_name['objectName'] = RegularExpression(f'{index}*')
+        self._settings_section_template.real_name['objectName'] = RegularExpression(f'{index}-.*')
         self._settings_section_template.click()
 
     @allure.step('Open messaging settings')
