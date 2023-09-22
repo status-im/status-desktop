@@ -1,7 +1,13 @@
 #include "StatusQ/stringutilsinternal.h"
 
-StringUtilsInternal::StringUtilsInternal(QObject* parent)
-    : QObject(parent)
+#include <QFile>
+#include <QFileSelector>
+#include <QQmlEngine>
+#include <QQmlFileSelector>
+
+StringUtilsInternal::StringUtilsInternal(QQmlEngine *engine, QObject* parent)
+    : m_engine(engine)
+    , QObject(parent)
 {
 }
 
@@ -10,11 +16,21 @@ QString StringUtilsInternal::escapeHtml(const QString &unsafe) const
     return unsafe.toHtmlEscaped();
 }
 
-QObject* StringUtilsInternal::qmlInstance(QQmlEngine *engine,
-                                          QJSEngine *scriptEngine)
+QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
+    auto selector = QQmlFileSelector::get(m_engine);
+    if (!selector) {
+        qWarning() << Q_FUNC_INFO << "No QQmlFileSelector available to load text file:" << filePath;
+        return {};
+    }
 
-    return new StringUtilsInternal;
+    const auto resolvedFilePath = selector->selector()->select(filePath);
+
+    QFile file(resolvedFilePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << Q_FUNC_INFO << "Error opening" << resolvedFilePath << "for reading";
+        return {};
+    }
+
+    return file.readAll();
 }
