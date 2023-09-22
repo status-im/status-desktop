@@ -35,11 +35,11 @@ method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType
   if not state.isNil:
     return state
   if self.flowType == FlowType.AppLogin:
+    if not controller.keyUidMatchSelectedLoginAccount(keycardEvent.keyUid):
+      controller.setPin("")
+      return createState(StateType.LoginKeycardWrongKeycard, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
-        if not controller.keyUidMatchSelectedLoginAccount(keycardEvent.keyUid):
-          controller.setPin("")
-          return createState(StateType.LoginKeycardWrongKeycard, self.flowType, nil)
         controller.setKeycardEvent(keycardEvent)
         return createState(StateType.LoginKeycardPinVerified, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN and
