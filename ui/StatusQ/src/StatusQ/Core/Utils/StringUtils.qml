@@ -8,4 +8,8 @@ QtObject {
     function escapeHtml(unsafe) {
         return Internal.StringUtils.escapeHtml(unsafe)
     }
+
+    function readTextFile(file) {
+        return Internal.StringUtils.readTextFile(file)
+    }
 }

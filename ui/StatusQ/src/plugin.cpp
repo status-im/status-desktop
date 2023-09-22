@@ -1,4 +1,4 @@
-#include <QtQml/QQmlExtensionPlugin>
+#include <QQmlExtensionPlugin>
 
 #include <QZXing.h>
 #include <qqmlsortfilterproxymodeltypes.h>
@@ -11,7 +11,8 @@
 #include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
 
-class StatusQPlugin : public QQmlExtensionPlugin {
+class StatusQPlugin : public QQmlExtensionPlugin
+{
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 public:
@@ -27,20 +28,19 @@ public:
 
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);
-        qmlRegisterSingletonType<StringUtilsInternal>(
-            "StatusQ.Internal", 0, 1, "StringUtils", &StringUtilsInternal::qmlInstance);
 
-        qmlRegisterSingletonType<PermissionUtilsInternal>("StatusQ.Internal", 0, 1, "PermissionUtils", [](QQmlEngine *, QJSEngine *) {
-            return new PermissionUtilsInternal;
-        });
+        qmlRegisterSingletonType<StringUtilsInternal>(
+            "StatusQ.Internal", 0, 1, "StringUtils", [](QQmlEngine* engine, QJSEngine*) {
+                return new StringUtilsInternal(engine);
+            });
+
+        qmlRegisterSingletonType<PermissionUtilsInternal>(
+            "StatusQ.Internal", 0, 1, "PermissionUtils", [](QQmlEngine*, QJSEngine*) {
+                return new PermissionUtilsInternal;
+            });
 
         QZXing::registerQMLTypes();
         qqsfpm::registerTypes();
-    }
-
-    void initializeEngine(QQmlEngine* engine, const char* uri) override
-    {
-        QQmlExtensionPlugin::initializeEngine(engine, uri);
     }
 };
 
