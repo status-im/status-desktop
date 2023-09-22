@@ -49,6 +49,7 @@ SettingsContentBase {
     bottomHeaderComponents: StatusTabBar {
         id: editPreviwTabBar
         StatusTabButton {
+            leftPadding: 0
             width: implicitWidth
             text: qsTr("Edit")
         }

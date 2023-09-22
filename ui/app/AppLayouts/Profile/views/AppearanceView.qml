@@ -40,7 +40,6 @@ SettingsContentBase {
     Item {
         id: appearanceContainer
         anchors.left: !!parent ? parent.left : undefined
-        anchors.leftMargin: Style.current.padding
         width: appearanceView.contentWidth - 2 * Style.current.padding
         height: childrenRect.height
 

@@ -19,6 +19,7 @@ ColumnLayout {
     StatusTabBar {
         id: editPreviwTabBar
         StatusTabButton {
+            leftPadding: 0
             text: qsTr("Live Network")
             width: implicitWidth
         }
