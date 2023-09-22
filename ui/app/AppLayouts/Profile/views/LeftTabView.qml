@@ -32,6 +32,7 @@ Item {
         contentHeight: profileMenu.height + Style.current.bigPadding
         anchors.right: parent.right
         anchors.left: parent.left
+        leftPadding: Style.current.halfPadding
         anchors.top: title.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom

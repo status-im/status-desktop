@@ -1,9 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 ToolBar {
@@ -21,23 +20,20 @@ ToolBar {
     objectName: "statusToolBar"
     implicitWidth: visible ? 518 : 0
     implicitHeight: visible ? 56 : 0
-    padding: 4
+    leftPadding: 24
+    rightPadding: 10
+    topPadding: 8
+    bottomPadding: 4
     background: null
 
     RowLayout {
         anchors.fill: parent
-        anchors.rightMargin: 4
         spacing: 0
         StatusFlatButton {
             objectName: "toolBarBackButton"
             icon.name: "arrow-left"
-            icon.width: 20
-            icon.height: 20
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-            Layout.leftMargin: 18
             visible: !!root.backButtonName
             text: root.backButtonName
-            size: StatusBaseButton.Size.Large
             onClicked: { root.backButtonClicked(); }
         }
 

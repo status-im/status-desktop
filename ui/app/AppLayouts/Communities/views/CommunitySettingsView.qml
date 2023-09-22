@@ -106,10 +106,10 @@ StatusSectionLayout {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Style.current.halfPadding
                 Layout.rightMargin: Style.current.padding
                 model: stackLayout.children
-                spacing: 8
+                spacing: Style.current.halfPadding
                 enabled: !root.communitySettingsDisabled
 
                 delegate: StatusNavigationListItem {
@@ -117,8 +117,6 @@ StatusSectionLayout {
                     width: ListView.view.width
                     title: model.sectionName
                     asset.name: model.sectionIcon
-                    asset.height: 24
-                    asset.width: 24
                     selected: d.currentIndex === index && !root.communitySettingsDisabled
                     onClicked: d.currentIndex = index
                     visible: model.sectionEnabled

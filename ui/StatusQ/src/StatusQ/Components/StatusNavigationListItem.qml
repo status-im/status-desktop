@@ -12,8 +12,10 @@ StatusListItem {
     implicitWidth: 286
     implicitHeight: 48
 
-    asset.bgWidth: 20
-    asset.bgHeight: 20
+    asset.bgWidth: 24
+    asset.bgHeight: 24
+    asset.width: 24
+    asset.height: 24
     asset.bgColor: "transparent"
 
     statusListItemIcon.anchors.topMargin: 14
