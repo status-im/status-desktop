@@ -263,7 +263,7 @@ $(STATUSQ_CMAKE_CACHE): | deps
 		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
-statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
+statusq-configure: | $(STATUSQ_CMAKE_CACHE)
 
 statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
@@ -328,7 +328,7 @@ run-statusq-tests: statusq-tests
 
 ifneq ($(detected_OS),Windows)
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
-#  NIM_PARAMS += 
+#  NIM_PARAMS +=
 else
  DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/$(COMMON_CMAKE_BUILD_TYPE)/DOtherSide.dll
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
@@ -354,7 +354,7 @@ $(DOTHERSIDE_CMAKE_CACHE): | deps
 		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
-dotherside-configure: | $(DOTHERSIDE_CMAKE_CACHE) 
+dotherside-configure: | $(DOTHERSIDE_CMAKE_CACHE)
 
 dotherside-build: | dotherside-configure
 	echo -e "\033[92mBuilding:\033[39m DOtherSide"
@@ -392,11 +392,16 @@ STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTA
 STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
 export STATUSKEYCARDGO_LIBDIR
 
+STATUSKEYCARDGO_RULE := build-lib
+ifeq ($(TEST_ENVIRONMENT),true)
+	STATUSKEYCARDGO_RULE := build-mocked-lib
+endif
+
 status-keycard-go: $(STATUSKEYCARDGO)
 $(STATUSKEYCARDGO): | deps
 	echo -e $(BUILD_MSG) "status-keycard-go"
 	+ cd vendor/status-keycard-go && \
-	  $(MAKE) build-lib $(STATUSKEYCARDGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+	  $(MAKE) $(STATUSKEYCARDGO_RULE) $(STATUSKEYCARDGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 

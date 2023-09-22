@@ -353,6 +353,23 @@ method windowDeactivated*(self: AccessInterface) {.base.} =
 method communityMembersRevealedAccountsLoaded*(self: AccessInterface, communityId: string, membersRevealedAccounts: MembersRevealedAccounts) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+## Used in test env only, for testing keycard flows
+method registerMockedKeycard*(self: AccessInterface, cardIndex: int, readerState: int, keycardState: int,
+  mockedKeycard: string, mockedKeycardHelper: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method pluginMockedReaderAction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unplugMockedReaderAction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method insertMockedKeycardAction*(self: AccessInterface, cardIndex: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
