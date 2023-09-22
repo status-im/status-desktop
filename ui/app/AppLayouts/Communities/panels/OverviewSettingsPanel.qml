@@ -66,6 +66,7 @@ StackLayout {
     signal airdropTokensClicked
     signal exportControlNodeClicked
     signal importControlNodeClicked
+    signal mintOwnerTokenClicked
 
     clip: true
 
@@ -111,15 +112,21 @@ StackLayout {
                     Layout.preferredHeight: 38
                     Layout.alignment: Qt.AlignTop
                     objectName: "communityOverviewSettingsTransferOwnershipButton"
-                    visible: root.isOwner && !!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed
+                    visible: root.isOwner
                     text: qsTr("Transfer ownership")
                     size: StatusBaseButton.Size.Small
 
-                    onClicked: Global.openTransferOwnershipPopup(root.name,
-                                                                 root.logoImageData,
-                                                                 root.ownerToken,
-                                                                 root.accounts,
-                                                                 root.sendModalPopup)
+                    onClicked: {
+                        if(!!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed) {
+                            Global.openTransferOwnershipPopup(root.name,
+                                                              root.logoImageData,
+                                                              root.ownerToken,
+                                                              root.accounts,
+                                                              root.sendModalPopup)
+                        } else {
+                            Global.openPopup(transferOwnershipAlertPopup, { mode: TransferOwnershipAlertPopup.Mode.TransferOwnership })
+                        }
+                    }
                 }
 
                 StatusButton {
@@ -174,7 +181,13 @@ StackLayout {
             topPadding: 0
             communityName: root.name
             isControlNode: root.isControlNode
-            onExportControlNodeClicked: root.exportControlNodeClicked()
+            onExportControlNodeClicked:{
+                if(!!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed) {
+                    root.exportControlNodeClicked()
+                } else {
+                    Global.openPopup(transferOwnershipAlertPopup, { mode: TransferOwnershipAlertPopup.Mode.MoveControlNode })
+                }
+            }
             onImportControlNodeClicked: root.importControlNodeClicked()
             //TODO update once the domain changes
             onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
@@ -304,6 +317,17 @@ StackLayout {
                 root.edited(editSettingsPanelLoader.item)
                 editSettingsPanelLoader.reloadContent()
             }
+        }
+    }
+
+    Component {
+        id: transferOwnershipAlertPopup
+
+        TransferOwnershipAlertPopup {
+            communityName: root.name
+            communityLogo: root.logoImageData
+
+            onMintClicked: root.mintOwnerTokenClicked()
         }
     }
 }

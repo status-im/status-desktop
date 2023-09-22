@@ -233,6 +233,12 @@ StatusSectionLayout {
 
                 Global.openImportControlNodePopup(root.community)
             }
+
+            onMintOwnerTokenClicked: {
+                root.goTo(Constants.CommunitySettingsSections.MintTokens)
+                mintPanel.openNewTokenForm(false/*Collectible owner token*/)
+            }
+
         }
 
         MembersSettingsPanel {
@@ -322,6 +328,7 @@ StatusSectionLayout {
             isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
             isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
             anyPrivilegedTokenFailed: tokensModelChangesTracker.isOwnerTokenFailed || tokensModelChangesTracker.isTMasterTokenFailed
+            ownerOrTMasterTokenItemsExist: tokensModelChangesTracker.ownerOrTMasterTokenItemsExist
 
             // Models
             tokensModel: root.community.communityTokens
