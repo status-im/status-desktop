@@ -1622,4 +1622,20 @@ Item {
             onClosed: userAgreementLoader.active = false
         }
     }
+
+    Loader {
+        id: mockedKeycardLibInitialController
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        active: localAppSettings.testEnvironment
+
+        sourceComponent: MockedKeycardLibInitialController {
+            width: 450
+            height: 500
+
+            onClose: {
+                mockedKeycardLibInitialController.active = false
+            }
+        }
+    }
 }

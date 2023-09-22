@@ -553,3 +553,20 @@ method onReencryptionProcessFinished*[T](self: Module[T]) =
       self.moveToStartupState()
       return
   self.moveToLoadingAppState()
+
+## Used in test env only, for testing keycard flows
+method registerMockedKeycard*[T](self: Module[T], cardIndex: int, readerState: int, keycardState: int,
+  mockedKeycard: string, mockedKeycardHelper: string) =
+  self.keycardService.registerMockedKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+
+method pluginMockedReaderAction*[T](self: Module[T]) =
+  self.keycardService.pluginMockedReaderAction()
+
+method unplugMockedReaderAction*[T](self: Module[T]) =
+  self.keycardService.unplugMockedReaderAction()
+
+method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
+  self.keycardService.insertMockedKeycardAction(cardIndex)
+
+method removeMockedKeycardAction*[T](self: Module[T]) =
+  self.keycardService.removeMockedKeycardAction()
