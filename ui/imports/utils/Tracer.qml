@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 Rectangle {
     id: root
@@ -10,31 +10,29 @@ Rectangle {
     color: 'transparent'
 
     QtObject {
-        id: internal
+        id: d
 
         property Item originalParent
-        property int counter: 0
+    }
 
-        PropertyAnimation on counter {
-            id: positionUpdater
+    Timer {
+        id: positionUpdateTimer
 
-            running: false
-            from: 0
-            to: 1000
-            duration: 1000
-            loops: Animation.Infinite
-        }
+        interval: 500
+        repeat: true
+        triggeredOnStart: true
 
-        onCounterChanged: {
-            const overlay = originalParent.Overlay.overlay
+        onTriggered: {
+            const overlay = d.originalParent.Overlay.overlay
 
             if (!overlay)
                 return
 
             root.parent = overlay
-            root.visible = originalParent.visible
-            const rect = originalParent.mapToItem(
-                           overlay, 0, 0, originalParent.width, originalParent.height)
+            root.visible = d.originalParent.visible
+            const rect = d.originalParent.mapToItem(overlay, 0, 0,
+                                                    d.originalParent.width,
+                                                    d.originalParent.height)
             root.x = rect.x
             root.y = rect.y
             root.width = rect.width
@@ -51,8 +49,8 @@ Rectangle {
                 || parent instanceof Row
                 || parent instanceof Grid
                 || parent instanceof Flow) {
-            internal.originalParent = parent
-            positionUpdater.running = true
+            d.originalParent = parent
+            positionUpdateTimer.running = true
         } else {
             if (!anchors.fill)
                 anchors.fill = parent
