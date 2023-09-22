@@ -340,4 +340,22 @@ QtObject:
         if tokenId > 0:
           result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
         return result
+    
+    # Fallback, use data from id
+    var parts = id.split("+")
+    if len(parts) == 3:
+      result.chainId = backend_activity.ChainId(parseInt(parts[0]))
+      result.address = some(eth.fromHex(eth.Address, parts[1]))
+      var tokenIdInt = u256(parseInt(parts[2]))
+      result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenIdInt)))
+
     return result
+
+  proc getUidForData*(self: Model, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getTokenId().toString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
+        return item.getId()
+    # Fallback, create uid from data, because it still might not be fetched
+    if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
+      return $chainId & "+" & tokenAddress & "+" & tokenId
+    return ""

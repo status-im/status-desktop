@@ -10,6 +10,7 @@ QtObject {
 
     property var transactionsList: walletSection.activityController.model
 
+    property bool autoUpdateFilter: true
     property var activityController: walletSection.activityController
     property bool filtersSet: selectedTime !== Constants.TransactionTimePeriod.All ||
                                 typeFilters.length !== 0 ||
@@ -153,17 +154,19 @@ QtObject {
                             ? activityController.noLimitTimestamp
                             : toTimestamp/1000
         activityController.setFilterTime(startTimestamp, endTimestamp)
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     // Type Filters
     property var typeFilters: []
-    function toggleType(type, allFiltersCount) {
+    function toggleType(type, allFiltersCount = 0) {
         // update filters
         typeFilters = d.toggleFilterState(typeFilters, type, allFiltersCount)
         // Set backend values
         activityController.setFilterType(JSON.stringify(typeFilters))
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     // Status Filters
@@ -173,7 +176,8 @@ QtObject {
         statusFilters = d.toggleFilterState(statusFilters, status, allFiltersCount)
         // Set backend values
         activityController.setFilterStatus(JSON.stringify(statusFilters))
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     // Tokens Filters
@@ -184,18 +188,20 @@ QtObject {
         tokensFilter = d.toggleFilterState(tokensFilter, symbol, tokensList.count)
         // Set backend values
         activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     // Collectibles Filters
-    // To-do: Get list of collectibles with activity from backend
     property var collectiblesList: walletSection.collectiblesController.model
     property var collectiblesFilter: []
     function toggleCollectibles(uid) {
         // update filters
         collectiblesFilter = d.toggleFilterState(collectiblesFilter, uid, collectiblesList.count)
+        // set backend values
         activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     property var recentsList: activityController.recipientsModel
@@ -208,7 +214,8 @@ QtObject {
         // update filters
         recentsFilters = d.toggleFilterState(recentsFilters, address, recentsList.count)
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     function getChainShortNamesForSavedWalletAddress(address) {
@@ -236,7 +243,8 @@ QtObject {
         savedAddressFilters = d.toggleFilterState(savedAddressFilters, address, savedAddressList.count)
         // Set backend values
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     function updateFilterBase() {
@@ -251,7 +259,8 @@ QtObject {
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
         activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
 
-        activityController.updateFilter()
+        if (autoUpdateFilter)
+            activityController.updateFilter()
     }
 
     function resetAllFilters() {
