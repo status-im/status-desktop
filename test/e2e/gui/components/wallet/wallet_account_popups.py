@@ -6,7 +6,7 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 import configs
 import constants.wallet
 import driver
-from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
+from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.qt.button import Button

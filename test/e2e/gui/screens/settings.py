@@ -1,5 +1,6 @@
 import time
 import typing
+from objectmaphelper import RegularExpression
 
 import allure
 
@@ -8,8 +9,10 @@ import driver
 from constants import UserCommunityInfo, wallet_account_list_item
 from driver import objects_access
 from driver.objects_access import walk_children
+from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.change_password_popup import ChangePasswordPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
+from gui.components.social_links_popup import SocialLinksPopup
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.list import List
@@ -28,29 +31,34 @@ class LeftPanel(QObject):
         super().__init__('mainWindow_LeftTabView')
         self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
 
-    def _open_settings(self, index: int, section_name: str):
-        self._settings_section_template.real_name['objectName'] = f'{index}-{section_name}MenuItem'
+    def _open_settings(self, index: int):
+        self._settings_section_template.real_name['objectName'] = RegularExpression(f'{index}*')
         self._settings_section_template.click()
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
-        self._open_settings(3, 'App')
+        self._open_settings(3)
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
     def open_communities_settings(self) -> 'CommunitiesSettingsView':
-        self._open_settings(12, 'App')
+        self._open_settings(12)
         return CommunitiesSettingsView()
 
     @allure.step('Open wallet settings')
     def open_wallet_settings(self):
-        self._open_settings(4, 'App')
+        self._open_settings(4)
         return WalletSettingsView()
 
     @allure.step('Open profile settings')
     def open_profile_settings(self):
-        self._open_settings(0, 'Main')
+        self._open_settings(0)
         return ProfileSettingsView()
+
+    @allure.step('Choose back up seed phrase in settings')
+    def open_back_up_seed_phrase(self):
+        self._open_settings(15)
+        return BackUpYourSeedPhrasePopUp()
 
 
 class SettingsScreen(QObject):
@@ -68,6 +76,9 @@ class ProfileSettingsView(QObject):
         self._display_name_text_field = TextEdit('displayName_TextEdit')
         self._save_button = Button('settingsSave_StatusButton')
         self._change_password_button = Button('change_password_button')
+        self._bio_text_field = TextEdit('bio_TextEdit')
+        self._add_more_links_label = TextLabel('addMoreSocialLinks')
+        self._links_list = QObject('linksView')
 
     @property
     @allure.step('Get display name')
@@ -80,6 +91,75 @@ class ProfileSettingsView(QObject):
         self._scroll_view.vertical_scroll_to(self._display_name_text_field)
         self._display_name_text_field.text = value
         self.save_changes()
+
+    @property
+    @allure.step('Get bio')
+    def bio(self) -> str:
+        self._scroll_view.vertical_scroll_to(self._bio_text_field)
+        return self._bio_text_field.text
+
+    @bio.setter
+    @allure.step('Set bio')
+    def bio(self, value: str):
+        self._scroll_view.vertical_scroll_to(self._bio_text_field)
+        self._bio_text_field.text = value
+        self.save_changes()
+
+    @property
+    @allure.step('Get social links')
+    def social_links(self) -> dict:
+        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        links = {}
+        for link_name in walk_children(driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
+            if getattr(link_name, 'id', '') == 'draggableDelegate':
+                for link_value in walk_children(link_name):
+                    if getattr(link_value, 'id', '') == 'textMouseArea':
+                        links[str(link_name.title)] = str(driver.object.parent(link_value).text)
+        return links
+
+    @social_links.setter
+    @allure.step('Set social links')
+    def social_links(self, links):
+        links = {
+            'Twitter': [links[0]],
+            'Personal site': [links[1]],
+            'Github': [links[2]],
+            'YouTube channel': [links[3]],
+            'Discord handle': [links[4]],
+            'Telegram handle': [links[5]],
+            'Custom link': [links[6], links[7]],
+        }
+
+        for network, link in links.items():
+            social_links_popup = self.open_social_links_popup()
+            social_links_popup.add_link(network, link)
+
+    @allure.step('Verify social links')
+    def verify_social_links(self, links):
+        twitter = links[0]
+        personal_site = links[1]
+        github = links[2]
+        youtube = links[3]
+        discord = links[4]
+        telegram = links[5]
+        custom_link_text = links[6]
+        custom_link = links[7]
+
+        actual_links = self.social_links
+
+        assert actual_links['Twitter'] == twitter
+        assert actual_links['Personal site'] == personal_site
+        assert actual_links['Github'] == github
+        assert actual_links['YouTube channel'] == youtube
+        assert actual_links['Discord handle'] == discord
+        assert actual_links['Telegram handle'] == telegram
+        assert actual_links[custom_link_text] == custom_link
+
+    @allure.step('Open social links form')
+    def open_social_links_popup(self):
+        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        self._add_more_links_label.click()
+        return SocialLinksPopup().wait_until_appears()
 
     @allure.step('Save changes')
     def save_changes(self):

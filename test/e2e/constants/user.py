@@ -11,7 +11,9 @@ user_account_two = UserAccount('athletic', '0000000000', [
 ])
 user_account_three = UserAccount('nervous', '000000000', [])
 
-user_account_one_changed = UserAccount('squisher', 'NewPassword@12345', [])
+user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [])
+
+user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [])
 
 community_params = {
     'name': 'Name',
