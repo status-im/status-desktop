@@ -104,6 +104,50 @@ const asyncAcceptRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.g
     })
 
 type
+  AsyncCommunityMemberActionTaskArg = ref object of QObjectTaskArg
+    communityId: string
+    pubKey: string
+
+const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
+  try:
+    let response = status_go.removeUserFromCommunity(arg.communityId, arg.pubKey)
+    let tpl: tuple[communityId: string, pubKey: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.pubKey, response, "")
+    arg.finish(tpl)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "communityId": arg.communityId,
+      "pubKey": arg.pubKey
+    })
+
+const asyncBanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
+  try:
+    let response = status_go.banUserFromCommunity(arg.communityId, arg.pubKey)
+    let tpl: tuple[communityId: string, pubKey: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.pubKey, response, "")
+    arg.finish(tpl)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "communityId": arg.communityId,
+      "pubKey": arg.pubKey
+    })
+
+const asyncUnbanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
+  try:
+    let response = status_go.unbanUserFromCommunity(arg.communityId, arg.pubKey)
+    let tpl: tuple[communityId: string, pubKey: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.pubKey, response, "")
+    arg.finish(tpl)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "communityId": arg.communityId,
+      "pubKey": arg.pubKey
+    })
+
+type
   AsyncRequestToJoinCommunityTaskArg = ref object of QObjectTaskArg
     communityId: string
     ensName: string

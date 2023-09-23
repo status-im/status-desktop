@@ -59,11 +59,6 @@ proc handleCommunityOnlyConnections(self: Controller) =
 
     self.delegate.onMembersChanged(args.members)
 
-  self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
-    let args = CommunityMemberArgs(e)
-    if (args.communityId == self.sectionId):
-      self.delegate.onChatMemberRemoved(args.pubKey)
-
 proc init*(self: Controller) =
   # Events that are needed for all chats because of mentions
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
