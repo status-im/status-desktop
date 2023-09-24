@@ -32,7 +32,7 @@ method executeCancelCommand*(self: InsertKeycardState, controller: Controller) =
 
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
-  let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+  let state = readingKeycard(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if keycardFlowType == ResponseTypeValueInsertCard and

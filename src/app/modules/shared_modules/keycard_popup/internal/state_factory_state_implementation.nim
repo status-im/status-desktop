@@ -576,3 +576,33 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
           return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
+
+proc readingKeycard*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  controller.setKeycardUid("")
+  if state.flowType == FlowType.UnlockKeycard or
+    state.flowType == FlowType.RenameKeycard or
+    state.flowType == FlowType.ChangeKeycardPin or
+    state.flowType == FlowType.ChangeKeycardPuk or
+    state.flowType == FlowType.ChangePairingCode or
+    state.flowType == FlowType.MigrateFromAppToKeycard or
+    (state.flowType == FlowType.CreateCopyOfAKeycard and
+    not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)) or
+    state.flowType == FlowType.FactoryReset and
+    not controller.getKeyPairForProcessing().isNil:
+      # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
+      let ensureKeycardPresenceState = ensureReaderAndCardPresence(state, keycardFlowType, keycardEvent, controller)
+      if ensureKeycardPresenceState.isNil: # means the keycard is inserted
+        let nextState = ensureReaderAndCardPresenceAndResolveNextState(state, keycardFlowType, keycardEvent, controller)
+        if not nextState.isNil and
+          (nextState.stateType == StateType.KeycardEmpty or
+          nextState.stateType == StateType.NotKeycard or
+          nextState.stateType == StateType.KeycardEmptyMetadata):
+            return nextState
+        let keyUid = controller.getKeyPairForProcessing().getKeyUid()
+        if keyUid.len > 0 and keycardEvent.keyUid.len > 0:
+          if keyUid != keycardEvent.keyUid:
+            return createState(StateType.WrongKeycard, state.flowType, nil)
+          controller.setKeycardUid(keycardEvent.instanceUID)
+
+  # this is used in case a keycard is inserted and we jump to the first meaningful screen
+  return ensureReaderAndCardPresenceAndResolveNextState(state, keycardFlowType, keycardEvent, controller)

@@ -32,4 +32,4 @@ method executeCancelCommand*(self: PluginReaderState, controller: Controller) =
 
 method resolveKeycardNextState*(self: PluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+  return readingKeycard(self, keycardFlowType, keycardEvent, controller)

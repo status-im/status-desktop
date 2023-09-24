@@ -39,6 +39,7 @@ proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType:
 # Resolve state section
 proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
+proc readingKeycard*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 
 include biometrics_state
 include biometrics_password_failed_state
