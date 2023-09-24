@@ -23,29 +23,4 @@ method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller)
 
 method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
-  if self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.RenameKeycard or
-    self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.MigrateFromAppToKeycard or
-    (self.flowType == FlowType.CreateCopyOfAKeycard and
-    not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)) or
-    self.flowType == FlowType.FactoryReset and
-    not controller.getKeyPairForProcessing().isNil:
-      # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
-      let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
-      if ensureKeycardPresenceState.isNil: # means the keycard is inserted
-        let nextState = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
-        if not nextState.isNil and
-          (nextState.stateType == StateType.KeycardEmpty or
-          nextState.stateType == StateType.NotKeycard or
-          nextState.stateType == StateType.KeycardEmptyMetadata):
-            return nextState
-        let keyUid = controller.getKeyPairForProcessing().getKeyUid()
-        if keyUid.len > 0:
-          if keyUid != keycardEvent.keyUid:
-            return createState(StateType.WrongKeycard, self.flowType, nil)
-          controller.setKeycardUid(keycardEvent.instanceUID)
-  # this is used in case a keycard is inserted and we jump to the first meaningful screen
-  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+  return readingKeycard(self, keycardFlowType, keycardEvent, controller)
