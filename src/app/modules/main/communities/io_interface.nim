@@ -1,4 +1,5 @@
 import tables
+import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community_tokens/dto/community_token
@@ -221,4 +222,7 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
   raise newException(ValueError, "No implementation available")
 
 method onAllCommunityTokensLoaded*(self: AccessInterface, communityTokens: seq[CommunityTokenDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityMemberStatusUpdated*(self: AccessInterface, communityId: string, memberPubkey: string, status: MembershipRequestState) {.base.} =
   raise newException(ValueError, "No implementation available")

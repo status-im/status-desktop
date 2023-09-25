@@ -139,6 +139,11 @@ type
     communityId*: string
     membersRevealedAccounts*: MembersRevealedAccounts
 
+  CommunityMemberStatusUpdatedArgs* = ref object of Args
+    communityId*: string
+    memberPubkey*: string
+    status*: MembershipRequestState
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -169,6 +174,7 @@ const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
+const SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED* = "communityMemberStatusChanged"
 const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
@@ -465,19 +471,8 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
           CommunityCategoryArgs(communityId: community.id, category: category))
 
-  proc checkForCommunityMembersUpdates(self: Service, community: CommunityDto, prev_community: CommunityDto) =
-    if not (community.isMember or community.tokenPermissions.len == 0) or
-      (community.members == prev_community.members and community.pendingAndBannedMembers == prev_community.pendingAndBannedMembers):
-      return
-
-    var members: seq[ChatMember]
-    for member in community.members:
-      if community.pendingAndBannedMembers.hasKey(member.id):
-        member.membershipRequestState = community.pendingAndBannedMembers[member.id].toMembershipRequestState()
-      members.add(members)
-
     self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
-    CommunityMembersArgs(communityId: community.id, members: members))
+    CommunityMembersArgs(communityId: community.id, members: community.members))
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
@@ -597,7 +592,9 @@ QtObject:
             self.chatService.updateChannelMembers(chat)
 
       # members list was changed
-      self.checkForCommunityMembersUpdates(community, prev_community)
+      if (community.isMember or community.tokenPermissions.len == 0) and community.members != prev_community.members:
+        self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
+        CommunityMembersArgs(communityId: community.id, members: community.members))
 
       # token metadata was added
       if community.communityTokensMetadata.len > prev_community.communityTokensMetadata.len:
@@ -1935,6 +1932,8 @@ QtObject:
         let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
 
+      let memberPubkey = rpcResponseObj{"pubKey"}.getStr()
+
       var communityJArr: JsonNode
       if not rpcResponseObj["response"]{"result"}.getProp("communities", communityJArr):
         raise newException(RpcException, "there is no `communities` key in the response")
@@ -1943,8 +1942,22 @@ QtObject:
         raise newException(RpcException, "`communities` array is empty in the response")
 
       var community = communityJArr[0].toCommunityDto()
-      let prev_community = self.communities[community.id]
-      self.checkForCommunityMembersUpdates(community, prev_community)
+
+      var status: MembershipRequestState = MembershipRequestState.None
+      if community.pendingAndBannedMembers.hasKey(memberPubkey):
+        status = community.pendingAndBannedMembers[memberPubkey].toMembershipRequestState()
+      else:
+        for member in community.members:
+          if member.id == memberPubkey:
+            status = MembershipRequestState.Accepted
+
+      echo "-----> onAsyncCommunityMemberActionCompleted::", memberPubkey, ", ", status
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
+        communityId: community.id,
+        memberPubkey: memberPubkey,
+        status: status
+      ))
 
     except Exception as e:
       error "error while getting the community members' revealed addressesses", msg = e.msg

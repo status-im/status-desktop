@@ -146,6 +146,12 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
   # TODO: unite bannedMembers, pendingMemberRequests and declinedMemberRequests
+  var members: seq[MemberItem] = @[]
+  for member in c.members:
+    if c.pendingAndBannedMembers.hasKey(member.id):
+      let communityMemberState = c.pendingAndBannedMembers[member.id]
+      members.add(self.createMemberItem(member.id, "", toMembershipRequestState(communityMemberState)))
+
   var bannedMembers: seq[MemberItem] = @[]
   for memberId, communityMemberState in c.pendingAndBannedMembers:
     bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
@@ -177,8 +183,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.access,
       c.permissions.ensOnly,
       c.muted,
-      c.members.map(proc(member: ChatMember): MemberItem =
-        result = self.createMemberItem(member.id, "", MembershipRequestState.Accepted)),
+      members = members,
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
       bannedMembers = bannedMembers,
       pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
@@ -656,3 +661,7 @@ method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, membe
         airdropAddress = revealedAccount.address
 
     self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
+
+method onCommunityMemberStatusUpdated*(self: Module, communityId: string, memberPubkey: string, status: MembershipRequestState) =
+  let community = self.controller.getCommunityById(communityId)
+  community.updateMemeberStatus(memberPubkey, status)

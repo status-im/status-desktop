@@ -112,13 +112,17 @@ const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
   try:
     let response = status_go.removeUserFromCommunity(arg.communityId, arg.pubKey)
-    let tpl: tuple[communityId: string, pubKey: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.pubKey, response, "")
-    arg.finish(tpl)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "pubKey": arg.pubKey,
+      "response": response,
+      "error": "",
+    })
   except Exception as e:
     arg.finish(%* {
-      "error": e.msg,
       "communityId": arg.communityId,
-      "pubKey": arg.pubKey
+      "pubKey": arg.pubKey,
+      "error": e.msg,
     })
 
 const asyncBanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =

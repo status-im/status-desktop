@@ -196,6 +196,10 @@ proc init*(self: Controller) =
       )
       self.tmpCommunityIdForRevealedAccounts = ""
 
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED) do(e: Args):
+    let args = CommunityMemberStatusUpdatedArgs(e)
+    self.delegate.onCommunityMemberStatusUpdated(args.communityId, args.memberPubkey, args.status)
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
 
