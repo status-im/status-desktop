@@ -1,6 +1,7 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/community_tokens/dto/community_token
 import ../../shared_models/section_item
 
 type
@@ -217,4 +218,7 @@ method onCommunityCheckAllChannelPermissionsFailed*(self: AccessInterface, commu
 
 method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, communityId: string, memberPubkey: string,
     revealedAccounts: seq[RevealedAccount]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAllCommunityTokensLoaded*(self: AccessInterface, communityTokens: seq[CommunityTokenDto]) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -57,6 +57,10 @@ type
     deployState*: DeployState
 
 type
+  CommunityTokensArgs* = ref object of Args
+    communityTokens*: seq[CommunityTokenDto]
+
+type
   CommunityTokenDeploymentArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
@@ -155,6 +159,7 @@ const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokenRemoved"
 const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "ownerTokenDeployStatus"
 const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "ownerTokenDeploymentStarted"
 const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokenDetailsLoaded"
+const SIGNAL_ALL_COMMUNITY_TOKENS_LOADED* = "allCommunityTokensLoaded"
 
 const SIGNAL_DEPLOY_OWNER_TOKEN* = "deployOwnerToken"
 
@@ -504,6 +509,23 @@ QtObject:
         ))
     except RpcException as e:
       error "Error getting community tokens details", message = e.msg
+
+  proc getAllCommunityTokensAsync*(self: Service) =
+    let arg = GetAllCommunityTokensArg(
+      tptr: cast[ByteAddress](getAllCommunityTokensTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onGotAllCommunityTokens",
+    )
+    self.threadpool.start(arg)
+
+  proc onGotAllCommunityTokens*(self:Service, response: string) {.slot.} =
+    try:
+      let responseJson = parseJson(response)
+      let communityTokens = map(responseJson["response"]["result"].getElems(),
+        proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
+      self.events.emit(SIGNAL_ALL_COMMUNITY_TOKENS_LOADED, CommunityTokensArgs(communityTokens: communityTokens))
+    except RpcException as e:
+      error "Error getting all community tokens async", message = e.msg
 
   proc removeCommunityToken*(self: Service, communityId: string, chainId: int, address: string) =
     try:

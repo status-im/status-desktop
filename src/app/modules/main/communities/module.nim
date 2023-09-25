@@ -51,7 +51,6 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
-proc buildTokensAndCollectiblesFromCommunities(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -107,7 +106,8 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  self.buildTokensAndCollectiblesFromCommunities()
+  # Get all community tokens to construct the original list of collectibles and assets from communities
+  self.controller.getAllCommunityTokensAsync()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -420,7 +420,7 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     infiniteSupply,
   )
 
-proc buildTokensAndCollectiblesFromCommunities(self: Module) =
+proc buildTokensAndCollectiblesFromCommunities(self: Module, communityTokens: seq[CommunityTokenDto]) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
@@ -430,7 +430,6 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module) =
       # No need to include those tokens, we do not manage that community
       continue
 
-    let communityTokens = self.controller.getCommunityTokens(community.id)
     for tokenMetadata in community.communityTokensMetadata:
       # Set fallback supply to infinite in case we don't have it
       var supply = "1"
@@ -478,6 +477,9 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
 
 method onWalletAccountTokensRebuilt*(self: Module) =
   self.buildTokensAndCollectiblesFromWallet()
+
+method onAllCommunityTokensLoaded*(self: Module, communityTokens: seq[CommunityTokenDto]) =
+  self.buildTokensAndCollectiblesFromCommunities(communityTokens)
 
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
   let communityTokens = self.controller.getCommunityTokens(communityId)
