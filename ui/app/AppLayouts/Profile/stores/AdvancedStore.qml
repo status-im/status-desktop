@@ -14,6 +14,7 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
     property bool isWakuV2StoreEnabled: advancedModule ? advancedModule.isWakuV2StoreEnabled : false
+    readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
@@ -148,6 +149,13 @@ QtObject {
             return
 
         localAppSettings.fakeLoadingScreenEnabled = !localAppSettings.fakeLoadingScreenEnabled
+    }
+
+    function toggleWakuV2ShardedCommunities() {
+        if(!localAppSettings)
+            return
+
+        localAppSettings.wakuV2ShardedCommunitiesEnabled = !localAppSettings.wakuV2ShardedCommunitiesEnabled
     }
 
     function setCustomScrollingEnabled(value) {

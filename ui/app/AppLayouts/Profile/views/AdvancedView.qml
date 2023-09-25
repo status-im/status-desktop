@@ -82,7 +82,6 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 text: qsTr("Application Logs")
-                font.pixelSize: 15
                 font.underline: mouseArea.containsMouse
                 color: Style.current.blue
                 topPadding: 23
@@ -165,6 +164,17 @@ SettingsContentBase {
                 text: qsTr("WakuV2 options")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
+            }
+
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Enable creation of sharded communities")
+                isSwitch: true
+                visible: root.advancedStore.isWakuV2
+                switchChecked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
+                onClicked: root.advancedStore.toggleWakuV2ShardedCommunities()
             }
 
             // TODO: replace with StatusQ component
@@ -454,6 +464,7 @@ SettingsContentBase {
                 property bool mode: false
 
                 id: confirmDialog
+                destroyOnClose: true
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable all the developer features? The app will be restarted.")
                 onConfirmButtonClicked: {
@@ -473,6 +484,7 @@ SettingsContentBase {
                 property bool mode: false
 
                 id: confirmDialog
+                destroyOnClose: true
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
@@ -491,6 +503,7 @@ SettingsContentBase {
                 property bool mode: false
 
                 id: confirmDialog
+                destroyOnClose: true
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable auto message? You need to restart the app for this change to take effect.")
                 onConfirmButtonClicked: {
@@ -509,6 +522,7 @@ SettingsContentBase {
                 property bool mode: false
 
                 id: confirmDialog
+                destroyOnClose: true
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to %1 WakuV2 Store? You need to restart the app for this change to take effect.")
                     .arg(root.advancedStore.isWakuV2StoreEnabled ?
@@ -530,6 +544,7 @@ SettingsContentBase {
                 property bool mode: false
 
                 id: confirmDialog
+                destroyOnClose: true
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to %1 debug mode? You need to restart the app for this change to take effect.").arg(root.advancedStore.isDebugEnabled ?
                     qsTr("disable") :
@@ -559,8 +574,6 @@ SettingsContentBase {
                     width: parent.width
                     StatusBaseText {
                         width: parent.width
-                        font.pixelSize: 15
-                        color: Theme.palette.directColor1
                         padding: 15
                         wrapMode: Text.WordWrap
                         text: qsTr("Choose a number between 1 and 100")
@@ -587,8 +600,6 @@ SettingsContentBase {
 
                     StatusBaseText {
                         width: parent.width
-                        font.pixelSize: 15
-                        color: Theme.palette.directColor1
                         padding: 15
                         wrapMode: Text.WordWrap
                         text: qsTr("This change will only come into action after a restart")
