@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
@@ -9,78 +10,104 @@ import shared.controls 1.0
 
 import utils 1.0
 
-Rectangle {
+ApplicationWindow {
     id: root
 
-    color: Style.current.modalBackground
-    radius: Style.current.radius
-    border.color: Style.current.grey3
-    border.width: 2
+    property var relatedModule
 
-    signal close()
+    title: qsTr("Mocked Keycard Lib Controller")
+    minimumHeight: 600
+    minimumWidth: 450
 
     QtObject {
         id: d
 
         property int btnWidth: 30
         property int btnHeight: 30
-        property int margin: 8
-
-        property bool minimized: false
-        property int maxWidth
-        property int maxHeight
-        onMinimizedChanged: {
-            if (minimized) {
-                d.maxWidth = root.width
-                d.maxHeight = root.height
-                root.width = header.implicitWidth + 2 * d.margin
-                root.height = header.implicitHeight + 2 * d.margin
-                return
-            }
-            root.width = d.maxWidth
-            root.height = d.maxHeight
-        }
+        property int margin: 16
+        property int spacing: 16
     }
 
-    Row {
-        id: header
-        anchors.right: parent.right
-        anchors.rightMargin: d.margin
+    ColumnLayout {
+        id: commands
         anchors.top: parent.top
-        anchors.topMargin: d.margin
-        spacing: d.margin
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: d.margin
+        spacing: d.spacing
 
-        StatusFlatRoundButton {
-            type: StatusFlatRoundButton.Type.Secondary
-            icon.name: d.minimized? "chevron-up" : "chevron-down"
-            icon.color: Theme.palette.directColor1
-            implicitWidth: d.btnWidth
-            implicitHeight: d.btnHeight
-            onClicked: {
-                d.minimized = !d.minimized
-            }
+        StatusBaseText {
+            text: qsTr("Use this buttons to control the flow")
         }
 
-        StatusFlatRoundButton {
-            type: StatusFlatRoundButton.Type.Secondary
-            icon.name: "close"
-            icon.color: Theme.palette.directColor1
-            implicitWidth: d.btnWidth
-            implicitHeight: d.btnHeight
-            onClicked: {
-                root.close()
+        Flow {
+            Layout.fillWidth: true
+            spacing: d.spacing
+
+            StatusButton {
+                text: qsTr("Plugin Reader")
+
+                onClicked: {
+                    if (!!root.relatedModule) {
+                        root.relatedModule.pluginMockedReaderAction()
+                    }
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Unplug Reader")
+
+                onClicked: {
+                    if (!!root.relatedModule) {
+                        root.relatedModule.unplugMockedReaderAction()
+                    }
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Insert Keycard 1")
+
+                onClicked: {
+                    if (!!root.relatedModule) {
+                        root.relatedModule.insertMockedKeycardAction(1)
+                    }
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Insert Keycard 2")
+
+                onClicked: {
+                    if (!!root.relatedModule) {
+                        root.relatedModule.insertMockedKeycardAction(2)
+                    }
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Remove Keycard")
+
+                onClicked: {
+                    if (!!root.relatedModule) {
+                        root.relatedModule.removeMockedKeycardAction()
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
             }
         }
     }
 
     MockedKeycardReaderStateSelector {
         id: readerState
-        anchors.top: parent.top
+        anchors.top: commands.bottom
         anchors.left: parent.left
-        anchors.topMargin: Style.current.bigPadding
-        anchors.leftMargin: Style.current.bigPadding
-        visible: !d.minimized
-        title: qsTr("Initial reader state")
+        anchors.margins: d.margin
+        anchors.topMargin: 3 * d.margin
+        title: qsTr("Set initial reader state (refers to keycard 1 only)")
     }
 
     StatusTabBar {
@@ -88,8 +115,8 @@ Rectangle {
         anchors.top: readerState.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Style.current.bigPadding
-        visible: !d.minimized
+        anchors.margins: d.margin
+        anchors.topMargin: 3 * d.margin
 
         StatusTabButton {
             width: implicitWidth
@@ -109,14 +136,15 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: Style.current.halfPadding
-        visible: !d.minimized
         currentIndex: tabBar.currentIndex
 
         KeycardSettingsTab {
             cardIndex: 1
 
             onRegisterKeycard: {
-                mainModule.registerMockedKeycard(cardIndex, readerState.selectedState, kcState, kc, kcHelper)
+                if (!!root.relatedModule) {
+                    relatedModule.registerMockedKeycard(cardIndex, readerState.selectedState, kcState, kc, kcHelper)
+                }
             }
         }
 
@@ -124,7 +152,9 @@ Rectangle {
             cardIndex: 2
 
             onRegisterKeycard: {
-                mainModule.registerMockedKeycard(cardIndex, MockedKeycardReaderStateSelector.NoKeycard, kcState, kc, kcHelper)
+                if (!!root.relatedModule) {
+                    relatedModule.registerMockedKeycard(cardIndex, MockedKeycardReaderStateSelector.NoKeycard, kcState, kc, kcHelper)
+                }
             }
         }
     }
@@ -137,7 +167,7 @@ Rectangle {
         signal registerKeycard(int kcState, string kc, string kcHelper)
 
         ColumnLayout {
-            spacing: 16
+            spacing: d.spacing
 
             MockedKeycardStateSelector {
                 id: keycardState
@@ -147,7 +177,7 @@ Rectangle {
             Column {
                 id: customSection
                 visible: keycardState.selectedState === MockedKeycardStateSelector.CustomKeycard
-                spacing: 16
+                spacing: d.spacing
 
                 StatusInput {
                     id: mockedKeycard
