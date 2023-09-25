@@ -14,6 +14,7 @@ from gui.components.change_password_popup import ChangePasswordPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
 from gui.components.social_links_popup import SocialLinksPopup
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
+from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.list import List
 from gui.elements.qt.object import QObject
@@ -110,7 +111,8 @@ class ProfileSettingsView(QObject):
     def social_links(self) -> dict:
         self._scroll_view.vertical_scroll_to(self._add_more_links_label)
         links = {}
-        for link_name in walk_children(driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
+        for link_name in walk_children(
+                driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
             if getattr(link_name, 'id', '') == 'draggableDelegate':
                 for link_value in walk_children(link_name):
                     if getattr(link_value, 'id', '') == 'textMouseArea':
@@ -325,17 +327,23 @@ class KeycardSettingsView(QObject):
         assert driver.waitFor(lambda: self._import_from_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Import keycard button not visible'
         assert driver.waitFor(lambda: self._check_whats_on_keycard_button.is_visible,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC ), f'Check whats new keycard button not visible'
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Check whats new keycard button not visible'
         assert driver.waitFor(lambda: self._factory_reset_keycard_button.is_visible,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC ), f'Factory reset keycard button not visible'
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Factory reset keycard button not visible'
 
 
 class WalletSettingsView(QObject):
 
     def __init__(self):
         super().__init__('mainWindow_WalletView')
+        self._wallet_settings_add_new_account_button = Button('settings_Wallet_MainView_AddNewAccountButton')
         self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
         self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
+
+    @allure.step('Open add account pop up in wallet settings')
+    def open_add_account_pop_up(self):
+        self._wallet_settings_add_new_account_button.click()
+        return AccountPopup().wait_until_appears()
 
     @allure.step('Open networks in wallet settings')
     def open_networks(self):

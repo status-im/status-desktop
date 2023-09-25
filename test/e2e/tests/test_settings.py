@@ -106,7 +106,7 @@ def test_back_up_seed_phrase(main_screen: MainWindow):
         settings = main_screen.left_panel.open_settings()
         back_up = settings.left_panel.open_back_up_seed_phrase()
         back_up.back_up_seed_phrase()
-    with step('Verify back up seed phrase banner dissapeared'):
+    with step('Verify back up seed phrase banner disappeared'):
         assert not BackUpSeedPhraseBanner().is_visible, 'Secure your seed phrase banner visible'
 
 

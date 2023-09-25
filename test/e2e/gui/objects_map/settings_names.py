@@ -44,6 +44,7 @@ factoryResetKeycard_StatusListItem = {"container": settingsContentBase_ScrollVie
 # Wallet Settings View
 mainWindow_WalletView = {"container": statusDesktop_mainWindow, "type": "WalletView", "unnamed": 1, "visible": True}
 settings_Wallet_MainView_Networks = {"container": statusDesktop_mainWindow, "objectName": "networksItem", "type": "StatusListItem"}
+settings_Wallet_MainView_AddNewAccountButton = {"container": statusDesktop_mainWindow, "objectName": "settings_Wallet_MainView_AddNewAccountButton", "type": "StatusButton", "visible": True}
 settingsContentBaseScrollView_accountOrderItem_StatusListItem = {"container": settingsContentBase_ScrollView, "objectName": "accountOrderItem", "type": "StatusListItem", "visible": True}
 settingsContentBaseScrollView_WalletNetworkDelegate = {"container": settingsContentBase_ScrollView, "type": "WalletNetworkDelegate", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_StatusListItem = {"container": settingsContentBase_ScrollView, "type": "StatusListItem", "unnamed": 1, "visible": True}
