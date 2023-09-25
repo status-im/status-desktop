@@ -138,3 +138,6 @@ rpc(filterOwnedCollectiblesAsync, "wallet"):
 rpc(getCollectiblesDetailsAsync, "wallet"):
   requestId: int32
   uniqueIds: seq[CollectibleUniqueID]
+
+rpc(refetchOwnedCollectibles, "wallet"):
+  discard

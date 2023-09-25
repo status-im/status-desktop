@@ -13,7 +13,6 @@ QtObject {
 
     readonly property bool balanceCache: walletSectionAssets.hasBalanceCache
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
-    readonly property bool collectiblesCache: false // TODO: Issue #11636
 
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
