@@ -25,5 +25,4 @@ StatusAssetSelector 1.0 StatusAssetSelector.qml
 StyledText 1.0 StyledText.qml
 TextWithLabel 1.0 TextWithLabel.qml
 DropAndEditImagePanel 1.0 DropAndEditImagePanel.qml
-MockedKeycardLibFlowController 1.0 MockedKeycardLibFlowController.qml
-MockedKeycardLibInitialController 1.0 MockedKeycardLibInitialController.qml
+MockedKeycardLibControllerWindow 1.0 MockedKeycardLibControllerWindow.qml

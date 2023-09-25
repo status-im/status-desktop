@@ -8,7 +8,6 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.popups.keycard 1.0
-import shared.panels 1.0
 
 import "controls"
 import "views"
@@ -29,16 +28,6 @@ OnboardingBasePage {
 
     function unload() {
         loader.sourceComponent  = undefined
-    }
-
-    MockedKeycardLibFlowController {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.topMargin: Style.current.bigPadding
-        anchors.leftMargin: 4 * Style.current.bigPadding
-        visible: localAppSettings.testEnvironment
-
-        relatedModule: root.startupStore.startupModuleInst
     }
 
     Loader {

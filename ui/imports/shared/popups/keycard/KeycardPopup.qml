@@ -83,23 +83,21 @@ StatusModal {
             id: content
             width: scrollView.availableWidth
             implicitHeight: {
-                let additionalHeight = localAppSettings.testEnvironment? 60 : 0
-
                 // for all flows
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
                     if (!root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return Constants.keycard.general.popupBiggerHeight + additionalHeight
+                        return Constants.keycard.general.popupBiggerHeight
                     }
                 }
 
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts &&
                         root.sharedKeycardModule.keyPairHelper.accounts.count > 1) {
-                    return Constants.keycard.general.popupBiggerHeight + additionalHeight
+                    return Constants.keycard.general.popupBiggerHeight
                 }
 
-                return Constants.keycard.general.popupHeight + additionalHeight
+                return Constants.keycard.general.popupHeight
             }
 
             sharedKeycardModule: root.sharedKeycardModule

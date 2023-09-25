@@ -95,6 +95,29 @@ StatusWindow {
     QtObject {
         id: d
         property int previousApplicationState: -1
+
+        property var mockedKeycardControllerWindow
+        function runMockedKeycardControllerWindow() {
+            if (localAppSettings.testEnvironment) {
+                if (!!d.mockedKeycardControllerWindow) {
+                    d.mockedKeycardControllerWindow.close()
+                }
+
+                console.info("running mocked keycard lib controller window")
+                var c = Qt.createComponent("qrc:/imports/shared/panels/MockedKeycardLibControllerWindow.qml");
+                if (c.status === Component.Ready) {
+                    d.mockedKeycardControllerWindow = c.createObject(applicationWindow, {
+                                                                         "relatedModule": startupOnboarding.visible?
+                                                                                              startupModule :
+                                                                                              mainModule
+                                                                     })
+                    if (d.mockedKeycardControllerWindow) {
+                        d.mockedKeycardControllerWindow.show()
+                        d.mockedKeycardControllerWindow.requestActivate()
+                    }
+                }
+            }
+        }
     }
 
     Action {
@@ -152,6 +175,8 @@ StatusWindow {
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
             applicationWindow.storeAppState();
+
+            d.runMockedKeycardControllerWindow()
         }
 
         function onAppStateChanged(state) {
@@ -194,6 +219,8 @@ StatusWindow {
                 Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
                 Style.changeFontSize(localAccountSensitiveSettings.fontSize)
                 Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
+
+                d.runMockedKeycardControllerWindow()
             } else if(state === Constants.appState.appEncryptionProcess) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = true
@@ -380,11 +407,11 @@ StatusWindow {
                 Qt.quit()
                 return
             }
-        
+
             if (localAccountSensitiveSettings.quitOnClose) {
                 Qt.quit();
                 return
-            } 
+            }
 
             applicationWindow.visible = false;
         }
