@@ -44,6 +44,17 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+  proc setWalletTokenItems*(self: TokenListModel, items: seq[TokenListItem]) =
+    var newItems = items
+    for item in self.items:
+      # Add back the community tokens
+      if item.communityId != "":
+        newItems.add(item)
+    self.beginResetModel()
+    self.items = newItems
+    self.endResetModel()
+    self.countChanged()
+
   proc hasItem*(self: TokenListModel, symbol: string): bool =
     for item in self.items:
       if item.getSymbol() == symbol:

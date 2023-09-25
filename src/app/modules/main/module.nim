@@ -302,10 +302,11 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
   var communityTokensItems: seq[TokenItem]
   if (isCommunity):
     communityDetails = self.controller.getCommunityById(channelGroup.id)
-    self.controller.getCommunityTokensDetailsAsync(channelGroup.id)
-    # Get community members' revealed accounts
-    # We will update the model later when we finish loading the accounts
     if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
+      self.controller.getCommunityTokensDetailsAsync(channelGroup.id)
+
+      # Get community members' revealed accounts
+      # We will update the model later when we finish loading the accounts
       self.controller.asyncGetRevealedAccountsForAllMembers(channelGroup.id)
 
   let unviewedCount = channelGroup.unviewedMessagesCount
