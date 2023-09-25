@@ -314,3 +314,22 @@ const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe
       "error": e.msg
     }
     arg.finish(output)
+
+type
+  GetAllCommunityTokensArg = ref object of QObjectTaskArg
+
+const getAllCommunityTokensTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetAllCommunityTokensArg](argEncoded)
+  try:
+    let response = tokens_backend.getAllCommunityTokens()
+
+    let output = %* {
+      "response": response,
+      "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+      "error": e.msg
+    }
+    arg.finish(output)

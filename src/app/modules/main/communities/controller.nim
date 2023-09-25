@@ -162,6 +162,11 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     self.delegate.curatedCommunitiesLoaded(args.communities)
 
+  # We use once here because we only need it to generate the original list of tokens from communities
+  self.events.once(SIGNAL_ALL_COMMUNITY_TOKENS_LOADED) do(e: Args):
+    let args = CommunityTokensArgs(e)
+    self.delegate.onAllCommunityTokensLoaded(args.communityTokens)
+
   self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
     let args = CommunityTokenMetadataArgs(e)
     self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
@@ -342,6 +347,9 @@ proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
+
+proc getAllCommunityTokensAsync*(self: Controller) =
+  self.communityTokensService.getAllCommunityTokensAsync()
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
