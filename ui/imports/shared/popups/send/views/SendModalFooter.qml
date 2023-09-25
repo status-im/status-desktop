@@ -20,8 +20,7 @@ Rectangle {
 
     signal nextButtonClicked()
 
-    width: parent.width
-    height: 82
+    implicitHeight: 82
     radius: 8
     color: Theme.palette.baseColor3
 

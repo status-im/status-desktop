@@ -116,16 +116,13 @@ Item {
                     clickable: root.interactive
                     onClicked: {
                         store.toggleFromDisabledChains(model.chainId)
-                        // only recalculate if the a best route was disabled
-                        if(!!model.toNetworks || !disabled)
-                            root.reCalculateSuggestedRoute()
+                        root.reCalculateSuggestedRoute()
                     }
                     onLockCard: {
                         let amount = lock ? (advancedInputCurrencyAmount * Math.pow(10, root.selectedAsset.decimals)).toString(16) : ""
                         store.lockCard(model.chainId, amount, lock)
                         d.calculateCustomAmounts()
-                        if(!locked || (d.customAmountToSend <= root.amountToSend && advancedInput.valid))
-                            root.reCalculateSuggestedRoute()
+                        root.reCalculateSuggestedRoute()
                     }
                 }
             }
@@ -187,13 +184,7 @@ Item {
                     loading: root.isLoading
                     onClicked: {
                         store.toggleToDisabledChains(model.chainId)
-                        // only recalculate if the a best route was disabled
-                        if(root.weiToEth(model.amountOut) > 0 || !disabled)
-                            root.reCalculateSuggestedRoute()
-                    }
-                    onOpacityChanged: {
-                            if(opacity === 0 && root.weiToEth(model.amountOut) > 0)
-                                root.reCalculateSuggestedRoute()
+                        root.reCalculateSuggestedRoute()
                     }
                 }
             }

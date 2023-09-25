@@ -59,7 +59,7 @@ SplitView {
                         }
                     }
 
-                    function splitAndFormatAddressPrefix(textAddrss, isBridgeTx) {
+                    function splitAndFormatAddressPrefix(textAddrss, updateInStore) {
                         return textAddrss
                     }
 

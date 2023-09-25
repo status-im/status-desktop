@@ -252,6 +252,8 @@ QtObject:
     return self.selectedSenderAccount.address()
 
   proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], totalFeesInEth: float) =
+    self.fromNetworksModel.resetPathData()
+    self.toNetworksModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
       let hasGas = self.selectedSenderAccount.getAssets().hasGas(fromChainId, self.fromNetworksModel.getNetworkNativeGasSymbol(fromChainId), totalFeesInEth)

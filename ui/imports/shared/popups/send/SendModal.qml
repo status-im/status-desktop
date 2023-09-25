@@ -128,8 +128,6 @@ StatusDialog {
     }
 
     width: 556
-    topMargin: 64 + header.height
-    bottomPadding: footer.visible ? footer.height : 32
 
     padding: 0
     background: StatusDialogBackground {
@@ -185,7 +183,6 @@ StatusDialog {
             popup.recalculateRoutesAndFees()
         }
     }
-
 
     ColumnLayout {
         id: group1
@@ -343,7 +340,6 @@ StatusDialog {
             implicitHeight: scrollView.implicitHeight
 
             clipTopMargin: 40
-            clipBottomMargin: popup.bottomPadding
 
             StatusScrollView {
                 id: scrollView
@@ -478,6 +474,7 @@ StatusDialog {
     }
 
     footer: SendModalFooter {
+        width: parent.width
         nextButtonText: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
         maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate

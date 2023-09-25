@@ -24,7 +24,7 @@ Rectangle {
 
     radius: 13
     color: Theme.palette.indirectColor1
-    height: text.height + gasSelector.height + gasValidator.height + Style.current.xlPadding
+    height: columnLayout.height + feesIcon.height
 
     RowLayout {
         id: feesLayout
@@ -41,6 +41,7 @@ Rectangle {
             asset.color: Theme.palette.directColor1
         }
         Column {
+            id: columnLayout
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: root.width - feesIcon.width - Style.current.xlPadding
             spacing: isLoading ? 4 : 0
