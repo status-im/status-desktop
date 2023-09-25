@@ -30,6 +30,8 @@ StatusGroupBox {
     property alias generalErrorText: footer.generalErrorText
     property alias accountErrorText: footer.accountErrorText
 
+    property string accountSelectorText: qsTr("Select account to pay gas fees from")
+
     FeesPanel {
         id: feesBox
 
@@ -50,6 +52,7 @@ StatusGroupBox {
                      || root.generalErrorText)
 
             showTotal: feesBox.count > 1
+            accountSelectorText: root.accountSelectorText
         }
     }
 }

@@ -21,6 +21,8 @@ Control {
 
     property alias accountErrorText: accountErrorText.text
 
+    required property string accountSelectorText
+
     component Separator: Rectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
@@ -73,7 +75,7 @@ Control {
             Layout.fillWidth: true
 
             visible: accountSelector.visible
-            text: qsTr("Select account to pay gas fees from")
+            text: root.accountSelectorText
             color: Theme.palette.baseColor1
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
