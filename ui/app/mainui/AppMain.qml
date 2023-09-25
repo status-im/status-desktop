@@ -925,21 +925,49 @@ Item {
                     objectName: "walletCollectiblesConnectionBanner"
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.collectibles
-                    withCache: networkConnectionStore.collectiblesCache
+                    withCache: lastCheckedAtUnix > 0
                     networkConnectionStore: appMain.networkConnectionStore
+                    tooltipMessage: {
+                        if(withCache)
+                            return qsTr("Collectibles providers are currently unavailable for %1. Collectibles for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                        else
+                            return qsTr("Collectibles providers are currently unavailable for %1.").arg(jointChainIdString)
+                    }
                     toastText: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
-                            return qsTr("Opensea connection successful")
+                            return qsTr("Collectibles providers connection successful")
                         case Constants.ConnectionStatus.Failure:
-                            if(withCache){
-                                return qsTr("Opensea down. Collectibles are as of %1.").arg(lastCheckedAt)
+                            if(completelyDown) {
+                                if(withCache)
+                                    return qsTr("Collectibles providers down. Collectibles are as of %1.").arg(lastCheckedAt)
+                                else
+                                    return qsTr("Collectibles providers down. Collectibles cannot be retrieved.")
                             }
-                            else {
-                                return qsTr("Opensea down.")
+                            else if(chainIdsDown.length > 0) {
+                                if(chainIdsDown.length > 2) {
+                                    if(withCache)
+                                        return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains are as of %1.".arg(lastCheckedAt))
+                                    else
+                                        return qsTr("Collectibles providers down for <a href='#'>multiple chains</a>. Collectibles for these chains cannot be retrieved.")
+                                }
+                                else if(chainIdsDown.length === 1) {
+                                    if(withCache)
+                                        return qsTr("Collectibles providers down for %1. Collectibles for this chain are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                                    else
+                                        return qsTr("Collectibles providers down for %1. Collectibles for this chain cannot be retrieved.").arg(jointChainIdString)
+                                }
+                                else {
+                                    if(withCache)
+                                        return qsTr("Collectibles providers down for %1. Collectibles for these chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                                    else
+                                        return qsTr("Collectibles providers down for %1. Collectibles for these chains cannot be retrieved.").arg(jointChainIdString)
+                                }
                             }
+                            else
+                                return ""
                         case Constants.ConnectionStatus.Retrying:
-                            return qsTr("Retrying connection to Opensea...")
+                            return qsTr("Retrying connection to collectibles providers...")
                         default:
                             return ""
                         }

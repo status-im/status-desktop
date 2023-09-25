@@ -15,6 +15,7 @@ Loader {
     property int connectionState: -1
     property var chainIdsDown: []
     property bool completelyDown: false
+    property double lastCheckedAtUnix: -1
     property string lastCheckedAt
     property bool withCache: false
     property string tooltipMessage
@@ -57,12 +58,13 @@ Loader {
 
     Connections {
         target: networkConnectionStore.networkConnectionModuleInst
-        function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int)  {
+        function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAtUnix: double)  {
             if (website === websiteDown) {
                 root.connectionState = connectionState
                 root.chainIdsDown = chainIds.split(";")
                 root.completelyDown = completelyDown
-                root.lastCheckedAt = LocaleUtils.formatDateTime(new Date(lastCheckedAt*1000))
+                root.lastCheckedAtUnix = lastCheckedAtUnix
+                root.lastCheckedAt = LocaleUtils.formatDateTime(new Date(lastCheckedAtUnix*1000))
                 root.updateBanner()
             }
         }

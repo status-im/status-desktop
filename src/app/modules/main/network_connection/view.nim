@@ -62,7 +62,7 @@ QtObject:
   proc refreshCollectiblesValues*(self: View) {.slot.} =
     self.delegate.refreshCollectiblesValues()
 
-  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) {.signal.}
+  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: float) {.signal.}
 
   proc updateNetworkConnectionStatus*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) =
     case website:
@@ -75,5 +75,5 @@ QtObject:
       of MARKET:
         self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
         self.marketValuesNetworkConnectionChanged()
-    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, lastCheckedAt)
+    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, float(lastCheckedAt))
 
