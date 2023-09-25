@@ -226,11 +226,7 @@ Rectangle {
         acceptedButtons: Qt.LeftButton
         hoverEnabled: true
         enabled: root.clickable && root.state !== "unavailable"
-        onClicked: {
-            if(!advancedMode)
-                disabled = !disabled
-            root.clicked()
-        }
+        onClicked: root.clicked()
     }
 
     ColumnLayout {

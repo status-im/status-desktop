@@ -10,7 +10,7 @@ import utils 1.0
 
 import shared.panels 1.0
 
-Column {
+ColumnLayout {
     id: root
 
     property int errorType: Constants.NoError
@@ -25,29 +25,29 @@ Column {
     spacing: 5
 
     StatusIcon {
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: 20
-        width: 20
+        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredHeight: 20
+        Layout.preferredWidth: 20
         icon: "cancel"
         color: Theme.palette.dangerColor1
         visible: !d.isValid && !isLoading
     }
     StyledText {
         id: txtValidationError
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredHeight: 18
         text: errorType === Constants.SendAmountExceedsBalance ?
                   qsTr("Balance exceeded") : qsTr("No route found")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 13
-        height: 18
         color: Style.current.danger
         visible: !isLoading
     }
     Loader {
         id: loadingComponent
-        height: 32
-        width: root.width - Style.current.xlPadding
+        Layout.preferredHeight: 32
+        Layout.preferredWidth: root.width - Style.current.xlPadding
         active: isLoading && d.isValid
         sourceComponent: LoadingComponent { radius: 4 }
     }
