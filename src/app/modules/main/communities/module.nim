@@ -51,7 +51,7 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
-proc buildTokensAndCollectibles(self: Module)
+proc buildTokensAndCollectiblesFromCommunities(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -107,7 +107,7 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  self.buildTokensAndCollectibles()
+  self.buildTokensAndCollectiblesFromCommunities()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -420,12 +420,16 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     infiniteSupply,
   )
 
-proc buildTokensAndCollectibles(self: Module) =
+proc buildTokensAndCollectiblesFromCommunities(self: Module) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
   let communities = self.controller.getAllCommunities()
   for community in communities:
+    if not community.isOwner or not community.isTokenMaster:
+      # No need to include those tokens, we do not manage that community
+      continue
+
     let communityTokens = self.controller.getCommunityTokens(community.id)
     for tokenMetadata in community.communityTokensMetadata:
       # Set fallback supply to infinite in case we don't have it
@@ -446,10 +450,16 @@ proc buildTokensAndCollectibles(self: Module) =
 
       if tokenMetadata.tokenType == community_dto.TokenType.ERC20:
       # Community ERC20 tokens
-        tokenListItems.add(communityTokenItem, )
+        tokenListItems.add(communityTokenItem)
       else:
       # Community collectibles (ERC721 and others)
         collectiblesListItems.add(communityTokenItem)
+
+  self.view.tokenListModel.addItems(tokenListItems)
+  self.view.collectiblesListModel.addItems(collectiblesListItems)
+
+proc buildTokensAndCollectiblesFromWallet(self: Module) =
+  var tokenListItems: seq[TokenListItem]
 
   # Common ERC20 tokens
   let erc20Tokens = self.controller.getTokenList()
@@ -464,14 +474,10 @@ proc buildTokensAndCollectibles(self: Module) =
     )
     tokenListItems.add(tokenListItem)
 
-  self.view.setTokenListItems(tokenListItems)
-  self.view.setCollectiblesListItems(collectiblesListItems)
+  self.view.tokenListModel.setWalletTokenItems(tokenListItems)
 
 method onWalletAccountTokensRebuilt*(self: Module) =
-  self.buildTokensAndCollectibles()
-
-method onOwnedCollectiblesUpdated*(self: Module) =
-  self.buildTokensAndCollectibles()
+  self.buildTokensAndCollectiblesFromWallet()
 
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
   let communityTokens = self.controller.getCommunityTokens(communityId)

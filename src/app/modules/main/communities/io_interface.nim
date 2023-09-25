@@ -161,9 +161,6 @@ method communityInfoAlreadyRequested*(self: AccessInterface) {.base.} =
 method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string, tokenMetadata: CommunityTokensMetadataDto) {.base.} = 
   raise newException(ValueError, "No implementation available")
 
-method onOwnedCollectiblesUpdated*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onWalletAccountTokensRebuilt*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

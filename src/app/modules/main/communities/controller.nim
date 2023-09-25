@@ -72,7 +72,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+  self.events.once(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
     self.delegate.communityDataLoaded()
 
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
@@ -190,12 +190,6 @@ proc init*(self: Controller) =
         args.memberRevealedAccounts,
       )
       self.tmpCommunityIdForRevealedAccounts = ""
-
-  self.events.on(SignalType.Wallet.event, proc(e: Args) =
-    var data = WalletSignal(e)
-    if data.eventType == backend_collectibles.eventCollectiblesOwnershipUpdateFinished:
-      self.delegate.onOwnedCollectiblesUpdated()
-  )
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
