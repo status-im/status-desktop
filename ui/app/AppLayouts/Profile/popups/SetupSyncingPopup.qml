@@ -237,6 +237,9 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
+
+                objectName: "syncAnewDeviceNextButton"
+
                 id: nextButton
                 visible: !!text
                 enabled: !localPairingInProgressState.active
