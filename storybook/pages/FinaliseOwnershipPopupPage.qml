@@ -30,19 +30,44 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            TransferOwnershipAlertPopup {
+            FinaliseOwnershipPopup {
                 id: dialog
 
-                anchors.centerIn: parent                
+                anchors.centerIn: parent
                 closePolicy: Popup.NoAutoClose
                 visible: true
                 modal: false
 
                 communityName: communityNameText.text
                 communityLogo: ModelsData.collectibles.doodles
+                communityColor: color1.checked ?  "#FFC4E9" : "#f44336"
 
-                onCancelClicked: logs.logEvent("TransferOwnershipAlertPopup::onCancelClicked")
-                onMintClicked: logs.logEvent("TransferOwnershipAlertPopup::onMintClicked")
+                tokenSymbol: communitySymbolText.text
+                tokenChainName: tokenChainText.text
+
+                accounts: ListModel {
+                    ListElement {
+                        name: "Test account"
+                        emoji: "😋"
+                        address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                        color: "red"
+                    }
+                    ListElement {
+                        name: "Another account - generated"
+                        emoji: "🚗"
+                        address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
+                        color: "blue"
+                    }
+                }
+
+                feeText: !feesErrorChecker.checked ? "13.34 USD (0.0072 ETH)" : ""
+                isFeeLoading: feesLoadingChecker.checked
+                feeErrorText: feesErrorChecker.checked ? "Error getting fees" : ""
+
+                onRejectClicked: logs.logEvent("FinaliseOwnershipPopup::onRejectClicked")
+                onFinaliseOwnershipClicked: logs.logEvent("FinaliseOwnershipPopup::onFinaliseOwnershipClicked")
+                onVisitCommunityClicked: logs.logEvent("FinaliseOwnershipPopup::onVisitCommunityClicked")
+                onOpenControlNodeDocClicked: logs.logEvent("FinaliseOwnershipPopup::onOpenControlNodeDocClicked --> " + link)
             }
         }
 
@@ -73,6 +98,28 @@ SplitView {
 
                 text: "Doodles"
 
+            }
+
+            Label {
+                text: "Community Symbol"
+                font.bold: true
+            }
+
+            TextInput {
+                id: communitySymbolText
+
+                text: "OWNDOO"
+            }
+
+            Label {
+                text: "Token chain name"
+                font.bold: true
+            }
+
+            TextInput {
+                id: tokenChainText
+
+                text: "Optimism"
             }
 
             Label {
@@ -109,28 +156,40 @@ SplitView {
             }
 
             Label {
-                text: "Mode"
+                text: "Community Color"
                 font.bold: true
             }
 
-            Column {
-
+            RowLayout {
                 RadioButton {
-                    id: transferMode
+                    id: color1
 
-                    text: "Transfer Ownership"
+                    text: "Light pink"
                     checked: true
-
-                    onCheckedChanged: dialog.mode = TransferOwnershipAlertPopup.Mode.TransferOwnership
                 }
 
                 RadioButton {
-                    id: moveNodeMode
-
-                    text: "Move Control Node"
-
-                    onCheckedChanged: dialog.mode = TransferOwnershipAlertPopup.Mode.MoveControlNode
+                    text: "Orange"
                 }
+            }
+
+            Label {
+                text: "Fees"
+                font.bold: true
+            }
+
+            Switch {
+                id: feesErrorChecker
+
+                text: "Is there fees error?"
+                checked: false
+            }
+
+            Switch {
+                id: feesLoadingChecker
+
+                text: "Is fees loading?"
+                checked: false
             }
         }
     }

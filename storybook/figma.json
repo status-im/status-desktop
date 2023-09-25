@@ -279,5 +279,16 @@
     ],
     "UserProfileCard": [
         "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=21961-655678&mode=design&t=JiMnPfMaLPWlrFK3-0"
+    ],
+    "TransferOwnershipAlertPopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86828&mode=design&t=coHVo1E6fHrKNNhQ-1",
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86847&mode=design&t=coHVo1E6fHrKNNhQ-1"
+    ],
+    "FinaliseOwnershipPopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A87869&mode=design&t=olSRjSKm7CM2vv5O-1",
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A93588&mode=design&t=olSRjSKm7CM2vv5O-1"
+    ],
+    "FinaliseOwnershipDeclinePopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A93540&mode=design&t=olSRjSKm7CM2vv5O-1"
     ]
 }
