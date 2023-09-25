@@ -167,6 +167,9 @@ SettingsContentBase {
                 spacing: 17
 
                 StatusBaseText {
+                    
+                    objectName: "syncNewDeviceTextLabel"
+
                     Layout.fillWidth: true
                     Layout.topMargin: -8
                     horizontalAlignment: Text.AlignHCenter
@@ -177,6 +180,9 @@ SettingsContentBase {
                 }
 
                 StatusBaseText {
+
+                    objectName: "syncNewDeviceSubTitleTextLabel"
+
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     color: Theme.palette.baseColor1
@@ -216,6 +222,9 @@ SettingsContentBase {
                 }
 
                 StatusButton {
+
+                    objectName: "setupSyncingStatusButton"           
+
                     Layout.alignment: Qt.AlignHCenter
                     normalColor: Theme.palette.primaryColor1
                     hoverColor: Theme.palette.miscColor1;
@@ -238,6 +247,9 @@ SettingsContentBase {
         }
 
         StatusButton {
+
+            objectName: "setupSyncBackupDataButton"
+
             id: backupBtn
             visible: !production
             Layout.alignment: Qt.AlignHCenter

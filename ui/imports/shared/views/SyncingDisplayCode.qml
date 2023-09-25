@@ -202,6 +202,9 @@ ColumnLayout {
             }
 
             StatusButton {
+
+                objectName: "syncCodeCopyButton"
+
                 anchors.verticalCenter: parent.verticalCenter
                 size: StatusBaseButton.Size.Tiny
                 enabled: !d.codeExpired
