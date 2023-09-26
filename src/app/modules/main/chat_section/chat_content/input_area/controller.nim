@@ -184,3 +184,9 @@ proc clearLinkPreviewCache*(self: Controller) =
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs) =
   let urls = self.linkPreviewCache.add(args.linkPreviews)
   self.delegate.updateLinkPreviewsFromCache(urls)
+
+proc reloadLinkPreview*(self: Controller, url: string) =
+  if url.len == 0:
+    return
+    
+  self.messageService.asyncUnfurlUrls(@[url])

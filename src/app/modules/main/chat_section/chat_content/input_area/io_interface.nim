@@ -110,3 +110,6 @@ method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
 
 method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method reloadLinkPreview*(self: AccessInterface, url: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
