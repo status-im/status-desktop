@@ -38,6 +38,13 @@ Control {
 
         opacity: 0
 
+        WheelHandler {
+            target: flickable
+            property: "contentX"
+            acceptedDevices: PointerDevice.Mouse
+            onActiveChanged: if(!active) flickable.returnToBounds()
+        }
+
         Flickable {
             id: flickable
             
@@ -87,17 +94,17 @@ Control {
 
                         titleStr: title
                         domain: hostname                //TODO: use domain when available
-                        favIconUrl: thumbnailImageUrl   //TODO: use favicon when available
+                        favIconUrl: ""                  //TODO: use favicon when available
                         communityName: ""               //TODO: add community info when available
                         channelName: ""                 //TODO: add community info when available
 
-                        thumbnailImageUrl: thumbnailDataUri.length > 0 ? thumbnailDataUri : thumbnailUrl
+                        thumbnailImageUrl: thumbnailUrl.length > 0 ? thumbnailUrl : thumbnailDataUri
                         type: linkType === 0 ? LinkPreviewMiniCard.Type.Link : LinkPreviewMiniCard.Type.Image
                         previewState: unfurled && hostname != "" ? LinkPreviewMiniCard.State.Loaded :
                                     unfurled && hostname === "" ? LinkPreviewMiniCard.State.LoadingFailed :
                                     !unfurled ? LinkPreviewMiniCard.State.Loading : LinkPreviewMiniCard.State.Invalid
 
-                        onClose: root.linkRemoved(url)
+                        onClose: root.linkPreviewModel.removePreviewData(d.filteredModel.mapToSource(index))
                         onRetry: root.linkReload(url)
                         onClicked: root.linkClicked(url)
                         onContainsMouseChanged: {
@@ -117,20 +124,20 @@ Control {
             }
         }
     }
-
-    LinearGradient {
+    
+    Rectangle {
         id: horizontalClipMask
         anchors.fill: opacityMaskWrapper
         visible: false
-        start: Qt.point(0 , 0)
-        end: Qt.point(horizontalClipMask.width, 0)
         gradient: Gradient {
+            orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: "transparent" }
             GradientStop { position: root.horizontalPadding / horizontalClipMask.width; color: "white" }
             GradientStop { position: 1 - root.horizontalPadding / horizontalClipMask.width; color: "white" }
             GradientStop { position: 1; color: "transparent" }
         }
     }
+    
     OpacityMask {
         anchors.fill: opacityMaskWrapper
         source: opacityMaskWrapper

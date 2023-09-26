@@ -105,7 +105,7 @@ Flow {
                 id: unfurledLink
                 leftTail: !root.isCurrentUser
 
-                bannerImageSource: thumbnailUrl
+                bannerImageSource: thumbnailUrl.length > 0 ? thumbnailUrl : thumbnailDataUri
                 title: parent.title
                 description: parent.description
                 footer: hostname

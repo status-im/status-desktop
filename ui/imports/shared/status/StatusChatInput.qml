@@ -112,6 +112,17 @@ Rectangle {
         textInput.cursorPosition = textInput.length
     }
 
+    function setText(text) {
+        const textInputEnabled = textInput.enabled
+        if(textInputEnabled) {
+            textInput.enabled = false
+        }
+
+        textInput.clear()
+        textInput.append(text)
+        textInput.enabled = textInputEnabled
+    }
+
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
@@ -1314,8 +1325,6 @@ Rectangle {
                                 const mention = d.getMentionAtPosition(cursorPosition - 1)
                                 if(mention) {
                                     select(mention.leftIndex, mention.rightIndex)
-                                } else {
-                                    Global.openLink(link)
                                 }
                             }
 
@@ -1348,6 +1357,7 @@ Rectangle {
                             textEdit: messageInputField
                             urlModel: control.linkPreviewModel
                             highlightUrl: linkPreviewArea.hoveredUrl
+                            enabled: messageInputField.enabled && messageInputField.textFormat == TextEdit.RichText
                         }
 
                         Shortcut {

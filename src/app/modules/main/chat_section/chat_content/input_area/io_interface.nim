@@ -18,10 +18,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int) {.base.} =
+method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, linkPreviews: seq[LinkPreview]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string): string {.base.} =
+method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =

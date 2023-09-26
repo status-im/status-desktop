@@ -110,20 +110,8 @@ QtObject:
     of ModelRole.ThumbnailDataUri:
       result = newQVariant(item.linkPreview.thumbnail.dataUri)
 
-  proc urlExists(self: Model, url: string): bool =
-    for it in self.items:
-      if(it.linkPreview.url == url):
-        return true
-    return false
-
-  proc urlExists(self: seq[string], url: string): bool =
-    for it in self:
-      if(it == url):
-        return true
-    return false
-
   proc removeItemWithIndex(self: Model, ind: int) =
-    if(ind == -1 or ind >= self.items.len):
+    if(ind < 0 or ind >= self.items.len):
       return
 
     let parentModelIndex = newQModelIndex()
@@ -144,6 +132,25 @@ QtObject:
         return i
     return -1
 
+  proc moveRow(self: Model, fromRow: int, to: int) =
+    if fromRow == to:
+      return
+    if fromRow < 0 or fromRow >= self.items.len:
+      return
+    if to < 0 or to >= self.items.len:
+      return
+
+    let sourceIndex = newQModelIndex()
+    defer: sourceIndex.delete
+    let destIndex = newQModelIndex()
+    defer: destIndex.delete
+
+    let currentItem = self.items[fromRow]
+    self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, to)
+    self.items.delete(fromRow)
+    self.items.insert(currentItem, to)
+    self.endMoveRows()
+
   proc updateLinkPreviews*(self: Model, linkPreviews: Table[string, LinkPreview]) =
     for row, item in self.items:
       if not linkPreviews.hasKey(item.linkPreview.url) or item.immutable:
@@ -156,42 +163,36 @@ QtObject:
 
   proc setUrls*(self: Model, urls: seq[string]) =
     var itemsToInsert: seq[Item]
-    var itemsToUpdate: Table[string, LinkPreview]
     var indexesToRemove: seq[int]
 
     #remove
     for i in 0 ..< self.items.len:
-      if not urls.urlExists(self.items[i].linkPreview.url):
+      if not urls.anyIt(it == self.items[i].linkPreview.url):
         indexesToRemove.add(i)
 
     while indexesToRemove.len > 0:
       let index = pop(indexesToRemove)
       self.removeItemWithIndex(index)
-      
-    self.countChanged()
 
-    # Update or insert
-    for url in urls:      
-      let linkPreview = initLinkPreview(url)
-      if(self.urlExists(url)):
-        itemsToUpdate[url] = linkPreview
-      else:
-        var item = Item()
-        item.unfurled = false
-        item.immutable = false
-        item.linkPreview = linkPreview
-        itemsToInsert.add(item)
+    # Move or insert
+    for i in 0 ..< urls.len:
+      let index = self.findUrlIndex(urls[i])
+      if index >= 0:
+        self.moveRow(index, i)
+        continue
 
-    #update
-    if(itemsToUpdate.len > 0):
-      self.updateLinkPreviews(itemsToUpdate)
+      let linkPreview = initLinkPreview(urls[i])
+      var item = Item()
+      item.unfurled = false
+      item.immutable = false
+      item.linkPreview = linkPreview
+
+      let parentModelIndex = newQModelIndex()
+      defer: parentModelIndex.delete
+      self.beginInsertRows(parentModelIndex, i, i)
+      self.items.insert(item, i)
+      self.endInsertRows()
       
-    #insert
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + itemsToInsert.len - 1)
-    self.items = concat(self.items, itemsToInsert)
-    self.endInsertRows()
     self.countChanged()
 
   proc clearItems*(self: Model) =
@@ -200,15 +201,20 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc removePreviewData*(self: Model, link: string) =
-    let index = self.findUrlIndex(link)
-    if index < 0:
+  proc removePreviewData*(self: Model, index: int) {.slot.} =
+    if index < 0 or index >= self.items.len:
       return
 
-    self.items[index].linkPreview = initLinkPreview(link)
+    self.items[index].linkPreview = initLinkPreview(self.items[index].linkPreview.url)
     self.items[index].unfurled = false
     self.items[index].immutable = true
 
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
+
+  proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
+    result = @[]
+    for item in self.items:
+      if item.unfurled and item.linkPreview.hostName != "":
+        result.add(item.linkPreview)

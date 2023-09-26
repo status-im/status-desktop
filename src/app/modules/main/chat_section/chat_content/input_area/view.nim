@@ -49,10 +49,10 @@ QtObject:
       msg: string,
       replyTo: string,
       contentType: int) {.slot.} =
-    self.delegate.sendChatMessage(msg, replyTo, contentType)
+    self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
-    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo)
+    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
@@ -211,9 +211,6 @@ QtObject:
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
-  
-  proc removeLinkPreview(self: View, link: string) {.slot.} =
-    self.linkPreviewModel.removePreviewData(link)
 
   proc reloadLinkPreview(self: View, link: string) {.slot.} =
     self.delegate.reloadLinkPreview(link)

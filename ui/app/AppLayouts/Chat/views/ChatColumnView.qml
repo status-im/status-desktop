@@ -133,15 +133,14 @@ Item {
         function restoreInputState() {
 
             if (!d.activeChatContentModule) {
-                chatInput.textInput.text = ""
+                chatInput.setText("")
                 chatInput.resetReplyArea()
                 chatInput.resetImageArea()
                 return
             }
 
             // Restore message text
-            chatInput.textInput.text = d.activeChatContentModule.inputAreaModule.preservedProperties.text
-            chatInput.textInput.cursorPosition = chatInput.textInput.length
+            chatInput.setText(d.activeChatContentModule.inputAreaModule.preservedProperties.text)
 
             d.restoreInputReply()
             d.restoreInputAttachments()
@@ -305,7 +304,7 @@ Item {
                          {
                              Global.playSendMessageSound()
 
-                             chatInput.textInput.clear();
+                             chatInput.setText("")
                              chatInput.textInput.textFormat = TextEdit.PlainText;
                              chatInput.textInput.textFormat = TextEdit.RichText;
                          }
@@ -314,8 +313,7 @@ Item {
                     onKeyUpPress: {
                         d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                     }
-
-                    onLinkPreviewRemoved: (link) => d.activeChatContentModule.inputAreaModule.removeLinkPreview(link)
+                    
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
                 }
 

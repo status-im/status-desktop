@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Universal 2.15
 import QtQuick.Layouts 1.15
 
 import Qt.labs.settings 1.0
@@ -8,6 +9,8 @@ import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
 
 import StatusQ.Core.Theme 0.1
 import Storybook 1.0
+
+import utils 1.0
 
 ApplicationWindow {
     id: root
@@ -114,15 +117,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
 
                         text: "Dark mode"
-
-                        StatusLightTheme { id: lightTheme }
-                        StatusDarkTheme { id: darkTheme }
-
-                        Binding {
-                            target: Theme
-                            property: "palette"
-                            value: darkModeCheckBox.checked ? darkTheme : lightTheme
-                        }
+                        onCheckedChanged: Style.changeTheme(checked ? Universal.Dark : Universal.Light, !checked)
                     }
 
                     HotReloaderControls {

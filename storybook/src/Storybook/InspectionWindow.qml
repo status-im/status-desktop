@@ -18,6 +18,7 @@ ApplicationWindow {
         }
 
         loader.setSource("InspectionPanel.qml", properties)
+        pinchHandler.target.scale = 1
     }
 
     Connections {
@@ -54,8 +55,8 @@ ApplicationWindow {
 
                 clip: true
 
-                contentWidth: content.width
-                contentHeight: content.height
+                contentWidth: content.width * content.scale
+                contentHeight: content.height * content.scale
 
                 Item {
                     id: content
@@ -71,10 +72,15 @@ ApplicationWindow {
 
                     Loader {
                         id: loader
-
                         anchors.centerIn: parent
                     }
                 }
+            }
+            PinchHandler {
+                id: pinchHandler
+                target: content
+                maximumRotation: 0
+                minimumRotation: 0
             }
 
             Pane {
