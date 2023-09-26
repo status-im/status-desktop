@@ -94,6 +94,43 @@ SplitView {
             sourceComponent: StatusChatInput {
                 id: chatInput
                 property var globalUtils: globalUtilsMock.globalUtils
+                property string unformattedText: textInput.getText(0, textInput.length)
+
+                onUnformattedTextChanged: {
+                    textEditConnection.enabled = false
+
+                    var words = unformattedText.split(" ")
+
+                    fakeLinksModel.clear()
+                    words.forEach(function(word){
+                        if(Utils.isURL(word)) {
+                            fakeLinksModel.append({
+                                    url: encodeURI(word),
+                                    unfurled: Math.floor(Math.random() * 2),
+                                    immutable: false,
+                                    hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
+                                    title: "PSY - GANGNAM STYLE(강남스타일) M/V",
+                                    description: "This is the description of the link",
+                                    linkType: Math.floor(Math.random() * 3),
+                                    thumbnailWidth: 480,
+                                    thumbnailHeight: 360,
+                                    thumbnailUrl: "https://picsum.photos/480/360?random=1",
+                                    thumbnailDataUri: ""
+                                })
+                        }
+                    })
+                    textEditConnection.enabled = true
+                }
+
+                Connections {
+                    id: textEditConnection
+                    target: chatInput.textInput
+                    function onTextChanged() {
+                        if(unformattedText !== chatInput.textInput.getText(0, chatInput.textInput.length))
+                            unformattedText = chatInput.textInput.getText(0, chatInput.textInput.length)
+                    }
+                }
+
                 enabled: enabledCheckBox.checked
                 linkPreviewModel: fakeLinksModel
                 usersStore: QtObject {
@@ -178,25 +215,12 @@ SplitView {
                         onCurrentIndexChanged: {
                             if(!chatInputLoader.item)
                                 return
-                            chatInputLoader.item.textInput.clear()
-                            fakeLinksModel.clear()
+                            let urls = ""
                             for (let i = 0; i < linksNb.currentIndex ; i++) {
-                                const url = "https://www.youtube.com/watch?v=9bZkp7q19f0" + Math.floor(Math.random() * 100)
-                                chatInputLoader.item.textInput.append(url + "\n")
-                                fakeLinksModel.append({
-                                    url: url,
-                                    unfurled: Math.floor(Math.random() * 2),
-                                    immutable: false,
-                                    hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
-                                    title: "PSY - GANGNAM STYLE(강남스타일) M/V",
-                                    description: "This is the description of the link",
-                                    linkType: Math.floor(Math.random() * 3),
-                                    thumbnailWidth: 480,
-                                    thumbnailHeight: 360,
-                                    thumbnailUrl: "https://picsum.photos/480/360?random=1",
-                                    thumbnailDataUri: ""
-                                })
+                                urls += "https://www.youtube.com/watch?v=9bZkp7q19f0" + Math.floor(Math.random() * 100) + " "
                             }
+
+                            chatInputLoader.item.textInput.text = urls
                         }
                     }
                 }
@@ -220,3 +244,5 @@ SplitView {
 }
 
 // category: Components
+
+// https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=23155-66084&mode=design&t=VWBVK4DOUxr1BmTp-0

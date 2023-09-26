@@ -47,7 +47,6 @@ CalloutCard {
     implicitHeight: 64
     verticalPadding: 15
     horizontalPadding: 12
-    visible: true
     borderColor: Theme.palette.directColor7
     backgroundColor: root.containsMouse ? Theme.palette.directColor7 : Theme.palette.baseColor4
 
@@ -117,12 +116,23 @@ CalloutCard {
             name: "loadedUser"
             when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.User
             extend: "loaded"
-            PropertyChanges { target: favIcon; visible: true; name: root.titleStr; asset.isLetterIdenticon: true; asset.charactersLen: 2; asset.color: Theme.palette.miscColor9; }
+            PropertyChanges { 
+                target: favIcon
+                visible: true
+                name: root.titleStr
+                asset.isLetterIdenticon: true
+                asset.charactersLen: 2
+                asset.color: Theme.palette.miscColor9
+            }
         }
     ]
 
     contentItem: Item {
+        implicitHeight: layout.implicitHeight
+        implicitWidth: layout.implicitWidth
+
         RowLayout {
+            id: layout
             anchors.fill: parent
             spacing: 0
             LoadingAnimation {

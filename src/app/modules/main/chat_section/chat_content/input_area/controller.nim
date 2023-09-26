@@ -90,37 +90,34 @@ proc getChatId*(self: Controller): string =
 proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
-proc gatherLinkPreviews(self: Controller, messsageText: string): seq[LinkPreview] =
-  let urls = self.messageService.getTextUrls(messsageText)
-  let linkPreviews = self.linkPreviewCache.linkPreviewsSeq(urls)
-  return filter(linkPreviews, proc(x: LinkPreview): bool = x.hostname.len > 0)
-
 proc sendImages*(self: Controller, 
                  imagePathsAndDataJson: string, 
                  msg: string, 
                  replyTo: string, 
-                 preferredUsername: string = ""): string =
+                 preferredUsername: string = "",
+                 linkPreviews: seq[LinkPreview]): string =
   self.chatService.sendImages(
     self.chatId, 
     imagePathsAndDataJson, 
     msg, 
     replyTo, 
     preferredUsername,
-    self.gatherLinkPreviews(msg)
+    linkPreviews
   )
 
 proc sendChatMessage*(self: Controller,
                       msg: string,
                       replyTo: string,
                       contentType: int,
-                      preferredUsername: string = "") =
+                      preferredUsername: string = "",
+                      linkPreviews: seq[LinkPreview]) =
   self.chatService.sendChatMessage(
     self.chatId, 
     msg, 
     replyTo, 
     contentType, 
     preferredUsername,
-    self.gatherLinkPreviews(msg)
+    linkPreviews
   )
 
 proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
@@ -186,7 +183,4 @@ proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs) =
   self.delegate.updateLinkPreviewsFromCache(urls)
 
 proc reloadLinkPreview*(self: Controller, url: string) =
-  if url.len == 0:
-    return
-    
   self.messageService.asyncUnfurlUrls(@[url])

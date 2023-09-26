@@ -5,28 +5,20 @@ import QtGraphicalEffects 1.15
 import StatusQ.Core.Theme 0.1
 import shared.controls.chat 1.0
 
-SplitView {
-    Pane {
-        SplitView.fillWidth: true
-        SplitView.fillHeight: true
-        Rectangle {
-            id: wrapper
-            anchors.fill: parent
-            color: Theme.palette.statusChatInput.secondaryBackgroundColor
+Page {
+    Rectangle {
+        id: wrapper
+        anchors.fill: parent
+        color: Theme.palette.statusChatInput.secondaryBackgroundColor
 
-            ChatInputLinksPreviewArea {
-                id: chatInputLinkPreviewsArea
-                anchors.centerIn: parent
-                width: parent.width
-                imagePreviewModel: ["https://picsum.photos/200/300?random=1", "https://picsum.photos/200/300?random=1"]
-                linkPreviewModel: linkPreviewListModel
-                onLinkRemoved: linkPreviewListModel.remove(index)
-            }
+        ChatInputLinksPreviewArea {
+            id: chatInputLinkPreviewsArea
+            anchors.centerIn: parent
+            width: parent.width
+            imagePreviewModel: ["https://picsum.photos/200/300?random=1", "https://picsum.photos/200/300?random=1"]
+            linkPreviewModel: linkPreviewListModel
+            onLinkRemoved: linkPreviewListModel.remove(index)
         }
-    }
-    Pane {
-        SplitView.fillWidth: true
-        SplitView.fillHeight: true
     }
 
     ListModel {

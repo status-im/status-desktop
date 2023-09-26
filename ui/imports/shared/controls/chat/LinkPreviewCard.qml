@@ -25,7 +25,6 @@ CalloutCard {
     signal clicked(var mouse)
 
     borderWidth: 1
-    padding: borderWidth
     implicitHeight: 290
     implicitWidth: 305
 
