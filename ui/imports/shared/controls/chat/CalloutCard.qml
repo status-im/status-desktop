@@ -1,14 +1,19 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.15
+import QtQuick.Shapes 1.5
 
 import utils 1.0
 import shared 1.0
+import shared.controls 1.0
 
 
 Control {
     id: root
 
     property bool leftTail: true
+    property color backgroundColor: Style.current.background
+    property color borderColor: Style.current.border
+    property bool dashedBorder: false
     property real borderWidth: 1
 
     readonly property Component clippingEffect: CalloutOpacityMask {
@@ -16,19 +21,14 @@ Control {
         height: parent.height
         leftTail: root.leftTail
     }
-    
-    background: Rectangle {
-        color: Style.current.border
-        layer.enabled: true
-        layer.effect: root.clippingEffect
 
-        Rectangle {
-            id: clipping
-            anchors.fill: parent
-            anchors.margins: root.borderWidth
-            color: Style.current.background
-            layer.enabled: true
-            layer.effect: root.clippingEffect
-        }
+    background: ShapeRectangle {
+        path.fillColor: root.backgroundColor
+        path.strokeColor: root.borderColor
+        path.strokeWidth: root.borderWidth
+        path.strokeStyle: root.dashedBorder ? ShapePath.DashLine : ShapePath.SolidLine
+        radius: Style.current.radius * 2
+        leftBottomRadius: root.leftTail ? Style.current.radius / 2 : Style.current.radius * 2
+        rightBottomRadius: root.leftTail ? Style.current.radius * 2 : Style.current.radius / 2
     }
 }
