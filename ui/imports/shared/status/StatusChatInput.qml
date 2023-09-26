@@ -1314,6 +1314,8 @@ Rectangle {
                                 const mention = d.getMentionAtPosition(cursorPosition - 1)
                                 if(mention) {
                                     select(mention.leftIndex, mention.rightIndex)
+                                } else {
+                                    Global.openLink(link)
                                 }
                             }
 
@@ -1341,6 +1343,12 @@ Rectangle {
                             }
                         }
 
+                        TextEditHyperlinksFormatter {
+                            id: hyperlinksFormatter
+                            textEdit: messageInputField
+                            urlModel: control.linkPreviewModel
+                            highlightUrl: linkPreviewArea.hoveredUrl
+                        }
 
                         Shortcut {
                             enabled: messageInputField.activeFocus
