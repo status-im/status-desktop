@@ -4,6 +4,7 @@ import ../../../app_service/service/message/dto/link_preview
 type
   Item* = ref object
     unfurled*: bool
+    immutable*: bool
     linkPreview*: LinkPreview
 
 proc delete*(self: Item) =
@@ -18,5 +19,6 @@ proc `linkPreview=`*(self: Item, linkPreview: LinkPreview) {.inline.} =
 proc `$`*(self: Item): string =
   result = fmt"""LinkPreviewItem(
     unfurled: {self.unfurled},
+    immutable: {self.immutable},
     linkPreview: {self.linkPreview},
   )"""

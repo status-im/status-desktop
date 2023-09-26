@@ -165,3 +165,6 @@ method setUrls*(self: Module, urls: seq[string]) =
 
 method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
   return self.controller.linkPreviewsFromCache(urls)
+
+method reloadLinkPreview*(self: Module, url: string) =
+  self.controller.reloadLinkPreview(url)

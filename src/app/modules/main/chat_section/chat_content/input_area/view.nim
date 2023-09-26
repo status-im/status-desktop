@@ -212,3 +212,8 @@ QtObject:
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
   
+  proc removeLinkPreview(self: View, link: string) {.slot.} =
+    self.linkPreviewModel.removePreviewData(link)
+
+  proc reloadLinkPreview(self: View, link: string) {.slot.} =
+    self.delegate.reloadLinkPreview(link)
