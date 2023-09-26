@@ -111,14 +111,7 @@ StatusDialog {
                     // Pre-populated dialog with the relevant Owner token info:
                     root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
                     root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
-                    root.sendModalPopup.preSelectedHolding = {
-                        uid : token.key,
-                        chainId: token.chainId,
-                        name: token.name,
-                        imageUrl: token.artworkSource,
-                        collectionUid: "",
-                        collectionName: ""
-                    }
+                    root.sendModalPopup.preSelectedHoldingID = token.key
                     root.sendModalPopup.preSelectedHoldingType = Constants.HoldingType.Collectible
                     root.sendModalPopup.open()
                     close()

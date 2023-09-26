@@ -121,7 +121,7 @@ Item {
             preSelectedSendType: Constants.SendType.ENSRelease
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedHolding: store.getAsset(releaseEnsModal.store.assets, Constants.ethToken)
+            preSelectedHoldingID: Constants.ethToken
             preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {

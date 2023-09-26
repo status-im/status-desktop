@@ -6,7 +6,6 @@ import QtGraphicalEffects 1.0
 import SortFilterProxyModel 0.2
 
 import utils 1.0
-import shared.stores 1.0
 import shared.stores.send 1.0
 
 import StatusQ.Components 0.1
@@ -24,25 +23,22 @@ import "./views"
 StatusDialog {
     id: popup
 
+    property var preSelectedAccount: store.selectedSenderAccount
     // expected content depends on the preSelectedRecipientType value.
     // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
     property var preSelectedRecipient
     property int preSelectedRecipientType: TabAddressSelectorView.Type.Address
     property string preDefinedAmountToSend
-    // requires to have assigned an item from assets model
-    property var preSelectedHolding
     // token symbol
     property string preSelectedHoldingID
     property int preSelectedHoldingType
     property int preSelectedSendType
     property bool interactive: true
     property alias onlyAssets: holdingSelector.onlyAssets
-    property var preSelectedAccount: store.selectedSenderAccount
 
     property alias modalHeader: modalHeader.text
 
     property TransactionStore store: TransactionStore {}
-    property CurrenciesStore currencyStore: store.currencyStore
     property var collectiblesModel: store.collectiblesModel
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
     property var bestRoutes
@@ -70,6 +66,7 @@ StatusDialog {
 
     QtObject {
         id: d
+        readonly property var currencyStore: store.currencyStore
         readonly property int errorType: !amountToSendInput.input.valid && !isERC721Transfer ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
                                                                            !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
@@ -77,7 +74,7 @@ StatusDialog {
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.totalCurrencyBalance.amount : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.totalBalance.amount : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.currencyStore.currentCurrency : store.selectedAssetSymbol
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : store.selectedAssetSymbol
         readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
@@ -149,9 +146,7 @@ StatusDialog {
 
         if (popup.preSelectedHoldingType !== Constants.HoldingType.Unknown) {
             tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
-            if(!!popup.preSelectedHolding) {
-                d.setSelectedHolding(popup.preSelectedHolding, popup.preSelectedHoldingType)
-            } else if (!!popup.preSelectedHoldingID) {
+            if (!!popup.preSelectedHoldingID) {
                 d.setSelectedHoldingId(popup.preSelectedHoldingID, popup.preSelectedHoldingType)
             }
         }
@@ -252,11 +247,11 @@ StatusDialog {
                             Layout.fillHeight: true
                             assetsModel: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
                             collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
-                            currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
+                            currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
                             visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
                                      (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
                             getNetworkIcon: function(chainId){
-                                return RootStore.getNetworkIcon(chainId)
+                                return popup.store.getNetworkIcon(chainId)
                             }
                             onItemSelected: {
                                 d.setSelectedHoldingId(holdingId, holdingType)
@@ -269,12 +264,12 @@ StatusDialog {
                             visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer
                             title: {
                                 if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
-                                    const balance = popup.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount) , d.hoveredHolding.symbol)
+                                    const balance = d.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount) , d.hoveredHolding.symbol)
                                     return qsTr("Max: %1").arg(balance)
                                 }
                                 if (d.maxInputBalance <= 0)
                                     return qsTr("No balances active")
-                                const balance = popup.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol)
+                                const balance = d.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol)
                                 return qsTr("Max: %1").arg(balance)
                             }
                             tagClickable: true
@@ -283,7 +278,7 @@ StatusDialog {
                             bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
                             titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                             onTagClicked: {
-                                amountToSendInput.input.text = popup.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
+                                amountToSendInput.input.text = d.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
                             }
                         }
                     }
@@ -297,21 +292,21 @@ StatusDialog {
                             interactive: popup.interactive
                             selectedSymbol: store.selectedAssetSymbol
                             maxInputBalance: d.maxInputBalance
-                            currentCurrency: popup.currencyStore.currentCurrency
+                            currentCurrency: d.currencyStore.currentCurrency
 
                             multiplierIndex: holdingSelector.selectedItem
                                              ? holdingSelector.selectedItem.decimals
                                              : 0
 
                             getFiatValue: function(cryptoValue) {
-                                return selectedSymbol ? popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
+                                return selectedSymbol ? d.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
                             }
 
                             getCryptoValue: function(fiatValue) {
-                                return selectedSymbol ? popup.currencyStore.getCryptoValue(fiatValue, selectedSymbol, currentCurrency) : 0.0
+                                return selectedSymbol ? d.currencyStore.getCryptoValue(fiatValue, selectedSymbol, currentCurrency) : 0.0
                             }
 
-                            formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
+                            formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
 
@@ -331,11 +326,11 @@ StatusDialog {
                             inputIsFiat: amountToSendInput.inputIsFiat
                             minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                             minFiatDecimals: amountToSendInput.minReceiveFiatDecimals
-                            currentCurrency: popup.currencyStore.currentCurrency
+                            currentCurrency: d.currencyStore.currentCurrency
                             getFiatValue: function(cryptoValue) {
-                                return popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
+                                return d.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
                             }
-                            formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
+                            formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                         }
                     }
                 }
@@ -383,7 +378,7 @@ StatusDialog {
                             return store.findTokenSymbolByAddress(address)
                         }
                         getNetworkIcon: function(chainId){
-                            return RootStore.getNetworkIcon(chainId)
+                            return popup.store.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
                             d.setSelectedHoldingId(symbol, holdingType)
@@ -486,7 +481,7 @@ StatusDialog {
     footer: SendModalFooter {
         width: parent.width
         nextButtonText: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.currencyStore.currentCurrency)
+        maxFiatFees: popup.isLoading ? "..." : d.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, d.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
         visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
@@ -499,8 +494,8 @@ StatusDialog {
             popup.bestRoutes =  txRoutes.suggestedRoutes
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
-            d.totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.currencyStore.currentCurrency) +
-                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.currencyStore.currentCurrency)
+            d.totalFeesInFiat = d.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", d.currencyStore.currentCurrency) +
+                d.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, d.currencyStore.currentCurrency)
             d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, d.selectedHolding.decimals)
             networkSelector.toNetworksList = txRoutes.toNetworksModel
             popup.isLoading = false

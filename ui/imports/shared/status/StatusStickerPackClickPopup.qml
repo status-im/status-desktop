@@ -72,7 +72,7 @@ ModalPopup {
                 preSelectedSendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedHolding: store.getAsset(buyStickersPackModal.store.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
+                preSelectedHoldingID: JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol
                 preSelectedHoldingType: Constants.HoldingType.Asset
                 sendTransaction: function() {
                     if(bestRoutes.count === 1) {

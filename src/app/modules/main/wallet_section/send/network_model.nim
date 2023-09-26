@@ -279,6 +279,12 @@ QtObject:
         return item.getChainName()
     return ""
 
+  proc getIconUrl*(self: NetworkModel, chainId: int): string =
+    for item in self.items:
+      if item.getChainId() == chainId:
+        return item.getIconURL()
+    return ""
+
   proc toggleRouteDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
