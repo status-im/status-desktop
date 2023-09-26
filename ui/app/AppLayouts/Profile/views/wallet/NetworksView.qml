@@ -40,6 +40,7 @@ Item {
                 }
             }
             delegate: WalletNetworkDelegate {
+                objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
                 network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
                 onClicked: editNetwork(walletStore.getNetworkData(model))
@@ -68,6 +69,7 @@ Item {
                 }
             }
             delegate: WalletNetworkDelegate {
+                objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
                 network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
                 onClicked: editNetwork(walletStore.getNetworkData(model))
