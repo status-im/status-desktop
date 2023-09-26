@@ -176,11 +176,12 @@ StatusSectionLayout {
             requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
             pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
             editable: true
-            owned: root.community.memberRole === Constants.memberRole.owner
             loginType: root.rootStore.loginType
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
+            communityShardingEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
+            communityShardIndex: root.community.shardIndex ?? -1 // TODO community sharding backend
 
             sendModalPopup: root.sendModalPopup
             tokensModel: root.community.communityTokens

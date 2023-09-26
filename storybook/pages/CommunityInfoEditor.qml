@@ -16,7 +16,9 @@ ColumnLayout {
     property color color: "orchid"
     property url image: Style.png("tokens/UNI")
     property bool colorVisible: false
-    property url banner: Style.png("settings/communities@2x")
+    property url banner: ctrlCommunityBanner.checked ? Style.png("settings/communities@2x") : ""
+    readonly property bool shardingEnabled: ctrlShardingEnabled.checked
+    readonly property int shardIndex: ctrlShardIndex.value
 
     spacing: 24
 
@@ -133,11 +135,26 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: "No banner"
-            onCheckedChanged: if(checked) root.banner = ""
         }
         RadioButton {
+            id: ctrlCommunityBanner
             text: "Communities"
-            onCheckedChanged: if(checked) root.banner = Style.png("settings/communities@2x")
+        }
+    }
+    RowLayout {
+        Layout.fillWidth: true
+        CheckBox {
+            id: ctrlShardingEnabled
+            text: "Sharding enabled"
+            checkable: true
+            checked: false
+        }
+        SpinBox {
+            id: ctrlShardIndex
+            visible: ctrlShardingEnabled.checked
+            from: -1
+            to: 1023
+            value: -1 // -1 == disabled
         }
     }
 }
