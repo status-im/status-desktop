@@ -16,17 +16,21 @@ SplitView {
         description: communityEditor.description
         logoImageData: communityEditor.image
         color: communityEditor.color
+        bannerImageData: communityEditor.banner
 
         editable: communityEditor.isCommunityEditable
-        owned: communityEditor.amISectionAdmin
+        isOwner: communityEditor.amISectionAdmin
         communitySettingsDisabled: !editable
+
+        communityShardingEnabled: communityEditor.shardingEnabled
+        communityShardIndex: communityEditor.shardIndex
     }
 
     Pane {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        CommunityInfoEditor{
+        CommunityInfoEditor {
             id: communityEditor
             anchors.fill: parent
         }

@@ -18,13 +18,15 @@ SplitView {
         logoImageData: communityEditor.image
         description: communityEditor.description
         bannerImageData: communityEditor.banner
+        communityShardingEnabled: communityEditor.shardingEnabled
+        communityShardIndex: communityEditor.shardIndex
     }
 
     ScrollView {
          SplitView.minimumWidth: 300
          SplitView.preferredWidth: 300
 
-         CommunityInfoEditor{
+         CommunityInfoEditor {
              id: communityEditor
              anchors.fill: parent
              colorVisible: true

@@ -41,7 +41,6 @@ StackLayout {
 
     property bool archiveSupporVisible: true
     property bool editable: false
-    property bool owned: false
     property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
@@ -50,6 +49,9 @@ StackLayout {
     readonly property var ownerToken: SQUtils.ModelUtils.getByKey(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner)
 
     property string overviewChartData: ""
+
+    property bool communityShardingEnabled
+    property int communityShardIndex: -1
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -277,6 +279,9 @@ StackLayout {
                     requestToJoinEnabled: root.requestToJoinEnabled
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
+
+                communityShardingEnabled: root.communityShardingEnabled
+                communityShardIndex: root.communityShardIndex
 
                 bottomReservedSpace:
                     Qt.size(settingsDirtyToastMessage.implicitWidth,
