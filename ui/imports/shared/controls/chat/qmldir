@@ -1,4 +1,6 @@
 CalloutCard 1.0 CalloutCard.qml
+CalloutOpacityMask 1.0 CalloutOpacityMask.qml
+ChatInputLinksPreviewArea 1.0 ChatInputLinksPreviewArea.qml
 FetchMoreMessagesButton 1.0 FetchMoreMessagesButton.qml
 GapComponent 1.0 GapComponent.qml
 LinkPreviewCard 1.0 LinkPreviewCard.qml

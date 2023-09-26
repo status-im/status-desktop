@@ -4,27 +4,31 @@ import QtQuick.Controls 2.13
 
 import utils 1.0
 import shared 1.0
+import shared.controls.chat 1.0
 import shared.panels 1.0
 
 Row {
     id: imageArea
-    spacing: 0
+    spacing: Style.current.halfPadding
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)
+
+    property bool leftTail: true
+
     property alias imageSource: rptImages.model
 
     Repeater {
         id: rptImages
-
+    
         Item {
-            height: Style.current.halfPadding * 2 + chatImage.height + closeBtn.height / 3
-            width: chatImage.width + closeBtn.width / 3
+            height: chatImage.height
+            width: chatImage.width
 
             Image {
                 id: chatImage
                 anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.bottom: parent.bottom
                 width: 64
                 height: 64
                 fillMode: Image.PreserveAspectCrop
@@ -34,26 +38,10 @@ Row {
                 cache: false
                 source: modelData
                 layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Item {
-                        width: chatImage.width
-                        height: chatImage.height
-
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            width: chatImage.width
-                            height: chatImage.height
-                            radius: 16
-                        }
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                            width: 32
-                            height: 32
-                            radius: 4
-                        }
-                    }
+                layer.effect: CalloutOpacityMask {
+                    width: parent.width
+                    height: parent.height
+                    leftTail: imageArea.leftTail
                 }
             }
 

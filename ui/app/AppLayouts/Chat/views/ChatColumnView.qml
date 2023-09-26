@@ -215,31 +215,6 @@ Item {
             }
         }
 
-        // This is a non-designed preview of unfurled urls.
-        // Should be replaced with a proper UI when it's ready.
-        //
-        // StatusListView {
-        //     Layout.fillWidth: true
-        //     Layout.maximumHeight: 200
-        //     Layout.margins: Style.current.smallPadding
-
-        //     // For a vertical list bind the imlicitHeight to contentHeight
-        //     implicitHeight: contentHeight
-        //     spacing: 10
-
-        //     model: d.activeChatContentModule.inputAreaModule.linkPreviewModel
-
-        //     delegate: StatusBaseText {
-        //         width: ListView.view.width
-        //         wrapMode: Text.WordWrap
-        //         text: {
-        //             const icon = unfurled ? (hostname !== "" ? '✅' : '❌') : '👀'
-        //             const thumbnailInfo = `thumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
-        //             return `${icon} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\n${thumbnailInfo}`
-        //         }
-        //     }
-        // }
-
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
@@ -268,6 +243,7 @@ Item {
 
                     store: root.rootStore
                     usersStore: d.activeUsersStore
+                    linkPreviewModel: d.activeChatContentModule.inputAreaModule.linkPreviewModel
 
                     textInput.placeholderText: {
                         if (!channelPostRestrictions.visible) {
@@ -290,9 +266,10 @@ Item {
                     chatType: root.activeChatType
 
                     textInput.onTextChanged: {
-                        d.updateLinkPreviews()
-                        if (!!d.activeChatContentModule)
+                        if (!!d.activeChatContentModule) {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
+                            d.updateLinkPreviews()
+                        }
                     }
 
                     onReplyMessageIdChanged: {
@@ -337,6 +314,9 @@ Item {
                     onKeyUpPress: {
                         d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                     }
+
+                    onLinkPreviewRemoved: (link) => d.activeChatContentModule.inputAreaModule.removeLinkPreview(link)
+                    onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
                 }
 
                 ChatPermissionQualificationPanel {
