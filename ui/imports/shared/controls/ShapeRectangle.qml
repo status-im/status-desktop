@@ -34,6 +34,10 @@ Shape {
     property alias font: description.font
 
     property int radius: Style.current.radius
+    property int leftTopRadius: radius
+    property int rightTopRadius: radius
+    property int leftBottomRadius: radius
+    property int rightBottomRadius: radius
     readonly property alias path: path
 
     asynchronous: true
@@ -59,55 +63,47 @@ Shape {
         strokeStyle: ShapePath.DashLine
         dashPattern: [4, 4]
 
-        startX: root.radius
+        startX: root.leftTopRadius
         startY: 0
         PathLine {
-            x: root.width - root.radius
+            x: root.width - root.rightTopRadius
             y: 0
         }
-        PathCubic {
-            control1X: root.width
-            control2X: root.width
-            control1Y: 0
-            control2Y: 0
+        PathArc {
             x: root.width
-            y: root.radius
+            y: root.rightTopRadius
+            radiusX: root.rightTopRadius
+            radiusY: root.rightTopRadius
         }
         PathLine {
             x: root.width
-            y: root.height - root.radius
+            y: root.height - root.rightBottomRadius
         }
-        PathCubic {
-            control1X: root.width
-            control2X: root.width
-            control1Y: root.height
-            control2Y: root.height
-            x: root.width - root.radius
+        PathArc {
+            x:root.width - root.rightBottomRadius
             y: root.height
+            radiusX: root.rightBottomRadius
+            radiusY: root.rightBottomRadius
         }
         PathLine {
-            x: root.radius
+            x: root.leftBottomRadius
             y: root.height
         }
-        PathCubic {
-            control1X: 0
-            control2X: 0
-            control1Y: root.height
-            control2Y: root.height
-            x: 0
-            y: root.height - root.radius
+        PathArc {
+            x:0
+            y: root.height - root.leftBottomRadius
+            radiusX: root.leftBottomRadius;
+            radiusY: root.leftBottomRadius
         }
         PathLine {
             x: 0
-            y: root.radius
+            y: root.leftTopRadius
         }
-        PathCubic {
-            control1X: 0
-            control2X: 0
-            control1Y: 0
-            control2Y: 0
-            x: root.radius
+        PathArc {
+            x:root.leftTopRadius
             y: 0
+            radiusX: root.leftTopRadius
+            radiusY: root.leftTopRadius
         }
     }
 }
