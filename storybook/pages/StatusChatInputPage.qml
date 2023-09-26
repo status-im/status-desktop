@@ -75,6 +75,10 @@ SplitView {
         id: fakeUsersModel
     }
 
+    ListModel {
+        id: fakeLinksModel
+    }
+
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -85,11 +89,13 @@ SplitView {
         }
 
         Loader {
+            id: chatInputLoader
             active: rootStoreMock.ready && globalUtilsMock.ready
             sourceComponent: StatusChatInput {
                 id: chatInput
                 property var globalUtils: globalUtilsMock.globalUtils
                 enabled: enabledCheckBox.checked
+                linkPreviewModel: fakeLinksModel
                 usersStore: QtObject {
                     readonly property var usersModel: fakeUsersModel
                 }
@@ -122,18 +128,92 @@ SplitView {
                 text: "enabled"
                 checked: true
             }
-            MenuSeparator {
-                Layout.fillWidth: true
-            }
-            UsersModelEditor {
-                id: modelEditor
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                model: fakeUsersModel
 
-                onRemoveClicked: fakeUsersModel.remove(index, 1)
-                onRemoveAllClicked: fakeUsersModel.clear()
-                onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+            TabBar {
+                id: bar
+                TabButton {
+                    text: "Attachments"
+                }
+                TabButton {
+                    text: "Users"
+                }
+            }
+
+            StackLayout {
+                currentIndex: bar.currentIndex
+                ColumnLayout {
+                    id: attachmentsTab
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Label {
+                        text: "Images"
+                        Layout.fillWidth: true
+                    }
+                    ComboBox {
+                        id: imageNb
+                        editable: true
+                        model: 20
+                        validator: IntValidator {bottom: 0; top: 20;}
+                        focus: true
+                        onCurrentIndexChanged: {
+                            if(!chatInputLoader.item)
+                                return
+                            const urls = []
+                            for (let i = 0; i < imageNb.currentIndex ; i++) {
+                                urls.push("https://picsum.photos/200/300?random=" + i)
+                            }
+                            console.log(urls.length)
+                            chatInputLoader.item.fileUrlsAndSources = urls
+                        }
+                    }
+                    Label {
+                        text: "Links"
+                        Layout.fillWidth: true
+                    }
+                    ComboBox {
+                        id: linksNb
+                        editable: true
+                        model: 20
+                        validator: IntValidator {bottom: 0; top: 20;}
+                        onCurrentIndexChanged: {
+                            if(!chatInputLoader.item)
+                                return
+                            chatInputLoader.item.textInput.clear()
+                            fakeLinksModel.clear()
+                            for (let i = 0; i < linksNb.currentIndex ; i++) {
+                                const url = "https://www.youtube.com/watch?v=9bZkp7q19f0" + Math.floor(Math.random() * 100)
+                                chatInputLoader.item.textInput.append(url + "\n")
+                                fakeLinksModel.append({
+                                    url: url,
+                                    unfurled: Math.floor(Math.random() * 2),
+                                    immutable: false,
+                                    hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
+                                    title: "PSY - GANGNAM STYLE(강남스타일) M/V",
+                                    description: "This is the description of the link",
+                                    linkType: Math.floor(Math.random() * 3),
+                                    thumbnailWidth: 480,
+                                    thumbnailHeight: 360,
+                                    thumbnailUrl: "https://picsum.photos/480/360?random=1",
+                                    thumbnailDataUri: ""
+                                })
+                            }
+                        }
+                    }
+                }
+                UsersModelEditor {
+                    id: modelEditor
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: fakeUsersModel
+
+                    onRemoveClicked: fakeUsersModel.remove(index, 1)
+                    onRemoveAllClicked: fakeUsersModel.clear()
+                    onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+                }
+            }
+            Label {
+                text: "Attachments"
+                Layout.fillWidth: true
             }
         }
     }

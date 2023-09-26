@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 
 import shared 1.0
+import shared.controls.chat 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
@@ -27,6 +28,8 @@ Rectangle {
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal keyUpPress()
+    signal linkPreviewRemoved(string link)
+    signal linkPreviewReloaded(string link)
 
     property var usersStore
     property var store
@@ -55,6 +58,8 @@ Rectangle {
     property alias textInput: messageInputField
 
     property var fileUrlsAndSources: []
+
+    property var linkPreviewModel: null
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
@@ -845,7 +850,6 @@ Rectangle {
     function resetImageArea() {
         isImage = false;
         control.fileUrlsAndSources = []
-        imageArea.imageSource = [];
         for (let i=0; i<validators.children.length; i++) {
             const validator = validators.children[i]
             validator.images = []
@@ -866,8 +870,8 @@ Rectangle {
         if (!imagePaths || !imagePaths.length) {
             return []
         }
-        // needed because imageArea.imageSource is not a normal js array
-        const existing = (imageArea.imageSource || []).map(x => x.toString())
+        // needed because control.fileUrlsAndSources is not a normal js array
+        const existing = (control.fileUrlsAndSources || []).map(x => x.toString())
         let validImages = Utils.deduplicate(existing.concat(imagePaths))
         for (let i=0; i<validators.children.length; i++) {
             const validator = validators.children[i]
@@ -879,8 +883,7 @@ Rectangle {
 
     function showImageArea(imagePathsOrData) {
         isImage = imagePathsOrData.length > 0
-        imageArea.imageSource = imagePathsOrData
-        control.fileUrlsAndSources = imageArea.imageSource
+        control.fileUrlsAndSources = imagePathsOrData
     }
 
     // Use this to validate and show the images. The concatenation of previous selected images is done automatically
@@ -1162,21 +1165,26 @@ Rectangle {
                     }
                 }
 
-                StatusChatInputImageArea {
-                    id: imageArea
+                ChatInputLinksPreviewArea {
+                    id: linkPreviewArea
                     Layout.fillWidth: true
-                    Layout.leftMargin: Style.current.halfPadding
-                    Layout.rightMargin: Style.current.halfPadding
-                    visible: isImage
-                    onImageClicked: {
-                        Global.openImagePopup(chatImage)
-                    }
-                    onImageRemoved: {
-                        if (control.fileUrlsAndSources.length > index && control.fileUrlsAndSources[index]) {
-                            control.fileUrlsAndSources.splice(index, 1)
+                    visible: contentItemsCount > 0
+                    horizontalPadding: 12
+                    topPadding: 12
+                    imagePreviewModel: control.fileUrlsAndSources
+                    linkPreviewModel: control.linkPreviewModel
+                    onImageRemoved: (index) => {
+                        //Just do a copy and replace the whole thing because it's a plain JS array and thre's no signal when a single item is removed
+                        let urls = control.fileUrlsAndSources
+                        if (urls.length > index && urls[index]) {
+                            urls.splice(index, 1)
                         }
-                        showImageArea(control.fileUrlsAndSources)
+                        control.fileUrlsAndSources = urls
                     }
+                    onImageClicked: (chatImage) => Global.openImagePopup(chatImage)
+                    onLinkReload: (link) => control.linkPreviewReloaded(link)
+                    onLinkRemoved: (link) => control.linkPreviewRemoved(link)
+                    onLinkClicked: (link) => Global.openLink(link)
                 }
 
                 RowLayout {
