@@ -295,3 +295,6 @@ QtObject:
     for shortName in chainShortNames.split(':'):
       preferredChains.add(self.fromNetworksModel.getNetworkChainId(shortName))
     return preferredChains.join(":")
+
+  proc getIconUrl*(self: View, chainId: int): string {.slot.} =
+    return self.fromNetworksModel.getIconUrl(chainId)

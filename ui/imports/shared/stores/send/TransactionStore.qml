@@ -246,4 +246,8 @@ QtObject {
     function getShortChainIds(chainShortNames) {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
+
+    function getNetworkIcon(chainId) {
+        return walletSectionSendInst.getIconUrl(chainId)
+    }
 }

@@ -203,7 +203,7 @@ Item {
             preSelectedSendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-            preSelectedHolding: store.getAsset(buyStickersModal.store.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
+            preSelectedHoldingID: JSON.parse(root.store.stickersStore.getStatusToken()).symbol
             preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {

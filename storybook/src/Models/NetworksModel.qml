@@ -294,4 +294,224 @@ QtObject {
                    }
                ])
     }
+
+    readonly property var sendFromNetworks: CustomNetworkModel {
+        function updateFromNetworks(paths){
+            reset()
+            for(let i=0; i<paths.length; i++) {
+                for(let k=0; k<count; k++) {
+                    if(paths[i].fromNetwork.toString() === get(k).chainId.toString()) {
+                        get(k).amountIn = paths[i].amountIn
+                        get(k).toNetworks = get(k).toNetworks + ":" + paths[i].toNetwork
+                        get(k).hasGas = true
+                        get(k).locked = paths[i].amountInLocked
+                    }
+                }
+            }
+        }
+        function reset() {
+            for( let j=0; j<count; j++) {
+                get(j).amountIn = ""
+                get(j).toNetworks = ""
+                get(j).hasGas = true
+                get(j).locked = false
+            }
+        }
+        Component.onCompleted: append([
+                   {
+                       chainId: 1,
+                       chainName: "Ethereum Mainnet",
+                       iconUrl: ModelsData.networks.ethereum,
+                       chainColor: "blue",
+                       shortName: "ETH",
+                       layer: 1,
+                       nativeCurrencyDecimals: 18,
+                       nativeCurrencyName: "Ether",
+                       nativeCurrencySymbol: "ETH",
+                       isEnabled: true,
+                       isPreferred: true,
+                       hasGas: true,
+                       tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                       }),
+                       locked: false,
+                       lockedAmount: "",
+                       amountIn: "",
+                       amountOut: "",
+                       toNetworks: ""
+                    },
+                   {
+                        chainId: 10,
+                        chainName: "Optimism",
+                        iconUrl: ModelsData.networks.optimism,
+                        chainColor: "red",
+                        shortName: "OPT",
+                        layer: 2,
+                        nativeCurrencyDecimals: 18,
+                        nativeCurrencyName: "Ether",
+                        nativeCurrencySymbol: "ETH",
+                        isEnabled: true,
+                        isPreferred: true,
+                        hasGas: true,
+                        tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                        }),
+                        locked: false,
+                        lockedAmount: "",
+                        amountIn: "",
+                        amountOut: "",
+                        toNetworks: ""
+                   },
+                   {
+                        chainId: 42161,
+                        chainName: "Arbitrum",
+                        iconUrl: ModelsData.networks.arbitrum,
+                        isActive: false,
+                        isEnabled: true,
+                        shortName: "ARB",
+                        chainColor: "purple",
+                        layer: 2,
+                        nativeCurrencyDecimals: 18,
+                        nativeCurrencyName: "Ether",
+                        nativeCurrencySymbol: "ETH",
+                        isEnabled: true,
+                        isPreferred: true,
+                        hasGas: true,
+                        tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                        }),
+                        locked: false,
+                        lockedAmount: "",
+                        amountIn: "",
+                        amountOut: "",
+                        toNetworks: ""
+                    }
+               ])
+    }
+
+    readonly property var sendToNetworks: CustomNetworkModel {
+        function updateRoutePreferredChains(chainIds) {
+            for( let i=0; i<count; i++) {
+                get(i).isPreferred = false
+                get(i).isEnabled = false
+                if(chainIds.length === 0) {
+                    if(get(i).layer() === 1) {
+                        get(i).isPreferred = true
+                        get(i).isEnabled = true
+                    }
+                }
+                else {
+                    for (let k =0;k<chainIds.split(":").length;k++) {
+                        if(get(i).chainId.toString() === chainIds[k].toString()) {
+                            get(i).isPreferred = true
+                            get(i).isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
+        function updateToNetworks(paths){
+            reset()
+            for(let i=0;i<paths.length;i++) {
+                for( let k=0; k<count; k++) {
+                    if(paths[i].toNetwork.toString() === get(k).chainId.toString()) {
+                        if(!!get(k).amountOut) {
+                            let res = parseInt(get(k).amountOut) + parseInt(paths[i].amountOut)
+                            get(k).amountOut = res.toString()
+                        }
+                        else {
+                            get(k).amountOut = paths[i].amountOut
+                        }
+                    }
+                }
+            }
+        }
+        function reset() {
+            for( let j=0; j<count; j++) {
+                get(j).amountOut = ""
+            }
+        }
+        Component.onCompleted: append([
+                   {
+                       chainId: 1,
+                       chainName: "Ethereum Mainnet",
+                       iconUrl: ModelsData.networks.ethereum,
+                       chainColor: "blue",
+                       shortName: "ETH",
+                       layer: 1,
+                       nativeCurrencyDecimals: 18,
+                       nativeCurrencyName: "Ether",
+                       nativeCurrencySymbol: "ETH",
+                       isEnabled: true,
+                       isPreferred: true,
+                       hasGas: true,
+                       tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                       }),
+                       locked: false,
+                       lockedAmount: "",
+                       amountIn: "",
+                       amountOut: "",
+                       toNetworks: ""
+                    },
+                   {
+                        chainId: 10,
+                        chainName: "Optimism",
+                        iconUrl: ModelsData.networks.optimism,
+                        chainColor: "red",
+                        shortName: "OPT",
+                        layer: 2,
+                        nativeCurrencyDecimals: 18,
+                        nativeCurrencyName: "Ether",
+                        nativeCurrencySymbol: "ETH",
+                        isEnabled: true,
+                        isPreferred: true,
+                        hasGas: true,
+                        tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                        }),
+                        locked: false,
+                        lockedAmount: "",
+                        amountIn: "",
+                        amountOut: "",
+                        toNetworks: ""
+                   },
+                   {
+                        chainId: 42161,
+                        chainName: "Arbitrum",
+                        iconUrl: ModelsData.networks.arbitrum,
+                        isActive: false,
+                        isEnabled: true,
+                        shortName: "ARB",
+                        chainColor: "purple",
+                        layer: 2,
+                        nativeCurrencyDecimals: 18,
+                        nativeCurrencyName: "Ether",
+                        nativeCurrencySymbol: "ETH",
+                        isEnabled: true,
+                        isPreferred: true,
+                        hasGas: true,
+                        tokenBalance: ({
+                            displayDecimals: true,
+                            stripTrailingZeroes: true,
+                            amount: 23333213.234
+                        }),
+                        locked: false,
+                        lockedAmount: "",
+                        amountIn: "",
+                        amountOut: "",
+                        toNetworks: ""
+                    }
+               ])
+    }
 }

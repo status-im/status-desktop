@@ -10,7 +10,7 @@ ListModel {
                 amount: 323.3,
                 symbol: "ETH"
             }),
-            decimals: 2,
+            decimals: 18,
             totalCurrencyBalance: ({
                 displayDecimals: true,
                 stripTrailingZeroes: true,
@@ -21,7 +21,7 @@ ListModel {
             name: "Ethereum",
             balances: [
                 {
-                    chainId: "chain_1_id",
+                    chainId: "1",
                     balance: {
                         displayDecimals: true,
                         stripTrailingZeroes: true,
@@ -40,7 +40,7 @@ ListModel {
                 amount: 324343.3,
                 symbol: "SNT"
             }),
-            decimals: 2,
+            decimals: 18,
             totalCurrencyBalance: ({
                 displayDecimals: true,
                 stripTrailingZeroes: true,
@@ -51,7 +51,7 @@ ListModel {
             name: "Status",
             balances: [
                 {
-                    chainId: "chain_1_id",
+                    chainId: "1",
                     balance: {
                         displayDecimals: true,
                         stripTrailingZeroes: true,
@@ -62,6 +62,36 @@ ListModel {
             checked: true,
             allChecked: true
         },
+        {
+            totalRawBalance: "12434330",
+            totalBalance: ({
+                displayDecimals: true,
+                stripTrailingZeroes: true,
+                amount: 124343.3,
+                symbol: "DAI"
+            }),
+            decimals: 18,
+            totalCurrencyBalance: ({
+                displayDecimals: true,
+                stripTrailingZeroes: true,
+                amount: 53333213.234
+            }),
+            visibleForNetwork: true,
+            symbol: "DAI",
+            name: "DAI Stablecoin",
+            balances: [
+                {
+                    chainId: "1",
+                    balance: {
+                        displayDecimals: true,
+                        stripTrailingZeroes: true,
+                        amount: 124343.3
+                    }
+                }
+            ],
+            checked: true,
+            allChecked: true
+        }
     ]
 
     Component.onCompleted: append(data)
