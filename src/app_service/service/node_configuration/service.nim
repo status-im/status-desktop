@@ -223,13 +223,13 @@ proc setFleet*(self: Service, fleet: string): bool =
   var dnsDiscoveryURL: seq[string] = @[]
   case fleetType:
     of Fleet.WakuV2Prod:
-      dnsDiscoveryURL.add("enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.waku.nodes.status.im")
+      dnsDiscoveryURL.add("enrtree://ANEDLO25QVUGJOUTQFRYKWX6P4Z4GKVESBMHML7DZ6YK4LGS5FC5O@prod.wakuv2.nodes.status.im")
     of Fleet.WakuV2Test:
-      dnsDiscoveryURL.add("enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@test.waku.nodes.status.im")
+      dnsDiscoveryURL.add("enrtree://AO47IDOLBKH72HIZZOXQP6NMRESAN7CHYWIBNXDXWRJRZWLODKII6@test.wakuv2.nodes.status.im")
     of Fleet.StatusTest:
-      dnsDiscoveryURL.add("enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@test.nodes.status.im")
+      dnsDiscoveryURL.add("enrtree://AIO6LUM3IVWCU2KCPBBI6FEH2W42IGK3ASCZHZGG5TIXUR56OGQUO@test.status.nodes.status.im")
     of Fleet.StatusProd:
-      dnsDiscoveryURL.add("enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im")
+      dnsDiscoveryURL.add("enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im")
     else:
       wakuVersion = 1
 

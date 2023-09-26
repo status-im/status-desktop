@@ -412,7 +412,7 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
         nodeConfigJson["Networks"] = defaultNetworksJson;
         nodeConfigJson["NoDiscovery"] = true;
         nodeConfigJson["Rendezvous"] = false;
-        QJsonArray dnsDiscoveryURL = {"enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"};
+        QJsonArray dnsDiscoveryURL = {"enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"};
         clusterConfig["WakuNodes"] = dnsDiscoveryURL;
         clusterConfig["DiscV5BootstrapNodes"] = dnsDiscoveryURL;
 

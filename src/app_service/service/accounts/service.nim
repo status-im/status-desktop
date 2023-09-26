@@ -309,7 +309,7 @@ QtObject:
 
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool, login: bool = false): JsonNode =
     let fleet = Fleet.StatusProd
-    let dnsDiscoveryURL = @["enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"]
+    let dnsDiscoveryURL = @["enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"]
 
     result = NODE_CONFIG.copy()
     result["ClusterConfig"]["Fleet"] = newJString($fleet)
