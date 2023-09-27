@@ -28,4 +28,8 @@ QtObject {
     property var getChainShortNamesForSavedWalletAddress
     property var getGasEthValue
     property var getNetworkLayer
+
+    function copyToClipboard(text) {
+        console.warn("STUB: copyToClipboard:", text)
+    }
 }
