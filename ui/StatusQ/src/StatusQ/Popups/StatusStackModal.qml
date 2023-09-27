@@ -18,6 +18,7 @@ StatusModal {
 
     readonly property int itemsCount: stackLayout.count
     readonly property var currentItem: stackLayout.currentItem
+    readonly property alias animating: stackLayout.animating
 
     property Item backButton: StatusBackButton {
         visible: replaceItem || stackLayout.currentIndex > 0
