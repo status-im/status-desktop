@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
@@ -41,6 +42,9 @@ int main(int argc, char *argv[])
 
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
+
+    engine.rootContext()->setContextProperty(
+                "pagesFolder", QML_IMPORT_ROOT + QStringLiteral("/pages"));
 
     qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
     qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
