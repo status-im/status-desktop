@@ -21,10 +21,6 @@ Column {
 
     spacing: 12
 
-    Component.onCompleted: {
-        activityFilterStore.updateFilterBase()
-    }
-
     function resetView() {
         activityFilterMenu.resetView()
     }
@@ -43,7 +39,10 @@ Column {
             border.color: Theme.palette.directColor8
             type: StatusRoundButton.Type.Tertiary
             icon.color: Theme.palette.primaryColor1
-            onClicked: activityFilterMenu.popup(x, y + height + 4)
+            onClicked: {
+                activityFilterStore.updateStartTimestamp()
+                activityFilterMenu.popup(x, y + height + 4)
+            }
         }
 
         ActivityFilterTagItem {

@@ -37,7 +37,7 @@ Loader {
         if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
             let preferredChainIds = []
             switch(root.selectedRecipientType) {
-            case  TabAddressSelectorView.Type.Account: {
+            case TabAddressSelectorView.Type.Account: {
                 root.addressText = root.selectedRecipient.address
                 preferredChainIds = root.selectedRecipient.preferredSharingChainIds
                 break
@@ -105,8 +105,10 @@ Loader {
         }
     }
 
-    sourceComponent: root.selectedRecipientType === TabAddressSelectorView.Type.SavedAddress ? savedAddressRecipient:
-                                                                                               root.selectedRecipientType === TabAddressSelectorView.Type.Account ? myAccountRecipient : addressRecipient
+    sourceComponent: root.selectedRecipientType === TabAddressSelectorView.Type.SavedAddress
+        ? savedAddressRecipient
+        : root.selectedRecipientType === TabAddressSelectorView.Type.Account
+            ? myAccountRecipient : addressRecipient
 
     Component {
         id: savedAddressRecipient

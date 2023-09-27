@@ -5,6 +5,7 @@ import QtQuick 2.13
 import utils 1.0
 import SortFilterProxyModel 0.2
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 QtObject {
     id: root
@@ -235,6 +236,59 @@ QtObject {
             name = getNameForSavedWalletAddress(address)
         }
         return name
+    }
+
+    enum LookupType {
+        Account = 0,
+        SavedAddress = 1
+    }
+
+    // Returns object of type {type: null, object: null} or null if lookup didn't find anything
+    function lookupAddressObject(address) {
+        let res = null
+        let acc = ModelUtils.getByKey(root.accounts, "address", address)
+        if (acc) {
+            res = {type: RootStore.LookupType.Account, object: acc}
+        } else {
+            let sa = ModelUtils.getByKey(walletSectionSavedAddresses.model, "address", address)
+            if (sa) {
+                res = {type: RootStore.LookupType.SavedAddress, object: sa}
+            }
+        }
+
+        return res
+    }
+
+    function getAssetForSendTx(tx) {
+        if (tx.isNFT) {
+            return {
+                uid: tx.tokenID,
+                chainId: tx.chainId,
+                name: tx.nftName,
+                imageUrl: tx.nftImageUrl,
+                collectionUid: "",
+                collectionName: ""
+            }
+        } else {
+            return tx.symbol
+        }
+    }
+
+    function isTxRepeatable(tx) {
+        if (tx.txType !== Constants.TransactionType.Send)
+            return false
+
+        let res = root.lookupAddressObject(tx.sender)
+        if (!res || res.type !== RootStore.LookupType.Account || res.object.walletType == Constants.watchWalletType)
+            return false
+
+        if (tx.isNFT) {
+            // TODO #12275: check if account owns enough NFT
+        } else {
+            // TODO #12275: Check if account owns enough tokens
+        }
+
+        return true
     }
 
     function isOwnedAccount(address) {

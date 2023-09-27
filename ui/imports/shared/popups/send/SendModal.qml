@@ -24,9 +24,14 @@ import "./views"
 StatusDialog {
     id: popup
 
-    property string preSelectedRecipient
+    // expected content depends on the preSelectedRecipientType value.
+    // If type Address this must be a string else it expects an object. See RecipientView.selectedRecipientType
+    property var preSelectedRecipient
+    property int preSelectedRecipientType: TabAddressSelectorView.Type.Address
     property string preDefinedAmountToSend
+    // requires to have assigned an item from assets model
     property var preSelectedHolding
+    // token symbol
     property string preSelectedHoldingID
     property int preSelectedHoldingType
     property int preSelectedSendType
@@ -156,8 +161,12 @@ StatusDialog {
         }
 
         if(!!popup.preSelectedRecipient) {
-            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
-            recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
+            recipientLoader.selectedRecipientType = popup.preSelectedRecipientType
+            if (popup.preSelectedRecipientType == TabAddressSelectorView.Type.Address) {
+                recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
+            } else {
+                recipientLoader.selectedRecipient = popup.preSelectedRecipient
+            }
         }
 
         if(d.isBridgeTx) {
