@@ -3,6 +3,7 @@ import options
 
 import backend/collectibles as backend
 import collectible_trait_model
+import ../../../app_service/service/community_tokens/dto/community_token 
 
 # Additional data needed to build an Entry, which is
 # not included in the backend data and needs to be
@@ -192,7 +193,7 @@ QtObject:
 
   proc getCommunityPrivilegesLevel*(self: CollectibleDetailsEntry): int {.slot.} =
     if self.data == nil or isNone(self.data.communityInfo):
-      return 0
+      return PrivilegesLevel.Community.int
     return int(self.data.communityInfo.get().privilegesLevel)
 
   QtProperty[int] communityPrivilegesLevel:

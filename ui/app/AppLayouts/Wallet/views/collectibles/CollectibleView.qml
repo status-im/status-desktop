@@ -23,8 +23,10 @@ Control {
     property url fallbackImageUrl : ""
     property bool isLoading: false
     property bool navigationIconVisible: false
+    property string communityId: ""
 
     // Special Owner and TMaster token properties
+    readonly property bool isCommunityCollectible: communityId !== ""
     property int privilegesLevel: Constants.TokenPrivilegesLevel.Community
     readonly property bool isPrivilegedToken: (privilegesLevel === Constants.TokenPrivilegesLevel.Owner) ||
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
@@ -52,7 +54,7 @@ Control {
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
-            visible: !root.isPrivilegedToken
+            visible: !specialCollectible.visible
             radius: 8
             mediaUrl: root.mediaUrl
             mediaType: root.mediaType
@@ -70,12 +72,14 @@ Control {
         }
 
         PrivilegedTokenArtworkPanel {
+            id: specialCollectible
+
             Layout.alignment: Qt.AlignHCenter
             Layout.margins: Style.current.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
-            visible: root.isPrivilegedToken
+            visible: root.isCommunityCollectible && root.isPrivilegedToken
             size: PrivilegedTokenArtworkPanel.Size.Medium
             artwork: root.fallbackImageUrl
             color: root.ornamentColor

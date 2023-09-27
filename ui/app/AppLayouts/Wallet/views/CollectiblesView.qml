@@ -65,6 +65,7 @@ Item {
                 isLoading: !!model.isLoading
                 privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
                 ornamentColor: model.communityColor ?? "transparent"
+                communityId: model.communityId
 
                 onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.uid)
             }
