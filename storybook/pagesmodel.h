@@ -29,7 +29,7 @@ public:
 
     void reload();
 private:
-    QList<PagesModelItem> load();
+    QList<PagesModelItem> load() const;
 
     static void readMetadata(PagesModelItem &item);
     static void readMetadata(QList<PagesModelItem> &items);

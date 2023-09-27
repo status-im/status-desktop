@@ -23,10 +23,15 @@ void SectionsDecoratorModel::setSourceModel(QAbstractItemModel *sourceModel)
 
     initialize();
 
-    connect(sourceModel, &QAbstractItemModel::modelReset, this, &SectionsDecoratorModel::initialize);
-    connect(sourceModel, &QAbstractItemModel::rowsInserted, this, &SectionsDecoratorModel::initialize);
-    connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &SectionsDecoratorModel::initialize);
-    connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &SectionsDecoratorModel::initialize);
+    connect(sourceModel, &QAbstractItemModel::modelReset, this,
+            &SectionsDecoratorModel::initialize);
+    connect(sourceModel, &QAbstractItemModel::rowsMoved, this,
+            &SectionsDecoratorModel::initialize);
+
+    connect(sourceModel, &QAbstractItemModel::rowsInserted, this,
+            &SectionsDecoratorModel::onInserted);
+    connect(sourceModel, &QAbstractItemModel::rowsRemoved, this,
+            &SectionsDecoratorModel::onRemoved);
 
     emit sourceModelChanged();
 }
@@ -159,4 +164,128 @@ void SectionsDecoratorModel::initialize()
     }
 
     calculateOffsets();
+}
+
+void SectionsDecoratorModel::onInserted(const QModelIndex &parent,
+                                        int first, int last)
+{
+    if (first != last) {
+        initialize();
+        return;
+    }
+
+    const QVariant sectionVariant = m_sourceModel->data(
+                m_sourceModel->index(first, 0), m_sectionRole);
+    const QString section = sectionVariant.toString();
+
+    auto insertNewSection = [this, &section](int index) {
+        beginInsertRows(QModelIndex{}, index, index + 1);
+
+        m_rowsMetadata.insert(m_rowsMetadata.begin() + index, RowMetadata{});
+        m_rowsMetadata.insert(m_rowsMetadata.begin() + index,
+                              RowMetadata{ true, section, false, 0, 1});
+        calculateOffsets();
+        endInsertRows();
+    };
+
+    int itemsCounter = 0;
+    int sectionIndex = 0;
+
+    while (sectionIndex < m_rowsMetadata.size()) {
+        auto& sectionMetadata = m_rowsMetadata.at(sectionIndex);
+
+        if (sectionMetadata.sectionName == section) {
+            sectionMetadata.count++;
+
+            emit dataChanged(index(sectionIndex, 0), index(sectionIndex, 0),
+                             { Roles::SubitemsCountRole });
+
+            if (sectionMetadata.folded) {
+                // update folded section only
+                calculateOffsets();
+
+            } else {
+                // insert item into unfolded section
+                auto insertIndex = sectionIndex + (first - itemsCounter) + 1;
+
+                beginInsertRows(QModelIndex{}, insertIndex, insertIndex);
+                m_rowsMetadata.insert(m_rowsMetadata.begin() + insertIndex, RowMetadata{});
+                calculateOffsets();
+                endInsertRows();
+            }
+
+            break;
+        }
+
+        if (sectionMetadata.sectionName != section && itemsCounter == first) {
+            insertNewSection(sectionIndex);
+            break;
+        }
+
+        itemsCounter += sectionMetadata.count;
+        sectionIndex += 1 + (sectionMetadata.folded ? 0 : sectionMetadata.count);
+    }
+
+    if (sectionIndex == m_rowsMetadata.size())
+        insertNewSection(sectionIndex);
+}
+
+void SectionsDecoratorModel::onRemoved(const QModelIndex &parent,
+                                       int first, int last)
+{
+    if (first != last) {
+        initialize();
+        return;
+    }
+
+    int itemsCounter = 0;
+    int sectionIndex = 0;
+
+    while (sectionIndex < m_rowsMetadata.size()) {
+        auto& sectionMetadata = m_rowsMetadata.at(sectionIndex);
+
+        if (first < itemsCounter + sectionMetadata.count) {
+
+            if (sectionMetadata.folded) {
+                if (sectionMetadata.count == 1) {
+                    auto removeIndex = sectionIndex + (first - itemsCounter);
+                    beginRemoveRows(QModelIndex{}, removeIndex, removeIndex);
+                    m_rowsMetadata.erase(m_rowsMetadata.begin() + removeIndex,
+                                         m_rowsMetadata.begin() + removeIndex + 1);
+                    calculateOffsets();
+                    endRemoveRows();
+                } else {
+                    sectionMetadata.count--;
+                    calculateOffsets();
+
+                    emit dataChanged(index(sectionIndex, 0), index(sectionIndex, 0),
+                                     { Roles::SubitemsCountRole });
+                }
+            } else {
+                if (sectionMetadata.count == 1) {
+                    auto removeIndex = sectionIndex + (first - itemsCounter);
+                    beginRemoveRows(QModelIndex{}, removeIndex, removeIndex + 1);
+                    m_rowsMetadata.erase(m_rowsMetadata.begin() + removeIndex,
+                                         m_rowsMetadata.begin() + removeIndex + 2);
+                } else {
+                    sectionMetadata.count--;
+                    emit dataChanged(index(sectionIndex, 0), index(sectionIndex, 0),
+                                     { Roles::SubitemsCountRole });
+
+                    auto removeIndex = sectionIndex + (first - itemsCounter) + 1;
+
+                    beginRemoveRows(QModelIndex{}, removeIndex, removeIndex);
+                    m_rowsMetadata.erase(m_rowsMetadata.begin() + removeIndex);
+                }
+
+                calculateOffsets();
+                endRemoveRows();
+            }
+
+            break;
+        }
+
+        itemsCounter += sectionMetadata.count;
+        sectionIndex += 1 + (sectionMetadata.folded ? 0 : sectionMetadata.count);
+    }
 }

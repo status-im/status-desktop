@@ -21,7 +21,7 @@ PagesModel::PagesModel(const QString &path, QObject *parent)
             this, &PagesModel::reload);
 }
 
-QList<PagesModelItem> PagesModel::load() {
+QList<PagesModelItem> PagesModel::load() const {
     static QRegularExpression fileNameRegex(
                 QRegularExpression::anchoredPattern("(.*)Page\\.qml"));
 
@@ -71,8 +71,8 @@ void PagesModel::readMetadata(QList<PagesModelItem> &items) {
 }
 
 void PagesModel::reload() {
-    QList<PagesModelItem> currentItems = load();
-    std::map<QString, PagesModelItem> mapping;
+    const QList<PagesModelItem> currentItems = load();
+    std::unordered_map<QString, PagesModelItem> mapping;
 
     for (const PagesModelItem &item : qAsConst(m_items))
         mapping[item.title] = item;
@@ -81,7 +81,7 @@ void PagesModel::reload() {
     std::vector<PagesModelItem> changedItems;
     std::vector<PagesModelItem> removedItems;
 
-    for (const PagesModelItem &item : qAsConst(currentItems)) {
+    for (const auto &item : currentItems) {
         auto it = mapping.find(item.title);
 
         if (it == mapping.end()) {
@@ -94,7 +94,7 @@ void PagesModel::reload() {
         }
     }
 
-    for (auto& [key, value] : mapping)
+    for (const auto& [key, value] : mapping)
         removedItems.push_back(value);
 
     for (auto& item : removedItems) {
