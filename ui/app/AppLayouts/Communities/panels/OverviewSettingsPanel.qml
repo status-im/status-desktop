@@ -280,6 +280,7 @@ StackLayout {
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
 
+                communityId: root.communityId
                 communityShardingEnabled: root.communityShardingEnabled
                 communityShardIndex: root.communityShardIndex
 

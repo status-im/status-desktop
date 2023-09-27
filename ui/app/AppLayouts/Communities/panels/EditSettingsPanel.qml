@@ -7,6 +7,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.popups 1.0
 
 import utils 1.0
 
@@ -22,6 +23,7 @@ StatusScrollView {
     property alias tags: baseLayout.tags
     property alias selectedTags: baseLayout.selectedTags
     property alias options: baseLayout.options
+    property string communityId
     property bool communityShardingEnabled
     property int communityShardIndex: -1
 
@@ -79,6 +81,9 @@ StatusScrollView {
         RowLayout {
             spacing: Style.current.halfPadding
             visible: root.communityShardingEnabled
+
+            readonly property bool shardingActive: root.communityShardIndex !== -1
+
             StatusBaseText {
                 Layout.fillWidth: true
                 text: qsTr("Community sharding")
@@ -86,12 +91,13 @@ StatusScrollView {
             Item { Layout.fillWidth: true }
             StatusBaseText {
                 color: Theme.palette.baseColor1
-                visible: root.communityShardIndex !== -1
+                visible: parent.shardingActive
                 text: qsTr("Active: on shard #%1").arg(root.communityShardIndex)
             }
             StatusButton {
                 size: StatusBaseButton.Size.Small
-                text: root.communityShardIndex === -1 ? qsTr("Make %1 a sharded community").arg(root.name) : qsTr("Manage")
+                text: parent.shardingActive ? qsTr("Manage") : qsTr("Make %1 a sharded community").arg(root.name)
+                onClicked: Global.openPopup(enableShardingPopupCmp) // TODO manage popup
             }
         }
 
@@ -101,6 +107,16 @@ StatusScrollView {
             implicitWidth: root.bottomReservedSpace.width
             implicitHeight: root.bottomReservedSpace.height
         }
+
+        Component {
+            id: enableShardingPopupCmp
+            EnableShardingPopup {
+                communityName: root.name
+                publicKey: root.communityId
+                shardingInProgress: false // TODO community sharding backend: set to "true" when generating the pubSub topic
+                onEnableSharding: (shardIndex) => console.warn("TODO: enable community sharding for shardIndex:", shardIndex) // TODO community sharding backend
+                onClosed: destroy()
+            }
+        }
     }
 }
-
