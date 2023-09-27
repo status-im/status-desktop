@@ -97,7 +97,7 @@ StatusScrollView {
             StatusButton {
                 size: StatusBaseButton.Size.Small
                 text: parent.shardingActive ? qsTr("Manage") : qsTr("Make %1 a sharded community").arg(root.name)
-                onClicked: Global.openPopup(enableShardingPopupCmp) // TODO manage popup
+                onClicked: parent.shardingActive ? Global.openPopup(manageShardingPopupCmp) : Global.openPopup(enableShardingPopupCmp)
             }
         }
 
@@ -111,11 +111,30 @@ StatusScrollView {
         Component {
             id: enableShardingPopupCmp
             EnableShardingPopup {
+                destroyOnClose: true
                 communityName: root.name
                 publicKey: root.communityId
-                shardingInProgress: false // TODO community sharding backend: set to "true" when generating the pubSub topic
-                onEnableSharding: (shardIndex) => console.warn("TODO: enable community sharding for shardIndex:", shardIndex) // TODO community sharding backend
-                onClosed: destroy()
+                shardingInProgress: false // TODO community sharding backend: set to "true" when generating the pubSub topic, or migrating
+                onEnableSharding: {
+                    console.warn("TODO: enable community sharding for shardIndex:", shardIndex) // TODO community sharding backend
+                    root.communityShardIndex = shardIndex
+                }
+            }
+        }
+
+        Component {
+            id: manageShardingPopupCmp
+            ManageShardingPopup {
+                destroyOnClose: true
+                communityName: root.name
+                shardIndex: root.communityShardIndex
+                pubSubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"%2"}'.arg(shardIndex).arg(root.communityId) // TODO community sharding backend
+                onDisableShardingRequested: {
+                    root.communityShardIndex = -1 // TODO community sharding backend
+                }
+                onEditShardIndexRequested: {
+                    Global.openPopup(enableShardingPopupCmp, {initialShardIndex: root.communityShardIndex})
+                }
             }
         }
     }

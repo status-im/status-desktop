@@ -91,6 +91,9 @@
     "EditSettingsPanel": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?node-id=3132%3A383870&mode=dev"
     ],
+    "EnableShardingPopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?node-id=37239%3A184324&mode=dev"
+    ],
     "ExportControlNodePopup": [
         "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=36894-685070&mode=design&t=6k1ago8SSQ5Ip9J8-0",
         "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37275-289960&mode=design&t=6k1ago8SSQ5Ip9J8-0",
@@ -137,6 +140,9 @@
     ],
     "LoginView": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=1080%3A313192"
+    ],
+    "ManageShardingPopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37242-186255&mode=design&t=tn8u8VaIZDDrCXN4-0"
     ],
     "MembersDropdown": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-498410",
@@ -264,14 +270,14 @@
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160"
     ],
+    "TransferOwnershipAlertPopup": [
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86828&mode=design&t=coHVo1E6fHrKNNhQ-1",
+        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86847&mode=design&t=coHVo1E6fHrKNNhQ-1"
+    ],
     "UserAgreementPopup": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31450-560694&t=Q4MOViPCoHsTjhs6-0"
     ],
     "UserProfileCard": [
         "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=21961-655678&mode=design&t=JiMnPfMaLPWlrFK3-0"
-    ],
-    "TransferOwnershipAlertPopup": [
-        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86828&mode=design&t=coHVo1E6fHrKNNhQ-1",
-        "https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86847&mode=design&t=coHVo1E6fHrKNNhQ-1"
     ]
 }

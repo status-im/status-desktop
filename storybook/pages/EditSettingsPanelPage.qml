@@ -27,6 +27,7 @@ SplitView {
         communityId: "0xdeadbeef"
         communityShardingEnabled: communityEditor.shardingEnabled
         communityShardIndex: communityEditor.shardIndex
+        onCommunityShardIndexChanged: communityEditor.shardIndex = communityShardIndex
     }
 
     ScrollView {
