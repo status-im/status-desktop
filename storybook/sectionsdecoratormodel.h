@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <optional>
 
 class SectionsDecoratorModel : public QAbstractListModel
 {
@@ -41,6 +40,9 @@ private:
 
     void initialize();
     void calculateOffsets();
+
+    void onInserted(const QModelIndex &parent, int first, int last);
+    void onRemoved(const QModelIndex &parent, int first, int last);
 
     QAbstractItemModel* m_sourceModel = nullptr;
     std::vector<RowMetadata> m_rowsMetadata;
