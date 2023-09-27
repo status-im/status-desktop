@@ -40,6 +40,7 @@ CheckBox {
     }
 
     font.family: Theme.palette.baseFont.name
+    font.pixelSize: size === StatusCheckBox.Size.Regular ? 15 : 13
 
     indicator: Rectangle {
         anchors.left: root.leftSide? parent.left : undefined
