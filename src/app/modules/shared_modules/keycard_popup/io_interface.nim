@@ -20,6 +20,7 @@ type FlowType* {.pure.} = enum
   ChangePairingCode = "ChangePairingCode"
   CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
   MigrateFromKeycardToApp = "MigrateFromKeycardToApp"
+  MigrateFromAppToKeycard = "MigrateFromAppToKeycard"
 
 # For the following flows we don't run card syncing.
 const FlowsWeShouldNotTryAKeycardSyncFor* = @[
@@ -32,7 +33,8 @@ const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.ImportFromKeycard,
   FlowType.Authentication,
   FlowType.CreateCopyOfAKeycard,
-  FlowType.MigrateFromKeycardToApp
+  FlowType.MigrateFromKeycardToApp,
+  FlowType.MigrateFromAppToKeycard,
 ]
 
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
@@ -75,6 +77,9 @@ type
   SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
     lastStepInTheCurrentFlow*: bool
     continueWithNextFlow*: FlowType
+    forceFlow*: bool
+    continueWithKeyUid*: string
+    returnToFlow*: FlowType
 
 type
   SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
@@ -91,6 +96,12 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCurrentFlowType*(self: AccessInterface): FlowType {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getReturnToFlow*(self: AccessInterface): FlowType {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getForceFlow*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getKeycardData*(self: AccessInterface): string {.base.} =
@@ -120,8 +131,9 @@ method onCancelActionClicked*(self: AccessInterface) {.base.} =
 method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") {.base.} =
-  raise newException(ValueError, "No implementation available")
+method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "",
+  forceFlow = false, returnToFlow = FlowType.General) {.base.} =
+    raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")

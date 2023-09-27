@@ -246,6 +246,11 @@ QtObject {
         return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
     }
 
+    function elideAndFormatWalletAddress(address) {
+        return elideText(address, 5, 3).replace(
+                    "0x", "0" + String.fromCodePoint(0x00D7))
+    }
+
     function ensureVisible(flickable, rect) {
         const rectRight = rect.x + rect.width
         const rectBottom = rect.y + rect.height

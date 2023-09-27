@@ -68,24 +68,27 @@ SplitView {
 
                 onBurnClicked: logs.logEvent("BurnTokensPopup::onBurnClicked --> Burn amount: " + burnAmount)
                 onCancelClicked: logs.logEvent("BurnTokensPopup::onCancelClicked")
+                feeText: "0.0015 ETH ($75.43)"
+                feeErrorText: ""
+                isFeeLoading: false
 
-                onBurnFeesRequested: {
-                    feeText = ""
-                    feeErrorText = ""
-                    isFeeLoading = true
-
-                    feeCalculationTimer.restart()
+                onSelectedAccountAddressChanged: {
+                    burnTokensPopup.isFeeLoading = true
+                    timer.delay(2000, () => burnTokensPopup.isFeeLoading = false)
+                }
+                onAmountToBurnChanged: {
+                    burnTokensPopup.isFeeLoading = true
+                    timer.delay(2000, () => burnTokensPopup.isFeeLoading = false)
                 }
             }
 
             Timer {
-                id: feeCalculationTimer
-
-                interval: 1000
-
-                onTriggered: {
-                    burnTokensPopup.feeText = "0.0015 ETH ($75.43)"
-                    burnTokensPopup.isFeeLoading = false
+                id: timer
+                function delay(ms, callback) {
+                    timer.interval = ms
+                    timer.repeat = false
+                    timer.triggered.connect(callback)
+                    timer.start()
                 }
             }
         }

@@ -1,4 +1,4 @@
-import NimQml, std/wrapnils
+import NimQml, std/wrapnils, strutils, strformat, sugar
 import ./message_item
 
 QtObject:
@@ -185,3 +185,15 @@ QtObject:
   proc reactionsModel*(self: MessageItem): QVariant {.slot.} = result = newQVariant(?.self.messageItem.reactionsModel)
   QtProperty[QVariant] reactionsModel:
     read = reactionsModel
+  
+  proc albumId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.albumId
+  QtProperty[string] albumId:
+    read = albumId
+
+  proc albumMessageImages*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.albumMessageImages.join(" ")
+  QtProperty[string] albumMessageImages:
+    read = albumMessageImages
+
+  proc albumImagesCount*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.albumImagesCount
+  QtProperty[int] albumImagesCount:
+    read = albumImagesCount

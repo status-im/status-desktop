@@ -21,6 +21,7 @@ type
   AsyncDeployOwnerContractsFeesArg = ref object of QObjectTaskArg
     chainId: int
     addressFrom: string
+    requestId: string
 
 const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncDeployOwnerContractsFeesArg](argEncoded)
@@ -37,10 +38,12 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
       "error": "",
+      "requestId": arg.requestId,
     })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
+      "requestId": arg.requestId,
     })
 
 type
@@ -48,6 +51,7 @@ type
     chainId: int
     addressFrom: string
     tokenType: TokenType
+    requestId: string
 
 const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetDeployFeesArg](argEncoded)
@@ -58,6 +62,7 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     feeTable[arg.chainId] = response.toSuggestedFeesDto()
     let deployGas = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate().result.getInt
       else: community_tokens.deployAssetsEstimate().result.getInt
+    
     gasTable[(arg.chainId, "")] = deployGas
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
@@ -65,10 +70,12 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
       "error": "",
+      "requestId": arg.requestId,
     })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
+      "requestId": arg.requestId,
     })
 
 type
@@ -77,6 +84,7 @@ type
     contractAddress: string
     tokenIds: seq[UInt256]
     addressFrom: string
+    requestId: string
 
 const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetRemoteBurnFees](argEncoded)
@@ -92,10 +100,13 @@ const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
       "gasTable": tableToJsonArray(gasTable),
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
-      "error": "" })
+      "error": "",
+      "requestId": arg.requestId,
+    })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
+      "requestId": arg.requestId,
     })
 
 type
@@ -104,6 +115,7 @@ type
     contractAddress: string
     amount: Uint256
     addressFrom: string
+    requestId: string
 
 const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetBurnFees](argEncoded)
@@ -119,10 +131,13 @@ const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       "gasTable": tableToJsonArray(gasTable),
       "chainId": arg.chainId,
       "addressFrom": arg.addressFrom,
-      "error": "" })
+      "error": "",
+      "requestId": arg.requestId
+    })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
+      "requestId": arg.requestId,
     })
 
 type
@@ -130,6 +145,7 @@ type
     collectiblesAndAmounts: seq[CommunityTokenAndAmount]
     walletAddresses: seq[string]
     addressFrom: string
+    requestId: string
 
 const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetMintFees](argEncoded)
@@ -152,10 +168,13 @@ const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
       "addressFrom": arg.addressFrom,
-      "error": "" })
+      "error": "",
+      "requestId": arg.requestId
+    })
   except Exception as e:
     let output = %* {
-      "error": e.msg
+      "error": e.msg,
+      "requestId": arg.requestId
     }
     arg.finish(output)
 

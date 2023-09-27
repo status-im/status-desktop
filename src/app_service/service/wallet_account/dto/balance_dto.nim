@@ -1,8 +1,9 @@
-import json, strformat, strutils
+import json, strformat, stint, strutils
 
 include  app_service/common/json_utils
 
 type BalanceDto* = object
+  rawBalance*: Uint256
   balance*: float64
   address*: string
   chainId*: int
@@ -21,6 +22,7 @@ proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
+  result.rawBalance = jsonObj{"rawBalance"}.getStr.parse(Uint256)
   result.balance = jsonObj{"balance"}.getStr.parseFloat()
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)

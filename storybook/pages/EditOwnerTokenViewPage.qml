@@ -53,7 +53,7 @@ SplitView {
 
                 onMintClicked: logs.logEvent("EditOwnerTokenView::onMintClicked")
 
-                onDeployFeesRequested: {
+                Component.onCompleted: {
                     feeText = ""
                     feeErrorText = ""
                     isFeeLoading = true

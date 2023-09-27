@@ -113,6 +113,13 @@ QtObject {
         if (typeof currencyAmount.amount === "undefined")
             return qsTr("N/A")
 
+        let currencyValue = currencyAmount.amount
+
+        if (currencyAmount.symbol === "Gwei") {
+            // Special case when currency amount must be converted to float to properly display it
+            currencyValue = currencyAmount.amount / Math.pow(10, currencyAmount.displayDecimals)
+        }
+
         locale = locale || Qt.locale()
 
         // Parse options
@@ -139,26 +146,26 @@ QtObject {
         var amountSuffix = ""
 
         let minAmount = 10**-optDisplayDecimals
-        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optRawAmount)
+        if (currencyValue > 0 && currencyValue < minAmount && !optRawAmount)
         {
             // Handle amounts smaller than resolution
             amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
         } else {
             var amount
             var displayDecimals
-            const numIntegerDigits = integralPartLength(currencyAmount.amount)
+            const numIntegerDigits = integralPartLength(currencyValue)
             const maxDigits = 11 // We add "B" suffix only after 999 Billion
             const maxDigitsToShowDecimal = 6 // We do not display decimal places after 1 million
             // For large numbers, we use the short scale system (https://en.wikipedia.org/wiki/Long_and_short_scales)
             // and 2 decimal digits.
             if (numIntegerDigits > maxDigits && !optRawAmount) {
-                amount = currencyAmount.amount/10**9 // Billion => 9 zeroes
+                amount = currencyValue/10**9 // Billion => 9 zeroes
                 displayDecimals = 2
                 amountSuffix = qsTr("B", "Billion")
             } else {
                 // For normal numbers, we show the whole integral part and as many decimal places not
                 // not to exceed the maximum
-                amount = currencyAmount.amount
+                amount = currencyValue
                 // For numbers over 1M , dont show decimal places
                 if(numIntegerDigits > maxDigitsToShowDecimal) {
                     displayDecimals = 0
@@ -175,6 +182,8 @@ QtObject {
         // Add symbol
         if (currencyAmount.symbol && !optNoSymbol) {
             amountStr = "%1%2 %3".arg(amountStr).arg(amountSuffix).arg(currencyAmount.symbol)
+        } else {
+            amountStr = "%1%2".arg(amountStr).arg(amountSuffix)
         }
 
         return amountStr

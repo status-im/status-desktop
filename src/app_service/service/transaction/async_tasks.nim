@@ -20,7 +20,7 @@ type
     disabledFromChainIDs: seq[int]
     disabledToChainIDs: seq[int]
     preferredChainIDs: seq[int]
-    sendType: int
+    sendType: SendType
     lockedInAmounts: string
 
 proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
@@ -68,7 +68,7 @@ proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[Transactio
     if not firstSimplePath:
       firstSimplePath = true
       path.isFirstSimpleTx = true
-    if path.bridgeName != "Simple":
+    if path.bridgeName != "Transfer":
       if not firstBridgePath:
         firstBridgePath = false
         path.isFirstBridgeTx = true
@@ -88,12 +88,12 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     except:
       discard
 
-    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.sendType, lockedInAmounts).result
+    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, ord(arg.sendType), lockedInAmounts).result
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     # retry along with unpreferred chains incase no route is possible with preferred chains
     if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
-      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.sendType, lockedInAmounts).result
+      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], ord(arg.sendType), lockedInAmounts).result
       bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     bestPaths.sort(sortAsc[TransactionPathDto])

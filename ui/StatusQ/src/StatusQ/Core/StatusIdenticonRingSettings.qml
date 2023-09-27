@@ -32,7 +32,7 @@ QtObject {
     id: statusIdenticonRingSettings
 
     /*!
-       \qmlproperty ListModel StatusIdenticonRingSettings::ringSpecModel
+       \qmlproperty var StatusIdenticonRingSettings::ringSpecModel
        This is a REQUIRED property that contains a ListModel or array of objects that describes each ring segment color and length.
 
        Examples:

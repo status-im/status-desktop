@@ -16,8 +16,8 @@ PermissionsDropdown 1.0 PermissionsDropdown.qml
 RecipientTypeSelectionDropdown 1.0 RecipientTypeSelectionDropdown.qml
 RemotelyDestructPopup 1.0 RemotelyDestructPopup.qml
 SharedAddressesPopup 1.0 SharedAddressesPopup.qml
-SignMultiTokenTransactionsPopup 1.0 SignMultiTokenTransactionsPopup.qml
-SignTokenTransactionsPopup 1.0 SignTokenTransactionsPopup.qml
+SignTransactionsPopup 1.0 SignTransactionsPopup.qml
 TokenMasterActionPopup 1.0 TokenMasterActionPopup.qml
 TokenPermissionsPopup 1.0 TokenPermissionsPopup.qml
 TransferOwnershipPopup 1.0 TransferOwnershipPopup.qml
+TransferOwnershipAlertPopup 1.0 TransferOwnershipAlertPopup.qml

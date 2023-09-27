@@ -1,93 +1,129 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Utils 0.1
+import StatusQ.Components 0.1
+
+import shared.popups 1.0
 
 import utils 1.0
-import shared.controls 1.0
-import shared 1.0
 
 StatusDialog {
     id: root
 
-    property string privateKey
-    property var store
+    // Community related props:
+    property string communityName
+    property string communityLogo
 
-    title: qsTr("Transfer ownership")
+    // Transaction related props:
+    property var token // Expected roles: accountAddress, key, chainId, name, artworkSource
+    property var accounts
+    property var sendModalPopup
+
+    signal cancelClicked
+
+    width: 640 // by design
     padding: Style.current.padding
+    contentItem: ColumnLayout {
+        spacing: Style.current.bigPadding
 
-    width: 480
-
-    ColumnLayout {
-        id: layout
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        spacing: Style.current.padding
-
-        StatusInput {
-            id: pKeyInput
-
+        component CustomText : StatusBaseText {
             Layout.fillWidth: true
 
-            readonly property string elidedPkey: Utils.getElidedCommunityPK(root.privateKey)
-
-            label: qsTr("Community private key")
-
-            input.text: elidedPkey
-            input.edit.readOnly: true
-            input.edit.onActiveFocusChanged: {
-                pKeyInput.input.text =  pKeyInput.input.edit.focus ? root.privateKey : elidedPkey
-            }
-            input.rightComponent: StatusButton {
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.halfPadding
-                anchors.verticalCenter: parent.verticalCenter
-                borderColor: Theme.palette.primaryColor1
-                size: StatusBaseButton.Size.Tiny
-                text: qsTr("Copy")
-                objectName: "copyCommunityPrivateKeyButton"
-                onClicked: {
-                    text = qsTr("Copied")
-                    root.store.copyToClipboard(root.privateKey)
-                }
-            }
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            font.pixelSize: Style.current.primaryTextFontSize
+            color: Theme.palette.directColor1
         }
 
-        StatusBaseText {
-            Layout.fillWidth: true
+        CustomText {
+            Layout.topMargin: Style.current.halfPadding
 
-            text: qsTr("You should keep it safe and only share it with people you trust to take ownership of your community")
-            wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            color: Theme.palette.baseColor1
+            text: qsTr("Are you sure you want to transfer ownership of %1? All ownership rights you currently hold for %1 will be transferred to the new owner.").arg(root.communityName)
         }
 
-        StatusBaseText {
-            Layout.fillWidth: true
+        CustomText {
+            text: qsTr("To transfer ownership of %1:").arg(root.communityName)
+            font.bold: true
+        }
 
-            text: qsTr("You can also use this key to import your community on another device")
-            wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            color: Theme.palette.baseColor1
+        CustomText {
+            text: qsTr("1. Send the %1 Owner token (%2) to the new owner’s address").arg(root.communityName).arg(token.name)
+        }
+
+        CustomText {
+            text: qsTr("2. Ask the new owner to setup the control node for %1 on their desktop device").arg(root.communityName)
+        }
+
+        StatusMenuSeparator {
+            Layout.fillWidth: true
+        }
+
+        CustomText {
+            text: qsTr("I acknowledge that...")
+        }
+
+        StatusCheckBox {
+            id: ackCheckBox
+
+            Layout.topMargin: -Style.current.halfPadding
+            Layout.bottomMargin: Style.current.halfPadding
+
+            font.pixelSize: Style.current.primaryTextFontSize
+            text: qsTr("My ownership rights will be removed and transferred to the recipient")
+        }
+    }
+
+    header: StatusDialogHeader {
+        headline.title: qsTr("Transfer ownership of %1").arg(root.communityName)
+        actions.closeButton.onClicked: root.close()
+        leftComponent: StatusSmartIdenticon {
+            asset.name: root.communityLogo
+            asset.isImage: !!asset.name
         }
     }
 
     footer: StatusDialogFooter {
-        leftButtons: ObjectModel {
-            StatusBackButton {
+        spacing: Style.current.padding
+        rightButtons: ObjectModel {
+            StatusFlatButton {
+                text: qsTr("Cancel")
+
                 onClicked: {
-                    root.close()
+                    root.cancelClicked()
+                    close()
+                }
+            }
+
+            StatusButton {
+                enabled: ackCheckBox.checked
+                text: qsTr("Send %1 owner token").arg(root.communityName)
+                type: StatusBaseButton.Type.Danger
+
+                onClicked: {
+                    // Pre-populated dialog with the relevant Owner token info:
+                    root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
+                    root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
+                    root.sendModalPopup.preSelectedHolding = {
+                        uid : token.key,
+                        chainId: token.chainId,
+                        name: token.name,
+                        imageUrl: token.artworkSource,
+                        collectionUid: "",
+                        collectionName: ""
+                    }
+                    root.sendModalPopup.preSelectedHoldingType = Constants.HoldingType.Collectible
+                    root.sendModalPopup.open()
+                    close()
                 }
             }
         }
     }
 }
-

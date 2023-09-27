@@ -3,7 +3,13 @@ import QtQuick 2.15
 ListModel {
     readonly property var data: [
         {
-            totalBalance: 323.3,
+            totalRawBalance: "32330",
+            totalBalance: ({
+                displayDecimals: true,
+                stripTrailingZeroes: true,
+                amount: 323.3,
+                symbol: "ETH"
+            }),
             decimals: 2,
             totalCurrencyBalance: ({
                 displayDecimals: true,
@@ -27,7 +33,13 @@ ListModel {
             allChecked: true
         },
         {
-            totalBalance: 324343.3,
+            totalRawBalance: "32434330",
+            totalBalance: ({
+                displayDecimals: true,
+                stripTrailingZeroes: true,
+                amount: 324343.3,
+                symbol: "SNT"
+            }),
             decimals: 2,
             totalCurrencyBalance: ({
                 displayDecimals: true,

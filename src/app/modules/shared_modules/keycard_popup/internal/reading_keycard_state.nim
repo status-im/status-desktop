@@ -28,6 +28,7 @@ method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: stri
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.MigrateFromAppToKeycard or
     (self.flowType == FlowType.CreateCopyOfAKeycard and
     not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)) or
     self.flowType == FlowType.FactoryReset and

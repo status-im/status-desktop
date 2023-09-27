@@ -10,7 +10,7 @@ QtObject {
     }
 
     enum State {
-        Active, Creating, Deleting, Editing
+        Approved, AdditionPending, UpdatePending, RemovalPending
     }
 
     function getName(type) {
@@ -24,9 +24,9 @@ QtObject {
             case PermissionTypes.Type.ViewAndPost:
                 return qsTr("View and post")
             case PermissionTypes.Type.TokenMaster:
-                return qsTr("Admin community tokens")
+                return qsTr("Manage community tokens")
             case PermissionTypes.Type.Owner:
-                return qsTr("Admin TokenMaster tokens")
+                return qsTr("Manage TokenMaster tokens")
         }
 
         return ""

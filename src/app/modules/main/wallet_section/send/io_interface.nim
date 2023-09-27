@@ -1,6 +1,8 @@
 import stint
 import ../../../shared_models/currency_amount
 import app_service/service/transaction/dto
+import app/modules/shared_models/collectibles_model as collectibles
+import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -21,14 +23,14 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method getTokenBalanceOnChain*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string {.base.} =
+method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRoutesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string) {.base.} =
+    tokenSymbol: string, value: string, uuid: string, sendType: SendType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
@@ -56,4 +58,13 @@ method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) =
   raise newException(ValueError, "No implementation available")
 
 method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) =
+  raise newException(ValueError, "No implementation available")
+
+method getCollectiblesModel*(self: AccessInterface): collectibles.Model =
+  raise newException(ValueError, "No implementation available")
+
+method getNestedCollectiblesModel*(self: AccessInterface): nested_collectibles.Model =
+  raise newException(ValueError, "No implementation available")
+
+method splitAndFormatAddressPrefix*(self: AccessInterface, text : string, updateInStore: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")

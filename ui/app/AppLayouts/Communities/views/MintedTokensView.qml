@@ -169,8 +169,8 @@ StatusScrollView {
                 delegate: StatusListItem {
                     height: 64
                     width: mainLayout.width
-                    title: model.name
-                    subTitle: model.symbol
+                    title: model.name ?? ""
+                    subTitle: model.symbol ?? ""
                     asset.name: model.image ? model.image : ""
                     asset.isImage: true
                     components: [

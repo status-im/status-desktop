@@ -74,12 +74,6 @@ SplitView {
                                   ])
                     close()
                 }
-                onRemotelyDestructFeesRequested: {
-                    logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructFeesRequested",
-                                  ["walletsAndAmounts", "accountAddress"], [
-                                      JSON.stringify(walletsAndAmounts), accountAddress
-                                  ])
-                }
 
                 Component.onCompleted: {
                     open()

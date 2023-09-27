@@ -24,6 +24,8 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
     return createState(StateType.CreatePuk, self.flowType, nil)
   if self.flowType == FlowType.ChangePairingCode:
     return createState(StateType.CreatePairingCode, self.flowType, nil)
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    return createState(StateType.Biometrics, self.flowType, nil)
 
 method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
@@ -36,5 +38,6 @@ method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromAppToKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

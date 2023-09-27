@@ -86,7 +86,7 @@ StatusListView {
             StatusBaseText {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: Theme.tertiaryTextFontSize
-                text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
+                text: LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
             }
         }
 
@@ -105,7 +105,7 @@ StatusListView {
                 icon.color: hovered ? Theme.palette.primaryColor3 :
                                       checked ? Theme.palette.primaryColor1 : disabledTextColor
                 checkable: true
-                checked: listItem.address === root.selectedAirdropAddress
+                checked: listItem.address === root.selectedAirdropAddress.toLowerCase()
                 enabled: shareAddressCheckbox.checked && root.selectedSharedAddresses.length > 1 // last cannot be unchecked
                 visible: shareAddressCheckbox.checked
                 opacity: enabled ? 1.0 : 0.3
@@ -123,11 +123,11 @@ StatusListView {
                 ButtonGroup.group: d.addressesGroup
                 anchors.verticalCenter: parent.verticalCenter
                 checkable: true
-                checked: root.selectedSharedAddresses.includes(listItem.address)
+                checked: root.selectedSharedAddresses.some((address) => address.toLowerCase() === listItem.address )
                 enabled: !(root.selectedSharedAddresses.length === 1 && checked) // last cannot be unchecked
                 onToggled: {
                     // handle selected addresses
-                    const index = root.selectedSharedAddresses.indexOf(listItem.address)
+                    const index = root.selectedSharedAddresses.findIndex((address) => address.toLowerCase() === listItem.address)
                     const selectedSharedAddressesCopy = Object.assign([], root.selectedSharedAddresses) // deep copy
                     if (index === -1) {
                         selectedSharedAddressesCopy.push(listItem.address)
@@ -137,7 +137,7 @@ StatusListView {
                     root.selectedSharedAddresses = selectedSharedAddressesCopy
 
                     // switch to next available airdrop address when unchecking
-                    if (!checked && listItem.address === root.selectedAirdropAddress) {
+                    if (!checked && listItem.address === root.selectedAirdropAddress.toLowerCase()) {
                         d.selectFirstAvailableAirdropAddress()
                     }
 

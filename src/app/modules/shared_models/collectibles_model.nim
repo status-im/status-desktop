@@ -2,6 +2,8 @@ import NimQml, Tables, strutils, strformat, sequtils, stint
 import logging
 
 import ./collectibles_item, ./collectible_trait_model
+import web3/ethtypes as eth
+import backend/activity as backend_activity
 
 type
   CollectibleRole* {.pure.} = enum
@@ -14,9 +16,16 @@ type
     MediaUrl
     MediaType
     BackgroundColor
+    CollectionUid
     CollectionName
+    CollectionSlug
     IsLoading
     IsPinned
+    # Community-related roles
+    CommunityId
+    CommunityName
+    CommunityColor
+    CommunityPrivilegesLevel
 
 const loadingItemsCount = 10
 
@@ -145,9 +154,15 @@ QtObject:
       CollectibleRole.MediaType.int:"mediaType",
       CollectibleRole.ImageUrl.int:"imageUrl",
       CollectibleRole.BackgroundColor.int:"backgroundColor",
+      CollectibleRole.CollectionUid.int:"collectionUid",
       CollectibleRole.CollectionName.int:"collectionName",
+      CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.IsPinned.int:"isPinned",
+      CollectibleRole.CommunityId.int:"communityId",
+      CollectibleRole.CommunityName.int:"communityName",
+      CollectibleRole.CommunityColor.int:"communityColor",
+      CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -180,12 +195,24 @@ QtObject:
         result = newQVariant(item.getImageUrl())
       of CollectibleRole.BackgroundColor:
         result = newQVariant(item.getBackgroundColor())
+      of CollectibleRole.CollectionUid:
+        result = newQVariant(item.getCollectionId())
       of CollectibleRole.CollectionName:
         result = newQVariant(item.getCollectionName())
+      of CollectibleRole.CollectionSlug:
+        result = newQVariant(item.getCollectionSlug())
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
       of CollectibleRole.IsPinned:
         result = newQVariant(item.getIsPinned())
+      of CollectibleRole.CommunityId:
+        result = newQVariant(item.getCommunityId())
+      of CollectibleRole.CommunityName:
+        result = newQVariant(item.getCommunityName())
+      of CollectibleRole.CommunityColor:
+        result = newQVariant(item.getCommunityColor())
+      of CollectibleRole.CommunityPrivilegesLevel:
+        result = newQVariant(item.getCommunityPrivilegesLevel())
     else:
       # Loading item
       case enumRole:
@@ -194,6 +221,30 @@ QtObject:
       else:
         error "Invalid role for loading item"
         result = newQVariant()
+
+  proc rowData(self: Model, index: int, column: string): string {.slot.} =
+    if (index >= self.items.len):
+      return
+    let item = self.items[index]
+    case column:
+      of "uid": result = item.getId()
+      of "chainId": result = $item.getChainId()
+      of "contractAddress": result = item.getContractAddress()
+      of "tokenId": result = item.getTokenId().toString()
+      of "name": result = item.getName()
+      of "mediaUrl": result = item.getMediaUrl()
+      of "mediaType": result = item.getMediaType()
+      of "imageUrl": result = item.getImageUrl()
+      of "backgroundColor": result = item.getBackgroundColor()
+      of "collectionUid": result = item.getCollectionId()
+      of "collectionName": result = item.getCollectionName()
+      of "collectionSlug": result = item.getCollectionSlug()
+      of "isLoading": result = $false
+      of "isPinned": result = $item.getIsPinned()
+      of "communityId": result = item.getCommunityId()
+      of "communityName": result = item.getCommunityName()
+      of "communityColor": result = item.getCommunityColor()
+      of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
 
   proc appendCollectibleItems(self: Model, newItems: seq[Item]) =
     if len(newItems) == 0:
@@ -271,6 +322,9 @@ QtObject:
     else:
       self.removeLoadingItems()
 
+  proc getItems*(self: Model): seq[Item] =
+    return self.items
+
   proc setItems*(self: Model, newItems: seq[Item], offset: int, hasMore: bool) =
     if offset == 0:
       self.removeCollectibleItems()
@@ -291,4 +345,38 @@ QtObject:
     for item in self.items:
       if(cmpIgnoreCase(item.getId(), id) == 0):
         return item.getName()
+    return ""
+
+  proc getActivityToken*(self: Model, id: string): backend_activity.Token =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getId(), id) == 0):
+        result.tokenType = backend_activity.TokenType.Erc721
+        result.chainId = backend_activity.ChainId(item.getChainId())
+        var contract = item.getContractAddress()
+        if len(contract) > 0:
+          var address: eth.Address
+          address = eth.fromHex(eth.Address, contract)
+          result.address = some(address)
+        var tokenId = item.getTokenId()
+        if tokenId > 0:
+          result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
+        return result
+    
+    # Fallback, use data from id
+    var parts = id.split("+")
+    if len(parts) == 3:
+      result.chainId = backend_activity.ChainId(parseInt(parts[0]))
+      result.address = some(eth.fromHex(eth.Address, parts[1]))
+      var tokenIdInt = u256(parseInt(parts[2]))
+      result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenIdInt)))
+
+    return result
+
+  proc getUidForData*(self: Model, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getTokenId().toString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
+        return item.getId()
+    # Fallback, create uid from data, because it still might not be fetched
+    if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
+      return $chainId & "+" & tokenAddress & "+" & tokenId
     return ""

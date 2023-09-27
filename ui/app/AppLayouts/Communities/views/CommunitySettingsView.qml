@@ -15,6 +15,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
 import shared.views.chat 1.0
+import shared.stores.send 1.0
 import utils 1.0
 
 import AppLayouts.Communities.controls 1.0
@@ -34,6 +35,7 @@ StatusSectionLayout {
     property var community
     property var transactionStore: TransactionStore {}
     property bool communitySettingsDisabled
+    property var sendModalPopup
 
     required property var walletAccountsModel // name, address, emoji, color
 
@@ -104,10 +106,10 @@ StatusSectionLayout {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Style.current.halfPadding
                 Layout.rightMargin: Style.current.padding
                 model: stackLayout.children
-                spacing: 8
+                spacing: Style.current.halfPadding
                 enabled: !root.communitySettingsDisabled
 
                 delegate: StatusNavigationListItem {
@@ -115,8 +117,6 @@ StatusSectionLayout {
                     width: ListView.view.width
                     title: model.sectionName
                     asset.name: model.sectionIcon
-                    asset.height: 24
-                    asset.width: 24
                     selected: d.currentIndex === index && !root.communitySettingsDisabled
                     onClicked: d.currentIndex = index
                     visible: model.sectionEnabled
@@ -160,6 +160,7 @@ StatusSectionLayout {
             readonly property string sectionIcon: "show"
             readonly property bool sectionEnabled: true
 
+            isOwner: root.isOwner
             communityId: root.community.id
             name: root.community.name
             description: root.community.description
@@ -180,6 +181,10 @@ StatusSectionLayout {
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
+
+            sendModalPopup: root.sendModalPopup
+            tokensModel: root.community.communityTokens
+            accounts: root.walletAccountsModel
 
             onCollectCommunityMetricsMessagesCount: {
                 rootStore.collectCommunityMetricsMessagesCount(intervals)
@@ -217,24 +222,21 @@ StatusSectionLayout {
                 if(!root.isControlNode)
                     return
 
-                root.rootStore.authenticateWithCallback((authenticated) => {
-                    if(!authenticated)
-                        return
-
-                    Global.openExportControlNodePopup(root.community.name, root.chatCommunitySectionModule.exportCommunity(root.community.id), (popup) => {
-                        popup.onDeletePrivateKey.connect(() => {
-                            root.rootStore.removePrivateKey(root.community.id)
-                        })  
-                    })
-                })
+                Global.openExportControlNodePopup(root.community)
             }
 
             onImportControlNodeClicked: {
                 if(root.isControlNode)
                     return
 
-                Global.openImportControlNodePopup(root.community, d.importControlNodePopupOpened)
+                Global.openImportControlNodePopup(root.community)
             }
+
+            onMintOwnerTokenClicked: {
+                root.goTo(Constants.CommunitySettingsSections.MintTokens)
+                mintPanel.openNewTokenForm(false/*Collectible owner token*/)
+            }
+
         }
 
         MembersSettingsPanel {
@@ -309,33 +311,11 @@ StatusSectionLayout {
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
 
-            function setFeesInfo(ethCurrency, fiatCurrency, errorCode) {
-                if (errorCode === Constants.ComputeFeeErrorCode.Success
-                        || errorCode === Constants.ComputeFeeErrorCode.Balance) {
-
-                    const valueStr = LocaleUtils.currencyAmountToLocaleString(ethCurrency)
-                        + "(" + LocaleUtils.currencyAmountToLocaleString(fiatCurrency) + ")"
-                    mintPanel.feeText = valueStr
-
-                    if (errorCode === Constants.ComputeFeeErrorCode.Balance)
-                        mintPanel.feeErrorText = qsTr("Not enough funds to make transaction")
-
-                    mintPanel.isFeeLoading = false
-
-                    return
-                } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
-                    mintPanel.feeErrorText = qsTr("Infura error")
-                    mintPanel.isFeeLoading = true
-                    return
-                }
-                mintPanel.feeErrorText = qsTr("Unknown error")
-                mintPanel.isFeeLoading = true
-            }
-
             // General community props
             communityName: root.community.name
             communityLogo: root.community.image
             communityColor: root.community.color
+            sendModalPopup: root.sendModalPopup
 
             // User profile props
             isOwner: root.isOwner
@@ -346,6 +326,7 @@ StatusSectionLayout {
             isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
             isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
             anyPrivilegedTokenFailed: tokensModelChangesTracker.isOwnerTokenFailed || tokensModelChangesTracker.isTMasterTokenFailed
+            ownerOrTMasterTokenItemsExist: tokensModelChangesTracker.ownerOrTMasterTokenItemsExist
 
             // Models
             tokensModel: root.community.communityTokens
@@ -356,22 +337,11 @@ StatusSectionLayout {
             allNetworks: communityTokensStore.allNetworks
             accounts: root.walletAccountsModel
 
-            onDeployFeesRequested: {
-                feeText = ""
-                feeErrorText = ""
-                isFeeLoading = true
+            onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
 
-                communityTokensStore.computeDeployFee(
-                    chainId, accountAddress, tokenType, !(mintPanel.isOwnerTokenDeployed && mintPanel.isTMasterTokenDeployed))
-            }
+            onRegisterSelfDestructFeesSubscriber: d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
 
-            onBurnFeesRequested: {
-                feeText = ""
-                feeErrorText = ""
-                isFeeLoading = true
-
-                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
-            }
+            onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
 
             onMintCollectible:
                 communityTokensStore.deployCollectible(
@@ -384,16 +354,17 @@ StatusSectionLayout {
                 communityTokensStore.deployOwnerToken(
                     root.community.id, ownerToken, tMasterToken)
 
-            onRemotelyDestructFeesRequest:
-                communityTokensStore.computeSelfDestructFee(
-                    walletsAndAmounts, tokenKey, accountAddress)
-
             onRemotelyDestructCollectibles:
                 communityTokensStore.remoteSelfDestructCollectibles(
                     root.community.id, walletsAndAmounts, tokenKey, accountAddress)
 
-            onSignBurnTransactionOpened:
-                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
+            onRemotelyDestructAndBan:
+                communityTokensStore.remotelyDestructAndBan(
+                    root.community.id, contactId, tokenKey, accountAddress)
+
+            onRemotelyDestructAndKick:
+                communityTokensStore.remotelyDestructAndKick(
+                    root.community.id, contactId, tokenKey, accountAddress)
 
             onBurnToken:
                 communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
@@ -481,10 +452,20 @@ StatusSectionLayout {
                 sourceComponent: SortFilterProxyModel {
 
                     sourceModel: airdropPanel.communityTokens
-                    filters: ValueFilter {
-                        roleName: "tokenType"
-                        value: Constants.TokenType.ERC721
-                    }
+                    filters: [
+                        ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC721
+                        },
+                        ExpressionFilter {
+                            function getPrivileges(privilegesLevel) {
+                                return privilegesLevel === Constants.TokenPrivilegesLevel.Community ||
+                                        (root.isOwner && privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+                            }
+
+                            expression: { return getPrivileges(model.privilegesLevel) }
+                        }
+                    ]
                     proxyRoles: [
                         ExpressionRole {
                             name: "category"
@@ -514,20 +495,16 @@ StatusSectionLayout {
             membersModel: community.members
 
             accountsModel: root.walletAccountsModel
-
             onAirdropClicked: communityTokensStore.airdrop(
-                                  root.community.id, airdropTokens, addresses,
-                                  feeAccountAddress)
-
+                                   root.community.id, airdropTokens, addresses,
+                                   feeAccountAddress)
+                                   
             onNavigateToMintTokenSettings: {
                 root.goTo(Constants.CommunitySettingsSections.MintTokens)
                 mintPanel.openNewTokenForm(isAssetType)
             }
 
-            onAirdropFeesRequested:
-                communityTokensStore.computeAirdropFee(
-                    root.community.id, contractKeysAndAmounts, addresses,
-                    feeAccountAddress)
+            onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
         }
     }
 
@@ -546,6 +523,10 @@ StatusSectionLayout {
             readonly property bool tokenMaster: root.community.memberRole === Constants.memberRole.tokenMaster
         }
 
+        readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
+            communityTokensStore: root.rootStore.communityTokensStore
+        }
+
         function goTo(section: int, subSection: int) {
             const stackContent = stackLayout.children
 
@@ -561,44 +542,6 @@ StatusSectionLayout {
                     break
                 }
             }
-        }
-
-        function requestCommunityInfoWithCallback(privateKey, callback) {
-            if(!callback) return
-
-            //success
-            root.rootStore.communityAdded.connect(function communityAddedHandler(communityId) {
-                root.rootStore.communityAdded.disconnect(communityAddedHandler)
-                let community = null
-                try {
-                    const communityJson = root.rootStore.getSectionByIdJson(communityId)
-                    community = JSON.parse(communityJson)
-                } catch (e) {
-                    console.warn("Error parsing community json: ", communityJson, " error: ", e.message)
-                }
-
-                callback(community)
-            })
-
-            //error
-            root.rootStore.importingCommunityStateChanged.connect(function communityImportingStateChangedHandler(communityId, status) {
-                root.rootStore.importingCommunityStateChanged.disconnect(communityImportingStateChangedHandler)
-                if(status === Constants.communityImportingError) {
-                    callback(null)
-                }
-            })
-
-            root.rootStore.requestCommunityInfo(privateKey, false)
-        }
-
-        function importControlNodePopupOpened(popup) {
-            popup.requestCommunityInfo.connect((privateKey) => {
-                requestCommunityInfoWithCallback(privateKey, popup.setCommunityInfo)
-            })
-
-            popup.importControlNode.connect((privateKey) => {
-                root.rootStore.importCommunity(privateKey)
-            })
         }
     }
 
@@ -670,16 +613,6 @@ StatusSectionLayout {
     }
 
     Component {
-        id: transferOwnershipPopup
-
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            store: root.rootStore
-            onClosed: destroy()
-        }
-    }
-
-    Component {
         id: noPermissionsPopupCmp
 
         NoPermissionsToJoinPopup {
@@ -694,22 +627,6 @@ StatusSectionLayout {
 
     Connections {
         target: rootStore.communityTokensStore
-
-        function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-            mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
-        }
-
-        function onAirdropFeeUpdated(airdropFees) {
-            airdropPanel.airdropFees = airdropFees
-        }
 
         function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
             if (root.community.id !== communityId)

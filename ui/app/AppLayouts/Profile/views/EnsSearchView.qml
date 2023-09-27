@@ -12,7 +12,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
-import shared.popups 1.0
+import shared.popups.send 1.0
 
 Item {
     id: root
@@ -63,10 +63,11 @@ Item {
             id: connectEnsModal
             modalHeader: qsTr("Connect username with your pubkey")
             interactive: false
-            sendType: Constants.SendType.ENSSetPubKey
+            preSelectedSendType: Constants.SendType.ENSSetPubKey
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedAsset: store.getAsset(connectEnsModal.store.assets, "ETH")
+            preSelectedHolding: store.getAsset(connectEnsModal.store.assets, Constants.ethToken)
+            preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()
@@ -74,7 +75,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndSetPubKey(
                                 root.ensUsernamesStore.chainId,
                                 ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 "",

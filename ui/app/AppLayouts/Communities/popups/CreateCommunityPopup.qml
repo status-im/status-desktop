@@ -107,32 +107,28 @@ StatusStackModal {
                 Layout.fillWidth: true
                 spacing: 12
                 StatusBaseText {
-                    font.pixelSize: 15
+                    Layout.fillWidth: true
+                    maximumLineCount: 2
+                    wrapMode: Text.Wrap
+                    elide: Text.ElideRight
                     text: fileListView.fileListModelEmpty ? qsTr("Select Discord JSON files to import") :
                                                             root.store.discordImportErrorsCount ? qsTr("Some of your community files cannot be used") :
                                                                                                   qsTr("Uncheck any files you would like to exclude from the import")
                 }
                 StatusBaseText {
-                    visible: fileListView.fileListModelEmpty
+                    visible: fileListView.fileListModelEmpty && !issuePill.visible
                     font.pixelSize: 12
                     color: Theme.palette.baseColor1
                     text: qsTr("(JSON file format only)")
                 }
                 IssuePill {
-                    type: root.store.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
-                    count: {
-                      if (root.store.discordImportErrorsCount > 0) {
-                        return root.store.discordImportErrorsCount
-                      }
-                      if (root.store.discordImportWarningsCount > 0) {
-                        return root.store.discordImportWarningsCount
-                      }
-                      return 0
-                    }
-                    visible: !!count
+                    id: issuePill
+                    type: root.communitiesStore.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
+                    count: root.communitiesStore.discordImportErrorsCount || root.communitiesStore.discordImportWarningsCount || 0
+                    visible: !!count && !fileListView.fileListModelEmpty
                 }
-                Item { Layout.fillWidth: true }
                 StatusButton {
+                    Layout.alignment: Qt.AlignRight
                     text: qsTr("Browse files")
                     type: StatusBaseButton.Type.Primary
                     onClicked: fileDialog.open()
@@ -160,8 +156,7 @@ StatusStackModal {
                         Layout.topMargin: 8
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
-                        text: qsTr("Export your Discord JSON data using %1")
-                          .arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter'>DiscordChatExporter</a>")
+                        text: qsTr("Export your Discord JSON data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
                         onLinkActivated: Global.openLink(link)
                         HoverHandler {
                             id: handler1
@@ -175,7 +170,7 @@ StatusStackModal {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
-                        text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/wiki'>wiki</a> if you have any queries")
+                        text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
                         onLinkActivated: Global.openLink(link)
                         HoverHandler {
                             id: handler2

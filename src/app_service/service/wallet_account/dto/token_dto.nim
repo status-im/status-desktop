@@ -1,4 +1,4 @@
-import tables, json, strformat, sequtils, sugar, strutils
+import tables, json, strformat, sequtils, sugar, stint, strutils
 
 import balance_dto
 
@@ -171,6 +171,13 @@ proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):
       sum += self.balancesPerChain[chainId].balance
+  return sum
+
+proc getRawBalance*(self: WalletTokenDto, chainIds: seq[int]): UInt256 =
+  var sum = stint.u256(0)
+  for chainId in chainIds:
+    if self.balancesPerChain.hasKey(chainId):
+      sum += self.balancesPerChain[chainId].rawBalance
   return sum
 
 proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: string): float64 =

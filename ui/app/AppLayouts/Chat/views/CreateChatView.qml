@@ -161,14 +161,6 @@ Page {
                 usersStore: ({
                     usersModel: membersSelector.model
                 })
-                onSendTransactionCommandButtonClicked: {
-                    root.createChatPropertiesStore.createChatStartSendTransactionProcess = true;
-                    membersSelector.createChat();
-                }
-                onReceiveTransactionCommandButtonClicked: {
-                    root.createChatPropertiesStore.createChatStartReceiveTransactionProcess = true;
-                    membersSelector.createChat();
-                }
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;
                     root.createChatPropertiesStore.createChatStickerPackId = packId;

@@ -13,7 +13,6 @@ Item {
     property int cursorPosition: 0
     property int lastAtPosition: 0
     property var property: ([])
-    property bool addSystemSuggestions: false
 
     onFilterChanged: invalidateFilter()
     onPropertyChanged: invalidateFilter()
@@ -86,7 +85,7 @@ Item {
             name: "everyone",
             icon: ""
         }
-        if (suggestionsPanelRoot.addSystemSuggestions && (all || isAcceptedItem(filter, everyoneItem))) {
+        if (all || isAcceptedItem(filter, everyoneItem)) {
             filterModel.append(everyoneItem)
         }
     }

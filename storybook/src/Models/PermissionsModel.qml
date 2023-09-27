@@ -14,7 +14,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true,
             tokenCriteriaMet: false
         },
@@ -22,7 +22,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         }
@@ -50,7 +50,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         }
     ]
@@ -60,28 +60,28 @@ QtObject {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         }
     ]
@@ -91,14 +91,14 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         }
     ]
@@ -108,14 +108,14 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         }
     ]
@@ -125,21 +125,21 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel1b(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         }
     ]
@@ -149,28 +149,28 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false
         }
     ]
@@ -181,7 +181,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2b(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -190,7 +190,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Admin,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -199,7 +199,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -208,7 +208,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         }
@@ -255,7 +255,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1b(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -264,7 +264,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -273,7 +273,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -282,7 +282,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.Read,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -291,7 +291,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.Read,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -300,7 +300,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.ViewAndPost,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -309,7 +309,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2b(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.ViewAndPost,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -318,7 +318,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -327,7 +327,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -336,7 +336,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
-            permissionState: PermissionTypes.State.Active,
+            permissionState: PermissionTypes.State.Approved,
             isPrivate: false,
             tokenCriteriaMet: false
         }

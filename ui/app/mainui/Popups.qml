@@ -28,6 +28,7 @@ QtObject {
     required property var popupParent
     required property var rootStore
     property var communitiesStore
+    property var devicesStore
     property bool isDevBuild
 
     property var activePopupComponents: []
@@ -64,6 +65,7 @@ QtObject {
         Global.openExportControlNodePopup.connect(openExportControlNodePopup)
         Global.openImportControlNodePopup.connect(openImportControlNodePopup)
         Global.openEditSharedAddressesFlow.connect(openEditSharedAddressesPopup)
+        Global.openTransferOwnershipPopup.connect(openTransferOwnershipPopup)
     }
 
     property var currentPopup
@@ -106,9 +108,8 @@ QtObject {
         openPopup(downloadPageComponent, popupProperties)
     }
 
-    function openImagePopup(image) {
-        var popup = imagePopupComponent.createObject(popupParent)
-        popup.openPopup(image)
+    function openImagePopup(image, url) {
+        openPopup(imagePopupComponent, {image: image, url: url})
     }
 
     function openProfilePopup(publicKey: string, parentPopup, cb) {
@@ -244,8 +245,8 @@ QtObject {
         openPopup(editSharedAddressesPopupComponent, {communityId: communityId, isEditMode: true})
     }
 
-    function openDiscordImportProgressPopup() {
-        openPopup(discordImportProgressDialog)
+    function openDiscordImportProgressPopup(importingSingleChannel) {
+        openPopup(discordImportProgressDialog, {importingSingleChannel: importingSingleChannel})
     }
 
     function openRemoveContactConfirmationPopup(displayName, publicKey) {
@@ -277,15 +278,16 @@ QtObject {
         openPopup(testnetModal)
     }
 
-    function openExportControlNodePopup(communityName, privateKey, cb) {
-        openPopup(exportControlNodePopup, {
-            communityName: communityName,
-            privateKey: privateKey
-        }, cb)
+    function openExportControlNodePopup(community) {
+        openPopup(exportControlNodePopup, { community })
     }
 
-    function openImportControlNodePopup(community, cb) {
-        openPopup(importControlNodePopup, {community: community}, cb)
+    function openImportControlNodePopup(community) {
+        openPopup(importControlNodePopup, { community })
+    }
+
+    function openTransferOwnershipPopup(communityName, communityLogo, token, accounts, sendModalPopup) {
+        openPopup(transferOwnershipPopup, { communityName, communityLogo, token, accounts, sendModalPopup })
     }
 
     readonly property list<Component> _components: [
@@ -681,6 +683,7 @@ QtObject {
         Component {
             id: exportControlNodePopup
             ExportControlNodePopup {
+                devicesStore: root.devicesStore
                 onClosed: destroy()
             }
         },
@@ -689,6 +692,7 @@ QtObject {
             id: importControlNodePopup
             ImportControlNodePopup {
                 onClosed: destroy()
+                onImportControlNode: console.warn("!!! TODO importControlNode for community:", community.name) // FIXME implement moving (importing) the control node
             }
         },
 
@@ -738,6 +742,13 @@ QtObject {
                     editSharedAddressesPopup.communityId, sharedAddresses)
                 onSaveSelectedAddressesClicked: root.rootStore.editSharedAddressesWithAuthentication(
                     editSharedAddressesPopup.communityId, sharedAddresses, airdropAddress)
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: transferOwnershipPopup
+            TransferOwnershipPopup {
                 onClosed: destroy()
             }
         }

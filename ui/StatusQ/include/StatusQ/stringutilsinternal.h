@@ -11,9 +11,12 @@ class StringUtilsInternal : public QObject
     Q_OBJECT
 
 public:
-    explicit StringUtilsInternal(QObject* parent = nullptr);
+    explicit StringUtilsInternal(QQmlEngine* engine, QObject* parent = nullptr);
 
     Q_INVOKABLE QString escapeHtml(const QString &unsafe) const;
 
-    static QObject* qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
+    Q_INVOKABLE QString readTextFile(const QString& filePath) const;
+
+private:
+    QQmlEngine *m_engine{nullptr};
 };

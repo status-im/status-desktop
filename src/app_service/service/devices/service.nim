@@ -81,16 +81,6 @@ QtObject:
     self.localPairingStatus.update(data)
     self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
 
-  proc createKeycardPairingFile(data: string) =
-    var file = open(main_constants.KEYCARDPAIRINGDATAFILE, fmWrite)
-    if file == nil:
-      error "failed to open local keycard pairing file"
-      return
-    try:
-      file.write(data)
-    except:
-      error "failed to write data to local keycard pairing file"
-    file.close()
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e:Args):
@@ -103,8 +93,6 @@ QtObject:
     self.events.on(SignalType.LocalPairing.event) do(e:Args):
       let signalData = LocalPairingSignal(e)
       if self.localPairingStatus.pairingType == PairingType.AppSync:
-        if not signalData.accountData.isNil and signalData.accountData.keycardPairings.len > 0:
-          createKeycardPairingFile(signalData.accountData.keycardPairings)
         let data = LocalPairingEventArgs(
           eventType: signalData.eventType,
           action: signalData.action,
@@ -207,10 +195,8 @@ QtObject:
     let keyUid = singletonInstance.userProfile.getKeyUid()
     let keycardUser = singletonInstance.userProfile.getIsKeycardUser()
     var finalPassword = utils.hashPassword(password)
-    var keycardPairingJsonString = ""
     if keycardUser:
       finalPassword = password
-      keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
 
     let configJSON = %* {
       "senderConfig": %* {
@@ -219,7 +205,6 @@ QtObject:
         "keyUID": keyUid,
         "password": finalPassword,
         "chatKey": chatKey,
-        "keycardPairings": keycardPairingJsonString
       },
       "serverConfig": %* {
         "timeout": 5 * 60 * 1000,

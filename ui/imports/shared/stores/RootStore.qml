@@ -231,6 +231,8 @@ QtObject {
     }
 
     function getFeeEthValue(feeCurrency) {
+        if (!feeCurrency || feeCurrency.symbol !== "Gwei")
+            return 0
         return currencyStore.getGasEthValue(feeCurrency.amount / Math.pow(10, feeCurrency.displayDecimals), 1)
     }
 
@@ -247,8 +249,8 @@ QtObject {
         walletSectionInst.fetchDecodedTxData(txHash, input)
     }
 
-    function fetchTxDetails(id, isMultiTx, isPending) {
-        walletSectionInst.activityController.fetchTxDetails(id, isMultiTx, isPending)
+    function fetchTxDetails(modelIndex) {
+        walletSectionInst.activityController.fetchTxDetails(modelIndex)
     }
 
     function getTxDetails() {

@@ -375,14 +375,14 @@ QtObject {
                     case Constants.keycardSharedState.wrongSeedPhrase:
                     case Constants.keycardSharedState.createPassword:
                     case Constants.keycardSharedState.confirmPassword:
-                        return true
+                        return !root.sharedKeycardModule.forceFlow
                     }
                     break
                 }
 
                 return false
             }
-            enabled: !root.disableActionPopupButtons
+            enabled: !root.sharedKeycardModule.forceFlow && !root.disableActionPopupButtons
             onClicked: {
                 root.cancelBtnClicked();
             }
@@ -479,6 +479,13 @@ QtObject {
                     case Constants.keycardSharedState.keyPairMigrateSuccess:
                         if (!root.sharedKeycardModule.migratingProfileKeyPair())
                             return qsTr("Factory reset this Keycard")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.migrateFromAppToKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.biometrics:
+                        return qsTr("I prefer to use my PIN")
                     }
                     break
                 }
@@ -1033,7 +1040,7 @@ QtObject {
                         return qsTr("Finalize Status Password Creation")
 
                     case Constants.keycardSharedState.keyPairMigrateFailure:
-                        return qsTr("Close app")
+                        return qsTr("Close App")
 
                     case Constants.keycardSharedState.biometrics:
                         return qsTr("Yes, use Touch ID")
@@ -1042,6 +1049,34 @@ QtObject {
                         if (root.sharedKeycardModule.migratingProfileKeyPair())
                             return qsTr("Restart App & Sign In Using Your New Password")
                         return qsTr("Done")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.migrateFromAppToKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.migrateKeypairToKeycard:
+                    case Constants.keycardSharedState.pinVerified:
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.keycardEmpty:
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                        return qsTr("Try again")
+
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                        return qsTr("Unlock Keycard")
+
+                    case Constants.keycardSharedState.biometrics:
+                        return qsTr("Yes, use Touch ID")
+
+                    case Constants.keycardSharedState.keyPairMigrateFailure:
+                        return qsTr("Close App")
+
+                    case Constants.keycardSharedState.keyPairMigrateSuccess:
+                        return qsTr("Restart App & Sign In Using Your Keycard")
                     }
                     break
                 }

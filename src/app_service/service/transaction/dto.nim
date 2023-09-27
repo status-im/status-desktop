@@ -10,6 +10,16 @@ import ../../common/conversion as service_conversion
 import ./backend/transactions
 
 type
+  SendType* {.pure.} = enum
+    Transfer
+    ENSRegister
+    ENSRelease
+    ENSSetPubKey
+    StickersBuy
+    Bridge
+    ERC721Transfer
+
+type
   PendingTransactionTypeDto* {.pure.} = enum
     RegisterENS = "RegisterENS",
     SetPubKey = "SetPubKey",

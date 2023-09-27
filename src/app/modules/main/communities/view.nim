@@ -1,7 +1,7 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item,
+import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,
   token_permissions_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
@@ -47,6 +47,8 @@ QtObject:
       discordDataExtractionInProgress: bool
       discordImportCommunityId: string
       discordImportCommunityName: string
+      discordImportChannelId: string
+      discordImportChannelName: string
       discordImportCommunityImage: string
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
@@ -116,7 +118,6 @@ QtObject:
 
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
-  proc communityPrivateKeyRemoved*(self: View, communityId: string) {.signal.}
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}
   proc discordImportErrorsCountChanged*(self: View) {.signal.}
   proc communityAccessRequested*(self: View, communityId: string) {.signal.}
@@ -481,6 +482,8 @@ QtObject:
     self.setDiscordImportWarningsCount(0)
     self.setDiscordImportCommunityId("")
     self.setDiscordImportCommunityName("")
+    self.discordImportChannelId = ""
+    self.discordImportChannelName = ""
     self.setDiscordImportCommunityImage("")
     self.setDiscordImportHasCommunityImage(false)
     self.setDiscordImportInProgress(false)
@@ -535,9 +538,6 @@ QtObject:
 
   proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isCommunityRequestPending(communityId)
-
-  proc removePrivateKey*(self: View, communityId: string) {.slot.} =
-    self.delegate.removePrivateKey(communityId)
 
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)
@@ -608,6 +608,30 @@ QtObject:
       let item = self.discordChannelsModel.getItem(id)
       if self.discordChannelsModel.allChannelsByCategoryUnselected(item.getCategoryId()):
         self.discordCategoriesModel.unselectItem(item.getCategoryId())
+
+  proc discordImportChannelChanged*(self: View) {.signal.}
+
+  proc toggleOneDiscordChannel*(self: View, id: string) {.slot.} =
+    let item = self.discordChannelsModel.getItem(id)
+    self.discordChannelsModel.selectOneItem(id)
+    self.discordCategoriesModel.selectOneItem(item.getCategoryId())
+    self.discordImportChannelId = id
+    self.discordImportChannelName = item.getName()
+    self.discordImportChannelChanged()
+
+  proc getDiscordImportChannelId(self: View): string {.slot.} =
+    return self.discordImportChannelId
+
+  QtProperty[string] discordImportChannelId:
+    read = getDiscordImportChannelId
+    notify = discordImportChannelChanged
+
+  proc getDiscordImportChannelName(self: View): string {.slot.} =
+    return self.discordImportChannelName
+
+  QtProperty[string] discordImportChannelName:
+    read = getDiscordImportChannelName
+    notify = discordImportChannelChanged
 
   proc tokenListModel*(self: View): TokenListModel =
     result = self.tokenListModel

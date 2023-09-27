@@ -2,6 +2,9 @@ import NimQml, sequtils, strutils, stint, sugar
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
 import app/modules/shared_models/token_model
+import app/modules/shared_models/collectibles_model as collectibles
+import app/modules/shared_models/collectibles_nested_model as nested_collectibles
+import app_service/service/transaction/dto as transaction_dto
 
 QtObject:
   type
@@ -10,6 +13,9 @@ QtObject:
       accounts: AccountsModel
       # this one doesn't include watch accounts and its what the user switches when using the sendModal
       senderAccounts: AccountsModel
+      # list of collectibles owned by the selected sender account
+      collectiblesModel: collectibles.Model
+      nestedCollectiblesModel: nested_collectibles.Model
       # for send modal
       selectedSenderAccount: AccountItem
       fromNetworksModel: NetworkModel
@@ -17,6 +23,8 @@ QtObject:
       transactionRoutes: TransactionRoutes
       selectedAssetSymbol: string
       showUnPreferredChains: bool
+      sendType: transaction_dto.SendType
+      selectedRecipient: string
       # for receive modal
       selectedReceiveAccount: AccountItem
 
@@ -43,6 +51,8 @@ QtObject:
     result.fromNetworksModel = newNetworkModel()
     result.toNetworksModel = newNetworkModel()
     result.transactionRoutes = newTransactionRoutes()
+    result.collectiblesModel = delegate.getCollectiblesModel()
+    result.nestedCollectiblesModel = delegate.getNestedCollectiblesModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -61,6 +71,20 @@ QtObject:
     read = getSenderAccounts
     notify = senderAccountsChanged
 
+  proc collectiblesModelChanged*(self: View) {.signal.}
+  proc getCollectiblesModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectiblesModel)
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesModel
+    notify = collectiblesModelChanged
+
+  proc nestedCollectiblesModelChanged*(self: View) {.signal.}
+  proc getNestedCollectiblesModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.nestedCollectiblesModel)
+  QtProperty[QVariant] nestedCollectiblesModel:
+    read = getNestedCollectiblesModel
+    notify = nestedCollectiblesModelChanged
+
   proc selectedSenderAccountChanged*(self: View) {.signal.}
   proc getSelectedSenderAccount(self: View): QVariant {.slot.} =
     return newQVariant(self.selectedSenderAccount)
@@ -71,6 +95,9 @@ QtObject:
   QtProperty[QVariant] selectedSenderAccount:
     read = getSelectedSenderAccount
     notify = selectedSenderAccountChanged
+
+  proc getSenderAddressByIndex*(self: View, index: int): string {.slot.} =
+    return self.senderAccounts.getItemByIndex(index).address()
 
   proc selectedReceiveAccountChanged*(self: View) {.signal.}
   proc getSelectedReceiveAccount(self: View): QVariant {.slot.} =
@@ -119,12 +146,34 @@ QtObject:
     read = getShowUnPreferredChains
     notify = showUnPreferredChainsChanged
 
+  proc sendTypeChanged*(self: View) {.signal.}
+  proc getSendType(self: View): int {.slot.} =
+    return ord(self.sendType)
+  proc setSendType(self: View, sendType: int) {.slot.} =
+    self.sendType = (SendType)sendType
+    self.sendTypeChanged()
+  QtProperty[int] sendType:
+    write = setSendType
+    read = getSendType
+    notify = sendTypeChanged
+
+  proc selectedRecipientChanged*(self: View) {.signal.}
+  proc getSelectedRecipient(self: View): string {.slot.} =
+    return self.selectedRecipient
+  proc setSelectedRecipient(self: View, selectedRecipient: string) {.slot.} =
+    self.selectedRecipient = selectedRecipient
+    self.selectedRecipientChanged()
+  QtProperty[string] selectedRecipient:
+    read = getSelectedRecipient
+    write = setSelectedRecipient
+    notify = selectedRecipientChanged
+
   proc updateNetworksDisabledChains(self: View) =
     # if the setting to show unpreferred chains is toggled, add all unpreferred chains to disabled chains list
     if not self.showUnPreferredChains:
-      self.toNetworksModel.disableUnpreferredChains()
+      self.toNetworksModel.disableRouteUnpreferredChains()
     else:
-      self.toNetworksModel.enableUnpreferredChains()
+      self.toNetworksModel.enableRouteUnpreferredChains()
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksModel.getAllNetworksChainIds():
@@ -148,26 +197,23 @@ QtObject:
   proc transactionWasSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.slot} =
     self.transactionSent(chainId, txHash, uuid, error)
 
-  proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid)
+  proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetSymbol, value, uuid, self.sendType)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
-      self.transactionRoutes = routes
-      self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
-  proc suggestedRoutes*(self: View, amount: string, sendType: int): string {.slot.} =
-    self.fromNetworksModel.reset()
-    self.toNetworksModel.reset()
-    var parsedAmount = stint.u256("0")
+    self.transactionRoutes = routes
+    self.suggestedRoutesReady(newQVariant(self.transactionRoutes))
+  proc suggestedRoutes*(self: View, amount: string): string {.slot.} =
+    var parsedAmount = stint.u256(0)
     try:
-      parsedAmount = fromHex(Stuint[256], amount)
+      parsedAmount = amount.parse(Uint256)
     except Exception as e:
       discard
 
     return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(),
-      parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getDisabledNetworkChainIds(),
-      self.toNetworksModel.getDisabledNetworkChainIds(), self.toNetworksModel.getPreferredNetworkChainIds(), sendType,  self.fromNetworksModel.getLockedChainIds())
+      parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(), self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)
@@ -199,15 +245,15 @@ QtObject:
     self.setSelectetReceiveAccount(account)
     self.delegate.setSelectedReceiveAccountIndex(idx)
 
-  proc updatePreferredChains*(self: View, chainIds: string) {.slot.} =
-    self.toNetworksModel.updatePreferredChains(chainIds)
+  proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
+    self.toNetworksModel.updateRoutePreferredChains(chainIds)
 
   proc getSelectedSenderAccountAddress*(self: View): string =
     return self.selectedSenderAccount.address()
 
   proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], totalFeesInEth: float) =
-    self.fromNetworksModel.reset()
-    self.toNetworksModel.reset()
+    self.fromNetworksModel.resetPathData()
+    self.toNetworksModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
       let hasGas = self.selectedSenderAccount.getAssets().hasGas(fromChainId, self.fromNetworksModel.getNetworkNativeGasSymbol(fromChainId), totalFeesInEth)
@@ -215,8 +261,37 @@ QtObject:
       self.toNetworksModel.updateToNetworks(path)
 
   proc resetStoredProperties*(self: View) {.slot.} =
+    self.sendType = transaction_dto.SendType.Transfer
+    self.selectedRecipient = ""
     self.fromNetworksModel.reset()
     self.toNetworksModel.reset()
     self.transactionRoutes = newTransactionRoutes()
     self.selectedAssetSymbol = ""
     self.showUnPreferredChains = false
+
+  proc getLayer1NetworkChainId*(self: View): string =
+    return $self.fromNetworksModel.getLayer1Network()
+
+  proc getNetworkColor*(self: View, shortName : string): string =
+    return self.fromNetworksModel.getNetworkColor(shortName)
+
+  proc getNetworkChainId*(self: View, shortName : string): int =
+    return self.fromNetworksModel.getNetworkChainId(shortName)
+
+  proc splitAndFormatAddressPrefix(self: View, text : string, updateInStore: bool): string {.slot.} =
+    return self.delegate.splitAndFormatAddressPrefix(text, updateInStore)
+
+  proc getAddressFromFormattedString(self: View, text : string): string {.slot.} =
+    var splitWords = plainText(text).split(':')
+    for i in countdown(splitWords.len-1, 0):
+      if splitWords[i].startsWith("0x"):
+        return splitWords[i]
+    return ""
+
+  proc getShortChainIds(self: View, chainShortNames : string): string {.slot.} =
+    if chainShortNames.isEmptyOrWhitespace():
+      return ""
+    var preferredChains: seq[int]
+    for shortName in chainShortNames.split(':'):
+      preferredChains.add(self.fromNetworksModel.getNetworkChainId(shortName))
+    return preferredChains.join(":")

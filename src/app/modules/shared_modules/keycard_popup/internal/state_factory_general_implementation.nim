@@ -151,6 +151,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newMaxPairingSlotsReachedState(flowType, backState)
   if stateToBeCreated == StateType.MigrateKeypairToApp:
     return newMigrateKeypairToAppState(flowType, backState)
+  if stateToBeCreated == StateType.MigrateKeypairToKeycard:
+    return newMigrateKeypairToKeycardState(flowType, backState)
   if stateToBeCreated == StateType.MigratingKeypairToApp:
     return newMigratingKeypairToAppState(flowType, backState)
   if stateToBeCreated == StateType.MigratingKeypairToKeycard:

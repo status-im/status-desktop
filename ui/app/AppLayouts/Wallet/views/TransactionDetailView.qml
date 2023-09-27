@@ -27,36 +27,26 @@ Item {
     property var overview: WalletStores.RootStore.overview
     property var contactsStore
     property var transaction
+    property int transactionIndex
     property var sendModal
     property bool showAllAccounts: false
     readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
-    onTransactionChanged: {
-        d.decodedInputData = ""
-        if (!transaction)
-            return
-
-        RootStore.fetchTxDetails(transaction.id, transaction.isMultiTransaction, transaction.isPending)
-        d.details = RootStore.getTxDetails()
-
-        if (!!d.details && !!d.details.input) {
-            d.loadingInputDate = true
-            RootStore.fetchDecodedTxData(d.details.txHash, d.details.input)
-        }
-    }
+    onTransactionChanged: d.updateTransactionDetails()
+    Component.onCompleted: d.updateTransactionDetails()
 
     QtObject {
         id: d
 
         property var details: null
         readonly property bool isDetailsValid: details !== undefined && !!details
-        readonly property bool isIncoming: transactionType === Constants.TransactionType.Received
+        readonly property bool isIncoming: transactionType === Constants.TransactionType.Received || transactionType === Constants.TransactionType.ContractDeployment
         readonly property string networkShortName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
         readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : "network/Network=Custom"
         readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
         readonly property int toBlockNumber: 0 // TODO fill when bridge data is implemented
         readonly property string networkShortNameOut: networkShortName
-        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdOut) : ""
+        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdIn) : ""
         readonly property string symbol: isTransactionValid ? transaction.symbol : ""
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
@@ -83,7 +73,7 @@ Item {
             const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
-        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getFeeEthValue(d.details.totalFees) : 0
+        readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
@@ -93,6 +83,20 @@ Item {
 
         function retryTransaction() {
             // TODO handle failed transaction retry
+        }
+
+        function updateTransactionDetails() {
+            d.decodedInputData = ""
+            if (!transaction)
+                return
+
+            RootStore.fetchTxDetails(transactionIndex)
+            d.details = RootStore.getTxDetails()
+
+            if (!!d.details && !!d.details.input) {
+                d.loadingInputDate = true
+                RootStore.fetchDecodedTxData(d.details.txHash, d.details.input)
+            }
         }
     }
 
@@ -159,7 +163,8 @@ Item {
             WalletTxProgressBlock {
                 id: progressBlock
                 width: Math.min(513, root.width)
-                readonly property int latestBlockNumber: root.isTransactionValid && !pending && !error ? RootStore.hex2Dec(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId)) : 0
+                readonly property int latestBlockNumber: root.isTransactionValid && !pending && !error ? WalletStores.RootStore.getEstimatedLatestBlockNumber(root.transaction.chainId) : 0
+                readonly property int latestBlockNumberIn: root.isTransactionValid && !pending && !error && transactionHeader.isMultiTransaction && d.isBridge ? WalletStores.RootStore.getEstimatedLatestBlockNumber(root.transaction.chainIdIn) : 0
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
                 outNetworkLayer: root.isTransactionValid ? Number(RootStore.getNetworkLayer(transactionHeader.isMultiTransaction ? root.transaction.chainIdOut : root.transaction.chainId)) : 0
@@ -169,7 +174,7 @@ Item {
                 outChainName: transactionHeader.isMultiTransaction ? transactionHeader.networkNameOut : transactionHeader.networkName
                 inChainName: transactionHeader.isMultiTransaction && d.isBridge ? transactionHeader.networkNameIn : ""
                 outNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
-                inNetworkConfirmations: root.isTransactionValid && latestBlockNumber > 0 ? latestBlockNumber - d.blockNumber : 0
+                inNetworkConfirmations: root.isTransactionValid && latestBlockNumberIn > 0 ? latestBlockNumberIn - d.blockNumber : 0
             }
 
             Separator {
@@ -183,7 +188,8 @@ Item {
                 nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
                 strikethrough: d.transactionType === Constants.TransactionType.Destroy
                 tokenId: root.isTransactionValid ? transaction.tokenID : ""
-                contractAddress: d.isDetailsValid ? d.details.contract : ""
+                tokenAddress: root.isTransactionValid ? transaction.tokenAddress : ""
+                areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
             }
 
             Column {
@@ -276,9 +282,9 @@ Item {
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
                             if (d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge) {
-                                addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortNameOut)
+                                addressMenu.openEthAddressMenu(this, addresses[0], [d.networkShortNameIn, d.networkShortNameOut])
                             } else {
-                                addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
+                                addressMenu.openSenderMenu(this, addresses[0], [d.networkShortName])
                             }
                         }
                     }
@@ -300,7 +306,7 @@ Item {
                         }
                         buttonIconName: hasValue ? "more" : ""
                         statusListItemSubTitle.customColor: hasValue ? Theme.palette.directColor1 : Theme.palette.directColor5
-                        onButtonClicked: addressMenu.openContractMenu(this, d.details.contract, transactionHeader.networkName, d.symbol)
+                        onButtonClicked: addressMenu.openContractMenu(this, d.details.contract, [d.networkShortName], d.symbol)
                         components: [
                             Loader {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -317,7 +323,7 @@ Item {
                         addresses: root.isTransactionValid && visible ? [root.transaction.recipient] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
-                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], d.networkShortName)
+                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], [d.networkShortName])
                         visible: d.transactionType !== Constants.TransactionType.ContractDeployment && d.transactionType !== Constants.TransactionType.Swap && d.transactionType !== Constants.TransactionType.Bridge && d.transactionType !== Constants.TransactionType.Destroy
                     }
                     TransactionDataTile {
@@ -335,7 +341,7 @@ Item {
                         subTitle: d.isDetailsValid ? d.details.txHash : ""
                         visible: !!subTitle
                         buttonIconName: "more"
-                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortName)
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortName])
                     }
                     TransactionDataTile {
                         width: parent.width
@@ -343,7 +349,7 @@ Item {
                         subTitle: "" // TODO fill tx hash for Bridge
                         visible: !!subTitle
                         buttonIconName: "more"
-                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortNameIn)
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortNameIn])
                     }
                     TransactionContractTile {
                         // Used for Bridge and Swap to display 'From' network Protocol contract address
@@ -459,7 +465,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Token format")
-                            subTitle: root.isTransactionValid ? transaction.tokenType.toUpperCase() : ""
+                            subTitle: root.isTransactionValid ? d.details.tokenType.toUpperCase() : ""
                             visible: !!subTitle
                         }
                         TransactionDataTile {
@@ -556,6 +562,7 @@ Item {
 
                 RowLayout {
                     width: parent.width
+                    visible: amountSentTile.visible || amountReceiveTile.visible || feesTile.visible || totalTile.visible
                     StatusBaseText {
                         Layout.alignment: Qt.AlignLeft
                         font.pixelSize: 15
@@ -575,6 +582,7 @@ Item {
 
                 DetailsPanel {
                     TransactionDataTile {
+                        id: amountSentTile
                         width: parent.width
                         title: qsTr("Amount sent")
                         subTitle: transactionHeader.isMultiTransaction ? d.outCryptoValueFormatted : d.cryptoValueFormatted
@@ -593,6 +601,7 @@ Item {
                         }
                     }
                     TransactionDataTile {
+                        id: amountReceiveTile
                         width: parent.width
                         title: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending ? qsTr("Amount to receive") : qsTr("Amount received")
                         subTitle: {
@@ -620,10 +629,11 @@ Item {
                         visible: !!subTitle
                     }
                     TransactionDataTile {
+                        id: feesTile
                         width: parent.width
                         title: d.symbol ? qsTr("Fees") : qsTr("Estimated max fee")
                         subTitle: {
-                            if (!root.isTransactionValid || transactionHeader.isNFT || !!d.isDetailsValid)
+                            if (!root.isTransactionValid || transactionHeader.isNFT || !d.isDetailsValid)
                                 return ""
                             if (!d.symbol) {
                                 const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
@@ -654,6 +664,7 @@ Item {
                         visible: !!subTitle
                     }
                     TransactionDataTile {
+                        id: totalTile
                         width: parent.width
                         readonly property bool fieldIsHidden: (transactionHeader.isNFT && d.isIncoming) || !d.symbol
                         readonly property bool showMaxFee: d.transactionType === Constants.TransactionType.ContractDeployment && transactionHeader.transactionStatus === Constants.TransactionStatus.Pending

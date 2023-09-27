@@ -25,6 +25,10 @@ Column {
         activityFilterStore.updateFilterBase()
     }
 
+    function resetView() {
+        activityFilterMenu.resetView()
+    }
+
     Flow {
         width: parent.width
 
@@ -76,12 +80,14 @@ Column {
                                           return qsTr("Send")
                                       case Constants.TransactionType.Receive:
                                           return qsTr("Receive")
-                                      case Constants.TransactionType.Buy:
-                                          return qsTr("Buy")
                                       case Constants.TransactionType.Swap:
                                           return qsTr("Swap")
                                       case Constants.TransactionType.Bridge:
                                           return qsTr("Bridge")
+                                      case Constants.TransactionType.ContractDeployment:
+                                          return qsTr("Contract Deployment")
+                                      case Constants.TransactionType.Mint:
+                                          return qsTr("Mint")
                                       default:
                                           console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                           return ""
@@ -91,12 +97,14 @@ Column {
                                     return "send"
                                 case Constants.TransactionType.Receive:
                                     return "receive"
-                                case Constants.TransactionType.Buy:
-                                    return "token"
                                 case Constants.TransactionType.Swap:
                                     return "swap"
                                 case Constants.TransactionType.Bridge:
                                     return "bridge"
+                                case Constants.TransactionType.ContractDeployment:
+                                    return "contract_deploy"
+                                case Constants.TransactionType.Mint:
+                                    return "token"
                                 default:
                                     console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                     return ""
@@ -128,7 +136,7 @@ Column {
                                 case Constants.TransactionStatus.Pending:
                                     return Style.svg("transaction/pending")
                                 case Constants.TransactionStatus.Complete:
-                                    return Style.svg("transaction/verified")
+                                    return Style.svg("transaction/confirmed")
                                 case Constants.TransactionStatus.Finished:
                                     return Style.svg("transaction/finished")
                                 default:
@@ -153,10 +161,36 @@ Column {
         Repeater {
             model: activityFilterStore.collectiblesFilter
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: activityFilterStore.collectiblesList.getName(modelData)
-                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(modelData)
+                id: collectibleTag
+                property string uid: modelData
+                readonly property string name: activityFilterStore.collectiblesList.getName(uid)
+                readonly property bool isValid: name.length > 0
+                tagPrimaryLabel.text: {
+                    if (!!name)
+                        return name
+                    // Fallback, get tokenId from uid
+                    const data = uid.split("+")
+                    if (data.length === 3)
+                        return "#" + data[2]
+                    return ""
+                }
+                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(uid)
                 iconAsset.color: "transparent"
-                onClosed: activityFilterStore.toggleCollectibles(model.id)
+                onClosed: activityFilterStore.toggleCollectibles(uid)
+
+                Connections {
+                    // Collectibles model is fetched asynchronousl, so data might not be available
+                    target: activityFilterStore.collectiblesList
+                    enabled: !collectibleTag.isValid
+                    function onIsFetchingChanged() {
+                        if (activityFilterStore.collectiblesList.isFetching || !activityFilterStore.collectiblesList.hasMore)
+                            return
+                        collectibleTag.uid = ""
+                        collectibleTag.uid = modelData
+                        if (!collectibleTag.isValid)
+                            activityFilterStore.collectiblesList.loadMore()
+                    }
+                }
             }
         }
 
@@ -224,7 +258,7 @@ Column {
         collectiblesList: activityFilterStore.collectiblesList
         collectiblesFilter: activityFilterStore.collectiblesFilter
         onUpdateTokensFilter: activityFilterStore.toggleToken(tokenSymbol)
-        onUpdateCollectiblesFilter: activityFilterStore.toggleCollectibles(id)
+        onUpdateCollectiblesFilter: activityFilterStore.toggleCollectibles(uid)
 
         store: root.store
         recentsList: activityFilterStore.recentsList

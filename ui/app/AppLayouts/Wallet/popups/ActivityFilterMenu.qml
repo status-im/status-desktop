@@ -34,7 +34,7 @@ StatusMenu {
     property var collectiblesList: []
     property var collectiblesFilter: []
     readonly property bool allCollectiblesChecked: tokensMenu.allCollectiblesChecked
-    signal updateCollectiblesFilter(double id)
+    signal updateCollectiblesFilter(string uid)
 
     // Recents filter
     property var recentsList
@@ -51,6 +51,11 @@ StatusMenu {
     signal updateSavedAddressFilter(string address)
 
     implicitWidth: 176
+
+    function resetView() {
+        counterPartyMenu.resetView()
+        tokensMenu.resetView()
+    }
 
     // Filter By Period
     ActivityFilterMenuItem {
@@ -70,6 +75,7 @@ StatusMenu {
         }
         ActivityTypeFilterSubMenu {
             id: typeMenu
+            implicitWidth: 230
             onBack: root.open()
             typeFilters: root.typeFilters
             onActionTriggered: updateTypeFilter(type, allFiltersCount)
@@ -91,7 +97,7 @@ StatusMenu {
             collectiblesList: root.collectiblesList
             collectiblesFilter: root.collectiblesFilter
             onTokenToggled: updateTokensFilter(tokenSymbol)
-            onCollectibleToggled: updateCollectiblesFilter(id)
+            onCollectibleToggled: updateCollectiblesFilter(uid)
             closePolicy: root.closePolicy
         }
         ActivityCounterpartyFilterSubMenu {

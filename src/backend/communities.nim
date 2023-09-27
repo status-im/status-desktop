@@ -387,9 +387,6 @@ proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: 
 proc requestCommunityInfo*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestCommunityInfoFromMailserver".prefix, %*[communityId])
 
-proc removePrivateKey*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("removePrivateKey".prefix, %*[communityId])
-
 proc importCommunity*(communityKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("importCommunity".prefix, %*[communityKey])
 

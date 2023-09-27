@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, algorithm
+import NimQml, Tables, strutils, stint, strformat, algorithm
 
 import balance_item
 import ./currency_amount
@@ -8,6 +8,7 @@ type
     ChainId = UserRole + 1,
     Address
     Balance
+    RawBalance
 
 QtObject:
   type
@@ -46,6 +47,7 @@ QtObject:
       ModelRole.ChainId.int:"chainId",
       ModelRole.Address.int:"address",
       ModelRole.Balance.int:"balance",
+      ModelRole.RawBalance.int:"rawBalance",
     }.toTable
 
   method data(self: BalanceModel, index: QModelIndex, role: int): QVariant =
@@ -65,6 +67,8 @@ QtObject:
       result = newQVariant(item.address)
     of ModelRole.Balance:
       result = newQVariant(item.balance)
+    of ModelRole.RawBalance:
+      result = newQVariant(item.rawBalance.toString(10))
 
   proc rowData(self: BalanceModel, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -74,6 +78,7 @@ QtObject:
       of "chainId": result = $item.chainId
       of "address": result = $item.address
       of "balance": result = $item.balance
+      of "rawBalance": result = $item.rawBalance.toString(10)
 
 
   proc cmpBalances*(x, y: Item): int =

@@ -8,6 +8,11 @@ proc newMaxPinRetriesReachedState*(flowType: FlowType, backState: State): MaxPin
 proc delete*(self: MaxPinRetriesReachedState) =
   self.State.delete
 
+method executePrePrimaryStateCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
+  if self.flowType == FlowType.MigrateFromAppToKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true, nextFlow = FlowType.UnlockKeycard, forceFlow = controller.getForceFlow(),
+      nextKeyUid = controller.getKeyPairForProcessing().getKeyUid(), returnToFlow = FlowType.MigrateFromAppToKeycard)
+
 method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Controller): State =
   if self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
@@ -15,7 +20,7 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
     self.flowType == FlowType.ChangePairingCode or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard, controller.getKeyPairForProcessing().getKeyUid())
-  if self.flowType == FlowType.ImportFromKeycard or 
+  if self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
@@ -38,7 +43,8 @@ method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Contro
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
-    self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.flowType == FlowType.CreateCopyOfAKeycard or
+    self.flowType == FlowType.MigrateFromAppToKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.ImportFromKeycard or

@@ -7,9 +7,6 @@ class TestSetup : public QObject
 {
     Q_OBJECT
 
-public:
-    TestSetup() {}
-
 public slots:
     void qmlEngineAvailable(QQmlEngine *engine)
     {
@@ -21,6 +18,6 @@ public slots:
     }
 };
 
-QUICK_TEST_MAIN_WITH_SETUP(TestControls, TestSetup)
+QUICK_TEST_MAIN_WITH_SETUP(TestStatusQ, TestSetup)
 
 #include "main.moc"

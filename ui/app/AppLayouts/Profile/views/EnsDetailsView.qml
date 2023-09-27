@@ -10,6 +10,7 @@ import StatusQ.Components 0.1
 import utils 1.0
 import shared.status 1.0
 import shared.popups 1.0
+import shared.popups.send 1.0
 
 Item {
     id: root
@@ -117,10 +118,11 @@ Item {
             id: releaseEnsModal
             modalHeader: qsTr("Release your username")
             interactive: false
-            sendType: Constants.SendType.ENSRelease
+            preSelectedSendType: Constants.SendType.ENSRelease
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedAsset: store.getAsset(releaseEnsModal.store.assets, "ETH")
+            preSelectedHolding: store.getAsset(releaseEnsModal.store.assets, Constants.ethToken)
+            preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()
@@ -129,7 +131,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndReleaseEns(
                                 root.chainId,
                                 root.username,
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

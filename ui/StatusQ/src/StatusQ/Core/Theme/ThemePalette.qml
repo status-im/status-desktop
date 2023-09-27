@@ -159,6 +159,7 @@ QtObject {
     property color indirectColor1
     property color indirectColor2
     property color indirectColor3
+    property color indirectColor4
 
     property color miscColor1
     property color miscColor2

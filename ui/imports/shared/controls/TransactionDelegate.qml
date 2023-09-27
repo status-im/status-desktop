@@ -170,7 +170,7 @@ StatusListItem {
 
     function getDetailsString(detailsObj) {
         if (!detailsObj) {
-            rootStore.fetchTxDetails(modelData.id, modelData.isMultiTransaction, modelData.isPending)
+            rootStore.fetchTxDetails(index)
             detailsObj = rootStore.getTxDetails()
         }
 
@@ -240,39 +240,65 @@ StatusListItem {
         }
 
         // PROGRESS
-        const networkLayer = rootStore.getNetworkLayer(modelData.chainId) === 1
-        // A block on layer1 is every 12s
-        const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
-        const finalisationTimeStamp = WalletUtils.calculateFinalisationTimestamp(networkLayer, modelData.timestamp)
+        const networkLayer = rootStore.getNetworkLayer(modelData.chainId)
+
+        const isBridge = type === Constants.TransactionType.Bridge
         switch(transactionStatus) {
         case Constants.TransactionStatus.Pending:
             details += qsTr("Status") + endl
             details += qsTr("Pending on %1").arg(root.networkName) + endl2
+            if (isBridge) {
+                details += qsTr("Pending on %1").arg(root.networkNameIn) + endl2
+            }
             break
         case Constants.TransactionStatus.Failed:
             details += qsTr("Status") + endl
             details += qsTr("Failed on %1").arg(root.networkName) + endl2
+            if (isBridge) {
+                details += qsTr("Failed on %1").arg(root.networkNameIn) + endl2
+            }
             break
         case Constants.TransactionStatus.Complete: {
+            const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
-            const epoch = parseFloat(Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber).toFixed(0)).toLocaleString()
-            details += qsTr("Signed") + endl + root.timestampString + endl2
-            details += qsTr("Signed") + endl + timestampString + endl2
-            details += qsTr("Confirmed") + endl
+            details += qsTr("Signed on %1").arg(root.networkName) + endl + timestampString + endl2
+            details += qsTr("Confirmed on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
+            if (isBridge) {
+                const networkInLayer = rootStore.getNetworkLayer(modelData.chainIdIn)
+                const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
+                details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
+                details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
+                details += LocaleUtils.formatDateTime(confirmationTimeStampIn * 1000, Locale.LongFormat) + endl2
+            }
             break
         }
         case Constants.TransactionStatus.Finalised: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
+            const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
+            const finalisationTimeStamp = WalletUtils.calculateFinalisationTimestamp(networkLayer, modelData.timestamp)
             details += qsTr("Status") + endl
-            const epoch = Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber)
-            details += qsTr("Finalised in epoch %1").arg(epoch.toFixed(0)) + endl2
-            details += qsTr("Signed") + endl + timestampString + endl2
-            details += qsTr("Confirmed") + endl
+            const epoch = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber)
+            details += qsTr("Finalised in epoch %1 on %2").arg(epoch.toFixed(0)).arg(root.networkName) + endl2
+            details += qsTr("Signed on %1").arg(root.networkName) + endl + timestampString + endl2
+            details += qsTr("Confirmed on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
-            details += qsTr("Finalised") + endl
+            details += qsTr("Finalised on %1").arg(root.networkName) + endl
             details += LocaleUtils.formatDateTime(finalisationTimeStamp * 1000, Locale.LongFormat) + endl2
+            if (isBridge) {
+                const networkInLayer = rootStore.getNetworkLayer(modelData.chainIdIn)
+                const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
+                const finalisationTimeStampIn = WalletUtils.calculateFinalisationTimestamp(networkInLayer, modelData.timestamp)
+                const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumber)
+                details += qsTr("Finalised in epoch %1 on %2").arg(epochIn.toFixed(0)).arg(root.networkNameIn) + endl2
+                details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
+                details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
+                details += LocaleUtils.formatDateTime(confirmationTimeStampIn * 1000, Locale.LongFormat) + endl2
+                details += qsTr("Finalised on %1").arg(root.networkNameIn) + endl
+                details += LocaleUtils.formatDateTime(finalisationTimeStampIn * 1000, Locale.LongFormat) + endl2
+            }
+
             break
         }
         default:
@@ -356,7 +382,9 @@ StatusListItem {
         if (type !== Constants.TransactionType.Bridge) {
             details += qsTr("Network") + endl + networkName + endl2
         }
-        details += qsTr("Token format") + endl + modelData.tokenType.toUpperCase() + endl2
+        if (!!detailsObj.tokenType) {
+            details += qsTr("Token format") + endl + detailsObj.tokenType.toUpperCase() + endl2
+        }
         details += qsTr("Nonce") + endl + detailsObj.nonce + endl2
         if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
@@ -476,8 +504,8 @@ StatusListItem {
             return qsTr("Via %1 on %2").arg(name).arg(networkName)
         case Constants.TransactionType.Mint:
             if (allAccounts)
-                return qsTr("%1 via %2 in %4").arg(transactionValue).arg(networkName).arg(toAddress)
-            return qsTr("%1 via %2").arg(transactionValue).arg(networkName).arg(networkName)
+                return qsTr("%1 via %2 in %3").arg(transactionValue).arg(networkName).arg(toAddress)
+            return qsTr("%1 via %2").arg(transactionValue).arg(networkName)
         default:
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)

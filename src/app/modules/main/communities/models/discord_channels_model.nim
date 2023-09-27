@@ -176,6 +176,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getCategoryId() == id):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].selected = false
         self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
@@ -184,6 +185,7 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getCategoryId() == id):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].selected = true
         self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
@@ -203,6 +205,7 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx].selected = false
       self.dataChanged(index, index, @[ModelRole.Selected.int])
       self.hasSelectedItemsChanged()
@@ -211,6 +214,15 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx].selected = true
       self.dataChanged(index, index, @[ModelRole.Selected.int])
       self.hasSelectedItemsChanged()
+
+  proc selectOneItem*(self: DiscordChannelsModel, id: string) =
+    for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.items[i].selected = self.items[i].getId() == id
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
+    self.hasSelectedItemsChanged()

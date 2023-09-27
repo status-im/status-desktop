@@ -5,6 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Components.private 0.1
 
 import shared 1.0
 import utils 1.0
@@ -87,6 +88,20 @@ RowLayout {
 
             Item {
                 Layout.fillWidth: !!root.messageBadgeComponent
+            }
+        }
+
+        Loader {
+            active: root.messageDetails.contentType === Constants.messageContentType.imageType
+            visible: active
+            Layout.fillWidth: true
+            sourceComponent: StatusMessageImageAlbum {
+                width: parent.width
+                album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
+                albumCount: root.messageDetails.albumCount || 1
+                imageWidth: 56
+                loadingComponentHeight: 56
+                shapeType: StatusImageMessage.ShapeType.ROUNDED
             }
         }
     }

@@ -10,6 +10,7 @@ import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
+import shared.popups.send 1.0
 
 //TODO remove this dependency!
 import "../../../app/AppLayouts/Chat/stores"
@@ -68,17 +69,18 @@ ModalPopup {
             SendModal {
                 id: buyStickersPackModal
                 interactive: false
-                sendType: Constants.SendType.StickersBuy
+                preSelectedSendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedAsset: store.getAsset(buyStickersPackModal.store.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
+                preSelectedHolding: store.getAsset(buyStickersPackModal.store.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
+                preSelectedHoldingType: Constants.HoldingType.Asset
                 sendTransaction: function() {
                     if(bestRoutes.count === 1) {
                         let path = bestRoutes.firstItem()
                         let eip1559Enabled = path.gasFees.eip1559Enabled
                         let maxFeePerGas = path.gasFees.maxFeePerGasM
                         stickerPackDetailsPopup.store.stickersStore.authenticateAndBuy(packId,
-                                                                                       selectedAccount.address,
+                                                                                       store.selectedSenderAccount.address,
                                                                                        path.gasAmount,
                                                                                        eip1559Enabled ? "" : path.gasFees.gasPrice,
                                                                                        eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

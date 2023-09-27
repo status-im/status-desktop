@@ -13,12 +13,13 @@ ColumnLayout {
     property var networksModule
     property var combinedNetwork
 
-    signal evaluateRpcEndPoint(string url)
+    signal evaluateRpcEndPoint(string url, bool isMainUrl)
     signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl)
 
     StatusTabBar {
         id: editPreviwTabBar
         StatusTabButton {
+            leftPadding: 0
             text: qsTr("Live Network")
             width: implicitWidth
         }
@@ -39,7 +40,7 @@ ColumnLayout {
         EditNetworkForm {
             network: !!root.combinedNetwork ? root.combinedNetwork.prod: null
             networksModule: root.networksModule
-            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
+            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
     }
@@ -49,7 +50,7 @@ ColumnLayout {
         EditNetworkForm {
             network: !!root.combinedNetwork ? root.combinedNetwork.test: null
             networksModule: root.networksModule
-            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
+            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
     }

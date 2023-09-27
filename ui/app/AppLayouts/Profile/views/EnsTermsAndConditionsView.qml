@@ -6,6 +6,7 @@ import utils 1.0
 
 import shared.popups 1.0
 import shared.status 1.0
+import shared.popups.send 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -47,10 +48,11 @@ Item {
         sourceComponent: SendModal {
             id: buyEnsModal
             interactive: false
-            sendType: Constants.SendType.ENSRegister
+            preSelectedSendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
-            preSelectedAsset: store.getAsset(buyEnsModal.store.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
+            preSelectedHolding: store.getAsset(buyEnsModal.store.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
+            preSelectedHoldingType: Constants.HoldingType.Asset
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()
@@ -59,7 +61,7 @@ Item {
                     root.ensUsernamesStore.authenticateAndRegisterEns(
                                 root.ensUsernamesStore.chainId,
                                 username,
-                                selectedAccount.address,
+                                store.selectedSenderAccount.address,
                                 path.gasAmount,
                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",

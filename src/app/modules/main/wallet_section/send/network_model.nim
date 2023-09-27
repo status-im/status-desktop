@@ -143,19 +143,24 @@ QtObject:
   proc reset*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
+      defer: index.delete
       self.items[i].amountIn = ""
       self.items[i].amountOut = ""
       self.items[i].resetToNetworks()
       self.items[i].hasGas = true
-      self.dataChanged(index, index, @[ModelRole.AmountIn.int])
-      self.dataChanged(index, index, @[ModelRole.ToNetworks.int])
-      self.dataChanged(index, index, @[ModelRole.HasGas.int])
-      self.dataChanged(index, index, @[ModelRole.AmountOut.int])
+      self.items[i].isEnabled = true
+      self.items[i].isPreferred = true
+      self.items[i].locked =  false
+      self.items[i].lockedAmount = ""
+      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int,
+        ModelRole.AmountOut.int, ModelRole.IsEnabled.int, ModelRole.IsPreferred.int, ModelRole.Locked.int,
+        ModelRole.LockedAmount.int])
 
   proc updateTokenBalanceForSymbol*(self: NetworkModel, chainId: int, tokenBalance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].tokenBalance = tokenBalance
         self.dataChanged(index, index, @[ModelRole.TokenBalance.int])
 
@@ -163,43 +168,54 @@ QtObject:
     for i in 0 ..< self.items.len:
       if path.getfromNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].amountIn = path.getAmountIn()
         self.items[i].toNetworks = path.getToNetwork()
         self.items[i].hasGas = hasGas
         self.items[i].locked = path.getAmountInLocked()
-        self.dataChanged(index, index, @[ModelRole.AmountIn.int])
-        self.dataChanged(index, index, @[ModelRole.ToNetworks.int])
-        self.dataChanged(index, index, @[ModelRole.HasGas.int])
-        self.dataChanged(index, index, @[ModelRole.Locked.int])
+        self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int])
 
   proc updateToNetworks*(self: NetworkModel, path: SuggestedRouteItem) =
     for i in 0 ..< self.items.len:
       if path.getToNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         if self.items[i].getAmountOut().len != 0:
           self.items[i].amountOut = $(parseInt(self.items[i].getAmountOut()) + parseInt(path.getAmountOut()))
         else:
           self.items[i].amountOut = path.getAmountOut()
         self.dataChanged(index, index, @[ModelRole.AmountOut.int])
 
-  proc getDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
+  proc resetPathData*(self: NetworkModel) =
+    for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.items[i].amountIn = ""
+      self.items[i].resetToNetworks()
+      self.items[i].hasGas = true
+      self.items[i].locked = false
+      self.items[i].amountOut = ""
+      self.dataChanged(index, index, @[ModelRole.AmountIn.int, ModelRole.ToNetworks.int, ModelRole.HasGas.int, ModelRole.Locked.int, ModelRole.AmountOut.int])
+
+  proc getRouteDisabledNetworkChainIds*(self: NetworkModel): seq[int] =
     var disbaledChains: seq[int] = @[]
     for item in self.items:
       if not item.getIsEnabled():
         disbaledChains.add(item.getChainId())
     return disbaledChains
 
-  proc getLockedChainIds*(self: NetworkModel): string =
+  proc getRouteLockedChainIds*(self: NetworkModel): string =
     var jsonObject = newJObject()
     for item in self.items:
       if item.getLocked():
         jsonObject[$item.getChainId()] = %* ("0x" & item.getLockedAmount())
     return $jsonObject
 
-  proc updatePreferredChains*(self: NetworkModel, chainIds: string) =
+  proc updateRoutePreferredChains*(self: NetworkModel, chainIds: string) =
     try:
       for i in 0 ..< self.items.len:
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isPreferred = false
         self.items[i].isEnabled = false
         if chainIds.len == 0:
@@ -211,35 +227,37 @@ QtObject:
             if $self.items[i].getChainId() == chainID:
               self.items[i].isPreferred = true
               self.items[i].isEnabled = true
-        self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
-        self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+        self.dataChanged(index, index, @[ModelRole.IsPreferred.int, ModelRole.IsEnabled.int])
     except:
       discard
 
-  proc getPreferredNetworkChainIds*(self: NetworkModel): seq[int] =
+  proc getRoutePreferredNetworkChainIds*(self: NetworkModel): seq[int] =
     var preferredChains: seq[int] = @[]
     for item in self.items:
       if item.getIsPreferred():
         preferredChains.add(item.getChainId())
     return preferredChains
 
-  proc disableUnpreferredChains*(self: NetworkModel) =
+  proc disableRouteUnpreferredChains*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = false
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc enableUnpreferredChains*(self: NetworkModel) =
+  proc enableRouteUnpreferredChains*(self: NetworkModel) =
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsPreferred():
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = true
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc setAllNetworksAsPreferredChains*(self: NetworkModel) {.slot.} =
+  proc setAllNetworksAsRoutePreferredChains*(self: NetworkModel) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
+      defer: index.delete
       self.items[i].isPreferred = true
       self.dataChanged(index, index, @[ModelRole.IsPreferred.int])
 
@@ -261,27 +279,43 @@ QtObject:
         return item.getChainName()
     return ""
 
-  proc toggleDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
+  proc toggleRouteDisabledChains*(self: NetworkModel, chainId: int) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = not self.items[i].getIsEnabled()
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
-  proc setDisabledChains*(self: NetworkModel, chainId: int, disabled: bool) {.slot.} =
+  proc setRouteDisabledChains*(self: NetworkModel, chainId: int, disabled: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].isEnabled = not disabled
         self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
+
+  proc setRouteEnabledFromChains*(self: NetworkModel, chainId: int) {.slot.} =
+    for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      self.items[i].isEnabled = false
+      if(self.items[i].getChainId() == chainId):
+        self.items[i].isEnabled = true
+      self.dataChanged(index, index, @[ModelRole.IsEnabled.int])
 
   proc lockCard*(self: NetworkModel, chainId: int, amount: string, lock: bool) {.slot.} =
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].locked = lock
         self.dataChanged(index, index, @[ModelRole.Locked.int])
         if self.items[i].getLocked():
           self.items[i].lockedAmount = amount
           self.dataChanged(index, index, @[ModelRole.LockedAmount.int])
 
+  proc getLayer1Network*(self: NetworkModel): int =
+    for item in self.items:
+      if item.getLayer() == 1:
+        return item.getChainId()
+    return 0

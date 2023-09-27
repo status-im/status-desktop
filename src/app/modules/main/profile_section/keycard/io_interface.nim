@@ -25,7 +25,7 @@ method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool,
-  nextFlow: FlowType) {.base.} =
+  nextFlow: FlowType, forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runSetupKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =

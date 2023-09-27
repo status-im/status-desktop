@@ -1,6 +1,7 @@
-import NimQml, json, stint, strutils
+import NimQml, json, stint, strutils, logging, options
 
 import backend/activity as backend
+import backend/backend as common_backend
 
 import app/modules/shared_models/currency_amount
 
@@ -14,6 +15,10 @@ QtObject:
   type
     ActivityDetails* = ref object of QObject
       id*: string
+
+      metadata: backend.ActivityEntry
+
+      # TODO use medatada
       multiTxId: int
       nonce*: int
       blockNumber*: int
@@ -33,41 +38,57 @@ QtObject:
   proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
     return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
 
-  proc newActivityDetails*(id: string, isMultiTx: bool): ActivityDetails =
+  proc newActivityDetails*(metadata: backend.ActivityEntry, valueConvertor: AmountToCurrencyConvertor): ActivityDetails =
     new(result, delete)
-    if isMultiTx:
-      result.multiTxId = parseInt(id)
-    else:
-      result.id = id
+    defer: result.setup()
+
     result.maxTotalFees = newCurrencyAmount()
     result.totalFees = newCurrencyAmount()
-    result.setup()
 
-  proc newActivityDetails*(e: JsonNode, valueConvertor: AmountToCurrencyConvertor): ActivityDetails =
-    new(result, delete)
+    var e: JsonNode
+    case metadata.getPayloadType():
+      of PendingTransaction:
+        result.id = metadata.getTransactionIdentity().get().hash
+        return
+      of MultiTransaction:
+        result.multiTxId = metadata.getMultiTransactionId.get(0)
+        let res = backend.getMultiTxDetails(metadata.getMultiTransactionId().get(0))
+        if res.error != nil:
+          error "failed to fetch multi tx details: ", metadata.getMultiTransactionId()
+          return
+        e = res.result
+      of SimpleTransaction:
+        let res = backend.getTxDetails(metadata.getTransactionIdentity().get().hash)
+        if res.error != nil:
+          error "failed to fetch tx details: ", metadata.getTransactionIdentity().get().hash
+          return
+        e = res.result
+
     const protocolTypeField = "protocolType"
     const hashField = "hash"
     const contractAddressField = "contractAddress"
     const inputField = "input"
     const totalFeesField = "totalFees"
 
-    result = ActivityDetails(
-      id: e["id"].getStr(),
-      multiTxId: e["multiTxId"].getInt(),
-      nonce: e["nonce"].getInt(),
-      blockNumber: e["blockNumber"].getInt()
-    )
+    result.id = e["id"].getStr()
+    result.multiTxId = e["multiTxId"].getInt()
+    result.nonce = e["nonce"].getInt()
+    result.blockNumber = e["blockNumber"].getInt()
+
     let maxFeePerGas = e["maxFeePerGas"].getStr()
     let gasLimit = e["gasLimit"].getStr()
+
+    const gweiSymbol = "Gwei"
+
     if len(maxFeePerGas) > 0 and len(gasLimit) > 0:
       let maxTotalFees = getMaxTotalFees(maxFeePerGas, gasLimit)
-      result.maxTotalFees = valueConvertor(stint.fromHex(UInt256, maxTotalFees), "Gwei")
-    else:
-      result.maxTotalFees = newCurrencyAmount()
+      result.maxTotalFees = valueConvertor(stint.fromHex(UInt256, maxTotalFees), gweiSymbol)
 
     if e.hasKey(totalFeesField) and e[totalFeesField].kind != JNull:
       let totalFees = e[totalFeesField].getStr()
-      result.totalFees = valueConvertor(stint.fromHex(UInt256, totalFees), "Gwei")
+      let resTotalFees = valueConvertor(stint.fromHex(UInt256, totalFees), gweiSymbol)
+      if resTotalFees != nil:
+        result.totalFees = resTotalFees
 
     if e.hasKey(hashField) and e[hashField].kind != JNull:
       result.txHash = e[hashField].getStr()
@@ -79,8 +100,6 @@ QtObject:
       var contractAddress: eth.Address
       fromJson(e[contractAddressField], contractAddressField, contractAddress)
       result.contractAddress = some(contractAddress)
-    result.setup()
-
 
   proc getNonce*(self: ActivityDetails): int {.slot.} =
     return self.nonce
@@ -131,3 +150,14 @@ QtObject:
 
   QtProperty[QVariant] totalFees:
     read = getTotalFees
+
+  proc getTokenType*(self: ActivityDetails): string {.slot.} =
+    if self.metadata.tokenIn.isSome:
+      return $self.metadata.tokenIn.get().tokenType
+    if self.metadata.tokenOut.isSome:
+      return $self.metadata.tokenOut.get().tokenType
+    return ""
+
+  QtProperty[string] tokenType:
+    read = getTokenType
+

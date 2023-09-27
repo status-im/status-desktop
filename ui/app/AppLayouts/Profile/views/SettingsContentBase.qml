@@ -62,9 +62,8 @@ Item {
 
         RowLayout {
             id: titleLayout
-            Layout.preferredWidth: (parent.width - Style.current.padding)
+            Layout.fillWidth: true
             Layout.preferredHeight: visible ? d.titleRowHeight : 0
-            Layout.leftMargin: Style.current.padding
             visible: (root.sectionTitle !== "")
 
             Loader {

@@ -42,7 +42,11 @@ proc newModule*(
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = accountsc.newController(result, walletAccountService)
-  result.collectiblesController = collectiblesc.newController(int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase), events)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
+    autofetch = false,
+    events = events
+  )
   result.moduleLoaded = false
 
 ## Forward declarations
@@ -58,7 +62,7 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method getCollectiblesModel*(self: Module): QVariant =
-  return self.collectiblesController.getModel()
+  return self.collectiblesController.getModelAsVariant()
 
 method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAccountDto): KeyPairAccountItem =
   result = newKeyPairAccountItem(
@@ -176,7 +180,8 @@ method load*(self: Module) =
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
-    self.view.setIncludeWatchOnlyAccount(self.controller.isIncludeWatchOnlyAccount())
+    let args = SettingsBoolValueArgs(e)
+    self.view.setIncludeWatchOnlyAccount(args.value)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
     let args = AccountArgs(e)

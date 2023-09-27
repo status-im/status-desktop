@@ -1,4 +1,3 @@
-AmountToSend 1.0 AmountToSend.qml
 AssetsView 1.0 AssetsView.qml
 EnsResolver 1.0 EnsResolver.qml
 ExistingContacts 1.0 ExistingContacts.qml
@@ -9,10 +8,7 @@ PasswordConfirmationView 1.0 PasswordConfirmationView.qml
 PickedContacts 1.0 PickedContacts.qml
 ProfileDialogView 1.0 ProfileDialogView.qml
 SearchResults 1.0 SearchResults.qml
-TokenListView 1.0 TokenListView.qml
-TransactionPreview 1.0 TransactionPreview.qml
 TransactionSigner 1.0 TransactionSigner.qml
-TransactionStackView 1.0 TransactionStackView.qml
 SyncingDeviceView 1.0 SyncingDeviceView.qml
 SyncingDisplayCode 1.0 SyncingDisplayCode.qml
 SyncingErrorMessage 1.0 SyncingErrorMessage.qml

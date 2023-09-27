@@ -81,6 +81,7 @@ QtObject:
       of SignalType.MailserverRequestCompleted: MailserverRequestCompletedSignal.fromEvent(jsonSignal)
       of SignalType.MailserverRequestExpired: MailserverRequestExpiredSignal.fromEvent(jsonSignal)
       of SignalType.CommunityFound: CommunitySignal.fromEvent(jsonSignal)
+      of SignalType.CuratedCommunitiesUpdated: CuratedCommunitiesSignal.fromEvent(jsonSignal)
       of SignalType.Stats: StatsSignal.fromEvent(jsonSignal)
       of SignalType.ChroniclesLogs: ChroniclesLogsSignal.fromEvent(jsonSignal)
       of SignalType.HistoryRequestCompleted: HistoryRequestCompletedSignal.fromEvent(jsonSignal)

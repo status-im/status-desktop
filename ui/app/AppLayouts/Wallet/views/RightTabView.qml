@@ -8,6 +8,7 @@ import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
 import shared.stores 1.0
+import shared.panels 1.0
 
 import "./"
 import "../stores"
@@ -29,6 +30,7 @@ Item {
     function resetView() {
         stack.currentIndex = 0
         root.currentTabIndex = 0
+        historyView.resetView()
     }
 
     function resetStack() {
@@ -110,6 +112,9 @@ Item {
                     width: implicitWidth
                     text: qsTr("Activity")
                 }
+                onCurrentIndexChanged: {
+                    RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.HoldingType.Collectible : Constants.HoldingType.Asset)
+                }
             }
             StackLayout {
                 Layout.fillWidth: true
@@ -124,6 +129,7 @@ Item {
                     assetDetailsLaunched: stack.currentIndex === 2
                     onAssetClicked: {
                         assetDetailView.token = token
+                        RootStore.setCurrentViewedHolding(token.symbol, Constants.HoldingType.Asset)
                         stack.currentIndex = 2
                     }
                 }
@@ -131,14 +137,18 @@ Item {
                     collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
                     onCollectibleClicked: {
                         RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
+                        RootStore.setCurrentViewedHolding(uid, Constants.HoldingType.Collectible)
                         stack.currentIndex = 1
                     }
                 }
                 HistoryView {
+                    id: historyView
                     overview: RootStore.overview
                     showAllAccounts: root.showAllAccounts
-                    onLaunchTransactionDetail: {
-                        transactionDetailView.transaction = transaction
+                    onLaunchTransactionDetail: function (entry, entryIndex) {
+                        transactionDetailView.transactionIndex = entryIndex
+                        transactionDetailView.transaction = entry
+
                         stack.currentIndex = 3
                     }
                 }
@@ -149,6 +159,11 @@ Item {
             Layout.fillHeight: true
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
+
+            onVisibleChanged: {
+                if (!visible)
+                    RootStore.resetCurrentViewedHolding()
+            }
         }
         AssetsDetailView {
             id: assetDetailView
@@ -161,6 +176,11 @@ Item {
             address: RootStore.overview.mixedcaseAddress
 
             networkConnectionStore: root.networkConnectionStore
+
+            onVisibleChanged: {
+                if (!visible)
+                    RootStore.resetCurrentViewedHolding()
+            }
         }
 
         TransactionDetailView {

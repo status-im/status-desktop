@@ -174,6 +174,7 @@ const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
+const SIGNAL_CURATED_COMMUNITIES_UPDATED* = "curatedCommunitiesUpdated"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
 const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
@@ -203,11 +204,10 @@ const SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED* = "communityInfoAlreadyRequested"
 
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
+const TOKEN_PERMISSIONS_REMOVED = "tokenPermissionsRemoved"
 
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
-
-const SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED* = "communityPrivateKeyRemoved"
 
 const SIGNAL_COMMUNITY_METRICS_UPDATED* = "communityMetricsUpdated"
 
@@ -286,6 +286,11 @@ QtObject:
           self.communities[receivedData.community.id].listedInDirectory and not
           self.communities[receivedData.community.id].isAvailable:
         self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CommunityArgs(community: self.communities[receivedData.community.id]))
+
+    self.events.on(SignalType.CuratedCommunitiesUpdated.event) do(e: Args):
+      var receivedData = CuratedCommunitiesSignal(e)
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_UPDATED,
+        CommunitiesArgs(communities: receivedData.communities))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -619,7 +624,8 @@ QtObject:
           if tokenPermission.tokenCriteria.len != prevTokenPermission.tokenCriteria.len or
             tokenPermission.isPrivate != prevTokenPermission.isPrivate or
             tokenPermission.chatIds.len != prevTokenPermission.chatIds.len or
-            tokenPermission.`type` != prevTokenPermission.`type`:
+            tokenPermission.`type` != prevTokenPermission.`type` or
+            tokenPermission.state != prevTokenPermission.state:
 
               permissionUpdated = true
 
@@ -724,7 +730,7 @@ QtObject:
       return
 
     if not self.communities.hasKey(communityId):
-      error "requested community doesn't exists", communityId
+      error "requested community doesn't exist", communityId
       return
 
     return self.communities[communityId]
@@ -1004,10 +1010,10 @@ QtObject:
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, "Error creating community: " & error.message)
+        raise newException(RpcException, "Error importing discord community: " & error.message)
 
     except Exception as e:
-      error "Error creating community", msg = e.msg
+      error "Error importing discord community", msg = e.msg
 
   proc createCommunity*(
       self: Service,
@@ -1669,20 +1675,6 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc removePrivateKey*(self: Service, communityId: string) =
-    try:
-      let response = status_go.removePrivateKey(communityId)
-      if (response.error != nil):
-        let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, fmt"err: {error.message}")
-
-      var community = self.communities[communityId]
-      community.isControlNode = false
-      self.communities[communityId] = community
-      self.events.emit(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED, CommunityArgs(community: community))
-    except Exception as e:
-      error "Error removing community private key: ", msg = e.msg
-
   proc asyncImportCommunity*(self: Service, communityKey: string) =
     let arg = AsyncImportCommunityTaskArg(
       tptr: cast[ByteAddress](asyncImportCommunityTask),
@@ -1941,33 +1933,28 @@ QtObject:
     try:
       discard status_go.requestCancelDiscordCommunityImport(communityId)
     except Exception as e:
-      error "Error extracting discord channels and categories", msg = e.msg
+      error "Error canceling discord community import", msg = e.msg
 
   proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
     try:
       let editing = tokenPermission.id != ""
-
       var response: RpcResponse[JsonNode]
-
       if editing:
         response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
       else:
         response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
 
       if response.result != nil and response.result.kind != JNull:
-        var changesField = TOKEN_PERMISSIONS_ADDED
-        if editing:
-          changesField = TOKEN_PERMISSIONS_MODIFIED
-
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][changesField].pairs():
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_ADDED].pairs():
           let p = permission.toCommunityTokenPermissionDto()
           self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
 
-          var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED
-          if editing:
-            signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
 
-          self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
         return
 
       var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED
@@ -1982,12 +1969,18 @@ QtObject:
     try:
       let response = status_go.deleteCommunityTokenPermission(communityId, permissionId)
       if response.result != nil and response.result.kind != JNull:
-        for permissionId in response.result["communityChanges"].getElems()[0]["tokenPermissionsRemoved"].getElems():
-          if self.communities[communityId].tokenPermissions.hasKey(permissionId.getStr()):
-            self.communities[communityId].tokenPermissions.del(permissionId.getStr())
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
-        CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId.getStr))
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_REMOVED].pairs():
+          if self.communities[communityId].tokenPermissions.hasKey(permissionId):
+            self.communities[communityId].tokenPermissions.del(permissionId)
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED, CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId))
+
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
+
         return
+
       var tokenPermission = CommunityTokenPermissionDto()
       tokenPermission.id = permissionId
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED,

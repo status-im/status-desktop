@@ -136,21 +136,9 @@ QtObject:
     let idx = self.findIndexById(item.getId())
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       self.items[idx] = item
-      self.dataChanged(index, index, @[
-        ModelRole.Name.int,
-        ModelRole.Available.int,
-        ModelRole.Description.int,
-        ModelRole.Icon.int,
-        ModelRole.Banner.int,
-        ModelRole.Featured.int,
-        ModelRole.Members.int,
-        ModelRole.ActiveMembers.int,
-        ModelRole.Color.int,
-        ModelRole.Popularity.int,
-        ModelRole.Tags.int,
-        ModelRole.Permissions.int,
-      ])
+      self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete

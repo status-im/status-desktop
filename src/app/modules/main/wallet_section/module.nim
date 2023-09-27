@@ -35,6 +35,8 @@ import app_service/service/network_connection/service as network_connection_serv
 import app_service/service/devices/service as devices_service
 
 import backend/collectibles as backend_collectibles
+import backend/activity as backend_activity
+
 
 logScope:
   topics = "wallet-section-module"
@@ -120,9 +122,16 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events)
-  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events)
-  result.collectiblesController = collectiblesc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), events)
+  let collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
+    autofetch = false,
+    events = events
+  )
+  result.collectiblesController = collectiblesController
+  let collectiblesToTokenConverter = proc(id: string): backend_activity.Token =
+    return collectiblesController.getActivityToken(id)
+  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events, collectiblesToTokenConverter)
+  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events, collectiblesToTokenConverter)
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
@@ -169,7 +178,7 @@ method notifyFilterChanged(self: Module) =
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
+  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.collectiblesController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], includeWatchOnly, self.filter.allAddresses)
@@ -227,6 +236,11 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
+    self.notifyFilterChanged()
+  self.events.on(SIGNAL_ALL_KEYCARDS_DELETED) do(e: Args):
     let args = KeycardArgs(e)
     if not args.success:
       return
@@ -368,6 +382,9 @@ method getChainIdForChat*(self: Module): int =
 
 method getLatestBlockNumber*(self: Module, chainId: int): string =
   return self.transactionService.getLatestBlockNumber(chainId)
+
+method getEstimatedLatestBlockNumber*(self: Module, chainId: int): string =
+  return self.transactionService.getEstimatedLatestBlockNumber(chainId)
 
 method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
   self.transactionService.fetchDecodedTxData(txHash, data)

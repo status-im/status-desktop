@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 
 import AppLayouts.Communities.popups 1.0
 
+import utils 1.0
+
 import Storybook 1.0
 
 SplitView {
@@ -11,22 +13,66 @@ SplitView {
 
     Logs { id: logs }
 
-    Item {
+    function openDialog() {
+        popupComponent.createObject(popupBg)
+    }
 
+    Component.onCompleted: openDialog()
+
+    Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
         PopupBackground {
+            id: popupBg
             anchors.fill: parent
-        }
 
-        Button {
-            anchors.centerIn: parent
-            text: "Reopen"
+            Button {
+                anchors.centerIn: parent
+                text: "Reopen"
 
-            onClicked: popupComponent.createObject(parent)
+                onClicked: openDialog()
+            }
         }
-        Component.onCompleted: popupComponent.createObject(parent)
+    }
+
+    ListModel {
+        id: fakeDevicesModel
+        ListElement {
+            name: "Device 1 (osx)"
+            deviceType: "osx"
+            timestamp: 123456789
+            isCurrentDevice: true
+            enabled: true
+        }
+        ListElement {
+            name: "Device 2 (windows)"
+            deviceType: "windows"
+            timestamp: 123456789123
+            isCurrentDevice: false
+            enabled: false
+        }
+        ListElement {
+            name: "Device 3 (android)"
+            deviceType: "android"
+            timestamp: 0
+            isCurrentDevice: false
+            enabled: true
+        }
+        ListElement {
+            name: "Device 4 (ios)"
+            deviceType: "ios"
+            timestamp: 0
+            isCurrentDevice: false
+            enabled: true
+        }
+        ListElement {
+            name: "Device 5 (desktop)"
+            deviceType: "desktop"
+            timestamp: 0
+            isCurrentDevice: false
+            enabled: true
+        }
     }
 
     Component {
@@ -36,9 +82,27 @@ SplitView {
             anchors.centerIn: parent
             modal: false
             visible: true
-            communityName: "Socks"
-            privateKey: "0x0454f2231543ba02583e4c55e513a75092a4f2c86c04d0796b195e964656d6cd94b8237c64ef668eb0fe268387adc3fe699bce97190a631563c82b718c19cf1fb8"
-            onDeletePrivateKey: logs.logEvent("ExportControlNodePopup::onDeletePrivateKey")
+            closePolicy: Popup.NoAutoClose
+            destroyOnClose: true
+            community: QtObject {
+                property string id: "1"
+                property string name: "Socks"
+                property var members: { "count": 5 }
+                property string image: Style.png("tokens/UNI")
+                property string color: "orchid"
+            }
+            devicesStore: QtObject {
+                function loadDevices() {}
+
+                property bool isDeviceSetup: true
+
+                property var devicesModule: QtObject {
+                    property bool devicesLoading
+                    property bool devicesLoadingError
+                }
+
+                property var devicesModel: ctrlHasSyncedDevices.checked ? fakeDevicesModel : null
+            }
         }
     }
 
@@ -49,6 +113,11 @@ SplitView {
         SplitView.preferredHeight: 160
 
         logsView.logText: logs.logText
+
+        Switch {
+            id: ctrlHasSyncedDevices
+            text: "Has synced devices"
+        }
     }
 }
 

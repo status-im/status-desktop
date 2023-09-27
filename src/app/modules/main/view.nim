@@ -24,7 +24,7 @@ QtObject:
       ephemeralNotificationModelVariant: QVariant
       tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
 
-  proc activeSectionChanged*(self:View) {.signal.}
+  proc activeSectionSet*(self: View, item: SectionItem)
 
   proc delete*(self: View) =
     self.model.delete
@@ -61,7 +61,7 @@ QtObject:
   proc editItem*(self: View, item: SectionItem) =
     self.model.editItem(item)
     if (self.activeSection.getId() == item.id):
-      self.activeSection.setActiveSectionData(item)
+      self.activeSectionSet(item)
 
   proc model*(self: View): SectionModel =
     return self.model
@@ -127,6 +127,8 @@ QtObject:
 
   proc activeSection*(self: View): SectionDetails =
     return self.activeSection
+
+  proc activeSectionChanged*(self:View) {.signal.}
 
   proc getActiveSection(self: View): QVariant {.slot.} =
     return self.activeSectionVariant
@@ -243,6 +245,17 @@ QtObject:
   proc emitDisplayUserProfileSignal*(self: View, publicKey: string) =
     self.displayUserProfile(publicKey)
 
+  proc getKeycardSharedModuleForAuthentication(self: View): QVariant {.slot.} =
+    let module = self.delegate.getKeycardSharedModuleForAuthentication()
+    if not module.isNil:
+      return module
+    return newQVariant()
+  QtProperty[QVariant] keycardSharedModuleForAuthentication:
+    read = getKeycardSharedModuleForAuthentication
+
+  proc activateStatusDeepLink*(self: View, statusDeepLink: string) {.slot.} =
+    self.delegate.activateStatusDeepLink(statusDeepLink)
+
   proc getKeycardSharedModule(self: View): QVariant {.slot.} =
     let module = self.delegate.getKeycardSharedModule()
     if not module.isNil:
@@ -251,8 +264,13 @@ QtObject:
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
 
-  proc activateStatusDeepLink*(self: View, statusDeepLink: string) {.slot.} =
-    self.delegate.activateStatusDeepLink(statusDeepLink)
+  proc displayKeycardSharedModuleForAuthentication*(self: View) {.signal.}
+  proc emitDisplayKeycardSharedModuleForAuthentication*(self: View) =
+    self.displayKeycardSharedModuleForAuthentication()
+
+  proc destroyKeycardSharedModuleForAuthentication*(self: View) {.signal.}
+  proc emitDestroyKeycardSharedModuleForAuthentication*(self: View) =
+    self.destroyKeycardSharedModuleForAuthentication()
 
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =

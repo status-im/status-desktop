@@ -18,7 +18,6 @@ Column {
     property string headerImageSource: ""
     property var community
 
-    signal transferOwnershipButtonClicked()
     signal leaveButtonClicked()
     signal copyToClipboard(string link)
 
@@ -60,15 +59,6 @@ Column {
     StatusModalDivider {
         topPadding: 8
         bottomPadding: 8
-    }
-
-    StatusListItem {
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: root.community.memberRole === Constants.memberRole.owner
-        title: qsTr("Transfer ownership")
-        asset.name: "exchange"
-        type: StatusListItem.Type.Secondary
-        onClicked: root.transferOwnershipButtonClicked()
     }
 
     StatusListItem {

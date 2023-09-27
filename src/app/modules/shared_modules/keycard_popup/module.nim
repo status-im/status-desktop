@@ -68,6 +68,12 @@ proc init[T](self: Module[T], fullConnect = true) =
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
 
+method getReturnToFlow*[T](self: Module[T]): FlowType =
+  return self.view.getReturnToFlow()
+
+method getForceFlow*[T](self: Module[T]): bool =
+  return self.view.getForceFlow()
+
 method getPin*[T](self: Module[T]): string =
   return self.controller.getPin()
 
@@ -460,7 +466,7 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
-method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") =
+method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "", forceFlow = false, returnToFlow = FlowType.General) =
   ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account
   ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then
   ## default key uid is always the key uid of the logged in user.
@@ -469,6 +475,8 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     error "sm_cannot run an general flow"
     return
   self.init()
+  self.view.setForceFlow(forceFlow)
+  self.view.setReturnToFlow(returnToFlow)
   if flowToRun == FlowType.FactoryReset:
     if keyUid.len > 0:
       self.prepareKeyPairForProcessing(keyUid)
@@ -562,11 +570,20 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     return
   if flowToRun == FlowType.MigrateFromKeycardToApp:
     if keyUid.len == 0:
-      error "sm_cannot run a migration from keycar to app flow without knowing in advance a keypair being migrated"
+      error "sm_cannot run a migration from keycard to app flow without knowing in advance a keypair being migrated"
       self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
       return
     self.prepareKeyPairForProcessing(keyUid)
     self.view.setCurrentState(newMigrateKeypairToAppState(flowToRun, nil))
+    self.controller.readyToDisplayPopup()
+    return
+  if flowToRun == FlowType.MigrateFromAppToKeycard:
+    if keyUid != singletonInstance.userProfile.getKeyUid():
+      error "sm_cannot MigrateFromAppToKeycard flow can be run only for the profile keypair and should not be run directly"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      quit() # quit the app
+    self.prepareKeyPairForProcessing(keyUid)
+    self.view.setCurrentState(newMigrateKeypairToKeycardState(flowToRun, nil))
     self.controller.readyToDisplayPopup()
     return
 
@@ -645,16 +662,15 @@ method updateKeyPairHelper*[T](self: Module[T], cardMetadata: CardMetadata) =
   self.view.setKeyPairHelper(item)
 
 method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
-  let flowType = self.getCurrentFlowType()
   if password.len == 0:
     self.view.setDisablePopup(false)
     return
-  if flowType == FlowType.SetupNewKeycard:
-    self.controller.setPassword(password)
-    self.onTertiaryActionClicked()
-  if flowType == FlowType.MigrateFromKeycardToApp:
-    self.controller.setPassword(password)
-    self.onTertiaryActionClicked()
+  let flowType = self.getCurrentFlowType()
+  if flowType == FlowType.SetupNewKeycard or
+    flowType == FlowType.MigrateFromKeycardToApp or
+    flowType == FlowType.MigrateFromAppToKeycard:
+      self.controller.setPassword(password)
+      self.onTertiaryActionClicked()
 
 method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string, errorType: string) =
   let currStateObj = self.view.currentStateObj()

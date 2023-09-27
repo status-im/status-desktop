@@ -93,6 +93,7 @@ QtObject:
     let idx = self.findIndexByType(item.`type`)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
+      defer: index.delete
       let errorsAndWarningsCount = self.items[idx].warningsCount + self.items[idx].errorsCount
       self.items[idx].progress = item.progress
       self.items[idx].state = item.state

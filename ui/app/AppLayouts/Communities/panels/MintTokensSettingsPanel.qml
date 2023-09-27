@@ -12,6 +12,7 @@ import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.views 1.0
+import AppLayouts.Wallet.helpers 1.0
 
 import shared.controls 1.0
 
@@ -28,6 +29,7 @@ StackView {
     required property string communityName
     required property string communityLogo
     required property color communityColor
+    property var sendModalPopup
 
     // User profile props:
     required property bool isOwner
@@ -50,11 +52,6 @@ StackView {
     property var tokensModelWallet
     property var accounts // Expected roles: address, name, color, emoji, walletType
 
-    // Transaction related properties:
-    property string feeText
-    property string feeErrorText
-    property bool isFeeLoading: true
-
     // Network related properties:
     property var layer1Networks
     property var layer2Networks
@@ -67,25 +64,20 @@ StackView {
 
     signal kickUserRequested(string contactId)
     signal banUserRequested(string contactId)
-
-    signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
-    signal burnFeesRequested(string tokenKey, string amount, string accountAddress)
-    signal remotelyDestructFeesRequest(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
-                                       string tokenKey,
-                                       string accountAddress)
     signal remotelyDestructCollectibles(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
                                         string tokenKey,
                                         string accountAddress)
-    signal signBurnTransactionOpened(string tokenKey, string amount, string accountAddress)
+
+    signal remotelyDestructAndBan(string contactId, string tokenKey, string accountAddress,
+                                  bool removeMessages)
+    signal remotelyDestructAndKick(string contactId, string tokenKey, string accountAddress)
+
     signal burnToken(string tokenKey, string amount, string accountAddress)
     signal airdropToken(string tokenKey, string amount, int type, var addresses)
     signal deleteToken(string tokenKey)
-
-    function setFeeLoading() {
-        root.isFeeLoading = true
-        root.feeText = ""
-        root.feeErrorText = ""
-    }
+    signal registerDeployFeesSubscriber(var feeSubscriber)
+    signal registerSelfDestructFeesSubscriber(var feeSubscriber)
+    signal registerBurnTokenFeesSubscriber(var feeSubscriber)
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -138,7 +130,6 @@ StackView {
             root.push(ownerTokenEditViewComponent, properties,
                       StackView.Immediate)
         }
-
     }
 
     initialItem: SettingsPage {
@@ -243,31 +234,36 @@ StackView {
                 allNetworks: root.allNetworks
                 accounts: root.accounts
 
+                feeText: feeSubscriber.feeText
+                feeErrorText: feeSubscriber.feeErrorText
+                isFeeLoading: !feeSubscriber.feesResponse
+
                 onMintClicked: signMintPopup.open()
+                
+                DeployFeesSubscriber {
+                    id: feeSubscriber
+                    chainId: editOwnerTokenView.ownerToken.chainId
+                    tokenType: editOwnerTokenView.ownerToken.type
+                    isOwnerDeployment: editOwnerTokenView.ownerToken.isPrivilegedToken
+                    accountAddress: editOwnerTokenView.ownerToken.accountAddress
+                    enabled: editOwnerTokenView.visible || signMintPopup.visible
+                    Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
+                }
 
-                onDeployFeesRequested: root.deployFeesRequested(
-                                           ownerToken.chainId,
-                                           ownerToken.accountAddress,
-                                           Constants.TokenType.ERC721)
-
-                feeText: root.feeText
-                feeErrorText: root.feeErrorText
-                isFeeLoading: root.isFeeLoading
-
-                SignMultiTokenTransactionsPopup {
+                SignTransactionsPopup {
                     id: signMintPopup
 
                     title: qsTr("Sign transaction - Mint %1 tokens").arg(
                                editOwnerTokenView.communityName)
-                    totalFeeText: root.isFeeLoading ?
-                                      "" : root.feeText
-                    errorText: root.feeErrorText
+                    totalFeeText: editOwnerTokenView.isFeeLoading ?
+                                      "" : editOwnerTokenView.feeText
+                    errorText: editOwnerTokenView.feeErrorText
                     accountName: editOwnerTokenView.ownerToken.accountName
 
                     model: QtObject {
                         readonly property string title: editOwnerTokenView.feeLabel
                         readonly property string feeText: signMintPopup.totalFeeText
-                        readonly property bool error: root.feeErrorText !== ""
+                        readonly property bool error: editOwnerTokenView.feeErrorText !== ""
                     }
 
                     onSignTransactionClicked: editOwnerTokenView.signMintTransaction()
@@ -282,14 +278,36 @@ StackView {
         SettingsPage {
             id: newTokenPage
 
+            readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
+            readonly property var chainModel: NetworkModelHelpers.getLayerNetworkModelByChainId(root.layer1Networks,
+                                                                                                root.layer2Networks,
+                                                                                                ownerTokenChainId) ?? root.layer2Networks
+            readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.layer1Networks,
+                                                                                         root.layer2Networks,
+                                                                                         ownerTokenChainId)
+            readonly property string chainName: NetworkModelHelpers.getChainName(chainModel, chainIndex)
+            readonly property string chainIcon: NetworkModelHelpers.getChainIconUrl(chainModel, chainIndex)
+
             property TokenObject asset: TokenObject{
                 type: Constants.TokenType.ERC20
                 multiplierIndex: 18
+
+                // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
+                chainId: newTokenPage.ownerTokenChainId
+                chainName: newTokenPage.chainName
+                chainIcon: newTokenPage.chainIcon
             }
 
             property TokenObject collectible: TokenObject {
                 type: Constants.TokenType.ERC721
+
+                // Minted tokens will use ALWAYS the same chain where the owner token was deployed.
+                chainId: newTokenPage.ownerTokenChainId
+                chainName: newTokenPage.chainName
+                chainIcon: newTokenPage.chainIcon
             }
+
+
 
             property bool isAssetView: false
             property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
@@ -335,7 +353,7 @@ StackView {
                         validationMode: !newTokenPage.isAssetView
                                         ? newTokenPage.validationMode
                                         : StatusInput.ValidationMode.OnlyWhenDirty
-                        collectible: newTokenPage.collectible
+                        token: newTokenPage.collectible
                     }
 
                     CustomEditCommunityTokenView {
@@ -345,15 +363,15 @@ StackView {
                         validationMode: newTokenPage.isAssetView
                                         ? newTokenPage.validationMode
                                         : StatusInput.ValidationMode.OnlyWhenDirty
-                        asset: newTokenPage.asset
+                        token: newTokenPage.asset
                     }
 
                     component CustomEditCommunityTokenView: EditCommunityTokenView {
+                        id: editView
+
                         viewWidth: root.viewWidth
                         layer1Networks: root.layer1Networks
                         layer2Networks: root.layer2Networks
-                        enabledNetworks: root.enabledNetworks
-                        allNetworks: root.allNetworks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
                         tokensModelWallet: root.tokensModelWallet
@@ -361,28 +379,27 @@ StackView {
                         referenceName: newTokenPage.referenceName
                         referenceSymbol: newTokenPage.referenceSymbol
 
-                        feeText: root.feeText
-                        feeErrorText: root.feeErrorText
-                        isFeeLoading: root.isFeeLoading
+                        feeText: deployFeeSubscriber.feeText
+                        feeErrorText: deployFeeSubscriber.feeErrorText
+                        isFeeLoading: !deployFeeSubscriber.feesResponse
 
                         onPreviewClicked: {
                             const properties = {
-                                token: isAssetView ? asset : collectible
+                                token: token
                             }
 
                             root.push(previewTokenViewComponent, properties,
                                       StackView.Immediate)
                         }
 
-                        onDeployFeesRequested: {
-                            if (isAssetView)
-                                root.deployFeesRequested(asset.chainId,
-                                                         asset.accountAddress,
-                                                         Constants.TokenType.ERC20)
-                            else
-                                root.deployFeesRequested(collectible.chainId,
-                                                         collectible.accountAddress,
-                                                         Constants.TokenType.ERC721)
+                        DeployFeesSubscriber {
+                            id: deployFeeSubscriber
+                            chainId: editView.token.chainId
+                            tokenType: editView.token.type
+                            isOwnerDeployment: editView.token.isPrivilegedToken
+                            accountAddress: editView.token.accountAddress
+                            enabled: editView.visible
+                            Component.onCompleted: root.registerDeployFeesSubscriber(deployFeeSubscriber)
                         }
                     }
                 }
@@ -407,20 +424,14 @@ StackView {
                 viewWidth: root.viewWidth
                 preview: true
 
-                feeText: root.feeText
-                feeErrorText: root.feeErrorText
-                isFeeLoading: root.isFeeLoading
                 accounts: root.accounts
-
-                onDeployFeesRequested: root.deployFeesRequested(
-                                           token.chainId, token.accountAddress,
-                                           token.type)
+                feeText: feeSubscriber.feeText
+                feeErrorText: feeSubscriber.feeErrorText
+                isFeeLoading: !feeSubscriber.feesResponse
 
                 onMintClicked: signMintPopup.open()
 
                 function signMintTransaction() {
-                    root.setFeeLoading()
-
                     if(preview.isAssetView)
                         root.mintAsset(token)
                     else
@@ -429,18 +440,28 @@ StackView {
                     root.resetNavigation()
                 }
 
-                SignMultiTokenTransactionsPopup {
+                DeployFeesSubscriber {
+                    id: feeSubscriber
+                    chainId: preview.token.chainId
+                    tokenType: preview.token.type
+                    isOwnerDeployment: preview.token.isPrivilegedToken
+                    accountAddress: preview.token.accountAddress
+                    enabled: preview.visible || signMintPopup.visible
+                    Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
+                }
+
+                SignTransactionsPopup {
                     id: signMintPopup
 
                     title: qsTr("Sign transaction - Mint %1 token").arg(
                                preview.token.name)
-                    totalFeeText: root.isFeeLoading ? "" : root.feeText
+                    totalFeeText: preview.isFeeLoading ? "" : preview.feeText
                     accountName: preview.token.accountName
 
                     model: QtObject {
                         readonly property string title: preview.feeLabel
                         readonly property string feeText: signMintPopup.totalFeeText
-                        readonly property bool error: root.feeErrorText !== ""
+                        readonly property bool error: preview.feeErrorText !== ""
                     }
 
                     onSignTransactionClicked: preview.signMintTransaction()
@@ -452,12 +473,11 @@ StackView {
     component TokenViewPage: SettingsPage {
         id: tokenViewPage
 
-        readonly property alias token: view.token
+        property TokenObject token: TokenObject {}
         readonly property bool deploymentFailed: view.deployState === Constants.ContractTransactionStatus.Failed
 
-        property alias tokenOwnersModel: view.tokenOwnersModel
-        property alias airdropKey: view.airdropKey
-
+        property var tokenOwnersModel
+        property string airdropKey
         // Owner and TMaster related props
         readonly property bool isPrivilegedTokenItem: isOwnerTokenItem || isTMasterTokenItem
         readonly property bool isOwnerTokenItem: token.privilegesLevel === Constants.TokenPrivilegesLevel.Owner
@@ -517,11 +537,12 @@ StackView {
         contentItem: CommunityTokenView {
             id: view
 
-            property string airdropKey // TO REMOVE: Temporal property until airdrop backend is not ready to use token key instead of symbol
+            property string airdropKey: tokenViewPage.airdropKey // TO REMOVE: Temporal property until airdrop backend is not ready to use token key instead of symbol
 
             viewWidth: root.viewWidth
 
-            token: TokenObject {}
+            token: tokenViewPage.token
+            tokenOwnersModel: tokenViewPage.tokenOwnersModel
 
             onGeneralAirdropRequested: {
                 root.airdropToken(view.airdropKey,
@@ -535,28 +556,31 @@ StackView {
                                   view.token.type, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
             }
 
+            onViewProfileRequested: {
+                Global.openProfilePopup(contactId)
+            }
+
+            onViewMessagesRequested: {
+                // TODO: https://github.com/status-im/status-desktop/issues/11860
+                console.warn("View Messages is not implemented yet")
+            }
+
             onRemoteDestructRequested: {
                 if (token.isPrivilegedToken) {
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.RemotelyDestruct, name)
+                                TokenMasterActionPopup.ActionType.RemotelyDestruct,
+                                name, address, "")
                 } else {
                     remotelyDestructPopup.open()
                     // TODO: set the address selected in the popup's list
                 }
             }
 
-            onViewProfileRequested: {
-                Global.openProfilePopup(contactId)
-            }
-            onViewMessagesRequested: {
-                // TODO: https://github.com/status-im/status-desktop/issues/11860
-                console.warn("View Messages is not implemented yet")
-            }
-
             onBanRequested: {
                 if (token.isPrivilegedToken)
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.Ban, name)
+                                TokenMasterActionPopup.ActionType.Ban, name,
+                                address, contactId)
                 else
                     kickBanPopup.openPopup(KickBanPopup.Mode.Ban, name, contactId)
             }
@@ -564,7 +588,8 @@ StackView {
             onKickRequested: {
                 if (token.isPrivilegedToken)
                     tokenMasterActionPopup.openPopup(
-                                TokenMasterActionPopup.ActionType.Kick, name)
+                                TokenMasterActionPopup.ActionType.Kick, name,
+                                address, contactId)
                 else
                     kickBanPopup.openPopup(KickBanPopup.Mode.Kick, name, contactId)
             }
@@ -572,15 +597,90 @@ StackView {
             TokenMasterActionPopup {
                 id: tokenMasterActionPopup
 
+                property string address: ""
+                property string contactId: ""
+
                 communityName: root.communityName
                 networkName: view.token.chainName
 
                 accountsModel: root.accounts
+                feeText: selfDestructFeesSubscriber.feeText
+                feeErrorText: selfDestructFeesSubscriber.feeErrorText
+                isFeeLoading: !selfDestructFeesSubscriber.feesResponse
 
-                function openPopup(type, userName) {
+                function openPopup(type, userName, address, contactId) {
                     tokenMasterActionPopup.actionType = type
-                    tokenMasterActionPopup.userName = userName
+                    tokenMasterActionPopup.userName = userName ||
+                            SQUtils.Utils.elideAndFormatWalletAddress(address)
+                    tokenMasterActionPopup.address = address
+                    tokenMasterActionPopup.contactId = contactId
                     open()
+                }
+
+                onRemotelyDestructClicked: signPopup.open()
+                onKickClicked: signPopup.open()
+                onBanClicked: signPopup.open()
+
+                SelfDestructFeesSubscriber {
+                    id: selfDestructFeesSubscriber
+
+                    walletsAndAmounts: [{ 
+                        walletAddress: tokenMasterActionPopup.address, 
+                        amount: 1
+                    }]
+                    accountAddress: tokenMasterActionPopup.selectedAccount
+                    tokenKey: view.token.key
+                    enabled: tokenMasterActionPopup.opened
+                    Component.onCompleted: root.registerSelfDestructFeesSubscriber(
+                                               selfDestructFeesSubscriber)
+                }
+
+                SignTransactionsPopup {
+                    id: signPopup
+
+                    title: qsTr("Sign transaction - Remotely-destruct TokenMaster token")
+
+                    totalFeeText: tokenMasterActionPopup.feeText
+                    errorText: tokenMasterActionPopup.feeErrorText
+
+                    accountName: tokenMasterActionPopup.selectedAccountName
+
+                    model: QtObject {
+                        readonly property string title: tokenMasterActionPopup.feeLabel
+                        readonly property string feeText: tokenMasterActionPopup.feeText
+                        readonly property bool error: tokenMasterActionPopup.feeErrorText !== ""
+                    }
+
+                    onSignTransactionClicked: {
+                        // https://bugreports.qt.io/browse/QTBUG-91917
+                        var contactId = tokenMasterActionPopup.contactId
+                        var tokenKey = tokenViewPage.token.key
+                        var accountAddress = tokenMasterActionPopup.selectedAccount
+
+                        switch (tokenMasterActionPopup.actionType) {
+                        case TokenMasterActionPopup.ActionType.RemotelyDestruct:
+                            var tokenToDestruct = {
+                                walletAddress: tokenMasterActionPopup.address,
+                                amount: 1
+                            }
+
+                            root.remotelyDestructCollectibles(
+                                        [tokenToDestruct],
+                                        tokenKey, accountAddress)
+                            break
+                        case TokenMasterActionPopup.ActionType.Kick:
+                            root.remotelyDestructAndKick(contactId, tokenKey,
+                                                         accountAddress)
+                            break
+                        case TokenMasterActionPopup.ActionType.Ban:
+                            root.remotelyDestructAndBan(contactId, tokenKey,
+                                                        accountAddress,
+                                                        tokenMasterActionPopup.deleteMessages)
+                            break
+                        }
+
+                        tokenMasterActionPopup.close()
+                    }
                 }
             }
 
@@ -622,10 +722,8 @@ StackView {
                 burnTokensPopup.close()
             }
 
+            communityName: root.communityName
             visible: {
-                if(tokenViewPage.isOwnerTokenItem)
-                    // Always hidden
-                    return false
                 if(tokenViewPage.isTMasterTokenItem)
                     // Only footer if owner profile
                     return root.isOwner
@@ -640,10 +738,13 @@ StackView {
                                      !!view.tokenOwnersModel &&
                                      view.tokenOwnersModel.count > 0
 
-            burnEnabled: deployStateCompleted
+            burnEnabled: deployStateCompleted            
+            sendOwnershipEnabled: deployStateCompleted
 
-            remotelyDestructVisible: token.remotelyDestruct
-            burnVisible: !token.infiniteSupply
+            sendOwnershipVisible: tokenViewPage.isOwnerTokenItem
+            airdropVisible: !tokenViewPage.isOwnerTokenItem
+            remotelyDestructVisible: !tokenViewPage.isOwnerTokenItem && token.remotelyDestruct
+            burnVisible: !tokenViewPage.isOwnerTokenItem && !token.infiniteSupply
 
             onAirdropClicked: root.airdropToken(
                                   view.airdropKey,
@@ -652,6 +753,11 @@ StackView {
 
             onRemotelyDestructClicked: remotelyDestructPopup.open()
             onBurnClicked: burnTokensPopup.open()
+            onSendOwnershipClicked: Global.openTransferOwnershipPopup(root.communityName,
+                                                                      root.communityLogo,
+                                                                      tokenViewPage.token,
+                                                                      root.accounts,
+                                                                      root.sendModalPopup)
 
             // helper properties to pass data through popups
             property var walletsAndAmounts
@@ -661,26 +767,73 @@ StackView {
             RemotelyDestructPopup {
                 id: remotelyDestructPopup
 
+                property alias feeSubscriber: remotelyDestructFeeSubscriber
+
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
                 accounts: root.accounts
-                chainName: view.token.chainName
+                chainName: view.token.chainName   
 
-                feeText: root.feeText                
-                isFeeLoading: root.isFeeLoading
-                feeErrorText: root.feeErrorText
-
-                onRemotelyDestructFeesRequested: {
-                    root.remotelyDestructFeesRequest(walletsAndAmounts,
-                                                     view.token.key,
-                                                     accountAddress)
-                }
-
+                feeText: remotelyDestructFeeSubscriber.feeText
+                feeErrorText: remotelyDestructFeeSubscriber.feeErrorText
+                isFeeLoading: !remotelyDestructFeeSubscriber.feesResponse          
+                
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
                     footer.accountAddress = accountAddress
                     footer.walletsAndAmounts = walletsAndAmounts
                     alertPopup.open()
+                }
+
+                SelfDestructFeesSubscriber {
+                    id: remotelyDestructFeeSubscriber
+
+                    walletsAndAmounts: remotelyDestructPopup.selectedWalletsAndAmounts
+                    accountAddress: remotelyDestructPopup.selectedAccount
+                    tokenKey: view.token.key
+                    enabled: remotelyDestructPopup.tokenCount > 0 && accountAddress !== "" && (remotelyDestructPopup.opened || signTransactionPopup.opened)
+                    Component.onCompleted: root.registerSelfDestructFeesSubscriber(remotelyDestructFeeSubscriber)
+                }
+            }
+
+            BurnTokensPopup {
+                id: burnTokensPopup
+
+                property alias feeSubscriber: burnTokensFeeSubscriber
+
+                communityName: root.communityName
+                tokenName: footer.token.name
+                remainingTokens: footer.token.remainingTokens
+                multiplierIndex: footer.token.multiplierIndex
+                tokenSource: footer.token.artworkSource
+                chainName: footer.token.chainName
+
+                onAmountToBurnChanged: burnTokensFeeSubscriber.updateAmount()
+
+                feeText: burnTokensFeeSubscriber.feeText
+                feeErrorText: burnTokensFeeSubscriber.feeErrorText
+                isFeeLoading: burnTokensFeeSubscriber.feeText === "" && burnTokensFeeSubscriber.feeErrorText === ""
+                accounts: root.accounts
+
+                onBurnClicked: {
+                    burnTokensPopup.close()
+                    footer.burnAmount = burnAmount
+                    footer.accountAddress = accountAddress
+                    signTransactionPopup.isRemotelyDestructTransaction = false
+                    signTransactionPopup.open()
+                }
+
+                BurnTokenFeesSubscriber {
+                    id: burnTokensFeeSubscriber
+
+                    readonly property var updateAmount: Backpressure.debounce(burnTokensFeeSubscriber, 500, () => {
+                        burnTokensFeeSubscriber.amount = burnTokensPopup.amountToBurn
+                    })
+                    amount: ""
+                    tokenKey: tokenViewPage.token.key
+                    accountAddress: burnTokensPopup.selectedAccountAddress
+                    enabled: burnTokensPopup.visible || signTransactionPopup.visible
+                    Component.onCompleted: root.registerBurnTokenFeesSubscriber(burnTokensFeeSubscriber)
                 }
             }
 
@@ -698,15 +851,40 @@ StackView {
                 }
             }
 
-            SignTokenTransactionsPopup {
+            SignTransactionsPopup {
                 id: signTransactionPopup
 
                 property bool isRemotelyDestructTransaction
-                readonly property string tokenKey: tokenViewPage.token.key
 
-                function signTransaction() {
-                    root.setFeeLoading()
+                readonly property string tokenName: footer.token.name
 
+                title: isRemotelyDestructTransaction
+                       ? qsTr("Sign transaction - Remotely destruct %1 token").arg(tokenName)
+                       : qsTr("Sign transaction - Burn %1 tokens").arg(tokenName)
+
+                accountName: footer.token.accountName
+
+                totalFeeText: isRemotelyDestructTransaction
+                              ? remotelyDestructPopup.feeText
+                              : burnTokensPopup.feeText
+
+                errorText: isRemotelyDestructTransaction
+                           ? remotelyDestructPopup.feeErrorText
+                           : burnTokensPopup.feeErrorText
+
+                model: QtObject {
+                    readonly property string title:
+                        signTransactionPopup.isRemotelyDestructTransaction
+                        ? qsTr("Remotely destruct %Ln %1 token(s) on %2", "",
+                               remotelyDestructPopup.tokenCount)
+                          .arg(remotelyDestructPopup.collectibleName)
+                          .arg(remotelyDestructPopup.chainName)
+                        : burnTokensPopup.feeLabel
+                    readonly property string feeText: signTransactionPopup.totalFeeText
+                    readonly property bool error: signTransactionPopup.errorText !== ""
+                }
+
+                onSignTransactionClicked: {
                     if(signTransactionPopup.isRemotelyDestructTransaction)
                         root.remotelyDestructCollectibles(footer.walletsAndAmounts,
                                                           tokenKey, footer.accountAddress)
@@ -715,59 +893,13 @@ StackView {
 
                     footer.closePopups()
                 }
-
-                title: signTransactionPopup.isRemotelyDestructTransaction
-                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(tokenName)
-                       : qsTr("Sign transaction - Burn %1 tokens").arg(tokenName)
-
-                tokenName: footer.token.name
-                accountName: footer.token.accountName
-                networkName: footer.token.chainName
-                feeText: root.feeText
-                isFeeLoading: root.isFeeLoading
-                errorText: root.feeErrorText
-
-                onOpened: {
-                    root.setFeeLoading()
-
-                    signTransactionPopup.isRemotelyDestructTransaction
-                            ? root.remotelyDestructFeesRequest(footer.walletsAndAmounts, tokenKey, footer.accountAddress)
-                            : root.signBurnTransactionOpened(tokenKey, footer.burnAmount, footer.accountAddress)
-                }
-                onSignTransactionClicked: signTransaction()
-            }
-
-            BurnTokensPopup {
-                id: burnTokensPopup
-
-                communityName: root.communityName
-                tokenName: footer.token.name
-                remainingTokens: footer.token.remainingTokens
-                multiplierIndex: footer.token.multiplierIndex
-                tokenSource: footer.token.artworkSource
-                chainName: footer.token.chainName
-
-                feeText: root.feeText
-                feeErrorText: root.feeErrorText
-                isFeeLoading: root.isFeeLoading
-                accounts: root.accounts
-
-                onBurnFeesRequested: root.burnFeesRequested(footer.token.key, burnAmount, accountAddress)
-
-                onBurnClicked: {
-                    burnTokensPopup.close()
-                    footer.burnAmount = burnAmount
-                    footer.accountAddress = accountAddress
-                    signTransactionPopup.isRemotelyDestructTransaction = false
-                    signTransactionPopup.open()
-                }
             }
         }
 
         AlertPopup {
             id: deleteTokenAlertPopup
 
-            readonly property alias tokenName: view.token.name
+            readonly property string tokenName: view.token.name
 
             width: 521
             title: qsTr("Delete %1").arg(tokenName)
@@ -799,6 +931,7 @@ StackView {
                 }
 
                 delegate: TokenViewPage {
+                    required property var model
                     implicitWidth: 0
                     anchors.fill: parent
 

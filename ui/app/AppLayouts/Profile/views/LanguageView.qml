@@ -48,8 +48,6 @@ SettingsContentBase {
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
             z: root.z + 2
 
             StatusBaseText {
@@ -87,8 +85,6 @@ SettingsContentBase {
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
             z: root.z + 1
 
             StatusBaseText {
@@ -162,8 +158,6 @@ SettingsContentBase {
         // Time format options:
         Column {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
             Layout.topMargin: Style.current.padding
             spacing: Style.current.padding
             StatusBaseText {

@@ -231,11 +231,6 @@ QtObject {
         stickersModuleInst.send(channelId, hash, replyTo, pack, url)
     }
 
-    // TODO: This seems to be better in Utils.qml
-    function copyToClipboard(text) {
-        globalUtilsInst.copyToClipboard(text)
-    }
-
     function isCurrentUser(pubkey) {
         return userProfileInst.pubKey === pubkey
     }
@@ -600,32 +595,12 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionSendInst.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
-    }
-
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
-        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
-    }
-
-    function suggestedFees(chainId) {
-        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
-    }
-
-    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
-        walletSectionSendInst.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }
 
     function getWei2Eth(wei) {
         return globalUtilsInst.wei2Eth(wei,18)
-    }
-
-    function getEth2Wei(eth) {
-         return globalUtilsInst.eth2Wei(eth, 18)
     }
 
     function getEtherscanLink() {
@@ -650,10 +625,6 @@ QtObject {
     function authenticateWithCallback(callback) {
         _d.authenticationCallbacks.push(callback)
         communitiesModuleInst.authenticateWithCallback()
-    }
-
-    function removePrivateKey(communityId) {
-        root.communitiesModuleInst.removePrivateKey(communityId)
     }
 
     readonly property Connections communitiesModuleConnections: Connections {

@@ -36,6 +36,7 @@ Item {
     property var emojiPopup
 
     property var store
+    property var communitiesStore
     property bool hasAddedContacts: false
     property var communityData
 
@@ -174,6 +175,13 @@ Item {
         }
 
         StatusAction {
+            objectName: "importCommunityChannelBtn"
+            text: qsTr("Create channel via Discord import")
+            icon.name: "download"
+            onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
+        }
+
+        StatusAction {
             objectName: "createCommunityCategoryBtn"
             text: qsTr("Create category")
             icon.name: "channel-category"
@@ -189,6 +197,7 @@ Item {
             text: qsTr("Invite people")
             icon.name: "share-ios"
             enabled: communityData.canManageUsers && adminPopupMenu.showInviteButton
+            objectName: "invitePeople"
             onTriggered: {
                 Global.openInviteFriendsToCommunityPopup(root.communityData,
                                                          root.communitySectionModule,
@@ -249,6 +258,13 @@ Item {
                 }
 
                 StatusAction {
+                    objectName: "importCommunityChannelBtn"
+                    text: qsTr("Create channel via Discord import")
+                    icon.name: "download"
+                    onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
+                }
+
+                StatusAction {
                     text: qsTr("Create category")
                     icon.name: "channel-category"
                     enabled: root.isSectionAdmin
@@ -261,6 +277,7 @@ Item {
                     text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
+                    objectName: "invitePeople"
                     onTriggered: {
                         Global.openInviteFriendsToCommunityPopup(root.communityData,
                                                                  root.communitySectionModule,
@@ -453,26 +470,6 @@ Item {
                         }
                 }
             } // Loader
-
-            Loader {
-                active: root.communityData.memberRole === Constants.memberRole.owner &&
-                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
-                width: parent.width
-                height: item.height
-                sourceComponent: Component {
-                        BackUpCommuntyBannerPanel {
-                            id: backupBanner
-                            communityId: communityData.id
-                            onBackupButtonClicked: {
-                                Global.openPopup(transferOwnershipPopup, {
-                                    privateKey: communitySectionModule.exportCommunity(communityData.id),
-                                    store: root.store
-                                })
-                            }
-                        }
-                }
-            } // Loader
         } // Column
 
         background: Item {
@@ -523,7 +520,7 @@ Item {
     Component {
         id: createChannelPopup
         CreateChannelPopup {
-            anchors.centerIn: parent
+            communitiesStore: root.communitiesStore
             emojiPopup: root.emojiPopup
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
                     chCategoryId) {
@@ -575,20 +572,5 @@ Item {
         title: qsTr("Error deleting the category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    Component {
-        id: transferOwnershipPopup
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            onClosed: {
-                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
-                if (hiddenBannerIds.includes(root.store.activeCommunity.id)) {
-                    return
-                }
-                hiddenBannerIds.push(root.store.activeCommunity.id)
-                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-            }
-        }
     }
 }

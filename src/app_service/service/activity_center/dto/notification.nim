@@ -57,6 +57,7 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   notificationType*: ActivityCenterNotificationType
   message*: MessageDto
   replyMessage*: MessageDto
+  albumMessages*: seq[MessageDto]
   timestamp*: int64
   read*: bool
   dismissed*: bool
@@ -117,13 +118,18 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("accepted", result.accepted)
 
   if jsonObj.contains("message") and jsonObj{"message"}.kind != JNull:
-    result.message = jsonObj{"message"}.toMessageDto()
+    result.message = jsonObj["message"].toMessageDto()
   elif result.notificationType == ActivityCenterNotificationType.NewOneToOne and
     jsonObj.contains("lastMessage") and jsonObj{"lastMessage"}.kind != JNull:
-    result.message = jsonObj{"lastMessage"}.toMessageDto()
+    result.message = jsonObj["lastMessage"].toMessageDto()
 
   if jsonObj.contains("replyMessage") and jsonObj{"replyMessage"}.kind != JNull:
-    result.replyMessage = jsonObj{"replyMessage"}.toMessageDto()
+    result.replyMessage = jsonObj["replyMessage"].toMessageDto()
+
+  if jsonObj.contains("albumMessages") and jsonObj{"albumMessages"}.kind != JNull:
+    let jsonAlbum = jsonObj["albumMessages"]
+    for msg in jsonAlbum:
+      result.albumMessages.add(toMessageDto(msg))
 
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotificationDto]) =
   var notifs: seq[ActivityCenterNotificationDto] = @[]

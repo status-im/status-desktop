@@ -98,11 +98,6 @@ proc init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED) do(e:Args):
-    let args = CommunityArgs(e)
-    self.delegate.communityEdited(args.community)
-    self.delegate.communityPrivateKeyRemoved(args.community.id)
-
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):
@@ -114,6 +109,11 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
+      self.delegate.curatedCommunityEdited(community)
+
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_UPDATED) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
       self.delegate.curatedCommunityEdited(community)
 
   self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
@@ -311,9 +311,6 @@ proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] 
 
 proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, importing)
-
-proc removePrivateKey*(self: Controller, communityId: string) =
-  self.communityService.removePrivateKey(communityId)
 
 proc importCommunity*(self: Controller, communityKey: string) =
   self.communityService.asyncImportCommunity(communityKey)

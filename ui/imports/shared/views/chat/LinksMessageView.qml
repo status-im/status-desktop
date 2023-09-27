@@ -7,6 +7,7 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import shared.status 1.0
 import shared.panels 1.0
@@ -16,15 +17,15 @@ import shared.controls.chat 1.0
 ColumnLayout {
     id: root
 
-    property var store
-    property var messageStore
+    required property var store
+    required property var messageStore
 
-    property var linkPreviewModel
-    property var localUnfurlLinks
+    required property var linkPreviewModel
+    required property var localUnfurlLinks
 
-    property bool isCurrentUser: false
+    required property bool isCurrentUser
 
-    signal imageClicked(var image, var mouse, var imageSource)
+    signal imageClicked(var image, var mouse, var imageSource, string url)
 
     Repeater {
         id: linksRepeater
@@ -47,47 +48,38 @@ ColumnLayout {
             property bool animated: false
 
             asynchronous: true
+            active: unfurled && hostname != ""
 
-            StateGroup {
-                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
-                states: [
-                    State {
-                        name: "loadLinkPreview"
-                        when: linkMessageLoader.linkType === Constants.LinkPreviewType.Link
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledLinkComponent }
-                    },
-                    State {
-                        name: "loadImage"
-                        when: linkMessageLoader.linkType === Constants.LinkPreviewType.Image
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledImageComponent }
-                    }
-                    // NOTE: New unfurling not yet suppport status links.
-                    //       Uncomment code below when implemented:
-                    //       - https://github.com/status-im/status-go/issues/3762
-                    // State {
-                    //     name: "statusInvitation"
-                    //     when: linkMessageLoader.isStatusDeepLink
-                    //     PropertyChanges { target: linkMessageLoader; sourceComponent: invitationBubble }
-                    // }
-                ]
+            sourceComponent: LinkPreviewCard {
+                id: unfurledLink
+                leftTail: !root.isCurrentUser
+
+                bannerImageSource: thumbnailUrl
+                title: parent.title
+                description: parent.description
+                footer: hostname
+                onClicked:  {
+                    Global.openLink(url)
+                }
             }
         }
     }
 
+    //TODO: Remove this once we have gif support in new unfurling flow
     Component {
         id: unfurledImageComponent
 
-        MessageBorder {
+        CalloutCard {
             implicitWidth: linkImage.width
             implicitHeight: linkImage.height
-            isCurrentUser: root.isCurrentUser
+            leftTail: !root.isCurrentUser
 
             StatusChatImageLoader {
                 id: linkImage
 
                 readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
+                readonly property string urlLink: url
                 property bool localAnimationEnabled: true
-
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
                 source: thumbnailUrl
@@ -101,7 +93,7 @@ ColumnLayout {
                     if (isAnimated && !playing)
                         localAnimationEnabled = true
                     else
-                        root.imageClicked(linkImage.imageAlias, mouse, source)
+                        root.imageClicked(linkImage.imageAlias, mouse, source, urlLink)
                 }
                 imageAlias.cache: localAnimationEnabled // GIFs can only loop/play properly with cache enabled
                 Loader {
@@ -138,6 +130,8 @@ ColumnLayout {
         }
     }
 
+    // Code below can be dropped when New unfurling flow suppports GIFs.
+
     Component {
         id: invitationBubble
 
@@ -165,78 +159,6 @@ ColumnLayout {
             }
         }
     }
-
-    Component {
-        id: unfurledLinkComponent
-
-        MessageBorder {
-            id: unfurledLink
-            implicitWidth: linkImage.visible ? linkImage.width + 2 : 300
-            implicitHeight: {
-                if (linkImage.visible) {
-                    return linkImage.height + (Style.current.smallPadding * 2) + (linkTitle.height + 2 + linkSite.height)
-                }
-                return (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
-            }
-            isCurrentUser: root.isCurrentUser
-
-            StatusChatImageLoader {
-                id: linkImage
-                objectName: "LinksMessageView_unfurledLinkComponent_linkImage"
-                source: thumbnailUrl
-                visible: thumbnailUrl.length
-                imageWidth: Math.min(300, thumbnailWidth > 0 ? thumbnailWidth : 300)
-                isCurrentUser: root.isCurrentUser
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                isOnline: root.store.mainModuleInst.isOnline
-                asynchronous: true
-                onClicked: {
-                    Global.openLink(url)
-                }
-            }
-
-            StatusBaseText {
-                id: linkTitle
-                text: title
-                font.pixelSize: 13
-                font.weight: Font.Medium
-                wrapMode: Text.Wrap
-                anchors.top: linkImage.visible ? linkImage.bottom : parent.top
-                anchors.topMargin: Style.current.smallPadding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.smallPadding
-                anchors.rightMargin: Style.current.smallPadding
-            }
-
-            StatusBaseText {
-                id: linkSite
-                text: hostname
-                font.pixelSize: 12
-                font.weight: Font.Thin
-                color: Theme.palette.baseColor1
-                anchors.top: linkTitle.bottom
-                anchors.topMargin: 2
-                anchors.left: linkTitle.left
-                anchors.bottomMargin: Style.current.halfPadding
-            }
-
-            MouseArea {
-                anchors.top: linkImage.visible ? linkImage.top : linkTitle.top
-                anchors.left: linkImage.visible ? linkImage.left : linkTitle.left
-                anchors.right: linkImage.visible ? linkImage.right : linkTitle.right
-                anchors.bottom: linkSite.bottom
-                cursorShape: Qt.PointingHandCursor
-                onClicked:  {
-                    Global.openLink(url)
-                }
-            }
-        }
-    }
-
-
-    // Code below can be dropped when New unfurling flow suppports GIFs.
 
     QtObject {
         id: d
@@ -307,7 +229,7 @@ ColumnLayout {
             required property bool success
             required property bool isStatusDeepLink
             readonly property bool isImage: result.contentType ? result.contentType.startsWith("image/") : false
-
+            readonly property bool isUserProfileLink: link.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase())
             readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
             readonly property string title: result && result.title ? result.title : ""
             readonly property string hostname: result && result.site ? result.site : ""
@@ -326,18 +248,44 @@ ColumnLayout {
                         name: "loadImage"
                         when: tempLoader.unfurl && tempLoader.isImage
                         PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
+                    },
+                    State {
+                        name: "userProfileLink"
+                        when: unfurl && isUserProfileLink && isStatusDeepLink
+                        PropertyChanges { target: tempLoader; sourceComponent: unfurledProfileLinkComponent }
                     }
-//                    State {
-//                        name: "loadLinkPreview"
-//                        when: unfurl && !isImage && !isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: unfurledLinkComponent }
-//                    },
 //                    State {
 //                        name: "statusInvitation"
 //                        when: unfurl && isStatusDeepLink
 //                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
 //                    }
                 ]
+            }
+        }
+    }
+
+    Component {
+        id: unfurledProfileLinkComponent
+        UserProfileCard {
+            id: unfurledProfileLink
+            readonly property var contact: Utils.parseContactUrl(parent.link)
+            readonly property var contactDetails: Utils.getContactDetailsAsJson(contact.publicKey)
+
+            readonly property string nickName: contactDetails ? contactDetails.localNickname : ""
+            readonly property string ensName: contactDetails ? contactDetails.name : ""
+            readonly property string displayName: contact && contact.displayName ? contact.displayName : 
+                                     contactDetails && contactDetails.displayName ? contactDetails.displayName : ""
+            readonly property string aliasName: contactDetails ? contactDetails.alias : ""
+
+            leftTail: !root.isCurrentUser
+            userName: ProfileUtils.displayName(nickName, ensName, displayName, aliasName)
+                      
+            userPublicKey: contactDetails && contactDetails.publicKey ? contactDetails.publicKey : ""
+            userBio: contactDetails && contactDetails.bio ? contactDetails.bio : ""
+            userImage: contactDetails && contactDetails.thumbnailImage ? contactDetails.thumbnailImage : ""
+            ensVerified: contactDetails && contactDetails.ensVerified ? contactDetails.ensVerified : false
+            onClicked: {
+                Global.openProfilePopup(userPublicKey)
             }
         }
     }
@@ -453,7 +401,5 @@ ColumnLayout {
             }
         }
     }
-
-
 
 }

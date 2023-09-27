@@ -1,13 +1,13 @@
 import NimQml, chronicles, json, strutils, sequtils, tables
 
-import ../../common/types as common_types
-import ../../common/social_links
-import ../../common/utils as common_utils
-import ../../../app/core/eventemitter
-import ../../../app/core/fleets/fleet_configuration
-import ../../../app/core/signals/types
-import ../../../backend/settings as status_settings
-import ../../../backend/status_update as status_update
+import app_service/common/types as common_types
+import app_service/common/social_links
+import app_service/common/utils as common_utils
+import app/core/eventemitter
+import app/core/fleets/fleet_configuration
+import app/core/signals/types
+import backend/settings as status_settings
+import backend/status_update as status_update
 
 import ./dto/settings as settings_dto
 import ../stickers/dto/stickers as stickers_dto
@@ -28,6 +28,7 @@ const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED* = "includeWatchOnlyAccounts"
+const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 
 logScope:
   topics = "settings-service"
@@ -115,7 +116,10 @@ QtObject:
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
           if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
             self.settings.includeWatchOnlyAccount = settingsField.value.getBool
-            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
+            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: self.settings.includeWatchOnlyAccount))
+          if settingsField.name == PROFILE_MIGRATION_NEEDED:
+            self.settings.profileMigrationNeeded = settingsField.value.getBool
+            self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
 
       if receivedData.socialLinksInfo.links.len > 0 or
         receivedData.socialLinksInfo.removed:
@@ -978,3 +982,6 @@ QtObject:
     if(self.saveSetting(INCLUDE_WATCH_ONLY_ACCOUNT, newValue)):
       self.settings.includeWatchOnlyAccount = newValue
       self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: newValue))
+
+  proc getProfileMigrationNeeded*(self: Service): bool =
+    self.settings.profileMigrationNeeded

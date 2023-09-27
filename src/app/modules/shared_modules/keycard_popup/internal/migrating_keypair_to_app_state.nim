@@ -17,7 +17,8 @@ method executePrePrimaryStateCommand*(self: MigratingKeypairToAppState, controll
     let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
     if migratingProfile:
       let newPassword = controller.getNewPassword()
-      controller.tryToStoreDataToKeychain(newPassword)
+      if singletonInstance.localAccountSettings.getStoreToKeychainValue() == LS_VALUE_STORE:
+        controller.tryToStoreDataToKeychain(newPassword)
       controller.convertKeycardProfileKeypairToRegular(sp, password, newPassword)
       return
     controller.migrateNonProfileKeycardKeypairToApp(kpForProcessing.getKeyUid(), sp, password,
@@ -26,7 +27,11 @@ method executePrePrimaryStateCommand*(self: MigratingKeypairToAppState, controll
 method executePreTertiaryStateCommand*(self: MigratingKeypairToAppState, controller: Controller) =
   ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.MigrateFromKeycardToApp:
-    self.migrationOk = controller.getConvertingProfileSuccess()
+    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    if migratingProfile:
+      self.migrationOk = controller.getConvertingProfileSuccess()
+      return
+    self.migrationOk = controller.getAddingMigratedKeypairSuccess()
 
 method getNextTertiaryState*(self: MigratingKeypairToAppState, controller: Controller): State =
   if self.flowType == FlowType.MigrateFromKeycardToApp:

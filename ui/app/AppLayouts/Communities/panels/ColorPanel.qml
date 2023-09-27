@@ -13,10 +13,11 @@ StatusScrollView {
     id: root
 
     property string title: qsTr("Community Colour")
+    property string buttonText: qsTr("Select Community Colour")
 
     property var rightButtons: StatusButton {
         objectName: "communityColorPanelSelectColorButton"
-        text: qsTr("Select Community Colour")
+        text: root.buttonText
         onClicked: root.accepted()
         enabled: hexInput.valid
     }

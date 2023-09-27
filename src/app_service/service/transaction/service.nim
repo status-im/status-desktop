@@ -44,8 +44,9 @@ const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 
-const SIMPLE_TX_BRIDGE_NAME = "Simple"
+const SIMPLE_TX_BRIDGE_NAME = "Transfer"
 const HOP_TX_BRIDGE_NAME = "Hop"
+const ERC721_TRANSFER_NAME = "ERC721Transfer"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -214,16 +215,17 @@ QtObject:
     txData.data = data
 
     var path = TransactionBridgeDto(bridgeName: SIMPLE_TX_BRIDGE_NAME, chainID: route.fromNetwork.chainId)
-    path.simpleTx = txData
+    path.transferTx = txData
     return path
 
   proc createPath*(self: Service, route: TransactionPathDto, txData: TransactionDataDto, tokenSymbol: string, to_addr: string): TransactionBridgeDto =
     var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
     var hopTx = TransactionDataDto()
     var cbridgeTx = TransactionDataDto()
+    var eRC721TransferTx = TransactionDataDto()
 
     if(route.bridgeName == SIMPLE_TX_BRIDGE_NAME):
-      path.simpleTx = txData
+      path.transferTx = txData
     elif(route.bridgeName == HOP_TX_BRIDGE_NAME):
       hopTx = txData
       hopTx.chainID =  route.toNetwork.chainId.some
@@ -232,6 +234,12 @@ QtObject:
       hopTx.amount = route.amountIn.some
       hopTx.bonderFee = route.bonderFees.some
       path.hopTx = hopTx
+    elif(route.bridgeName == ERC721_TRANSFER_NAME):
+      eRC721TransferTx = txData
+      eRC721TransferTx.chainID =  route.toNetwork.chainId.some
+      eRC721TransferTx.recipient = parseAddress(to_addr).some
+      eRC721TransferTx.tokenID = stint.u256(tokenSymbol).some
+      path.eRC721TransferTx = eRC721TransferTx
     else:
       cbridgeTx = txData
       cbridgeTx.chainID =  route.toNetwork.chainId.some
@@ -239,7 +247,6 @@ QtObject:
       cbridgeTx.recipient = parseAddress(to_addr).some
       cbridgeTx.amount = route.amountIn.some
       path.cbridgeTx = cbridgeTx
-
     return path
 
   proc transferEth*(
@@ -254,7 +261,7 @@ QtObject:
   ) =
     try:
       var paths: seq[TransactionBridgeDto] = @[]
-      let amountToSend = conversion.eth2Wei(parseFloat(value), 18)
+      let amountToSend = value.parse(Uint256)
       let toAddress = parseAddress(to_addr)
 
       for route in routes:
@@ -303,19 +310,30 @@ QtObject:
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
+    sendType: SendType
   ) =
     try:
+      let isERC721Transfer = sendType == ERC721Transfer
       var paths: seq[TransactionBridgeDto] = @[]
       var chainID = 0
 
       if(routes.len > 0):
         chainID = routes[0].fromNetwork.chainID
 
-      let network = self.networkService.getNetwork(chainID)
+      var toAddress: Address
+      var tokenSym = tokenSymbol
+      let amountToSend = value.parse(Uint256)
 
-      let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSymbol)
-      let amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
-      let toAddress = token.address
+      if isERC721Transfer:
+        let contract_tokenId = tokenSym.split(":")
+        if contract_tokenId.len == 2:
+          toAddress = parseAddress(contract_tokenId[0])
+          tokenSym = contract_tokenId[1]
+      else:
+        let network = self.networkService.getNetwork(chainID)
+        let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSym)
+        toAddress = token.address
+
       let transfer = Transfer(
         to: parseAddress(to_addr),
         value: amountToSend,
@@ -336,14 +354,15 @@ QtObject:
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.data = data
 
-        paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
+        paths.add(self.createPath(route, txData, tokenSym, to_addr))
 
-      let response = transactions.createMultiTransaction(
+      var response: RpcResponse[JsonNode]
+      response = transactions.createMultiTransaction(
         MultiTransactionCommandDto(
           fromAddress: from_addr,
           toAddress: to_addr,
-          fromAsset: tokenSymbol,
-          toAsset: tokenSymbol,
+          fromAsset: tokenSym,
+          toAsset: tokenSym,
           fromAmount:  "0x" & amountToSend.toHex,
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
@@ -368,6 +387,7 @@ QtObject:
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
     password: string,
+    sendType: SendType
   ) =
     try:
       var chainID = 0
@@ -383,7 +403,7 @@ QtObject:
       if(isEthTx):
         self.transferEth(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
       else:
-        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
+        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
@@ -404,7 +424,7 @@ QtObject:
       error "error handling suggestedRoutesReady response", errDesription=e.msg
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -446,6 +466,12 @@ QtObject:
       return response.result{"number"}.getStr
     except Exception as e:
       error "Error getting latest block number", message = e.msg
+    
+  proc getEstimatedLatestBlockNumber*(self: Service, chainId: int): string =
+    try:
+      return $eth.getEstimatedLatestBlockNumber(chainId).result
+    except Exception as e:
+      error "Error getting estimated latest block number", message = e.msg
       return ""
 
 proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =

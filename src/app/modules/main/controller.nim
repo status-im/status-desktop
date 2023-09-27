@@ -1,29 +1,29 @@
 import chronicles, stint, tables
-import ../../global/app_sections_config as conf
-import ../../global/global_singleton
-import ../../global/app_signals
-import ../../core/signals/types as signal_types
-import ../../core/eventemitter
-import ../../core/notifications/notifications_manager
-import ../../../app_service/common/types
-import ../../../app_service/service/settings/service as settings_service
-import ../../../app_service/service/node_configuration/service as node_configuration_service
-import ../../../app_service/service/accounts/service as accounts_service
-import ../../../app_service/service/chat/service as chat_service
-import ../../../app_service/service/community/service as community_service
-import ../../../app_service/service/contacts/service as contacts_service
-import ../../../app_service/service/message/service as message_service
-import ../../../app_service/service/gif/service as gif_service
-import ../../../app_service/service/mailservers/service as mailservers_service
-import ../../../app_service/service/privacy/service as privacy_service
-import ../../../app_service/service/node/service as node_service
-import ../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/token/service as token_service
-import ../../../app_service/service/network/service as networks_service
-import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+import app/global/app_sections_config as conf
+import app/global/global_singleton
+import app/global/app_signals
+import app/core/signals/types as signal_types
+import app/core/eventemitter
+import app/core/notifications/notifications_manager
+import app_service/common/types
+import app_service/service/settings/service as settings_service
+import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/message/service as message_service
+import app_service/service/gif/service as gif_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/node/service as node_service
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/network/service as networks_service
+import app_service/service/visual_identity/service as procs_from_visual_identity_service
 
-import ../../../app_service/service/community_tokens/community_collectible_owner
+import app_service/service/community_tokens/community_collectible_owner
 
 import io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -31,8 +31,9 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 logScope:
   topics = "main-module-controller"
 
-const UNIQUE_MAIN_MODULE_IDENTIFIER* = "MainModule"
+const UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER* = "MainModule-AuthenticateKeypair"
 const UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER* = "MainModule-KeycardSyncPurpose"
+const UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER* = "MainModule-SharedKeycardModule"
 
 type
   Controller* = ref object of RootObj
@@ -252,10 +253,6 @@ proc init*(self: Controller) =
     let args = CommunityMembersRevealedAccountsArgs(e)
     self.delegate.communityMembersRevealedAccountsLoaded(args.communityId, args.membersRevealedAccounts)
 
-  self.events.on(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED) do(e:Args):
-    let args = CommunityArgs(e)
-    self.delegate.communityEdited(args.community)
-
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
@@ -268,30 +265,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
-
-  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactUpdated(args.contactId)
-
-  self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
-    let args = ContactsStatusUpdatedArgs(e)
-    self.delegate.contactsStatusUpdated(args.statusUpdates)
-
-  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactUpdated(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
-
-  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
-
-  self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
-    var args = TrustArgs(e)
-    self.delegate.contactUpdated(args.publicKey)
 
   self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
     self.delegate.mnemonicBackedUp()
@@ -418,10 +391,14 @@ proc init*(self: Controller) =
       self.delegate.onSharedKeycarModuleKeycardSyncPurposeTerminated(args.lastStepInTheCurrentFlow)
       self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED, Args())
       return
-    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or
+    if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER:
+      self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow, args.continueWithNextFlow,
+        args.forceFlow, args.continueWithKeyUid, args.returnToFlow)
+      return
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER or
       self.authenticateUserFlowRequestedBy.len == 0:
         return
-    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+    self.delegate.onSharedKeycarModuleForAuthenticationTerminated(args.lastStepInTheCurrentFlow)
     let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
       password: args.password,
       pin: args.pin,
@@ -435,10 +412,13 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
     let args = SharedKeycarModuleBaseArgs(e)
-    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or
+    if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER:
+      self.delegate.onDisplayKeycardSharedModuleFlow()
+      return
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER or
       self.authenticateUserFlowRequestedBy.len == 0:
         return
-    self.delegate.onDisplayKeycardSharedModuleFlow()
+    self.delegate.onDisplayKeycardSharedModuleForAuthentication()
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER) do(e: Args):
     let args = SharedKeycarModuleAuthenticationArgs(e)
@@ -448,6 +428,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
     self.delegate.tryKeycardSync(args.keyUid, args.pin)
+
+  self.events.on(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED) do(e: Args):
+    self.delegate.checkAndPerformProfileMigrationIfNeeded()
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
@@ -551,4 +534,4 @@ proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: strin
   self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
-  self.communityService.asyncReevaluateCommunityMembersPermissions(communityId) 
+  self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)

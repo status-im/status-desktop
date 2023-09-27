@@ -24,8 +24,6 @@ Rectangle {
     id: control
     objectName: "statusChatInput"
 
-    signal sendTransactionCommandButtonClicked()
-    signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal keyUpPress()
@@ -46,8 +44,9 @@ Rectangle {
     property bool isImage: false
     property bool isEdit: false
 
-    property int messageLimit: 2000
-    property int messageLimitVisible: 200
+    readonly property int messageLimit: 2000 // actual message limit, we don't allow sending more than that
+    readonly property int messageLimitSoft: 200 // we start showing a char counter when this no. of chars left in the message
+    readonly property int messageLimitHard: 20000 // still cut-off attempts to paste beyond this limit, for app usability reasons
 
     property int chatType
 
@@ -57,7 +56,7 @@ Rectangle {
 
     property var fileUrlsAndSources: []
 
-    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this proeprty?
+    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
     property alias suggestions: suggestionsBox
 
@@ -172,7 +171,6 @@ Rectangle {
             }
         }
 
-        property bool chatCommandsPopupOpen: false
         property Menu textFormatMenu: null
 
         function copyMentions(start, end) {
@@ -277,7 +275,7 @@ Rectangle {
     }
 
     function insertInTextInput(start, text) {
-        // Repace new lines with entities because `insert` gets rid of them
+        // Replace new lines with entities because `insert` gets rid of them
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
@@ -328,26 +326,33 @@ Rectangle {
     }
 
     function onKeyPress(event) {
+        // get text without HTML formatting
+        const messageLength = messageInputField.getText(0, messageInputField.length).length;
+
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
             }
-
-            if (messageInputField.length <= messageLimit) {
+            if (messageLength <= messageLimit) {
                 checkForInlineEmojis(true);
-                control.sendMessage(event)
+                control.sendMessage(event);
                 control.hideExtendedArea();
-                event.accepted = true
+                event.accepted = true;
                 return;
             }
-            if (event) {
-                event.accepted = true
-                console.error("Attempting to send a message exceeding length limit")
+            else {
+                // pop-up a warning message when trying to send a message over the limit
+                messageLengthLimitTooltip.open();
+                event.accepted = true;
+                return;
             }
-        } else if (event.key === Qt.Key_Escape && control.isReply) {
-            control.isReply = false
-            event.accepted = true
+        }
+
+        if (event.key === Qt.Key_Escape && control.isReply) {
+            control.isReply = false;
+            event.accepted = true;
+            return;
         }
 
         const symbolPressed = event.text.length > 0 &&
@@ -430,6 +435,16 @@ Rectangle {
                 validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
             } else if (QClipboardProxy.hasText) {
+                const clipboardText = Utils.plainText(QClipboardProxy.text)
+                // prevent repetitive & huge clipboard paste, where huge is total char count > than messageLimitHard
+                const selectionLength = messageInputField.selectionEnd - messageInputField.selectionStart;
+                if ((messageLength + clipboardText.length - selectionLength) > control.messageLimitHard)
+                {
+                    messageLengthLimitTooltip.open();
+                    event.accepted = true;
+                    return;
+                }
+
                 messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
 
                 // cursor position must be stored in a helper property because setting readonly to true causes change
@@ -437,7 +452,6 @@ Rectangle {
                 d.copyTextStart = messageInputField.cursorPosition
                 messageInputField.readOnly = true
 
-                const clipboardText = Utils.plainText(QClipboardProxy.text)
                 const copiedText = Utils.plainText(d.copiedTextPlain)
                 if (copiedText === clipboardText) {
                     if (d.copiedTextPlain.includes("@")) {
@@ -470,6 +484,7 @@ Rectangle {
                     ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(QClipboardProxy.text) + "</div>")
                     : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
                 }
+                event.accepted = true
             }
         }
 
@@ -532,7 +547,7 @@ Rectangle {
     function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
-        // calulate the new selection start and end positions
+        // Calculate the new selection start and end positions
         var newSelectionStart = messageInputField.selectionStart -  unwrapWith.length
         var newSelectionEnd = messageInputField.selectionEnd-messageInputField.selectionStart + newSelectionStart
 
@@ -602,51 +617,6 @@ Rectangle {
         }
 
         return result
-    }
-
-    function setFormatInInput(formationFunction, startTag, endTag, formationChar, numFormationChars) {
-        const inputText = getFormattedText()
-        const plainInputText = messageInputField.getText(0, messageInputField.length)
-
-        let lengthDifference
-
-        try {
-            const result = formationFunction(inputText)
-
-            if (!result) {
-                return
-            }
-            const parsed = JSON.parse(result)
-
-            let substring
-            let nbEmojis
-            parsed.forEach(function (match) {
-                match[1] += 1
-                const truncatedInputText = inputText.substring(0, match[1] + numFormationChars)
-                const truncatedPlainText = plainInputText.substring(0, messageInputField.cursorPosition)
-
-                const lengthDifference = truncatedInputText.length - truncatedPlainText.length
-
-                nbEmojis = StatusQUtils.Emoji.nbEmojis(truncatedInputText)
-
-
-                match[1] += (nbEmojis * -2)
-                match[0] += (nbEmojis * -2)
-                substring = inputText.substring(match[0], match[1])
-
-                if (plainInputText.charAt(match[0] - 1) !== formationChar) {
-                    match[0] -= lengthDifference
-                    match[1] -= lengthDifference
-                } else {
-                    match[1] -= lengthDifference
-                }
-
-                messageInputField.remove(match[0], match[1])
-                insertInTextInput(match[0], `${startTag}${substring}${endTag}`)
-            })
-        } catch (e) {
-            //
-        }
     }
 
     function onRelease(event) {
@@ -913,7 +883,7 @@ Rectangle {
         control.fileUrlsAndSources = imageArea.imageSource
     }
 
-    // Use this to validate and show the images. The concatanation of previous selected images is done automatically
+    // Use this to validate and show the images. The concatenation of previous selected images is done automatically
     // Returns true if the images were valid and added
     function validateImagesAndShowImageArea(imagePaths) {
         const validImages = validateImages(imagePaths)
@@ -940,6 +910,7 @@ Rectangle {
 
     Connections {
         target: Global.dragArea
+        enabled: control.visible
         ignoreUnknownSignals: true
         function onDroppedOnValidScreen(drop) {
             let dropUrls = drop.urls
@@ -1021,35 +992,6 @@ Rectangle {
     }
 
     Component {
-        id: chatCommandsPopupComponent
-
-        ChatCommandsPopup {
-            id: chatCommandsPopup
-            x: 8
-            y: -height
-            onSendTransactionCommandButtonClicked: {
-                control.sendTransactionCommandButtonClicked()
-                close()
-            }
-            onReceiveTransactionCommandButtonClicked: {
-                control.receiveTransactionCommandButtonClicked()
-                close()
-            }
-            onClosed: {
-                chatCommandsBtn.highlighted = false
-                destroy()
-            }
-            onOpened: {
-                chatCommandsBtn.highlighted = true
-            }
-            Component.onDestruction: {
-                if (d.chatCommandsPopupOpen)
-                    d.chatCommandsPopupOpen = false;
-            }
-        }
-    }
-
-    Component {
         id: gifPopupComponent
 
         StatusGifPopup {
@@ -1081,26 +1023,6 @@ Rectangle {
         anchors.fill: parent
         spacing: 4
 
-        // TODO remove that Loader when the Chat Commands are re-implemented and fixed
-        Loader {
-            id: chatCommandsBtnLoader
-            active: false
-            sourceComponent: StatusQ.StatusFlatRoundButton {
-                id: chatCommandsBtn
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                Layout.alignment: Qt.AlignBottom
-                Layout.bottomMargin: 4
-                icon.name: "chat-commands"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                onClicked: {
-                    d.chatCommandsPopupOpen ? Global.closePopup() : Global.openPopup(chatCommandsPopup);
-                    d.chatCommandsPopupOpen = !d.chatCommandsPopupOpen;
-                }
-                visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
-            }
-        }
-
         StatusQ.StatusFlatRoundButton {
             id: imageBtn
             Layout.preferredWidth: 32
@@ -1120,15 +1042,20 @@ Rectangle {
         Rectangle {
             id: messageInput
 
-            readonly property int defaultInputFieldHeight: 40
-
             Layout.fillWidth: true
-
             implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
             implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
 
             color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
             radius: 20
+
+            StatusQ.StatusToolTip {
+                id: messageLengthLimitTooltip
+                text: messageInputField.length >= control.messageLimitHard ? qsTr("Please reduce the message length")
+                      : qsTr("Maximum message character count is %n", "", control.messageLimit)
+                orientation: StatusQ.StatusToolTip.Orientation.Top
+                timeout: 3000 // show for 3 seconds
+            }
 
             Component {
                 id: textFormatMenuComponent
@@ -1255,7 +1182,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.minimumHeight: (messageInputField.contentHeight + messageInputField.topPadding + messageInputField.bottomPadding)
-                    Layout.maximumHeight: 112
+                    Layout.maximumHeight: 200
                     spacing: Style.current.radius
                     StatusScrollView {
                         id: inputScrollView
@@ -1346,9 +1273,10 @@ Rectangle {
                                     } else {
                                         checkForInlineEmojis()
                                     }
-                                } else {
-                                    const removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
+                                } else if (length > control.messageLimitHard) {
+                                    const removeFrom = (cursorPosition < messageLimitHard) ? cursorWhenPressed : messageLimitHard;
                                     remove(removeFrom, cursorPosition);
+                                    messageLengthLimitTooltip.open();
                                 }
 
                                 d.updateMentionsPositions()
@@ -1452,9 +1380,26 @@ Rectangle {
                             property int remainingChars: -1
                             leftPadding: Style.current.halfPadding
                             rightPadding: Style.current.halfPadding
-                            visible: ((messageInputField.length >= control.messageLimitVisible) && (messageInputField.length <= control.messageLimit))
-                            color: (remainingChars <= messageLimitVisible) ? Style.current.danger : Style.current.textColor
+                            visible: messageInputField.length >= control.messageLimit - control.messageLimitSoft
+                            color: {
+                                if (remainingChars  >= 0)
+                                    return Style.current.textColor
+                                else
+                                    return Style.current.danger
+                            }
                             text: visible ? remainingChars.toString() : ""
+
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    messageLengthLimitTooltip.open()
+                                }
+                                onExited: {
+                                    messageLengthLimitTooltip.hide()
+                                }
+                            }
                         }
 
                         Row {
@@ -1534,6 +1479,5 @@ Rectangle {
                 }
             }
         }
-
     }
 }

@@ -166,6 +166,7 @@ StatusSectionLayout {
                 StatusAction {
                     text: "Invite people"
                     icon.name: "share-ios"
+                    objectName: "invitePeople"
                 }
 
             }
@@ -270,6 +271,7 @@ StatusSectionLayout {
                     StatusAction {
                         text: "Invite people"
                         icon.name: "share-ios"
+                        objectName: "invitePeople"
                     }
                 }
             }

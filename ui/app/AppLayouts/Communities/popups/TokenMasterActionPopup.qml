@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.panels 1.0
 
@@ -36,11 +37,17 @@ StatusDialog {
     property string communityName
     property string userName
     property string networkName
-
+    
     property string feeText
     property string feeErrorText
     property bool isFeeLoading
+
+
     property var accountsModel
+    readonly property alias selectedAccount: d.accountAddress
+    readonly property alias selectedAccountName: d.accountName
+
+    readonly property alias deleteMessages: deleteMessagesSwitch.checked
 
     readonly property string feeLabel: qsTr("Remotely destruct 1 TokenMaster token on %1").arg(
                                            root.networkName)
@@ -48,6 +55,13 @@ StatusDialog {
     signal remotelyDestructClicked
     signal kickClicked
     signal banClicked
+
+    QtObject {
+        id: d
+
+        property string accountAddress: ""
+        property string accountName: ""
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -140,8 +154,18 @@ StatusDialog {
 
                 readonly property string title: root.feeLabel
                 readonly property string feeText: root.isFeeLoading ?
-                                                      "" : root.feeText
+                                                  "" : root.feeText
                 readonly property bool error: root.feeErrorText !== ""
+            }
+
+            accountsSelector.onCurrentIndexChanged: {
+                if (accountsSelector.currentIndex < 0)
+                    return
+
+                const item = ModelUtils.get(accountsSelector.model,
+                                            accountsSelector.currentIndex)
+                d.accountAddress = item.address
+                d.accountName = item.name
             }
         }
     }
@@ -156,7 +180,6 @@ StatusDialog {
             }
             StatusButton {
                 enabled: !root.isFeeLoading && root.feeErrorText === ""
-                         && root.feeText !== ""
                 text: {
                     if (root.actionType === TokenMasterActionPopup.ActionType.Ban)
                         return qsTr("Ban %1 and remotely destruct 1 token").arg(root.userName)

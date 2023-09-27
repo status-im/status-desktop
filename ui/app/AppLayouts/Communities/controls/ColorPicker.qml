@@ -13,15 +13,17 @@ ColumnLayout {
     id: root
 
     property color color: Theme.palette.primaryColor1
+    property string title: qsTr("Community colour")
 
     signal pick()
 
     spacing: 8
 
     implicitHeight: childrenRect.height
+
     StatusBaseText {
-        text: qsTr("Community colour")
-        font.pixelSize: 15
+        Layout.fillWidth: true
+        text: root.title
     }
 
     StatusPickerButton {

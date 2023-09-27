@@ -29,7 +29,13 @@ ColumnLayout {
     property var overview
     property bool showAllAccounts: false
 
-    signal launchTransactionDetail(var transaction)
+    signal launchTransactionDetail(var transaction, int entryIndex)
+
+    function resetView() {
+        if (!!filterPanelLoader.item) {
+            filterPanelLoader.item.resetView()
+        }
+    }
 
     onVisibleChanged: {
         if (!visible)
@@ -291,12 +297,12 @@ ColumnLayout {
         property var transaction
         property var transactionDelegate
 
-        function openMenu(delegate, mouse) {
-            if (!delegate || !delegate.modelData)
+        function openMenu(delegate, mouse, data) {
+            if (!delegate || !data)
                 return
 
             delegateMenu.transactionDelegate = delegate
-            delegateMenu.transaction = delegate.modelData
+            delegateMenu.transaction = data
             repeatTransactionAction.enabled = !overview.isWatchOnlyAccount && delegate.modelData.txType === TransactionDelegate.Send
             popup(delegate, mouse.x, mouse.y)
         }
@@ -332,11 +338,40 @@ ColumnLayout {
         }
         StatusAction {
             id: filterAction
-            enabled: false
             text: qsTr("Filter by similar")
             icon.name: "filter"
             onTriggered: {
-                // TODO apply filter
+                const store = WalletStores.RootStore.currentActivityFiltersStore
+                const tx = delegateMenu.transaction
+
+                store.autoUpdateFilter = false
+                store.resetAllFilters()
+
+                const currentAddress = overview.mixedcaseAddress.toUpperCase()
+
+                store.toggleType(tx.txType)
+                // Contract deployment has always ETH symbol. Symbol doesn't affect this type
+                if (tx.txType !== Constants.TransactionType.ContractDeployment) {
+                    const symbol = tx.symbol
+                    if (!!symbol)
+                        store.toggleToken(symbol)
+                    const inSymbol = tx.inSymbol
+                    if (!!inSymbol && inSymbol !== symbol)
+                        store.toggleToken(inSymbol)
+                }
+                if (showAllAccounts || tx.txType !== Constants.TransactionType.Bridge) {
+                    const recipient = tx.recipient.toUpperCase()
+                    if (!!recipient && recipient !== currentAddress && !/0X0+$/.test(recipient))
+                        store.toggleRecents(recipient)
+                }
+                if (tx.isNFT) {
+                    const uid = store.collectiblesList.getUidForData(tx.tokenID, tx.tokenAddress, tx.chainId)
+                    if (!!uid)
+                        store.toggleCollectibles(uid)
+                }
+
+                store.autoUpdateFilter = true
+                store.applyAllFilters()
             }
         }
     }
@@ -356,7 +391,7 @@ ColumnLayout {
                 if (mouse.button === Qt.RightButton) {
                     delegateMenu.openMenu(this, mouse, modelData)
                 } else {
-                    launchTransactionDetail(modelData)
+                    launchTransactionDetail(modelData, index)
                 }
             }
         }

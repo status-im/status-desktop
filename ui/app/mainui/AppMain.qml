@@ -23,6 +23,7 @@ import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.status 1.0
 import shared.stores 1.0
+import shared.popups.send 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -69,6 +70,14 @@ Item {
 
         function onDisplayUserProfile(publicKey: string) {
             popups.openProfilePopup(publicKey)
+        }
+
+        function onDisplayKeycardSharedModuleForAuthentication() {
+            keycardPopupForAuthentication.active = true
+        }
+
+        function onDestroyKeycardSharedModuleForAuthentication() {
+            keycardPopupForAuthentication.active = false
         }
 
         function onDisplayKeycardSharedModuleFlow() {
@@ -196,6 +205,7 @@ Item {
         popupParent: appMain
         rootStore: appMain.rootStore
         communitiesStore: appMain.communitiesStore
+        devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         isDevBuild: !production
     }
 
@@ -332,16 +342,6 @@ Item {
                                        true,
                                        Constants.ephemeralNotificationType.normal,
                                        "")
-        }
-
-        function onCommunityPrivateKeyRemoved(communityId) {
-            const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
-            Global.displayToastMessage(qsTr("This device is no longer the control node for the %1 Community").arg(community.name),
-                                "",
-                                "info",
-                                false,
-                                Constants.ephemeralNotificationType.normal,
-                                "")
         }
     }
 
@@ -487,6 +487,7 @@ Item {
                             text: qsTr("Invite People")
                             icon.name: "share-ios"
                             enabled: model.canManageUsers
+                            objectName: "invitePeople"
                             onTriggered: {
                                 popups.openInviteFriendsToCommunityPopup(model,
                                                                          communityContextMenu.chatCommunitySectionModule,
@@ -734,15 +735,18 @@ Item {
                     readonly property int warnings: appMain.communitiesStore.discordImportWarningsCount
                     readonly property string communityId: appMain.communitiesStore.discordImportCommunityId
                     readonly property string communityName: appMain.communitiesStore.discordImportCommunityName
+                    readonly property string channelId: appMain.communitiesStore.discordImportChannelId
+                    readonly property string channelName: appMain.communitiesStore.discordImportChannelName
+                    readonly property string channelOrCommunityName: channelName || communityName
 
                     active: !cancelled && (inProgress || finished || stopped)
                     type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
                     text: {
                         if (finished || stopped) {
                             if (errors)
-                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(communityName)
+                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(channelOrCommunityName)
 
-                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
                             if (warnings)
                                 result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
                             else
@@ -751,7 +755,7 @@ Item {
                             return result
                         }
                         if (inProgress) {
-                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(channelOrCommunityName) + "  <a href='#'>"
                             if (warnings)
                                 result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
                             else
@@ -762,16 +766,17 @@ Item {
 
                         return ""
                     }
-                    onLinkActivated: popups.openDiscordImportProgressPopup()
+                    onLinkActivated: popups.openDiscordImportProgressPopup(!!channelId)
                     progressValue: progress
                     closeBtnVisible: finished || stopped
-                    buttonText: finished && !errors ? qsTr("Visit your Community") : ""
+                    buttonText: finished && !errors ? !!channelId ? qsTr("Visit your new channel") : qsTr("Visit your Community") : ""
                     onClicked: function() {
-                        appMain.communitiesStore.setActiveCommunity(communityId)
+                        if (!!channelId)
+                            rootStore.setActiveSectionChat(communityId, channelId)
+                        else
+                            appMain.communitiesStore.setActiveCommunity(communityId)
                     }
-                    onCloseClicked: {
-                        hide();
-                    }
+                    onCloseClicked: hide()
                 }
 
                 ModuleWarning {
@@ -1235,10 +1240,12 @@ Item {
                                     }
                                 }
 
+                                sendModalPopup: sendModal
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
+                                communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
                                 rootStore: ChatStores.RootStore {
@@ -1321,29 +1328,47 @@ Item {
             id: sendModal
             active: false
 
-            function open(address = "") {
+            function open() {
                 this.active = true
-                this.item.addressText = address;
                 this.item.open()
             }
             function closed() {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
-            property var selectedAccount
-            property bool isBridgeTx
+
+            property var preSelectedAccount
+            property var preSelectedHolding
+            property string preSelectedHoldingID
+            property int preSelectedHoldingType
+            property int preSelectedSendType: Constants.SendType.Unknown
+            property bool onlyAssets: false
+
             sourceComponent: SendModal {
+                onlyAssets: sendModal.onlyAssets
                 onClosed: {
                     sendModal.closed()
-                    sendModal.isBridgeTx = false
+                    sendModal.preSelectedSendType = Constants.SendType.Unknown
+                    sendModal.preSelectedHoldingID = ""
+                    sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
+                    sendModal.preSelectedHolding = undefined
+                    sendModal.preSelectedAccount = undefined
                 }
             }
             onLoaded: {
-                if (!!sendModal.selectedAccount) {
-                    item.selectedAccount = sendModal.selectedAccount
+                if (!!sendModal.preSelectedAccount) {
+                    item.preSelectedAccount = sendModal.preSelectedAccount
                 }
-                if(isBridgeTx)
-                    item.isBridgeTx = sendModal.isBridgeTx
+                if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
+                    item.preSelectedSendType = sendModal.preSelectedSendType
+                }
+                if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
+                    item.preSelectedHoldingID = sendModal.preSelectedHoldingID
+                    item.preSelectedHoldingType = sendModal.preSelectedHoldingType
+                }
+                if(!!preSelectedHolding) {
+                    item.preSelectedHolding = preSelectedHolding
+                }
             }
         }
 
@@ -1556,6 +1581,18 @@ Item {
             console.error('Could not parse the whitelist for sites', e)
         }
         Global.settingsLoaded()
+    }
+
+    Loader {
+        id: keycardPopupForAuthentication
+        active: false
+        sourceComponent: KeycardPopup {
+            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthentication
+        }
+
+        onLoaded: {
+            keycardPopupForAuthentication.item.open()
+        }
     }
 
     Loader {

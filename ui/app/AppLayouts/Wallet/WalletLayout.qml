@@ -144,12 +144,46 @@ Item {
 
         footer: WalletFooter {
             visible: !root.showAllAccounts
-            sendModal: root.sendModalPopup
             width: parent.width
             height: root.showAllAccounts ? implicitHeight : 61
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
+            isCommunityOwnershipTransfer: (!!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== "") ?
+                                              (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
+            communityName: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityName : ""
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
+            onLaunchSendModal: {
+                if(isCommunityOwnershipTransfer) {
+                    let tokenItem = walletStore.currentViewedCollectible
+                    Global.openTransferOwnershipPopup(tokenItem.communityName,
+                                                      tokenItem.communityImage,
+                                                      {
+                                                          "key": walletStore.currentViewedHoldingID,
+                                                          "privilegesLevel": tokenItem.communityPrivilegesLevel,
+                                                          "chainId": tokenItem.communityPrivilegesLevel,
+                                                          "privilegesLevel": tokenItem.chainId,
+                                                          "name": tokenItem.name,
+                                                          "artworkSource": tokenItem.artworkSource,
+                                                          "accountAddress": tokenItem.contractAddress
+                                                      },
+                                                      walletStore.accounts,
+                                                      root.sendModalPopup)
+                } else {
+                    // Common send modal popup:
+                    root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
+                    root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                    root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                    root.sendModalPopup.onlyAssets = false
+                    root.sendModalPopup.open()
+                }
+            }
+            onLaunchBridgeModal: {
+                root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
+                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
+                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
+                root.sendModalPopup.onlyAssets = true
+                root.sendModalPopup.open()
+            }
         }
     }
 

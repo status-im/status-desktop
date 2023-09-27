@@ -7,6 +7,8 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import AppLayouts.Communities.panels 1.0
+
 import utils 1.0
 import shared.controls 1.0
 
@@ -19,6 +21,10 @@ Item {
     property var collectible
     property bool isCollectibleLoading
     readonly property int isNarrowMode : width < 700
+
+    // Community related token props:
+    readonly property bool isOwnerTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
+    readonly property bool isTMasterTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.TMaster) : false
 
     CollectibleDetailsHeader {
         id: collectibleHeader
@@ -48,13 +54,31 @@ Item {
 
         Row {
             id: collectibleImageDetails
-            Layout.preferredHeight: root.isNarrowMode ? 152 : collectibleimage.height
+
+            readonly property real visibleImageHeight: (collectibleimage.visible ? collectibleimage.height : privilegedCollectibleImage.height)
+            readonly property real visibleImageWidth: (collectibleimage.visible ? collectibleimage.width : privilegedCollectibleImage.width)
+
+            Layout.preferredHeight: collectibleImageDetails.visibleImageHeight
             Layout.preferredWidth: parent.width
             spacing: 24
 
+            // Special artwork representation for community `Owner and Master Token` token types:
+            PrivilegedTokenArtworkPanel {
+                id: privilegedCollectibleImage
+
+                visible: root.isOwnerTokenType || root.isTMasterTokenType
+                size: root.isNarrowMode ? PrivilegedTokenArtworkPanel.Size.Medium : PrivilegedTokenArtworkPanel.Size.Large
+                artwork: collectible.imageUrl
+                color: !!collectible ? collectible.communityColor : "transparent"
+                isOwner: root.isOwnerTokenType
+            }
+
             StatusRoundedMedia {
                 id: collectibleimage
+
                 readonly property int size : root.isNarrowMode ? 132 : 253
+
+                visible: !privilegedCollectibleImage.visible
                 width: size
                 height: size
                 radius: 2
@@ -70,7 +94,7 @@ Item {
                 id: collectibleNameAndDescription
                 spacing: 12
 
-                width: parent.width - collectibleimage.width - Style.current.bigPadding
+                width: parent.width - collectibleImageDetails.visibleImageWidth - Style.current.bigPadding
 
                 StatusBaseText {
                     id: collectibleName
@@ -114,7 +138,7 @@ Item {
         StatusTabBar {
             id: collectiblesDetailsTab
             Layout.fillWidth: true
-            Layout.topMargin: root.isNarrowMode ? 0 : Style.current.xlPadding
+            Layout.topMargin: root.isNarrowMode ? Style.current.padding : Style.current.xlPadding
             visible: collectible.traits.count > 0
 
             StatusTabButton {

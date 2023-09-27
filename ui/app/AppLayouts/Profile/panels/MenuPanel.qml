@@ -89,7 +89,7 @@ Column {
     }
 
     StatusListSectionHeadline {
-        text: qsTr("Settings")
+        text: qsTr("Preferences")
         width: root.width
     }
 

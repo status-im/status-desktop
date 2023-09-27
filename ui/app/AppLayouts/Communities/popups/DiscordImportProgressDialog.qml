@@ -10,7 +10,10 @@ StatusDialog {
 
     property var store
 
-    title: qsTr("Import a community from Discord into Status")
+    property bool importingSingleChannel
+
+    title: importingSingleChannel ? qsTr("Import a channel from Discord into Status") :
+                                    qsTr("Import a community from Discord into Status")
 
     horizontalPadding: 16
     verticalPadding: 20
@@ -38,6 +41,7 @@ StatusDialog {
         id: contents
         anchors.fill: parent
         store: root.store
+        importingSingleChannel: root.importingSingleChannel
         onClose: root.close()
     }
 }

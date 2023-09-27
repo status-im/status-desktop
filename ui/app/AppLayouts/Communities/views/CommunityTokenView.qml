@@ -24,6 +24,10 @@ StatusScrollView {
 
     // https://bugreports.qt.io/browse/QTBUG-84269
     /* required */ property TokenObject token
+    /* required */ property string feeText
+    /* required */ property string feeErrorText
+    /* required */ property bool isFeeLoading
+
 
     readonly property bool isAssetView: token.type === Constants.TokenType.ERC20
 
@@ -52,16 +56,12 @@ StatusScrollView {
     readonly property string feeLabel:
         isAssetView ? qsTr("Mint asset on %1").arg(token.chainName)
                     : qsTr("Mint collectible on %1").arg(token.chainName)
-
+                    
     // Models:
     property var tokenOwnersModel
 
     // Required for preview mode:
     property var accounts
-    property string feeText
-    property string feeErrorText
-    property bool isFeeLoading
-
     signal mintClicked()
 
     signal airdropRequested(string address)
@@ -71,10 +71,8 @@ StatusScrollView {
     signal viewMessagesRequested(string contactId)
 
     signal remoteDestructRequested(string name, string address)
-    signal kickRequested(string name, string contactId)
-    signal banRequested(string name, string contactId)
-
-    signal deployFeesRequested
+    signal kickRequested(string name, string contactId, string address)
+    signal banRequested(string name, string contactId, string address)
 
     QtObject {
         id: d
@@ -179,8 +177,6 @@ StatusScrollView {
                                    accountsSelector.currentIndex)
                     token.accountAddress = item.address
                     token.accountName = item.name
-
-                    root.deployFeesRequested()
                 })
             }
         }
@@ -217,8 +213,8 @@ StatusScrollView {
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(name, address)
 
-            onKickRequested: root.kickRequested(name, contactId)
-            onBanRequested: root.banRequested(name, contactId)
+            onKickRequested: root.kickRequested(name, contactId, address)
+            onBanRequested: root.banRequested(name, contactId, address)
         }
     }
 }

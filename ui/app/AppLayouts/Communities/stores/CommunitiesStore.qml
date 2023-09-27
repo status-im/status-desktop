@@ -27,6 +27,8 @@ QtObject {
     property int discordImportProgressCurrentChunk: root.communitiesModuleInst.discordImportProgressCurrentChunk
     property string discordImportCommunityId: root.communitiesModuleInst.discordImportCommunityId
     property string discordImportCommunityName: root.communitiesModuleInst.discordImportCommunityName
+    property string discordImportChannelId: root.communitiesModuleInst.discordImportChannelId
+    property string discordImportChannelName: root.communitiesModuleInst.discordImportChannelName
     property url discordImportCommunityImage: root.communitiesModuleInst.discordImportCommunityImage
     property bool discordImportHasCommunityImage: root.communitiesModuleInst.discordImportHasCommunityImage
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
@@ -57,8 +59,6 @@ QtObject {
     property string communityTags: communitiesModuleInst.tags
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
-
-    signal communityPrivateKeyRemoved(string communityId)
 
     signal communityInfoAlreadyRequested()
 
@@ -161,6 +161,7 @@ QtObject {
     function removeFileListItem(filePath) {
         root.communitiesModuleInst.removeFileListItem(filePath)
     }
+
     function setFileListItems(filePaths) {
         root.communitiesModuleInst.setFileListItems(filePaths)
     }
@@ -183,10 +184,18 @@ QtObject {
 
     function toggleDiscordChannel(id, selected) {
         root.communitiesModuleInst.toggleDiscordChannel(id, selected)
-      }
+    }
+
+    function toggleOneDiscordChannel(id) {
+        root.communitiesModuleInst.toggleOneDiscordChannel(id)
+    }
 
     function requestCancelDiscordCommunityImport(id) {
         root.communitiesModuleInst.requestCancelDiscordCommunityImport(id)
+    }
+
+    function requestCancelDiscordChannelImport(id) {
+        console.warn("!!! IMPLEMENT ME requestCancelDiscordChannelImport(id)") // FIXME
     }
 
     function resetDiscordImport() {
@@ -220,6 +229,18 @@ QtObject {
                     args.options.historyArchiveSupportEnabled, args.options.pinMessagesAllowedForMembers, from);
     }
 
+    function requestImportDiscordChannel(args = {
+                                         discordChannelId: "",
+                                         name: "",
+                                         description: "",
+                                         color: "",
+                                         emoji: "",
+                                         options: {
+                                             // TODO
+                                         }
+                                      }, from = 0) {
+        console.warn("!!! IMPLEMENT ME requestImportDiscordChannel") // FIXME
+    }
 
     readonly property Connections connections: Connections {
         target: communitiesModuleInst
@@ -229,10 +250,6 @@ QtObject {
 
         function onCommunityInfoAlreadyRequested() {
           root.communityInfoAlreadyRequested()
-        }
-
-        function onCommunityPrivateKeyRemoved(communityId) {
-            root.communityPrivateKeyRemoved(communityId)
         }
     }
 }

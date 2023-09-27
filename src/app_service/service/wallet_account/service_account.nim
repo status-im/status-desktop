@@ -387,10 +387,6 @@ proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, pass
 ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
 proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
   keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
-  if password.len == 0:
-    let err = "for adding a new seed phrase keypair, password must be provided"
-    error "error", err
-    return err
   var finalPassword = password
   if password.len > 0 and doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -731,14 +727,16 @@ proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
     chainId: response{"chainId"}.getInt,
     success: response{"success"}.getBool,
     url: response{"url"}.getStr,
+    isMainUrl: response{"isMainUrl"}.getBool
   ))
 
-proc fetchChainIdForUrl*(self: Service, url: string) =
+proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
   let arg = FetchChainIdForUrlTaskArg(
     tptr: cast[ByteAddress](fetchChainIdForUrlTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: "onFetchChainIdForUrl",
-    url: url
+    url: url,
+    isMainUrl: isMainUrl
   )
   self.threadpool.start(arg)
 

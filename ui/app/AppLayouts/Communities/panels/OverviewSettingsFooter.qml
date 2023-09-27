@@ -13,7 +13,6 @@ import utils 1.0
 Control {
     id: root
     property bool isControlNode: true
-    property int loginType: Constants.LoginType.Password
     property string communityName: ""
 
     signal exportControlNodeClicked
@@ -29,9 +28,7 @@ Control {
         property string paragraphTitle
         property string paragraphSubtitle
         property string primaryButtonText
-        property string primaryButtonIcon
         property string secondaryButtonText
-        property string secondaryButtonIcon
         property string indicatorBgColor
         property string indicatorColor
         property var primaryButtonAction: root.exportControlNodeClicked
@@ -91,15 +88,14 @@ Control {
 
             StatusFlatButton {
                 size: StatusBaseButton.Size.Small
-                text: d.secondaryButtonText
-                icon.name: d.secondaryButtonIcon
+                text:  qsTr("Learn more")
+                icon.name: "external-link"
                 onClicked: root.learnMoreClicked()
             }
 
             StatusButton {
                 size: StatusBaseButton.Size.Small
                 text: d.primaryButtonText
-                icon.name: d.primaryButtonIcon
                 onClicked: d.primaryButtonAction()
             }
         }
@@ -114,10 +110,7 @@ Control {
             PropertyChanges { target: d; indicatorColor: Theme.palette.successColor1 }
             PropertyChanges { target: d; paragraphTitle: qsTr("This device is currently the control node for the %1 Community").arg(root.communityName) }
             PropertyChanges { target: d; paragraphSubtitle: qsTr("For your Community to function correctly keep this device online with Status running as much as possible.") }
-            PropertyChanges { target: d; primaryButtonText: qsTr("Move control node") }
-            PropertyChanges { target: d; primaryButtonIcon: Constants.authenticationIconByType[root.loginType] }
-            PropertyChanges { target: d; secondaryButtonText: qsTr("Learn more") }
-            PropertyChanges { target: d; secondaryButtonIcon: "external-link" }
+            PropertyChanges { target: d; primaryButtonText: qsTr("How to move control node") }
             PropertyChanges { target: d; primaryButtonAction: root.exportControlNodeClicked }
         },
         State {
@@ -126,11 +119,8 @@ Control {
             PropertyChanges { target: d; indicatorBgColor: Theme.palette.primaryColor3 }
             PropertyChanges { target: d; indicatorColor: Theme.palette.primaryColor1 }
             PropertyChanges { target: d; paragraphTitle: qsTr("Make this device the control node for the %1 Community").arg(root.communityName) }
-            PropertyChanges { target: d; paragraphSubtitle: qsTr("You will need to input the Community private key. Ensure this is a device you can keep online with Status running.") }
+            PropertyChanges { target: d; paragraphSubtitle: qsTr("Ensure this is a device you can keep online with Status running.") }
             PropertyChanges { target: d; primaryButtonText: qsTr("Make this device the control node") }
-            PropertyChanges { target: d; primaryButtonIcon: "" }
-            PropertyChanges { target: d; secondaryButtonText: qsTr("Learn more") }
-            PropertyChanges { target: d; secondaryButtonIcon: "external-link" }
             PropertyChanges { target: d; primaryButtonAction: root.importControlNodeClicked }
         }
     ]

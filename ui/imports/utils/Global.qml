@@ -33,7 +33,7 @@ QtObject {
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
     signal openBackUpSeedPopup()
-    signal openImagePopup(var image)
+    signal openImagePopup(var image, string url)
     signal openProfilePopupRequested(string publicKey, var parentPopup, var cb)
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested()
@@ -46,9 +46,14 @@ QtObject {
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
     signal openDeleteMessagePopup(string messageId, var messageStore)
     signal openDownloadImageDialog(string imageSource)
-    signal openExportControlNodePopup(string communityName, string privateKey, var cb)
-    signal openImportControlNodePopup(var community, var cb)
+    signal openExportControlNodePopup(var community)
+    signal openImportControlNodePopup(var community)
     signal contactRenamed(string publicKey)
+    signal openTransferOwnershipPopup(string communityName,
+                                      string communityLogo,
+                                      var token,
+                                      var accounts,
+                                      var sendModalPopup)
 
     signal openLink(string link)
 
