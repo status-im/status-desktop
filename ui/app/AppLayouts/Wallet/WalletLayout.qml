@@ -143,13 +143,18 @@ Item {
         }
 
         footer: WalletFooter {
+            id: footer
+
+            readonly property bool isHoldingSelected: !!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== ""
+            readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
+            readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
+
             visible: !root.showAllAccounts
             width: parent.width
             height: root.showAllAccounts ? implicitHeight : 61
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
-            isCommunityOwnershipTransfer: (!!walletStore.currentViewedCollectible && walletStore.currentViewedHoldingID !== "") ?
-                                              (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
+            isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityName : ""
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
             onLaunchSendModal: {

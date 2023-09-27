@@ -23,6 +23,7 @@ Item {
     readonly property int isNarrowMode : width < 700
 
     // Community related token props:
+    readonly property bool isCommunityCollectible: !!collectible ? collectible.communityId !== "" : false
     readonly property bool isOwnerTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
     readonly property bool isTMasterTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.TMaster) : false
 
@@ -66,7 +67,7 @@ Item {
             PrivilegedTokenArtworkPanel {
                 id: privilegedCollectibleImage
 
-                visible: root.isOwnerTokenType || root.isTMasterTokenType
+                visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
                 size: root.isNarrowMode ? PrivilegedTokenArtworkPanel.Size.Medium : PrivilegedTokenArtworkPanel.Size.Large
                 artwork: collectible.imageUrl
                 color: !!collectible ? collectible.communityColor : "transparent"

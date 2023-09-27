@@ -1,6 +1,7 @@
 import sequtils, sugar, times, options
 import backend/collectibles as backend
 import collectibles_item
+import ../../../app_service/service/community_tokens/dto/community_token 
 
 proc collectibleToItem*(c: backend.CollectibleHeader, isPinned: bool = false) : Item =
   var mediaUrl = c.animationUrl
@@ -12,7 +13,7 @@ proc collectibleToItem*(c: backend.CollectibleHeader, isPinned: bool = false) : 
   var communityId = ""
   var communityName = ""
   var communityColor = ""
-  var communityPrivilegesLevel = 0
+  var communityPrivilegesLevel = PrivilegesLevel.Community.int
   if isSome(c.communityHeader):
     let communityHeader = c.communityHeader.get() 
     communityId = communityHeader.communityId
