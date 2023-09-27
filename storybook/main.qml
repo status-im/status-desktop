@@ -102,59 +102,71 @@ ApplicationWindow {
     SplitView {
         anchors.fill: parent
 
-        Pane {
+        ColumnLayout {
             SplitView.preferredWidth: 270
 
-            ColumnLayout {
-                width: parent.width
-                height: parent.height
+            Pane {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                Button {
-                    Layout.fillWidth: true
+                ColumnLayout {
+                    width: parent.width
+                    height: parent.height
 
-                    text: "Settings"
+                    Button {
+                        Layout.fillWidth: true
 
-                    onClicked: settingsPopup.open()
-                }
+                        text: "Settings"
 
-                CheckBox {
-                    id: darkModeCheckBox
+                        onClicked: settingsPopup.open()
+                    }
 
-                    Layout.fillWidth: true
+                    CheckBox {
+                        id: darkModeCheckBox
 
-                    text: "Dark mode"
+                        Layout.fillWidth: true
 
-                    StatusLightTheme { id: lightTheme }
-                    StatusDarkTheme { id: darkTheme }
+                        text: "Dark mode"
 
-                    Binding {
-                        target: Theme
-                        property: "palette"
-                        value: darkModeCheckBox.checked ? darkTheme : lightTheme
+                        StatusLightTheme { id: lightTheme }
+                        StatusDarkTheme { id: darkTheme }
+
+                        Binding {
+                            target: Theme
+                            property: "palette"
+                            value: darkModeCheckBox.checked ? darkTheme : lightTheme
+                        }
+                    }
+
+                    HotReloaderControls {
+                        id: hotReloaderControls
+
+                        Layout.fillWidth: true
+
+                        onForceReloadClicked: reloader.forceReload()
+                    }
+
+                    MenuSeparator {
+                        Layout.fillWidth: true
+                    }
+
+                    FilteredPagesList {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        currentPage: root.currentPage
+                        model: pagesModel
+
+                        onPageSelected: root.currentPage = page
                     }
                 }
+            }
 
-                HotReloaderControls {
-                    id: hotReloaderControls
+            Button {
+                Layout.fillWidth: true
+                text: "Open pages directory"
 
-                    Layout.fillWidth: true
-
-                    onForceReloadClicked: reloader.forceReload()
-                }
-
-                MenuSeparator {
-                    Layout.fillWidth: true
-                }
-
-                FilteredPagesList {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    currentPage: root.currentPage
-                    model: pagesModel
-
-                    onPageSelected: root.currentPage = page
-                }
+                onClicked: Qt.openUrlExternally(Qt.resolvedUrl(pagesFolder))
             }
         }
 
