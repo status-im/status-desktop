@@ -18,35 +18,30 @@ from scripts.tools import image
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)
-@pytest.mark.parametrize('first_network, second_network, third_network, message_turned_on, message_turned_off', [
-    pytest.param('Mainnet', 'Optimism', 'Arbitrum', 'Testnet mode turned on', 'Testnet mode turned off')
+@pytest.mark.parametrize('first_network, second_network, third_network', [
+    pytest.param('Mainnet', 'Optimism', 'Arbitrum')
 ])
-def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second_network: str, third_network: str,
-                             message_turned_on: str, message_turned_off: str):
-    with step('Started to turn on Testnet mode but cancel it'):
-        networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
-        assert networks.get_testnet_mode_button_checked_state() is False
-        networks.switch_testnet_mode().cancel()
-
+def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second_network: str, third_network: str):
     with step('Verify that Testnet toggle has subtitle'):
+        networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
         subtitle = networks.get_testnet_toggle_subtitle()
         assert subtitle == WalletNetworkSettings.TESTNET_SUBTITLE.value, \
             f"Testnet title is incorrect, current subtitle is {subtitle}"
 
-    with step('Back button is present and text on top is correct'):
-        assert networks.is_back_to_wallet_settings_button_present() is True, \
+    with step('Verify back to Wallet settings button is present and text on top is correct'):
+        assert networks.is_back_to_wallet_settings_button_present(), \
             f"Back to Wallet settings button is not visible on Networks screen"
 
-    with step('Verify that Testnet mode not turned on'):
-        assert networks.get_testnet_mode_button_checked_state() is False
+    with step('Verify that Testnet mode toggle is turned off'):
+        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is on when it should not"
 
     with step('Turn on Testnet mode'):
-        networks.switch_testnet_mode().turn_on_testnet_mode()
+        networks.switch_testnet_mode_toggle().click_turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned on'):
-        WalletToastMessage().get_toast_message(message_turned_on)
+        WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value)
         TestnetModeBanner().wait_until_appears()
-        assert networks.get_testnet_mode_button_checked_state() is True
+        assert networks.get_testnet_mode_toggle_status(), f"Testnet toggle if off when it should not"
 
     with step('Verify that all networks are in the list and text for testnet active is shown on each'):
         assert networks.testnet_items_amount == 3
@@ -61,12 +56,67 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {third_network} not found'
 
     with step('Turn off Testnet mode in wallet settings'):
-        networks.switch_testnet_mode().turn_off_testnet_mode()
+        networks.switch_testnet_mode_toggle().turn_off_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned off'):
-        WalletToastMessage().get_toast_message(message_turned_off)
+        WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_DISABLED_TOAST_MESSAGE.value)
         TestnetModeBanner().wait_until_hidden()
-        assert networks.get_testnet_mode_button_checked_state() is False
+        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is on when it should not"
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703621',
+                 'Network: Enable testnet toggle and click cross button in confirmation')
+@pytest.mark.case(703621)
+def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWindow):
+    networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
+
+    with step('Verify that Testnet mode toggle is turned off'):
+        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is enabled when it should not"
+
+    with step('Toggle the Testnet mode toggle ON'):
+        testnet_modal = networks.switch_testnet_mode_toggle()
+
+    with step('Click cross button on the Testnet modal'):
+        testnet_modal.close_testnet_modal_with_cross_button()
+        assert not networks.get_testnet_mode_toggle_status()
+
+    with step('Verify that Testnet mode is not turned off'):
+        assert not WalletToastMessage().is_visible
+        assert not TestnetModeBanner().is_visible, f"Testnet banner is present when it should not"
+        assert not networks.get_testnet_mode_toggle_status(), \
+            f"Testnet toggle is turned on when it should not"
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703622',
+                 'Network:  Network: Enable Testnets, toggle testnet toggle OFF, click cancel in confirmation')
+@pytest.mark.case(703621)
+# @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12247"), bug is now fixed
+def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: MainWindow):
+    networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
+
+    with step('Verify that Testnet mode toggle is turned off'):
+        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is enabled when it should not"
+
+    with step('Toggle the Testnet mode toggle ON'):
+        testnet_modal = networks.switch_testnet_mode_toggle()
+
+    with step('Confirm enabling testnet mode in testnet modal'):
+        testnet_modal.click_turn_on_testnet_mode_in_testnet_modal()
+
+    with step('Verify testnet mode is enabled'):
+        WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value)
+        TestnetModeBanner().wait_until_appears()
+        assert networks.get_testnet_mode_toggle_status(), f"testnet toggle is off"
+
+    with step('Toggle the Testnet mode toggle Off'):
+        testnet_modal = networks.switch_testnet_mode_toggle()
+
+    with step('Click Cancel button on the Testnet modal'):
+        testnet_modal.click_cancel_button_in_testnet_modal()
+        assert networks.get_testnet_mode_toggle_status(), f"Testnet toggle is turned OFF when it should not"
+
+    with step('Verify that Testnet mode is not turned off'):
+        assert TestnetModeBanner().is_visible, f"Testnet banner is not present when it should"
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
@@ -164,12 +214,12 @@ def test_change_account_order_not_possible(main_screen: MainWindow, default_name
                                           'GenAcc1edited', '#216266', 'thumbsup', '1f44d')
                          ])
 def test_add_new_account_from_wallet_settings(main_screen: MainWindow, user_account,
-                                  color: str, emoji: str, emoji_unicode: str,
-                                  name: str, new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
-
+                                              color: str, emoji: str, emoji_unicode: str,
+                                              name: str, new_name: str, new_color: str, new_emoji: str,
+                                              new_emoji_unicode: str):
     with step('Open add account pop up from wallet settings'):
         add_account_popup = \
-                main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
+            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
 
     with step('Add a new generated account from wallet settings screen'):
 
@@ -187,4 +237,3 @@ def test_add_new_account_from_wallet_settings(main_screen: MainWindow, user_acco
             time.sleep(1)
         if time.monotonic() - started_at > 15:
             raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
-

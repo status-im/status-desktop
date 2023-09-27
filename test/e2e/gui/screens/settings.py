@@ -362,7 +362,7 @@ class NetworkWalletSettings(WalletSettingsView):
         super(NetworkWalletSettings, self).__init__()
         self._wallet_networks_item = QObject('settingsContentBaseScrollView_WalletNetworkDelegate')
         self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
-        self._testnet_mode_button = Button('settings_Wallet_NetworksView_TestNet_Toggle')
+        self._testnet_mode_toggle = Button('settings_Wallet_NetworksView_TestNet_Toggle')
         self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
         self._back_button = Button('main_toolBar_back_button')
 
@@ -376,7 +376,7 @@ class NetworkWalletSettings(WalletSettingsView):
         return self._testnet_mode_title.text
 
     @allure.step('Verify back to Wallet settings button')
-    def is_back_to_wallet__settings_button_present(self):
+    def is_back_to_wallet_settings_button_present(self):
         return self._back_button.is_visible
 
     @property
@@ -388,14 +388,14 @@ class NetworkWalletSettings(WalletSettingsView):
                 items_amount += 1
         return items_amount
 
-    @allure.step('Switch testnet mode')
-    def switch_testnet_mode(self):
-        self._testnet_mode_button.click()
+    @allure.step('Switch testnet mode toggle')
+    def switch_testnet_mode_toggle(self):
+        self._testnet_mode_toggle.click()
         return TestnetModePopup().wait_until_appears()
 
-    @allure.step('Check state of testnet mode switch')
-    def get_testnet_mode_button_checked_state(self):
-        return self._testnet_mode_button.is_checked
+    @allure.step('Get testnet mode toggle status')
+    def get_testnet_mode_toggle_status(self):
+        return self._testnet_mode_toggle.is_checked
 
 
 class EditAccountOrderSettings(WalletSettingsView):
