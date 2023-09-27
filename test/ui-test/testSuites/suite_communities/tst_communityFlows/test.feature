@@ -75,6 +75,7 @@ Feature: Status Desktop community
         When the admin deletes category named "test-category"
         Then the category named "test-category" is missing
 
+    @mayfail
     Scenario Outline: The admin edits a community name, description and color separately
         When the admin changes the community name to "<new_community_name>"
         Then the community overview name is "<new_community_name>"

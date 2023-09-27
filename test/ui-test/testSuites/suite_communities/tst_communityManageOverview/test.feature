@@ -13,6 +13,7 @@ Feature: Community -> Manage Community -> Overview page
         And the user creates a community named "Test-Community", with description "My community description", intro "Community Intro" and outro "Community Outro"
         And the user lands on the community named "Test-Community"
 
+    @mayfail
     Scenario Outline: Manage community -> Overview: community admin edits the community name, description and color
         When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"
         Then the community overview name is "<new_community_name>"

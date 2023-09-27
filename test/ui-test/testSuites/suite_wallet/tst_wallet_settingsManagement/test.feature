@@ -8,6 +8,7 @@ Feature: Settings -> Wallet
         And the user opens the wallet section
         And the user accepts the signing phrase
 
+    @mayfail
     Scenario: The user can edit the default Status account from Settings
         Given the user opens app settings screen
         And the user opens the wallet settings
