@@ -12,6 +12,7 @@ ImportControlNodePopup 1.0 ImportControlNodePopup.qml
 InDropdown 1.0 InDropdown.qml
 InviteFriendsToCommunityPopup 1.0 InviteFriendsToCommunityPopup.qml
 KickBanPopup 1.0 KickBanPopup.qml
+ManageShardingPopup 1.0 ManageShardingPopup.qml
 MembersDropdown 1.0 MembersDropdown.qml
 PermissionsDropdown 1.0 PermissionsDropdown.qml
 RecipientTypeSelectionDropdown 1.0 RecipientTypeSelectionDropdown.qml

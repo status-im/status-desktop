@@ -18,7 +18,7 @@ ColumnLayout {
     property bool colorVisible: false
     property url banner: ctrlCommunityBanner.checked ? Style.png("settings/communities@2x") : ""
     readonly property bool shardingEnabled: ctrlShardingEnabled.checked
-    readonly property int shardIndex: ctrlShardIndex.value
+    property alias shardIndex: ctrlShardIndex.value
 
     spacing: 24
 
