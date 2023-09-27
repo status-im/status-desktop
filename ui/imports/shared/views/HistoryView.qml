@@ -15,6 +15,7 @@ import utils 1.0
 
 import "../panels"
 import "../popups"
+import "../popups/send"
 import "../stores"
 import "../controls"
 
@@ -28,6 +29,7 @@ ColumnLayout {
 
     property var overview
     property bool showAllAccounts: false
+    property var sendModal
 
     signal launchTransactionDetail(var transaction, int entryIndex)
 
@@ -303,7 +305,6 @@ ColumnLayout {
 
             delegateMenu.transactionDelegate = delegate
             delegateMenu.transaction = data
-            repeatTransactionAction.enabled = !overview.isWatchOnlyAccount && delegate.modelData.txType === TransactionDelegate.Send
             popup(delegate, mouse.x, mouse.y)
         }
 
@@ -314,13 +315,35 @@ ColumnLayout {
 
         StatusAction {
             id: repeatTransactionAction
+
             text: qsTr("Repeat transaction")
-            enabled: false
             icon.name: "rotate"
+
+            property alias tx: delegateMenu.transaction
+
+            enabled: {
+                if (!overview.isWatchOnlyAccount && !tx)
+                    return false
+                return WalletStores.RootStore.isTxRepeatable(tx)
+            }
+
             onTriggered: {
-                if (!delegateMenu.transaction)
+                if (!tx)
                     return
-                root.sendModal.open(delegateMenu.transaction.to)
+                let asset = WalletStores.RootStore.getAssetForSendTx(tx)
+
+                let req = Helpers.lookupAddressesForSendModal(tx.sender, tx.recipient, asset, tx.isNFT, tx.amount)
+
+                root.sendModal.preSelectedAccount = req.preSelectedAccount
+                root.sendModal.preSelectedRecipient = req.preSelectedRecipient
+                root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
+                root.sendModal.preSelectedHolding = req.preSelectedHolding
+                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
+                root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
+                root.sendModal.preSelectedSendType = req.preSelectedSendType
+                root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
+                root.sendModal.onlyAssets = false
+                root.sendModal.open()
             }
         }
         StatusSuccessAction {

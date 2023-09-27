@@ -343,8 +343,6 @@ QtObject:
     self.allAddressesSelected = allAddressesSelected
     self.status.setIsFilterDirty(true)
 
-    self.updateStartTimestamp()
-
   proc setFilterAddressesJson*(self: Controller, jsonArray: string, allAddressesSelected: bool) {.slot.}  =
     let addressesJson = parseJson(jsonArray)
     if addressesJson.kind != JArray:
@@ -392,9 +390,6 @@ QtObject:
     # If the request was enqueued and waiting for an answer, we don't need to do anything
     if res.result.getBool():
       self.status.setLoadingRecipients(false)
-
-  proc updateFilterBase(self: Controller) {.slot.} =
-    self.updateStartTimestamp()
 
   proc getStatus*(self: Controller): QVariant {.slot.} =
     return newQVariant(self.status)

@@ -247,8 +247,8 @@ QtObject {
             activityController.updateFilter()
     }
 
-    function updateFilterBase() {
-        activityController.updateFilterBase()
+    function updateStartTimestamp() {
+        activityController.updateStartTimestamp()
     }
 
     function applyAllFilters() {

@@ -145,6 +145,7 @@ Item {
                     id: historyView
                     overview: RootStore.overview
                     showAllAccounts: root.showAllAccounts
+                    sendModal: root.sendModal
                     onLaunchTransactionDetail: function (entry, entryIndex) {
                         transactionDetailView.transactionIndex = entryIndex
                         transactionDetailView.transaction = entry

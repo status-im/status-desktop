@@ -13,7 +13,7 @@ import StatusQ.Popups 0.1
 import shared.controls 1.0
 import shared.panels 1.0
 import utils 1.0
-import shared.stores 1.0
+import shared.popups.send 1.0
 
 import "../controls"
 import "../popups"
@@ -714,7 +714,7 @@ Item {
                     }
                 }
             }
-            
+
             Separator {
                 width: progressBlock.width
             }
@@ -728,10 +728,29 @@ Item {
                     Layout.preferredHeight: copyDetailsButton.height
                     text: qsTr("Repeat transaction")
                     size: StatusButton.Small
-                    visible: root.isTransactionValid && !root.overview.isWatchOnlyAccount && d.transactionType === TransactionDelegate.Send
+
+                    property alias tx: root.transaction
+
+                    visible: {
+                        if (!root.isTransactionValid || root.overview.isWatchOnlyAccount)
+                            return false
+
+                        return WalletStores.RootStore.isTxRepeatable(tx)
+                    }
                     onClicked: {
-                        root.sendModal.open(root.transaction.to)
-                        // TODO handle other types
+                        let asset = WalletStores.RootStore.getAssetForSendTx(tx)
+                        let req = Helpers.lookupAddressesForSendModal(tx.sender, tx.recipient, asset, tx.isNFT, tx.amount)
+
+                        root.sendModal.preSelectedAccount = req.preSelectedAccount
+                        root.sendModal.preSelectedRecipient = req.preSelectedRecipient
+                        root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
+                        root.sendModal.preSelectedHolding = req.preSelectedHolding
+                        root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
+                        root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
+                        root.sendModal.preSelectedSendType = req.preSelectedSendType
+                        root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
+                        root.sendModal.onlyAssets = false
+                        root.sendModal.open()
                     }
                 }
                 StatusButton {

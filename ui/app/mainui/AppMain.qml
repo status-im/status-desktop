@@ -24,6 +24,7 @@ import shared.popups.keycard 1.0
 import shared.status 1.0
 import shared.stores 1.0
 import shared.popups.send 1.0
+import shared.popups.send.views 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -1360,16 +1361,20 @@ Item {
                 this.active = true
                 this.item.open()
             }
+
             function closed() {
                 // this.sourceComponent = undefined // kill an opened instance
                 this.active = false
             }
 
             property var preSelectedAccount
+            property var preSelectedRecipient
+            property int preSelectedRecipientType
             property var preSelectedHolding
             property string preSelectedHoldingID
             property int preSelectedHoldingType
             property int preSelectedSendType: Constants.SendType.Unknown
+            property string preDefinedAmountToSend
             property bool onlyAssets: false
 
             sourceComponent: SendModal {
@@ -1381,11 +1386,17 @@ Item {
                     sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
                     sendModal.preSelectedHolding = undefined
                     sendModal.preSelectedAccount = undefined
+                    sendModal.preSelectedRecipient = undefined
+                    sendModal.preDefinedAmountToSend = ""
                 }
             }
             onLoaded: {
                 if (!!sendModal.preSelectedAccount) {
                     item.preSelectedAccount = sendModal.preSelectedAccount
+                }
+                if (!!sendModal.preSelectedRecipient) {
+                    item.preSelectedRecipient = sendModal.preSelectedRecipient
+                    item.preSelectedRecipientType = sendModal.preSelectedRecipientType
                 }
                 if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
                     item.preSelectedSendType = sendModal.preSelectedSendType
@@ -1396,6 +1407,9 @@ Item {
                 }
                 if(!!preSelectedHolding) {
                     item.preSelectedHolding = preSelectedHolding
+                }
+                if(preDefinedAmountToSend != "") {
+                    item.preDefinedAmountToSend = preDefinedAmountToSend
                 }
             }
         }
