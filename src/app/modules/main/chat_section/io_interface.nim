@@ -117,7 +117,7 @@ method onCommunityMuted*(self: AccessInterface, chatId: string, muted: bool) {.b
 method onContactAdded*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onContactRejected*(self: AccessInterface, publicKey: string) {.base.} =
+method onContactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
