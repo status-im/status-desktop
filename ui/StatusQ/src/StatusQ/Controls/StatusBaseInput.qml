@@ -278,8 +278,7 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: root.showBackground ? Theme.palette.baseColor2
-                                              : "transparent"
+        color: root.showBackground ? Theme.palette.baseColor2 : "transparent"
         radius: 8
 
         clip: true
@@ -292,7 +291,7 @@ Item {
             if (!root.valid && root.dirty) {
                 return Theme.palette.dangerColor1
             }
-            if (edit.activeFocus) {
+            if (edit.cursorVisible) {
                 return Theme.palette.primaryColor1
             }
             return sensor.containsMouse ? Theme.palette.primaryColor2 : "transparent"
