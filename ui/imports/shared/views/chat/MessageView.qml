@@ -472,11 +472,11 @@ Loader {
 
                 readonly property int contentType: d.convertContentType(root.messageContentType)
                 property string originalMessageText: ""
-                readonly property bool hideQuickActions: root.isChatBlocked ||
-                                  root.placeholderMessage ||
-                                  root.isInPinnedPopup ||
-                                  root.editModeOn ||
-                                  !root.rootStore.mainModuleInst.activeSection.joined
+                // readonly property bool hideQuickActions: root.isChatBlocked ||
+                //                   root.placeholderMessage ||
+                //                   root.isInPinnedPopup ||
+                //                   root.editModeOn ||
+                //                   !root.rootStore.mainModuleInst.activeSection.joined
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -539,10 +539,10 @@ Loader {
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
                 bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
-                disableHover: root.disableHover ||
-                              delegate.hideQuickActions ||
-                              (root.chatLogView && root.chatLogView.moving) ||
-                              Global.activityPopupOpened
+                // disableHover: root.disableHover ||
+                //               delegate.hideQuickActions ||
+                //               (root.chatLogView && root.chatLogView.moving) ||
+                //               Global.activityPopupOpened
 
                 disableEmojis: root.isChatBlocked
                 hideMessage: d.hideMessage
@@ -783,7 +783,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
+                        active: delegate.hovered
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -828,6 +828,7 @@ Loader {
                     },
                     Loader {
                         active: {
+                            return true;
                             if(!delegate.hovered)
                                 return false;
                                 
