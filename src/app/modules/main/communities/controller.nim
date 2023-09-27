@@ -200,6 +200,12 @@ proc init*(self: Controller) =
     let args = CommunityMemberStatusUpdatedArgs(e)
     self.delegate.onCommunityMemberStatusUpdated(args.communityId, args.memberPubkey, args.status)
 
+  self.events.on(SignalType.Wallet.event, proc(e: Args) =
+    var data = WalletSignal(e)
+    if data.eventType == backend_collectibles.eventCollectiblesOwnershipUpdateFinished:
+      self.delegate.onOwnedCollectiblesUpdated()
+  )
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
 

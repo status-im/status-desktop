@@ -1951,8 +1951,6 @@ QtObject:
           if member.id == memberPubkey:
             status = MembershipRequestState.Accepted
 
-      echo "-----> onAsyncCommunityMemberActionCompleted::", memberPubkey, ", ", status
-
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
         communityId: community.id,
         memberPubkey: memberPubkey,

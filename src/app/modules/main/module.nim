@@ -1181,6 +1181,11 @@ method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, me
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
 
+method onMembershipStatusUpdated*[T](self: Module[T], communityId: string, memberPubkey: string, status: MembershipRequestState) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateMembershipStatus(memberPubkey, status)
+
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
 

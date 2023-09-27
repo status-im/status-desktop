@@ -661,7 +661,3 @@ method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, membe
         airdropAddress = revealedAccount.address
 
     self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
-
-method onCommunityMemberStatusUpdated*(self: Module, communityId: string, memberPubkey: string, status: MembershipRequestState) =
-  let community = self.controller.getCommunityById(communityId)
-  community.updateMemeberStatus(memberPubkey, status)
