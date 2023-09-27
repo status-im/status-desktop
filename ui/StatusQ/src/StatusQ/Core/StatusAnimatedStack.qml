@@ -11,6 +11,7 @@ StackLayout {
 
     readonly property var previousItem: items[previousIndex]
     readonly property var currentItem: items[currentIndex]
+    readonly property bool animating: !!d.crossFaderAnim && d.crossFaderAnim.running
 
     clip: true
 
@@ -20,6 +21,11 @@ StackLayout {
         for(var i = 1; i < count; ++i) {
             children[i].opacity = 0
         }
+    }
+
+    QtObject {
+        id: d
+        property var crossFaderAnim
     }
 
     Component {
@@ -68,12 +74,14 @@ StackLayout {
         if (previousItem && currentItem && (previousItem != currentItem)) {
             previousItem.visible = true;
             currentItem.visible = true;
-            var crossFaderAnim = crossFader.createObject(parent,
+            if (!!d.crossFaderAnim)
+                d.crossFaderAnim.destroy()
+            d.crossFaderAnim = crossFader.createObject(parent,
             {
                 fadeOutTarget: previousItem,
                 fadeInTarget: currentItem
             });
-            crossFaderAnim.restart();
+            d.crossFaderAnim.restart();
         }
         previousIndex = currentIndex;
     }
