@@ -397,6 +397,7 @@ var NODE_CONFIG* = %* {
     "PeerExchange": true,
     "AutoUpdate": true,
     "Rendezvous": true,
+    "EnableFilterFullNode": true,
   },
   "WalletConfig": {
     "Enabled": true,
