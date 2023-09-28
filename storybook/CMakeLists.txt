@@ -80,6 +80,19 @@ target_link_libraries(
 
 add_dependencies(${PROJECT_NAME} StatusQ)
 
+add_executable(
+  PagesValidator
+  validator_main.cpp
+)
+
+target_link_libraries(
+    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)
+
+target_compile_definitions(PagesValidator PRIVATE
+        QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+    )
+
 enable_testing()
 
 add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
