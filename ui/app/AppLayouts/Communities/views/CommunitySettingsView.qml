@@ -44,6 +44,10 @@ StatusSectionLayout {
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
+    // Community transfer ownership related props:
+    required property var finaliseOwnershipTransferPopup
+    required property bool isPendingOwnershipRequest
+
     readonly property string filteredSelectedTags: {
         let tagsArray = []
         if (community && community.tags) {
@@ -186,6 +190,9 @@ StatusSectionLayout {
             sendModalPopup: root.sendModalPopup
             tokensModel: root.community.communityTokens
             accounts: root.walletAccountsModel
+
+            finaliseOwnershipTransferPopup: root.finaliseOwnershipTransferPopup
+            isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
             onCollectCommunityMetricsMessagesCount: {
                 rootStore.collectCommunityMetricsMessagesCount(intervals)

@@ -112,6 +112,7 @@ QtObject {
             function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
                 d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
             }
+
             function onAirdropFeeUpdated(response) {
                 d.feesBroker.response(response.requestId, response)
             }

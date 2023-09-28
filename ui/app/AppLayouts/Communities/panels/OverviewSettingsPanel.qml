@@ -52,6 +52,10 @@ StackLayout {
 
     property bool communityShardingEnabled
     property int communityShardIndex: -1
+    
+    // Community transfer ownership related props:
+    required property var finaliseOwnershipTransferPopup
+    required property bool isPendingOwnershipRequest
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -176,13 +180,17 @@ StackLayout {
 
     Component {
         id: overviewSettingsFooterComp
+
         OverviewSettingsFooter {
             rightPadding: 64
             leftPadding: 64
             bottomPadding: 64
             topPadding: 0
             communityName: root.name
+            communityColor: root.color
             isControlNode: root.isControlNode
+            isPendingOwnershipRequest: root.isPendingOwnershipRequest
+
             onExportControlNodeClicked:{
                 if(!!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed) {
                     root.exportControlNodeClicked()
@@ -191,6 +199,7 @@ StackLayout {
                 }
             }
             onImportControlNodeClicked: root.importControlNodeClicked()
+            onFinaliseOwnershipTransferClicked: Global.openPopup(root.finaliseOwnershipTransferPopup)
             //TODO update once the domain changes
             onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
         }

@@ -24,15 +24,26 @@ SplitView {
 
         communityShardingEnabled: communityEditor.shardingEnabled
         communityShardIndex: communityEditor.shardIndex
+        
+        isPendingOwnershipRequest: pendingOwnershipSwitch.checked
+        finaliseOwnershipTransferPopup: undefined
     }
 
     Pane {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        CommunityInfoEditor {
-            id: communityEditor
-            anchors.fill: parent
+        ColumnLayout {
+            CommunityInfoEditor{
+                id: communityEditor
+                anchors.fill: parent
+            }
+
+            Switch {
+                id: pendingOwnershipSwitch
+                text: "Is there a pending transfer ownership request?"
+                checked: true
+            }
         }
     }
 }

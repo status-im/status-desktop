@@ -43,7 +43,7 @@ StatusDialog {
     QtObject {
         id: d
 
-        readonly property string controlNodeLink: "https://help.status.im/en/status-communities/about-the-control-node-in-status-communities/"
+        readonly property string controlNodeLink: Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities/"
         readonly property int init: 0
         readonly property int finalise: 1
 
@@ -149,8 +149,6 @@ StatusDialog {
 
             StatusButton {
                 id: acceptBtn
-
-                type: StatusBaseButton.Type.Normal
             }
         }
         leftButtons: ObjectModel {
@@ -171,7 +169,7 @@ StatusDialog {
 
             CustomText {
                 textFormat: Text.RichText
-                text: qsTr("To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's <a style=\"color: inherit;\" href=\"%2\">control node</a><a style=\"color: inherit;text-decoration: none\" href=\"%2\">↗</a>. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.").arg(root.communityName).arg(d.controlNodeLink)
+                text: qsTr("To finalise your ownership and assume ultimate admin rights for the %1 Community, you need to make your device the Community's <a style=\"color:%3;\" href=\"%2\">control node</a><a style=\"color:%3;text-decoration: none\" href=\"%2\">↗</a>. You will also need to sign a small transaction to update the %1 Community smart contract to make you the official signatory for all Community changes.").arg(root.communityName).arg(d.controlNodeLink).arg(color)
 
                 onLinkActivated: root.openControlNodeDocClicked(link)
             }
@@ -196,6 +194,7 @@ StatusDialog {
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
+                color: "transparent"
 
                 ColumnLayout {
                     id: boxContent
