@@ -181,6 +181,17 @@ Item {
                 ""
             )
         }
+
+        function onShowToastTransactionSent(chainId: int, txHash: string, uuid: string, error: string) {
+            if (!error) {
+                Global.displayToastMessage(qsTr("Transaction pending..."),
+                                           qsTr("View on etherscan"),
+                                           "",
+                                           true,
+                                           Constants.ephemeralNotificationType.normal,
+                                           "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash))
+            }
+        }
     }
 
     QtObject {

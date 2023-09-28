@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils, sugar, json
+import NimQml, Tables, strutils, strformat, sequtils, sugar, json, stint
 
 import app/modules/shared_models/currency_amount
 import ./network_item, ./suggested_route_item
@@ -181,7 +181,7 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         if self.items[i].getAmountOut().len != 0:
-          self.items[i].amountOut = $(parseInt(self.items[i].getAmountOut()) + parseInt(path.getAmountOut()))
+          self.items[i].amountOut = $(stint.u256(self.items[i].getAmountOut()) + stint.u256(path.getAmountOut()))
         else:
           self.items[i].amountOut = path.getAmountOut()
         self.dataChanged(index, index, @[ModelRole.AmountOut.int])

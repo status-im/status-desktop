@@ -296,6 +296,7 @@ QtObject:
   proc showIncludeWatchOnlyAccountUpdated*(self: View, includeWatchOnly: bool) {.signal.}
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
   proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}
+  proc showToastTransactionSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.signal.}
 
   ## Used in test env only, for testing keycard flows
   proc registerMockedKeycard*(self: View, cardIndex: int, readerState: int, keycardState: int,

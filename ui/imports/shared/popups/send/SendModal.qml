@@ -519,13 +519,6 @@ StatusDialog {
                 sendingError.text = error
                 return sendingError.open()
             }
-            let url =  "%1/%2".arg(popup.store.getEtherscanLink(chainId)).arg(txHash)
-            Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       qsTr("View on etherscan"),
-                                       "",
-                                       true,
-                                       Constants.ephemeralNotificationType.normal,
-                                       url)
             popup.close()
         }
     }
