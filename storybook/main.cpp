@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
         QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
         QML_IMPORT_ROOT + QStringLiteral("/src"),
         QML_IMPORT_ROOT + QStringLiteral("/pages"),
-        QML_IMPORT_ROOT + QStringLiteral("/stubs"),
-        QML_IMPORT_ROOT + QStringLiteral("/mocks"),
+        QML_IMPORT_ROOT + QStringLiteral("/stubs")
     };
 
     for (const auto& path : additionalImportPaths)
