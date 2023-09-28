@@ -20,15 +20,11 @@ StatusDialog {
 
     width: 480 // by design
     padding: Style.current.padding
+    title: qsTr("Are you sure you don’t want to be the owner?")
     contentItem: StatusBaseText {
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: qsTr("If you don’t want to be the owner of the %1 Community it is important that you let the previous owner know so they can organise another owner to take over. You will have to send the Owner token back to them or on to the next designated owner.").arg(root.communityName)
         lineHeight: 1.2
-    }
-
-    header: StatusDialogHeader {
-        headline.title: qsTr("Are you sure you don’t want to be the owner?")
-        actions.closeButton.onClicked: root.close()
     }
 
     footer: StatusDialogFooter {
@@ -37,10 +33,7 @@ StatusDialog {
             StatusFlatButton {
                 text: qsTr("Cancel")
 
-                onClicked: {
-                    root.cancelClicked()
-                    close()
-                }
+                onClicked: close()
             }
 
             StatusButton {

@@ -60,6 +60,10 @@ QtObject {
         communityTokensModuleInst.removeCommunityToken(communityId, parts[0], parts[1])
     }
 
+    function updateSmartContract(communityId, collectibleItem) {
+        console.warn("TODO: Backend to update smart contract and finalise community transfer ownership! The token owner is: " + collectibleItem.symbol)
+    }
+
     readonly property Connections connections: Connections {
         target: communityTokensModuleInst
 

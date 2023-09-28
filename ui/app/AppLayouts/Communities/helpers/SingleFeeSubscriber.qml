@@ -6,11 +6,12 @@ import utils 1.0
 /*!
     \qmltype SingleFeeSubscriber
     \inherits QtObject
-    \brief Helper object that parses fees response and provides fee text and error text for single fee respnse
+    \brief Helper object that parses fees response and provides fee text and error text for single fee response
 */
 
  QtObject {
     id: root
+
     // Published properties
     property var feesResponse
 

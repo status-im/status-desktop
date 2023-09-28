@@ -6,19 +6,44 @@ import AppLayouts.Communities.panels 1.0
 
 import utils 1.0
 
+import Storybook 1.0
+
 SplitView {
     id: root
 
-    Item {
-        id: wrapper
+    Logs { id: logs }
+
+    SplitView {
+        orientation: Qt.Vertical
         SplitView.fillWidth: true
-        SplitView.fillHeight: true
-        OverviewSettingsFooter {
-            id: footer
-            width: parent.width
-            anchors.centerIn: parent
-            isControlNode: controlNodeSwitch.checked
-            communityName: "Socks"
+        Item {
+            id: wrapper
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
+
+            OverviewSettingsFooter {
+                id: footer
+                width: parent.width
+                anchors.centerIn: parent
+                isControlNode: controlNodeSwitch.checked
+                isPendingOwnershipRequest: pendingOwnershipSwitch.checked
+                communityName: "Socks"
+                communityColor: "orange"
+
+                onExportControlNodeClicked: logs.logEvent("OverviewSettingsFooter::onExportControlNodeClicked")
+                onImportControlNodeClicked: logs.logEvent("OverviewSettingsFooter::onImportControlNodeClicked")
+                onLearnMoreClicked: logs.logEvent("OverviewSettingsFooter::onLearnMoreClicked")
+                onFinaliseOwnershipTransferClicked: logs.logEvent("OverviewSettingsFooter::onFinaliseOwnershipTransferClicked")
+            }
+        }
+
+        LogsAndControlsPanel {
+            id: logsAndControlsPanel
+
+            SplitView.minimumHeight: 100
+            SplitView.preferredHeight: 150
+
+            logsView.logText: logs.logText
         }
     }
     
@@ -30,6 +55,12 @@ SplitView {
             Switch {
                 id: controlNodeSwitch
                 text: "Control node on/off"
+                checked: true
+            }
+
+            Switch {
+                id: pendingOwnershipSwitch
+                text: "Is there a pending transfer ownership request?"
                 checked: true
             }
         }
