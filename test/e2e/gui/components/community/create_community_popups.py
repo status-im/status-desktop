@@ -1,3 +1,4 @@
+import logging
 import typing
 
 import allure
@@ -12,6 +13,9 @@ from gui.elements.qt.check_box import CheckBox
 from gui.elements.qt.scroll import Scroll
 from gui.elements.qt.text_edit import TextEdit
 from gui.screens.community import CommunityScreen
+
+
+_logger = logging.getLogger(__name__)
 
 
 class CreateCommunitiesBanner(BasePopup):
@@ -69,11 +73,21 @@ class CreateCommunityPopup(BasePopup):
     def logo(self):
         return NotImplementedError
 
+    def _open_logo_file_dialog(self, attempt: int = 2):
+        self._add_logo_button.click()
+        try:
+            return OpenFileDialog().wait_until_appears().prepare()
+        except LookupError as err:
+            if attempt:
+                _logger.debug(err)
+                return self._open_logo_file_dialog(attempt-1)
+            else:
+                raise
+
     @logo.setter
     @allure.step('Set community logo')
     def logo(self, kwargs: dict):
-        self._add_logo_button.click()
-        OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
+        self._open_logo_file_dialog().open_file(kwargs['fp'])
         PictureEditPopup().wait_until_appears().make_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
 
     @property

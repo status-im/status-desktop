@@ -7,17 +7,17 @@ from PIL import ImageGrab
 
 import configs
 import driver
-from driver.aut import AUT
+from scripts.utils import local_system
 from scripts.utils.system_path import SystemPath
-from tests.fixtures.path import generate_test_info
+from fixtures.path import generate_test_info
 
 _logger = logging.getLogger(__name__)
 
 pytest_plugins = [
-    'tests.fixtures.aut',
-    'tests.fixtures.path',
-    'tests.fixtures.squish',
-    'tests.fixtures.testrail',
+    'fixtures.aut',
+    'fixtures.path',
+    'fixtures.squish',
+    'fixtures.testrail',
 ]
 
 
@@ -62,5 +62,9 @@ def pytest_exception_interact(node):
             body=screenshot.read_bytes(),
             attachment_type=allure.attachment_type.PNG)
         driver.context.detach()
+        for port in [configs.squish.AUT_PORT, configs.squish.MLT_AUT_PORT]:
+            pid = local_system.find_process_by_port(port)
+            if pid is not None:
+                local_system.kill_process(pid, verify=True)
     except Exception as ex:
         _logger.debug(ex)

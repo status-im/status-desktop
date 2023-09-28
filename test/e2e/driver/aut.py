@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import allure
@@ -9,6 +10,8 @@ from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
 from scripts.utils.system_path import SystemPath
+
+_logger = logging.getLogger(__name__)
 
 
 class AUT:
@@ -78,12 +81,12 @@ class AUT:
                 f'-d={self.app_data}'
             ]
             local_system.execute(command)
+            self.attach()
         else:
             SquishServer().add_executable_aut(self.aut_id, self.path.parent)
             command = [self.aut_id, f'-d={self.app_data}']
             self.ctx = squish.startApplication(' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
 
-        self.attach()
         self.pid = self.ctx.pid
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         return self

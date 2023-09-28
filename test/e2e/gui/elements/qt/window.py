@@ -2,6 +2,7 @@ import logging
 
 import allure
 
+import configs
 import driver
 from gui.elements.qt.object import QObject
 
@@ -47,3 +48,8 @@ class Window(QObject):
     @allure.step("Hide {0}")
     def hide(self):
         driver.waitForObjectExists(self.real_name).setVisible(False)
+
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        super().wait_until_appears(timeout_msec)
+        _logger.info(f'Window {getattr(self.object, "title", "")} appears')
+        return self

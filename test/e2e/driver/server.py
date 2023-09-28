@@ -33,8 +33,8 @@ class SquishServer:
 
     def stop(self):
         if self.pid is not None:
-            local_system.kill_process(self.pid)
-        self.pid = None
+            local_system.kill_process(self.pid, verify=True)
+            self.pid = None
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):
