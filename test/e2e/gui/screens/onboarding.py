@@ -37,13 +37,19 @@ class WelcomeToStatusView(QObject):
     def __init__(self):
         super(WelcomeToStatusView, self).__init__('mainWindow_WelcomeView')
         self._i_am_new_to_status_button = Button('mainWindow_I_am_new_to_Status_StatusBaseText')
-        self._i_already_use_status_button = Button('mainWindow_I_already_use_Status_StatusBaseText')
+        self._i_already_use_status_button = Button('mainWindow_I_already_use_Status_StatusFlatButton')
 
     @allure.step('Open Keys view')
     def get_keys(self) -> 'KeysView':
         self._i_am_new_to_status_button.click()
         time.sleep(1)
         return KeysView().wait_until_appears()
+
+    @allure.step('Open Sign by syncing form')
+    def sync_existing_user(self) -> 'SignBySyncingView':
+        self._i_already_use_status_button.click()
+        time.sleep(1)
+        return SignBySyncingView().wait_until_appears()
 
 
 class OnboardingView(QObject):
@@ -101,6 +107,77 @@ class ImportSeedPhraseView(OnboardingView):
     def back(self) -> KeysView:
         self._back_button.click()
         return KeysView().wait_until_appears()
+
+
+class SignBySyncingView(OnboardingView):
+
+    def __init__(self):
+        super(SignBySyncingView, self).__init__('mainWindow_KeysMainView')
+        self._scan_or_enter_sync_code_button = Button('keysMainView_PrimaryAction_Button')
+
+    @allure.step('Open sync code view')
+    def open_sync_code_view(self):
+        self._scan_or_enter_sync_code_button.click()
+        return SyncCodeView().wait_until_appears()
+
+
+class SyncCodeView(OnboardingView):
+
+    def __init__(self):
+        super(SyncCodeView, self).__init__('mainWindow_SyncCodeView')
+        self._enter_sync_code_button = Button('switchTabBar_Enter_sync_code_StatusSwitchTabButton')
+        self._paste_sync_code_button = Button('mainWindow_Paste_StatusButton')
+
+    @allure.step('Open enter sync code form')
+    def open_enter_sync_code_form(self):
+        self._enter_sync_code_button.click()
+        return self
+
+    @allure.step('Paste sync code')
+    def paste_sync_code(self):
+        self._paste_sync_code_button.click()
+        return SyncDeviceFoundView().wait_until_appears()
+
+
+class SyncDeviceFoundView(OnboardingView):
+
+    def __init__(self):
+        super(SyncDeviceFoundView, self).__init__('mainWindow_SyncingDeviceView_found')
+        self._sync_text_item = QObject('sync_text_item')
+
+    @property
+    @allure.step('Get device_found_notifications')
+    def device_found_notifications(self) -> typing.List:
+        device_found_notifications = []
+        for obj in driver.findAllObjects(self._sync_text_item.real_name):
+            device_found_notifications.append(str(obj.text))
+        return device_found_notifications
+
+
+class SyncResultView(OnboardingView):
+
+    def __init__(self):
+        super(SyncResultView, self).__init__('mainWindow_SyncDeviceResult')
+        self._sync_result = QObject('mainWindow_SyncDeviceResult')
+        self._sign_in_button = Button('mainWindow_Sign_in_StatusButton')
+        self._synced_text_item = QObject('synced_StatusBaseText')
+
+    @property
+    @allure.step('Get device synced notifications')
+    def device_synced_notifications(self) -> typing.List:
+        device_synced_notifications = []
+        for obj in driver.findAllObjects(self._synced_text_item.real_name):
+            device_synced_notifications.append(str(obj.text))
+        return device_synced_notifications
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._sign_in_button.wait_until_appears(timeout_msec)
+        return self
+
+    @allure.step('Sign in')
+    def sign_in(self):
+        self._sign_in_button.click()
 
 
 class SeedPhraseInputView(OnboardingView):

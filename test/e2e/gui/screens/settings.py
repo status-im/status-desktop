@@ -7,11 +7,14 @@ import allure
 import configs.timeouts
 import driver
 from constants import UserCommunityInfo, wallet_account_list_item
+from constants.syncing import SyncingSettings
 from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.change_password_popup import ChangePasswordPopup
+from gui.components.community.authenticate_popup import AuthenticatePopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
+from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.components.social_links_popup import SocialLinksPopup
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
@@ -60,6 +63,11 @@ class LeftPanel(QObject):
     def open_back_up_seed_phrase(self):
         self._open_settings(15)
         return BackUpYourSeedPhrasePopUp()
+
+    @allure.step('Open syncing settings')
+    def open_syncing_settings(self):
+        self._open_settings(8)
+        return SyncingSettingsView()
 
 
 class SettingsScreen(QObject):
@@ -456,3 +464,33 @@ class EditAccountOrderSettings(WalletSettingsView):
     @allure.step('Verify that back button is present')
     def is_back_button_present(self) -> bool:
         return self._back_button.is_visible
+
+
+class SyncingSettingsView(QObject):
+
+    def __init__(self):
+        super().__init__('mainWindow_SyncingView')
+        self._setup_syncing_button = Button('settings_Setup_Syncing_StatusButton')
+        self._backup_data_button = Button('settings_Backup_Data_StatusButton')
+        self._sync_new_device_instructions_header = TextLabel('settings_Sync_New_Device_Header')
+        self._sync_new_device_instructions_subtitle = TextLabel('settings_Sync_New_Device_SubTitle')
+
+    @allure.step('Checking instructions elements: back up button presence')
+    def is_backup_button_present(self):
+        assert self._backup_data_button.is_visible, f"Backup button is not visible"
+
+    @allure.step('Checking instructions elements: header presence')
+    def is_instructions_header_present(self):
+        assert (self._sync_new_device_instructions_header.text
+                == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_HEADER.value), f"Sync a new device title is incorrect"
+
+    @allure.step('Checking instructions elements: subtitle presence')
+    def is_instructions_subtitle_present(self):
+        assert (self._sync_new_device_instructions_subtitle.text
+                == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value), f"Sync a new device subtitle is incorrect"
+
+    @allure.step('Setup syncing')
+    def set_up_syncing(self, password: str):
+        self._setup_syncing_button.click()
+        AuthenticatePopup().wait_until_appears().authenticate(password)
+        return SyncNewDevicePopup().wait_until_appears()

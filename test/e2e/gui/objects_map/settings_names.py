@@ -66,3 +66,10 @@ change_password_button = {"container": statusDesktop_mainWindow, "type": "Status
 bio_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "bioInput", "type": "StatusInput", "visible": True}
 bio_TextEdit = {"container": bio_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 addMoreSocialLinks = {"container": statusDesktop_mainWindow, "objectName": "addMoreSocialLinks", "type": "StatusLinkText", "visible": True}
+
+# Syncing Settings View
+mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
+settings_Setup_Syncing_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}
+settings_Backup_Data_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncBackupDataButton", "type": "StatusButton", "visible": True}
+settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceTextLabel", "type": "StatusBaseText", "visible": True}
+settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}

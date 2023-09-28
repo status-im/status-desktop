@@ -9,7 +9,7 @@ mainWindow_allowNotificationsOnboardingOkButton = {"container": mainWindow_Allow
 # Welcome View
 mainWindow_WelcomeView = {"container": statusDesktop_mainWindow, "type": "WelcomeView", "unnamed": 1, "visible": True}
 mainWindow_I_am_new_to_Status_StatusBaseText = {"container": mainWindow_WelcomeView, "objectName": "welcomeViewIAmNewToStatusButton", "type": "StatusButton"}
-mainWindow_I_already_use_Status_StatusBaseText = {"container": mainWindow_WelcomeView, "objectName": "welcomeViewIAlreadyUseStatusButton", "type": "StatusFlatButton", "visible": True}
+mainWindow_I_already_use_Status_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow, "id": "btnExistingUser", "type": "StatusFlatButton", "visible": True}
 
 # Get Keys View
 mainWindow_KeysMainView = {"container": statusDesktop_mainWindow, "type": "KeysMainView", "unnamed": 1, "visible": True}
@@ -38,6 +38,21 @@ mainWindow_statusSeedPhraseInputField_TextEdit = {"container": mainWindow_SeedPh
 mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_SeedPhraseInputView,
                                   "objectName": "seedPhraseViewSubmitButton", "text": "Import", "type": "StatusButton",
                                   "visible": True}
+
+# SyncCode View
+mainWindow_SyncCodeView = {"container": statusDesktop_mainWindow, "type": "SyncCodeView", "unnamed": 1, "visible": True}
+mainWindow_switchTabBar_StatusSwitchTabBar_2 = {"container": statusDesktop_mainWindow, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
+switchTabBar_Enter_sync_code_StatusSwitchTabButton = {"checkable": True, "container": mainWindow_switchTabBar_StatusSwitchTabBar_2, "text": "Enter sync code", "type": "StatusSwitchTabButton", "unnamed": 1, "visible": True}
+mainWindow_statusBaseInput_StatusBaseInput = {"container": statusDesktop_mainWindow, "id": "statusBaseInput", "type": "StatusBaseInput", "unnamed": 1, "visible": True}
+mainWindow_Paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "text": "Paste", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# SyncDevice View
+mainWindow_SyncingDeviceView_found = {"container": statusDesktop_mainWindow, "type": "SyncingDeviceView", "unnamed": 1, "visible": True}
+mainWindow_SyncingDeviceView_synced = {"container": mainWindow_StatusWindow, "type": "SyncingDeviceView", "unnamed": 1, "visible": True}
+mainWindow_SyncDeviceResult = {"container": mainWindow_StatusWindow, "type": "SyncDeviceResult", "unnamed": 1, "visible": True}
+synced_StatusBaseText = {"container": mainWindow_StatusWindow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_Sign_in_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "text": "Sign in", "type": "StatusButton", "unnamed": 1, "visible": True}
+sync_text_item = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Keycard Init View
 mainWindow_KeycardInitView = {"container": statusDesktop_mainWindow, "type": "KeycardInitView", "unnamed": 1,

@@ -24,4 +24,4 @@ class AuthenticatePopup(BasePopup):
     def authenticate(self, password: str):
         self._passwort_text_edit.type_text(password)
         self._authenticate_button.click()
-        self.wait_until_hidden()
+        self._authenticate_button.wait_until_hidden()
