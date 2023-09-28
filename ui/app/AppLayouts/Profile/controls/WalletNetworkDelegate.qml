@@ -15,6 +15,7 @@ StatusListItem {
     rightPadding: Style.current.padding
     components: [
         StatusBaseText {
+            objectName: "testnetLabel_" + network.chainName
             text: qsTr("Goerli testnet active")
             font.pixelSize: 15
             color: Theme.palette.baseColor1
