@@ -78,6 +78,7 @@ StatusListItem {
         id: expandedItem
         StatusListItemTag {
             height: 16
+            leftPadding: 0
             title: LocaleUtils.currencyAmountToLocaleString(balance)
             titleText.font.pixelSize: 12
             closeButtonVisible: false

@@ -127,7 +127,7 @@ Item {
                 Layout.preferredHeight: 16
                 icon: "chevron-down"
                 color: Theme.palette.miscColor1
-                visible: d.isItemSelected
+                visible: !!root.selectedItem
             }
         }
 
