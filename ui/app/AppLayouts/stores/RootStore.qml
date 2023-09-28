@@ -167,8 +167,8 @@ QtObject {
 
     property var allNetworks: networksModule.all
 
-    function getEtherscanLink() {
-        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    function getEtherscanLink(chainID) {
+        return allNetworks.getBlockExplorerURL(chainID)
     }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,

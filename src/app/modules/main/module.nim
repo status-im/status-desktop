@@ -423,6 +423,10 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
       kpName = args.keypairs[0].name
     self.view.showToastKeypairsImported(kpName, args.keypairs.len, args.error)
 
+  self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+    let args = TransactionSentArgs(e)
+    self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,
