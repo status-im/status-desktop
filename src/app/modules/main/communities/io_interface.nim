@@ -222,6 +222,3 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
 
 method onAllCommunityTokensLoaded*(self: AccessInterface, communityTokens: seq[CommunityTokenDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method onCommunityMemberStatusUpdated*(self: AccessInterface, communityId: string, memberPubkey: string, status: MembershipRequestState) {.base.} =
-  raise newException(ValueError, "No implementation available")

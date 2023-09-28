@@ -472,7 +472,7 @@ QtObject:
           CommunityCategoryArgs(communityId: community.id, category: category))
 
     self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
-    CommunityMembersArgs(communityId: community.id, members: community.members))
+      CommunityMembersArgs(communityId: community.id, members: community.members))
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:

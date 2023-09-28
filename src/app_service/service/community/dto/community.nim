@@ -35,7 +35,7 @@ type
     ControlNodeUptime
 
 type
-  CommunityMemberState* {.pure.} = enum
+  CommunityMemberPendingBanOrKick* {.pure.} = enum
     Banned = 0,
     BanPending,
     UnbanPending,
@@ -161,7 +161,7 @@ type CommunityDto* = object
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
-  pendingAndBannedMembers*: Table[string, CommunityMemberState]
+  pendingAndBannedMembers*: Table[string, CommunityMemberPendingBanOrKick]
   declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
   encrypted*: bool
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
@@ -436,9 +436,9 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   var pendingAndBannedMembersObj: JsonNode
   if (jsonObj.getProp("pendingAndBannedMembers", pendingAndBannedMembersObj) and pendingAndBannedMembersObj.kind == JObject):
-    result.pendingAndBannedMembers = initTable[string, CommunityMemberState]()
-    for memberId, communityMemberState in pendingAndBannedMembersObj:
-      result.pendingAndBannedMembers[memberId] = CommunityMemberState(communityMemberState.getInt())
+    result.pendingAndBannedMembers = initTable[string, CommunityMemberPendingBanOrKick]()
+    for memberId, pendingKickOrBanMember in pendingAndBannedMembersObj:
+      result.pendingAndBannedMembers[memberId] = CommunityMemberPendingBanOrKick(pendingKickOrBanMember.getInt())
 
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
@@ -454,15 +454,15 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     for tokenObj in communityTokensMetadataObj:
       result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
 
-proc toMembershipRequestState*(state: CommunityMemberState): MembershipRequestState =
+proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:
-    of CommunityMemberState.Banned:
+    of CommunityMemberPendingBanOrKick.Banned:
       return MembershipRequestState.Banned
-    of CommunityMemberState.BanPending:
+    of CommunityMemberPendingBanOrKick.BanPending:
       return MembershipRequestState.BannedPending
-    of CommunityMemberState.UnbanPending:
+    of CommunityMemberPendingBanOrKick.UnbanPending:
       return MembershipRequestState.UnbannedPending
-    of CommunityMemberState.KickPending:
+    of CommunityMemberPendingBanOrKick.KickPending:
       return MembershipRequestState.KickedPending
   return MembershipRequestState.None
 
@@ -517,7 +517,7 @@ proc contains(arrayToSearch: seq[int], searched: int): bool =
 proc getBannedMembersIds*(self: CommunityDto): seq[string] =
   var bannedIds: seq[string] = @[]
   for memberId, state in self.pendingAndBannedMembers:
-    if state == CommunityMemberState.Banned:
+    if state == CommunityMemberPendingBanOrKick.Banned:
       bannedIds.add(memberId)
   return bannedIds
 
