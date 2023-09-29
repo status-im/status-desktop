@@ -365,11 +365,12 @@ QtObject:
     self.chainIds = chainIds
     self.status.setIsFilterDirty(true)
 
+    self.status.emitFilterChainsChanged()
     self.updateAssetsIdentities()
 
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(self.requestId, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.requestId, self.chainIds, self.addresses, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil or res.result.kind != JBool:
       self.status.setLoadingRecipients(false)
       error "error fetching recipients: ", res.error, "; kind ", res.result.kind
@@ -381,7 +382,7 @@ QtObject:
 
   proc loadMoreRecipients(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(self.requestId, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.requestId, self.chainIds, self.addresses, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingRecipients(false)
       error "error fetching more recipient entries: ", res.error

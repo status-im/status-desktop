@@ -47,6 +47,8 @@ ColumnLayout {
         if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
+
+        WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
     }
 
     Connections {
@@ -54,6 +56,9 @@ ColumnLayout {
         enabled: root.visible
         function onIsFilterDirtyChanged() {
             RootStore.updateTransactionFilter()
+        }
+        function onFilterChainsChanged() {
+            WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
         }
     }
 

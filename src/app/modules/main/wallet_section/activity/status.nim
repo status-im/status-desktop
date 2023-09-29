@@ -27,6 +27,11 @@ QtObject:
   proc delete*(self: Status) =
     self.QObject.delete
 
+  proc filterChainsChanged*(self: Status) {.signal.}
+
+  proc emitFilterChainsChanged*(self: Status) = 
+    self.filterChainsChanged()
+
   proc loadingDataChanged*(self: Status) {.signal.}
 
   proc setLoadingData*(self: Status, loadingData: bool) =
