@@ -394,7 +394,9 @@ export STATUSKEYCARDGO_LIBDIR
 
 STATUSKEYCARDGO_RULE := build-lib
 ifeq ($(TEST_ENVIRONMENT),true)
-	STATUSKEYCARDGO_RULE := build-mocked-lib
+    STATUSKEYCARDGO_RULE := build-mocked-lib
+else ifeq ($(TEST_ENVIRONMENT),1)
+    STATUSKEYCARDGO_RULE := build-mocked-lib
 endif
 
 status-keycard-go: $(STATUSKEYCARDGO)
