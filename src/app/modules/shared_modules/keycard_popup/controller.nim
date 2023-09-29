@@ -558,17 +558,6 @@ proc runLoginFlow*(self: Controller) =
   self.cancelCurrentFlow()
   self.keycardService.startLoginFlow()
 
-# This flow is not in use any more for authentication purpose, will be use later for signing a transaction, but
-# we still do not support that. Going to keep this code, but as a comment.
-#
-# For running sign flow we need to be sure is a keycard we're signing with contains a keyuid for a keypair we're sending a transaction for.
-#
-# proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
-#   if not serviceApplicable(self.keycardService):
-#     return
-#   self.cancelCurrentFlow()
-#   self.keycardService.startSignFlow(bip44Path, txHash)
-
 proc reRunCurrentFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):
     return

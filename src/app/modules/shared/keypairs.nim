@@ -25,7 +25,7 @@ proc buildKeypairItem*(keypair: KeypairDto, areTestNetworksEnabled: bool): KeyPa
     pairType = KeyPairType.Unknown,
     derivedFrom = keypair.derivedFrom,
     lastUsedDerivationIndex = keypair.lastUsedDerivationIndex,
-    migratedToKeycard = keypair.keycards.len > 0,
+    migratedToKeycard = keypair.migratedToKeycard(),
     syncedFrom = keypair.syncedFrom)
 
   if keypair.keypairType == KeypairTypeProfile:

@@ -24,6 +24,9 @@ type
     keycards*: seq[KeycardDto]
     removed*: bool
 
+proc migratedToKeycard*(self: KeypairDto): bool =
+  return self.keycards.len > 0
+
 proc toKeypairDto*(jsonObj: JsonNode): KeypairDto =
   result = KeypairDto()
   discard jsonObj.getProp("key-uid", result.keyUid)

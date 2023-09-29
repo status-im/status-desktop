@@ -1,8 +1,9 @@
 import stint
-import ../../../shared_models/currency_amount
+import app/modules/shared_models/currency_amount
 import app_service/service/transaction/dto
 import app/modules/shared_models/collectibles_model as collectibles
 import app/modules/shared_models/collectibles_nested_model as nested_collectibles
+from app_service/service/keycard/service import KeycardEvent
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -33,15 +34,12 @@ method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_add
     tokenSymbol: string, value: string, uuid: string, sendType: SendType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transactionWasSent*(self: AccessInterface, chainId: int, txHash, uuid, error: string) {.base.} =
+method transactionWasSent*(self: AccessInterface, chainId: int = 0, txHash, uuid, error: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-# View Delegate Interface
-# Delegate for the view must be declared here due to use of QtObject and multi
-# inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -67,4 +65,10 @@ method getNestedCollectiblesModel*(self: AccessInterface): nested_collectibles.M
   raise newException(ValueError, "No implementation available")
 
 method splitAndFormatAddressPrefix*(self: AccessInterface, text : string, updateInStore: bool): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareSignaturesForTransactions*(self: AccessInterface, txHashes: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")

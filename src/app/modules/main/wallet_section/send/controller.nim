@@ -1,16 +1,22 @@
 import sugar, sequtils, stint, json, json_serialization
+import uuids, os, chronicles
 import io_interface
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/transaction/service as transaction_service
-import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/currency/dto as currency_dto
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/currency/service as currency_service
+import app_service/service/currency/dto as currency_dto
+import app_service/service/keycard/service as keycard_service
 
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
-import ../../../shared/wallet_utils
-import ../../../shared_models/currency_amount
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app/modules/shared/wallet_utils
+import app/modules/shared_models/currency_amount
 
-import ../../../../core/eventemitter
+import app/core/signals/types
+import app/core/eventemitter
+
+logScope:
+  topics = "wallet-send-controller"
 
 const UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER* = "WalletSection-SendModule"
 
@@ -22,6 +28,8 @@ type
     networkService: network_service.Service
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
+    keycardService: keycard_service.Service
+    connectionKeycardResponse: UUID
 
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -30,6 +38,7 @@ proc newController*(
   networkService: network_service.Service,
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
+  keycardService: keycard_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -38,6 +47,7 @@ proc newController*(
   result.networkService = networkService
   result.currencyService = currencyService
   result.transactionService = transactionService
+  result.keycardService = keycardService
 
 proc delete*(self: Controller) =
   discard
@@ -51,10 +61,16 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER:
       return
-    self.delegate.onUserAuthenticated(args.password)
+    self.delegate.onUserAuthenticated(args.password, args.pin)
 
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
+
+  self.events.on(SignalType.Wallet.event) do(e:Args):
+    var data = WalletSignal(e)
+    if data.eventType != SignTransactionsEventType:
+      return
+    self.delegate.prepareSignaturesForTransactions(data.txHashes)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
@@ -83,7 +99,7 @@ proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccoun
 proc getTokenBalanceOnChain*(self: Controller, address: string, chainId: int, symbol: string): CurrencyAmount =
   return currencyAmountToItem(self.walletAccountService.getTokenBalanceOnChain(address, chainId, symbol), self.currencyService.getCurrencyFormat(symbol))
 
-proc authenticateUser*(self: Controller, keyUid = "") =
+proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER,
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
@@ -93,8 +109,14 @@ proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token:
   return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType) =
-  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType)
+    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
+    usePassword: bool, doHashing: bool) =
+  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType,
+    usePassword, doHashing)
+
+proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
+    signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =
+  self.transactionService.proceedWithTransactionsSignatures(fromAddr, toAddr, uuid, signatures, selectedRoutes)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
@@ -107,3 +129,31 @@ proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], 
 
 proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
+
+proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
+  return self.walletAccountService.getKeypairByAccountAddress(address)
+
+proc disconnectKeycardReponseSignal(self: Controller) =
+  self.events.disconnect(self.connectionKeycardResponse)
+
+proc connectKeycardReponseSignal(self: Controller) =
+  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+    let args = KeycardLibArgs(e)
+    self.disconnectKeycardReponseSignal()
+    let currentFlow = self.keycardService.getCurrentFlow()
+    if currentFlow != KCSFlowType.Sign:
+      error "trying to use keycard in the other than the signing a transaction flow"
+      self.delegate.transactionWasSent()
+      return
+    self.delegate.onTransactionSigned(args.flowType, args.flowEvent)
+
+proc cancelCurrentFlow*(self: Controller) =
+  self.keycardService.cancelCurrentFlow()
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
+  sleep(200)
+
+proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
+  self.cancelCurrentFlow()
+  self.connectKeycardReponseSignal()
+  self.keycardService.startSignFlow(bip44Path, txHash, pin)

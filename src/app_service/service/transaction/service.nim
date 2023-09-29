@@ -27,6 +27,7 @@ import ../../../constants as main_constants
 
 
 export transaction_dto
+export transactions.TransactionsSignatures
 
 logScope:
   topics = "transaction-service"
@@ -35,7 +36,7 @@ include async_tasks
 include ../../common/json_utils
 
 # Maximum number of collectibles to be fetched at a time
-const collectiblesLimit = 200 
+const collectiblesLimit = 200
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
@@ -250,7 +251,17 @@ QtObject:
       path.cbridgeTx = cbridgeTx
     return path
 
-  proc transferEth*(
+  proc sendTransactionSentSignal(self: Service, fromAddr: string, toAddr: string, uuid: string,
+    routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "") =
+    if err.len > 0:
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err))
+    elif response.result{"hashes"} != nil:
+      for route in routes:
+        for hash in response.result["hashes"][$route.fromNetwork.chainID]:
+          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
+          self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+
+  proc transferEth(
     self: Service,
     from_addr: string,
     to_addr: string,
@@ -291,18 +302,15 @@ QtObject:
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
-        common_utils.hashPassword(password),
+        password,
       )
 
-      if response.result{"hashes"} != nil:
-        for route in routes:
-          for hash in response.result["hashes"][$route.fromNetwork.chainID]:
-            self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
-            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+      if password != "":
+        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response)
     except Exception as e:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
+      self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
-  proc transferToken*(
+  proc transferToken(
     self: Service,
     from_addr: string,
     to_addr: string,
@@ -368,28 +376,33 @@ QtObject:
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
-        common_utils.hashPassword(password),
+        password,
       )
 
-      if response.result{"hashes"} != nil:
-        for route in routes:
-          for hash in response.result["hashes"][$route.fromNetwork.chainID]:
-            self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
-            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+      if password != "":
+        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response)
+
     except Exception as e:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
+      self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
   proc transfer*(
     self: Service,
-    from_addr: string,
-    to_addr: string,
+    fromAddr: string,
+    toAddr: string,
     tokenSymbol: string,
     value: string,
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
     password: string,
-    sendType: SendType
+    sendType: SendType,
+    usePassword: bool,
+    doHashing: bool
   ) =
+    var finalPassword = ""
+    if usePassword:
+      finalPassword = password
+      if doHashing:
+        finalPassword = common_utils.hashPassword(password)
     try:
       var chainID = 0
       var isEthTx = false
@@ -402,12 +415,25 @@ QtObject:
         isEthTx = true
 
       if(isEthTx):
-        self.transferEth(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
+        self.transferEth(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword)
       else:
-        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType)
+        self.transferToken(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword, sendType)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
+
+  proc proceedWithTransactionsSignatures*(self: Service, fromAddr: string, toAddr: string, uuid: string,
+    signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =
+    try:
+      let response = transactions.proceedWithTransactionsSignatures(signatures)
+      self.sendTransactionSentSignal(fromAddr, toAddr, uuid, selectedRoutes, response)
+      if response.result{"hashes"} != nil:
+        for route in selectedRoutes:
+          for hash in response.result["hashes"][$route.fromNetwork.chainID]:
+            self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
+            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+    except Exception as e:
+      self.sendTransactionSentSignal(fromAddr, toAddr, uuid, @[], RpcResponse[JsonNode](), fmt"Error proceeding with transactions signatures: {e.msg}")
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:
@@ -467,7 +493,7 @@ QtObject:
       return response.result{"number"}.getStr
     except Exception as e:
       error "Error getting latest block number", message = e.msg
-    
+
   proc getEstimatedLatestBlockNumber*(self: Service, chainId: int): string =
     try:
       return $eth.getEstimatedLatestBlockNumber(chainId).result
