@@ -76,7 +76,7 @@ class CreateCommunityPopup(BasePopup):
     def _open_logo_file_dialog(self, attempt: int = 2):
         self._add_logo_button.click()
         try:
-            return OpenFileDialog().wait_until_appears().prepare()
+            return OpenFileDialog().wait_until_appears()
         except LookupError as err:
             if attempt:
                 _logger.debug(err)

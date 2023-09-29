@@ -71,8 +71,8 @@ class AUT:
         SquishServer().set_aut_timeout()
 
         if configs.ATTACH_MODE:
-            if local_system.find_process_by_port(self.port):
-                self.port += 100
+            while local_system.find_process_by_port(self.port):
+                self.port += 1000
             SquishServer().add_attachable_aut(self.aut_id, self.port)
             command = [
                 configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
