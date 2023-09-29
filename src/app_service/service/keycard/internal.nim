@@ -90,6 +90,8 @@ proc toTransactionSignature(jsonObj: JsonNode): TransactionSignature =
   discard jsonObj.getProp(ResponseParamTxSignatureR, result.r)
   discard jsonObj.getProp(ResponseParamTxSignatureS, result.s)
   discard jsonObj.getProp(ResponseParamTxSignatureV, result.v)
+  if result.v.len == 0:
+    result.v = "0"
 
 proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamErrorKey, result.error)

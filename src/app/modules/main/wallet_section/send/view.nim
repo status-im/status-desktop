@@ -193,8 +193,7 @@ QtObject:
     self.toNetworksModel.setItems(toNetworks)
 
   proc transactionSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.signal.}
-
-  proc transactionWasSent*(self: View, chainId: int, txHash: string, uuid: string, error: string) {.slot} =
+  proc sendTransactionSentSignal*(self: View, chainId: int, txHash: string, uuid: string, error: string) =
     self.transactionSent(chainId, txHash, uuid, error)
 
   proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =

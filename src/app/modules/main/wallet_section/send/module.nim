@@ -1,14 +1,16 @@
-import tables, NimQml, sequtils, sugar, json, stint, strutils
+import tables, NimQml, sequtils, sugar, json, stint, strutils, chronicles
 
 import ./io_interface, ./view, ./controller, ./network_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_model
 import ../io_interface as delegate_interface
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
+import app/global/global_singleton
+import app/core/eventemitter
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/network_connection/service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/keycard/constants as keycard_constants
 import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
@@ -20,17 +22,22 @@ import backend/collectibles as backend_collectibles
 
 export io_interface
 
+logScope:
+  topics = "wallet-send-module"
+
 const cancelledRequest* = "cancelled"
 
 # Shouldn't be public ever, use only within this module.
 type TmpSendTransactionDetails = object
   fromAddr: string
+  fromAddrPath: string
   toAddr: string
   tokenSymbol: string
   value: string
   paths: seq[TransactionPathDto]
   uuid: string
   sendType: SendType
+  resolvedSignatures: TransactionsSignatures
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -43,6 +50,8 @@ type
     nestedCollectiblesModel: nested_collectibles.Model
     moduleLoaded: bool
     tmpSendTransactionDetails: TmpSendTransactionDetails
+    tmpPin: string
+    tmpTxHashBeingProcessed: string
     senderCurrentAccountIndex: int
     # To-do we should create a dedicated module Receive
     receiveCurrentAccountIndex: int
@@ -57,11 +66,13 @@ proc newModule*(
   networkService: network_service.Service,
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
+  keycardService: keycard_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService, transactionService)
+  result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService,
+    transactionService, keycardService)
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.WalletSend),
     autofetch = true,
@@ -245,53 +256,76 @@ method viewDidLoad*(self: Module) =
 method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
   return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
 
-method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType) =
-  self.tmpSendTransactionDetails.fromAddr = from_addr
-  self.tmpSendTransactionDetails.toAddr = to_addr
+method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType) =
+  self.tmpSendTransactionDetails.fromAddr = fromAddr
+  self.tmpSendTransactionDetails.toAddr = toAddr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
   self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.sendType = sendType
+  self.tmpSendTransactionDetails.fromAddrPath = ""
+  self.tmpSendTransactionDetails.resolvedSignatures.clear()
 
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
+  let kp = self.controller.getKeypairByAccountAddress(fromAddr)
+  if kp.migratedToKeycard():
+    let accounts = kp.accounts.filter(acc => cmpIgnoreCase(acc.address, fromAddr) == 0)
+    if accounts.len != 1:
+      error "cannot resolve selected account to send from among known keypair accounts"
+      return
+    self.tmpSendTransactionDetails.fromAddrPath = accounts[0].path
+    self.controller.authenticate(kp.keyUid)
   else:
-    self.controller.authenticateUser()
+    self.controller.authenticate()
 
-  ##################################
-  ## Do Not Delete
-  ##
-  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
-  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
-  ## address (key pair) is migrated to and sign the transaction using it.
-  ##
-  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
-  ##
-  ## let acc = self.controller.getAccountByAddress(from_addr)
-  ## if acc.isNil:
-  ##   echo "error: selected account to send a transaction from is not known"
-  ##   return
-  ## let keyPair = self.controller.getKeycardsWithSameKeyUid(acc.keyUid)
-  ## if keyPair.len == 0:
-  ##   self.controller.authenticateUser()
-  ## else:
-  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
-  ##
-  ##################################
-
-method onUserAuthenticated*(self: Module, password: string) =
+method onUserAuthenticated*(self: Module, password: string, pin: string) =
   if password.len == 0:
-    self.view.transactionWasSent(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = cancelledRequest)
+    self.transactionWasSent()
   else:
+    self.tmpPin = pin
+    let doHashing = self.tmpPin.len == 0
+    let usePassword = self.tmpSendTransactionDetails.fromAddrPath.len == 0
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
       self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-      self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType
+      self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing
     )
 
+method signOnKeycard*(self: Module) =
+  self.tmpTxHashBeingProcessed = ""
+  for h, (r, s, v) in self.tmpSendTransactionDetails.resolvedSignatures.pairs:
+    if r.len != 0 and s.len != 0 and v.len != 0:
+      continue
+    self.tmpTxHashBeingProcessed = h
+    var txForKcFlow = self.tmpTxHashBeingProcessed
+    if txForKcFlow.startsWith("0x"):
+      txForKcFlow = txForKcFlow[2..^1]
+    self.controller.runSignFlow(self.tmpPin, self.tmpSendTransactionDetails.fromAddrPath, txForKcFlow)
+    break
+  if self.tmpTxHashBeingProcessed.len == 0:
+    self.controller.proceedWithTransactionsSignatures(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
+      self.tmpSendTransactionDetails.uuid, self.tmpSendTransactionDetails.resolvedSignatures, self.tmpSendTransactionDetails.paths)
+
+method prepareSignaturesForTransactions*(self: Module, txHashes: seq[string]) =
+  if txHashes.len == 0:
+    error "no transaction hashes to be signed"
+    return
+  for h in txHashes:
+    self.tmpSendTransactionDetails.resolvedSignatures[h] = ("", "", "")
+  self.signOnKeycard()
+
+method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if keycardFlowType != keycard_constants.ResponseTypeValueKeycardFlowResult:
+    error "unexpected error while keycard signing transaction"
+    return
+  self.tmpSendTransactionDetails.resolvedSignatures[self.tmpTxHashBeingProcessed] = (keycardEvent.txSignature.r,
+    keycardEvent.txSignature.s, keycardEvent.txSignature.v)
+  self.signOnKeycard()
+
 method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: string) =
-  self.view.transactionWasSent(chainId, txHash, uuid, error)
+  if txHash.len == 0:
+    self.view.sendTransactionSentSignal(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = cancelledRequest)
+    return
+  self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
 method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
   return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
