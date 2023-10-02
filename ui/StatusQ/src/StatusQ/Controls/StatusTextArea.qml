@@ -6,13 +6,13 @@ import StatusQ.Components 0.1
 
 /*!
       \qmltype StatusTextArea
-      \inherits Item
+      \inherits TextArea
       \inqmlmodule StatusQ.Controls
       \since StatusQ.Controls 0.1
       \brief Displays a multi line text input component.
       Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-textarea.html}{QQC.TextArea}.
 
-      The \c StatusTextArea displays a styled TextArea for users to type multiple lines of text.
+      The \c StatusTextArea displays a styled TextArea for users to type or display multiple lines of text.
       For example:
 
       \qml
@@ -55,9 +55,6 @@ TextArea {
     */
     property bool valid: true
 
-    implicitWidth: 448 // by design
-    implicitHeight: 108
-
     leftPadding: 16
     rightPadding: 16
     topPadding: 10
@@ -82,12 +79,14 @@ TextArea {
 
     background: Rectangle {
         radius: 8
-        color: root.enabled ? Theme.palette.baseColor2 : Theme.palette.baseColor4
+        color: root.readOnly ? "transparent" : root.enabled ? Theme.palette.baseColor2 : Theme.palette.baseColor4
         border.width: 1
         border.color: {
             if (!root.valid)
                 return Theme.palette.dangerColor1
-            if (root.activeFocus)
+            if (root.readOnly)
+                return Theme.palette.baseColor2
+            if (root.cursorVisible)
                 return Theme.palette.primaryColor1
             if (root.hovered)
                 return Theme.palette.primaryColor2
