@@ -193,8 +193,15 @@ QtObject {
     }
 
     // Collectibles Filters
-    property var collectiblesList: walletSection.collectiblesController.model
+    property var collectiblesList: activityController.collectiblesModel
     property var collectiblesFilter: []
+    property bool loadingCollectibles: activityController.status.loadingCollectibles
+    function updateCollectiblesModel() {
+        activityController.updateCollectiblesModel()
+    }
+    function loadMoreCollectibles() {
+        activityController.loadMoreCollectibles()
+    }
     function toggleCollectibles(uid) {
         // update filters
         collectiblesFilter = d.toggleFilterState(collectiblesFilter, uid, collectiblesList.count)

@@ -46,6 +46,9 @@ QtObject:
   proc onGetOldestTimestampDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityGetOldestTimestampDone] = handler
 
+  proc onGetCollectiblesDone*(self: EventsHandler, handler: EventCallbackProc) =
+    self.eventHandlers[backend_activity.eventActivityGetCollectiblesDone] = handler
+
   proc onNewDataAvailable*(self: EventsHandler, handler: proc()) =
     self.newDataAvailableFn = handler
 

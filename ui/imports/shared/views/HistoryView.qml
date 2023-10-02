@@ -48,6 +48,7 @@ ColumnLayout {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
 
+        WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
         WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
     }
 
@@ -58,8 +59,13 @@ ColumnLayout {
             RootStore.updateTransactionFilter()
         }
         function onFilterChainsChanged() {
+            WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
             WalletStores.RootStore.currentActivityFiltersStore.updateRecipientsModel()
         }
+    }
+
+    Connections {
+        enabled: root.visible
     }
 
     QtObject {

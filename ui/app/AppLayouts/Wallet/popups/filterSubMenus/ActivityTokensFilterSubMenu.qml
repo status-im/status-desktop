@@ -20,6 +20,7 @@ StatusMenu {
     property var tokensList: []
     readonly property bool allTokensChecked: tokensFilter.length === 0
 
+    property bool loadingCollectibles: false
     property var collectiblesList: []
     property var collectiblesFilter: []
     readonly property bool allCollectiblesChecked: collectiblesFilter.length === 0
@@ -35,11 +36,6 @@ StatusMenu {
     function resetView() {
         tokensSearchBox.reset()
         collectiblesSearchBox.reset()
-    }
-
-    QtObject {
-        id: d
-        readonly property bool isFetching: root.collectiblesList.isFetching
     }
 
     contentItem: ColumnLayout {
@@ -186,7 +182,7 @@ StatusMenu {
                         allChecked: root.allCollectiblesChecked
                         checked: !loading && (root.allCollectiblesChecked || root.collectiblesFilter.includes(model.uid))
                         onActionTriggered: root.collectibleToggled(model.uid)
-                        loading: d.isFetching
+                        loading: root.loadingCollectibles
                     }
                 }
             }
