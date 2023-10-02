@@ -265,15 +265,22 @@ const getCommunityTokensDetailsTaskArg: Task = proc(argEncoded: string) {.gcsafe
 
     proc createTokenItemJson(communityTokens: seq[CommunityTokenDto], tokenDto: CommunityTokenDto): JsonNode =
       try:
-        let remainingSupply = if tokenDto.infiniteSupply:
-            "0"
-          else:
-            getRemainingSupply(tokenDto.chainId, tokenDto.address)
+        var remainingSupply = tokenDto.supply.toString(10)
+        var burnState = ContractTransactionStatus.Completed
+        var remoteDestructedAddresses: seq[string] = @[]
+        var destructedAmount = "0"
 
-        let burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
-        let remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
+        if tokenDto.deployState == DeployState.Deployed:
+          remainingSupply =
+            if tokenDto.infiniteSupply:
+              "0"
+            else:
+              getRemainingSupply(tokenDto.chainId, tokenDto.address)
+
+          burnState = getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
+          remoteDestructedAddresses = getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
         
-        let destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
+          destructedAmount = getRemoteDestructedAmount(communityTokens, tokenDto.chainId, tokenDto.address)
 
         return %* {
           "address": tokenDto.address,

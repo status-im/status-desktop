@@ -502,7 +502,7 @@ QtObject:
           communityTokens: communityTokens,
           communityTokenJsonItems: communityTokenJsonItems,
         ))
-    except RpcException as e:
+    except Exception as e:
       error "Error getting community tokens details", message = e.msg
 
   proc removeCommunityToken*(self: Service, communityId: string, chainId: int, address: string) =
