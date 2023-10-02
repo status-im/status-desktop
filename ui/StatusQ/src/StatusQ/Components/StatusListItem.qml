@@ -147,6 +147,7 @@ Rectangle {
     MouseArea {
         id: sensor
 
+        objectName: root.objectName + "_sensor"
         anchors.fill: parent
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton
