@@ -18,6 +18,7 @@ ColumnLayout {
 
     StatusTabBar {
         id: editPreviwTabBar
+        objectName: "editPreviwTabBar"
         StatusTabButton {
             leftPadding: 0
             text: qsTr("Live Network")
