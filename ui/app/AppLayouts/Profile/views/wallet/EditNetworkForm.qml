@@ -123,6 +123,7 @@ ColumnLayout {
     StatusInput {
         Layout.fillWidth: true
         label: qsTr("Network name")
+        input.edit.objectName: "editNetworkNameInput"
         text: !!network ? network.chainName : ""
         input.enabled: false
     }
@@ -130,12 +131,14 @@ ColumnLayout {
     StatusInput {
         Layout.fillWidth: true
         label: qsTr("Short name")
+        input.edit.objectName: "editNetworkShortNameInput"
         text: !!network ? network.shortName : ""
         input.enabled: false
     }
 
     StatusInput {
         Layout.fillWidth: true
+        input.edit.objectName: "editNetworkChainIdInput"
         label: qsTr("Chain ID")
         text: !!network ? network.chainId : ""
         input.enabled: false
@@ -143,6 +146,7 @@ ColumnLayout {
 
     StatusInput {
         Layout.fillWidth: true
+        input.edit.objectName: "editNetworkSymbolInput"
         label: qsTr("Native Token Symbol")
         text: !!network ? network.nativeCurrencySymbol : ""
         input.enabled: false
@@ -163,6 +167,7 @@ ColumnLayout {
         }
         StatusInput {
             id: mainRpcInput
+            input.edit.objectName: "editNetworkMainRpcInput"
             width: parent.width
             label: qsTr("Main JSON RPC URL")
             text: {
@@ -204,6 +209,7 @@ ColumnLayout {
 
     StatusInput {
         id: failoverRpcUrlInput
+        input.edit.objectName: "editNetworkFailoverRpcUrlInput"
         Layout.fillWidth: true
         label: qsTr("Failover JSON RPC URL")
         text: {
@@ -237,6 +243,7 @@ ColumnLayout {
     }
 
     StatusInput {
+        input.edit.objectName: "editNetworkExplorerInput"
         Layout.fillWidth: true
         label: qsTr("Block Explorer")
         text: !!network ? network.blockExplorerURL : ""
@@ -245,6 +252,7 @@ ColumnLayout {
 
     StatusCheckBox {
         id: warningCheckbox
+        objectName: "editNetworkAknowledgmentCheckbox"
         Layout.fillWidth: true
         text: qsTr("I understand that changing network settings can cause unforeseen issues, errors, security risks and potentially even loss of funds.")
         checkState: Qt.Unchecked
@@ -257,11 +265,13 @@ ColumnLayout {
         Layout.alignment: Qt.AlignRight
         spacing: 8
         StatusButton {
+            objectName: "editNetworkRevertButton"
             text: qsTr("Revert to default")
             normalColor: "transparent"
             onClicked: d.revertValues()
         }
         StatusButton {
+            objectName: "editNetworkSaveButton"
             text: qsTr("Save Changes")
             enabled: (
                 d.evaluationStatusMainRpc === EditNetworkForm.Verified || 

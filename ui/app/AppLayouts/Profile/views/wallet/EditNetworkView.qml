@@ -21,10 +21,12 @@ ColumnLayout {
         StatusTabButton {
             leftPadding: 0
             text: qsTr("Live Network")
+            objectName: "editNetworkLiveButton"
             width: implicitWidth
         }
         StatusTabButton {
             text: qsTr("Test Network")
+            objectName: "editNetworkTestButton"
             width: implicitWidth
         }
     }
