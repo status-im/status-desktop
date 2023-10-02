@@ -25,7 +25,10 @@ class Scroll(QObject):
                 raise LookupError(f'Object not found: {element}')
         try:
             if hasattr(element.object, 'y'):
-                driver.flick(self.object, 0, int(element.object.y))
+                y = int(element.object.y)
+                if hasattr(element.object, 'height'):
+                    y += int(element.object.height)
+                driver.flick(self.object, 0, y)
         except LookupError as err:
             _logger.debug(err)
 

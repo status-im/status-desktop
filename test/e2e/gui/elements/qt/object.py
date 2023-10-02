@@ -80,7 +80,7 @@ class QObject(BaseObject):
     @allure.step('Get visible {0}')
     def is_visible(self) -> bool:
         try:
-            return driver.waitForObjectExists(self.real_name, 0).visible
+            return driver.waitForObject(self.real_name, 0).visible
         except (AttributeError, LookupError, RuntimeError):
             return False
 

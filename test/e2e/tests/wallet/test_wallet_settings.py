@@ -35,7 +35,7 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
             f"Back to Wallet settings button is not visible on Networks screen"
 
     with step('Verify that Testnet mode toggle is turned off'):
-        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is on when it should not"
+        assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
     with step('Turn on Testnet mode'):
         networks.switch_testnet_mode_toggle().click_turn_on_testnet_mode_in_testnet_modal()
@@ -43,7 +43,7 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
     with step('Verify that Testnet mode turned on'):
         WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value)
         TestnetModeBanner().wait_until_appears()
-        assert networks.get_testnet_mode_toggle_status(), f"Testnet toggle if off when it should not"
+        assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle if off when it should not"
 
     with step('Verify that all networks are in the list and text for testnet active is shown on each'):
         assert networks.testnet_items_amount == 3
@@ -63,7 +63,7 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
     with step('Verify that Testnet mode turned off'):
         WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_DISABLED_TOAST_MESSAGE.value)
         TestnetModeBanner().wait_until_hidden()
-        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is on when it should not"
+        assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703621',
@@ -73,19 +73,19 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
     with step('Verify that Testnet mode toggle is turned off'):
-        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is enabled when it should not"
+        assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is enabled when it should not"
 
     with step('Toggle the Testnet mode toggle ON'):
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Click cross button on the Testnet modal'):
         testnet_modal.close_testnet_modal_with_cross_button()
-        assert not networks.get_testnet_mode_toggle_status()
+        assert not networks.is_testnet_mode_toggle_checked()
 
     with step('Verify that Testnet mode is not turned off'):
         assert not WalletToastMessage().is_visible
         assert not TestnetModeBanner().is_visible, f"Testnet banner is present when it should not"
-        assert not networks.get_testnet_mode_toggle_status(), \
+        assert not networks.is_testnet_mode_toggle_checked(), \
             f"Testnet toggle is turned on when it should not"
 
 
@@ -97,7 +97,7 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
     with step('Verify that Testnet mode toggle is turned off'):
-        assert not networks.get_testnet_mode_toggle_status(), f"Testnet toggle is enabled when it should not"
+        assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is enabled when it should not"
 
     with step('Toggle the Testnet mode toggle ON'):
         testnet_modal = networks.switch_testnet_mode_toggle()
@@ -108,14 +108,14 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
     with step('Verify testnet mode is enabled'):
         WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value)
         TestnetModeBanner().wait_until_appears()
-        assert networks.get_testnet_mode_toggle_status(), f"testnet toggle is off"
+        assert networks.is_testnet_mode_toggle_checked(), f"testnet toggle is off"
 
     with step('Toggle the Testnet mode toggle Off'):
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Click Cancel button on the Testnet modal'):
         testnet_modal.click_cancel_button_in_testnet_modal()
-        assert networks.get_testnet_mode_toggle_status(), f"Testnet toggle is turned OFF when it should not"
+        assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is turned OFF when it should not"
 
     with step('Verify that Testnet mode is not turned off'):
         assert TestnetModeBanner().is_visible, f"Testnet banner is not present when it should"

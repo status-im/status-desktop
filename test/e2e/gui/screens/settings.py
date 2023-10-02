@@ -1,6 +1,5 @@
 import time
 import typing
-from objectmaphelper import RegularExpression
 
 import allure
 
@@ -35,38 +34,38 @@ class LeftPanel(QObject):
         super().__init__('mainWindow_LeftTabView')
         self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
 
-    def _open_settings(self, index: int):
-        self._settings_section_template.real_name['objectName'] = RegularExpression(f'{index}-.*')
+    def _open_settings(self, object_name: str):
+        self._settings_section_template.real_name['objectName'] = object_name
         self._settings_section_template.click()
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
-        self._open_settings(3)
+        self._open_settings('3-AppMenuItem')
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
     def open_communities_settings(self) -> 'CommunitiesSettingsView':
-        self._open_settings(12)
+        self._open_settings('12-AppMenuItem')
         return CommunitiesSettingsView()
 
     @allure.step('Open wallet settings')
     def open_wallet_settings(self):
-        self._open_settings(4)
+        self._open_settings('4-AppMenuItem')
         return WalletSettingsView()
 
     @allure.step('Open profile settings')
     def open_profile_settings(self):
-        self._open_settings(0)
+        self._open_settings('0-MainMenuItem')
         return ProfileSettingsView()
 
     @allure.step('Choose back up seed phrase in settings')
     def open_back_up_seed_phrase(self):
-        self._open_settings(15)
+        self._open_settings('17-MainMenuItem')
         return BackUpYourSeedPhrasePopUp()
 
     @allure.step('Open syncing settings')
     def open_syncing_settings(self):
-        self._open_settings(8)
+        self._open_settings('8-MainMenuItem')
         return SyncingSettingsView()
 
 
@@ -402,7 +401,7 @@ class NetworkWalletSettings(WalletSettingsView):
         return TestnetModePopup().wait_until_appears()
 
     @allure.step('Get testnet mode toggle status')
-    def get_testnet_mode_toggle_status(self):
+    def is_testnet_mode_toggle_checked(self):
         return self._testnet_mode_toggle.is_checked
 
 

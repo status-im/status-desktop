@@ -210,6 +210,7 @@ def compare(actual: Image,
             threshold: float = 0.99,
             timout_sec: int = 1
             ):
+    expected_fp = None
     if isinstance(expected, str):
         expected_fp = configs.testpath.TEST_VP / configs.system.OS_ID / expected
         if not expected_fp.exists():
@@ -223,6 +224,12 @@ def compare(actual: Image,
     start = datetime.now()
     while not actual.compare(expected, threshold):
         time.sleep(1)
-        assert (datetime.now() - start).seconds < timout_sec, 'Comparison failed'
+        if (datetime.now() - start).seconds > timout_sec:
+            if configs.UPDATE_VP_ON_FAIL and expected_fp is not None:
+                actual.save(expected_fp, force=True)
+                _logger.warning(f'VP file updated: {expected_fp}')
+                break
+            else:
+                raise AssertionError('Comparison failed')
     _logger.info(f'Screenshot comparison passed')
 
