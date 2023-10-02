@@ -1191,8 +1191,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
 
   elif(details.notificationType == NotificationType.NewContactRequest or
-    details.notificationType == NotificationType.IdentityVerificationRequest or
-    details.notificationType == NotificationType.ContactRemoved):
+    details.notificationType == NotificationType.IdentityVerificationRequest):
     self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
 
   elif(details.notificationType == NotificationType.AcceptedContactRequest):

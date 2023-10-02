@@ -10,7 +10,6 @@ type
     TestNotification,
     NewContactRequest,
     AcceptedContactRequest,
-    ContactRemoved,
     JoinCommunityRequest,
     MyRequestToJoinCommunityAccepted,
     MyRequestToJoinCommunityRejected,

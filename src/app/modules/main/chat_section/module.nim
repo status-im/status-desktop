@@ -909,7 +909,7 @@ method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: 
   self.controller.acceptContactRequest(publicKey, contactRequestId)
 
 method onContactAdded*(self: Module, publicKey: string) =
-  self.view.contactRequestsModel().removeItemById(publicKey) # is this correct?
+  self.view.contactRequestsModel().removeItemById(publicKey)
 
   let contact = self.controller.getContactById(publicKey)
   if (contact.isContact):
@@ -923,12 +923,8 @@ method acceptAllContactRequests*(self: Module) =
 method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
   self.controller.dismissContactRequest(publicKey, contactRequestId)
 
-method onContactRemoved*(self: Module, publicKey: string) =
-  let contact = self.controller.getContactById(publicKey)
-  if (contact.isContact):
-    singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
-  else:
-    self.view.contactRequestsModel().removeItemById(publicKey)
+method onContactRejected*(self: Module, publicKey: string) =
+  self.view.contactRequestsModel().removeItemById(publicKey)
 
 method dismissAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
@@ -1017,10 +1013,9 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
 
   singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
-
-  self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
-  message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
-  chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
+    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
+    message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
+    chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))

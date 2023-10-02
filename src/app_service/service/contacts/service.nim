@@ -450,7 +450,6 @@ QtObject:
       if self.contacts[publicKey].dto.added and not self.contacts[publicKey].dto.removed and contact.added and not contact.removed:
         signal = SIGNAL_CONTACT_UPDATED
     if contact.removed:
-      singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
       signal = SIGNAL_CONTACT_REMOVED
 
     self.contacts[publicKey] = self.constructContactDetails(contact)
