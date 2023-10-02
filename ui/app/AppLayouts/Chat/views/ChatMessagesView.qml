@@ -62,7 +62,7 @@ Item {
                 return
             }
 
-            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.loading) {
+            if (chatDetails && chatDetails.active && (chatDetails.hasUnreadMessages || chatDetails.highlight) && !messageStore.loading) {
                 chatContentModule.markAllMessagesRead()
             }
         }

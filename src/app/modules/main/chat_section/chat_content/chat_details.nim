@@ -16,6 +16,7 @@ QtObject:
     emoji: string
     hasUnreadMessages: bool
     notificationsCount: int
+    highlight: bool
     muted: bool
     position: int
     isUntrustworthy: bool
@@ -32,7 +33,7 @@ QtObject:
 
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
       isUsersListAvailable: bool, name, icon: string, color, description,
-      emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int,
+      emoji: string, hasUnreadMessages: bool, notificationsCount: int, highlight, muted: bool, position: int,
       isUntrustworthy: bool, isContact: bool = false, blocked: bool = false) =
     self.id = id
     self.`type` = `type`
@@ -45,6 +46,7 @@ QtObject:
     self.description = description
     self.hasUnreadMessages = hasUnreadMessages
     self.notificationsCount = notificationsCount
+    self.highlight = highlight
     self.muted = muted
     self.position = position
     self.isUntrustworthy = isUntrustworthy
@@ -148,6 +150,17 @@ QtObject:
   proc setNotificationCount*(self: ChatDetails, value: int) = # this is not a slot
     self.notificationsCount = value
     self.notificationCountChanged()
+
+  proc highlightChanged(self: ChatDetails) {.signal.}
+  proc getHighlight*(self: ChatDetails): bool {.slot.} =
+    return self.highlight
+  QtProperty[bool] highlight:
+    read = getHighlight
+    notify = highlightChanged
+
+  proc setHighlight*(self: ChatDetails, value: bool) = # this is not a slot
+    self.highlight = value
+    self.highlightChanged()
 
   proc mutedChanged(self: ChatDetails) {.signal.}
   proc getMuted(self: ChatDetails): bool {.slot.} =
