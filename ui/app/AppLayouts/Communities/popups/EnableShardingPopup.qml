@@ -99,20 +99,23 @@ StatusStackModal {
         ColumnLayout {
             readonly property bool canGoNext: agreement.checked
 
-            StatusInput {
+            StatusBaseText {
+                text: qsTr("Pub/Sub topic")
+            }
+
+            StatusTextArea {
                 Layout.fillWidth: true
-                minimumHeight: 88
-                maximumHeight: 88
-                multiline: true
-                input.edit.readOnly: true
-                label: qsTr("Pub/Sub topic")
+                Layout.preferredHeight: 138
+                readOnly: true
                 text: d.pubSubTopic
+                rightPadding: 48
+                wrapMode: TextEdit.Wrap
 
                 CopyButton {
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.rightMargin: 12
-                    anchors.topMargin: (parent.height - parent.input.height) + 12
+                    anchors.topMargin: 10
                     textToCopy: parent.text
                 }
             }

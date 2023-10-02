@@ -46,27 +46,35 @@ StatusDialog {
 
     contentItem: ColumnLayout {
         spacing: Style.current.halfPadding
-        StatusInput {
+
+        StatusBaseText {
+            text: qsTr("Shard number")
+        }
+
+        StatusTextArea {
             Layout.fillWidth: true
-            label: qsTr("Shard number")
-            input.edit.readOnly: true
+            readOnly: true
             text: root.shardIndex
         }
 
-        StatusInput {
+        StatusBaseText {
+            Layout.topMargin: Style.current.halfPadding
+            text: qsTr("Pub/Sub topic")
+        }
+
+        StatusTextArea {
             Layout.fillWidth: true
-            minimumHeight: 88
-            maximumHeight: 88
-            multiline: true
-            input.edit.readOnly: true
-            label: qsTr("Pub/Sub topic")
+            Layout.preferredHeight: 138
+            readOnly: true
             text: root.pubSubTopic
+            rightPadding: 48
+            wrapMode: TextEdit.Wrap
 
             CopyButton {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.rightMargin: 12
-                anchors.topMargin: (parent.height - parent.input.height) + 12
+                anchors.topMargin: 10
                 textToCopy: parent.text
             }
         }

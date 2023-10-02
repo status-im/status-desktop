@@ -107,7 +107,7 @@ StatusDialog {
             StatusTextArea {
                 id: keyInput
                 Layout.fillWidth: true
-                implicitHeight: 108
+                Layout.preferredHeight: 108
                 placeholderText: "0x0..."
                 wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
                 onTextChanged: d.importErrorMessage = ""
