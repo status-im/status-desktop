@@ -1,83 +1,58 @@
 import json, os, chronicles, strutils
 import ../../constants as main_constants
 
+proc resolveEnvVar(envVar: string, defaultValue: string): string =
+  let envVarValue = $getEnv(envVar)
+  if envVarValue != "":
+    return envVarValue
+  else:
+    return defaultValue
+
 # provider Tokens
 # allow runtime override via environment variable; core contributors can set a
 # release token in this way for local development
 
 # set via `nim c` param `-d:POKT_TOKEN:[token]`; should be set in CI/release builds
 const POKT_TOKEN {.strdefine.} = ""
-let POKT_TOKEN_ENV = $getEnv("POKT_TOKEN")
-let POKT_TOKEN_RESOLVED =
-  if POKT_TOKEN_ENV != "":
-    POKT_TOKEN_ENV
-  else:
-    POKT_TOKEN
+let POKT_TOKEN_RESOLVED* = resolveEnvVar("POKT_TOKEN", POKT_TOKEN)
 
 # set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
 const INFURA_TOKEN {.strdefine.} = ""
-let INFURA_TOKEN_ENV = $getEnv("INFURA_TOKEN")
-let INFURA_TOKEN_RESOLVED* =
-  if INFURA_TOKEN_ENV != "":
-    INFURA_TOKEN_ENV
-  else:
-    INFURA_TOKEN
+let INFURA_TOKEN_RESOLVED* = resolveEnvVar("INFURA_TOKEN", INFURA_TOKEN)
 
 # set via `nim c` param `-d:INFURA_TOKEN_SECRET:[token]`; should be set in CI/release builds
 const INFURA_TOKEN_SECRET {.strdefine.} = ""
-let INFURA_TOKEN_SECRET_ENV = $getEnv("INFURA_TOKEN_SECRET")
-let INFURA_TOKEN_SECRET_RESOLVED* =
-  if INFURA_TOKEN_SECRET_ENV != "":
-    INFURA_TOKEN_SECRET_ENV
-  else:
-    INFURA_TOKEN_SECRET
+let INFURA_TOKEN_SECRET_RESOLVED* = resolveEnvVar("INFURA_TOKEN_SECRET", INFURA_TOKEN_SECRET)
+
+# set via `nim c` param `-d:ALCHEMY_ETHEREUM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
+const ALCHEMY_ETHEREUM_MAINNET_TOKEN {.strdefine.} = ""
+let ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ETHEREUM_MAINNET_TOKEN", ALCHEMY_ETHEREUM_MAINNET_TOKEN)
+
+# set via `nim c` param `-d:ALCHEMY_ETHEREUM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
+const ALCHEMY_ETHEREUM_GOERLI_TOKEN {.strdefine.} = ""
+let ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ETHEREUM_GOERLI_TOKEN", ALCHEMY_ETHEREUM_GOERLI_TOKEN)
 
 # set via `nim c` param `-d:ALCHEMY_ARBITRUM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
 const ALCHEMY_ARBITRUM_MAINNET_TOKEN {.strdefine.} = ""
-let ALCHEMY_ARBITRUM_MAINNET_TOKEN_ENV = $getEnv("ALCHEMY_ARBITRUM_MAINNET_TOKEN")
-let ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED* =
-  if ALCHEMY_ARBITRUM_MAINNET_TOKEN_ENV != "":
-    ALCHEMY_ARBITRUM_MAINNET_TOKEN_ENV
-  else:
-    ALCHEMY_ARBITRUM_MAINNET_TOKEN
+let ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ARBITRUM_MAINNET_TOKEN", ALCHEMY_ARBITRUM_MAINNET_TOKEN)
 
 # set via `nim c` param `-d:ALCHEMY_ARBITRUM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
 const ALCHEMY_ARBITRUM_GOERLI_TOKEN {.strdefine.} = ""
-let ALCHEMY_ARBITRUM_GOERLI_TOKEN_ENV = $getEnv("ALCHEMY_ARBITRUM_GOERLI_TOKEN")
-let ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED* =
-  if ALCHEMY_ARBITRUM_GOERLI_TOKEN_ENV != "":
-    ALCHEMY_ARBITRUM_GOERLI_TOKEN_ENV
-  else:
-    ALCHEMY_ARBITRUM_GOERLI_TOKEN
+let ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ARBITRUM_GOERLI_TOKEN", ALCHEMY_ARBITRUM_GOERLI_TOKEN)
 
 # set via `nim c` param `-d:ALCHEMY_OPTIMISM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
 const ALCHEMY_OPTIMISM_MAINNET_TOKEN {.strdefine.} = ""
-let ALCHEMY_OPTIMISM_MAINNET_TOKEN_ENV = $getEnv("ALCHEMY_OPTIMISM_MAINNET_TOKEN")
-let ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED* =
-  if ALCHEMY_OPTIMISM_MAINNET_TOKEN_ENV != "":
-    ALCHEMY_OPTIMISM_MAINNET_TOKEN_ENV
-  else:
-    ALCHEMY_OPTIMISM_MAINNET_TOKEN
+let ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_OPTIMISM_MAINNET_TOKEN", ALCHEMY_OPTIMISM_MAINNET_TOKEN)
 
 # set via `nim c` param `-d:ALCHEMY_OPTIMISM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
 const ALCHEMY_OPTIMISM_GOERLI_TOKEN {.strdefine.} = ""
-let ALCHEMY_OPTIMISM_GOERLI_TOKEN_ENV = $getEnv("ALCHEMY_OPTIMISM_GOERLI_TOKEN")
-let ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED* =
-  if ALCHEMY_OPTIMISM_GOERLI_TOKEN_ENV != "":
-    ALCHEMY_OPTIMISM_GOERLI_TOKEN_ENV
-  else:
-    ALCHEMY_OPTIMISM_GOERLI_TOKEN
+let ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_OPTIMISM_GOERLI_TOKEN", ALCHEMY_OPTIMISM_GOERLI_TOKEN)
+
+# set via `nim c` param `-d:OPENSEA_API_KEY:[token]`; should be set in CI/release builds
+const OPENSEA_API_KEY {.strdefine.} = ""
+let OPENSEA_API_KEY_RESOLVED* = resolveEnvVar("OPENSEA_API_KEY", OPENSEA_API_KEY)
 
 const GANACHE_NETWORK_RPC_URL = $getEnv("GANACHE_NETWORK_RPC_URL")
-const OPENSEA_API_KEY {.strdefine.} = ""
-# allow runtime override via environment variable; core contributors can set a
-# an opensea API key in this way for local development
-let OPENSEA_API_KEY_ENV = $getEnv("OPENSEA_API_KEY")
-let OPENSEA_API_KEY_RESOLVED* =
-  if OPENSEA_API_KEY_ENV != "":
-    OPENSEA_API_KEY_ENV
-  else:
-    OPENSEA_API_KEY
 
 const DEFAULT_TORRENT_CONFIG_PORT = 0 # Random
 let TORRENT_CONFIG_PORT* = if (existsEnv("TORRENT_PORT")):
@@ -403,6 +378,8 @@ var NODE_CONFIG* = %* {
     "Enabled": true,
     "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
     "AlchemyAPIKeys": %* {
+      "1": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+      "5": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
       "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
       "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
       "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
