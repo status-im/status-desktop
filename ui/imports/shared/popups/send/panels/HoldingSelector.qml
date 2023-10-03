@@ -157,7 +157,8 @@ Item {
 
     HoldingItemSelector {
         id: holdingItemSelector
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
 
         defaultIconSource: Style.png("tokens/DEFAULT-TOKEN@3x")
         placeholderText: d.isCurrentBrowsingTypeAsset ? qsTr("Select token") : qsTr("Select collectible")

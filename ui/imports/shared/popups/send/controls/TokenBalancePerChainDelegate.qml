@@ -40,6 +40,8 @@ StatusListItem {
     title: name
     titleAsideText: symbol
     statusListItemTitleAside.font.pixelSize: 15
+    statusListItemTitleAside.width: statusListItemTitleArea.width - statusListItemTitle.width
+    statusListItemTitleAside.elide: Text.ElideRight
     label: LocaleUtils.currencyAmountToLocaleString(totalCurrencyBalance)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
