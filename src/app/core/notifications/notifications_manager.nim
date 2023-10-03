@@ -75,6 +75,10 @@ QtObject:
       self, "onShowMessageNotification(QString, QString, QString, bool, bool, QString, bool, QString, int, bool, bool)", 2)
     signalConnect(singletonInstance.globalEvents, "showNewContactRequestNotification(QString, QString, QString)", 
       self, "onShowNewContactRequestNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showAcceptedContactRequest(QString, QString, QString)",
+      self, "onShowAcceptedContactRequest(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showContactRemoved(QString, QString, QString)",
+      self, "onShowContactRemoved(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "newCommunityMembershipRequestNotification(QString, QString, QString)", 
       self, "onNewCommunityMembershipRequestNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityAcccepted(QString, QString, QString)", 
@@ -83,8 +87,6 @@ QtObject:
       self, "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "meMentionedIconBadgeNotification(int)",
       self, "onMeMentionedIconBadgeNotification(int)", 2)
-    signalConnect(singletonInstance.globalEvents, "showAcceptedContactRequest(QString, QString, QString)", 
-      self, "onShowAcceptedContactRequest(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreatedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletedNotification(QString, QString, QString)", 2)
@@ -180,6 +182,11 @@ QtObject:
     let details = NotificationDetails(notificationType: NotificationType.AcceptedContactRequest, sectionId: sectionId)
     self.processNotification(title, message, details)
 
+  proc onShowContactRemoved*(self: NotificationsManager, title: string, message: string,
+    sectionId: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.ContactRemoved, sectionId: sectionId)
+    self.processNotification(title, message, details)
+
   proc onNewCommunityMembershipRequestNotification*(self: NotificationsManager, title: string, message: string, 
     sectionId: string) {.slot.} =
     let details = NotificationDetails(notificationType: NotificationType.JoinCommunityRequest, sectionId: sectionId)
@@ -217,6 +224,7 @@ QtObject:
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
       details.notificationType == NotificationType.NewMessageWithGlobalMention or
       details.notificationType == NotificationType.NewContactRequest or 
+      details.notificationType == NotificationType.ContactRemoved or
       details.notificationType == NotificationType.IdentityVerificationRequest):
 
       if(notificationWay == VALUE_NOTIF_DELIVER_QUIETLY):
@@ -335,7 +343,7 @@ QtObject:
             self.notificationCheck(title, message, details, self.settingsService.getNotifSettingGroupChats())
             return
 
-    # In all other cases (TestNotification, AcceptedContactRequest, JoinCommunityRequest,  MyRequestToJoinCommunityAccepted,
+    # In all other cases (TestNotification, AcceptedContactRequest, ContactRemoved, JoinCommunityRequest,  MyRequestToJoinCommunityAccepted,
     # MyRequestToJoinCommunityRejected)
     else:
       self.notificationCheck(title, message, details, "")

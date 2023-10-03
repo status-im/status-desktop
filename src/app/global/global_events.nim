@@ -31,8 +31,14 @@ QtObject:
     isCommunitySection: bool, isSectionActive: bool, chatId: string, isChatActive: bool, messageId: string, 
     notificationType: int, isOneToOne: bool, isGroupChat: bool) {.signal.}
   
-  proc showNewContactRequestNotification*(self: GlobalEvents, title: string, message: string, sectionId: string) 
-    {.signal.}
+  proc showNewContactRequestNotification*(self: GlobalEvents, title: string, message: string,
+    sectionId: string) {.signal.}
+
+  proc showAcceptedContactRequest*(self: GlobalEvents, title: string, message: string,
+    sectionId: string) {.signal.}
+
+  proc showContactRemoved*(self: GlobalEvents, title: string, message: string,
+    sectionId: string) {.signal.}
   
   proc newCommunityMembershipRequestNotification*(self: GlobalEvents, title: string, message: string, 
     sectionId: string) {.signal.}
@@ -41,9 +47,6 @@ QtObject:
     sectionId: string) {.signal.}
 
   proc myRequestToJoinCommunityRejected*(self: GlobalEvents, title: string, message: string, 
-    sectionId: string) {.signal.}
-
-  proc showAcceptedContactRequest*(self: GlobalEvents, title: string, message: string, 
     sectionId: string) {.signal.}
 
   proc meMentionedIconBadgeNotification*(self: GlobalEvents, allMentions: int) {.signal.}
