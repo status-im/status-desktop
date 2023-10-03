@@ -25,6 +25,7 @@ Rectangle {
     color: 'transparent'
 
     required property string name
+    property string objName
     required property bool isVisual
     property bool showNonVisual: false
     property bool forceSelect: false
@@ -135,6 +136,10 @@ Rectangle {
             Label {
                 text: root.name
                 font.bold: true
+            }
+            Label {
+                text: `objectName: ${root.objName}`
+                visible: root.objName
             }
             Label {
                 text: `x: ${root.x}, y: ${root.y}`
