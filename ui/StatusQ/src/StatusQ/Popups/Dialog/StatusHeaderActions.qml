@@ -20,7 +20,7 @@ Item {
     QtObject {
         id: d
         readonly property int buttonSize: 32
-        readonly property int iconSize: 20
+        readonly property int iconSize: 24
     }
 
     RowLayout {
