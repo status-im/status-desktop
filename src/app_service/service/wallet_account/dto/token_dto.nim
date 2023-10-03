@@ -188,12 +188,6 @@ proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: str
       sum += self.balancesPerChain[chainId].getCurrencyBalance(price)
   return sum
 
-proc getVisibleForNetwork*(self: WalletTokenDto, chainIds: seq[int]): bool =
-  for chainId in chainIds:
-    if self.balancesPerChain.hasKey(chainId):
-      return true
-  return false
-
 proc getVisibleForNetworkWithPositiveBalance*(self: WalletTokenDto, chainIds: seq[int]): bool =
   for chainId in chainIds:
     if alwaysVisible.hasKey(chainId) and self.symbol in alwaysVisible[chainId]:

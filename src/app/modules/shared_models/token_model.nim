@@ -12,7 +12,6 @@ type
     TotalCurrencyBalance
     EnabledNetworkCurrencyBalance
     EnabledNetworkBalance
-    VisibleForNetwork
     VisibleForNetworkWithPositiveBalance
     Balances
     Description
@@ -71,7 +70,6 @@ QtObject:
       ModelRole.TotalCurrencyBalance.int:"totalCurrencyBalance",
       ModelRole.EnabledNetworkCurrencyBalance.int:"enabledNetworkCurrencyBalance",
       ModelRole.EnabledNetworkBalance.int:"enabledNetworkBalance",
-      ModelRole.VisibleForNetwork.int:"visibleForNetwork",
       ModelRole.VisibleForNetworkWithPositiveBalance.int:"visibleForNetworkWithPositiveBalance",
       ModelRole.Balances.int:"balances",
       ModelRole.Description.int:"description",
@@ -115,8 +113,6 @@ QtObject:
       result = newQVariant(item.getEnabledNetworkCurrencyBalance())
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.getEnabledNetworkBalance())
-    of ModelRole.VisibleForNetwork:
-      result = newQVariant(item.getVisibleForNetwork())
     of ModelRole.VisibleForNetworkWithPositiveBalance:
       result = newQVariant(item.getVisibleForNetworkWithPositiveBalance())
     of ModelRole.Balances:
@@ -162,7 +158,6 @@ QtObject:
       of "totalCurrencyBalance": result = $item.getTotalCurrencyBalance().toJsonNode()
       of "enabledNetworkCurrencyBalance": result = $item.getEnabledNetworkCurrencyBalance()
       of "enabledNetworkBalance": result = $item.getEnabledNetworkBalance()
-      of "visibleForNetwork": result = $item.getVisibleForNetwork()
       of "visibleForNetworkWithPositiveBalance": result = $item.getVisibleForNetworkWithPositiveBalance()
       of "description": result = $item.getDescription()
       of "assetWebsiteUrl": result = $item.getAssetWebsiteUrl()
