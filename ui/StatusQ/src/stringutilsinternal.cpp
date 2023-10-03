@@ -16,6 +16,18 @@ QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
     return unsafe.toHtmlEscaped();
 }
 
+QString resolveFileUsingQmlImportPaths(QQmlEngine *engine, const QString &relativeFilePath) {
+    QStringList importPaths = engine->importPathList();
+    for (const auto &path : importPaths) {
+        QString fullPath = path + "/" + relativeFilePath;
+        QFile file(fullPath);
+        if (file.exists()) {
+            return fullPath;
+        }
+    }
+    return "";
+}
+
 QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
     auto selector = QQmlFileSelector::get(m_engine);
@@ -28,8 +40,16 @@ QString StringUtilsInternal::readTextFile(const QString& filePath) const
 
     QFile file(resolvedFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << Q_FUNC_INFO << "Error opening" << resolvedFilePath << "for reading";
-        return {};
+        auto fileUrl = resolveFileUsingQmlImportPaths(m_engine, filePath);
+        if (fileUrl.isEmpty()) {
+            qWarning() << Q_FUNC_INFO << "Can't find file in QML import paths" << filePath;
+            return {};
+        }
+        file.setFileName(fileUrl);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning() << Q_FUNC_INFO << "Error opening existing file" << fileUrl << "for reading";
+            return {};
+        }
     }
 
     return file.readAll();

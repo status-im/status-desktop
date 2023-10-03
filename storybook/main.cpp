@@ -2,12 +2,15 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+#include <QtWebView>
+
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
 #include "figmalinks.h"
 #include "pagesmodel.h"
 #include "sectionsdecoratormodel.h"
 #include "testsrunner.h"
+#include "systemutils.h"
 
 struct PagesModelInitialized : public PagesModel {
     explicit PagesModelInitialized(QObject *parent = nullptr)
@@ -16,6 +19,9 @@ struct PagesModelInitialized : public PagesModel {
 
 int main(int argc, char *argv[])
 {
+    // Required by the WalletConnectSDK view
+    QtWebView::initialize();
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -78,6 +84,11 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<TestsRunner>(
                 "Storybook", 1, 0, "TestsRunner", runnerFactory);
+
+    qmlRegisterSingletonType<SystemUtils>(
+                "Storybook", 1, 0, "SystemUtils", [](QQmlEngine*, QJSEngine*) {
+                    return new SystemUtils;
+                });
 
 #ifdef Q_OS_WIN
     const QUrl url(QUrl::fromLocalFile(QML_IMPORT_ROOT + QStringLiteral("/main.qml")));

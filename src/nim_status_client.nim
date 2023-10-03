@@ -132,6 +132,9 @@ proc mainProc() =
 
   let app = newQGuiApplication()
 
+  # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
+  initializeWebView()
+
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let urlSchemeEvent = newStatusUrlSchemeEventObject()
   # init url manager before app controller

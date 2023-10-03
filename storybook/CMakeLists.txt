@@ -20,7 +20,7 @@ endif()
 
 find_package(
   Qt5
-  COMPONENTS Core Gui Quick QuickControls2 Test QuickTest Qml
+  COMPONENTS Core Gui Quick QuickControls2 Test QuickTest Qml WebView
   REQUIRED)
 
 set(STATUSQ_BUILD_SANDBOX OFF)
@@ -53,6 +53,7 @@ add_library(${PROJECT_LIB}
     pagesmodel.h pagesmodel.cpp
     sectionsdecoratormodel.cpp sectionsdecoratormodel.h
     testsrunner.h testsrunner.cpp
+    systemutils.cpp systemutils.h
 )
 
 add_executable(
@@ -72,7 +73,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     )
 
 target_link_libraries(
-    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)
+    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView)
 
 target_link_libraries(
         ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
@@ -87,7 +88,7 @@ add_executable(
 )
 
 target_link_libraries(
-    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)
+    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView)
 
 add_dependencies(PagesValidator StatusQ)
 

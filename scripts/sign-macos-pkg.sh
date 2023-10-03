@@ -55,7 +55,7 @@ if [[ -n "${MACOS_KEYCHAIN_FILE}" ]]; then
     echo -e "\n### Storing original keychain search list..."
     # We want to restore the normal keychains and ignore Jenkis created ones
     ORIG_KEYCHAIN_LIST=$(security list-keychains | grep -v -e "^/private" -e "secretFiles" | xargs)
-    
+
     # The keychain file needs to be locked afterwards
     trap clean_up EXIT ERR
 
