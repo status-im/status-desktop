@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -17,13 +19,14 @@ ColumnLayout {
     property string  syncCodeErrorMessage: qsTr("This does not look like a sync code")
     property string  syncCodeLabel: qsTr("Paste sync code")
 
-    property var validateConnectionString: function(){}
+    property var validateConnectionString: function(stringValue) { return true }
 
     readonly property bool syncViaQr:  !switchTabBar.currentIndex
 
     signal displayInstructions()
     signal proceed(string connectionString)
 
+    spacing: 8
 
     StatusSwitchTabBar {
         id: switchTabBar
@@ -44,6 +47,7 @@ ColumnLayout {
     StackLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.max(syncQr.implicitHeight, syncCode.implicitHeight)
+        Layout.topMargin: 24
         currentIndex: switchTabBar.currentIndex
 
         // StackLayout doesn't support alignment, so we create an `Item` wrappers
@@ -68,14 +72,15 @@ ColumnLayout {
             }
         }
 
-        Item {
+        ColumnLayout {
+            spacing: 20
             StatusSyncCodeInput {
                 id: syncCode
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 424
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 424
 
                 mode: StatusSyncCodeInput.Mode.WriteMode
-                label:root.syncCodeLabel
+                label: root.syncCodeLabel
                 input.placeholderText: qsTr("eg. %1").arg("0x2Ef19")
 
                 validators: [
@@ -90,6 +95,14 @@ ColumnLayout {
                         return
                     root.proceed(syncCode.text)
                 }
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                text: qsTr("Ensure both devices are on the same network")
             }
         }
     }

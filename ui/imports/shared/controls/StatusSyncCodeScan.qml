@@ -77,9 +77,9 @@ Column {
     Component {
         id: btnComponent
 
-        Rectangle {
+        ShapeRectangle {
             anchors.fill: parent
-            color: Theme.palette.baseColor4
+            path.fillColor: Theme.palette.baseColor4
             radius: d.radius
 
             ColumnLayout {
@@ -145,7 +145,7 @@ Column {
     
     Item {
         width: parent.width
-        height: 16
+        height: 8
     }
 
     StatusBaseText {
@@ -159,11 +159,23 @@ Column {
     }
 
     StatusBaseText {
+        visible: !d.showCamera
+        width: parent.width
+        height: visible ? implicitHeight : 0
+        wrapMode: Text.WordWrap
+        color: Theme.palette.baseColor1
+        font.pixelSize: Theme.tertiaryTextFontSize
+        horizontalAlignment: Text.AlignHCenter
+        text: qsTr("Ensure both devices are on the same network")
+    }
+
+    StatusBaseText {
         visible: d.showCamera && cameraLoader.item.camera ? true : false
         width: parent.width
         height: visible ? implicitHeight : 0
         wrapMode: Text.WordWrap
         color: Theme.palette.baseColor1
+        font.pixelSize: Theme.tertiaryTextFontSize
         horizontalAlignment: Text.AlignHCenter
         text: qsTr("Ensure that the QR code is in focus to scan")
     }
