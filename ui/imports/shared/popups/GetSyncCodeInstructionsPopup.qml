@@ -8,7 +8,8 @@ StatusDialog {
     id: root
 
     title: qsTr("How to get a sync code on...")
-    padding: 40
+    horizontalPadding: 24
+    verticalPadding: 32
     footer: null
 
     SyncingCodeInstructions {

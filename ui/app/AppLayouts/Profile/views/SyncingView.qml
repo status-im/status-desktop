@@ -14,6 +14,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 
 import shared.panels 1.0
+import shared.popups 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
 
@@ -248,6 +249,13 @@ SettingsContentBase {
             }
         }
 
+        StatusFlatButton {
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("How to get a sync code")
+            icon.name: "info"
+            onClicked: Global.openPopup(getSyncCodeInstructionsPopup)
+        }
+
         StatusButton {
             objectName: "setupSyncBackupDataButton"
 
@@ -278,6 +286,13 @@ SettingsContentBase {
                 destroyOnClose: true
                 devicesStore: root.devicesStore
                 profileStore: root.profileStore
+            }
+        }
+
+        Component {
+            id: getSyncCodeInstructionsPopup
+            GetSyncCodeInstructionsPopup {
+                destroyOnClose: true
             }
         }
 
