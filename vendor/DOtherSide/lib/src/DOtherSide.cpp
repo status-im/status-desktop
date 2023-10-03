@@ -56,6 +56,7 @@
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
+#include <QtWebView>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -173,6 +174,11 @@ void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 void dos_qguiapplication_initialize_opengl()
 {
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+}
+
+void dos_qtwebview_initialize()
+{
+    QtWebView::initialize();
 }
 
 void dos_qguiapplication_try_enable_threaded_renderer()

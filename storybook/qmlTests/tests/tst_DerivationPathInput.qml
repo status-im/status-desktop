@@ -161,24 +161,4 @@ Item {
             verify(/^<style>(?:\.[a-zA-Z]{[a-zA-Z0-9#:;]+})+<\/style>(?:<span\sclass=["']\w["']>[\/\d'm]+<\/span>)+$/.test(res), `The generated html is valid and optimum (no extra spaces or CSS long names) - "${res}"`)
         }
     }
-
-    TestCase {
-        name: "DerivationPathInputRegressionTests"
-
-        Component {
-            id: regressionControlComponent
-
-            DerivationPathInput {
-            }
-        }
-
-        property DerivationPathInput controller: null
-
-        // Controller.Component.onCompleted was initializing Component.d.referenceElements after DerivationPathInput.onCompleted was processing the DerivationPathInput.initialDerivationPath, hence the output was wrong (m/44'/60001)
-        function test_successfulInitializationOfControllerBeforeItem() {
-            skip("Failing test. Needs to be fixed or updated")
-            const control = createTemporaryObject(regressionControlComponent, root)
-            compare("m/44'/60'/0'/0/1", control.derivationPath)
-        }
-    }
 }

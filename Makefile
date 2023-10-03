@@ -186,7 +186,7 @@ ifneq ($(detected_OS),Windows)
  endif
  DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia Qt5WebView)"
 else
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
