@@ -507,6 +507,8 @@ proc fromJson*(e: JsonNode, T: typedesc[GetRecipientsResponse]): GetRecipientsRe
 
 rpc(getRecipientsAsync, "wallet"):
   requestId: int32
+  chainIDs: seq[int]
+  addresses: seq[string]
   offset: int
   limit: int
 
