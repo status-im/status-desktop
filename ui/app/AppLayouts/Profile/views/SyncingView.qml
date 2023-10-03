@@ -27,10 +27,12 @@ import "../../stores"
 SettingsContentBase {
     id: root
 
-    property DevicesStore devicesStore
+    property var devicesStore
     property ProfileStore profileStore
     property PrivacyStore privacyStore
-    property AdvancedStore advancedStore
+    property var advancedStore
+
+    required property bool isProduction
 
     ColumnLayout {
         id: layout
@@ -247,11 +249,10 @@ SettingsContentBase {
         }
 
         StatusButton {
-
             objectName: "setupSyncBackupDataButton"
 
             id: backupBtn
-            visible: !production
+            visible: !root.isProduction
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data")
             onClicked : {
@@ -264,7 +265,7 @@ SettingsContentBase {
             id: personalizeDevicePopup
 
             SyncDeviceCustomizationPopup {
-                anchors.centerIn: parent
+                destroyOnClose: true
                 devicesStore: root.devicesStore
                 advancedStore: root.advancedStore
             }
@@ -274,7 +275,7 @@ SettingsContentBase {
             id: setupSyncingPopup
 
             SetupSyncingPopup {
-                anchors.centerIn: parent
+                destroyOnClose: true
                 devicesStore: root.devicesStore
                 profileStore: root.profileStore
             }
