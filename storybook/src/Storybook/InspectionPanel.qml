@@ -76,6 +76,7 @@ Item {
 
             const props = {
                 index, name, x, y,
+                objName: item.objectName,
                 width: item.width,
                 height: item.height,
                 z: item.z,
