@@ -508,7 +508,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
-                            Global.removeContactRequested(root.mainDisplayName, root.publicKey);
+                            Global.removeContactRequested(d.mainDisplayName, root.publicKey);
                             moreMenu.close();
                         }
                     }
