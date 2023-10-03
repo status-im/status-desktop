@@ -298,6 +298,7 @@ ColumnLayout {
         id: addressMenu
         selectedAddress: !!root.account ? root.account.address: ""
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
+        isSepoliaEnabled: root.walletStore.isSepoliaEnabled
         preferredSharingNetworks: d.preferredSharingNetworkShortNames
         preferredSharingNetworksArray: d.preferredSharingNetworksArray
         onCopyToClipboard: root.walletStore.copyToClipboard(address)

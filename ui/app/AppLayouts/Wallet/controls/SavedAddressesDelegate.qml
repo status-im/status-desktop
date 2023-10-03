@@ -25,6 +25,7 @@ StatusListItem {
     property string chainShortNames
     property bool favourite: false
     property bool areTestNetworksEnabled: false
+    property bool isSepoliaEnabled: false
     property var saveAddress: function (name, address, favourite, chainShortNames, ens) {}
     property var deleteSavedAddress: function (address, ens) {}
 
@@ -172,7 +173,11 @@ StatusListItem {
             onTriggered: {
                 var baseUrl = Constants.networkExplorerLinks.etherscan
                 if (root.areTestNetworksEnabled) {
-                    baseUrl = Constants.networkExplorerLinks.goerliEtherscan
+                    if (root.isSepoliaEnabled) {
+                        baseUrl = Constants.networkExplorerLinks.sepoliaEtherscan
+                    } else {
+                        baseUrl = Constants.networkExplorerLinks.goerliEtherscan
+                    }
                 }
                 Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }

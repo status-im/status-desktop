@@ -100,6 +100,10 @@ method toggleTestNetworksEnabled*(self: Module) =
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
 
+method toggleIsSepoliaEnabled*(self: Module) = 
+  self.controller.toggleIsSepoliaEnabled()
+  self.refreshNetworks()
+
 method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
   self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
 

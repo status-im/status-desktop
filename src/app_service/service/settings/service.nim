@@ -484,6 +484,16 @@ QtObject:
       return true
     return false
 
+  proc isSepoliaEnabled*(self: Service): bool =
+    return self.settings.isSepoliaEnabled
+
+  proc toggleIsSepoliaEnabled*(self: Service): bool =
+    let newValue = not self.settings.isSepoliaEnabled
+    if(self.saveSetting(KEY_IS_SEPOLIA_ENABLED, newValue)):
+      self.settings.isSepoliaEnabled = newValue
+      return true
+    return false
+
   proc notifSettingAllowNotificationsChanged*(self: Service) {.signal.}
   proc getNotifSettingAllowNotifications*(self: Service): bool {.slot.} =
     if self.initialized:

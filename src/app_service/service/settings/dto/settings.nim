@@ -44,6 +44,7 @@ const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
+const KEY_IS_SEPOLIA_ENABLED* = "is-sepolia-enabled?"
 const INCLUDE_WATCH_ONLY_ACCOUNT* = "include-watch-only-account?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 
@@ -139,6 +140,7 @@ type
     notificationsMessagePreview*: int
     includeWatchOnlyAccount*: bool
     profileMigrationNeeded*: bool
+    isSepoliaEnabled*: bool
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -192,6 +194,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
+  discard jsonObj.getProp(KEY_IS_SEPOLIA_ENABLED, result.isSepoliaEnabled)
   discard jsonObj.getProp(INCLUDE_WATCH_ONLY_ACCOUNT, result.includeWatchOnlyAccount)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 

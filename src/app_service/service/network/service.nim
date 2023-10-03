@@ -51,6 +51,9 @@ proc fetchNetworks*(self: Service, useCached: bool = true): seq[CombinedNetworkD
     self.networks = result
     self.networksInited = true
 
+proc resetNetworks*(self: Service) =
+  discard self.fetchNetworks(useCached = false)
+
 proc getCombinedNetworks*(self: Service): seq[CombinedNetworkDto] =
   return self.fetchNetworks()
 
@@ -128,7 +131,11 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 
 proc getChainIdForEns*(self: Service): int =
   if self.settingsService.areTestNetworksEnabled():
+    if self.settingsService.isSepoliaEnabled():
+      return Sepolia
+
     return Goerli
+
   return Mainnet
 
 proc getNetworkForEns*(self: Service): NetworkDto =
@@ -137,6 +144,9 @@ proc getNetworkForEns*(self: Service): NetworkDto =
 
 proc getNetworkForStickers*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
+    if self.settingsService.isSepoliaEnabled():
+      return self.getNetwork(Sepolia)
+
     return self.getNetwork(Goerli)
 
   return self.getNetwork(Mainnet)
@@ -152,6 +162,9 @@ proc getNetworkForActivityCheck*(self: Service): NetworkDto =
 
 proc getNetworkForCollectibles*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
+    if self.settingsService.isSepoliaEnabled():
+      return self.getNetwork(Sepolia)
+
     return self.getNetwork(Goerli)
 
   return self.getNetwork(Mainnet)

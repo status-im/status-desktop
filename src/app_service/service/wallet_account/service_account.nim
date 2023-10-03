@@ -530,6 +530,15 @@ proc toggleTestNetworksEnabled*(self: Service) =
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
+proc toggleIsSepoliaEnabled*(self: Service) =
+  discard self.settingsService.toggleIsSepoliaEnabled()
+  self.networkService.resetNetworks()
+  let addresses = self.getWalletAddresses()
+  self.buildAllTokens(addresses, store = true)
+  self.tokenService.loadData()
+  self.checkRecentHistory(addresses)
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
+
 proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =
   try:
     var account = self.getAccountByAddress(address)
@@ -748,6 +757,9 @@ proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
 
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()
+
+proc isSepoliaEnabled*(self: Service): bool =
+  return self.settingsService.isSepoliaEnabled()
 
 proc hasPairedDevices*(self: Service): bool =
   return hasPairedDevices()

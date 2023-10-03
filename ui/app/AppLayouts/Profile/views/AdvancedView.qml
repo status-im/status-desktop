@@ -437,6 +437,17 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Enable Sepolia as Test Network")
+                isSwitch: true
+                switchChecked: root.advancedStore.isSepoliaEnabled
+                onClicked: {
+                    root.advancedStore.toggleIsSepoliaEnabled()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("How many log files to keep archived")
                 currentValue: root.advancedStore.logMaxBackups
                 onClicked: {

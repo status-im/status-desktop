@@ -19,6 +19,7 @@ QtObject {
     }
 
     property AdvancedStore advancedStore: AdvancedStore {
+        walletModule: profileSectionModuleInst.walletModule
         advancedModule: profileSectionModuleInst.advancedModule
     }
 

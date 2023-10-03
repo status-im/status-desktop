@@ -19,6 +19,7 @@ ColumnLayout {
     property string tokenAddress
     property bool strikethrough: false
     property bool areTestNetworksEnabled: false
+    property bool isSepoliaEnabled: false
 
     spacing: Style.current.padding
 
@@ -103,7 +104,14 @@ ColumnLayout {
                     radius: 8
                     visible: nftPreviewSensor.hovered && !!root.tokenId && !!root.tokenAddress
                     onClicked: {
-                        const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
+                        let link = Constants.networkExplorerLinks.etherscan
+                        if (areTestNetworksEnabled) {
+                            if (root.isSepoliaEnabled) {
+                                link = Constants.networkExplorerLinks.sepoliaEtherscan
+                            } else {
+                                link = Constants.networkExplorerLinks.goerliEtherscan
+                            }
+                        }
                         Global.openLink("%1/nft/%2/%3".arg(link).arg(root.tokenAddress).arg(root.tokenId))
                     }
                 }

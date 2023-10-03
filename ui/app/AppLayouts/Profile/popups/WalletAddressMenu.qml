@@ -11,6 +11,7 @@ StatusMenu {
 
     property string selectedAddress
     property bool areTestNetworksEnabled: false
+    property bool isSepoliaEnabled: false
     property string preferredSharingNetworks
     property var preferredSharingNetworksArray
 
@@ -27,7 +28,15 @@ StatusMenu {
         text: qsTr("View address on Etherscan")
         icon.name: "link"
         onTriggered: {
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
+            let link = Constants.networkExplorerLinks.etherscan
+            if (areTestNetworksEnabled) {
+                if (root.isSepoliaEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaEtherscan
+                } else {
+                    link = Constants.networkExplorerLinks.goerliEtherscan
+                }
+            }
+            
             Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAddress))
         }
     }
