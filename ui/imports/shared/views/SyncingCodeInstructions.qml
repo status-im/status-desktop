@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Controls 0.1
 
+import utils 1.0
 import shared.controls 1.0
 
 ColumnLayout {
@@ -21,11 +22,13 @@ ColumnLayout {
     property int purpose: SyncingCodeInstructions.Purpose.AppSync
     property int type: SyncingCodeInstructions.Type.QRCode
 
-    spacing: 0
+    spacing: Style.current.xlPadding
 
     StatusSwitchTabBar {
         id: switchTabBar
         Layout.fillWidth: true
+        Layout.leftMargin: Style.current.padding
+        Layout.rightMargin: Style.current.padding
         Layout.minimumWidth: 400
         currentIndex: 0
 
@@ -36,11 +39,6 @@ ColumnLayout {
         StatusSwitchTabButton {
             text: qsTr("Desktop")
         }
-    }
-
-    Item {
-        Layout.fillWidth: true
-        implicitHeight: 41
     }
 
     StackLayout {

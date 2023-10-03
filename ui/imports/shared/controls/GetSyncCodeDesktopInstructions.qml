@@ -14,21 +14,22 @@ Column {
 
     GetSyncCodeInstruction {
         order: "1."
-        orderColor: Theme.palette.baseColor1
+        text1: qsTr("Ensure both devices are on the same network")
+    }
+
+    GetSyncCodeInstruction {
+        order: "2."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 return qsTr("Open Status on the device you want to import from")
             }
             return qsTr("Open Status App on your desktop device")
         }
-        text1Color: Theme.palette.baseColor1
     }
 
     GetSyncCodeInstruction {
-        order: "2."
-        orderColor: Theme.palette.baseColor1
+        order: "3."
         text1: qsTr("Open")
-        text1Color: Theme.palette.baseColor1
         icon: "settings"
         text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
@@ -40,15 +41,13 @@ Column {
     }
 
     GetSyncCodeInstruction {
-        order: "3."
-        orderColor: Theme.palette.baseColor1
+        order: "4."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 return qsTr("Click")
             }
             return qsTr("Navigate to the")
         }
-        text1Color: Theme.palette.baseColor1
         icon: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 return ""
@@ -65,8 +64,7 @@ Column {
     }
 
     GetSyncCodeInstruction {
-        order: "4."
-        orderColor: Theme.palette.baseColor1
+        order: "5."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
@@ -106,8 +104,7 @@ Column {
     }
 
     GetSyncCodeInstruction {
-        order: "5."
-        orderColor: Theme.palette.baseColor1
+        order: "6."
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
@@ -117,7 +114,6 @@ Column {
             }
             return ""
         }
-        text1Color: Theme.palette.baseColor1
         text2: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
@@ -137,20 +133,18 @@ Column {
             }
             return qsTr("on this device")
         }
-        text3Color: Theme.palette.baseColor1
     }
 
     GetSyncCodeInstruction {
         order: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
-                    return "6."
+                    return "7."
                 }
                 return ""
             }
-            return "6."
+            return "7."
         }
-        orderColor: Theme.palette.baseColor1
         text1: {
             if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
                 if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
@@ -160,6 +154,5 @@ Column {
             }
             return qsTr("Scan or enter the code")
         }
-        text1Color: Theme.palette.baseColor1
     }
 }

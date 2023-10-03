@@ -2,6 +2,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 RowLayout {
     id: root
@@ -9,41 +10,37 @@ RowLayout {
     height: 40
 
     property string order: ""
-    property string orderColor: ""
+    property color orderColor: Theme.palette.baseColor1
     property string text1: ""
-    property string text1Color: ""
+    property color text1Color: Theme.palette.baseColor1
     property string icon: ""
     property string text2: ""
     property string text2Color: ""
     property string text3: ""
-    property string text3Color: ""
+    property color text3Color: Theme.palette.baseColor1
 
     StatusBaseText {
-        Layout.alignment: Qt.AlignVCenter
-        visible: !!root.order
+        visible: text
         color: root.orderColor
         text: root.order
     }
     StatusBaseText {
-        Layout.alignment: Qt.AlignVCenter
-        visible: !!root.text1
+        visible: text
         color: root.text1Color
-        text: "%1".arg(root.text1)
+        text: root.text1
     }
     StatusRoundIcon {
         visible: !!root.icon
         asset.name: root.icon
     }
     StatusBaseText {
-        Layout.alignment: Qt.AlignVCenter
-        visible: !!root.text2
+        visible: text
         color: root.text2Color
-        text: "%1".arg(root.text2)
+        text: root.text2
     }
     StatusBaseText {
-        Layout.alignment: Qt.AlignVCenter
-        visible: !!root.text3
+        visible: text
         color: root.text3Color
-        text: "%1".arg(root.text3)
+        text: root.text3
     }
 }
