@@ -128,7 +128,7 @@ Item {
                 expression: {
                     var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.assetSearchString)
                     tokenList.positionViewAtBeginning()
-                    return visibleForNetwork && (
+                    return visibleForNetworkWithPositiveBalance && (
                                 symbol.startsWith(d.assetSearchString.toUpperCase()) || name.toUpperCase().startsWith(d.assetSearchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                                 )
                 }

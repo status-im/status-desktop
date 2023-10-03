@@ -14,7 +14,6 @@ type
     totalCurrencyBalance: CurrencyAmount
     enabledNetworkCurrencyBalance: CurrencyAmount
     enabledNetworkBalance: CurrencyAmount
-    visibleForNetwork: bool
     visibleForNetworkWithPositiveBalance: bool
     balances: balance_model.BalanceModel
     description: string
@@ -38,7 +37,6 @@ proc initItem*(
   totalCurrencyBalance: CurrencyAmount,
   enabledNetworkBalance: CurrencyAmount,
   enabledNetworkCurrencyBalance: CurrencyAmount,
-  visibleForNetwork: bool,
   visibleForNetworkWithPositiveBalance: bool,
   balances: seq[balance_item.Item],
   description: string,
@@ -63,7 +61,6 @@ proc initItem*(
   result.totalCurrencyBalance = totalCurrencyBalance
   result.enabledNetworkBalance = enabledNetworkBalance
   result.enabledNetworkCurrencyBalance = enabledNetworkCurrencyBalance
-  result.visibleForNetwork = visibleForNetwork
   result.visibleForNetworkWithPositiveBalance = visibleForNetworkWithPositiveBalance
   result.balances = balance_model.newModel()
   result.balances.setItems(balances)
@@ -92,7 +89,6 @@ proc `$`*(self: Item): string =
     enabledNetworkBalance: {self.enabledNetworkBalance},
     enabledNetworkCurrencyBalance: {self.enabledNetworkCurrencyBalance},
     visibleForNetworkWithPositiveBalance: {self.visibleForNetworkWithPositiveBalance},
-    visibleForNetwork: {self.visibleForNetwork},
     description: {self.description},
     assetWebsiteUrl: {self.assetWebsiteUrl}
     builtOn: {self.builtOn}
@@ -118,7 +114,6 @@ proc initLoadingItem*(): Item =
     totalCurrencyBalance = newCurrencyAmount(),
     enabledNetworkBalance = newCurrencyAmount(),
     enabledNetworkCurrencyBalance = newCurrencyAmount(),
-    visibleForNetwork = false,
     visibleForNetworkWithPositiveBalance = false,
     balances = @[],
     description = "",
@@ -157,9 +152,6 @@ proc getEnabledNetworkBalance*(self: Item): CurrencyAmount =
 
 proc getEnabledNetworkCurrencyBalance*(self: Item): CurrencyAmount =
   return self.enabledNetworkCurrencyBalance
-
-proc getVisibleForNetwork*(self: Item): bool =
-  return self.visibleForNetwork
 
 proc getVisibleForNetworkWithPositiveBalance*(self: Item): bool =
   return self.visibleForNetworkWithPositiveBalance

@@ -96,7 +96,7 @@ Item {
                 ExpressionFilter {
                     expression: {
                         d.uppercaseSearchText; // Force re-evaluation when searchText changes
-                        return visibleForNetwork && (
+                        return visibleForNetworkWithPositiveBalance && (
                             d.uppercaseSearchText === "" ||
                             symbol.startsWith(d.uppercaseSearchText) ||
                             name.toUpperCase().startsWith(d.uppercaseSearchText) |
