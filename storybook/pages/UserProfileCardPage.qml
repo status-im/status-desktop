@@ -82,3 +82,5 @@ SplitView {
         }
     }
 }
+
+// https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/💬-Chat⎜Desktop?type=design&node-id=21961-655678&mode=design&t=JiMnPfMaLPWlrFK3-0

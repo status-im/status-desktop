@@ -363,3 +363,10 @@ SplitView {
 }
 
 // category: Views
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22602-495563&t=9dIP8Sji2UlfhsEs-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-495258&t=9dIP8Sji2UlfhsEs-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-496145&t=9dIP8Sji2UlfhsEs-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-497754&t=9dIP8Sji2UlfhsEs-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-501014&t=9dIP8Sji2UlfhsEs-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-499051&t=kHAcE8WSCyGqhWSH-0

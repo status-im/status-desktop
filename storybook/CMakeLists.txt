@@ -60,7 +60,6 @@ add_executable(
   ${CORE_QML_FILES}
   ${CORE_JS_FILES}
   ${STORYBOOK_QML_FILES}
-  figma.json
   README.md
 )
 

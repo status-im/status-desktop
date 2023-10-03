@@ -101,3 +101,7 @@ SplitView {
 }
 
 // category: Panels
+
+// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14580-339532&t=RkXAEv3G6mp3EUvl-0
+// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14729-231402&t=RkXAEv3G6mp3EUvl-0
+// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14609-236656&t=RkXAEv3G6mp3EUvl-0

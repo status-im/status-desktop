@@ -420,3 +420,5 @@ SplitView {
 }
 
 // category: Components
+
+// https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=12272%3A269692&t=YiipgcxOhdOvqprP-0

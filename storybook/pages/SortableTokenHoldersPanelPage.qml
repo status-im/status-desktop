@@ -91,3 +91,12 @@ SplitView {
 }
 
 // category: Panels
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690307&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690334&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690939&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690557&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691130&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691320&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691513&mode=design&t=xJYwzqj8f8v72gYz-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691703&mode=design&t=xJYwzqj8f8v72gYz-0

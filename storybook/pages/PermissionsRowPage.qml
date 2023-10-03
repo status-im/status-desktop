@@ -202,3 +202,7 @@ SplitView {
 }
 
 // category: Components
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=28570-546277&t=PVEC7ehRew4RnGFa-0
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159&t=bTEq7jsSZT0nfC4y-1
+// https://www.figma.com/file/WQZcp6S0EnzxdTL4taoKDv/Design-System-for-Mobile?node-id=17582-215241&t=8cRmw5jIlzUtfJbY-0

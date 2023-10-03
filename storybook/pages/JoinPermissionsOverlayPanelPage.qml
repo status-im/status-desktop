@@ -175,3 +175,5 @@ SplitView {
 }
 
 // category: Panels
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2365%3A291788&t=UOvsb3QLi26KmVrk-0

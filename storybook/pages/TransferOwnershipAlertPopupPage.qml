@@ -137,3 +137,6 @@ SplitView {
 }
 
 // category: Popups
+
+// https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86828&mode=design&t=coHVo1E6fHrKNNhQ-1
+// https://www.figma.com/file/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?type=design&node-id=37206%3A86847&mode=design&t=coHVo1E6fHrKNNhQ-1
