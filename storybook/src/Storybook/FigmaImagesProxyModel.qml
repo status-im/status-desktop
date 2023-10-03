@@ -1,9 +1,9 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 ListModel {
     id: root
 
-    /* required */ property FigmaLinksCache figmaLinksCache
+    required property FigmaLinksCache figmaLinksCache
     property alias sourceModel: d.model
 
     readonly property Instantiator _d: Instantiator {
@@ -29,7 +29,7 @@ ListModel {
                 d.idCounter++
 
                 figmaLinksCache.getImageUrl(model.link, link => {
-                    if (delegate)
+                    if (delegate && link !== null)
                         root.setProperty(model.index, "imageLink", link)
                 })
             }

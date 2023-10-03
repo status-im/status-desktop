@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Qt.labs.settings 1.0
 
@@ -76,19 +76,6 @@ ApplicationWindow {
 
     PagesModel {
         id: pagesModel
-    }
-
-    FigmaLinksSource {
-        id: figmaLinksSource
-
-        filePath: "figma.json"
-    }
-
-    FigmaDecoratorModel {
-        id: figmaModel
-
-        sourceModel: pagesModel
-        figmaLinks: figmaLinksSource.figmaLinks
     }
 
     HotReloader {
@@ -212,7 +199,7 @@ ApplicationWindow {
                     id: currentPageModelItem
 
                     model: SingleItemProxyModel {
-                        sourceModel: figmaModel
+                        sourceModel: pagesModel
                         roleName: "title"
                         value: root.currentPage
                     }
@@ -319,9 +306,6 @@ Tips:
 
                 figmaLinksCache: figmaImageLinksCache
             }
-
-            onRemoveLinksRequested: figmaLinksSource.remove(pageTitle, indexes)
-            onAppendLinksRequested: figmaLinksSource.append(pageTitle, links)
 
             onClosing: Qt.callLater(destroy)
         }
