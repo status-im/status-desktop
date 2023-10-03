@@ -1013,10 +1013,9 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
 
   singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
-
-  self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
-  message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
-  chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
+    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
+    message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
+    chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
