@@ -151,3 +151,5 @@ SplitView {
         property alias membersTabPanelSelection: viewStateSelector.currentIndex
     }
 }
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=35909-605774&mode=design&t=KfrAekLfW5mTy68x-0

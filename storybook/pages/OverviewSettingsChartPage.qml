@@ -68,3 +68,5 @@ SplitView {
 }
 
 // category: Panels
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31281-635619&mode=design&t=RYpVRgwqCjp8fUEX-0

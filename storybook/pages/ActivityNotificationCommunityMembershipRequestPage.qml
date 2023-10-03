@@ -177,3 +177,5 @@ SplitView {
         property alias activityNotificationRequestState: stateSelector.currentIndex
     }
 }
+
+// https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=35909-606817&mode=design&t=Ia7Z0AzyYIjkuPtr-0
