@@ -20,6 +20,7 @@ const eventActivityFilteringUpdate*: string = "wallet-activity-filtering-entries
 const eventActivityGetRecipientsDone*: string = "wallet-activity-get-recipients-result"
 const eventActivityGetOldestTimestampDone*: string = "wallet-activity-get-oldest-timestamp-result"
 const eventActivityFetchTransactionDetails*: string = "wallet-activity-fetch-transaction-details-result"
+const eventActivityGetCollectiblesDone*: string = "wallet-activity-get-collectibles"
 
 type
   Period* = object
@@ -526,6 +527,67 @@ proc fromJson*(e: JsonNode, T: typedesc[GetOldestTimestampResponse]): GetOldestT
 rpc(getOldestActivityTimestampAsync, "wallet"):
   requestId: int32
   addresses: seq[string]
+
+type 
+  # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
+  ContractID* = ref object of RootObj
+    chainID*: int
+    address*: string
+
+  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleUniqueID
+  CollectibleUniqueID* = ref object of RootObj
+    contractID*: ContractID
+    tokenID*: UInt256
+
+  # see services/wallet/activity/service.go CollectibleHeader
+  CollectibleHeader* = object
+    id* : CollectibleUniqueID
+    name*: string
+    imageUrl*: string
+
+  # see services/wallet/activity/service.go CollectiblesResponse
+  GetCollectiblesResponse* = object
+    collectibles*: seq[CollectibleHeader]
+    offset*: int
+    hasMore*: bool
+    errorCode*: ErrorCode
+
+proc fromJson*(t: JsonNode, T: typedesc[ContractID]): ContractID {.inline.} =
+  result = ContractID()
+  result.chainID = t["chainID"].getInt()
+  result.address = t["address"].getStr()
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleUniqueID]): CollectibleUniqueID {.inline.} =
+  result = CollectibleUniqueID()
+  result.contractID = fromJson(t["contractID"], ContractID)
+  result.tokenID = stint.parse(t["tokenID"].getStr(), UInt256)
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
+  result = CollectibleHeader()
+  result.id = fromJson(t["id"], CollectibleUniqueID)
+  result.name = t["name"].getStr()
+  result.imageUrl = t["image_url"].getStr()
+
+proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesResponse]): GetCollectiblesResponse {.inline.} =
+  var collectibles: seq[CollectibleHeader] = @[]
+  if e.hasKey("collectibles"):
+    let jsonCollectibles = e["collectibles"]
+    for item in jsonCollectibles.getElems():
+      collectibles.add(fromJson(item, CollectibleHeader))
+
+  result = T(
+    collectibles: collectibles,
+    hasMore: e["hasMore"].getBool(),
+    offset: e["offset"].getInt(),
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+rpc(getActivityCollectiblesAsync, "wallet"):
+  requestId: int32
+  chainIDs: seq[int]
+  addresses: seq[string]
+  offset: int
+  limit: int
 
 rpc(getMultiTxDetails, "wallet"):
   id: int

@@ -5,6 +5,8 @@ import model
 import entry
 import entry_details
 import recipients_model
+import collectibles_model
+import collectibles_item
 import events_handler
 import status
 
@@ -29,6 +31,7 @@ proc toRef*[T](obj: T): ref T =
 
 const FETCH_BATCH_COUNT_DEFAULT = 10
 const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
+const FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT = 2000
 
 type
   CollectiblesToTokenConverter* = proc (id: string): backend_activity.Token
@@ -39,6 +42,7 @@ QtObject:
       model: Model
 
       recipientsModel: RecipientsModel
+      collectiblesModel: CollectiblesModel
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
       tokenService: token_service.Service
@@ -76,6 +80,12 @@ QtObject:
 
   QtProperty[QVariant] recipientsModel:
     read = getRecipientsModel
+
+  proc getCollectiblesModel*(self: Controller): QVariant {.slot.} =
+    return newQVariant(self.collectiblesModel)
+
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesModel
 
   proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
     if metadata.symbolIn.isSome():
@@ -170,6 +180,22 @@ QtObject:
       error "error fetching activity entries: ", response.error
       return
 
+  proc updateCollectiblesModel*(self: Controller) {.slot.} =
+    self.status.setLoadingCollectibles(true)
+    let res = backend_activity.getActivityCollectiblesAsync(self.requestId, self.chainIds, self.addresses, 0, FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
+    if res.error != nil:
+      self.status.setLoadingCollectibles(false)
+      error "error fetching collectibles: ", res.error
+      return
+
+  proc loadMoreCollectibles*(self: Controller) {.slot.} =
+    self.status.setLoadingCollectibles(true)
+    let res = backend_activity.getActivityCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.collectiblesModel.getCount(), FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
+    if res.error != nil:
+      self.status.setLoadingCollectibles(false)
+      error "error fetching collectibles: ", res.error
+      return
+
   proc setFilterTime*(self: Controller, startTimestamp: int, endTimestamp: int) {.slot.} =
     self.currentActivityFilter.period = backend_activity.newPeriod(startTimestamp, endTimestamp)
 
@@ -234,6 +260,21 @@ QtObject:
       self.status.setStartTimestamp(res.timestamp)
     )
 
+    self.eventsHandler.onGetCollectiblesDone(proc (jsonObj: JsonNode) =
+      defer: self.status.setLoadingCollectibles(false)
+      let res = fromJson(jsonObj, backend_activity.GetCollectiblesResponse)
+
+      if res.errorCode != ErrorCodeSuccess:
+        error "error fetching collectibles: ", res.errorCode
+        return
+
+      try: 
+        let items = res.collectibles.map(header => collectibleToItem(header))
+        self.collectiblesModel.setItems(items, res.offset, res.hasMore)
+      except Exception as e:
+        error "Error converting activity entries: ", e.msg
+    )
+
     self.eventsHandler.onNewDataAvailable(proc () =
       self.status.setNewDataAvailable(true)
     )
@@ -248,6 +289,7 @@ QtObject:
     result.requestId = requestId
     result.model = newModel()
     result.recipientsModel = newRecipientsModel()
+    result.collectiblesModel = newCollectiblesModel()
     result.tokenService = tokenService
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
@@ -364,6 +406,7 @@ QtObject:
   proc setFilterChains*(self: Controller, chainIds: seq[int], allEnabled: bool) =
     self.chainIds = chainIds
     self.status.setIsFilterDirty(true)
+    self.status.emitFilterChainsChanged()
 
     self.status.emitFilterChainsChanged()
     self.updateAssetsIdentities()

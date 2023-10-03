@@ -275,7 +275,7 @@ QtObject {
     }
 
     function isTxRepeatable(tx) {
-        if (tx.txType !== Constants.TransactionType.Send)
+        if (!tx || tx.txType !== Constants.TransactionType.Send)
             return false
 
         let res = root.lookupAddressObject(tx.sender)

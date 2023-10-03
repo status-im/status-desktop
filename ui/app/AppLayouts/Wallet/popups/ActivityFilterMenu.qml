@@ -33,6 +33,7 @@ StatusMenu {
     // Collectibles filter
     property var collectiblesList: []
     property var collectiblesFilter: []
+    property bool loadingCollectibles: false
     readonly property bool allCollectiblesChecked: tokensMenu.allCollectiblesChecked
     signal updateCollectiblesFilter(string uid)
 
@@ -96,6 +97,7 @@ StatusMenu {
             tokensFilter: root.tokensFilter
             collectiblesList: root.collectiblesList
             collectiblesFilter: root.collectiblesFilter
+            loadingCollectibles: root.loadingCollectibles
             onTokenToggled: updateTokensFilter(tokenSymbol)
             onCollectibleToggled: updateCollectiblesFilter(uid)
             closePolicy: root.closePolicy

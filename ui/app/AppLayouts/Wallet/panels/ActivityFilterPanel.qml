@@ -178,11 +178,11 @@ Column {
                 onClosed: activityFilterStore.toggleCollectibles(uid)
 
                 Connections {
-                    // Collectibles model is fetched asynchronousl, so data might not be available
-                    target: activityFilterStore.collectiblesList
+                    // Collectibles model is fetched asynchronously, so data might not be available
+                    target: activityFilterStore
                     enabled: !collectibleTag.isValid
-                    function onIsFetchingChanged() {
-                        if (activityFilterStore.collectiblesList.isFetching || !activityFilterStore.collectiblesList.hasMore)
+                    function onLoadingCollectiblesChanged() {
+                        if (activityFilterStore.loadingCollectibles || !activityFilterStore.collectiblesList.hasMore)
                             return
                         collectibleTag.uid = ""
                         collectibleTag.uid = modelData
@@ -262,6 +262,7 @@ Column {
         store: root.store
         recentsList: activityFilterStore.recentsList
         loadingRecipients: activityFilterStore.loadingRecipients
+        loadingCollectibles: activityFilterStore.loadingCollectibles
         recentsFilters: activityFilterStore.recentsFilters
         savedAddressList: activityFilterStore.savedAddressList
         savedAddressFilters: activityFilterStore.savedAddressFilters
