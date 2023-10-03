@@ -171,6 +171,23 @@ var NETWORKS* = %* [
     "layer":   2,
     "enabled": false,
     "relatedChainId": 42161,
+  },
+  {
+    "chainId": 11155111,
+    "chainName": "Mainnet",
+    "rpcUrl": "https://sepolia-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "blockExplorerUrl": "https://sepolia.etherscan.io/",
+    "iconUrl": "network/Network=Ethereum",
+    "chainColor": "#51D0F0",
+    "shortName": "sep",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  true,
+    "layer":   1,
+    "enabled": true,
+    "relatedChainId": 1,
   }
 ]
 

@@ -14,6 +14,8 @@ QtObject {
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+
     readonly property var networks: networksModule.networks
     readonly property var combinedNetworks: networksModule.combinedNetworks
     property var selectedAccount
@@ -21,7 +23,6 @@ QtObject {
     function toggleTestNetworksEnabled(){
         networksModule.toggleTestNetworksEnabled()
     }
-
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
     property var assets: walletSectionAssets.assets

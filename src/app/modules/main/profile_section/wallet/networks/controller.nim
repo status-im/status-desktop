@@ -50,6 +50,12 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
 
+proc isSepoliaEnabled*(self: Controller): bool =
+  return self.walletAccountService.isSepoliaEnabled()
+
+proc toggleIsSepoliaEnabled*(self: Controller) =
+  self.walletAccountService.toggleIsSepoliaEnabled()
+
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)
 

@@ -25,6 +25,9 @@ method refreshNetworks*(self: AccessInterface) {.base.} =
 method toggleTestNetworksEnabled*(self: AccessInterface) {.base.} = 
   raise newException(ValueError, "No implementation available")
 
+method toggleIsSepoliaEnabled*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 

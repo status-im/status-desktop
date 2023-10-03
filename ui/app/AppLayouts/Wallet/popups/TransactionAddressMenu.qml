@@ -20,6 +20,7 @@ StatusMenu {
 
     property var contactsStore
     property bool areTestNetworksEnabled: false
+    property bool isSepoliaEnabled: false
 
     signal openSendModal(address: string)
 
@@ -191,7 +192,14 @@ StatusMenu {
         icon.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
+            let link = Constants.networkExplorerLinks.etherscan
+            if (areTestNetworksEnabled) {
+                if (root.isSepoliaEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaEtherscan
+                } else {
+                    link = Constants.networkExplorerLinks.goerliEtherscan
+                }
+            }
             Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }

@@ -13,6 +13,7 @@ QtObject:
       combinedNetworks: CombinedModel
       networks: Model
       areTestNetworksEnabled: bool
+      isSepoliaEnabled: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -45,6 +46,24 @@ QtObject:
     self.delegate.toggleTestNetworksEnabled()
     self.areTestNetworksEnabled = not self.areTestNetworksEnabled
     self.areTestNetworksEnabledChanged()
+
+  proc isSepoliaEnabledChanged*(self: View) {.signal.}
+
+  proc getIsSepoliaEnalbled(self: View): bool {.slot.} =
+    return self.isSepoliaEnabled
+
+  QtProperty[bool] isSepoliaEnabled:
+    read = getIsSepoliaEnalbled
+    notify = isSepoliaEnabledChanged
+
+  proc setIsSepoliaEnabled*(self: View, isSepoliaEnabled: bool) =
+    self.isSepoliaEnabled = isSepoliaEnabled
+    self.isSepoliaEnabledChanged()
+
+  proc toggleIsSepoliaEnabled*(self: View) {.slot.} =
+    self.delegate.toggleIsSepoliaEnabled()
+    self.isSepoliaEnabled = not self.isSepoliaEnabled
+    self.isSepoliaEnabledChanged()
 
   proc networksChanged*(self: View) {.signal.}
   proc getNetworks(self: View): QVariant {.slot.} =

@@ -123,6 +123,7 @@ Item {
             store: RootStore
             contactsStore: root.contactsStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
+            isSepoliaEnabled: RootStore.isSepoliaEnabled
             onOpenSendModal: root.sendModal.open(recipient);
             saveAddress: function(name, address, favourite, chainShortNames, ens) {
                 _internal.saveAddress(name, address, favourite, chainShortNames, ens)
