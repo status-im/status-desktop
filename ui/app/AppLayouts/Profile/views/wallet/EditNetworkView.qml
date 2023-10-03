@@ -33,6 +33,7 @@ ColumnLayout {
     }
 
     Loader {
+        objectName: "editNetworkLoader"
         Layout.fillWidth: true
         active: root.visible
         sourceComponent: editPreviwTabBar.currentIndex === 0 ? editLiveNetwork: editTestNetwork
