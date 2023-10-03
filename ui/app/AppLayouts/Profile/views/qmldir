@@ -4,3 +4,4 @@ AppearanceView 1.0 AppearanceView.qml
 NotificationsView 1.0 NotificationsView.qml
 CommunitiesView 1.0 CommunitiesView.qml
 BrowserView 1.0 BrowserView.qml
+SyncingView 1.0 SyncingView.qml

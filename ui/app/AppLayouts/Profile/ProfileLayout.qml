@@ -236,6 +236,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                isProduction: production
                 profileStore: root.store.profileStore
                 devicesStore: root.store.devicesStore
                 privacyStore: root.store.privacyStore
