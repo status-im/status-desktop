@@ -4,6 +4,8 @@
 #include <QFileSystemWatcher>
 #include <QRegularExpression>
 
+#include <unordered_map>
+
 namespace {
 const auto categoryUncategorized QStringLiteral("Uncategorized");
 }
@@ -14,6 +16,10 @@ PagesModel::PagesModel(const QString &path, QObject *parent)
 {
     m_items = load();
     readMetadata(m_items);
+
+    for (const auto& item : qAsConst(m_items)) {
+        setFigmaLinks(item.title, item.figmaLinks);
+    }
 
     fsWatcher->addPath(path);
 
@@ -62,6 +68,21 @@ void PagesModel::readMetadata(PagesModelItem& item) {
             ? categoryMatch.captured(2).trimmed() : categoryUncategorized;
 
     item.category = category;
+
+    static QRegularExpression figmaRegex(
+                "^(\\/\\/\\s*)((?:https:\\/\\/)?(?:www\\.)?figma\\.com\\/.*)$",
+                QRegularExpression::MultilineOption);
+
+    QRegularExpressionMatchIterator i = figmaRegex.globalMatch(content);
+    QStringList links;
+
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString link = match.captured(2);
+        links << link;
+    }
+
+    item.figmaLinks = links;
 }
 
 void PagesModel::readMetadata(QList<PagesModelItem> &items) {
@@ -129,6 +150,7 @@ void PagesModel::reload() {
         auto index = std::distance(m_items.begin(), it);
         const auto& previous = *it;
         readMetadata(item);
+        setFigmaLinks(item.title, item.figmaLinks);
 
         if (previous.category != item.category) {
             // For simplicity category change is handled by removing and
@@ -149,7 +171,8 @@ QHash<int, QByteArray> PagesModel::roleNames() const
 {
     static const QHash<int,QByteArray> roles {
         { TitleRole, QByteArrayLiteral("title") },
-        { CategoryRole, QByteArrayLiteral("category") }
+        { CategoryRole, QByteArrayLiteral("category") },
+        { FigmaRole, QByteArrayLiteral("figma") }
     };
 
     return roles;
@@ -167,8 +190,28 @@ QVariant PagesModel::data(const QModelIndex &index, int role) const
 
     if (role == TitleRole)
         return m_items.at(index.row()).title;
+
     if (role == CategoryRole)
         return m_items.at(index.row()).category;
 
+    if (role == FigmaRole) {
+        auto title = m_items.at(index.row()).title;
+        auto it = m_figmaSubmodels.find(title);
+        assert(it != m_figmaSubmodels.end());
+
+        return QVariant::fromValue(it.value());
+    }
+
     return {};
+}
+
+void PagesModel::setFigmaLinks(const QString& title, const QStringList& links)
+{
+    auto it = m_figmaSubmodels.find(title);
+
+    if (it == m_figmaSubmodels.end()) {
+        m_figmaSubmodels.insert(title, new FigmaLinksModel(links, this));
+    } else {
+        it.value()->setContent(links);
+    }
 }

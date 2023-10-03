@@ -3,6 +3,8 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 
+#include "figmalinksmodel.h"
+
 class QFileSystemWatcher;
 
 struct PagesModelItem {
@@ -10,6 +12,7 @@ struct PagesModelItem {
     QDateTime lastModified;
     QString title;
     QString category;
+    QStringList figmaLinks;
 };
 
 class PagesModel : public QAbstractListModel
@@ -20,7 +23,8 @@ public:
 
     enum Roles {
         TitleRole = Qt::UserRole + 1,
-        CategoryRole
+        CategoryRole,
+        FigmaRole
     };
 
     QHash<int, QByteArray> roleNames() const override;
@@ -34,7 +38,10 @@ private:
     static void readMetadata(PagesModelItem &item);
     static void readMetadata(QList<PagesModelItem> &items);
 
+    void setFigmaLinks(const QString& title, const QStringList& links);
+
     QString m_path;
     QList<PagesModelItem> m_items;
+    QMap<QString, FigmaLinksModel*> m_figmaSubmodels;
     QFileSystemWatcher* fsWatcher;
 };

@@ -4,9 +4,7 @@
 
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
-#include "figmadecoratormodel.h"
 #include "figmalinks.h"
-#include "figmalinkssource.h"
 #include "pagesmodel.h"
 #include "sectionsdecoratormodel.h"
 
@@ -46,8 +44,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(
                 "pagesFolder", QML_IMPORT_ROOT + QStringLiteral("/pages"));
 
-    qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
-    qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
     qmlRegisterType<PagesModelInitialized>("Storybook", 1, 0, "PagesModel");
     qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
     qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", {});

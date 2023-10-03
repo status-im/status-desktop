@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQml.Models 2.15
 
 GridView {
     id: root
@@ -9,15 +9,6 @@ GridView {
     cellHeight: 300
 
     signal clicked(int index)
-
-    property bool selectable: true
-    readonly property alias selection: selectionModel
-
-    ItemSelectionModel {
-        id: selectionModel
-
-        model: root.model
-    }
 
     delegate: Item {
         width: root.cellWidth
@@ -59,21 +50,6 @@ GridView {
                 ToolTip.delay: 1500
                 ToolTip.visible: hovered
                 ToolTip.text: model.rawLink
-            }
-
-            CheckBox {
-                visible: root.selectable
-
-                anchors.top: parent.top
-                anchors.right: parent.right
-
-                checked: {
-                    selectionModel.selection
-                    return selectionModel.isSelected(root.model.index(index, 0))
-                }
-
-                onToggled: selectionModel.select(root.model.index(index, 0),
-                                                 ItemSelectionModel.Toggle)
             }
         }
     }
