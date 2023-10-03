@@ -259,6 +259,7 @@ StatusDialog {
                         }
 
                         StatusListItemTag {
+                            Layout.maximumWidth: 150
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
                             visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer

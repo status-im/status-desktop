@@ -79,6 +79,8 @@ Item {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
+        width: Math.min(implicitWidth, parent.width)
+
         control.padding: 4
         control.popup.width: 492
         control.popup.x: -root.x
@@ -112,6 +114,7 @@ Item {
                 }
             }
             StatusBaseText {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: root.contentTextSize
                 elide: Text.ElideRight
