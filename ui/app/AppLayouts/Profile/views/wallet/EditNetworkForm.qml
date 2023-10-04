@@ -167,6 +167,7 @@ ColumnLayout {
         }
         StatusInput {
             id: mainRpcInput
+            objectName: "mainRpcInputObject"
             input.edit.objectName: "editNetworkMainRpcInput"
             width: parent.width
             label: qsTr("Main JSON RPC URL")
@@ -209,6 +210,7 @@ ColumnLayout {
 
     StatusInput {
         id: failoverRpcUrlInput
+        objectName: "failoverRpcUrlInputObject"
         input.edit.objectName: "editNetworkFailoverRpcUrlInput"
         Layout.fillWidth: true
         label: qsTr("Failover JSON RPC URL")
