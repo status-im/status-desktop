@@ -655,9 +655,9 @@ QtObject {
         case Constants.appTranslatableConstants.loginAccountsListLostKeycard:
             return qsTr("Lost Keycard")
         case Constants.appTranslatableConstants.addAccountLabelNewWatchOnlyAccount:
-            return qsTr("New watch-only account")
+            return qsTr("New watched address")
         case Constants.appTranslatableConstants.addAccountLabelWatchOnlyAccount:
-            return qsTr("Watch-only account")
+            return qsTr("Watched address")
         case Constants.appTranslatableConstants.addAccountLabelExisting:
             return qsTr("Existing")
         case Constants.appTranslatableConstants.addAccountLabelImportNew:
@@ -665,7 +665,7 @@ QtObject {
         case Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey:
             return qsTr("Add new master key")
         case Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc:
-            return qsTr("Add watch-only account")
+            return qsTr("Add watched address")
         }
 
         // special handling because on an index attached to the constant

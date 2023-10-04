@@ -65,7 +65,7 @@ StatusMenu {
 
     StatusAction {
         objectName: "AccountMenu-AddWatchOnlyAccountAction-%1".arg(root.uniqueIdentifier)
-        text: qsTr("Add watch-only account")
+        text: qsTr("Add watched address")
         enabled: !root.account
         icon.name: "show"
         onTriggered: {
