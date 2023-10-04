@@ -79,21 +79,6 @@ pipeline {
       }
     }
 
-    stage('Client') {
-      environment {
-        /* Hack-fix for wrong config path location causing:
-         * Error: unhandled exception: Read-only file system */
-        RESOURCES_LAYOUT = '-d:production'
-      }
-      steps { script {
-        /* Temporary hack-fix for failing Linux builds:
-         * https://github.com/status-im/infra-ci/issues/88 */
-        timeout(10) { retry(20) {
-          sh 'make nim_status_client'
-        } }
-      } }
-    }
-
     stage('Package') {
       steps { script {
         linux.bundle('tgz-linux')
