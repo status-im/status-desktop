@@ -22,7 +22,12 @@ proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
-  result.rawBalance = jsonObj{"rawBalance"}.getStr.parse(Uint256)
+
+  # Expecting "<nil>" values comming from status-go when the entry is nil
+  let rawBalanceStr = jsonObj{"rawBalance"}.getStr
+  if not rawBalanceStr.contains("nil"):
+    result.rawBalance = rawBalanceStr.parse(Uint256)
+
   result.balance = jsonObj{"balance"}.getStr.parseFloat()
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)
