@@ -51,6 +51,10 @@ class QObject(BaseObject):
     def width(self) -> int:
         return int(self.bounds.width)
 
+    @allure.step('Get attribute {0}')
+    def get_object_attribute(self, attr: str):
+        return getattr(self.object, attr)
+
     @property
     @allure.step('Get height {0}')
     def height(self) -> int:
@@ -117,7 +121,6 @@ class QObject(BaseObject):
 
         assert driver.waitFor(lambda: _hover(), timeout_msec)
         return self
-
 
     @allure.step('Open context menu')
     def open_context_menu(

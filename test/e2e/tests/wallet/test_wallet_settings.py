@@ -7,7 +7,7 @@ from allure import step
 import configs
 import constants
 import driver
-from constants.wallet import WalletNetworkSettings
+from constants.wallet import WalletNetworkSettings, WalletNetworkNaming, WalletNetworkDefaultValues
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
@@ -20,10 +20,7 @@ pytestmark = allure.suite("Wallet")
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)
-@pytest.mark.parametrize('first_network, second_network, third_network', [
-    pytest.param('Mainnet', 'Optimism', 'Arbitrum')
-])
-def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second_network: str, third_network: str):
+def test_switch_testnet_mode(main_screen: MainWindow):
     with step('Verify that Testnet toggle has subtitle'):
         networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
         subtitle = networks.get_testnet_toggle_subtitle()
@@ -45,17 +42,14 @@ def test_switch_testnet_mode(main_screen: MainWindow, first_network: str, second
         TestnetModeBanner().wait_until_appears()
         assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle if off when it should not"
 
-    with step('Verify that all networks are in the list and text for testnet active is shown on each'):
-        assert networks.testnet_items_amount == 3
-        assert driver.waitFor(
-            lambda: first_network in networks.networks_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {first_network} not found'
-        assert driver.waitFor(
-            lambda: second_network in networks.networks_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {second_network} not found'
-        assert driver.waitFor(
-            lambda: third_network in networks.networks_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Network: {third_network} not found'
+    with step('Verify networks are switched to testnets'):
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.ETHEREUM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.OPTIMISM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.ARBITRUM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
+        # TODO: add verificatin for test net label
 
     with step('Turn off Testnet mode in wallet settings'):
         networks.switch_testnet_mode_toggle().turn_off_testnet_mode_in_testnet_modal()
@@ -74,6 +68,10 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
 
     with step('Verify that Testnet mode toggle is turned off'):
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is enabled when it should not"
+
+    with step('Check Mainnet network item title'):
+        networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value)
 
     with step('Toggle the Testnet mode toggle ON'):
         testnet_modal = networks.switch_testnet_mode_toggle()
@@ -119,6 +117,52 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
 
     with step('Verify that Testnet mode is not turned off'):
         assert TestnetModeBanner().is_visible, f"Testnet banner is not present when it should"
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',
+                 'Network:  Network: Editing network -> Restore defaults')
+@pytest.mark.case(703515)
+def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
+    networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
+
+    with step('Check network items titles'):
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.OPTIMISM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
+        assert networks.get_network_item_attribute_by_id_and_attr_name('title',
+                                                                       WalletNetworkNaming.ARBITRUM_MAINNET_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
+
+    with step('Open Ethereum Mainnet network item to edit'):
+        edit_network_form = networks.click_network_item_to_open_edit_view(
+            WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value)
+
+    with step('Check the elements on the form'):
+        edit_network_form.wait_until_appears().check_available_elements_on_edit_view()
+
+    with step('Click in Main JSON RPC URL and paste incorrect URL'):
+        edit_network_form.edit_network_main_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")
+
+    with step('Check error message'):
+        assert edit_network_form.self._network_edit_error_message() == 'test'
+
+    with step('Click in Failover JSON RPC URL and paste incorrect URL'):
+        edit_network_form.edit_network_failover_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")
+
+    with step('Check the acknowledgment checkbox'):
+        edit_network_form.check_acknowledgement_checkbox(True)
+
+    with step('Click Revert to default button and restore values'):
+        edit_network_form.click_network_revert_to_default()
+
+    with step('Check value in Main JSON RPC URL input'):
+        assert edit_network_form.get_edit_network_main_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value
+
+    with (step('Check value in Failover JSON RPC URL input')):
+        assert edit_network_form.get_edit_network_failover_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value
+
+    with step('Verify the acknowledgment checkbox is unchecked'):
+        assert edit_network_form.check_acknowledgement_checkbox(False)
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',

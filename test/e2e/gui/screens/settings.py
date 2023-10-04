@@ -1,3 +1,4 @@
+from objectmaphelper import RegularExpression
 import time
 import typing
 
@@ -5,6 +6,7 @@ import allure
 
 import configs.timeouts
 import driver
+
 from constants import UserCommunityInfo, wallet_account_list_item
 from constants.syncing import SyncingSettings
 from driver import objects_access
@@ -18,6 +20,7 @@ from gui.components.social_links_popup import SocialLinksPopup
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.qt.button import Button
+from gui.elements.qt.check_box import CheckBox
 from gui.elements.qt.list import List
 from gui.elements.qt.object import QObject
 from gui.elements.qt.scroll import Scroll
@@ -367,16 +370,33 @@ class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
         super(NetworkWalletSettings, self).__init__()
-        self._wallet_networks_item = QObject('settingsContentBaseScrollView_WalletNetworkDelegate')
         self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
         self._testnet_mode_toggle = Button('settings_Wallet_NetworksView_TestNet_Toggle')
         self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
         self._back_button = Button('main_toolBar_back_button')
+        self._mainnet_network_item = QObject('networkSettingsNetworks_Mainnet')
+        self._mainnet_goerli_network_item = QObject('networkSettingsNetworks_Mainnet_Goerli')
+        self._mainnet_goerli_network_item_test_label = TextLabel('networkSettingsNetowrks_Mainnet_Testlabel')
+        self._optimism_network_item = QObject('networkSettingsNetworks_Optimism')
+        self._optimism_goerli_network_item = QObject('networkSettingsNetworks_Optimism_Goerli')
+        self._arbitrum_network_item = QObject('networkSettingsNetworks_Arbitrum')
+        self._arbitrum__goerli_network_item = QObject('networkSettingsNetworks_Arbitrum_Goerli')
+        self._wallet_network_item_template = QObject('settingsContentBaseScrollView_WalletNetworkDelegate_template')
+        self._wallet_network_item_goerli_sensor = QObject('networkSettingsNetworks_Mainnet_Goerli_sensor')
+        self._wallet_network_item_goerli_testlabel = TextLabel('networkSettingsNetowrks_Mainnet_Testlabel')
 
-    @property
-    @allure.step('Get wallet networks items')
-    def networks_names(self) -> typing.List[str]:
-        return [str(network.title) for network in driver.findAllObjects(self._wallet_networks_item.real_name)]
+    @allure.step('Check networks item title')
+    def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
+        self._wallet_network_item_template.real_name['objectName'] = RegularExpression(
+            f'walletNetworkDelegate_.*_{network_id}')
+        return self._wallet_network_item_template.get_object_attribute(attribute_name)
+
+    @allure.step('Open network to check the details')
+    def click_network_item_to_open_edit_view(self, network_id):
+        self._wallet_network_item_template.real_name['objectName'] \
+            = RegularExpression(f'walletNetworkDelegate_.*_{network_id}')
+        self._wallet_network_item_template.click()
+        return EditNetworkSettings().wait_until_appears()
 
     @allure.step('Verify Testnet toggle subtitle')
     def get_testnet_toggle_subtitle(self):
@@ -403,6 +423,74 @@ class NetworkWalletSettings(WalletSettingsView):
     @allure.step('Get testnet mode toggle status')
     def is_testnet_mode_toggle_checked(self):
         return self._testnet_mode_toggle.is_checked
+
+
+class EditNetworkSettings(WalletSettingsView):
+    def __init__(self):
+        super(EditNetworkSettings, self).__init__()
+        self._live_network_tab = Button('editNetworkLiveButton')
+        self._test_network_tab = Button('editNetworkTestButton')
+        self._network_name = TextEdit('editNetworkNameInput')
+        self._network_short_name = TextEdit('editNetworkShortNameInput')
+        self._network_chaid_id = TextEdit('editNetworkChainIdInput')
+        self._network_native_token_symbol = TextEdit('editNetworkSymbolInput')
+        self._network_main_json_rpc_url = TextEdit('editNetworkMainRpcInput')
+        self._network_failover_json_rpc_url = TextEdit('editNetworkFailoverRpcUrlInput')
+        self._network_block_explorer = TextEdit('editNetworkExplorerInput')
+        self._network_acknowledgment_checkbox = CheckBox('editNetworkAknowledgmentCheckbox')
+        self._network_revert_to_default = Button('editNetworkRevertButton')
+        self._network_save_changes = Button('editNetworkSaveButton')
+        self._network_edit_view_back_button = Button('main_toolBar_back_button')
+        self._network_edit_scroll = Scroll('settingsContentBaseScrollView_Flickable')
+
+    @allure.step('Verify elements for the edit network view')
+    def check_available_elements_on_edit_view(self):
+        assert self._network_edit_view_back_button.exists, f"Back button is not present"
+        assert self._live_network_tab.exists, f"Live tab is not present"
+        assert self._test_network_tab.exists, f"Test tab is not present"
+        assert self._network_name.exists, f"Network name input field is not present"
+        assert self._network_short_name.exists, f"Short name input field is not present"
+        assert self._network_chaid_id.exists, f"Chaid Id input field is not present"
+        assert self._network_native_token_symbol.exists, f"Native token symbol input field is not present"
+        assert self._network_main_json_rpc_url.exists, f"Main JSON RPC URL input field is not present"
+        assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
+        assert self._network_block_explorer.exists, f"Block explorer input field is not present"
+
+        self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+        assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        assert driver.waitFor(lambda: self._network_revert_to_default.exists,
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+
+        assert self._network_save_changes.exists
+
+    @allure.step('Edit the rpc input field')
+    def edit_network_main_json_rpc_url_input(self, test_value):
+        self._network_main_json_rpc_url.text = test_value
+
+    @allure.step('Edit the rpc input field')
+    def edit_network_failover_json_rpc_url_input(self, test_value):
+        self._network_failover_json_rpc_url.text = test_value
+
+    @allure.step('Check acknowledgment checkbox')
+    def check_acknowledgement_checkbox(self, value: bool):
+        self._network_acknowledgment_checkbox.set(value)
+        return self
+
+    @allure.step('Click Revert to default button')
+    def click_network_revert_to_default(self):
+        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_revert_to_default.click()
+
+    @allure.step('Get value from Main json rpc input')
+    def get_edit_network_main_json_rpc_url_value(self):
+        return self._network_main_json_rpc_url.text
+
+    @allure.step('Get value from Failover json rpc input')
+    def get_edit_network_failover_json_rpc_url_value(self):
+        return self._network_failover_json_rpc_url.text
 
 
 class EditAccountOrderSettings(WalletSettingsView):

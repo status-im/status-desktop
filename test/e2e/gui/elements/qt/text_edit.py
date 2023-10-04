@@ -30,5 +30,5 @@ class TextEdit(QObject):
         self.object.clear()
         if verify:
             assert driver.waitFor(lambda: not self.text), \
-            f'Clear text field failed, value in field: "{self.text}"'
+                f'Clear text field failed, value in field: "{self.text}"'
         return self
