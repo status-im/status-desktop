@@ -34,7 +34,8 @@ def setup_session_scope(
 def setup_function_scope(
         caplog,
         generate_test_data,
-        check_result
+        check_result,
+        application_logs
 ):
     caplog.set_level(configs.LOG_LEVEL)
     yield
@@ -62,7 +63,9 @@ def pytest_exception_interact(node):
             body=screenshot.read_bytes(),
             attachment_type=allure.attachment_type.PNG)
         driver.context.detach()
-        for port in [configs.squish.AUT_PORT, configs.squish.MLT_AUT_PORT]:
+        # The maximum count of multiple instances in tests now is 3
+        max_instances = configs.squish.MAX_INSTANCES
+        for port in range(configs.squish.AUT_PORT, configs.squish.AUT_PORT + (max_instances * 1000), 1000):
             pid = local_system.find_process_by_port(port)
             if pid is not None:
                 local_system.kill_process(pid, verify=True)

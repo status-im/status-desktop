@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 import configs
@@ -7,6 +8,14 @@ from driver.aut import AUT
 from gui.main_window import MainWindow
 from scripts.utils import system_path
 from scripts.utils.system_path import SystemPath
+
+@pytest.fixture
+def application_logs():
+    yield
+    for app_data in configs.testpath.STATUS_DATA.iterdir():
+        for log in (app_data / 'logs').iterdir():
+            allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
+            log.unlink()
 
 
 @pytest.fixture
