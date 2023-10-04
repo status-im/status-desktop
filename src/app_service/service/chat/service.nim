@@ -173,6 +173,10 @@ QtObject:
               self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
             self.updateOrAddChat(chatDto)
 
+          elif self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].active:
+            # We left the chat
+            self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatDto.id))
+
         self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
       if (receivedData.clearedHistories.len > 0):
