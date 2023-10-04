@@ -96,7 +96,7 @@ Item {
 
                 font.weight: Font.Normal
                 textColor: Theme.palette.baseColor1
-                text: overview.includeWatchOnly ? qsTr("Hide watch-only"): qsTr("Show watch-only")
+                text: overview.includeWatchOnly ? qsTr("Hide watched addresses"): qsTr("Show watched addresses")
 
                 icon.name: overview.includeWatchOnly ? "hide" : "show"
                 icon.height: 16

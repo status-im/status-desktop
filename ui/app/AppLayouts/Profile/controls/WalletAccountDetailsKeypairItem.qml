@@ -14,7 +14,7 @@ StatusListItem {
 
     signal buttonClicked()
 
-    title: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly ? qsTr("Watch only") : root.keyPair.name: ""
+    title: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly ? qsTr("Watched address") : root.keyPair.name: ""
     titleAsideText: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.getElidedCompressedPk(root.keyPair.pubKey): ""
     asset {
         width: !!root.keyPair && root.keyPair.icon? Style.current.bigPadding : 40
