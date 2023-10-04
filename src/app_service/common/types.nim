@@ -55,6 +55,8 @@ type MemberRole* {.pure} = enum
   Admin
   TokenMaster
 
+# TODO: consider refactor MembershipRequestState to MembershipState and use both for request to join and kick/ban actions
+# Issue: https://github.com/status-im/status-desktop/issues/11842
 type MembershipRequestState* {.pure} = enum 
   None = 0,
   Pending = 1,
@@ -65,7 +67,8 @@ type MembershipRequestState* {.pure} = enum
   Banned = 6,
   Kicked = 7,
   BannedPending = 8,
-  KickedPending = 9
+  UnbannedPending = 9,
+  KickedPending = 10,
 
 type
   ContractTransactionStatus* {.pure.} = enum

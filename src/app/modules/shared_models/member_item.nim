@@ -12,7 +12,7 @@ type
     requestToJoinId: string
     requestToJoinLoading*: bool
     airdropAddress*: string
-    membershipRequestState: MembershipRequestState
+    membershipRequestState*: MembershipRequestState
 
 # FIXME: remove defaults
 proc initMemberItem*(

@@ -101,13 +101,14 @@ Item {
                 readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
                 readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
                 readonly property bool isBanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending
+                readonly property bool isUnbanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.UnbannedPending
                 readonly property bool isKickPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending
                 readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned
                 readonly property bool isKicked: model.membershipRequestState === Constants.CommunityMembershipRequestState.Kicked
 
                 // TODO: Connect to backend when available
                 // The admin that initited the pending state can change the state. Actions are not visible for other admins
-                readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isKickPending
+                readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
@@ -140,10 +141,11 @@ Item {
                 readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
 
                 /// Pending states ///
-                readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isKickPending
+                readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isUnbanPending || isKickPending
                 readonly property string pendingStateText:  isAcceptedPending ? qsTr("Accept pending...") :
                                                             isRejectedPending ? qsTr("Reject pending...") :
                                                             isBanPending ? qsTr("Ban pending...") :
+                                                            isUnbanPending ? qsTr("Unban pending...") :
                                                             isKickPending ? qsTr("Kick pending...") : ""
 
                 statusListItemComponentsSlot.spacing: 16
@@ -160,7 +162,7 @@ Item {
                             d.pendingTextMaxWidth = Math.max(implicitWidth, d.pendingTextMaxWidth)
                         }
                         visible: !!text && isPendingState
-                        rightPadding: isKickPending || isBanPending ? 0 : Style.current.bigPadding
+                        rightPadding: isKickPending || isBanPending || isUnbanPending ? 0 : Style.current.bigPadding
                         anchors.verticalCenter: parent.verticalCenter
                         text: pendingStateText
                         color: Theme.palette.baseColor1

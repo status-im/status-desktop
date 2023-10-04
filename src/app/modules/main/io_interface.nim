@@ -13,7 +13,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/community_tokens/community_collectible_owner
-from app_service/common/types import StatusType, ContractTransactionStatus
+from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState
 
 import app/global/app_signals
 import app/core/eventemitter
@@ -339,6 +339,9 @@ method onAcceptRequestToJoinLoading*(self: AccessInterface, communityId: string,
   raise newException(ValueError, "No implementation available")
 
 method onAcceptRequestToJoinSuccess*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMembershipStatusUpdated*(self: AccessInterface, communityId: string, memberPubkey: string, status: MembershipRequestState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onDeactivateChatLoader*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =

@@ -94,7 +94,7 @@ SplitView {
     SortFilterProxyModel {
         id: usersModelWithMembershipState
         readonly property var membershipStatePerView: [
-            [Constants.CommunityMembershipRequestState.Accepted , Constants.CommunityMembershipRequestState.BannedPending, Constants.CommunityMembershipRequestState.KickedPending],
+            [Constants.CommunityMembershipRequestState.Accepted , Constants.CommunityMembershipRequestState.BannedPending, Constants.CommunityMembershipRequestState.UnbannedPending, Constants.CommunityMembershipRequestState.KickedPending],
             [Constants.CommunityMembershipRequestState.Banned],
             [Constants.CommunityMembershipRequestState.Pending, Constants.CommunityMembershipRequestState.AcceptedPending, Constants.CommunityMembershipRequestState.RejectedPending],
             [Constants.CommunityMembershipRequestState.Rejected]

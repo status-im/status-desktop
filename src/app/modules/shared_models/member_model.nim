@@ -358,3 +358,14 @@ QtObject:
       ModelRole.RequestToJoinLoading.int
     ])
 
+  proc updateMembershipStatus*(self: Model, memberKey: string, status: MembershipRequestState) {.inline.} =
+    let idx = self.findIndexForMember(memberKey)
+    if(idx == -1):
+      return
+
+    self.items[idx].membershipRequestState = status
+    let index = self.createIndex(idx, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[
+      ModelRole.MembershipRequestState.int
+    ])

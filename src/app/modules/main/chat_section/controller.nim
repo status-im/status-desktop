@@ -576,13 +576,13 @@ proc leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
 
 proc removeUserFromCommunity*(self: Controller, pubKey: string) =
-  self.communityService.removeUserFromCommunity(self.sectionId, pubKey)
+  self.communityService.asyncRemoveUserFromCommunity(self.sectionId, pubKey)
 
 proc banUserFromCommunity*(self: Controller, pubKey: string) =
-  self.communityService.banUserFromCommunity(self.sectionId, pubKey)
+  self.communityService.asyncBanUserFromCommunity(self.sectionId, pubKey)
 
 proc unbanUserFromCommunity*(self: Controller, pubKey: string) =
-  self.communityService.unbanUserFromCommunity(self.sectionId, pubKey)
+  self.communityService.asyncUnbanUserFromCommunity(self.sectionId, pubKey)
 
 proc editCommunity*(
     self: Controller,

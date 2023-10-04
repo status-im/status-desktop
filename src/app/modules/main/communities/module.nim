@@ -145,6 +145,17 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
   )
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
+  # TODO: unite bannedMembers, pendingMemberRequests and declinedMemberRequests
+  var members: seq[MemberItem] = @[]
+  for member in c.members:
+    if c.pendingAndBannedMembers.hasKey(member.id):
+      let communityMemberState = c.pendingAndBannedMembers[member.id]
+      members.add(self.createMemberItem(member.id, "", toMembershipRequestState(communityMemberState)))
+
+  var bannedMembers: seq[MemberItem] = @[]
+  for memberId, communityMemberState in c.pendingAndBannedMembers:
+    bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
+
   return initItem(
       c.id,
       SectionType.Community,
@@ -172,11 +183,9 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.access,
       c.permissions.ensOnly,
       c.muted,
-      c.members.map(proc(member: ChatMember): MemberItem =
-        result = self.createMemberItem(member.id, "", MembershipRequestState.Accepted)),
+      members = members,
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
-      bannedMembers = c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem =
-        result = self.createMemberItem(bannedMemberId, "", MembershipRequestState.Banned)),
+      bannedMembers = bannedMembers,
       pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =

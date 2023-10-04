@@ -360,3 +360,9 @@ proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.in
 
 proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
   self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
+
+proc updateMembershipStatus*(self: SectionItem, memberKey: string, status: MembershipRequestState) {.inline.} =
+  if status == MembershipRequestState.UnbannedPending or status == MembershipRequestState.Banned:
+    self.bannedMembersModel.updateMembershipStatus(memberKey, status)
+  else:
+    self.membersModel.updateMembershipStatus(memberKey, status)

@@ -139,6 +139,11 @@ type
     communityId*: string
     membersRevealedAccounts*: MembersRevealedAccounts
 
+  CommunityMemberStatusUpdatedArgs* = ref object of Args
+    communityId*: string
+    memberPubkey*: string
+    status*: MembershipRequestState
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -169,7 +174,7 @@ const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
-const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
+const SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED* = "communityMemberStatusChanged"
 const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
@@ -466,6 +471,8 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
           CommunityCategoryArgs(communityId: community.id, category: category))
 
+    self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
+      CommunityMembersArgs(communityId: community.id, members: community.members))
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
@@ -1884,26 +1891,74 @@ QtObject:
     except Exception as e:
       error "Error unmuting category", msg = e.msg
 
-  proc removeUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
-    try:
-      discard status_go.removeUserFromCommunity(communityId, pubKey)
+  proc asyncRemoveUserFromCommunity*(self: Service, communityId, pubKey: string) =
+    let arg = AsyncCommunityMemberActionTaskArg(
+      tptr: cast[ByteAddress](asyncRemoveUserFromCommunityTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCommunityMemberActionCompleted",
+      communityId: communityId,
+      pubKey: pubKey,
+    )
+    self.threadpool.start(arg)
 
-      self.events.emit(SIGNAL_COMMUNITY_MEMBER_REMOVED,
-        CommunityMemberArgs(communityId: communityId, pubKey: pubKey))
-    except Exception as e:
-      error "Error removing user from community", msg = e.msg
+  proc asyncBanUserFromCommunity*(self: Service, communityId, pubKey: string) =
+    let arg = AsyncCommunityMemberActionTaskArg(
+      tptr: cast[ByteAddress](asyncBanUserFromCommunityTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCommunityMemberActionCompleted",
+      communityId: communityId,
+      pubKey: pubKey,
+    )
+    self.threadpool.start(arg)
 
-  proc banUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
-    try:
-      discard status_go.banUserFromCommunity(communityId, pubKey)
-    except Exception as e:
-      error "Error banning user from community", msg = e.msg
+  proc asyncUnbanUserFromCommunity*(self: Service, communityId, pubKey: string) =
+    let arg = AsyncCommunityMemberActionTaskArg(
+      tptr: cast[ByteAddress](asyncUnbanUserFromCommunityTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCommunityMemberActionCompleted",
+      communityId: communityId,
+      pubKey: pubKey,
+    )
+    self.threadpool.start(arg)
 
-  proc unbanUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
+  proc onAsyncCommunityMemberActionCompleted*(self: Service, response: string) {.slot.} =
     try:
-      discard status_go.unbanUserFromCommunity(communityId, pubKey)
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
+
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
+
+      let memberPubkey = rpcResponseObj{"pubKey"}.getStr()
+
+      var communityJArr: JsonNode
+      if not rpcResponseObj["response"]{"result"}.getProp("communities", communityJArr):
+        raise newException(RpcException, "there is no `communities` key in the response")
+
+      if communityJArr.len == 0:
+        raise newException(RpcException, "`communities` array is empty in the response")
+
+      var community = communityJArr[0].toCommunityDto()
+
+      var status: MembershipRequestState = MembershipRequestState.None
+      if community.pendingAndBannedMembers.hasKey(memberPubkey):
+        status = community.pendingAndBannedMembers[memberPubkey].toMembershipRequestState()
+      else:
+        for member in community.members:
+          if member.id == memberPubkey:
+            status = MembershipRequestState.Accepted
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
+        communityId: community.id,
+        memberPubkey: memberPubkey,
+        status: status
+      ))
+
     except Exception as e:
-      error "Error banning user from community", msg = e.msg
+      error "error while getting the community members' revealed addressesses", msg = e.msg
 
   proc setCommunityMuted*(self: Service, communityId: string, mutedType: int) =
     try:
