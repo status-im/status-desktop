@@ -621,7 +621,7 @@ StatusListItem {
             }
             StatusRoundIcon {
                 id: secondTokenImage
-                visible: root.isModelDataValid && !root.isNFT && !!root.inTokenImage &&modelData.txType === Constants.TransactionType.Swap
+                visible: root.isModelDataValid && !root.isNFT && !!root.inTokenImage && modelData.txType === Constants.TransactionType.Swap
                 anchors.verticalCenter: parent.verticalCenter
                 asset: StatusAssetSettings {
                     width: root.tokenIconAsset.width

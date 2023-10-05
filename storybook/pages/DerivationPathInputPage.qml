@@ -8,7 +8,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 
-import AppLayouts.Wallet.addaccount.panels 1.0
+import shared.popups.addaccount.panels 1.0
 
 SplitView {
     Pane {
@@ -22,11 +22,6 @@ SplitView {
 
             DerivationPathInput {
                 id: testControl
-
-                initialDerivationPath: initialBasePath + (initialBasePath.split("'").length > 4 ? "/0" : "/0'")
-                initialBasePath: stdBaseListView.currentIndex >= 0
-                    ? standardBasePathModel.get(stdBaseListView.currentIndex).derivationPath
-                    : "m/44'/60'/0'/0"
 
                 levelsLimit: levelsLimitSpinBox.value
 

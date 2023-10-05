@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 import Models 1.0
 import Storybook 1.0
 
-import shared.views 1.0
+import shared.popups.send.views 1.0
 
 SplitView {
     orientation: Qt.Vertical
