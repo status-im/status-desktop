@@ -44,19 +44,20 @@ SplitView {
             anchors.centerIn: parent
             spacing: 100
             StatusTxProgressBar {
+                id: progressBar
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 500
                 error: failureCheckBox.checked
-                isLayer1: mainnetCheckbox.checked
+                networkLayer: mainnetCheckbox.checked ? 1 : 2
                 confirmations: confirmationsSlider.value
                 duration: durationSlider.to
                 progress: durationSlider.value
-                chainName: isLayer1 ? "Mainnet" :"Optimism"
+                chainName: isLayer1 ? "Mainnet" : "Optimism"
             }
 
             Rectangle {
                 width: root.width
-                height: 400
+                height: 200
                 border.width: 2
                 WalletTxProgressBlock {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -64,10 +65,12 @@ SplitView {
                     anchors.topMargin: 20
                     width: 500
                     error: failureCheckBox.checked
-                    isLayer1: mainnetCheckbox.checked
-                    confirmations: confirmationsSlider.value
-                    chainName: isLayer1 ? "Mainnet" :"Optimism"
-                    timeStamp: 1670419848
+                    inNetworkConfirmations: confirmationsSlider.value
+                    outNetworkConfirmations: confirmationsSlider.value
+                    inChainName: progressBar.isLayer1 ? "Mainnet" : "Optimism"
+                    outChainName: inChainName
+                    inNetworkTimestamp: 1670419847
+                    outNetworkTimestamp: 1670419848
                 }
             }
         }
@@ -77,7 +80,7 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 200
+        SplitView.preferredHeight: 250
 
         logsView.logText: logs.logText
         Column {
@@ -89,7 +92,6 @@ SplitView {
             CheckBox {
                 id: failureCheckBox
                 text: "Failed"
-                checked: false
             }
             Slider {
                 id: confirmationsSlider
@@ -104,9 +106,9 @@ SplitView {
                     text: "Confirmations = " + confirmationsSlider.value
                 }
             }
-            StatusInput {
+            TextField {
                 id: duration
-                label: "Duration for finalisation"
+                placeholderText: "Duration for finalisation"
                 text: "7"
                 visible: !mainnetCheckbox.checked && !failureCheckBox.checked
             }

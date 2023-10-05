@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     bool errorsFound = false;
 
-    for (auto& fileInfo : files) {
+    for (const auto& fileInfo : files) {
         auto fileName = fileInfo.fileName();
         qDebug() << fileName;
 

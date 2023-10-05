@@ -30,8 +30,6 @@ SplitView {
                 isAssetView: isAssetBox.checked
                 layer1Networks: NetworksModel.layer1Networks
                 layer2Networks: NetworksModel.layer2Networks
-                enabledNetworks: NetworksModel.enabledNetworks
-                allNetworks: enabledNetworks
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
                 tokensModelWallet: ListModel {
