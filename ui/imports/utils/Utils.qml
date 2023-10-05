@@ -832,7 +832,7 @@ QtObject {
                     Theme.palette.warningColor1
     }
 
-    function getKeypairLocation(keypair) {
+    function getKeypairLocation(keypair, fromAccountDetailsView) {
         if (!keypair || keypair.pairType === Constants.keypair.type.watchOnly) {
             return ""
         }
@@ -849,7 +849,9 @@ QtObject {
             return profileTitle + qsTr("On device")
         }
         if (keypair.operability === Constants.keypair.operability.nonOperable) {
-            if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
+            if (fromAccountDetailsView) {
+                return qsTr("Requires import")
+            } else if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
                 if (keypair.pairType === Constants.keypair.type.seedImport ||
                         keypair.pairType === Constants.keypair.type.privateKeyImport) {
                     return qsTr("Restored from backup. Import keypair to use derived accounts.")

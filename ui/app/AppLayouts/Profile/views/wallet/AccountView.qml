@@ -203,7 +203,7 @@ ColumnLayout {
             WalletAccountDetailsListItem {
                 Layout.fillWidth: true
                 title: qsTr("Stored")
-                subTitle: Utils.getKeypairLocation(root.keyPair)
+                subTitle: Utils.getKeypairLocation(root.keyPair, true)
                 statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             }
         }
