@@ -29,6 +29,8 @@ Item {
     SyncingEnterCode {
         id: layout
 
+        objectName: "syncingEnterCode"
+
         anchors.centerIn: parent
         width: 400
         spacing: 24
