@@ -57,6 +57,9 @@ Item {
 
         readonly property bool showJoinButton: !communityData.joined || root.communityData.amIBanned
         readonly property bool showFinaliseOwnershipButton: root.isPendingOwnershipRequest
+
+        property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
+        property bool isJoinBtnLoading: false
     }
 
     ColumnHeaderPanel {
@@ -84,12 +87,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: d.showFinaliseOwnershipButton ? finaliseCommunityOwnershipBtn :
                                                          d.showJoinButton ? joinCommunityButton : undefined
+        active: d.showFinaliseOwnershipButton || d.showJoinButton
     }
 
     ChatsLoadingPanel {
         chatSectionModule: root.communitySectionModule
         width: parent.width
-        anchors.top: columnHeaderButton.sourceComponent !== undefined ? columnHeaderButton.bottom : communityHeader.bottom
+        anchors.top: columnHeaderButton.active ? columnHeaderButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? Style.current.halfPadding : 0
     }
 
@@ -143,7 +147,7 @@ Item {
     StatusScrollView {
         id: scrollView
 
-        anchors.top: columnHeaderButton.sourceComponent !== undefined ? columnHeaderButton.bottom : communityHeader.bottom
+        anchors.top: columnHeaderButton.active ? columnHeaderButton.bottom : communityHeader.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: createChatOrCommunity.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -456,18 +460,16 @@ Item {
         id: joinCommunityButton
 
         StatusButton {
-
-            property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
-
             anchors.top: communityHeader.bottom
             anchors.topMargin: Style.current.halfPadding
             anchors.bottomMargin: Style.current.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: !root.communityData.amIBanned
+            loading: d.isJoinBtnLoading
 
             text: {
                 if (root.communityData.amIBanned) return qsTr("You were banned from community")
-                if (invitationPending) return qsTr("Membership request pending...")
+                if (d.invitationPending) return qsTr("Membership request pending...")
 
                 return root.communityData.access === Constants.communityChatOnRequestAccess ?
                             qsTr("Request to join") : qsTr("Join Community")
@@ -478,18 +480,18 @@ Item {
             }
 
             Connections {
-                enabled: joinCommunityButton.loading
+                enabled: d.isJoinBtnLoading
                 target: root.store.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
                     if (communityId === communityData.id) {
-                        joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
-                        joinCommunityButton.loading = false
+                        d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                        d.isJoinBtnLoading = false
                     }
                 }
                 function onCommunityAccessFailed(communityId: string) {
                     if (communityId === communityData.id) {
-                        joinCommunityButton.invitationPending = false
-                        joinCommunityButton.loading = false
+                        d.invitationPending = false
+                        d.isJoinBtnLoading = false
                         Global.displayToastMessage(qsTr("Request to join failed"),
                                                    qsTr("Please try again later"),
                                                    "",
@@ -499,8 +501,8 @@ Item {
                     }
                 }
                 function onUserAuthenticationCanceled() {
-                    joinCommunityButton.invitationPending = false
-                    joinCommunityButton.loading = false
+                    d.invitationPending = false
+                    d.isJoinBtnLoading = false
                 }
             }
 
@@ -508,7 +510,7 @@ Item {
                 id: communityIntroDialog
                 CommunityIntroDialog {
 
-                    isInvitationPending: joinCommunityButton.invitationPending
+                    isInvitationPending: d.invitationPending
                     requirementsCheckPending: root.store.requirementsCheckPending
                     name: communityData.name
                     introMessage: communityData.introMessage
@@ -524,12 +526,12 @@ Item {
                     collectiblesModel: root.store.collectiblesModel
 
                     onJoined: {
-                        joinCommunityButton.loading = true
+                        d.isJoinBtnLoading = true
                         root.store.requestToJoinCommunityWithAuthentication(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress)
                     }
                     onCancelMembershipRequest: {
                         root.store.cancelPendingRequest(communityData.id)
-                        joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                        d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                     }
                     onSharedAddressesUpdated: {
                         root.store.updatePermissionsModel(communityData.id, sharedAddresses)
