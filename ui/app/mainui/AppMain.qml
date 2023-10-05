@@ -308,7 +308,6 @@ Item {
         target: appMain.communitiesStore
 
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-            const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
             let title = ""
             let subTitle = ""
             let loading = false
@@ -318,6 +317,7 @@ Item {
             switch (state)
             {
             case Constants.communityImported:
+                const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
                 if(community.isControlNode) {
                     title = qsTr("This device is now the control node for the %1 Community").arg(community.name)
                     notificationType = Constants.ephemeralNotificationType.success
@@ -331,7 +331,7 @@ Item {
                 loading = true
                 break
             case Constants.communityImportingError:
-                title = qsTr("Failed to import community '%1'").arg(community.name)
+                title = qsTr("Failed to import community '%1'").arg(communityId)
                 subTitle = errorMsg
                 break
             default:
