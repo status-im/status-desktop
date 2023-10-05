@@ -12,7 +12,7 @@ Rectangle {
 
     property string title: qsTr("Import keypair to use this account")
     property string info: qsTr("This account was added to one of your synced devices. To use this account you will first need import the associated keypair to this device.")
-    property string buttonName: qsTr("Import keypair")
+    property string buttonName: qsTr("Import missing keypair")
 
     signal runImport()
 

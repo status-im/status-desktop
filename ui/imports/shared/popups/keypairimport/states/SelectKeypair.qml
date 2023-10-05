@@ -45,7 +45,7 @@ Item {
             Layout.fillWidth: true
             Layout.leftMargin: d.margin
             Layout.rightMargin: d.margin
-            text: qsTr("To use the derived accounts on this device, you need to import their keypairs.")
+            text: qsTr("To use the associated accounts on this device, you need to import their keypairs.")
             wrapMode: Text.WordWrap
         }
 

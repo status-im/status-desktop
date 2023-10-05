@@ -44,7 +44,7 @@ StatusModal {
             }
             d.entryValid = d.entryValid && !root.accountsModule.keypairNameExists(nameInput.text)
             if (!d.entryValid) {
-                nameInput.errorMessageCmp.text = qsTr("Key name already in use")
+                nameInput.errorMessageCmp.text = qsTr("Keypair name already in use")
                 nameInput.valid = false
             }
         }
@@ -66,7 +66,7 @@ StatusModal {
             Layout.preferredHeight: 120
             topPadding: 8
             bottomPadding: 8
-            label: qsTr("Key name")
+            label: qsTr("Keypair name")
             charLimit: Constants.keypair.nameLengthMax
             validators: Constants.validators.keypairName
             input.clearable: true
@@ -81,7 +81,7 @@ StatusModal {
         StatusBaseText {
             Layout.preferredWidth: parent.width
             Layout.topMargin: Style.current.padding
-            text: qsTr("Accounts derived from this key")
+            text: qsTr("Accounts derived from this keypair")
             font.pixelSize: Style.current.primaryTextFontSize
         }
 

@@ -51,7 +51,7 @@ Rectangle {
             title: !!root.keyPair? d.isWatchOnly ? qsTr("Watched addresses") : root.keyPair.name : ""
             statusListItemSubTitle.textFormat: Qt.RichText
             titleTextIcon: !!root.keyPair && keyPair.migratedToKeycard ? "keycard": ""
-            subTitle: Utils.getKeypairLocation(root.keyPair)
+            subTitle: Utils.getKeypairLocation(root.keyPair, false)
             statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             color: Theme.palette.transparent
             ringSettings {
