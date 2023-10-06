@@ -277,7 +277,8 @@ change_password_success_menu_sign_out_quit_button = {"container": statusDesktop_
 # Social Links Popup
 socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}
 placeholder_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-o_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBackButton", "unnamed": 1, "visible": True}
+social_links_back_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBackButton", "unnamed": 1, "visible": True}
+social_links_add_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 linksView = {"container": statusDesktop_mainWindow, "id": "linksView", "type": "StatusListView", "unnamed": 1, "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
 

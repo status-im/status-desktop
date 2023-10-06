@@ -15,7 +15,8 @@ class SocialLinksPopup(BasePopup):
         super(SocialLinksPopup, self).__init__()
         self._add_social_link_list_item = QObject('socialLink_StatusListItem')
         self._social_link_text_field = TextEdit('edit_TextEdit')
-        self._add_button = Button('o_StatusBackButton')
+        self._back_button = Button('social_links_back_StatusBackButton')
+        self._add_button = Button('social_links_add_StatusBackButton')
 
     @allure.step('Get social link')
     def _get_list_item(self, title: str) -> QObject:
