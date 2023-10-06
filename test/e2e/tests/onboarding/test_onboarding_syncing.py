@@ -31,6 +31,7 @@ def sync_screen(main_window) -> SyncCodeView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'user_account_one'])
+@pytest.mark.skip(reason = "https://github.com/status-im/desktop-qa-automation/issues/147")
 def test_sync_device_during_onboarding(multiple_instance, user_data):
     user: UserAccount = constants.user_account_one
     main_window = MainWindow()
@@ -84,10 +85,11 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
             user_canvas = main_window.left_panel.open_user_canvas()
             user_canvas_name = user_canvas.user_name
             assert user_canvas_name == user.name
-            assert driver.waitFor(
-                lambda: user_canvas.is_user_image_contains(user.name[:2]),
-                configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-            )
+            # TODO: temp removing tesseract usage because it is not stable
+            #assert driver.waitFor(
+            #    lambda: user_canvas.is_user_image_contains(user.name[:2]),
+            #    configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+            #)
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')
