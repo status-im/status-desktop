@@ -11569,7 +11569,6 @@ var Scale = core_element.extend({
 			// Generate labels using all non-skipped ticks
 			labels = me._convertTicksToLabels(me._ticksToDraw);
 		}
-
 		me.ticks = labels;   // BACKWARD COMPATIBILITY
 
 		// IMPORTANT: after this point, we consider that `this.ticks` will NEVER change!
@@ -13052,7 +13051,12 @@ var scale_linear = scale_linearbase.extend({
 	},
 
 	getLabelForIndex: function(index, datasetIndex) {
-		return this._getScaleLabel(this.chart.data.datasets[datasetIndex].data[index]);
+		var scaleLabel = this._getScaleLabel(this.chart.data.datasets[datasetIndex].data[index]);
+		var optionsTooltips = this.chart.options.tooltips;
+		if (optionsTooltips && optionsTooltips.format && optionsTooltips.format.enabled && optionsTooltips.format.valueCallback) {
+			return optionsTooltips.format.valueCallback(scaleLabel);
+		}
+		return scaleLabel;
 	},
 
 	// Utils
@@ -14566,6 +14570,11 @@ var scale_time = core_scale.extend({
 		if (typeof label === 'string') {
 			return label;
 		}
+		var tooltipsFormat = me.chart.options.tooltips.format;
+		if (tooltipsFormat && tooltipsFormat.enabled && tooltipsFormat.callback) {
+			return tooltipsFormat.callback(label)
+		}
+
 		return adapter.format(toTimestamp(me, label), timeOpts.displayFormats.datetime);
 	},
 
@@ -14584,7 +14593,13 @@ var scale_time = core_scale.extend({
 		var tick = ticks[index];
 		var tickOpts = options.ticks;
 		var major = majorUnit && majorFormat && tick && tick.major;
-		var label = adapter.format(time, format ? format : major ? majorFormat : minorFormat);
+		var labelFormat = me.chart.options.scales.labelFormat;
+		var label;
+		if (labelFormat && labelFormat.enabled && labelFormat.callback)
+			label = labelFormat.callback(time);
+		else
+			label = adapter.format(time, format ? format : major ? majorFormat : minorFormat);
+
 		var nestedTickOpts = major ? tickOpts.major : tickOpts.minor;
 		var formatter = resolve$5([
 			nestedTickOpts.callback,
