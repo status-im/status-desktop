@@ -92,8 +92,8 @@ QtObject:
   proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
     return self.combinedNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
 
-  proc updateNetworkEndPointValues*(self: View, chainId: int, newMainRpcInput: string, newFailoverRpcUrl: string) {.slot.} =
-    self.delegate.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+  proc updateNetworkEndPointValues*(self: View, chainId: int, newMainRpcInput: string, newFailoverRpcUrl: string, revertToDefault: bool) {.slot.} =
+    self.delegate.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
 
   proc fetchChainIdForUrl*(self: View, url: string, isMainUrl: bool) {.slot.} =
     self.delegate.fetchChainIdForUrl(url, isMainUrl)

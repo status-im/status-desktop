@@ -154,7 +154,7 @@ SettingsContentBase {
             networksModule: root.walletStore.networksModule
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
-                root.walletStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+                root.walletStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
                 stackContainer.currentIndex = networksViewIndex
             }
         }

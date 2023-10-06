@@ -127,9 +127,12 @@ Item {
             )
         }
 
-        function onShowNetworkEndpointUpdated(name: string, isTest: bool) {
+        function onShowNetworkEndpointUpdated(name: string, isTest: bool, revertToDefault: bool) {
+            let mainText = revertToDefault ?
+                    (isTest ? qsTr("Test network settings for %1 reverted to default").arg(name): qsTr("Live network settings for %1 reverted to default").arg(name)):
+                    (isTest ? qsTr("Test network settings for %1 updated").arg(name): qsTr("Live network settings for %1 updated").arg(name))
             Global.displayToastMessage(
-                isTest ? qsTr("Test network settings for %1 updated").arg(name): qsTr("Live network settings for %1 updated").arg(name),
+                mainText,
                 "",
                 "checkmark-circle",
                 false,

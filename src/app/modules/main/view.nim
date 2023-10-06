@@ -292,7 +292,7 @@ QtObject:
   ## Signals for in app (ephemeral) notifications
   proc showToastAccountAdded*(self: View, name: string) {.signal.}
   proc showToastKeypairRenamed*(self: View, oldName: string, newName: string) {.signal.}
-  proc showNetworkEndpointUpdated*(self: View, name: string, isTest: bool) {.signal.}
+  proc showNetworkEndpointUpdated*(self: View, name: string, isTest: bool, revertedToDefault: bool) {.signal.}
   proc showIncludeWatchOnlyAccountUpdated*(self: View, includeWatchOnly: bool) {.signal.}
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
   proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}
