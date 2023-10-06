@@ -292,3 +292,10 @@ mainWindow_secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDeskto
 copy_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncCodeCopyButton", "type": "StatusButton", "visible": True}
 done_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncAnewDeviceNextButton", "type": "StatusButton", "visible": True}
 syncCodeInput_StatusPasswordInput = {"container": statusDesktop_mainWindow_overlay, "id": "syncCodeInput", "type": "StatusPasswordInput", "unnamed": 1, "visible": True}
+
+# Edit group name and image popup
+groupChatEdit_name_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_name", "type": "TextEdit", "visible": True}
+save_changes_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_save", "type": "StatusButton", "visible": True}
+
+# Leave group popup
+leave_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "leaveGroupConfirmationDialogLeaveButton", "type": "StatusButton", "visible": True}

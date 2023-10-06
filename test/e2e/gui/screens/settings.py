@@ -247,6 +247,10 @@ class ContactsSettingsView(QObject):
         self._contact_request_button.click()
         return SendContactRequest().wait_until_appears()
 
+    @allure.step('Open contacts request form')
+    def send_contacts_request(self):
+        LeftPanel().open_messaging_settings().open_contacts_settings().open_contact_request_form()
+
     @allure.step('Accept contact request')
     def accept_contact_request(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC) -> MessagesScreen:
