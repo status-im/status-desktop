@@ -10,7 +10,7 @@ pytestmark = allure.suite("Settings")
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703007',
-                 'Change own display name in profile popup')
+                 'Change own display name from online identifier')
 @pytest.mark.case(703007)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('new_name', [pytest.param('NewUserName')])
@@ -29,6 +29,7 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703002', 'Switch state to offline')
 @pytest.mark.case(703002)
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/149")
 def test_switch_states_between_offline_and_online(aut: AUT, main_screen: MainWindow, user_account):
     with (step('Open settings and switch state to offline')):
         settings = main_screen.left_panel
@@ -58,6 +59,7 @@ def test_switch_states_between_offline_and_online(aut: AUT, main_screen: MainWin
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703004', 'Switch state to automatic')
 @pytest.mark.case(703004)
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/149")
 def test_switch_state_to_automatic(aut: AUT, main_screen: MainWindow, user_account):
     with step('Open settings and switch state to automatic'):
         settings = main_screen.left_panel
@@ -72,5 +74,3 @@ def test_switch_state_to_automatic(aut: AUT, main_screen: MainWindow, user_accou
 
     with step('Verify user status set automatically to online'):
         assert settings.user_is_set_to_automatic()
-
-
