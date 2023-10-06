@@ -14,7 +14,7 @@ ColumnLayout {
     property var network
     property var networksModule
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
-    signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl)
+    signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
 
     enum EvaluationState {
         UnTouched,
@@ -23,6 +23,7 @@ ColumnLayout {
         InvalidURL,
         PingUnsuccessful,
         SameAsOther,
+        NotSameChain,
         Empty
     }
 
@@ -42,12 +43,8 @@ ColumnLayout {
         })
 
         function revertValues() {
-            warningCheckbox.checked = false
-            d.evaluationStatusMainRpc = EditNetworkForm.UnTouched
-            d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
             if(!!network) {
-                mainRpcInput.text = d.mask(network.originalRpcURL)
-                failoverRpcUrlInput.text = d.mask(network.originalFallbackURL)
+                root.updateNetworkValues(network.chainId, network.originalRpcURL, network.originalFallbackURL, true)
             }
         }       
 
@@ -63,6 +60,8 @@ ColumnLayout {
                 return qsTr("RPC successfully reached")
             case EditNetworkForm.SameAsOther:
                 return qsTr("Main and failover JSON RPC URLs are the same")
+            case EditNetworkForm.NotSameChain:
+                return qsTr("Chain ID returned from JSON RPC doesn’t match %1").arg(network.chainName)
             default: return ""
             }
         }
@@ -72,6 +71,7 @@ ColumnLayout {
             case EditNetworkForm.Pending:
                 return Theme.palette.baseColor1
             case EditNetworkForm.SameAsOther:
+            case EditNetworkForm.NotSameChain:
                 return  Theme.palette.warningColor1
             case EditNetworkForm.Verified:
                 return Theme.palette.successColor1
@@ -84,6 +84,7 @@ ColumnLayout {
             case EditNetworkForm.Pending:
             case EditNetworkForm.Verified:
             case EditNetworkForm.SameAsOther:
+            case EditNetworkForm.NotSameChain:
                 return  Text.AlignLeft
             default: return Text.AlignRight
             }
@@ -97,14 +98,15 @@ ColumnLayout {
         }
     }
 
-    onVisibleChanged: if(!visible) {d.revertValues()}
-
     Connections {
         target: networksModule
         function onChainIdFetchedForUrl(url, chainId, success, isMainUrl) {
             let status = EditNetworkForm.PingUnsuccessful
             if(success) {
-                if((isMainUrl && url === network.fallbackURL) ||
+                if (network.chainId !== chainId) {
+                    status = EditNetworkForm.NotSameChain
+                }
+                else if((isMainUrl && url === network.fallbackURL) ||
                         (!isMainUrl && url === network.rpcURL)) {
                   status = EditNetworkForm.SameAsOther
                 }
@@ -185,14 +187,14 @@ ColumnLayout {
                     d.evaluationStatusMainRpc = EditNetworkForm.Empty
                     return
                 }
-
-                if (!!text && d.mask(network.originalRpcURL) === text) {
-                    d.evaluationStatusMainRpc = EditNetworkForm.Verified
-                }
-
-                if(!!text && d.mask(network.originalRpcURL) !== text) {
-                    d.evaluationStatusMainRpc = EditNetworkForm.Pending
-                    Qt.callLater(d.evaluateRpcEndPoint, text, true);
+                else {
+                    if ((d.mask(network.originalRpcURL) === text) ||
+                            (network.rpcURL === text)) {
+                        d.evaluationStatusMainRpc = EditNetworkForm.UnTouched
+                    } else {
+                        d.evaluationStatusMainRpc = EditNetworkForm.Pending
+                        Qt.callLater(d.evaluateRpcEndPoint, text, true);
+                    }
                 }
             }
             errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusMainRpc)
@@ -228,14 +230,14 @@ ColumnLayout {
                 d.evaluationStatusFallBackRpc = EditNetworkForm.Empty
                 return
             }
-
-            if (!!text && d.mask(network.originalFallbackURL) === text) {
-                d.evaluationStatusFallBackRpc = EditNetworkForm.Verified
-            }
-
-            if(!!text && d.mask(network.originalFallbackURL) !== text) {
-                d.evaluationStatusFallBackRpc = EditNetworkForm.Pending
-                Qt.callLater(d.evaluateRpcEndPoint, text, false);
+            else {
+                if ((d.mask(network.originalFallbackURL) === text) ||
+                        (network.fallbackURL === text)) {
+                    d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
+                } else {
+                    d.evaluationStatusFallBackRpc = EditNetworkForm.Pending
+                    Qt.callLater(d.evaluateRpcEndPoint, text, false);
+                }
             }
         }
         errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusFallBackRpc)
@@ -270,6 +272,8 @@ ColumnLayout {
             objectName: "editNetworkRevertButton"
             text: qsTr("Revert to default")
             normalColor: "transparent"
+            enabled: (failoverRpcUrlInput.text !== d.mask(network.originalFallbackURL)) ||
+                     (mainRpcInput.text !== d.mask(network.originalRpcURL))
             onClicked: d.revertValues()
         }
         StatusButton {
@@ -280,7 +284,10 @@ ColumnLayout {
                 d.evaluationStatusFallBackRpc === EditNetworkForm.Verified || 
                 d.evaluationStatusMainRpc === EditNetworkForm.SameAsOther || 
                 d.evaluationStatusFallBackRpc === EditNetworkForm.SameAsOther ||
-                d.evaluationStatusFallBackRpc === EditNetworkForm.Empty
+                d.evaluationStatusMainRpc === EditNetworkForm.Empty ||
+                d.evaluationStatusFallBackRpc === EditNetworkForm.Empty ||
+                d.evaluationStatusMainRpc === EditNetworkForm.NotSameChain ||
+                d.evaluationStatusFallBackRpc === EditNetworkForm.NotSameChain
                 ) && warningCheckbox.checked
 
             onClicked: {
@@ -293,7 +300,7 @@ ColumnLayout {
                 if (fallback === d.mask(network.originalFallbackURL)) {
                     fallback = network.originalFallbackURL
                 }
-                root.updateNetworkValues(network.chainId, main, fallback)
+                root.updateNetworkValues(network.chainId, main, fallback, false)
             }
         }
     }

@@ -59,5 +59,5 @@ proc toggleIsSepoliaEnabled*(self: Controller) =
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)
 
-proc updateNetworkEndPointValues*(self: Controller, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
-  self.networkService.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+proc updateNetworkEndPointValues*(self: Controller, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+  self.networkService.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)

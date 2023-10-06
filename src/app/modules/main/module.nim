@@ -445,7 +445,7 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
 
   self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
     let args = NetworkEndpointUpdatedArgs(e)
-    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest)
+    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest, args.revertedToDefault)
 
   self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
     let args = SettingsBoolValueArgs(e)

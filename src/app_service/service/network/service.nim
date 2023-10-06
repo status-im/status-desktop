@@ -16,6 +16,7 @@ const SIGNAL_NETWORK_ENDPOINT_UPDATED* = "networkEndPointUpdated"
 type NetworkEndpointUpdatedArgs* = ref object of Args
   isTest*: bool
   networkName*: string
+  revertedToDefault*: bool
 
 type 
   Service* = ref object of RootObj
@@ -169,7 +170,7 @@ proc getNetworkForCollectibles*(self: Service): NetworkDto =
 
   return self.getNetwork(Mainnet)
 
-proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
   let network = self.getNetworkByChainId(chainId)
 
   if network.rpcURL == newMainRpcInput and network.fallbackURL == newFailoverRpcUrl:
@@ -182,4 +183,4 @@ proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, 
     network.fallbackURL = newFailoverRpcUrl
 
   if self.upsertNetwork(network):
-    self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName))
+    self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName, revertedToDefault: revertToDefault))

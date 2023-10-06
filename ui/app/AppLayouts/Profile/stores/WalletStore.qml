@@ -77,8 +77,8 @@ QtObject {
         return networksModule.fetchChainIdForUrl(url, isMainUrl)
     }
 
-    function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {
-        networksModule.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+    function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault) {
+        networksModule.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
     }
 
     function updateWalletAccountPreferredChains(address, preferredChainIds) {

@@ -104,8 +104,8 @@ method toggleIsSepoliaEnabled*(self: Module) =
   self.controller.toggleIsSepoliaEnabled()
   self.refreshNetworks()
 
-method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
-  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
 
 method fetchChainIdForUrl*(self: Module, url: string, isMainUrl: bool) =
   self.controller.fetchChainIdForUrl(url, isMainUrl)
