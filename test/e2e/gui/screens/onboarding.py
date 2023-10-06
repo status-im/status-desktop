@@ -127,6 +127,7 @@ class SyncCodeView(OnboardingView):
         super(SyncCodeView, self).__init__('mainWindow_SyncCodeView')
         self._enter_sync_code_button = Button('switchTabBar_Enter_sync_code_StatusSwitchTabButton')
         self._paste_sync_code_button = Button('mainWindow_Paste_StatusButton')
+        self._syncing_enter_code_item = QObject('mainWindow_syncingEnterCode_SyncingEnterCode')
 
     @allure.step('Open enter sync code form')
     def open_enter_sync_code_form(self):
@@ -136,7 +137,11 @@ class SyncCodeView(OnboardingView):
     @allure.step('Paste sync code')
     def paste_sync_code(self):
         self._paste_sync_code_button.click()
-        return SyncDeviceFoundView().wait_until_appears()
+
+    @property
+    @allure.step('Get wrong sync code message')
+    def sync_code_error_message(self) -> str:
+        return self._syncing_enter_code_item.object.syncCodeErrorMessage
 
 
 class SyncDeviceFoundView(OnboardingView):

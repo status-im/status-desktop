@@ -1,4 +1,5 @@
 import allure
+import pyperclip
 import pytest
 from allure_commons._allure import step
 
@@ -6,13 +7,25 @@ import configs.testpath
 import constants
 import driver
 from constants import UserAccount
+from constants.syncing import SyncingSettings
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView
+from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
+    SyncCodeView, SyncDeviceFoundView
 
 pytestmark = allure.suite("Syncing")
+
+
+@pytest.fixture
+def sync_screen(main_window) -> SyncCodeView:
+    with step('Open Syncing view'):
+        if configs.system.IS_MAC:
+            AllowNotificationsView().wait_until_appears().allow()
+        BeforeStartedPopUp().get_started()
+        wellcome_screen = WelcomeToStatusView().wait_until_appears()
+        return wellcome_screen.sync_existing_user().open_sync_code_view()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
@@ -53,11 +66,13 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
             sync_view = wellcome_screen.sync_existing_user().open_sync_code_view()
 
         with step('Paste sync code on second instance and wait until device is synced'):
-            sync_start = sync_view.open_enter_sync_code_form().paste_sync_code()
-            assert driver.waitFor(lambda: 'Device found!' in sync_start.device_found_notifications)
+            sync_start = sync_view.open_enter_sync_code_form()
+            sync_start.paste_sync_code()
+            sync_device_found = SyncDeviceFoundView()
+            assert driver.waitFor(lambda: 'Device found!' in sync_device_found.device_found_notifications)
             sync_result = SyncResultView().wait_until_appears()
             assert driver.waitFor(lambda: 'Device synced!' in sync_result.device_synced_notifications)
-            assert user.name in sync_start.device_found_notifications
+            assert user.name in sync_device_found.device_found_notifications
 
         with step('Sign in to synced account'):
             sync_result.sign_in()
@@ -73,3 +88,18 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
                 lambda: user_canvas.is_user_image_contains(user.name[:2]),
                 configs.timeouts.UI_LOAD_TIMEOUT_MSEC
             )
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')
+@pytest.mark.case(703631)
+@pytest.mark.parametrize('wrong_sync_code', [
+    pytest.param('9rhfjgfkgfj890tjfgtjfgshjef900')
+])
+def test_wrong_sync_code(sync_screen, wrong_sync_code):
+    with step('Open sync code form'):
+        sync_view = sync_screen.open_enter_sync_code_form()
+
+    with step('Paste wrong sync code on second instance and check that error message appears'):
+        pyperclip.copy(wrong_sync_code)
+        sync_view.paste_sync_code()
+        assert SyncingSettings.SYNC_CODE_IS_WRONG_TEXT.value == sync_view.sync_code_error_message, f'Wrong sync code message did not appear'
