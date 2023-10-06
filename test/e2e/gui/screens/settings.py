@@ -446,6 +446,8 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_save_changes = Button('editNetworkSaveButton')
         self._network_edit_view_back_button = Button('main_toolBar_back_button')
         self._network_edit_scroll = Scroll('settingsContentBaseScrollView_Flickable')
+        self._network_edit_main_rpc_url_error_message = QObject('mainRpcUrlInputObject')
+        self._network_edit_failover_rpc_url_error_message = QObject('failoverRpcUrlInputObject')
 
     @allure.step('Verify elements for the edit network view')
     def check_available_elements_on_edit_view(self):
@@ -462,19 +464,19 @@ class EditNetworkSettings(WalletSettingsView):
 
         self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
         assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
 
         self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
         assert driver.waitFor(lambda: self._network_revert_to_default.exists,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Revert to default button is not present"
 
-        assert self._network_save_changes.exists
+        assert self._network_save_changes.exists, f"Save changes button is not present"
 
-    @allure.step('Edit the rpc input field')
+    @allure.step('Edit Main RPC url input field')
     def edit_network_main_json_rpc_url_input(self, test_value):
         self._network_main_json_rpc_url.text = test_value
 
-    @allure.step('Edit the rpc input field')
+    @allure.step('Edit Failover RPC url input field')
     def edit_network_failover_json_rpc_url_input(self, test_value):
         self._network_failover_json_rpc_url.text = test_value
 
@@ -483,10 +485,32 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_acknowledgment_checkbox.set(value)
         return self
 
+    @allure.step('Get the text for consent when changing RPC urls')
+    def get_acknowledgement_checkbox_text(self, attr):
+        text = str(self._network_acknowledgment_checkbox.get_object_attribute(attr))
+        return text
+
+    @allure.step('Get error message for Main RPC URL input')
+    def get_main_rpc_url_error_message_text(self):
+        error = str(self._network_edit_main_rpc_url_error_message.object.errorMessageCmp.text)
+        return error
+
+    @allure.step('Get error message for Failover RPC URL input')
+    def get_failover_rpc_url_error_message_text(self):
+        error = str(self._network_edit_failover_rpc_url_error_message.object.errorMessageCmp.text)
+        return error
+
     @allure.step('Click Revert to default button')
-    def click_network_revert_to_default(self):
+    def revert_to_default(self, attempts=2):
+        current_value_main = self._network_main_json_rpc_url.text
+        current_value_failover = self._network_failover_json_rpc_url.text
         self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
         self._network_revert_to_default.click()
+        if (current_value_main == self._network_main_json_rpc_url.text
+                and current_value_failover == self._network_failover_json_rpc_url.text):
+            assert attempts > 0, "value not reverted"
+            time.sleep(1)
+            self.revert_to_default(attempts-1)
 
     @allure.step('Get value from Main json rpc input')
     def get_edit_network_main_json_rpc_url_value(self):

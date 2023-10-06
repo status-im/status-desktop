@@ -78,8 +78,10 @@ editNetworkMainRpcInput = {"container": statusDesktop_mainWindow, "objectName": 
 editNetworkFailoverRpcUrlInput = {"container": statusDesktop_mainWindow, "objectName": "editNetworkFailoverRpcUrlInput", "type": "TextEdit", "visible": True}
 editNetworkExplorerInput = {"container": statusDesktop_mainWindow, "objectName": "editNetworkExplorerInput", "type": "TextEdit"}
 editNetworkAknowledgmentCheckbox = {"container": statusDesktop_mainWindow, "objectName": "editNetworkAknowledgmentCheckbox", "type": "StatusCheckBox", "visible": True}
-editNetworkRevertButton = {"container": statusDesktop_mainWindow, "objectName": "editNetworkRevertButton", "type": "StatusButton", "visible": True}
+editNetworkRevertButton = {"container": statusDesktop_mainWindow, "objectName": "editNetworkRevertButton", "type": "StatusButton", "visible": True, "enabled": True}
 editNetworkSaveButton = {"container": statusDesktop_mainWindow, "objectName": "editNetworkSaveButton", "type": "StatusButton"}
+mainRpcUrlInputObject = {"container": settingsContentBase_ScrollView, "objectName": "mainRpcInputObject", "type": "StatusInput", "visible": True}
+failoverRpcUrlInputObject = {"container": settingsContentBase_ScrollView, "objectName": "failoverRpcUrlInputObject", "type": "StatusInput", "visible": True}
 
 # Profile View
 mainWindow_MyProfileView = {"container": statusDesktop_mainWindow, "type": "MyProfileView", "unnamed": 1, "visible": True}

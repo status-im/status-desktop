@@ -13,6 +13,7 @@ class WalletNetworkSettings(Enum):
     TESTNET_SUBTITLE = 'Switch entire Status app to testnet only mode'
     TESTNET_ENABLED_TOAST_MESSAGE = 'Testnet mode turned on'
     TESTNET_DISABLED_TOAST_MESSAGE = 'Testnet mode turned off'
+    ACKNOWLEDGMENT_CHECKBOX_TEXT = 'I understand that changing network settings can cause unforeseen issues, errors, security risks and potentially even loss of funds.'
 
 
 class WalletNetworkNaming(Enum):
@@ -28,5 +29,10 @@ class WalletNetworkNaming(Enum):
 
 
 class WalletNetworkDefaultValues(Enum):
-    ETHEREUM_LIVE_MAIN = 'https://eth-archival.gateway.pokt.network/v1/lb/********'
+    ETHEREUM_LIVE_MAIN = 'https://eth-archival.gateway.pokt.network/v1/lb/************************'
     ETHEREUM_LIVE_FAILOVER = 'https://mainnet.infura.io/v3/********************************'
+
+
+class WalletEditNetworkErrorMessages(Enum):
+    PINGUNSUCCESSFUL = 'RPC appears to be either offline or this is not a valid JSON RPC endpoint URL'
+    PINGVERIFIED = 'RPC successfully reached'

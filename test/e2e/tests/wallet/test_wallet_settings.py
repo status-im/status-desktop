@@ -7,7 +7,8 @@ from allure import step
 import configs
 import constants
 import driver
-from constants.wallet import WalletNetworkSettings, WalletNetworkNaming, WalletNetworkDefaultValues
+from constants.wallet import WalletNetworkSettings, WalletNetworkNaming, WalletNetworkDefaultValues, \
+    WalletEditNetworkErrorMessages
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
@@ -143,23 +144,40 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
     with step('Click in Main JSON RPC URL and paste incorrect URL'):
         edit_network_form.edit_network_main_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")
 
-    with step('Check error message'):
-        assert edit_network_form.self._network_edit_error_message() == 'test'
+    with step('Check error message for Main JSON RPC URL input'):
+        assert driver.waitFor(
+            lambda: edit_network_form.get_main_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGUNSUCCESSFUL.value)
 
     with step('Click in Failover JSON RPC URL and paste incorrect URL'):
         edit_network_form.edit_network_failover_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")
 
+    with step('Check error message for Failover JSON RPC URL input'):
+        assert driver.waitFor(
+            lambda: edit_network_form.get_failover_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGUNSUCCESSFUL.value)
+
     with step('Check the acknowledgment checkbox'):
         edit_network_form.check_acknowledgement_checkbox(True)
 
+    with step('Check the acknowledgment text'):
+        assert edit_network_form.get_acknowledgement_checkbox_text(
+            'text') == WalletNetworkSettings.ACKNOWLEDGMENT_CHECKBOX_TEXT.value
+
     with step('Click Revert to default button and restore values'):
-        edit_network_form.click_network_revert_to_default()
+        edit_network_form.revert_to_default()
 
     with step('Check value in Main JSON RPC URL input'):
         assert edit_network_form.get_edit_network_main_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value
 
+    with step('Check successful connection message for Main JSON RPC URL input'):
+        assert driver.waitFor(
+            lambda: edit_network_form.get_main_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGVERIFIED.value)
+
     with (step('Check value in Failover JSON RPC URL input')):
         assert edit_network_form.get_edit_network_failover_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value
+
+    with step('Check successful connection message for Failover JSON RPC URL input'):
+        assert driver.waitFor(
+            lambda: edit_network_form.get_failover_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGVERIFIED.value)
 
     with step('Verify the acknowledgment checkbox is unchecked'):
         assert edit_network_form.check_acknowledgement_checkbox(False)
