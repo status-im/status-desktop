@@ -5,9 +5,9 @@ import allure
 import configs.timeouts
 import driver
 from gui.components.base_popup import BasePopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.text_edit import TextEdit
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
 
 
 class InviteContactsPopup(BasePopup):

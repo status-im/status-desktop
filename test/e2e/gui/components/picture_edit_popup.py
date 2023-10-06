@@ -5,9 +5,9 @@ import allure
 
 import driver.mouse
 from gui.components.base_popup import BasePopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.slider import Slider
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.slider import Slider
 
 shift_image = namedtuple('Shift', ['left', 'right', 'top', 'bottom'])
 

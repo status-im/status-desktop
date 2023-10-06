@@ -12,9 +12,9 @@ from gui.components.wallet.confirmation_popup import ConfirmationPopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.components.context_menu import ContextMenu
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.text_label import TextLabel
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.text_label import TextLabel
 from scripts.utils.decorators import close_exists
 
 

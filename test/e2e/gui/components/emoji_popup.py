@@ -2,8 +2,8 @@ import allure
 
 import configs
 from .base_popup import BasePopup
-from ..elements.qt.object import QObject
-from ..elements.qt.text_edit import TextEdit
+from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
 
 
 class EmojiPopup(BasePopup):

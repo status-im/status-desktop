@@ -9,11 +9,11 @@ import driver
 from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.check_box import CheckBox
-from gui.elements.qt.object import QObject
-from gui.elements.qt.scroll import Scroll
-from gui.elements.qt.text_edit import TextEdit
+from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
+from gui.elements.object import QObject
+from gui.elements.scroll import Scroll
+from gui.elements.text_edit import TextEdit
 
 GENERATED_PAGES_LIMIT = 20
 

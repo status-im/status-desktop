@@ -4,7 +4,7 @@ import allure
 
 import configs
 import driver
-from gui.elements.qt.object import QObject
+from gui.elements.object import QObject
 
 _logger = logging.getLogger(__name__)
 

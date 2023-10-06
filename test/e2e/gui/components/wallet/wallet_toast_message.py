@@ -1,7 +1,7 @@
 import allure
 
 from driver import objects_access
-from gui.elements.qt.object import QObject
+from gui.elements.object import QObject
 
 
 class WalletToastMessage(QObject):

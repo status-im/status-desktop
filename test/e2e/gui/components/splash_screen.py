@@ -2,7 +2,7 @@ import allure
 
 import configs
 
-from gui.elements.qt.object import QObject
+from gui.elements.object import QObject
 
 
 class SplashScreen(QObject):

@@ -4,9 +4,9 @@ import pyperclip
 import constants
 import driver
 from gui.components.base_popup import BasePopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.text_label import TextLabel
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.text_label import TextLabel
 from gui.screens.settings import ProfileSettingsView
 from scripts.tools.image import Image
 

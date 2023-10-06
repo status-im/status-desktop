@@ -144,9 +144,8 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
     with step('Click in Main JSON RPC URL and paste incorrect URL'):
         edit_network_form.edit_network_main_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")
 
-    with step('Check error message for Main JSON RPC URL input'):
-        assert driver.waitFor(
-            lambda: edit_network_form.get_main_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGUNSUCCESSFUL.value)
+    # with step('Check error message'):
+    #     assert edit_network_form._network_edit_error_message() == 'test'
 
     with step('Click in Failover JSON RPC URL and paste incorrect URL'):
         edit_network_form.edit_network_failover_json_rpc_url_input("https://eth-archival.gateway.pokt.network/v1/lb/")

@@ -7,15 +7,11 @@ import allure
 import configs
 import driver
 from driver.objects_access import walk_children
-from gui.components.context_menu import ContextMenu
-from gui.components.messaging.edit_group_name_and_image_popup import EditGroupNameAndImagePopup
-from gui.components.messaging.leave_group_popup import LeaveGroupPopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.list import List
-from gui.elements.qt.object import QObject
-from gui.elements.qt.scroll import Scroll
-from gui.elements.qt.text_edit import TextEdit
-from gui.elements.qt.text_label import TextLabel
+from gui.elements.button import Button
+from gui.elements.list import List
+from gui.elements.object import QObject
+from gui.elements.scroll import Scroll
+from gui.elements.text_edit import TextEdit
 from gui.screens.community import CommunityScreen
 from scripts.tools.image import Image
 

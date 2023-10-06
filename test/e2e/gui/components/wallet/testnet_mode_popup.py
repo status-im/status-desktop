@@ -1,7 +1,7 @@
 import allure
 
 from gui.components.base_popup import BasePopup
-from gui.elements.qt.button import Button
+from gui.elements.button import Button
 
 
 class TestnetModePopup(BasePopup):

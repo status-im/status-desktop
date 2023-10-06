@@ -1,7 +1,7 @@
 import allure
 
 import driver
-from gui.elements.qt.object import QObject
+from gui.elements.object import QObject
 
 
 class BasePopup(QObject):

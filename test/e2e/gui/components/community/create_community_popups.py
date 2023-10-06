@@ -8,10 +8,10 @@ from gui.components.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.check_box import CheckBox
-from gui.elements.qt.scroll import Scroll
-from gui.elements.qt.text_edit import TextEdit
+from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
+from gui.elements.scroll import Scroll
+from gui.elements.text_edit import TextEdit
 from gui.screens.community import CommunityScreen
 
 

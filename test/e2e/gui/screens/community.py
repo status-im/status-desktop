@@ -8,10 +8,10 @@ from constants import UserChannel
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.delete_popup import DeletePopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.list import List
-from gui.elements.qt.object import QObject
-from gui.elements.qt.text_label import TextLabel
+from gui.elements.button import Button
+from gui.elements.list import List
+from gui.elements.object import QObject
+from gui.elements.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
 from scripts.tools import image
 from scripts.tools.image import Image

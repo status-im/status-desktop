@@ -1,5 +1,5 @@
-from gui.elements.qt.object import QObject
-from gui.elements.qt.button import Button
+from gui.elements.object import QObject
+from gui.elements.button import Button
 
 
 class TestnetModeBanner(QObject):

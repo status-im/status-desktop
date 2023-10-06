@@ -4,9 +4,9 @@ import typing
 import allure
 
 from .base_popup import BasePopup
-from ..elements.qt.button import Button
-from ..elements.qt.object import QObject
-from ..elements.qt.text_edit import TextEdit
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
 
 
 class SocialLinksPopup(BasePopup):

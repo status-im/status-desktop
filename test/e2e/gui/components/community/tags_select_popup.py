@@ -6,8 +6,8 @@ import allure
 import configs
 import driver
 from gui.components.base_popup import BasePopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
+from gui.elements.button import Button
+from gui.elements.object import QObject
 
 
 class TagsSelectPopup(BasePopup):

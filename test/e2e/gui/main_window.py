@@ -12,9 +12,9 @@ from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.user_canvas import UserCanvas
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.window import Window
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.window import Window
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.messages import MessagesScreen

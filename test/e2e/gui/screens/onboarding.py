@@ -10,10 +10,10 @@ import constants.tesseract
 import driver
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
-from gui.elements.qt.button import Button
-from gui.elements.qt.object import QObject
-from gui.elements.qt.text_edit import TextEdit
-from gui.elements.qt.text_label import TextLabel
+from gui.elements.button import Button
+from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
+from gui.elements.text_label import TextLabel
 from scripts.tools.image import Image
 from scripts.utils.system_path import SystemPath
 
