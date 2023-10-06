@@ -132,6 +132,13 @@ Item {
 
                 chart.animateToNewData()
             }
+
+            readonly property var dateToShortLabel: function (value) {
+                    const range = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                    return range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
+                         LocaleUtils.getDayMonth(value) :
+                         LocaleUtils.getMonthYear(value)
+            }
             chart.chartType: 'line'
             chart.chartData: {
                 return {
@@ -170,6 +177,15 @@ Item {
                     //},
                     //pan:{enabled:true,mode:'x'},
                     tooltips: {
+                        format: {
+                            enabled: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance,
+                            callback: function (value) {
+                                return graphDetail.dateToShortLabel(value)
+                            },
+                            valueCallback: function(value) {
+                                return LocaleUtils.currencyAmountToLocaleString({ amount: value, symbol: RootStore.currencyStore.currentCurrencySymbol, displayDecimals: 2 })
+                            }
+                        },
                         intersect: false,
                         displayColors: false,
                         callbacks: {
@@ -179,12 +195,21 @@ Item {
                                     label += ': ';
                                 }
 
-                                const value = LocaleUtils.currencyAmountToLocaleString({ amount: tooltipItem.yLabel.toFixed(2), symbol: RootStore.currencyStore.currentCurrencySymbol })
+                                if (graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance)
+                                    return label + tooltipItem.yLabel // already formatted in tooltips.value.callback
+
+                                const value = LocaleUtils.currencyAmountToLocaleString({ amount: tooltipItem.yLabel, symbol: RootStore.currencyStore.currentCurrencySymbol, displayDecimals: 2 })
                                 return label + value
                             }
                         }
                     },
                     scales: {
+                        labelFormat: {
+                            callback: function (value) {
+                                return graphDetail.dateToShortLabel(value)
+                            },
+                            enabled: graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance,
+                        },
                         xAxes: [{
                                 id: 'x-axis-1',
                                 position: 'bottom',
