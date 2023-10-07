@@ -28,6 +28,7 @@ logScope:
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
+    communityId*: string # should be set when community is nil (i.e. error occured)
     error*: string
     fromUserAction*: bool
 
@@ -1428,17 +1429,20 @@ QtObject:
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
-    if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-      error "Error requesting community info", msg = rpcResponseObj{"error"}
-      return
 
-    var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
     let requestedCommunityId = rpcResponseObj{"communityId"}.getStr()
     self.requestedCommunityIds.excl(requestedCommunityId)
 
+    if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+      error "Error requesting community info", msg = rpcResponseObj{"error"}
+      self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(communityId: requestedCommunityId, error: "Couldn't find community info"))
+      return
+
+    var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
+
     if community.id == "":
       community.id = requestedCommunityId
-      self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
+      self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(communityId: requestedCommunityId, community: community, error: "Couldn't find community info"))
       return
 
     self.communities[community.id] = community
