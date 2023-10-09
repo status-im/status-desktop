@@ -213,8 +213,17 @@ QtObject:
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
 
+  proc removeAllPreviewData*(self: Model) {.slot.} =
+    for i in 0 ..< self.items.len:
+      self.removePreviewData(i)
+      
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]
     for item in self.items:
       if item.unfurled and item.linkPreview.hostName != "":
         result.add(item.linkPreview)
+
+  proc getLinks*(self: Model): seq[string] =
+    result = @[]
+    for item in self.items:
+      result.add(item.linkPreview.url)

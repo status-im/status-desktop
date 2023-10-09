@@ -111,5 +111,17 @@ method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
 method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reloadLinkPreview*(self: AccessInterface, url: string) {.base.} =
+method loadLinkPreviews*(self: AccessInterface, urls: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLinkPreviewEnabled*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method setLinkPreviewEnabled*(self: AccessInterface, enabled: bool) =
+  raise newException(ValueError, "No implementation available")
+
+method setAskToEnableLinkPreview*(self: AccessInterface, value: bool) =
+  raise newException(ValueError, "No implementation available")
+
+method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool) =
   raise newException(ValueError, "No implementation available")

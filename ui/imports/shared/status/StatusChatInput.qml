@@ -28,9 +28,13 @@ Rectangle {
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal keyUpPress()
-    signal linkPreviewRemoved(string link)
     signal linkPreviewReloaded(string link)
-
+    signal enableLinkPreview()
+    signal enableLinkPreviewForThisMessage()
+    signal disableLinkPreview()
+    signal dismissLinkPreviewSettings()
+    signal dismissLinkPreview(int index)
+    
     property var usersStore
     property var store
 
@@ -60,6 +64,8 @@ Rectangle {
     property var fileUrlsAndSources: []
 
     property var linkPreviewModel: null
+
+    property bool askToEnableLinkPreview: false
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
@@ -1179,11 +1185,12 @@ Rectangle {
                 ChatInputLinksPreviewArea {
                     id: linkPreviewArea
                     Layout.fillWidth: true
-                    visible: contentItemsCount > 0
+                    visible: hasContent
                     horizontalPadding: 12
                     topPadding: 12
-                    imagePreviewModel: control.fileUrlsAndSources
+                    imagePreviewArray: control.fileUrlsAndSources
                     linkPreviewModel: control.linkPreviewModel
+                    showLinkPreviewSettings: control.askToEnableLinkPreview
                     onImageRemoved: (index) => {
                         //Just do a copy and replace the whole thing because it's a plain JS array and thre's no signal when a single item is removed
                         let urls = control.fileUrlsAndSources
@@ -1194,8 +1201,12 @@ Rectangle {
                     }
                     onImageClicked: (chatImage) => Global.openImagePopup(chatImage)
                     onLinkReload: (link) => control.linkPreviewReloaded(link)
-                    onLinkRemoved: (link) => control.linkPreviewRemoved(link)
                     onLinkClicked: (link) => Global.openLink(link)
+                    onEnableLinkPreview: () => control.enableLinkPreview()
+                    onEnableLinkPreviewForThisMessage: () => control.enableLinkPreviewForThisMessage()
+                    onDisableLinkPreview: () => control.disableLinkPreview()
+                    onDismissLinkPreviewSettings: () => control.dismissLinkPreviewSettings()
+                    onDismissLinkPreview: (index) => control.dismissLinkPreview(index)
                 }
 
                 RowLayout {

@@ -17,6 +17,7 @@ QtObject:
       preservedPropertiesVariant: QVariant
       linkPreviewModel: link_preview_model.Model
       linkPreviewModelVariant: QVariant
+      askToEnableLinkPreview: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -40,6 +41,7 @@ QtObject:
     result.preservedPropertiesVariant = newQVariant(result.preservedProperties)
     result.linkPreviewModel = newLinkPreviewModel()
     result.linkPreviewModelVariant = newQVariant(result.linkPreviewModel)
+    result.askToEnableLinkPreview = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -197,6 +199,17 @@ QtObject:
   QtProperty[QVariant] linkPreviewModel:
     read = getLinkPreviewModel
 
+  proc askToEnableLinkPreviewChanged(self: View) {.signal.}
+  proc getAskToEnableLinkPreview(self: View): bool {.slot.} =
+    return self.askToEnableLinkPreview
+  proc setAskToEnableLinkPreview*(self: View, value: bool) {.slot.} =
+    self.askToEnableLinkPreview = value
+    self.askToEnableLinkPreviewChanged()
+
+  QtProperty[bool] askToEnableLinkPreview:
+    read = getAskToEnableLinkPreview
+    notify = askToEnableLinkPreviewChanged
+    
   # Currently used to fetch link previews, but could be used elsewhere
   proc setText*(self: View, text: string) {.slot.} =
     self.delegate.setText(text)
@@ -207,10 +220,36 @@ QtObject:
 
   proc setUrls*(self: View, urls: seq[string]) =
     self.linkPreviewModel.setUrls(urls)
-    self.updateLinkPreviewsFromCache(urls)
+    if(self.delegate.getLinkPreviewEnabled()):
+      self.updateLinkPreviewsFromCache(urls)
+    else:
+      self.linkPreviewModel.removeAllPreviewData()
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
 
   proc reloadLinkPreview(self: View, link: string) {.slot.} =
-    self.delegate.reloadLinkPreview(link)
+    self.delegate.loadLinkPreviews(@[link])
+  
+  proc loadLinkPreviews(self: View, links: seq[string]) =
+    self.delegate.loadLinkPreviews(links)
+  
+  proc enableLinkPreview(self: View) {.slot.} =
+    self.delegate.setLinkPreviewEnabled(true)
+    let links = self.linkPreviewModel.getLinks()
+    self.linkPreviewModel.clearItems()
+    self.loadLinkPreviews(links)
+  
+  proc disableLinkPreview(self: View) {.slot.} =
+    self.delegate.setLinkPreviewEnabled(false)
+    self.linkPreviewModel.removeAllPreviewData()
+  
+  proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
+    self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
+    let links = self.linkPreviewModel.getLinks()
+    self.linkPreviewModel.clearItems()
+    self.setUrls(links)
+    self.loadLinkPreviews(links)
+
+  proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
+    self.linkPreviewModel.removePreviewData(index)

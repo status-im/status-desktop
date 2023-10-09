@@ -42,6 +42,7 @@ CalloutCard {
     signal close()
     signal retry()
     signal clicked(var eventPoint)
+    signal rightClicked(var eventPoint)
 
     implicitWidth: 260
     implicitHeight: 64
@@ -181,7 +182,6 @@ CalloutCard {
                         icon: "tiny/chevron-right"
                         color: Theme.palette.baseColor1
                         visible: secondTitleText.visible
-
                     }
                     StatusBaseText {
                         id: secondTitleText
@@ -245,5 +245,9 @@ CalloutCard {
         id: tapHandler
         target: background
         onTapped: root.clicked(eventPoint)
+    }
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        onTapped: root.rightClicked(eventPoint)
     }
 }

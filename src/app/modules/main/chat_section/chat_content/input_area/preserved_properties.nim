@@ -56,3 +56,4 @@ QtObject:
     read = getFileUrlsAndSourcesJson
     write = setFileUrlsAndSourcesJson
     notify = fileUrlsAndSourcesJsonChanged
+
