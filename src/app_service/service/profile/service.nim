@@ -1,4 +1,4 @@
-import NimQml, json, chronicles
+import NimQml, json, chronicles, tables, json_serialization
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
@@ -10,13 +10,22 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
-import ../community/dto/community
-import ../wallet_account/dto/account_dto
+import dto/profile_showcase_entry
 
 include async_tasks
 
 logScope:
   topics = "profile-service"
+
+type
+  ProfileShowcasePreferencesArgs* = ref object of Args
+    communities*: seq[ProfileShowcaseEntryDto]
+    accounts*: seq[ProfileShowcaseEntryDto]
+    collectibles*: seq[ProfileShowcaseEntryDto]
+    tokens*: seq[ProfileShowcaseEntryDto]
+
+# Signals which may be emitted by this service:
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
 
 QtObject:
   type Service* = ref object of QObject
@@ -112,23 +121,15 @@ QtObject:
 
     let result =  rpcResponseObj{"response"}{"result"}
 
-    echo "-----> result:", result
+    var communities = result{"communities"}.parseProfileShowcaseEntries()
+    var accounts = result{"accounts"}.parseProfileShowcaseEntries()
+    var collectibles = result{"collectibles"}.parseProfileShowcaseEntries()
+    var tokens = result{"tokens"}.parseProfileShowcaseEntries()
 
-    # # TODO: ProfileCommunityDto
-    # var communities: seq[CommunityDto] = @[]
-    # for profileCommunity in result{"communities"}:
-    #   let community = profileCommunity.toCommunityDto()
-    #   communities.add(community)
-
-    # # TODO: ProfileWalletAccountDto
-    # var accounts: seq[WalletAccountDto] = @[]
-    # for profileAccount in result{"accounts"}:
-    #   let account = profileAccount.toWalletAccountDto()
-    #   accounts.add(account)
-
-    # echo "-----> communities:", communities
-    # echo "-----> accounts:", communities
-    
-    # let accounts =  response.result{"accounts"}
-    # let collectibles =  response.result["collectibles"]
-    # let assets =  response.result["assets"]
+    self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
+      ProfileShowcasePreferencesArgs(
+        communities: communities,
+        accounts: accounts,
+        collectibles: collectibles,
+        tokens: tokens
+    ))

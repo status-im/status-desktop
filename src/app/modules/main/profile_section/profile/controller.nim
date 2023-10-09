@@ -34,6 +34,10 @@ proc init*(self: Controller) =
     let args = SocialLinksArgs(e)
     self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
 
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
+    let args = ProfileShowcasePreferencesArgs(e)
+    self.delegate.setShowcasePreferences(args.communities & args.accounts & args.collectibles & args.tokens)
+
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
 

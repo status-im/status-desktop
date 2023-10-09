@@ -44,3 +44,9 @@ proc toProfileShowcaseEntryDto*(jsonObj: JsonNode): ProfileShowcaseEntryDto =
     (visibilityInt >= ord(low(ProfileShowcaseVisibility)) and
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.visibility = ProfileShowcaseVisibility(visibilityInt)
+
+proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): seq[ProfileShowcaseEntryDto] =
+  var entries: seq[ProfileShowcaseEntryDto] = @[]
+  for jsonMsg in jsonMsgs:
+    entries.add(jsonMsg.toProfileShowcaseEntryDto())
+  return entries

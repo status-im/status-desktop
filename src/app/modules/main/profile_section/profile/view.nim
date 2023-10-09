@@ -1,4 +1,4 @@
-import NimQml, json
+import NimQml, json, sugar, sequtils
 
 import io_interface
 import app/modules/shared_models/social_links_model
@@ -6,6 +6,8 @@ import app/modules/shared_models/social_link_item
 
 import models/profile_preferences_model
 import models/profile_preferences_item
+
+import app_service/service/profile/dto/profile_showcase_entry
 
 QtObject:
   type
@@ -149,6 +151,10 @@ QtObject:
 
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
+
+  proc setShowcasePreferences*(self: View, items: seq[ProfileShowcaseEntryDto]) =
+    let modelItems = items.map(item => initProfileShowcasePreferencesItem(item))
+    self.profileShowcasePreferencesModel.setItems(modelItems)
 
   proc getProfileShowcasePreferencesModel(self: View): QVariant {.slot.} =
     return self.profileShowcasePreferencesModelVariant
