@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -13,7 +12,7 @@ import shared.panels 1.0
 import shared.stores 1.0
 import shared.controls.chat 1.0
 
-ColumnLayout {
+Flow {
     id: root
 
     required property var store
@@ -25,6 +24,59 @@ ColumnLayout {
     required property bool isCurrentUser
 
     signal imageClicked(var image, var mouse, var imageSource, string url)
+
+    spacing: 12
+
+    //TODO: remove once GIF previews are unfurled sender side
+       Repeater {
+        id: tempRepeater
+        visible: !RootStore.neverAskAboutUnfurlingAgain
+        model: linksModel
+
+        delegate: Loader {
+            id: tempLoader
+
+            required property var result
+            required property string link
+            required property int index
+            required property bool unfurl
+            required property bool success
+            required property bool isStatusDeepLink
+            readonly property bool isImage: result.contentType && result.contentType.startsWith("image/") ? true : false
+            readonly property bool isUserProfileLink: link.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase())
+            readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
+            readonly property string title: result && result.title ? result.title : ""
+            readonly property string hostname: result && result.site ? result.site : ""
+            readonly property bool animated: isImage && result.contentType === "image/gif" // TODO support more types of animated images?
+
+            StateGroup {
+                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
+                id: linkPreviewLoaderState
+                states: [
+                   State {
+                        name: "askToEnableUnfurling"
+                        when: !tempLoader.unfurl
+                        PropertyChanges { target: tempLoader; sourceComponent: enableLinkComponent }
+                    },
+                    State {
+                        name: "loadImage"
+                        when: tempLoader.unfurl && tempLoader.isImage
+                        PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
+                    },
+                    State {
+                        name: "userProfileLink"
+                        when: unfurl && isUserProfileLink && isStatusDeepLink
+                        PropertyChanges { target: tempLoader; sourceComponent: unfurledProfileLinkComponent }
+                    }
+//                    State {
+//                        name: "statusInvitation"
+//                        when: unfurl && isStatusDeepLink
+//                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
+//                    }
+                ]
+            }
+        }
+    }
 
     Repeater {
         id: linksRepeater
@@ -219,56 +271,6 @@ ColumnLayout {
              })
          }
      }
-
-    Repeater {
-        id: tempRepeater
-        visible: !RootStore.neverAskAboutUnfurlingAgain
-        model: linksModel
-
-        delegate: Loader {
-            id: tempLoader
-
-            required property var result
-            required property string link
-            required property int index
-            required property bool unfurl
-            required property bool success
-            required property bool isStatusDeepLink
-            readonly property bool isImage: result.contentType ? result.contentType.startsWith("image/") : false
-            readonly property bool isUserProfileLink: link.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase())
-            readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
-            readonly property string title: result && result.title ? result.title : ""
-            readonly property string hostname: result && result.site ? result.site : ""
-            readonly property bool animated: isImage && result.contentType === "image/gif" // TODO support more types of animated images?
-
-            StateGroup {
-                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
-                id: linkPreviewLoaderState
-                states: [
-                   State {
-                        name: "askToEnableUnfurling"
-                        when: !tempLoader.unfurl
-                        PropertyChanges { target: tempLoader; sourceComponent: enableLinkComponent }
-                    },
-                    State {
-                        name: "loadImage"
-                        when: tempLoader.unfurl && tempLoader.isImage
-                        PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
-                    },
-                    State {
-                        name: "userProfileLink"
-                        when: unfurl && isUserProfileLink && isStatusDeepLink
-                        PropertyChanges { target: tempLoader; sourceComponent: unfurledProfileLinkComponent }
-                    }
-//                    State {
-//                        name: "statusInvitation"
-//                        when: unfurl && isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
-//                    }
-                ]
-            }
-        }
-    }
 
     Component {
         id: unfurledProfileLinkComponent
