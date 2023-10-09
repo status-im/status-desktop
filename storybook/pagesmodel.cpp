@@ -1,10 +1,10 @@
 #include "pagesmodel.h"
 
-#include <QDir>
-#include <QFileSystemWatcher>
+#include <QFileInfo>
 #include <QRegularExpression>
 
-#include <unordered_map>
+#include "directoryfileswatcher.h"
+
 
 namespace {
 const auto categoryUncategorized QStringLiteral("Uncategorized");
@@ -12,62 +12,37 @@ const auto categoryUncategorized QStringLiteral("Uncategorized");
 
 PagesModel::PagesModel(const QString &path, QObject *parent)
     : QAbstractListModel{parent}, m_path{path},
-      fsWatcher(new QFileSystemWatcher(this))
+      m_pagesWatcher(new DirectoryFilesWatcher(
+                         path, QStringLiteral("*Page.qml"), this))
 {
-    m_items = load();
-    readMetadata(m_items);
+    m_items = readMetadata(m_pagesWatcher->files());
 
-    for (const auto& item : qAsConst(m_items)) {
+    for (const auto& item : qAsConst(m_items))
         setFigmaLinks(item.title, item.figmaLinks);
-    }
 
-    fsWatcher->addPath(path);
-
-    connect(fsWatcher, &QFileSystemWatcher::directoryChanged,
-            this, &PagesModel::reload);
+    connect(m_pagesWatcher, &DirectoryFilesWatcher::filesChanged,
+            this, &PagesModel::onPagesChanged);
 }
 
-QList<PagesModelItem> PagesModel::load() const {
-    static QRegularExpression fileNameRegex(
-                QRegularExpression::anchoredPattern("(.*)Page\\.qml"));
+PagesModelItem PagesModel::readMetadata(const QString& path)
+{
+    PagesModelItem item;
+    item.path = path;
+    item.title = QFileInfo(path).fileName().chopped(
+                (QStringLiteral("Page.qml").size()));
 
-    QDir dir(m_path);
-    dir.setFilter(QDir::Files);
-
-    const QFileInfoList files = dir.entryInfoList();
-    QList<PagesModelItem> items;
-
-    std::for_each(files.begin(), files.end(), [this, &items] (auto &fileInfo) {
-        QString fileName = fileInfo.fileName();
-        QRegularExpressionMatch fileNameMatch = fileNameRegex.match(fileName);
-
-        if (!fileNameMatch.hasMatch())
-            return;
-
-        PagesModelItem item;
-        item.path = fileInfo.filePath();
-        item.title = fileNameMatch.captured(1);
-        item.lastModified = fileInfo.lastModified();
-
-        items << item;
-    });
-
-    return items;
-}
-
-void PagesModel::readMetadata(PagesModelItem& item) {
-    static QRegularExpression categoryRegex(
-                "^//(\\s)*category:(.+)$", QRegularExpression::MultilineOption);
-
-    QFile file(item.path);
+    QFile file(path);
     file.open(QIODevice::ReadOnly);
     QByteArray content = file.readAll();
+
+    static QRegularExpression categoryRegex(
+                "^//(\\s)*category:(.+)$", QRegularExpression::MultilineOption);
 
     QRegularExpressionMatch categoryMatch = categoryRegex.match(content);
     QString category = categoryMatch.hasMatch()
             ? categoryMatch.captured(2).trimmed() : categoryUncategorized;
 
-    item.category = category;
+    item.category = category.size() ? category : categoryUncategorized;
 
     static QRegularExpression figmaRegex(
                 "^(\\/\\/\\s*)((?:https:\\/\\/)?(?:www\\.)?figma\\.com\\/.*)$",
@@ -83,88 +58,76 @@ void PagesModel::readMetadata(PagesModelItem& item) {
     }
 
     item.figmaLinks = links;
+
+    return item;
 }
 
-void PagesModel::readMetadata(QList<PagesModelItem> &items) {
-    std::for_each(items.begin(), items.end(), [](auto&item) {
-        readMetadata(item);
+QList<PagesModelItem> PagesModel::readMetadata(const QStringList &paths)
+{
+    QList<PagesModelItem> metadata;
+    metadata.reserve(paths.size());
+
+    std::transform(paths.begin(), paths.end(), std::back_inserter(metadata),
+                   [](auto& path) {
+        return readMetadata(path);
     });
+
+    return metadata;
 }
 
-void PagesModel::reload() {
-    const QList<PagesModelItem> currentItems = load();
-    std::unordered_map<QString, PagesModelItem> mapping;
+void PagesModel::onPagesChanged(const QStringList& added,
+                                const QStringList& removed,
+                                const QStringList& changed)
+{
+    for (auto& path : removed) {
+        auto index = getIndexByPath(path);
 
-    for (const PagesModelItem &item : qAsConst(m_items))
-        mapping[item.title] = item;
-
-    std::vector<PagesModelItem> newItems;
-    std::vector<PagesModelItem> changedItems;
-    std::vector<PagesModelItem> removedItems;
-
-    for (const auto &item : currentItems) {
-        auto it = mapping.find(item.title);
-
-        if (it == mapping.end()) {
-            newItems.push_back(item);
-        } else {
-            if (item.lastModified != it->second.lastModified)
-                changedItems.push_back(item);
-
-            mapping.erase(it);
-        }
-    }
-
-    for (const auto& [key, value] : mapping)
-        removedItems.push_back(value);
-
-    for (auto& item : removedItems) {
-
-        auto it = std::find_if(m_items.begin(), m_items.end(), [&item](auto& it){
-            return it.title == item.title;
-        });
-
-        auto index = std::distance(m_items.begin(), it);
-
-        beginRemoveRows(QModelIndex{}, index, index);
+        beginRemoveRows({}, index, index);
         m_items.removeAt(index);
         endRemoveRows();
     }
 
-    if (newItems.size()) {
-        beginInsertRows(QModelIndex{}, rowCount(), rowCount() + newItems.size() - 1);
+    if (added.size()) {
+        beginInsertRows({}, rowCount(), rowCount() + added.size() - 1);
 
-        for (auto& item : newItems) {
-            readMetadata(item);
-            m_items << item;
-        }
+        auto metadata = readMetadata(added);
 
+        for (const auto& item : qAsConst(metadata))
+            setFigmaLinks(item.title, item.figmaLinks);
+
+        m_items << metadata;
         endInsertRows();
     }
 
-    for (auto& item : changedItems) {
-        auto it = std::find_if(m_items.begin(), m_items.end(), [&item](auto& it){
-            return it.title == item.title;
-        });
+    for (auto& path : changed) {
+        auto index = getIndexByPath(path);
+        const auto& previous = m_items.at(index);
 
-        auto index = std::distance(m_items.begin(), it);
-        const auto& previous = *it;
-        readMetadata(item);
-        setFigmaLinks(item.title, item.figmaLinks);
+        PagesModelItem metadata = readMetadata(path);
+        setFigmaLinks(metadata.title, metadata.figmaLinks);
 
-        if (previous.category != item.category) {
+        if (previous.category != metadata.category) {
             // For simplicity category change is handled by removing and
             // adding item. In the future it can be changed to regular dataChanged
             // event and handled properly in upstream models like SectionSDecoratorModel.
-            beginRemoveRows(QModelIndex{}, index, index);
+            beginRemoveRows({}, index, index);
             m_items.removeAt(index);
             endRemoveRows();
 
-            beginInsertRows(QModelIndex{}, rowCount(), rowCount());
-            m_items << item;
+            beginInsertRows({}, rowCount(), rowCount());
+            m_items << metadata;
             endInsertRows();
         }
     }
+}
+
+int PagesModel::getIndexByPath(const QString& path) const
+{
+    auto it = std::find_if(m_items.begin(), m_items.end(), [&path](auto& it) {
+        return it.path == path;
+    });
+    assert(it != m_items.end());
+    return std::distance(m_items.begin(), it);
 }
 
 QHash<int, QByteArray> PagesModel::roleNames() const
