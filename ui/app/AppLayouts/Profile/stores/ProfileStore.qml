@@ -25,6 +25,11 @@ QtObject {
     readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
+    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
+    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
+    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
+    readonly property var profileShowcaseTokensModel: profileModule.profileShowcaseTokensModel
+
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
     onUserDeclinedBackupBannerChanged: {

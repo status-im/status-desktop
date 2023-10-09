@@ -107,7 +107,7 @@ QtObject:
   proc asyncProfileShowcaseLoaded*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-      error "Error requesting community info", msg = rpcResponseObj{"error"}
+      error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
       return
 
     let result =  rpcResponseObj{"response"}{"result"}

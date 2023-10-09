@@ -4,6 +4,9 @@ import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+import models/profile_preferences_model
+import models/profile_preferences_item
+
 QtObject:
   type
     View* = ref object of QObject
@@ -12,6 +15,8 @@ QtObject:
       socialLinksModelVariant: QVariant
       temporarySocialLinksModel: SocialLinksModel # used for editing purposes
       temporarySocialLinksModelVariant: QVariant
+      profileShowcasePreferencesModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -19,6 +24,8 @@ QtObject:
     self.socialLinksModelVariant.delete
     self.temporarySocialLinksModel.delete
     self.temporarySocialLinksModelVariant.delete
+    self.profileShowcasePreferencesModel.delete
+    self.profileShowcasePreferencesModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -28,6 +35,8 @@ QtObject:
     result.socialLinksModelVariant = newQVariant(result.socialLinksModel)
     result.temporarySocialLinksModel = newSocialLinksModel()
     result.temporarySocialLinksModelVariant = newQVariant(result.temporarySocialLinksModel)
+    result.profileShowcasePreferencesModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesModelVariant = newQVariant(result.profileShowcasePreferencesModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -141,3 +150,8 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  proc getProfileShowcasePreferencesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesModel:
+    read = getProfileShowcasePreferencesModel

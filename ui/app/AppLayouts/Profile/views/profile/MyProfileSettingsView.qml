@@ -161,7 +161,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
-        text: qsTr("Showcase (demo only)")
+        text: qsTr("Showcase")
         color: Theme.palette.baseColor1
     }
 
