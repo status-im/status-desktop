@@ -111,7 +111,7 @@ class LeftPanel(QObject):
             return AccountPopup().wait_until_appears()
         except:
             if attempt:
-                return self.open_add_watch_anly_account_popup(attempt - 1)
+                return self.open_add_watch_only_account_popup(attempt - 1)
             else:
                 raise
 

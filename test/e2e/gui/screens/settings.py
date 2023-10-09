@@ -41,6 +41,11 @@ class LeftPanel(QObject):
         self._settings_section_template.real_name['objectName'] = object_name
         self._settings_section_template.click()
 
+    @allure.step('Check back up seed option menu item presence')
+    def check_back_up_seed_option_present(self):
+        self._settings_section_template.real_name['objectName'] = '17-MainMenuItem'
+        return self._settings_section_template.is_visible
+
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
         self._open_settings('3-AppMenuItem')
@@ -337,7 +342,7 @@ class KeycardSettingsView(QObject):
         assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'
         assert self._create_new_keycard_account_button.is_visible, f'Create new keycard button not visible'
         assert self._import_restore_via_seed_phrase_button.is_visible, f'Import and restore via seed phrase button not visible'
-        self._scroll.vertical_scroll_to(self._import_from_keycard_button)
+        self._scroll.vertical_down_to(self._import_from_keycard_button)
         assert driver.waitFor(lambda: self._import_from_keycard_button.is_visible,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Import keycard button not visible'
         assert driver.waitFor(lambda: self._check_whats_on_keycard_button.is_visible,
