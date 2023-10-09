@@ -60,7 +60,7 @@ QtObject:
           break
 
     case overallState:
-      of OwnershipStateIdle:
+      of OwnershipStateIdle, OwnershipStateDelayed:
         self.model.setIsUpdating(false)
         self.model.setIsError(false)
       of OwnershipStateUpdating:

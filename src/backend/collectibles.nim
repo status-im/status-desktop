@@ -35,6 +35,7 @@ type
   # Mirrors services/wallet/collectibles/service.go OwnershipState
   OwnershipState* = enum
     OwnershipStateIdle = 1,
+    OwnershipStateDelayed,
     OwnershipStateUpdating,
     OwnershipStateError
 
