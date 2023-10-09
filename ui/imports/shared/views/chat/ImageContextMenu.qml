@@ -36,17 +36,13 @@ StatusMenu {
         text: qsTr("Copy link")
         icon.name: "copy"
         enabled: d.isUnfurled
-        onTriggered: {
-            Utils.copyToClipboard(url);
-        }
+        onTriggered: Utils.copyToClipboard(url)
     }
 
     StatusAction {
         text: qsTr("Open link")
         icon.name: "browser"
         enabled: d.isUnfurled
-        onTriggered: {
-            Qt.openUrlExternally(url);
-        }
+        onTriggered: Global.openLink(root.url)
     }
 }

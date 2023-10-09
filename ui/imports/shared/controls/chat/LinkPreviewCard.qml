@@ -22,7 +22,7 @@ CalloutCard {
     
     property string bannerImageSource: ""
 
-    signal clicked()
+    signal clicked(var mouse)
 
     borderWidth: 1
     padding: borderWidth
@@ -96,6 +96,7 @@ CalloutCard {
         anchors.fill: root
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: root.clicked(mouse)
     }
 }
