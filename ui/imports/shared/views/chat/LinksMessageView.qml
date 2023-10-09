@@ -1,6 +1,5 @@
 import QtQuick 2.15
-import QtGraphicalEffects 1.13
-import QtQuick.Layouts 1.13
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -58,9 +57,17 @@ ColumnLayout {
                 title: parent.title
                 description: parent.description
                 footer: hostname
-                onClicked:  {
-                    Global.openLink(url)
-                }
+                onClicked:
+                    (mouse) => {
+                        switch (mouse.button) {
+                            case Qt.RightButton:
+                            root.imageClicked(unfurledLink, mouse, "", url) // request a dumb context menu with just "copy/open link" items
+                            break
+                            default:
+                            Global.openLink(url) // FIXME https://github.com/status-im/status-desktop/issues/12388
+                            break
+                        }
+                    }
             }
         }
     }
@@ -78,7 +85,7 @@ ColumnLayout {
                 id: linkImage
 
                 readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
-                readonly property string urlLink: url
+                readonly property string urlLink: link
                 property bool localAnimationEnabled: true
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
@@ -88,7 +95,7 @@ ColumnLayout {
                 playing: globalAnimationEnabled && localAnimationEnabled
                 isOnline: root.store.mainModuleInst.isOnline
                 asynchronous: true
-                isAnimated: animated // FIXME: GIFs are not supported with new unfurling yet
+                isAnimated: animated
                 onClicked: {
                     if (isAnimated && !playing)
                         localAnimationEnabled = true
@@ -178,7 +185,6 @@ ColumnLayout {
 
 
         onGetLinkPreviewDataIdChanged: {
-
             linkFetchConnections.enabled = root.localUnfurlLinks !== ""
         }
     }
@@ -233,7 +239,7 @@ ColumnLayout {
             readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
             readonly property string title: result && result.title ? result.title : ""
             readonly property string hostname: result && result.site ? result.site : ""
-            readonly property bool animated: true
+            readonly property bool animated: isImage && result.contentType === "image/gif" // TODO support more types of animated images?
 
             StateGroup {
                 //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
