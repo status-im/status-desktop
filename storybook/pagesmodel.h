@@ -5,7 +5,7 @@
 
 #include "figmalinksmodel.h"
 
-class QFileSystemWatcher;
+class DirectoryFilesWatcher;
 
 struct PagesModelItem {
     QString path;
@@ -31,9 +31,15 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
 
-    void reload();
+
 private:
-    QList<PagesModelItem> load() const;
+    void onPagesChanged(const QStringList& added, const QStringList& removed,
+                        const QStringList& changed);
+
+    int getIndexByPath(const QString& path) const;
+
+    static PagesModelItem readMetadata(const QString& path);
+    static QList<PagesModelItem> readMetadata(const QStringList& paths);
 
     static void readMetadata(PagesModelItem &item);
     static void readMetadata(QList<PagesModelItem> &items);
@@ -43,5 +49,5 @@ private:
     QString m_path;
     QList<PagesModelItem> m_items;
     QMap<QString, FigmaLinksModel*> m_figmaSubmodels;
-    QFileSystemWatcher* fsWatcher;
+    DirectoryFilesWatcher* m_pagesWatcher;
 };

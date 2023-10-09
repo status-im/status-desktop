@@ -45,6 +45,7 @@ set(PROJECT_LIB "${PROJECT_NAME}Lib")
 add_library(${PROJECT_LIB}
     cachecleaner.cpp cachecleaner.h
     directorieswatcher.cpp directorieswatcher.h
+    directoryfileswatcher.cpp directoryfileswatcher.h
     figmaio.cpp figmaio.h
     figmalinks.cpp figmalinks.h
     figmalinksmodel.cpp figmalinksmodel.h
@@ -95,6 +96,10 @@ enable_testing()
 add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
 target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt5::Test ${PROJECT_LIB})
 add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
+
+add_executable(DirectoryFilesWatcherTest tests/tst_DirectoryFilesWatcher.cpp)
+target_link_libraries(DirectoryFilesWatcherTest PRIVATE Qt5::Test ${PROJECT_LIB})
+add_test(NAME DirectoryFilesWatcherTest COMMAND DirectoryFilesWatcherTest)
 
 add_executable(QmlTests
     qmlTests/main.cpp
