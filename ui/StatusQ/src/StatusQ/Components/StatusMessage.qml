@@ -65,6 +65,8 @@ Control {
     property bool profileClickable: true
     property bool hideMessage: false
     property bool isInPinnedPopup
+    property string highlightedLink: ""
+    property string hoveredLink: ""
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
@@ -273,8 +275,12 @@ Control {
                             isEdited: root.isEdited
                             allowShowMore: !root.isInPinnedPopup
                             textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
+                            highlightedLink: root.highlightedLink
                             onLinkActivated: {
                                 root.linkActivated(link);
+                            }
+                            textField.onHoveredLinkChanged: {
+                                root.hoveredLink = hoveredLink;
                             }
                         }
                     }
@@ -295,6 +301,7 @@ Control {
                                     messageDetails: root.messageDetails
                                     allowShowMore: !root.isInPinnedPopup
                                     textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
+                                    highlightedLink: root.highlightedLink
                                     onLinkActivated: {
                                         root.linkActivated(link);
                                     }

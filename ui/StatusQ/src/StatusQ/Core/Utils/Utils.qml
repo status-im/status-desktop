@@ -197,6 +197,7 @@ QtObject {
                         `padding: 0px 2px;` +
                     `}` +
                     (hoveredLink !== "" ? `a.mention[href="${hoveredLink}"] { background-color: ${Theme.palette.mentionColor2}; }` : ``) +
+                    (hoveredLink !== "" ? `a[href="${hoveredLink}"] { background-color: ${Theme.palette.primaryColor3}; }` : ``) +
                     `del {` +
                         `text-decoration: line-through;` +
                     `}` +

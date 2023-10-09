@@ -23,6 +23,9 @@ Flow {
 
     required property bool isCurrentUser
 
+    readonly property alias hoveredLink: linksRepeater.hoveredUrl
+    property string highlightLink: ""
+
     signal imageClicked(var image, var mouse, var imageSource, string url)
 
     spacing: 12
@@ -80,8 +83,10 @@ Flow {
 
     Repeater {
         id: linksRepeater
-        model: root.linkPreviewModel
 
+        property string hoveredUrl: ""
+
+        model: root.linkPreviewModel
         delegate: Loader {
             id: linkMessageLoader
 
@@ -120,6 +125,8 @@ Flow {
                             break
                         }
                     }
+                highlight: root.highlightLink === url
+                onHoveredChanged: linksRepeater.hoveredUrl = hovered ? url : ""
             }
         }
     }

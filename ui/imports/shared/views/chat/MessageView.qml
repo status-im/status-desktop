@@ -755,14 +755,17 @@ Loader {
 
                 linksComponent: Component {
                     LinksMessageView {
+                        id: linksMessageView
                         linkPreviewModel: root.linkPreviewModel
                         localUnfurlLinks: root.localUnfurlLinks
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
+                        highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
+                        onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
                     }
                 }
 

@@ -9,6 +9,10 @@ import StatusQ.Core.Utils 0.1
 Item {
     id: root
 
+    readonly property alias hoveredLink: chatText.hoveredLink
+
+    property string highlightedLink: ""
+
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property bool isEdited: false
     property bool convertToSingleLine: false
@@ -24,6 +28,8 @@ Item {
 
     QtObject {
         id: d
+        property string hoveredLink: chatText.hoveredLink || root.highlightedLink
+
         property bool readMore: false
         property bool isQuote: false
         readonly property int showMoreHeight: showMoreButtonLoader.visible ? showMoreButtonLoader.height : 0
@@ -44,7 +50,7 @@ Item {
                 const editedMessage = formattedMessage.slice(0, index)
                                     + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
                                     + formattedMessage.slice(index);
-                return Utils.getMessageWithStyle(Emoji.parse(editedMessage), chatText.hoveredLink)
+                return Utils.getMessageWithStyle(Emoji.parse(editedMessage), d.hoveredLink)
             }
 
             if (root.convertToSingleLine || isQuote)
@@ -60,7 +66,7 @@ Item {
                 // short return not to add styling when no html
                 return formattedMessage
 
-            return Utils.getMessageWithStyle(formattedMessage, chatText.hoveredLink)
+            return Utils.getMessageWithStyle(formattedMessage, d.hoveredLink)
         }
     }
 
@@ -97,10 +103,6 @@ Item {
         selectByMouse: true
         onLinkActivated: {
             root.linkActivated(link);
-        }
-        onLinkHovered: {
-            // Strange thing. Without this empty stub the cursorShape
-            // is not changed to pointingHandCursor.
         }
     }
 
