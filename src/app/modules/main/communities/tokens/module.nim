@@ -1,4 +1,4 @@
-import NimQml, json, stint, strutils, chronicles
+import NimQml, json, stint, strutils, chronicles, tables
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../../app_service/service/transaction/service as transaction_service
@@ -107,6 +107,20 @@ proc getTokenAndAmountList(self: Module, communityId: string, tokensJsonString: 
   except Exception as e:
     error "Error getTokenAndAmountList", msg = e.msg
 
+proc getTokenAddressFromPermissions(self: Module, communityDto: CommunityDto, chainId: int, permissionType: TokenPermissionType): string =
+  for _, tokenPermission in communityDto.tokenPermissions.pairs:
+    if tokenPermission.`type` == permissionType:
+      for tokenCriteria in tokenPermission.tokenCriteria:
+        let addresses = tokenCriteria.contractAddresses
+        return addresses.getOrDefault(chainId, "")
+  return ""
+
+proc getOwnerAndMasterTokensAddresses(self: Module, communityId: string, chainId: int): (string, string, bool) =
+  let communityDto = self.controller.getCommunityById(communityId)
+  let ownerTokenAddress = self.getTokenAddressFromPermissions(communityDto, chainId, TokenPermissionType.BecomeTokenOwner)
+  let masterTokenAddress = self.getTokenAddressFromPermissions(communityDto, chainId, TokenPermissionType.BecomeTokenMaster)
+  return (ownerTokenAddress, masterTokenAddress, ownerTokenAddress != "" and masterTokenAddress != "")
+
 method airdropTokens*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) =
   self.tempTokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
   if len(self.tempTokenAndAmountList) == 0:
@@ -148,13 +162,10 @@ method burnTokens*(self: Module, communityId: string, contractUniqueKey: string,
 
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                            supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
-  let ownerToken = self.controller.getOwnerToken(communityId)
-  let masterToken = self.controller.getTokenMasterToken(communityId)
-
-  if not (ownerToken.address != "" and ownerToken.deployState == DeployState.Deployed and masterToken.address != "" and masterToken.deployState == DeployState.Deployed):
-      error "Owner token and master token not deployed"
-      return
-
+  let (ownerTokenAddress, masterTokenAddress, isDeployed) = self.getOwnerAndMasterTokensAddresses(communityId, chainId)
+  if not isDeployed:
+    error "Owner token and master token not deployed"
+    return
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
@@ -165,8 +176,8 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
-  self.tempDeploymentParams.ownerTokenAddress = ownerToken.address
-  self.tempDeploymentParams.masterTokenAddress = masterToken.address
+  self.tempDeploymentParams.ownerTokenAddress = ownerTokenAddress
+  self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
   self.tempTokenMetadata.tokenType = TokenType.ERC721
   self.tempTokenMetadata.description = description
   self.tempTokenImageCropInfoJson = imageCropInfoJson
@@ -182,12 +193,10 @@ proc createOwnerAndMasterDeploymentParams(self: Module, communityId: string): (D
 
 method deployOwnerToken*(self: Module, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
                         masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) =
-  let ownerToken = self.controller.getOwnerToken(communityId)
-  let masterToken = self.controller.getTokenMasterToken(communityId)
-
-  if ownerToken.address != "" and ownerToken.deployState != DeployState.Failed and masterToken.address != "" and masterToken.deployState == DeployState.Failed:
-      error "Owner token and master token are deployed or pending"
-      return
+  let (_, _, isDeployed) = self.getOwnerAndMasterTokensAddresses(communityId, chainId)
+  if isDeployed:
+    error "Owner token and master token are deployed or pending"
+    return
 
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
@@ -203,6 +212,10 @@ method deployOwnerToken*(self: Module, communityId: string, fromAddress: string,
 
 method deployAssets*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int,
                      chainId: int, imageCropInfoJson: string) =
+  let (ownerTokenAddress, masterTokenAddress, isDeployed) = self.getOwnerAndMasterTokensAddresses(communityId, chainId)
+  if not isDeployed:
+    error "Owner token and master token not deployed"
+    return
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
@@ -212,6 +225,8 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.decimals = decimals
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempDeploymentParams.ownerTokenAddress = ownerTokenAddress
+  self.tempDeploymentParams.masterTokenAddress = masterTokenAddress
   self.tempTokenMetadata.tokenType = TokenType.ERC20
   self.tempTokenMetadata.description = description
   self.tempTokenImageCropInfoJson = imageCropInfoJson
