@@ -230,6 +230,6 @@ def compare(actual: Image,
                 _logger.warning(f'VP file updated: {expected_fp}')
                 break
             else:
-                raise AssertionError('Comparison failed')
+                raise AssertionError('Images comparison failed')
     _logger.info(f'Screenshot comparison passed')
 

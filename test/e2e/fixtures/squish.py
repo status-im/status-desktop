@@ -1,3 +1,4 @@
+import allure
 import pytest
 
 from driver.server import SquishServer
@@ -18,3 +19,4 @@ def start_squish_server():
                 pytest.exit(err)
     yield squish_server
     squish_server.stop()
+    allure.attach.file('Squish server config', str(squish_server.config))

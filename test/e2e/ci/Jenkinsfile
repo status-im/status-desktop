@@ -20,6 +20,19 @@ pipeline {
   }
 
   parameters {
+
+    gitParameter(
+      branch: '',
+      branchFilter: 'origin/(.*)',
+      defaultValue: 'master',
+      description: 'Git branch to checkout.',
+      name: 'GIT_REF',
+      quickFilterEnabled: false,
+      selectedValue: 'DEFAULT',
+      sortMode: 'ASCENDING_SMART',
+      tagFilter: '*',
+      type: 'PT_BRANCH'
+    )
     string(
       name: 'BUILD',
       description: 'Paste a number of PR that you want to test.',
@@ -27,17 +40,17 @@ pipeline {
     )
     string(
       name: 'TEST_NAME',
-      description: 'Paste test name/part of test name to run specific test',
+      description: 'Paste test name/part of test name to run specific test.',
       defaultValue: ''
     )
     string(
       name: 'TEST_SCOPE',
-      description: 'Paste tag to run specific scope of tests',
+      description: 'Paste tag to run specific scope of tests.',
       defaultValue: ''
     )
     string(
       name: 'TESTRAIL_RUN_ID',
-      description: 'Test run ID in Test Rail',
+      description: 'Test run ID in Test Rail.',
       defaultValue: ''
     )
   }
@@ -82,6 +95,7 @@ pipeline {
         autoDisplayName: true,
         parallelBuild: true,
         screen: '1920x1080x24',
+        additionalOptions: '-dpi 1'
       ]) { script {
         sh "fluxbox &"
         env.TESTRAIL_USR = "${CREDS_USR}"
