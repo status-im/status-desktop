@@ -1,11 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import shared.status 1.0
+import utils 1.0
 
 CalloutCard {
     id: root
@@ -14,6 +16,9 @@ CalloutCard {
     required property string title
     required property string description
     required property string footer
+
+    property bool highlight: false
+    
     property StatusAssetSettings logoSettings: StatusAssetSettings {
         width: 28
         height: 28
@@ -27,11 +32,20 @@ CalloutCard {
     borderWidth: 1
     implicitHeight: 290
     implicitWidth: 305
+    hoverEnabled: true
+    borderColor: hovered || highlight ? Style.current.borderTertiary : Style.current.border
+
+    Behavior on borderColor {
+        ColorAnimation { duration: 200 }
+    }
 
     contentItem: ColumnLayout {
         StatusImage {
             id: bannerImage
             Layout.fillWidth: true
+            Layout.leftMargin: d.bannerImageMargins
+            Layout.rightMargin: d.bannerImageMargins
+            Layout.topMargin: d.bannerImageMargins
             Layout.preferredHeight: 170
             asynchronous: true
             source: root.bannerImageSource
@@ -97,5 +111,10 @@ CalloutCard {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: root.clicked(mouse)
+    }
+
+    QtObject {
+        id: d
+        property real bannerImageMargins: 1 / Screen.devicePixelRatio // image size isn't pixel perfect..
     }
 }
