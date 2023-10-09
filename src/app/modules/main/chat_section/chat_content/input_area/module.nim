@@ -167,5 +167,17 @@ method setUrls*(self: Module, urls: seq[string]) =
 method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
   return self.controller.linkPreviewsFromCache(urls)
 
-method reloadLinkPreview*(self: Module, url: string) =
-  self.controller.reloadLinkPreview(url)
+method loadLinkPreviews*(self: Module, urls: seq[string]) =
+  self.controller.loadLinkPreviews(urls)
+
+method getLinkPreviewEnabled*(self: Module): bool =
+  return self.controller.getLinkPreviewEnabled()
+
+method setLinkPreviewEnabled*(self: Module, enabled: bool) =
+  self.controller.setLinkPreviewEnabled(enabled)
+
+method setAskToEnableLinkPreview*(self: Module, value: bool) =
+  self.view.setAskToEnableLinkPreview(value)
+
+method setLinkPreviewEnabledForThisMessage*(self: Module, value: bool) =
+  self.controller.setLinkPreviewEnabledForThisMessage(value)

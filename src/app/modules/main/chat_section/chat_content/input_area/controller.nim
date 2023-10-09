@@ -11,6 +11,12 @@ import ../../../../../core/unique_event_emitter
 import ./link_preview_cache
 
 type
+  LinkPreviewSetting* {.pure.} = enum
+    AlwaysAsk
+    Enabled
+    Disabled
+
+type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     sectionId: string
@@ -22,6 +28,8 @@ type
     gifService: gif_service.Service
     messageService: message_service.Service
     linkPreviewCache: LinkPreviewCache
+    linkPreviewPersistentSetting: LinkPreviewSetting
+    linkPreviewCurrentMessageSetting: LinkPreviewSetting
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -45,6 +53,8 @@ proc newController*(
   result.gifService = gifService
   result.messageService = messageService
   result.linkPreviewCache = newLinkPreiewCache()
+  result.linkPreviewPersistentSetting = LinkPreviewSetting.AlwaysAsk
+  result.linkPreviewCurrentMessageSetting = LinkPreviewSetting.AlwaysAsk
 
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs)
 
@@ -89,6 +99,16 @@ proc getChatId*(self: Controller): string =
 
 proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
+  
+proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
+  self.linkPreviewCurrentMessageSetting = if enabled: LinkPreviewSetting.Enabled else: LinkPreviewSetting.Disabled
+  self.delegate.setAskToEnableLinkPreview(false)
+
+proc resetLinkPreviews(self: Controller) =
+  self.delegate.setUrls(@[])
+  self.linkPreviewCache.clear()
+  self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.AlwaysAsk
+  self.delegate.setAskToEnableLinkPreview(false)
 
 proc sendImages*(self: Controller, 
                  imagePathsAndDataJson: string, 
@@ -96,6 +116,7 @@ proc sendImages*(self: Controller,
                  replyTo: string, 
                  preferredUsername: string = "",
                  linkPreviews: seq[LinkPreview]): string =
+  self.resetLinkPreviews()
   self.chatService.sendImages(
     self.chatId, 
     imagePathsAndDataJson, 
@@ -111,8 +132,8 @@ proc sendChatMessage*(self: Controller,
                       contentType: int,
                       preferredUsername: string = "",
                       linkPreviews: seq[LinkPreview]) =
-  self.chatService.sendChatMessage(
-    self.chatId, 
+  self.resetLinkPreviews()
+  self.chatService.sendChatMessage(self.chatId, 
     msg, 
     replyTo, 
     contentType, 
@@ -165,11 +186,25 @@ proc addToRecentsGif*(self: Controller, item: GifDto) =
 proc isFavorite*(self: Controller, item: GifDto): bool =
   return self.gifService.isFavorite(item)
 
+proc getLinkPreviewEnabled*(self: Controller): bool =
+  return self.linkPreviewPersistentSetting == LinkPreviewSetting.Enabled or self.linkPreviewCurrentMessageSetting == LinkPreviewSetting.Enabled
+
+proc canAskToEnableLinkPreview(self: Controller): bool =
+  return self.linkPreviewPersistentSetting == LinkPreviewSetting.AlwaysAsk and self.linkPreviewCurrentMessageSetting == LinkPreviewSetting.AlwaysAsk
+
 proc setText*(self: Controller, text: string) =
+  if(text == ""):
+    self.resetLinkPreviews()
+    return
+
   let urls = self.messageService.getTextUrls(text)
   self.delegate.setUrls(urls)
-  if len(urls) > 0:
-    let newUrls = self.linkPreviewCache.unknownUrls(urls)
+  let newUrls = self.linkPreviewCache.unknownUrls(urls)
+
+  let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()
+  self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
+
+  if self.getLinkPreviewEnabled() and len(urls) > 0:
     self.messageService.asyncUnfurlUrls(newUrls)
     
 proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
@@ -179,8 +214,22 @@ proc clearLinkPreviewCache*(self: Controller) =
   self.linkPreviewCache.clear()
 
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs) =
+  if not self.getLinkPreviewEnabled():
+    return
+    
   let urls = self.linkPreviewCache.add(args.linkPreviews)
   self.delegate.updateLinkPreviewsFromCache(urls)
 
-proc reloadLinkPreview*(self: Controller, url: string) =
-  self.messageService.asyncUnfurlUrls(@[url])
+proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
+  if self.getLinkPreviewEnabled():
+    self.messageService.asyncUnfurlUrls(urls)
+
+proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
+  if(enabled):
+    self.linkPreviewPersistentSetting = LinkPreviewSetting.Enabled
+    self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.Enabled
+  else:
+    self.linkPreviewPersistentSetting = LinkPreviewSetting.Disabled
+    self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.Disabled
+
+  self.delegate.setAskToEnableLinkPreview(false)

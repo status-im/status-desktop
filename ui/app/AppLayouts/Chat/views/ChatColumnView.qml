@@ -130,17 +130,17 @@ Item {
             chatInput.validateImagesAndShowImageArea(filesList)
         }
 
-        function restoreInputState() {
+        function restoreInputState(textInput) {
 
             if (!d.activeChatContentModule) {
-                chatInput.setText("")
+                chatInput.clear()
                 chatInput.resetReplyArea()
                 chatInput.resetImageArea()
                 return
             }
 
             // Restore message text
-            chatInput.setText(d.activeChatContentModule.inputAreaModule.preservedProperties.text)
+            chatInput.setText(textInput)
 
             d.restoreInputReply()
             d.restoreInputAttachments()
@@ -154,9 +154,14 @@ Item {
         }
 
         onActiveChatContentModuleChanged: {
+            let preservedText = ""
+            if (d.activeChatContentModule) {
+                preservedText = d.activeChatContentModule.inputAreaModule.preservedProperties.text
+            }
+
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
-            Qt.callLater(d.restoreInputState)
+            Qt.callLater(d.restoreInputState, preservedText)
         }
     }
 
@@ -243,7 +248,12 @@ Item {
                     store: root.rootStore
                     usersStore: d.activeUsersStore
                     linkPreviewModel: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+                    askToEnableLinkPreview: {
+                        if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
+                            return false
 
+                        return d.activeChatContentModule.inputAreaModule.askToEnableLinkPreview
+                    }
                     textInput.placeholderText: {
                         if (!channelPostRestrictions.visible) {
                             if (d.activeChatContentModule.chatDetails.blocked)
@@ -315,6 +325,11 @@ Item {
                     }
                     
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
+                    onEnableLinkPreview: () => d.activeChatContentModule.inputAreaModule.enableLinkPreview()
+                    onDisableLinkPreview: () => d.activeChatContentModule.inputAreaModule.disableLinkPreview()
+                    onEnableLinkPreviewForThisMessage: () => d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(true)
+                    onDismissLinkPreviewSettings: () => d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
+                    onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
                 }
 
                 ChatPermissionQualificationPanel {

@@ -94,31 +94,11 @@ SplitView {
             sourceComponent: StatusChatInput {
                 id: chatInput
                 property var globalUtils: globalUtilsMock.globalUtils
-                property string unformattedText: textInput.getText(0, textInput.length)
+                property string unformattedText: chatInput.textInput.getText(0, chatInput.textInput.length)
 
                 onUnformattedTextChanged: {
                     textEditConnection.enabled = false
-
-                    var words = unformattedText.split(" ")
-
-                    fakeLinksModel.clear()
-                    words.forEach(function(word){
-                        if(Utils.isURL(word)) {
-                            fakeLinksModel.append({
-                                    url: encodeURI(word),
-                                    unfurled: Math.floor(Math.random() * 2),
-                                    immutable: false,
-                                    hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
-                                    title: "PSY - GANGNAM STYLE(강남스타일) M/V",
-                                    description: "This is the description of the link",
-                                    linkType: Math.floor(Math.random() * 3),
-                                    thumbnailWidth: 480,
-                                    thumbnailHeight: 360,
-                                    thumbnailUrl: "https://picsum.photos/480/360?random=1",
-                                    thumbnailDataUri: ""
-                                })
-                        }
-                    })
+                    d.loadLinkPreviews(unformattedText)
                     textEditConnection.enabled = true
                 }
 
@@ -133,6 +113,13 @@ SplitView {
 
                 enabled: enabledCheckBox.checked
                 linkPreviewModel: fakeLinksModel
+                askToEnableLinkPreview: askToEnableLinkPreviewSwitch.checked
+                onAskToEnableLinkPreviewChanged: {
+                    if(askToEnableLinkPreview) {
+                        fakeLinksModel.clear()
+                        d.loadLinkPreviews(unformattedText)
+                    }
+                }
                 usersStore: QtObject {
                     readonly property var usersModel: fakeUsersModel
                 }
@@ -140,6 +127,26 @@ SplitView {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [globalUtilsMock.globalUtils.plainText(chatInput.getTextWithPublicKeys())])
                     logs.logEvent("StatusChatInput::sendMessage", ["RawText"], [chatInput.textInput.text])
+                }
+                onEnableLinkPreviewForThisMessage: {
+                    linkPreviewSwitch.checked = true
+                    askToEnableLinkPreviewSwitch.checked = false
+                }
+                onEnableLinkPreview: {
+                    linkPreviewSwitch.checked = true
+                    askToEnableLinkPreviewSwitch.checked = false
+                }
+                onDisableLinkPreview: {
+                    linkPreviewSwitch.checked = false
+                    askToEnableLinkPreviewSwitch.checked = false
+                }
+                onDismissLinkPreviewSettings: {
+                    askToEnableLinkPreviewSwitch.checked = false
+                    linkPreviewSwitch.checked = false
+                }
+                onDismissLinkPreview: (index) => {
+                    fakeLinksModel.setProperty(index, "unfurled", false)
+                    fakeLinksModel.setProperty(index, "immutable", true)
                 }
             }
         }
@@ -151,6 +158,36 @@ SplitView {
             SplitView.preferredHeight: 200
 
             logsView.logText: logs.logText
+        }
+
+        QtObject {
+            id: d
+            property bool linkPreviewsEnabled: linkPreviewSwitch.checked && !askToEnableLinkPreviewSwitch.checked
+            onLinkPreviewsEnabledChanged: {
+                loadLinkPreviews(chatInputLoader.item ? chatInputLoader.item.unformattedText : "")
+            }
+            function loadLinkPreviews(text) {
+                var words = text.split(" ")
+
+                fakeLinksModel.clear()
+                words.forEach(function(word){
+                    if(Utils.isURL(word)) {
+                        fakeLinksModel.append({
+                                url: encodeURI(word),
+                                unfurled: d.linkPreviewsEnabled,
+                                immutable: !d.linkPreviewsEnabled,
+                                hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
+                                title: "PSY - GANGNAM STYLE(강남스타일) M/V",
+                                description: "This is the description of the link",
+                                linkType: Math.floor(Math.random() * 3),
+                                thumbnailWidth: 480,
+                                thumbnailHeight: 360,
+                                thumbnailUrl: "https://picsum.photos/480/360?random=1",
+                                thumbnailDataUri: ""
+                            })
+                    }
+                })
+            }
         }
     }
 
@@ -207,6 +244,18 @@ SplitView {
                         text: "Links"
                         Layout.fillWidth: true
                     }
+
+                    Switch {
+                        id: linkPreviewSwitch
+                        text: "Link Preview enabled"
+                    }
+
+                    Switch {
+                        id: askToEnableLinkPreviewSwitch
+                        text: "Ask to enable Link Preview"
+                        checked: true
+                    }
+
                     ComboBox {
                         id: linksNb
                         editable: true

@@ -20,7 +20,7 @@ Row {
 
     Repeater {
         id: rptImages
-    
+
         Item {
             height: chatImage.height
             width: chatImage.width

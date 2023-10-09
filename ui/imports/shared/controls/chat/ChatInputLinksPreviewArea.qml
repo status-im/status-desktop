@@ -8,22 +8,44 @@ import StatusQ.Core 0.1
 import shared.status 1.0
 import shared.controls.chat 1.0
 
+import utils 1.0
+
 import SortFilterProxyModel 0.2
 
 Control {
     id: root
 
-    required property var imagePreviewModel
+    required property var imagePreviewArray
+    /*
+    Expected roles:
+        string title
+        string url
+        bool unfurled
+        bool immutable
+        string hostname
+        string description
+        int linkType
+        int thumbnailWidth
+        int thumbnailHeight
+        string thumbnailUrl
+        string thumbnailDataUri
+    */
     required property var linkPreviewModel
+    required property bool showLinkPreviewSettings
 
     readonly property alias hoveredUrl: d.hoveredUrl
-    readonly property int contentItemsCount: imagePreviewModel.length + d.filteredModel.count
+    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)
     signal linkReload(string link)
     signal linkClicked(string link)
-    signal linkRemoved(string link)
+
+    signal enableLinkPreview()
+    signal enableLinkPreviewForThisMessage()
+    signal disableLinkPreview()
+    signal dismissLinkPreviewSettings()
+    signal dismissLinkPreview(int index)
 
     horizontalPadding: 12
     topPadding: 12
@@ -60,6 +82,8 @@ Control {
             contentWidth: layout.width
             contentHeight: layout.height
 
+            onFlickStarted: settingsContextMenu.close()
+
             RowLayout {
                 id: layout
                 spacing: 8
@@ -67,12 +91,13 @@ Control {
                     id: imageArea
                     Layout.preferredHeight: 64
                     spacing: layout.spacing
-                    imageSource: imagePreviewModel
+                    imageSource: imagePreviewArray
                     onImageClicked: root.imageClicked(chatImage)
                     onImageRemoved: root.imageRemoved(index)
-                    visible: !!imagePreviewModel && imagePreviewModel.length > 0
+                    visible: !!imagePreviewArray && imagePreviewArray.length > 0
                 }
                 Repeater {
+                    id: linkPreviewRepeater
                     model: d.filteredModel
                     delegate: LinkPreviewMiniCard {
                         // Model properties
@@ -104,9 +129,10 @@ Control {
                                     unfurled && hostname === "" ? LinkPreviewMiniCard.State.LoadingFailed :
                                     !unfurled ? LinkPreviewMiniCard.State.Loading : LinkPreviewMiniCard.State.Invalid
 
-                        onClose: root.linkPreviewModel.removePreviewData(d.filteredModel.mapToSource(index))
+                        onClose: root.dismissLinkPreview(d.filteredModel.mapToSource(index))
                         onRetry: root.linkReload(url)
                         onClicked: root.linkClicked(url)
+                        onRightClicked: settingsContextMenu.popup()
                         onContainsMouseChanged: {
                             if (containsMouse) {
                                 d.hoveredUrl = url
@@ -120,6 +146,14 @@ Control {
                             }
                         }
                     }
+                }
+                LinkPreviewSettingsCard {
+                    id: settingsCard
+                    visible: root.showLinkPreviewSettings
+                    onDismiss: root.dismissLinkPreviewSettings()
+                    onEnableLinkPreviewForThisMessage: root.enableLinkPreviewForThisMessage()
+                    onEnableLinkPreview: root.enableLinkPreview()
+                    onDisableLinkPreview: root.disableLinkPreview()
                 }
             }
         }
@@ -156,5 +190,13 @@ Control {
                 }
             ]
         }
+    }
+
+    LinkPreviewSettingsCard.ContextMenu {
+        id: settingsContextMenu
+
+        onEnableLinkPreviewForThisMessage: root.enableLinkPreviewForThisMessage()
+        onEnableLinkPreview: root.enableLinkPreview()
+        onDisableLinkPreview: root.disableLinkPreview()
     }
 }

@@ -117,9 +117,7 @@ Item {
             }
 
             const newStackSize = Math.ceil(root.maxStackSize / 2)
-            print("Reducing undo stack to " + newStackSize + " items")
             for(var i = 1; i <= newStackSize; i++) {
-                print("Removing " + Math.ceil(root.maxStackSize / newStackSize) + " items from index " + i)
                 d.undoStack.splice(i, Math.ceil(root.maxStackSize / newStackSize))
             }
         }
