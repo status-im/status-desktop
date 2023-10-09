@@ -1,7 +1,6 @@
 import allure
 
 import configs
-
 from gui.elements.object import QObject
 
 

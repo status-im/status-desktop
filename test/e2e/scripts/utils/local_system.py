@@ -50,7 +50,7 @@ def kill_process(pid, verify: bool = False, timeout_sec: int = configs.timeouts.
             wait_for_close(pid, timeout_sec)
         except RuntimeError as err:
             if attempt:
-                kill_process(pid, verify, timeout_sec, attempt-1)
+                kill_process(pid, verify, timeout_sec, attempt - 1)
             else:
                 raise err
 

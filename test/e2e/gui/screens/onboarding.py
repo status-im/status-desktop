@@ -412,7 +412,6 @@ class BiometricsView(OnboardingView):
         return self._yes_use_touch_id_button.is_visible
 
 
-
 class LoginView(QObject):
 
     def __init__(self):

@@ -9,6 +9,7 @@ from gui.main_window import MainWindow
 from scripts.utils import system_path
 from scripts.utils.system_path import SystemPath
 
+
 @pytest.fixture
 def application_logs():
     yield

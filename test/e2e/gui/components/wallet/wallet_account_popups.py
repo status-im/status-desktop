@@ -1,14 +1,14 @@
 import typing
 
 import allure
-from gui.components.wallet.authenticate_popup import AuthenticatePopup
 
 import configs
 import constants.wallet
 import driver
-from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
+from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.wallet.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject

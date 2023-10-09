@@ -7,9 +7,9 @@ from PIL import ImageGrab
 
 import configs
 import driver
+from fixtures.path import generate_test_info
 from scripts.utils import local_system
 from scripts.utils.system_path import SystemPath
-from fixtures.path import generate_test_info
 
 _logger = logging.getLogger(__name__)
 

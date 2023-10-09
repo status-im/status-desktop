@@ -3,10 +3,10 @@ import typing
 
 import allure
 
-from .base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from .base_popup import BasePopup
 
 
 class SocialLinksPopup(BasePopup):
@@ -41,4 +41,3 @@ class SocialLinksPopup(BasePopup):
             self._get_text_field(occurrence).text = link
         self._add_button.click()
         self.wait_until_hidden()
-        

@@ -14,7 +14,6 @@ from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.screens.community import CommunityScreen
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -80,7 +79,7 @@ class CreateCommunityPopup(BasePopup):
         except LookupError as err:
             if attempt:
                 _logger.debug(err)
-                return self._open_logo_file_dialog(attempt-1)
+                return self._open_logo_file_dialog(attempt - 1)
             else:
                 raise
 

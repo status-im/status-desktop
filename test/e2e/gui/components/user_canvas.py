@@ -62,6 +62,6 @@ class UserCanvas(QObject):
     def is_user_image_contains(self, text: str):
         # To remove all artifacts, the image cropped.
         crop = driver.UiTypes.ScreenRectangle(
-                5, 5, self._profile_image.image.width-10, self._profile_image.image.height-10
-            )
+            5, 5, self._profile_image.image.width - 10, self._profile_image.image.height - 10
+        )
         return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)

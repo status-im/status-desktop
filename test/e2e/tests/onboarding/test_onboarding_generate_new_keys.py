@@ -5,13 +5,11 @@ import pytest
 from allure import step
 
 import configs.timeouts
-import driver
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.picture_edit_popup import shift_image
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
-from scripts.tools import image
 
 _logger = logging.getLogger(__name__)
 pytestmark = allure.suite("Onboarding")
@@ -49,13 +47,13 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
         details_view = profile_view.next()
         # TODO: temp removing tesseract usage because it is not stable
-        #if user_image is None:
+        # if user_image is None:
         #    assert not details_view.is_user_image_background_white()
         #    assert driver.waitFor(
         #        lambda: details_view.is_user_image_contains(user_name[:2]),
         #        configs.timeouts.UI_LOAD_TIMEOUT_MSEC
         #    )
-        #else:
+        # else:
         #    image.compare(
         #        details_view.cropped_profile_image,
         #        f'{user_image.split(".")[1]}_onboarding.png',
@@ -83,11 +81,11 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         user_canvas = main_window.left_panel.open_user_canvas()
         assert user_canvas.user_name == user_name
         # TODO: temp removing tesseract usage because it is not stable
-       # if user_image is None:
-       #     assert driver.waitFor(
-       #         lambda: user_canvas.is_user_image_contains(user_name[:2]),
-       #         configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-       #     )
+    # if user_image is None:
+    #     assert driver.waitFor(
+    #         lambda: user_canvas.is_user_image_contains(user_name[:2]),
+    #         configs.timeouts.UI_LOAD_TIMEOUT_MSEC
+    #     )
 
     with step('Open Profile popup and verify user info'):
 
@@ -96,12 +94,12 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         assert profile_popup.chat_key == chat_key
         assert profile_popup.emoji_hash.compare(emoji_hash.view, threshold=0.9)
         # TODO: temp removing tesseract usage because it is not stable
-        #if user_image is None:
+        # if user_image is None:
         #    assert driver.waitFor(
         #        lambda: profile_popup.is_user_image_contains(user_name[:2]),
         #        configs.timeouts.UI_LOAD_TIMEOUT_MSEC
         #    )
-        #else:
+        # else:
         #    image.compare(
         #        profile_popup.cropped_profile_image,
         #        f'{user_image.split(".")[1]}_profile.png',

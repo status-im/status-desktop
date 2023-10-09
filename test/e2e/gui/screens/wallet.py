@@ -7,11 +7,11 @@ import constants.user
 import driver
 from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
+from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
 from gui.components.wallet.confirmation_popup import ConfirmationPopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
-from gui.components.context_menu import ContextMenu
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel

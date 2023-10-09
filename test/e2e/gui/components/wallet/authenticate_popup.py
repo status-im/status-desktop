@@ -1,8 +1,8 @@
 import allure
 
 from gui.elements.button import Button
-from gui.elements.text_edit import TextEdit
 from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
 
 
 class AuthenticatePopup(QObject):

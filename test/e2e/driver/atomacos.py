@@ -3,7 +3,6 @@ from copy import deepcopy
 
 import configs.timeouts
 import driver
-from scripts.utils import local_system
 
 if configs.system.IS_MAC:
     from atomacos._a11y import _running_apps_with_bundle_id

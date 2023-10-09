@@ -96,16 +96,16 @@ def test_edit_community_separately(main_screen, community_params):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
 @pytest.mark.parametrize('params', [
-        {
-            'name': 'Updated Name',
-            'description': 'Updated Description',
-            'logo': {'fp': configs.testpath.TEST_FILES / 'banner.png', 'zoom': None, 'shift': None},
-            'banner': {'fp': configs.testpath.TEST_FILES / 'tv_signal.png', 'zoom': None, 'shift': None},
-            'color': '#ff7d46',
-            'tags': ['Ethereum'],
-            'intro': 'Updated Intro',
-            'outro': 'Updated Outro'
-        }
+    {
+        'name': 'Updated Name',
+        'description': 'Updated Description',
+        'logo': {'fp': configs.testpath.TEST_FILES / 'banner.png', 'zoom': None, 'shift': None},
+        'banner': {'fp': configs.testpath.TEST_FILES / 'tv_signal.png', 'zoom': None, 'shift': None},
+        'color': '#ff7d46',
+        'tags': ['Ethereum'],
+        'intro': 'Updated Intro',
+        'outro': 'Updated Outro'
+    }
 ])
 def test_edit_community(main_screen: MainWindow, params):
     main_screen.create_community(constants.community_params)

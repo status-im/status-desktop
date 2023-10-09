@@ -11,7 +11,8 @@ from gui.main_window import MainWindow
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
 @pytest.mark.parametrize('user_account, user_account_changed_password',
-                         [pytest.param(constants.user.user_account_one, constants.user.user_account_one_changed_password)])
+                         [pytest.param(constants.user.user_account_one,
+                                       constants.user.user_account_one_changed_password)])
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings and change password'):
         main_screen.left_panel.open_settings().left_panel.open_profile_settings().open_change_password_popup().change_password(

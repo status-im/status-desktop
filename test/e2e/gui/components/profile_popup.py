@@ -34,7 +34,7 @@ class ProfilePopup(BasePopup):
         self._profile_image.image.update_view()
         self._profile_image.image.crop(
             driver.UiTypes.ScreenRectangle(
-                15, 15, self._profile_image.image.width-30, self._profile_image.image.height-30
+                15, 15, self._profile_image.image.width - 30, self._profile_image.image.height - 30
             ))
         return self._profile_image.image
 

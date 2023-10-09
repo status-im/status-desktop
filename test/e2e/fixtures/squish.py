@@ -19,4 +19,5 @@ def start_squish_server():
                 pytest.exit(err)
     yield squish_server
     squish_server.stop()
-    allure.attach.file('Squish server config', str(squish_server.config))
+    if squish_server.config.exists():
+        allure.attach.file(str(squish_server.config), 'Squish server config')

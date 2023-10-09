@@ -1,12 +1,11 @@
-from objectmaphelper import RegularExpression
 import time
 import typing
 
 import allure
+from objectmaphelper import RegularExpression
 
 import configs.timeouts
 import driver
-
 from constants import UserCommunityInfo, wallet_account_list_item
 from constants.syncing import SyncingSettings
 from driver import objects_access
@@ -515,7 +514,7 @@ class EditNetworkSettings(WalletSettingsView):
                 and current_value_failover == self._network_failover_json_rpc_url.text):
             assert attempts > 0, "value not reverted"
             time.sleep(1)
-            self.revert_to_default(attempts-1)
+            self.revert_to_default(attempts - 1)
 
     @allure.step('Get value from Main json rpc input')
     def get_edit_network_main_json_rpc_url_value(self):

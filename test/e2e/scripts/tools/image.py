@@ -232,4 +232,3 @@ def compare(actual: Image,
             else:
                 raise AssertionError('Images comparison failed')
     _logger.info(f'Screenshot comparison passed')
-
