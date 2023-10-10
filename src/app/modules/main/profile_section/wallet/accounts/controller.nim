@@ -52,12 +52,6 @@ proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
 proc getKeypairs*(self: Controller): seq[KeypairDto] =
   return self.walletAccountService.getKeypairs()
 
-proc toggleIncludeWatchOnlyAccount*(self: Controller) =
-  self.walletAccountService.toggleIncludeWatchOnlyAccount()
-
-proc isIncludeWatchOnlyAccount*(self: Controller): bool =
-  return self.walletAccountService.isIncludeWatchOnlyAccount()
-
 proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.walletAccountService.getEnabledChainIds()
 
@@ -78,3 +72,6 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 
 proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
   return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+
+proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string, hideFromTotalBalance: bool) =
+  discard self.walletAccountService.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

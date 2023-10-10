@@ -10,7 +10,6 @@ type
     emoji: string
     isWatchOnlyAccount: bool
     isAllAccounts: bool
-    includeWatchOnly: bool
     colorIds: seq[string]
 
 proc initItem*(
@@ -22,7 +21,6 @@ proc initItem*(
   emoji: string,
   isWatchOnlyAccount: bool=false,
   isAllAccounts: bool = false,
-  includeWatchOnly: bool = true,
   colorIds: seq[string] = @[]
 ): Item =
   result.name = name
@@ -32,7 +30,6 @@ proc initItem*(
   result.colorId = colorId
   result.emoji = emoji
   result.isAllAccounts = isAllAccounts
-  result.includeWatchOnly = includeWatchOnly
   result.colorIds = colorIds
   result.isWatchOnlyAccount = isWatchOnlyAccount
 
@@ -46,7 +43,6 @@ proc `$`*(self: Item): string =
     emoji: {self.emoji},
     isWatchOnlyAccount: {self.isWatchOnlyAccount},
     isAllAccounts: {self.isAllAccounts},
-    includeWatchOnly: {self.includeWatchOnly},
     colorIds: {self.colorIds}
     ]"""
 
@@ -70,9 +66,6 @@ proc getEmoji*(self: Item): string =
 
 proc getIsAllAccounts*(self: Item): bool =
   return self.isAllAccounts
-
-proc getIncludeWatchOnly*(self: Item): bool =
-  return self.includeWatchOnly
 
 proc getColorIds*(self: Item): string =
   return self.colorIds.join(";")

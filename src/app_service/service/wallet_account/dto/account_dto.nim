@@ -38,6 +38,7 @@ type
     position*: int
     prodPreferredChainIDs*: string
     testPreferredChainIDs*: string
+    hideFromTotalBalance*: bool
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
@@ -59,6 +60,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("prodPreferredChainIds", result.prodPreferredChainIds)
   discard jsonObj.getProp("testPreferredChainIds", result.testPreferredChainIds)
+  discard jsonObj.getProp("hidden", result.hideFromTotalBalance)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false
@@ -81,5 +83,6 @@ proc `$`*(self: WalletAccountDto): string =
     removed: {self.removed},
     operable: {self.operable},
     prodPreferredChainIds: {self.prodPreferredChainIds},
-    testPreferredChainIds: {self.testPreferredChainIds}
+    testPreferredChainIds: {self.testPreferredChainIds},
+    hideFromTotalBalance: {self.hideFromTotalBalance}
     ]"""

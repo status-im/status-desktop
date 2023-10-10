@@ -18,6 +18,7 @@ QtObject:
     areTestNetworksEnabled: bool
     prodPreferredChainIds: string
     testPreferredChainIds: string
+    hideFromTotalBalance: bool
 
   proc setup*(self: WalletAccountItem,
     name: string = "",
@@ -32,7 +33,8 @@ QtObject:
     operability: string = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled: bool = false,
     prodPreferredChainIds: string = "",
-    testPreferredChainIds: string = ""
+    testPreferredChainIds: string = "",
+    hideFromTotalBalance: bool = true
     ) =
       self.QObject.setup
       self.name = name
@@ -48,6 +50,7 @@ QtObject:
       self.areTestNetworksEnabled = areTestNetworksEnabled
       self.prodPreferredChainIds = prodPreferredChainIds
       self.testPreferredChainIds = testPreferredChainIds
+      self.hideFromTotalBalance = hideFromTotalBalance
 
   proc delete*(self: WalletAccountItem) =
       self.QObject.delete
@@ -65,7 +68,8 @@ QtObject:
     operability: string = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled: bool = false,
     prodPreferredChainIds: string = "",
-    testPreferredChainIds: string = ""): WalletAccountItem =
+    testPreferredChainIds: string = "",
+    hideFromTotalBalance: bool = true): WalletAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -81,6 +85,7 @@ QtObject:
     result.areTestNetworksEnabled = areTestNetworksEnabled
     result.prodPreferredChainIds = prodPreferredChainIds
     result.testPreferredChainIds = testPreferredChainIds
+    result.hideFromTotalBalance = hideFromTotalBalance
 
   proc `$`*(self: WalletAccountItem): string =
     result = fmt"""WalletAccountItem(
@@ -97,6 +102,7 @@ QtObject:
       areTestNetworksEnabled: {self.areTestNetworksEnabled},
       prodPreferredChainIds: {self.prodPreferredChainIds},
       testPreferredChainIds: {self.testPreferredChainIds},
+      hideFromTotalBalance: {self.hideFromTotalBalance}
       ]"""
 
   proc nameChanged*(self: WalletAccountItem) {.signal.}
@@ -198,3 +204,10 @@ QtObject:
   QtProperty[string] preferredSharingChainIds:
     read = preferredSharingChainIds
     notify = preferredSharingChainIdsChanged
+
+  proc hideFromTotalBalanceChanged*(self: WalletAccountItem) {.signal.}
+  proc hideFromTotalBalance*(self: WalletAccountItem): bool {.slot.} =
+    return self.hideFromTotalBalance
+  QtProperty[bool] hideFromTotalBalance:
+    read = hideFromTotalBalance
+    notify = hideFromTotalBalanceChanged

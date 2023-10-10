@@ -115,6 +115,8 @@ Rectangle {
                 removeAccountConfirmation.accountDerivationPath = account.path
                 removeAccountConfirmation.active = true
             }
+
+            onHideFromTotalBalanceClicked: RootStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
         }
     }
 
@@ -158,7 +160,7 @@ Rectangle {
         function onDestroyAddAccountPopup() {
             addAccount.active = false
         }
-        function onFilterChanged(address, includeWatchOnly, allAddresses) {
+        function onFilterChanged(address, allAddresses) {
             root.currentAddress = allAddresses ? "" : address
             root.showAllAccounts = allAddresses
         }
@@ -269,7 +271,7 @@ Rectangle {
                     }
                     anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                     title: model.name
-                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
+                    subTitle: !model.hideFromTotalBalance ? LocaleUtils.currencyAmountToLocaleString(model.currencyBalance): ""
                     asset.emoji: !!model.emoji ? model.emoji: ""
                     asset.color: Utils.getColorForId(model.colorId)
                     asset.name: !model.emoji ? "filled-account": ""

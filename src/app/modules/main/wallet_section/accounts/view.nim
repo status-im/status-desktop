@@ -63,3 +63,6 @@ QtObject:
 
   proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
     self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)
+
+  proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
+    self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

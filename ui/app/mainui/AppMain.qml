@@ -142,16 +142,6 @@ Item {
             )
         }
 
-        function onShowIncludeWatchOnlyAccountUpdated(includeWatchOnly: bool) {
-            Global.displayToastMessage(
-                        includeWatchOnly ? qsTr("Your wallet’s total balance will now include balances of watched addresses") : qsTr("Your wallet’s total balance will not include balances of watched addresses") ,
-                        "",
-                        "checkmark-circle",
-                        false,
-                        Constants.ephemeralNotificationType.success,
-                        "")
-        }
-
         function onShowToastKeypairRemoved(keypairName: string) {
             Global.displayToastMessage(
                 qsTr("“%1” keypair and its derived accounts were successfully removed from all devices").arg(keypairName),

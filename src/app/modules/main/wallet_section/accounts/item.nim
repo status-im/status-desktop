@@ -27,7 +27,8 @@ proc initItem*(
   isWallet: bool = false,
   areTestNetworksEnabled: bool = false,
   prodPreferredChainIds: string = "",
-  testPreferredChainIds: string = ""
+  testPreferredChainIds: string = "",
+  hideFromTotalBalance: bool = false
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -42,7 +43,8 @@ proc initItem*(
     operability = wa_dto.AccountFullyOperable,
     areTestNetworksEnabled,
     prodPreferredChainIds,
-    testPreferredChainIds)
+    testPreferredChainIds,
+    hideFromTotalBalance)
   result.createdAt = createdAt
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance

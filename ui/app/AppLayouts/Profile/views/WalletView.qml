@@ -199,6 +199,9 @@ SettingsContentBase {
             onRunStopUsingKeycardFlow: {
                 root.rootStore.keycardStore.runStopUsingKeycardPopup(keyPair.keyUid)
             }
+            onUpdateWatchAccountHiddenFromTotalBalance: {
+                root.walletStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+            }
         }
 
         DappPermissionsView {

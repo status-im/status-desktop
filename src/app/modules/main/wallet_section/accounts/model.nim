@@ -19,7 +19,8 @@ type
     KeycardAccount,
     AssetsLoading,
     IsWallet,
-    PreferredSharingChainIds
+    PreferredSharingChainIds,
+    HideFromTotalBalance
 
 QtObject:
   type
@@ -69,7 +70,8 @@ QtObject:
       ModelRole.KeycardAccount.int: "keycardAccount",
       ModelRole.AssetsLoading.int: "assetsLoading",
       ModelRole.IsWallet.int: "isWallet",
-      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
+      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds",
+      ModelRole.HideFromTotalBalance.int: "hideFromTotalBalance"
     }.toTable
 
 
@@ -121,6 +123,8 @@ QtObject:
       result = newQVariant(item.isWallet())
     of ModelRole.PreferredSharingChainIds:
       result = newQVariant(item.preferredSharingChainIds())
+    of ModelRole.HideFromTotalBalance:
+      result = newQVariant(item.hideFromTotalBalance())
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:

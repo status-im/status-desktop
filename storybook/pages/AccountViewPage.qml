@@ -39,7 +39,6 @@ SplitView {
                                                displayDecimals: 4,
                                                stripTrailingZeroes: false}),
                                  isAllAccounts: false,
-                                 includeWatchOnly: false,
                                  path: "m/44’/60’/0’/0’/34",
                                  preferredSharingChainIds:  walletStore.areTestNetworksEnabled ? "5:420:421613": "1:10:42161"
                              })
@@ -87,6 +86,9 @@ SplitView {
             account: d.dummyOverview
             walletStore: d.walletStore
             keyPair: d.keyPairModel.data[0].keyPair
+            onUpdateWatchAccountHiddenFromTotalBalance: {
+                console.warn("updateWatchAccountHiddenFromTotalBalance :: address ::", address, "hideFromTotalBalance :: ", hideFromTotalBalance)
+            }
         }
     }  
 

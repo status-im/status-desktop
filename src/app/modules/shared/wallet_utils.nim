@@ -42,7 +42,8 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
     w.operable,
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
-    w.testPreferredChainIds
+    w.testPreferredChainIds,
+    w.hideFromTotalBalance
   )
 
 proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool,
@@ -63,7 +64,8 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.isWallet,
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
-    w.testPreferredChainIds
+    w.testPreferredChainIds,
+    w.hideFromTotalBalance
   )
 
 proc walletAccountToWalletAssetsItem*(w: WalletAccountDto): wallet_assets_item.Item =
