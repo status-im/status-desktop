@@ -25,8 +25,6 @@ ColumnLayout {
 
     property PrivacyStore privacyStore
     property ProfileStore profileStore
-    property WalletStore walletStore
-    property var communitiesModel
 
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
@@ -198,26 +196,26 @@ ColumnLayout {
         ProfileShowcaseCommunitiesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.communitiesModel
+            baseModel: root.profileStore.profileShowcaseCommunitiesModel
         }
 
         ProfileShowcaseAccountsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.accounts
+            baseModel: root.profileStore.profileShowcaseAccountsModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
         }
 
         ProfileShowcaseCollectiblesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.collectibles
+            baseModel: root.profileStore.profileShowcaseCollectiblesModel
         }
 
         ProfileShowcaseAssetsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.assets
+            baseModel: root.profileStore.profileShowcaseTokensModel
         }
     }
 }
