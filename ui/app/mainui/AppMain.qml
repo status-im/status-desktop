@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import Qt.labs.platform 1.1
+import Qt.labs.settings 1.1
 import QtQml.Models 2.14
 import QtQml 2.15
 
@@ -215,6 +216,11 @@ Item {
         }
     }
 
+    Settings {
+        id: appMainLocalSettings
+        property var whitelistedUnfurledDomains: []
+    }
+
     Popups {
         id: popups
         popupParent: appMain
@@ -222,6 +228,15 @@ Item {
         communitiesStore: appMain.communitiesStore
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         isDevBuild: !production
+
+        onOpenExternalLink: globalConns.onOpenLink(link)
+        onSaveDomainToUnfurledWhitelist: {
+            const whitelistedHostnames = appMainLocalSettings.whitelistedUnfurledDomains || []
+            if (!whitelistedHostnames.includes(domain)) {
+                whitelistedHostnames.push(domain)
+                appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
+            }
+        }
     }
 
     Connections {
@@ -250,8 +265,6 @@ Item {
         }
 
         function onOpenLink(link: string) {
-            console.warn("opening external url without asking user")
-
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = appMain.rootStore.plainText(link)
 
@@ -265,6 +278,13 @@ Item {
                     Qt.openUrlExternally(link)
                 }
             }
+        }
+
+        function onOpenLinkWithConfirmation(link: string, domain: string) {
+            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain) || !!localAccountSensitiveSettings.whitelistedUnfurlingSites[domain])
+                globalConns.onOpenLink(link)
+            else
+                popups.openConfirmExternalLinkPopup(link, domain)
         }
 
         function onPlaySendMessageSound() {
@@ -1618,7 +1638,7 @@ Item {
                                             settingsUpdated = true
                                         }
                                         whitelistedHostnames.push(site.address)
-                                    })
+                                     })
             // Remove any whitelisted sites from app settings that don't exist in the
             // whitelist from status-go
             Object.keys(settings).forEach(settingsHostname => {

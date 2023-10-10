@@ -85,6 +85,6 @@ CheckBox {
 
     HoverHandler {
         acceptedDevices: PointerDevice.Mouse
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: root.changeCursor ? Qt.PointingHandCursor : undefined
     }
 }

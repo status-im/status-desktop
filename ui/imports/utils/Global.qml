@@ -56,6 +56,7 @@ QtObject {
                                       var sendModalPopup)
 
     signal openLink(string link)
+    signal openLinkWithConfirmation(string link, string domain)
 
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection)

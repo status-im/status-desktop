@@ -55,7 +55,7 @@ QtObject:
 
       return $(response.result)
     except Exception as e:
-      error "error: ", procName="removeReaction", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getLinkPreviewWhitelist", errName = e.name, errDesription = e.msg
 
   proc getDefaultAccount(self: Service): string =
     try:

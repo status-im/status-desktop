@@ -12,4 +12,8 @@ QtObject {
     function readTextFile(file) {
         return Internal.StringUtils.readTextFile(file)
     }
+
+    function extractDomainFromLink(link) {
+        return Internal.StringUtils.extractDomainFromLink(link)
+    }
 }
