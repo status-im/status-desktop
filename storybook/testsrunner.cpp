@@ -49,3 +49,8 @@ QObject* TestsRunner::runTests(const QString& fileName)
 
     return testRunnerProcess;
 }
+
+QString TestsRunner::testsPath() const
+{
+    return m_testsBasePath;
+}

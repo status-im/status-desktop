@@ -140,5 +140,8 @@ ToolBar {
                   ? `Please add valid tests to <b>${testRunnerControls.testFileName}</b> file`
                   : ""
         }
+
+        onAccepted: Qt.openUrlExternally(Qt.resolvedUrl(TestsRunner.testsPath()))
+        Component.onCompleted: standardButton(Dialog.Ok).text = "Open tests folder"
     }
 }
