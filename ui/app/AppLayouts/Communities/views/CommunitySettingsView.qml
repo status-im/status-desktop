@@ -557,6 +557,10 @@ StatusSectionLayout {
     StatusQUtils.ModelChangeTracker {
         id: tokensModelChangesTracker
 
+        Component.onCompleted: {
+            updateOwnerAndTMasterProperties()
+        }
+
         // Owner and TMaster token deployment states
         property bool isOwnerTokenDeployed: false
         property bool isTMasterTokenDeployed: false
@@ -569,6 +573,28 @@ StatusSectionLayout {
         function checkIfPrivilegedTokenItemsExist() {
            return StatusQUtils.ModelUtils.contains(model, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner) ||
                   StatusQUtils.ModelUtils.contains(model, "privilegesLevel", Constants.TokenPrivilegesLevel.TMaster)
+        }
+
+        function updateOwnerAndTMasterProperties() {
+            // It will update property to know if Owner and TMaster token items have been added into the tokens list.
+            ownerOrTMasterTokenItemsExist = checkIfPrivilegedTokenItemsExist()
+            if(!ownerOrTMasterTokenItemsExist)
+                return
+
+            // It monitors the deployment:
+            if(!isOwnerTokenDeployed) {
+                isOwnerTokenDeployed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Completed)
+                isOwnerTokenFailed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Failed)
+            }
+
+            if(!isTMasterTokenDeployed) {
+                isTMasterTokenDeployed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Completed)
+                isTMasterTokenFailed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Failed)
+            }
+
+            // Not necessary to track more changes since privileged tokens have been correctly deployed.
+            if(isOwnerTokenDeployed && isTMasterTokenDeployed)
+                tokensModelChangesTracker.enabled = false
         }
 
         function reviewTokenDeployState(isOwner, deployState) {
@@ -591,25 +617,7 @@ StatusSectionLayout {
         model: root.community.communityTokens
 
         onRevisionChanged: {
-            // It will update property to know if Owner and TMaster token items have been added into the tokens list.
-            ownerOrTMasterTokenItemsExist = checkIfPrivilegedTokenItemsExist()
-            if(!ownerOrTMasterTokenItemsExist)
-                return
-
-            // It monitors the deployment:
-            if(!isOwnerTokenDeployed) {
-                isOwnerTokenDeployed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Completed)
-                isOwnerTokenFailed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Failed)
-            }
-
-            if(!isTMasterTokenDeployed) {
-                isTMasterTokenDeployed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Completed)
-                isTMasterTokenFailed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Failed)
-            }
-
-            // Not necessary to track more changes since privileged tokens have been correctly deployed.
-            if(isOwnerTokenDeployed && isTMasterTokenDeployed)
-                tokensModelChangesTracker.enabled = false
+            updateOwnerAndTMasterProperties()
         }
     }
 
