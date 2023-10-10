@@ -27,6 +27,7 @@ QtObject {
                             root.fleet === Constants.status_prod
 
     readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
+    property bool isManageCommunityOnTestModeEnabled: false
     readonly property QtObject experimentalFeatures: QtObject {
         readonly property string browser: "browser"
         readonly property string communities: "communities"
@@ -153,6 +154,10 @@ QtObject {
             return
 
         localAppSettings.fakeLoadingScreenEnabled = !localAppSettings.fakeLoadingScreenEnabled
+    }
+
+    function toggleManageCommunityOnTestnet() {
+        root.isManageCommunityOnTestModeEnabled = !root.isManageCommunityOnTestModeEnabled
     }
 
     function toggleWakuV2ShardedCommunities() {

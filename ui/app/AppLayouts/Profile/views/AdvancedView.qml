@@ -448,6 +448,17 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
+                text: qsTr("Manage communities on testnet")
+                isSwitch: true
+                switchChecked: root.advancedStore.isManageCommunityOnTestModeEnabled
+                onClicked: {
+                    root.advancedStore.toggleManageCommunityOnTestnet()
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("How many log files to keep archived")
                 currentValue: root.advancedStore.logMaxBackups
                 onClicked: {
