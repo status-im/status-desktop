@@ -52,6 +52,7 @@ add_library(${PROJECT_LIB}
     modelutils.cpp modelutils.h
     pagesmodel.h pagesmodel.cpp
     sectionsdecoratormodel.cpp sectionsdecoratormodel.h
+    testsrunner.h testsrunner.cpp
 )
 
 add_executable(
@@ -105,6 +106,9 @@ add_executable(QmlTests
     qmlTests/main.cpp
     qmlTests/src/TextUtils.cpp qmlTests/src/TextUtils.h
     ${TEST_QML_FILES})
+
+add_dependencies(QmlTests StatusQ)
+
 target_compile_definitions(QmlTests PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
