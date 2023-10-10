@@ -4,6 +4,7 @@
 #include <QFileSelector>
 #include <QQmlEngine>
 #include <QQmlFileSelector>
+#include <QUrl>
 
 StringUtilsInternal::StringUtilsInternal(QQmlEngine* engine, QObject* parent)
     : m_engine(engine)
@@ -32,4 +33,14 @@ QString StringUtilsInternal::readTextFile(const QString& filePath) const
     }
 
     return file.readAll();
+}
+
+QString StringUtilsInternal::extractDomainFromLink(const QString& link) const
+{
+    const auto url = QUrl::fromUserInput(link);
+    if (!url.isValid()) {
+        qWarning() << Q_FUNC_INFO << "Invalid URL:" << link;
+        return {};
+    }
+    return url.host();
 }

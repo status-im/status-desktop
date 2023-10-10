@@ -73,7 +73,6 @@ Loader {
         const arr = links.split(separator)
         const filtered = arr.filter(v => v.toLowerCase().endsWith('.gif') || v.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase()))
         const out = filtered.join(separator)
-        console.log(`<<<${arr}->${out}`)
         return out
     }
 
@@ -756,7 +755,6 @@ Loader {
 
                 linksComponent: Component {
                     LinksMessageView {
-                        id: linksMessageView
                         linkPreviewModel: root.linkPreviewModel
                         localUnfurlLinks: root.localUnfurlLinks
                         messageStore: root.messageStore

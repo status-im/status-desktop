@@ -31,6 +31,9 @@ QtObject {
     property var devicesStore
     property bool isDevBuild
 
+    signal openExternalLink(string link)
+    signal saveDomainToUnfurledWhitelist(string domain)
+
     property var activePopupComponents: []
 
     Component.onCompleted: {
@@ -288,6 +291,10 @@ QtObject {
 
     function openTransferOwnershipPopup(communityName, communityLogo, token, accounts, sendModalPopup) {
         openPopup(transferOwnershipPopup, { communityName, communityLogo, token, accounts, sendModalPopup })
+    }
+
+    function openConfirmExternalLinkPopup(link, domain) {
+        openPopup(confirmExternalLinkPopup, {link, domain})
     }
 
     readonly property list<Component> _components: [
@@ -750,6 +757,15 @@ QtObject {
             id: transferOwnershipPopup
             TransferOwnershipPopup {
                 onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: confirmExternalLinkPopup
+            ConfirmExternalLinkPopup {
+                destroyOnClose: true
+                onOpenExternalLink: root.openExternalLink(link)
+                onSaveDomainToUnfurledWhitelist: root.saveDomainToUnfurledWhitelist(domain)
             }
         }
     ]

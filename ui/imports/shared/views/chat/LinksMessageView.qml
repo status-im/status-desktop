@@ -116,7 +116,7 @@ Flow {
                             root.imageClicked(unfurledLink, mouse, "", url) // request a dumb context menu with just "copy/open link" items
                             break
                             default:
-                            Global.openLink(url) // FIXME https://github.com/status-im/status-desktop/issues/12388
+                            Global.openLinkWithConfirmation(url, hostname)
                             break
                         }
                     }
