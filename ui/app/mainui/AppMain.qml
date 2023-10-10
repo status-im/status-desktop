@@ -1266,6 +1266,8 @@ Item {
                             sourceComponent: ChatLayout {
                                 id: chatLayoutComponent
 
+                                readonly property bool isManageCommunityEnabledInAdvanced: appMain.rootStore.profileSectionStore.advancedStore.isManageCommunityOnTestModeEnabled
+
                                 Binding {
                                     target: rootDropAreaPanel
                                     property: "enabled"
@@ -1289,8 +1291,8 @@ Item {
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitiesStore: appMain.communitiesStore
-                                communitySettingsDisabled: production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
-
+                                communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
+                                                           (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     communityTokensStore: appMain.communityTokensStore
