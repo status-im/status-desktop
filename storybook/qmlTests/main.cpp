@@ -14,7 +14,7 @@ public slots:
             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
             QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
             QML_IMPORT_ROOT + QStringLiteral("/stubs"),
-            QML_IMPORT_ROOT + QStringLiteral("/mocks"),
+            QML_IMPORT_ROOT + QStringLiteral("/src")
         };
 
         for (const auto& path : additionalImportPaths)

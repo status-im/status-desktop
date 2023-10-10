@@ -2,6 +2,8 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import Storybook 1.0
+
 ToolBar {
     id: root
 
@@ -54,6 +56,56 @@ ToolBar {
 
         ToolSeparator {}
 
+        TestRunnerControls {
+            id: testRunnerControls
+
+            property var testProcess: null
+            readonly property string testFileName: `tst_${root.componentName}.qml`
+
+            onTestFileNameChanged: {
+                if (testRunnerControls.testProcess)
+                    testRunnerControls.testProcess.kill()
+
+                testRunnerControls.mode = TestRunnerControls.Mode.Base
+            }
+
+            onRunClicked: {
+                const testsCount = TestsRunner.testsCount(testFileName)
+
+                if (testsCount === 0)
+                    return noTestsDialog.open()
+
+                testRunnerControls.mode = TestRunnerControls.Mode.InProgress
+
+                const process = TestsRunner.runTests(testFileName)
+                testRunnerControls.testProcess = process
+
+                process.finished.connect((exitCode, exitStatus) => {
+                    if (testRunnerControls.mode !== TestRunnerControls.Mode.InProgress)
+                        return
+
+                    if (exitStatus) {
+                        testRunnerControls.mode = TestRunnerControls.Mode.Crashed
+                        return
+                    }
+
+                    if (exitCode)
+                        testRunnerControls.mode = TestRunnerControls.Mode.Failed
+                    else
+                        testRunnerControls.mode = TestRunnerControls.Mode.Success
+
+                    testRunnerControls.numberOfFailedTests = exitCode
+                })
+            }
+
+            onAbortClicked: {
+                testRunnerControls.testProcess.kill()
+                testRunnerControls.mode = TestRunnerControls.Mode.Aborted
+            }
+        }
+
+        ToolSeparator {}
+
         ToolButton {
             id: openFigmaButton
 
@@ -70,6 +122,23 @@ ToolBar {
             Layout.rightMargin: parent.spacing
 
             onClicked: root.inspectClicked()
+        }
+    }
+
+    Dialog {
+        id: noTestsDialog
+
+        anchors.centerIn: Overlay.overlay
+
+        title: "No tests found"
+        standardButtons: Dialog.Ok
+
+        Label {
+            // check on visible used as a workaround to avoid warning about
+            // binding loop on implicitWidth
+            text: visible
+                  ? `Please add valid tests to <b>${testRunnerControls.testFileName}</b> file`
+                  : ""
         }
     }
 }

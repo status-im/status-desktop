@@ -7,6 +7,7 @@
 #include "figmalinks.h"
 #include "pagesmodel.h"
 #include "sectionsdecoratormodel.h"
+#include "testsrunner.h"
 
 struct PagesModelInitialized : public PagesModel {
     explicit PagesModelInitialized(QObject *parent = nullptr)
@@ -63,6 +64,16 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<CacheCleaner>(
                 "Storybook", 1, 0, "CacheCleaner", cleanerFactory);
+
+    auto runnerFactory = [](QQmlEngine* engine, QJSEngine*) {
+        return new TestsRunner(
+                    QCoreApplication::applicationDirPath() + QStringLiteral("/QmlTests"),
+                    QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests"));
+
+    };
+
+    qmlRegisterSingletonType<TestsRunner>(
+                "Storybook", 1, 0, "TestsRunner", runnerFactory);
 
 #ifdef Q_OS_WIN
     const QUrl url(QUrl::fromLocalFile(QML_IMPORT_ROOT + QStringLiteral("/main.qml")));
