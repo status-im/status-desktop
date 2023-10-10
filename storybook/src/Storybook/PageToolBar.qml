@@ -1,15 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-
-import Storybook 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 ToolBar {
     id: root
 
     property string componentName
-
     property int figmaPagesCount: 0
+
+    required property TestRunnerController testRunnerController
 
     signal figmaPreviewClicked
     signal inspectClicked
@@ -59,49 +58,54 @@ ToolBar {
         TestRunnerControls {
             id: testRunnerControls
 
-            property var testProcess: null
             readonly property string testFileName: `tst_${root.componentName}.qml`
 
             onTestFileNameChanged: {
-                if (testRunnerControls.testProcess)
-                    testRunnerControls.testProcess.kill()
+                if (testRunnerController.running)
+                    testRunnerController.abort()
 
                 testRunnerControls.mode = TestRunnerControls.Mode.Base
             }
 
-            onRunClicked: {
-                const testsCount = TestsRunner.testsCount(testFileName)
+            Connections {
+                target: testRunnerController
 
-                if (testsCount === 0)
-                    return noTestsDialog.open()
+                function onStarted() {
+                    testRunnerControls.mode = TestRunnerControls.Mode.InProgress
+                }
 
-                testRunnerControls.mode = TestRunnerControls.Mode.InProgress
-
-                const process = TestsRunner.runTests(testFileName)
-                testRunnerControls.testProcess = process
-
-                process.finished.connect((exitCode, exitStatus) => {
+                function onFinished(failedTests, aborted, crashed) {
                     if (testRunnerControls.mode !== TestRunnerControls.Mode.InProgress)
                         return
 
-                    if (exitStatus) {
+                    if (aborted) {
+                        testRunnerControls.mode = TestRunnerControls.Mode.Aborted
+                        return
+                    }
+
+                    if (crashed) {
                         testRunnerControls.mode = TestRunnerControls.Mode.Crashed
                         return
                     }
 
-                    if (exitCode)
-                        testRunnerControls.mode = TestRunnerControls.Mode.Failed
-                    else
-                        testRunnerControls.mode = TestRunnerControls.Mode.Success
+                    testRunnerControls.mode = failedTests
+                            ? TestRunnerControls.Mode.Failed
+                            : TestRunnerControls.Mode.Success
 
-                    testRunnerControls.numberOfFailedTests = exitCode
-                })
+                    testRunnerControls.numberOfFailedTests = failedTests
+                }
             }
 
-            onAbortClicked: {
-                testRunnerControls.testProcess.kill()
-                testRunnerControls.mode = TestRunnerControls.Mode.Aborted
+            onRunClicked: {
+                const testsCount = testRunnerController.getTestsCount(testFileName)
+
+                if (testsCount === 0)
+                    return noTestsDialog.open()
+
+                testRunnerController.runTests(testFileName)
             }
+
+            onAbortClicked: testRunnerController.abort()
         }
 
         ToolSeparator {}
@@ -141,7 +145,7 @@ ToolBar {
                   : ""
         }
 
-        onAccepted: Qt.openUrlExternally(Qt.resolvedUrl(TestsRunner.testsPath()))
+        onAccepted: Qt.openUrlExternally(testRunnerController.getTestsPath())
         Component.onCompleted: standardButton(Dialog.Ok).text = "Open tests folder"
     }
 }
