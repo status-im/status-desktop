@@ -89,6 +89,10 @@ ApplicationWindow {
         onReloaded: hotReloaderControls.notifyReload()
     }
 
+    TestRunnerController {
+        id: testRunnerController
+    }
+
     SplitView {
         anchors.fill: parent
 
@@ -189,6 +193,8 @@ ApplicationWindow {
                 componentName: root.currentPage
                 figmaPagesCount: currentPageModelItem.object
                                  ? currentPageModelItem.object.figma.count : 0
+
+                testRunnerController: testRunnerController
 
                 Instantiator {
                     id: currentPageModelItem

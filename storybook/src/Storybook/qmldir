@@ -25,6 +25,7 @@ PopupBackground 1.0 PopupBackground.qml
 SettingsLayout 1.0 SettingsLayout.qml
 SingleItemProxyModel 1.0 SingleItemProxyModel.qml
 SourceCodeBox 1.0 SourceCodeBox.qml
+TestRunnerController 1.0 TestRunnerController.qml
 TestRunnerControls 1.0 TestRunnerControls.qml
 singleton FigmaUtils 1.0 FigmaUtils.qml
 singleton InspectionUtils 1.0 InspectionUtils.qml
