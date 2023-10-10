@@ -15,8 +15,10 @@ pipeline {
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
 
-    CREDS = credentials('test-rail-api-devops')
+    TESTRAIL_CREDS = credentials('test-rail-api-devops')
     TESTRAIL_URL = "https://ethstatus.testrail.net"
+
+    CI_CREDS = credentials('status-im-auto')
   }
 
   parameters {
@@ -35,8 +37,8 @@ pipeline {
     )
     string(
       name: 'BUILD',
-      description: 'Paste a number of PR that you want to test.',
-      defaultValue: 'PR-'
+      description: 'Link to tar.gz file.',
+      defaultValue: ''
     )
     string(
       name: 'TEST_NAME',
@@ -68,19 +70,19 @@ pipeline {
   }
 
   stages {
-
     stage('Download') {
-      steps { script {
-        copyArtifacts(
-          projectName: "status-desktop/branches/linux/x86_64/package/${params.BUILD}/",
-          filter: 'pkg/*-x86_64.tar.gz',
-          selector: lastWithArtifacts(),
-          target: "${env.WORKSPACE}/tmp"
-        )
-        def pkg_path = "${env.WORKSPACE}/${utils.findFile('tmp/pkg/*-x86_64.tar.gz')}"
-        sh "tar -zxvf '${pkg_path}' -C '${env.WORKSPACE}/tmp'"
-        env.APP_DIR = "${env.WORKSPACE}/${utils.findFile('tmp/*.AppImage')}"
-      } }
+      steps {
+        script {
+          sh "mkdir '${env.WORKSPACE}/tmp/'"
+        }
+        fileOperations([
+          fileDownloadOperation(url:"${params.BUILD}", userName:"${CI_CREDS_USR}", password:"${CI_CREDS_PSW}", targetLocation:"./tmp", targetFileName:"StatusIm-Desktop.tar.gz", proxyHost:"", proxyPort:"")
+        ])
+        script {
+          sh "tar -zxvf '${env.WORKSPACE}/tmp/StatusIm-Desktop.tar.gz' -C '${env.WORKSPACE}/tmp'"
+          env.APP_DIR = "${env.WORKSPACE}/${utils.findFile('tmp/*.AppImage')}"
+        }
+      }
     }
 
     stage('Setup') {
@@ -98,8 +100,8 @@ pipeline {
         additionalOptions: '-dpi 1'
       ]) { script {
         sh "fluxbox &"
-        env.TESTRAIL_USR = "${CREDS_USR}"
-        env.TESTRAIL_PWD = "${CREDS_PSW}"
+        env.TESTRAIL_USR = "${TESTRAIL_CREDS_USR}"
+        env.TESTRAIL_PWD = "${TESTRAIL_CREDS_PSW}"
         def cmd = ''
         if (params.TEST_NAME != "") {
           cmd = cmd + " -k ${params.TEST_NAME}"
