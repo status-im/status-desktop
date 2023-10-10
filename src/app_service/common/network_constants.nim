@@ -180,7 +180,7 @@ var NETWORKS* = %* [
     "blockExplorerUrl": "https://sepolia.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#51D0F0",
-    "shortName": "sep",
+    "shortName": "eth",
     "nativeCurrencyName": "Ether",
     "nativeCurrencySymbol": "ETH",
     "nativeCurrencyDecimals": 18,
@@ -188,6 +188,23 @@ var NETWORKS* = %* [
     "layer":   1,
     "enabled": true,
     "relatedChainId": 1,
+   },
+   {
+    "chainId": 421614,
+    "chainName": "Arbitrum",
+    "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+    "fallbackUrl": "",
+    "blockExplorerUrl": "https://sepolia-explorer.arbitrum.io/",
+    "iconUrl": "network/Network=Arbitrum",
+    "chainColor": "#51D0F0",
+    "shortName": "arb",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  true,
+    "layer":   2,
+    "enabled": false,
+    "relatedChainId": 42161,
   }
 ]
 
