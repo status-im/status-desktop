@@ -17,7 +17,6 @@ QtObject:
       colorId: string
       emoji: string
       isAllAccounts: bool
-      includeWatchOnly: bool
       colorIds: string
       isWatchOnlyAccount: bool
 
@@ -99,13 +98,6 @@ QtObject:
     read = getIsAllAccounts
     notify = isAllAccountsChanged
 
-  proc getIncludeWatchOnly(self: View): QVariant {.slot.} =
-    return newQVariant(self.includeWatchOnly)
-  proc includeWatchOnlyChanged(self: View) {.signal.}
-  QtProperty[QVariant] includeWatchOnly:
-    read = getIncludeWatchOnly
-    notify = includeWatchOnlyChanged
-
   proc getColorIds(self: View): QVariant {.slot.} =
     return newQVariant(self.colorIds)
   proc colorIdsChanged(self: View) {.signal.}
@@ -147,6 +139,3 @@ QtObject:
     if(self.isAllAccounts != item.getIsAllAccounts()):
       self.isAllAccounts = item.getIsAllAccounts()
       self.isAllAccountsChanged()
-    if(self.includeWatchOnly != item.getIncludeWatchOnly()):
-      self.includeWatchOnly = item.getIncludeWatchOnly()
-      self.includeWatchOnlyChanged()

@@ -378,4 +378,8 @@ QtObject {
         }
         return prefChains
     }
+
+    function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
+        walletSectionAccounts.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+    }
 }

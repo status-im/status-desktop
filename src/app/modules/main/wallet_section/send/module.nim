@@ -227,6 +227,9 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
+    self.refreshWalletAccounts()
+
   self.controller.init()
   self.view.load()
 

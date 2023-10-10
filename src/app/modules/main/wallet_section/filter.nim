@@ -27,17 +27,11 @@ proc `$`*(self: Filter): string =
 
 proc setFillterAllAddresses*(self: Filter) = 
   self.allAddresses = true
-  self.addresses = self.controller.getWalletAccounts().map(a => a.address)
-
-proc toggleWatchOnlyAccounts*(self: Filter) =
-  self.controller.toggleIncludeWatchOnlyAccount()
-
-proc includeWatchOnlyToggled*(self: Filter) =
-  let includeWatchOnly = self.controller.isIncludeWatchOnlyAccount()
-  if includeWatchOnly:
-    self.setFillterAllAddresses()
-  else:
-    self.addresses = self.controller.getWalletAccounts().filter(a => a.walletType != "watch").map(a => a.address)
+  var allAccounts = self.controller.getWalletAccounts()
+  var accountsExclWatchAccs = allAccounts.filter(a => not a.hideFromTotalBalance)
+  if allAccounts.len != accountsExclWatchAccs.len:
+    self.allAddresses = false
+  self.addresses = self.controller.getWalletAccounts().filter(a => not a.hideFromTotalBalance).map(a => a.address)
 
 proc setAddress*(self: Filter, address: string) =
   self.allAddresses = false
@@ -58,5 +52,5 @@ proc updateNetworks*(self: Filter) =
   self.allChainsEnabled = (self.chainIds.len == self.controller.getNetworks().len)
 
 proc load*(self: Filter) =
-  self.includeWatchOnlyToggled()
+  self.setFillterAllAddresses()
   self.updateNetworks()

@@ -18,10 +18,8 @@ Rectangle {
     property bool hasPairedDevices
     property var getNetworkShortNames: function(chainIds){}
     property string userProfilePublicKey
-    property bool includeWatchOnlyAccount
 
     signal goToAccountView(var account)
-    signal toggleIncludeWatchOnlyAccount()
     signal runExportQrFlow()
     signal runImportViaQrFlow()
     signal runImportViaSeedPhraseFlow()
@@ -98,16 +96,6 @@ Rectangle {
                             onRunStopUsingKeycardFlow: root.runStopUsingKeycardFlow()
                         }
                     }
-                },
-                StatusBaseText {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("Include in total balance")
-                    visible: d.isWatchOnly
-                },
-                StatusSwitch {
-                    visible: d.isWatchOnly
-                    checked: root.includeWatchOnlyAccount
-                    onClicked: root.toggleIncludeWatchOnlyAccount()
                 }
             ]
         }
@@ -120,6 +108,7 @@ Rectangle {
             model: d.relatedAccounts
             delegate: WalletAccountDelegate {
                 width: ListView.view.width
+                label: keyPair.pairType !== Constants.keypair.type.watchOnly ? "" : model.account.hideFromTotalBalance ? qsTr("Excl. from total balance"): qsTr("Incl. in total balance")
                 account: model.account
                 totalCount: ListView.view.count
                 getNetworkShortNames: root.getNetworkShortNames

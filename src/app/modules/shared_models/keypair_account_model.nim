@@ -141,3 +141,8 @@ QtObject:
           self.items[i].setProdPreferredChainIds(prodPreferredChainIds)
         if testPreferredChainIds.len > 0:
           self.items[i].setTestPreferredChainIds(testPreferredChainIds)
+
+  proc updateAccountHiddenInTotalBalance*(self: KeyPairAccountModel, address: string, hideFromTotalBalance: bool) =
+    for i in 0 ..< self.items.len:
+      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
+        self.items[i].setHideFromTotalBalance(hideFromTotalBalance)

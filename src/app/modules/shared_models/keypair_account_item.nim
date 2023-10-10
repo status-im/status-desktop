@@ -20,13 +20,14 @@ QtObject:
     areTestNetworksEnabled: bool
     prodPreferredChainIds: string
     testPreferredChainIds: string
+    hideFromTotalBalance: bool
 
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 
   proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
     balance = newCurrencyAmount(), balanceFetched = true, operability = wa_dto.AccountFullyOperable,
-    isDefaultAccount = false, areTestNetworksEnabled =false, prodPreferredChainIds = "", testPreferredChainIds = ""): KeyPairAccountItem =
+    isDefaultAccount = false, areTestNetworksEnabled =false, prodPreferredChainIds = "", testPreferredChainIds = "", hideFromTotalBalance = false): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -43,6 +44,7 @@ QtObject:
     result.areTestNetworksEnabled = areTestNetworksEnabled
     result.prodPreferredChainIds = prodPreferredChainIds
     result.testPreferredChainIds = testPreferredChainIds
+    result.hideFromTotalBalance = hideFromTotalBalance
 
   proc `$`*(self: KeyPairAccountItem): string =
     result = fmt"""KeyPairAccountItem[
@@ -59,7 +61,8 @@ QtObject:
       isDefaultAccount: {self.isDefaultAccount},
       areTestNetworksEnabled: {self.areTestNetworksEnabled},
       prodPreferredChainIds: {self.prodPreferredChainIds},
-      testPreferredChainIds: {self.testPreferredChainIds}
+      testPreferredChainIds: {self.testPreferredChainIds},
+      hideFromTotalBalance: {self.hideFromTotalBalance}
       ]"""
 
   proc nameChanged*(self: KeyPairAccountItem) {.signal.}
@@ -191,3 +194,13 @@ QtObject:
   QtProperty[string] preferredSharingChainIds:
     read = preferredSharingChainIds
     notify = preferredSharingChainIdsChanged
+
+  proc hideFromTotalBalanceChanged*(self: KeyPairAccountItem) {.signal.}
+  proc hideFromTotalBalance*(self: KeyPairAccountItem): bool {.slot.} =
+    return self.hideFromTotalBalance
+  proc setHideFromTotalBalance*(self: KeyPairAccountItem, value: bool) =
+    self.hideFromTotalBalance = value
+    self.hideFromTotalBalanceChanged()
+  QtProperty[bool] hideFromTotalBalance:
+    read = hideFromTotalBalance
+    notify = hideFromTotalBalanceChanged

@@ -13,7 +13,6 @@ QtObject:
       accounts: Model
       accountsVariant: QVariant
       keyPairModel: KeyPairModel
-      includeWatchOnlyAccount: bool
 
   proc delete*(self: View) =
     self.accounts.delete
@@ -57,6 +56,9 @@ QtObject:
   proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
     self.keyPairModel.onPreferredSharingChainsUpdated(keyUid, address, prodPreferredChainIds, testPreferredChainIds)
 
+  proc onHideFromTotalBalanceUpdated*(self: View, keyUid, address: string, hideFromTotalBalance: bool) =
+    self.keyPairModel.onHideFromTotalBalanceUpdated(keyUid, address, hideFromTotalBalance)
+
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
 
@@ -76,20 +78,6 @@ QtObject:
   proc setKeyPairModelItems*(self: View, items: seq[KeyPairItem]) =
     self.keyPairModel.setItems(items)
     self.keyPairModelChanged()
-
-  proc includeWatchOnlyAccountChanged*(self: View) {.signal.}
-  proc getIncludeWatchOnlyAccount(self: View): bool {.slot.} =
-    return self.includeWatchOnlyAccount
-  QtProperty[bool] includeWatchOnlyAccount:
-    read = getIncludeWatchOnlyAccount
-    notify = includeWatchOnlyAccountChanged
-
-  proc toggleIncludeWatchOnlyAccount*(self: View) {.slot.} =
-    self.delegate.toggleIncludeWatchOnlyAccount()
-
-  proc setIncludeWatchOnlyAccount*(self: View, includeWatchOnlyAccount: bool) =
-    self.includeWatchOnlyAccount = includeWatchOnlyAccount
-    self.includeWatchOnlyAccountChanged()
 
   proc keypairNameExists*(self: View, name: string): bool {.slot.} =
     return self.keyPairModel.keypairNameExists(name)
@@ -111,3 +99,6 @@ QtObject:
 
   proc setBalanceForKeyPairs*(self: View, address: string, balance: CurrencyAmount) =
     self.keyPairModel.setBalanceForAddress(address, balance)
+
+  proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
+    self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

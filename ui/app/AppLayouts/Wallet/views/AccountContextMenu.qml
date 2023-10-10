@@ -5,6 +5,8 @@ import StatusQ.Popups 0.1
 
 import "../stores"
 
+import utils 1.0
+
 StatusMenu {
     id: root
 
@@ -14,6 +16,7 @@ StatusMenu {
     signal deleteAccountClicked()
     signal addNewAccountClicked()
     signal addWatchOnlyAccountClicked()
+    signal hideFromTotalBalanceClicked(string address, bool hideFromTotalBalance)
 
     width: 204
 
@@ -40,6 +43,14 @@ StatusMenu {
         onTriggered: {
             root.editAccountClicked()
         }
+    }   
+
+    StatusAction {
+        objectName: "AccountMenu-HideFromTotalBalance-%1".arg(root.uniqueIdentifier)
+        enabled: !!root.account && root.account.walletType === Constants.watchWalletType
+        text: !!root.account ? root.account.hideFromTotalBalance ? qsTr("Include in total balance"): qsTr("Exclude from total balance"): ""
+        icon.name: !!root.account ? root.account.hideFromTotalBalance ? "show" : "hide": ""
+        onTriggered: root.hideFromTotalBalanceClicked(root.account.address, !root.account.hideFromTotalBalance)
     }
 
     StatusAction {

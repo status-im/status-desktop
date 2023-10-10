@@ -29,6 +29,7 @@ ColumnLayout {
     signal runImportMissingKeypairFlow()
     signal runMoveKeypairToKeycardFlow()
     signal runStopUsingKeycardFlow()
+    signal updateWatchAccountHiddenFromTotalBalance(string address, bool hideFromTotalBalance)
 
     property var account
     property var keyPair
@@ -218,6 +219,27 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
+        title: qsTr("Include in total balance")
+        visible: d.watchOnlyAccount
+        color: Theme.palette.transparent
+        components: [
+            StatusSwitch {
+                checked: !!root.account && !account.hideFromTotalBalance
+                onToggled: root.updateWatchAccountHiddenFromTotalBalance(account.address, !checked)
+            }
+        ]
+    }
+
+    Separator {
+        visible: d.watchOnlyAccount
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Theme.palette.baseColor2
+    }
+
+    StatusListItem {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.halfPadding
         title: qsTr("Preferred networks when sharing this address")
         color: Theme.palette.transparent
         components: [

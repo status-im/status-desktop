@@ -48,7 +48,6 @@ SplitView {
                                                               displayDecimals: 4,
                                                               stripTrailingZeroes: false}),
                                         isAllAccounts: false,
-                                        includeWatchOnly: false
                                     })
 
             function getNameForAddress(address) {

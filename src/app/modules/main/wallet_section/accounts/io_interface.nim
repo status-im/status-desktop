@@ -36,3 +36,6 @@ method updateWalletAccountProdPreferredChains*(self: AccessInterface, address, p
 
 method updateWalletAccountTestPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateWatchAccountHiddenFromTotalBalance*(self: AccessInterface, address: string, hideFromTotalBalance: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

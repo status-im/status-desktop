@@ -47,7 +47,7 @@ QtObject:
   QtProperty[string] currentCurrency:
     read = getCurrentCurrency
 
-  proc filterChanged*(self: View, addresses: string, includeWatchOnly: bool, allAddresses: bool)  {.signal.}
+  proc filterChanged*(self: View, addresses: string, allAddresses: bool)  {.signal.}
 
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
@@ -75,9 +75,6 @@ QtObject:
 
   proc setFillterAllAddresses(self: View) {.slot.} =
     self.delegate.setFillterAllAddresses()
-
-  proc toggleWatchOnlyAccounts(self: View) {.slot.} =
-    self.delegate.toggleWatchOnlyAccounts()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance

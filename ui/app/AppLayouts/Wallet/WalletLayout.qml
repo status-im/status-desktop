@@ -30,7 +30,7 @@ Item {
     Connections {
         target: walletSection
 
-        function onFilterChanged(address, includeWatchOnly, allAddresses) {
+        function onFilterChanged(address, allAddresses) {
             root.showAllAccounts = allAddresses
         }
 

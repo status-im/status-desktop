@@ -70,3 +70,6 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 
 proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
   return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+
+proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string, hideFromTotalBalance: bool) =
+  discard self.walletAccountService.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)

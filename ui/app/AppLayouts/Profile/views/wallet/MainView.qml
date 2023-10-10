@@ -223,9 +223,7 @@ Column {
                 hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
                 getNetworkShortNames: walletStore.getNetworkShortNames
                 userProfilePublicKey: walletStore.userProfilePublicKey
-                includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
                 onGoToAccountView: root.goToAccountView(account, keyPair)
-                onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
                 onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
                 onRunImportViaSeedPhraseFlow: {

@@ -21,9 +21,6 @@ method setFilterAddress*(self: AccessInterface, address: string) {.base.} =
 method setFillterAllAddresses*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleWatchOnlyAccounts*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

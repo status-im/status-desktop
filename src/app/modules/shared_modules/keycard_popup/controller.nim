@@ -744,16 +744,6 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
       self.tmpKeycardUid = keycardUid
       info "update keycard uid failed", oldKeycardUid=self.tmpKeycardUid, newKeycardUid=keycardUid
 
-proc addWalletAccount*(self: Controller, name, address, path, publicKey, keyUid, accountType, colorId, emoji: string): bool =
-  if not serviceApplicable(self.walletAccountService):
-    return false
-  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, address, path,
-    publicKey, keyUid, accountType, colorId, emoji)
-  if err.len > 0:
-    info "adding wallet account failed", name=name, path=path
-    return false
-  return true
-
 proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string,
   accounts: seq[WalletAccountDto]): bool =
   let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid,

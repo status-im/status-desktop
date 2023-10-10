@@ -599,6 +599,7 @@ proc doAddAccount[T](self: Module[T]) =
     keyUid = selectedOrigin.getKeyUid()
     createKeystoreFile = not selectedOrigin.getMigratedToKeycard()
     doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser()
+    hideFromTotalBalance = false
 
   if selectedOrigin.getPairType() == KeyPairType.Profile.int:
     accountType = account_constants.GENERATED
@@ -616,6 +617,7 @@ proc doAddAccount[T](self: Module[T]) =
     addingNewKeyPair = not self.isKeyPairAlreadyAdded(keyUid)
   else:
     accountType = account_constants.WATCH
+    hideFromTotalBalance = true
     createKeystoreFile = false
     doPasswordHashing = false
     keypairName = ""
@@ -678,7 +680,8 @@ proc doAddAccount[T](self: Module[T]) =
       keyUid = keyUid,
       accountType = accountType,
       colorId = self.view.getSelectedColorId(),
-      emoji = self.view.getSelectedEmoji())
+      emoji = self.view.getSelectedEmoji(),
+      hideFromTotalBalance = hideFromTotalBalance)
     if not success:
       error "failed to store account", address=selectedAddrItem.getAddress()
 

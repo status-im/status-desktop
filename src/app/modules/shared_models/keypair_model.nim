@@ -88,10 +88,16 @@ QtObject:
         item.updateOperabilityForAllAddresses(operability)
         break
 
-  proc onPreferredSharingChainsUpdated*(self: KeyPairModel,keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
+  proc onPreferredSharingChainsUpdated*(self: KeyPairModel, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
     for item in self.items:
       if keyUid == item.getKeyUid():
         item.getAccountsModel().updatePreferredSharingChainsForAddress(address, prodPreferredChainIds, testPreferredChainIds)
+        break
+
+  proc onHideFromTotalBalanceUpdated*(self: KeyPairModel, keyUid, address: string, hideFromTotalBalance: bool) =
+    for item in self.items:
+      if keyUid == item.getKeyUid():
+        item.getAccountsModel().updateAccountHiddenInTotalBalance(address, hideFromTotalBalance)
         break
 
   proc keypairNameExists*(self: KeyPairModel, name: string): bool =

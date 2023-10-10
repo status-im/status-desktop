@@ -319,18 +319,18 @@ proc updatePreferredSharingChainsAndNotify(self: Service, address, prodPreferred
 
 ## if password is not provided local keystore file won't be created
 proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
-  keyUid, accountType, colorId, emoji: string): string =
+  keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool): string =
   try:
     var response: RpcResponse[JsonNode]
     if password.len == 0:
       response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, address, path, publicKey, keyUid,
-        accountType, colorId, emoji)
+        accountType, colorId, emoji, hideFromTotalBalance)
     else:
       var finalPassword = password
       if doPasswordHashing:
         finalPassword = utils.hashPassword(password)
       response = status_go_accounts.addAccount(finalPassword, name, address, path, publicKey, keyUid, accountType,
-        colorId, emoji)
+        colorId, emoji, hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
       return response.error.message
@@ -546,7 +546,7 @@ proc updateWalletAccount*(self: Service, address: string, accountName: string, c
       error "account's address is not among known addresses: ", address=address, procName="updateWalletAccount"
       return false
     let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds)
+      account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds, account.hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
       return false
@@ -563,7 +563,7 @@ proc updateWalletAccountProdPreferredChains*(self: Service, address, preferredCh
       error "account's address is not among known addresses: ", address=address, procName="updateWalletAccountProdPreferredChains"
       return false
     let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, preferredChainIds, account.testPreferredChainIds)
+      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, preferredChainIds, account.testPreferredChainIds, account.hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccountProdPreferredChains", errCode=response.error.code, errDesription=response.error.message
       return false
@@ -580,7 +580,7 @@ proc updateWalletAccountTestPreferredChains*(self: Service, address, preferredCh
       error "account's address is not among known addresses: ", address=address, procName="updateWalletAccountTestPreferredChains"
       return false
     let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, preferredChainIds)
+      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, preferredChainIds, account.hideFromTotalBalance)
     if not response.error.isNil:
       error "status-go error", procName="updateWalletAccountTestPreferredChains", errCode=response.error.code, errDesription=response.error.message
       return false
@@ -588,6 +588,25 @@ proc updateWalletAccountTestPreferredChains*(self: Service, address, preferredCh
     return true
   except Exception as e:
     error "error: ", procName="updateWalletAccountTestPreferredChains", errName=e.name, errDesription=e.msg
+  return false
+
+proc updateWatchAccountHiddenFromTotalBalance*(self: Service, address: string, hideFromTotalBalance: bool): bool =
+  try:
+    var account = self.getAccountByAddress(address)
+    if account.isNil:
+      error "account's address is not among known addresses: ", address=address, procName="updateWatchAccountHiddenFromTotalBalance"
+      return false
+    let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
+      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds, hideFromTotalBalance)
+    if not response.error.isNil:
+      error "status-go error", procName="updateWatchAccountHiddenFromTotalBalance", errCode=response.error.code, errDesription=response.error.message
+      return false
+    if hideFromTotalBalance != account.hideFromTotalBalance:
+      account.hideFromTotalBalance = hideFromTotalBalance
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED, AccountArgs(account: account))
+    return true
+  except Exception as e:
+    error "error: ", procName="updateWatchAccountHiddenFromTotalBalance", errName=e.name, errDesription=e.msg
   return false
 
 proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
@@ -723,12 +742,6 @@ proc handleKeypair(self: Service, keypair: KeypairDto) =
 
   # notify all interested parts about the keypair change
   self.events.emit(SIGNAL_KEYPAIR_SYNCED, KeypairArgs(keypair: keypair))
-
-proc isIncludeWatchOnlyAccount*(self: Service): bool =
-  return self.settingsService.isIncludeWatchOnlyAccount()
-
-proc toggleIncludeWatchOnlyAccount*(self: Service) =
-  self.settingsService.toggleIncludeWatchOnlyAccount()
 
 proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
   let response = parseJson(jsonString)

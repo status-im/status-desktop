@@ -163,31 +163,22 @@ method getCurrentCurrency*(self: Module): string =
   self.controller.getCurrency()
 
 method setTotalCurrencyBalance*(self: Module) =
-  var addresses: seq[string] = @[]
   let walletAccounts = self.controller.getWalletAccounts()
-  if self.controller.isIncludeWatchOnlyAccount():
-    addresses = walletAccounts.map(a => a.address)
-  else:
-    addresses = walletAccounts.filter(a => a.walletType != "watch").map(a => a.address)
-
+  var addresses = walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(addresses))
 
 method notifyFilterChanged(self: Module) =
-  let includeWatchOnly = self.controller.isIncludeWatchOnlyAccount()
-  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, includeWatchOnly, self.filter.allAddresses)
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allAddresses)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.collectiblesController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
   if self.filter.addresses.len > 0:
-    self.view.filterChanged(self.filter.addresses[0], includeWatchOnly, self.filter.allAddresses)
+    self.view.filterChanged(self.filter.addresses[0], self.filter.allAddresses)
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
-
-method toggleWatchOnlyAccounts*(self: Module) =
-  self.filter.toggleWatchOnlyAccounts()
 
 method setFilterAddress*(self: Module, address: string) =
   let keypair = self.controller.getKeypairByAccountAddress(address)
@@ -247,10 +238,6 @@ method load*(self: Module) =
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
-    self.filter.includeWatchOnlyToggled()
-    self.notifyFilterChanged()
-    self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do (e:Args):
     self.view.setIsNonArchivalNode(true)
   self.events.on(SIGNAL_TRANSACTION_DECODED) do(e: Args):
@@ -263,7 +250,11 @@ method load*(self: Module) =
     self.onUpdatedKeypairsOperability(args.keypairs)
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e:Args):
     let data = LocalPairingStatus(e)
-    self.onLocalPairingStatusUpdate(data)
+    self.onLocalPairingStatusUpdate(data)    
+  self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
+    self.filter.setFillterAllAddresses()
+    self.notifyFilterChanged()
+    self.setTotalCurrencyBalance()
 
   self.controller.init()
   self.view.load()

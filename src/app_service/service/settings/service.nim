@@ -27,7 +27,6 @@ const SIGNAL_BIO_UPDATED* = "bioUpdated"
 const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
-const SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED* = "includeWatchOnlyAccounts"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 
 logScope:
@@ -114,9 +113,6 @@ QtObject:
           if settingsField.name == KEY_MNEMONIC:
             self.settings.mnemonic = ""
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
-          if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
-            self.settings.includeWatchOnlyAccount = settingsField.value.getBool
-            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: self.settings.includeWatchOnlyAccount))
           if settingsField.name == PROFILE_MIGRATION_NEEDED:
             self.settings.profileMigrationNeeded = settingsField.value.getBool
             self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
@@ -983,15 +979,6 @@ QtObject:
       data.error = e.msg
       error "error saving social links", errDescription=data.error
     self.storeSocialLinksAndNotify(data)
-
-  proc isIncludeWatchOnlyAccount*(self: Service): bool =
-    return self.settings.includeWatchOnlyAccount
-
-  proc toggleIncludeWatchOnlyAccount*(self: Service) =
-    let newValue = not self.settings.includeWatchOnlyAccount
-    if(self.saveSetting(INCLUDE_WATCH_ONLY_ACCOUNT, newValue)):
-      self.settings.includeWatchOnlyAccount = newValue
-      self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: newValue))
 
   proc getProfileMigrationNeeded*(self: Service): bool =
     self.settings.profileMigrationNeeded
