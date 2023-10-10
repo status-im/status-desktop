@@ -499,7 +499,13 @@ QtObject:
       error "Error deleting channel", chatId, msg = e.msg
       return
 
-  proc sendImages*(self: Service, chatId: string, imagePathsAndDataJson: string, msg: string, replyTo: string): string =
+  proc sendImages*(self: Service, 
+                   chatId: string, 
+                   imagePathsAndDataJson: string, 
+                   msg: string, 
+                   replyTo: string,
+                   preferredUsername: string = "",
+                   linkPreviews: seq[LinkPreview] = @[]): string =
     result = ""
     try:
       var images = Json.decode(imagePathsAndDataJson, seq[string])
@@ -511,7 +517,7 @@ QtObject:
         if imagePath != "":
           imagePaths.add(imagePath)
 
-      let response = status_chat.sendImages(chatId, imagePaths, msg, replyTo)
+      let response = status_chat.sendImages(chatId, imagePaths, msg, replyTo, preferredUsername, linkPreviews)
 
       for imagePath in imagePaths:
         removeFile(imagePath)
