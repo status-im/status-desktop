@@ -11,6 +11,7 @@ public:
 
     Q_INVOKABLE int testsCount(const QString& path);
     Q_INVOKABLE QObject* runTests(const QString& path);
+    Q_INVOKABLE QString testsPath() const;
 
 private:
     QString m_testRunnerExecutablePath;
