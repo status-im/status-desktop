@@ -36,7 +36,8 @@ bool QClipboardProxy::hasHtml() const
 
 QString QClipboardProxy::html() const
 {
-    return m_clipboard->mimeData()->html();
+    auto mimeData = m_clipboard->mimeData();
+    return mimeData ? mimeData->html() : QString{};
 }
 
 bool QClipboardProxy::hasImage() const
