@@ -8,6 +8,13 @@ type
     EntryType
     Visibility
     Order
+    Name
+    SecondaryTitle
+    Image
+    Emoji
+    ColorId
+    Color
+    BackgroundColor
 
 QtObject:
   type
@@ -81,6 +88,13 @@ QtObject:
       ModelRole.EntryType.int: "entryType",
       ModelRole.Visibility.int: "visibility",
       ModelRole.Order.int: "order",
+      ModelRole.Name.int: "name",
+      ModelRole.SecondaryTitle.int: "secondaryTitle",
+      ModelRole.Image.int: "image",
+      ModelRole.Emoji.int: "emoji",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.Color.int: "color",
+      ModelRole.BackgroundColor.int: "backgroundColor"
     }.toTable
 
   method data(self: ProfileShowcasePreferencesModel, index: QModelIndex, role: int): QVariant =
@@ -102,3 +116,17 @@ QtObject:
       result = newQVariant(item.visibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Name:
+      result = newQVariant(item.name)
+    of ModelRole.SecondaryTitle:
+      result = newQVariant(item.secondaryTitle)
+    of ModelRole.Image:
+      result = newQVariant(item.image)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)
+    of ModelRole.Color:
+      result = newQVariant(item.color)
+    of ModelRole.BackgroundColor:
+      result = newQVariant(item.backgroundColor)

@@ -6,7 +6,15 @@ type
     entryType*: ProfileShowcaseEntryType
     visibility*: ProfileShowcaseVisibility
     order*: int
+    name*: string
+    secondaryTitle*: string
+    image*: string
+    emoji*: string
+    colorId*: string
+    color*: string
+    backgroundColor*: string
 
+# TODO: different init functions for different content
 proc initProfileShowcasePreferencesItem*(dto: ProfileShowcaseEntryDto): ProfileShowcasePreferencesItem =
   result = ProfileShowcasePreferencesItem()
   result.id = dto.id
@@ -25,3 +33,24 @@ proc visibility*(self: ProfileShowcasePreferencesItem): ProfileShowcaseVisibilit
 
 proc order*(self: ProfileShowcasePreferencesItem): int {.inline.} =
   self.order
+
+proc name*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.name
+
+proc secondaryTitle*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.secondaryTitle
+
+proc image*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.image
+
+proc emoji*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.emoji
+
+proc colorId*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.colorId
+
+proc color*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.color
+
+proc backgroundColor*(self: ProfileShowcasePreferencesItem): string {.inline.} =
+  self.backgroundColor

@@ -4,6 +4,20 @@ import utils 1.0
 QtObject {
     id: root
 
+    enum ProfileShowcaseEntryType {
+        Community = 0,
+        Account = 1,
+        Collectible = 2,
+        Asset = 3
+    }
+
+    enum ProfileShowcaseVisibility {
+        NoOne = 0,
+        IDVerifiedContacts = 1,
+        Contacts = 2,
+        Everyone = 3
+    }
+
     property var profileModule
 
     property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
@@ -25,10 +39,7 @@ QtObject {
     readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
-    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
-    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
-    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
-    readonly property var profileShowcaseTokensModel: profileModule.profileShowcaseTokensModel
+    readonly property var profileShowcasePreferencesModel: profileModule.profileShowcasePreferencesModel
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 

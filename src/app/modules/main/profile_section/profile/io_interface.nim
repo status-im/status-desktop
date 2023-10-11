@@ -1,7 +1,7 @@
 import NimQml
 import app_service/common/social_links
 
-import app_service/service/profile/dto/profile_showcase_entry
+import models/profile_preferences_item
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -43,7 +43,7 @@ method saveSocialLinks*(self: AccessInterface) {.base.} =
 method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setShowcasePreferences*(self: AccessInterface, items: seq[ProfileShowcaseEntryDto]) {.base.} =
+method setShowcasePreferences*(self: AccessInterface, items: seq[ProfileShowcasePreferencesItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
