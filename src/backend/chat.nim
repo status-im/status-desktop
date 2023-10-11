@@ -82,16 +82,22 @@ proc sendChatMessage*(
     }
   ])
 
-proc sendImages*(chatId: string, images: var seq[string], msg: string, replyTo: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc sendImages*(chatId: string, 
+                 images: var seq[string], 
+                 msg: string, 
+                 replyTo: string,
+                 preferredUsername: string,
+                 linkPreviews: seq[LinkPreview],
+                 ): RpcResponse[JsonNode] {.raises: [Exception].} =
   let imagesJson = %* images.map(image => %*
       {
         "chatId": chatId,
         "contentType": 7, # TODO how do we unhardcode this
         "imagePath": image,
-        # TODO is this still needed
-        # "ensName": preferredUsername,
+        "ensName": preferredUsername,
         "text": msg,
         "responseTo": replyTo,
+        "linkPreviews": linkPreviews
       }
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])

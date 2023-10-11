@@ -90,26 +90,37 @@ proc getChatId*(self: Controller): string =
 proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
-proc sendImages*(self: Controller, imagePathsAndDataJson: string, msg: string, replyTo: string): string =
-  self.chatService.sendImages(self.chatId, imagePathsAndDataJson, msg, replyTo)
-
-proc sendChatMessage*(
-    self: Controller,
-    msg: string,
-    replyTo: string,
-    contentType: int,
-    preferredUsername: string = "") =
-
-  let urls = self.messageService.getTextUrls(msg)
+proc gatherLinkPreviews(self: Controller, messsageText: string): seq[LinkPreview] =
+  let urls = self.messageService.getTextUrls(messsageText)
   let linkPreviews = self.linkPreviewCache.linkPreviewsSeq(urls)
-  let unfurledLinkPreviews = filter(linkPreviews, proc(x: LinkPreview): bool = x.hostname.len > 0)
+  return filter(linkPreviews, proc(x: LinkPreview): bool = x.hostname.len > 0)
 
-  self.chatService.sendChatMessage(self.chatId, 
+proc sendImages*(self: Controller, 
+                 imagePathsAndDataJson: string, 
+                 msg: string, 
+                 replyTo: string, 
+                 preferredUsername: string = ""): string =
+  self.chatService.sendImages(
+    self.chatId, 
+    imagePathsAndDataJson, 
+    msg, 
+    replyTo, 
+    preferredUsername,
+    self.gatherLinkPreviews(msg)
+  )
+
+proc sendChatMessage*(self: Controller,
+                      msg: string,
+                      replyTo: string,
+                      contentType: int,
+                      preferredUsername: string = "") =
+  self.chatService.sendChatMessage(
+    self.chatId, 
     msg, 
     replyTo, 
     contentType, 
     preferredUsername,
-    unfurledLinkPreviews
+    self.gatherLinkPreviews(msg)
   )
 
 proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =

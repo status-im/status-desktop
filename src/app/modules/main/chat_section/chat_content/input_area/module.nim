@@ -66,7 +66,7 @@ proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
 method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string): string =
-  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo)
+  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName())
 
 method sendChatMessage*(
     self: Module,
