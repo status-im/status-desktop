@@ -3,6 +3,7 @@ import typing
 import allure
 
 import driver
+from driver.objects_access import walk_children
 from gui.components.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
@@ -30,6 +31,7 @@ class LeftPanel(QObject):
         self._back_to_community_button = Button('mainWindow_communitySettingsBackToCommunityButton_StatusBaseText')
         self._overview_button = Button('overview_StatusNavigationListItem')
         self._members_button = Button('members_StatusNavigationListItem')
+        self._permissions_button = Button('permissions_StatusNavigationListItem')
 
     @allure.step('Open community main view')
     def back_to_community(self):
@@ -46,6 +48,11 @@ class LeftPanel(QObject):
         if not self._members_button.is_selected:
             self._members_button.click()
         return MembersView().wait_until_appears()
+
+    @allure.step('Open permissions')
+    def open_permissions(self) -> 'PermissionsIntroView':
+        self._permissions_button.click()
+        return PermissionsIntroView().wait_until_appears()
 
 
 class OverviewView(QObject):
@@ -204,3 +211,127 @@ class MembersView(QObject):
     @allure.step('Get community members')
     def members(self) -> typing.List[str]:
         return [str(member.title) for member in driver.findAllObjects(self._member_list_item.real_name)]
+
+
+class PermissionsIntroView(QObject):
+    def __init__(self):
+        super(PermissionsIntroView, self).__init__('o_IntroPanel')
+        self._add_new_permission_button = Button('add_new_permission_button')
+        self._welcome_image = QObject('community_welcome_screen_image')
+        self._welcome_title = TextLabel('community_welcome_screen_title')
+        self._welcome_subtitle = TextLabel('community_welcome_screen_subtitle')
+        self._welcome_checklist_1 = TextLabel('community_welcome_screen_checkList_element1')
+        self._welcome_checklist_2 = TextLabel('community_welcome_screen_checkList_element2')
+        self._welcome_checklist_3 = TextLabel('community_welcome_screen_checkList_element3')
+
+    @property
+    @allure.step('Get permission welcome image')
+    def permission_welcome_image(self) -> Image:
+        return self._welcome_image.image
+
+    @property
+    @allure.step('Get permission welcome title')
+    def permission_welcome_title(self) -> str:
+        return self._welcome_title.text
+
+    @property
+    @allure.step('Get permission welcome subtitle')
+    def permission_welcome_subtitle(self) -> str:
+        return self._welcome_subtitle.text
+
+    @property
+    @allure.step('Get permission checklist')
+    def permission_checklist(self) -> typing.List[str]:
+        permission_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
+                                str(self._welcome_checklist_3.object.text)]
+        return permission_checklist
+
+    @allure.step('Click add new permission button')
+    def add_new_permission(self) -> 'PermissionsSettingsView':
+        self._add_new_permission_button.click()
+        return PermissionsSettingsView().wait_until_appears()
+
+
+class PermissionsSettingsView(QObject):
+    def __init__(self):
+        super(PermissionsSettingsView, self).__init__('mainWindow_PermissionsSettingsPanel')
+        self._who_holds_checkbox = CheckBox('editPermissionView_whoHoldsSwitch_StatusSwitch')
+        self._who_holds_asset_field = TextEdit('edit_TextEdit')
+        self._who_holds_amount_field = TextEdit('inputValue_StyledTextField')
+        self._asset_item = QObject('o_TokenItem')
+        self._is_allowed_to_option_button = Button('customPermissionListItem')
+        self._in_general_button = Button('communityItem_CommunityListItem')
+        self._hide_permission_checkbox = CheckBox('editPermissionView_switchItem_StatusSwitch')
+        self._create_permission_button = Button('editPermissionView_Create_permission_StatusButton')
+        self._add_button = Button('add_StatusButton')
+        self._who_holds_list_item = QObject('editPermissionView_Who_holds_StatusItemSelector')
+        self._is_allowed_to_list_item = QObject('editPermissionView_Is_allowed_to_StatusFlowSelector')
+        self._in_list_item = QObject('editPermissionView_In_StatusItemSelector')
+        self._tag_item = QObject('o_StatusListItemTag')
+
+    @property
+    @allure.step('Get permission tags')
+    def tags(self) -> typing.List[str]:
+        _tags = driver.findAllObjects(self._tag_item.real_name)
+        return [str(getattr(tag, 'title', '')) for tag in _tags]
+
+    @allure.step('Set state of who holds checkbox')
+    def set_who_holds_checkbox_state(self, state):
+        if state is False:
+            self._who_holds_checkbox.set(state)
+
+    @allure.step('Set asset and amount')
+    def set_who_holds_asset_and_amount(self, asset: str, amount: str):
+        if asset is not False:
+            self.open_who_holds_context_menu()
+            self._who_holds_asset_field.clear().text = asset
+            self._asset_item.click()
+            self._who_holds_asset_field.wait_until_hidden()
+            self._who_holds_amount_field.text = amount
+            self._add_button.click()
+            self._who_holds_amount_field.wait_until_hidden()
+
+    @allure.step('Choose option from Is allowed to context menu')
+    def set_is_allowed_to(self, name):
+        self.open_is_allowed_to_context_menu()
+        self._is_allowed_to_option_button.real_name['objectName'] = name
+        self._is_allowed_to_option_button.wait_until_appears().click()
+        self._add_button.click()
+        self._add_button.wait_until_hidden()
+
+    @allure.step('Choose channel from In context menu')
+    def set_in(self, in_general):
+        if in_general == '#general':
+            self.open_in_context_menu()
+            self._in_general_button.wait_until_appears().click()
+            self._add_button.click()
+            self._add_button.wait_until_hidden()
+
+    @allure.step('Click create permission')
+    def create_permission(self):
+        self._create_permission_button.click()
+        self._create_permission_button.wait_until_hidden()
+
+    @allure.step('Open Who holds context menu')
+    def open_who_holds_context_menu(self):
+        for child in walk_children(self._who_holds_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                driver.mouseClick(child)
+                return
+        raise LookupError('Add button for who holds not found')
+
+    @allure.step('Open Is allowed to context menu')
+    def open_is_allowed_to_context_menu(self):
+        for child in walk_children(self._is_allowed_to_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                driver.mouseClick(child)
+                return
+        raise LookupError('Add button for allowed to not found')
+
+    @allure.step('Open In context menu')
+    def open_in_context_menu(self):
+        for child in walk_children(self._in_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                driver.mouseClick(child)
+                return
+        raise LookupError('Add button for in not found')
