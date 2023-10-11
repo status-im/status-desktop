@@ -3,6 +3,11 @@ import core, ../app_service/common/utils
 import response_type
 import interpret/cropped_image
 import ../app_service/service/message/dto/link_preview
+import ../app_service/service/message/dto/standard_link_preview
+import ../app_service/service/message/dto/status_link_preview
+import ../app_service/service/message/dto/status_contact_link_preview
+import ../app_service/service/message/dto/status_community_link_preview
+import ../app_service/service/message/dto/status_community_channel_link_preview
 
 export response_type
 
@@ -66,6 +71,7 @@ proc sendChatMessage*(
     stickerHash: string = "",
     stickerPack: string = "0",
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let (standardLinkPreviews, statusLinkPreviews) = extractLinkPreviewsLists(linkPreviews)
   result = callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
@@ -78,7 +84,8 @@ proc sendChatMessage*(
       },
       "contentType": contentType,
       "communityId": communityId,
-      "linkPreviews": linkPreviews
+      "linkPreviews": standardLinkPreviews,
+      "statusLinkPreviews": statusLinkPreviews
     }
   ])
 

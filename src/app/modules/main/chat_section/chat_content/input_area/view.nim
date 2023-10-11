@@ -51,6 +51,9 @@ QtObject:
       msg: string,
       replyTo: string,
       contentType: int) {.slot.} =
+    # let urls = self.messageService.getTextUrls(messsageText)
+    # let linkPreviews = self.linkPreviewCache.linkPreviewsSeq(urls)
+    # return filter(linkPreviews, proc(x: LinkPreview): bool = not x.empty())
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =

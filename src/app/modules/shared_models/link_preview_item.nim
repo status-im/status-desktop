@@ -1,5 +1,7 @@
 import strformat
 import ../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/dto/status_community_link_preview
+import ../../../app_service/service/message/dto/status_community_channel_link_preview
 
 type
   Item* = ref object
@@ -22,3 +24,10 @@ proc `$`*(self: Item): string =
     immutable: {self.immutable},
     linkPreview: {self.linkPreview},
   )"""
+
+proc getChannelCommunity*(self: Item): StatusCommunityLinkPreview =
+  if self.linkPreview == nil:
+    return nil
+  if self.linkPreview.statusCommunityChannelPreview == nil:
+    return nil
+  return self.linkPreview.statusCommunityChannelPreview.getCommunity()

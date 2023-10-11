@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strutils
+import json, strutils, chronicles
 import ../../../common/types
 import link_preview
 
@@ -208,6 +208,9 @@ proc toTransactionParameters*(jsonObj: JsonNode): TransactionParameters =
   discard jsonObj.getProp("signature", result.signature)
 
 proc toMessageDto*(jsonObj: JsonNode): MessageDto =
+
+  debug "<<< toMessageDto", jsonObj
+
   result = MessageDto()
   var contentType: int
   discard jsonObj.getProp("id", result.id)
@@ -263,7 +266,12 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   var linkPreviewsArr: JsonNode
   if jsonObj.getProp("linkPreviews", linkPreviewsArr):
     for element in linkPreviewsArr.getElems():
-      result.linkPreviews.add(element.toLinkPreview())
+      result.linkPreviews.add(element.toLinkPreview(true))
+
+  var statusLinkPreviewsArr: JsonNode
+  if jsonObj.getProp("statusLinkPreviews", statusLinkPreviewsArr):
+    for element in statusLinkPreviewsArr.getElems():
+      result.linkPreviews.add(element.toLinkPreview(false))
       
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):

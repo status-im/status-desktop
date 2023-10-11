@@ -219,6 +219,25 @@ Item {
             }
         }
 
+        // This is a non-designed preview of unfurled urls.
+        // Should be replaced with a proper UI when it's ready.
+
+        StatusListView {
+            Layout.fillWidth: true
+            Layout.maximumHeight: 200
+            Layout.margins: Style.current.smallPadding
+
+            // For a vertical list bind the imlicitHeight to contentHeight
+            implicitHeight: contentHeight
+            spacing: 10
+
+            model: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+
+            delegate: LinkPreviewDebugView {
+                width: ListView.view.width
+            }
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding

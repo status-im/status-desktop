@@ -11,6 +11,9 @@ include ../../app_service/service/accounts/utils
 QtObject:
   type Utils* = ref object of QObject
 
+  proc isCompressedPubKey*(self: Utils, publicKey: string): bool
+  proc getDecompressedPk*(self: Utils, compressedKey: string): string
+
   proc setup(self: Utils) =
     self.QObject.setup
 
@@ -129,13 +132,22 @@ QtObject:
     result = escape_html(text)
 
   proc getEmojiHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
-    procs_from_visual_identity_service.getEmojiHashAsJson(publicKey)
+    var pk = publicKey
+    if self.isCompressedPubKey(publicKey):
+      pk = self.getDecompressedPk(publicKey)
+    procs_from_visual_identity_service.getEmojiHashAsJson(pk)
 
   proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
-    procs_from_visual_identity_service.getColorHashAsJson(publicKey)
+    var pk = publicKey
+    if self.isCompressedPubKey(publicKey):
+      pk = self.getDecompressedPk(publicKey)
+    procs_from_visual_identity_service.getColorHashAsJson(pk)
 
   proc getColorId*(self: Utils, publicKey: string): int {.slot.} =
-    int(procs_from_visual_identity_service.colorIdOf(publicKey))
+    var pk = publicKey
+    if self.isCompressedPubKey(publicKey):
+      pk = self.getDecompressedPk(publicKey)
+    int(procs_from_visual_identity_service.colorIdOf(pk))
 
   proc getCompressedPk*(self: Utils, publicKey: string): string {.slot.} =
     compressPk(publicKey)

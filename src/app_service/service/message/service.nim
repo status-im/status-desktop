@@ -18,6 +18,7 @@ import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
 import ./dto/link_preview
+import ./dto/status_link_preview
 import ./message_cursor
 
 import ../../common/message as message_common
@@ -863,11 +864,20 @@ QtObject:
     if responseObj.getProp("requestedUrls", requestedUrlsArr):
       requestedUrls = map(requestedUrlsArr.getElems(), proc(x: JsonNode): string = x.getStr)
 
-    var linkPreviewsArr: JsonNode
+    let unfurlResponse = responseObj["response"]
+
     var linkPreviews: Table[string, LinkPreview]
-    if responseObj.getProp("response", linkPreviewsArr):
+    var linkPreviewsArr: JsonNode
+    var statusLinkPreviewsArr: JsonNode
+
+    if unfurlResponse.getProp("linkPreviews", linkPreviewsArr):
       for element in linkPreviewsArr.getElems():
-        let linkPreview = element.toLinkPreview()
+        let linkPreview = element.toLinkPreview(true)
+        linkPreviews[linkPreview.url] = linkPreview
+
+    if unfurlResponse.getProp("statusLinkPreviews", statusLinkPreviewsArr):
+      for element in statusLinkPreviewsArr.getElems():
+        let linkPreview = element.toLinkPreview(false)
         linkPreviews[linkPreview.url] = linkPreview
 
     for url in requestedUrls:
