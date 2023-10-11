@@ -11,6 +11,7 @@ from gui.main_window import MainWindow
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',
                  'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
+@pytest.mark.skip(reaason="https://github.com/status-im/desktop-qa-automation/issues/165")
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 

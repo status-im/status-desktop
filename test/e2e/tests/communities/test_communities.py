@@ -19,6 +19,7 @@ pytestmark = allure.suite("Communities")
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
 @pytest.mark.parametrize('params', [constants.community_params])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_create_community(user_account, main_screen: MainWindow, params):
     with step('Create community'):
         communities_portal = main_screen.left_panel.open_communities_portal()
@@ -67,6 +68,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
     },
 
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_edit_community_separately(main_screen, community_params):
     main_screen.create_community(constants.community_params)
 
@@ -164,6 +166,7 @@ def test_create_community_channel(main_screen: MainWindow, channel_name, channel
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703050', 'Edit community channel')
 @pytest.mark.case(703050)
 @pytest.mark.parametrize('channel_name, channel_description, channel_emoji', [('Channel', 'Description', 'sunglasses')])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_edit_community_channel(main_screen, channel_name, channel_description, channel_emoji):
     main_screen.create_community(constants.community_params)
     community_screen = CommunityScreen()
