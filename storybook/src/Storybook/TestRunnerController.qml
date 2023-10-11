@@ -20,18 +20,17 @@ QtObject {
     }
 
     function runTests(testFileName) {
-        console.assert(d.testProcess === null)
+        if (d.testProcess) {
+            d.testProcess.finished.disconnect(d.processFinishedHandler)
+            d.testProcess.kill()
+            d.aborted = false
+        }
 
         const process = TestsRunner.runTests(testFileName)
         d.testProcess = process
         d.running = true
 
-        process.finished.connect((exitCode, exitStatus) => {
-            root.finished(exitCode, d.aborted, exitStatus !== 0)
-
-            d.running = false
-            d.aborted = false
-        })
+        process.finished.connect(d.processFinishedHandler)
 
         started()
     }
@@ -47,5 +46,12 @@ QtObject {
         property var testProcess: null
         property bool aborted: false
         property bool running: false
+
+        function processFinishedHandler(exitCode, exitStatus) {
+            root.finished(exitCode, d.aborted, exitStatus !== 0)
+
+            d.running = false
+            d.aborted = false
+        }
     }
 }

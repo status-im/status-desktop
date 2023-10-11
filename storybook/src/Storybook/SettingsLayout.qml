@@ -1,9 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 ColumnLayout {
     property alias loadAsynchronously: loadAsyncCheckBox.checked
+    property alias runTestsAutomatically: runTestsAutoCheckBox.checked
     property alias figmaToken: figmaTokenTextInput.text
 
     CheckBox {
@@ -12,6 +13,15 @@ ColumnLayout {
         Layout.fillWidth: true
 
         text: "Load pages asynchronously"
+    }
+
+    CheckBox {
+        id: runTestsAutoCheckBox
+
+        Layout.fillWidth: true
+
+        text: "Run tests automatically"
+        checked: true
     }
 
     GroupBox {

@@ -29,6 +29,8 @@ ApplicationWindow {
     palette.base: Theme.palette.indirectColor1
     font.pixelSize: 13
 
+    onCurrentPageChanged: testsReRunTimer.restart()
+
     QtObject {
         id: d
 
@@ -86,11 +88,34 @@ ApplicationWindow {
 
         loader: viewLoader
         enabled: hotReloaderControls.enabled
-        onReloaded: hotReloaderControls.notifyReload()
+
+        onReloaded: {
+            hotReloaderControls.notifyReload()
+            testsReRunTimer.restart()
+        }
     }
 
     TestRunnerController {
         id: testRunnerController
+    }
+
+    Timer {
+        id: testsReRunTimer
+
+        interval: 100
+
+        onTriggered: {
+            if (!settingsLayout.runTestsAutomatically)
+                return
+
+            const testFileName = `tst_${root.currentPage}.qml`
+            const testsCount = testRunnerController.getTestsCount(testFileName)
+
+            if (testsCount === 0)
+                return
+
+            testRunnerController.runTests(testFileName)
+        }
     }
 
     SplitView {
@@ -313,8 +338,11 @@ Tips:
     }
 
     Settings {
+        id: settings
+
         property alias currentPage: root.currentPage
         property alias loadAsynchronously: settingsLayout.loadAsynchronously
+        property alias runTestsAutomatically: settingsLayout.runTestsAutomatically
         property alias darkMode: darkModeCheckBox.checked
         property alias hotReloading: hotReloaderControls.enabled
         property alias figmaToken: settingsLayout.figmaToken

@@ -52,6 +52,10 @@ int main(int argc, char *argv[])
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
         auto watcher = new DirectoriesWatcher();
         watcher->addPaths(additionalImportPaths);
+
+        // Test path added here as a temporary solution. Ideally, tests should
+        // be observed separately.
+        watcher->addPaths({ QML_IMPORT_ROOT + QStringLiteral("/qmlTests/tests") });
         return watcher;
     };
 
