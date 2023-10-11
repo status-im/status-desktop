@@ -23,11 +23,15 @@ def keys_screen(main_window) -> KeysView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
 @pytest.mark.case(703040)
-@pytest.mark.parametrize('user_account', [constants.user.user_account_two])
-def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account):
+@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('autocomplete', [
+    pytest.param(False),
+    pytest.param(True)
+])
+def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, autocomplete: bool):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        profile_view = input_view.input_seed_phrase(user_account.seed_phrase)
+        profile_view = input_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
         profile_view.set_display_name(user_account.name)
 
     with step('Finalize onboarding and open main screen'):
