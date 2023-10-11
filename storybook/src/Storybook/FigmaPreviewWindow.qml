@@ -36,6 +36,16 @@ ApplicationWindow {
                     topSwipeView.incrementCurrentIndex()
                 }
             }
+
+            Label {
+                anchors.fill: parent
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                visible: grid.count === 0
+                text: "To add a design, put a link to Figma directly in the Storybook's page code as a comment."
+            }
         }
 
         Item {
