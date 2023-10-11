@@ -23,6 +23,11 @@ pipeline {
       description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
       defaultValue: '--colors:off'
     )
+    booleanParam(
+      name: 'USE_MOCKED_KEYCARD_LIB',
+      description: 'Decides whether the mocked status-keycard-go library is built.',
+      defaultValue: false
+    )
   }
 
   options {

@@ -31,6 +31,11 @@ pipeline {
       description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
       defaultValue: '--colors:off'
     )
+    booleanParam(
+      name: 'USE_MOCKED_KEYCARD_LIB',
+      description: 'Decides whether the mocked status-keycard-go library is built.',
+      defaultValue: getMockedKeycardLibDefault()
+    )
   }
 
   options {
@@ -113,4 +118,8 @@ def getArch() {
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
     }
+}
+
+def getMockedKeycardLibDefault() {
+    return utils.isReleaseBuild() ? 'false' : 'true'
 }
