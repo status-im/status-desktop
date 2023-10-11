@@ -88,6 +88,12 @@ method setMessagesFromContactsOnly*(self: Module, value: bool) =
   if(not self.controller.setMessagesFromContactsOnly(value)):
     error "an error occurred while saving messages from contacts only flag"
 
+method urlUnfurlingMode*(self: Module): int =
+  return self.controller.urlUnfurlingMode()
+
+method setUrlUnfurlingMode*(self: Module, value: int) =
+  self.controller.setUrlUnfurlingMode(value)
+
 method validatePassword*(self: Module, password: string): bool =
   self.controller.validatePassword(password)
 

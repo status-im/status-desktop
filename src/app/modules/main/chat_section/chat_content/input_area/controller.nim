@@ -1,5 +1,7 @@
 import io_interface, chronicles, tables, sequtils
 
+
+import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -27,6 +29,7 @@ type
     chatService: chat_service.Service
     gifService: gif_service.Service
     messageService: message_service.Service
+    settingsService: settings_service.Service
     linkPreviewCache: LinkPreviewCache
     linkPreviewPersistentSetting: LinkPreviewSetting
     linkPreviewCurrentMessageSetting: LinkPreviewSetting
@@ -40,7 +43,8 @@ proc newController*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     gifService: gif_service.Service,
-    messageService: message_service.Service
+    messageService: message_service.Service,
+    settingsService: settings_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -52,11 +56,13 @@ proc newController*(
   result.communityService = communityService
   result.gifService = gifService
   result.messageService = messageService
+  result.settingsService = settingsService
   result.linkPreviewCache = newLinkPreiewCache()
   result.linkPreviewPersistentSetting = LinkPreviewSetting.AlwaysAsk
   result.linkPreviewCurrentMessageSetting = LinkPreviewSetting.AlwaysAsk
 
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs)
+proc clearLinkPreviewCache*(self: Controller)
 
 proc delete*(self: Controller) =
   self.events.disconnect()

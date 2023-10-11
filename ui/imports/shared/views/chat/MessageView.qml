@@ -72,6 +72,12 @@ Loader {
         const separator = " "
         const arr = links.split(separator)
         const filtered = arr.filter(v => v.toLowerCase().endsWith('.gif'))
+        const filtered = arr.filter(value => {
+                                        const v = value.toLowerCase()
+                                        return localAccountSensitiveSettings.gifUnfurlingEnabled && value.endsWith('.gif')
+                                    })
+
+
         const out = filtered.join(separator)
         return out
     }

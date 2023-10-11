@@ -161,6 +161,85 @@ SettingsContentBase {
             Layout.fillWidth: true
         }
 
+        // GIF LINK PREVIEWS
+        StatusSectionHeadline {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("GIF link previews")
+        }
+
+        StatusListItem {
+            Layout.fillWidth: true
+            title: qsTr("Allow show GIF previews")
+            components: [
+                StatusSwitch {
+                    id: showGifPreviewsSwitch
+                    checked: localAccountSensitiveSettings.gifUnfurlingEnabled
+                    onClicked: {
+                        localAccountSensitiveSettings.gifUnfurlingEnabled = !localAccountSensitiveSettings.gifUnfurlingEnabled
+                    }
+                }
+            ]
+            onClicked: {
+                showGifPreviewsSwitch.clicked()
+            }
+        }
+
+        Separator {
+            Layout.fillWidth: true
+        }
+
+        // URL UNFRULING
+        StatusSectionHeadline {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("Website link previews")
+        }
+
+        ButtonGroup {
+            id: urlUnfurlingGroup
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Always ask")
+            group: urlUnfurlingGroup
+            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeAlwaysAsk
+            onClicked: {
+                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeAlwaysAsk
+            }
+        }
+
+        SettingsRadioButton {
+            Layout.topMargin: Constants.settingsSection.itemSpacing / 2
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Always show previews")
+            group: urlUnfurlingGroup
+            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeEnableAll
+            onClicked: {
+                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeEnableAll
+            }
+        }
+
+        SettingsRadioButton {
+            Layout.topMargin: Constants.settingsSection.itemSpacing / 2
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Never show previews")
+            group: urlUnfurlingGroup
+            checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
+            onClicked: {
+                root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeDisableAll
+            }
+        }
+
         // MESSAGE LINK PREVIEWS
         StatusListItem {
             Layout.fillWidth: true

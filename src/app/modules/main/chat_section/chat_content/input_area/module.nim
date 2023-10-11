@@ -5,6 +5,7 @@ import view, controller
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 
+import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/message/dto/link_preview
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -31,14 +32,15 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     gifService: gif_service.Service,
-    messageService: message_service.Service
+    messageService: message_service.Service,
+    settingsService: settings_service.Service
     ):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService, messageService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService, messageService, settingsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

@@ -46,6 +46,7 @@ const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 const KEY_IS_SEPOLIA_ENABLED* = "is-sepolia-enabled?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
+const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -59,6 +60,18 @@ const PROFILE_PICTURES_VISIBILITY_NO_ONE* = 3
 const PROFILE_PICTURES_SHOW_TO_CONTACTS_ONLY* = 1
 const PROFILE_PICTURES_SHOW_TO_EVERYONE* = 2
 const PROFILE_PICTURES_SHOW_TO_NO_ONE* = 3
+
+type UrlUnfurlingMode* {.pure.} = enum
+  UrlUnfurlingModeUnknown = 0
+  UrlUnfurlingModeAlwaysAsk = 1,
+  UrlUnfurlingModeEnableAll = 2,
+  UrlUnfurlingModeDisableAll = 3,
+
+proc toUrlUnfurlingMode*(value: int): UrlUnfurlingMode =
+  try:
+    return UrlUnfurlingMode(value)
+  except RangeDefect:
+    return UrlUnfurlingModeUnknown
 
 type NotificationsExemptions* = object
   muteAllMessages*: bool
@@ -139,6 +152,8 @@ type
     notificationsMessagePreview*: int
     profileMigrationNeeded*: bool
     isSepoliaEnabled*: bool
+    urlUnfurlingMode*: UrlUnfurlingMode
+
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -194,6 +209,10 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
   discard jsonObj.getProp(KEY_IS_SEPOLIA_ENABLED, result.isSepoliaEnabled)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
+
+  var urlUnfurlingMode: int
+  discard jsonObj.getProp(KEY_URL_UNFURLING_MODE, urlUnfurlingMode)
+  result.urlUnfurlingMode = toUrlUnfurlingMode(urlUnfurlingMode)
 
   var pinnedMailserverObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
