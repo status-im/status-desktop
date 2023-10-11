@@ -77,7 +77,8 @@ pipeline {
     /* Ganache config */
     GANACHE_RPC_PORT = "${9545 + env.EXECUTOR_NUMBER.toInteger()}"
     GANACHE_MNEMONIC = 'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial'
-    TEST_ENVIRONMENT = '1'
+    /* Runtime flag to make testing of the app easier. */
+    STATUS_RUNTIME_TEST_MODE = '1'
   }
 
   stages {
