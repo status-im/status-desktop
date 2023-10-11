@@ -82,14 +82,14 @@ class LeftPanel(QObject):
         self._wallet_account_item.wait_until_appears().open_context_menu()
         return ContextMenu().wait_until_appears()
 
-    @allure.step('Open account popup for editing')
-    def open_edit_account_popup(self, account_name: str, attempt: int = 2) -> AccountPopup:
+    @allure.step('Open account popup for editing from context menu')
+    def open_edit_account_popup_from_context_menu(self, account_name: str, attempt: int = 2) -> AccountPopup:
         try:
-            self._open_context_menu_for_account(account_name).select('Edit')
+            self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
             return AccountPopup().wait_until_appears()
         except:
             if attempt:
-                return self.open_edit_account_popup(account_name, attempt - 1)
+                return self.open_edit_account_popup_from_context_menu(account_name, attempt - 1)
             else:
                 raise
 
@@ -104,25 +104,19 @@ class LeftPanel(QObject):
             else:
                 raise err
 
-    @allure.step('Open account popup for watch only account')
-    def open_add_watch_only_account_popup(self, attempt: int = 2) -> AccountPopup:
-        try:
-            self._open_context_menu().select('Add watch-only account')
-            return AccountPopup().wait_until_appears()
-        except:
-            if attempt:
-                return self.open_add_watch_only_account_popup(attempt - 1)
-            else:
-                raise
+    @allure.step('Select add watched address from context menu')
+    def select_add_watched_address_from_context_menu(self) -> AccountPopup:
+        self._open_context_menu().select_add_watched_address_from_context_menu()
+        return AccountPopup().wait_until_appears()
 
-    @allure.step('Delete account from list')
-    def delete_account(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
+    @allure.step('Delete account from the list from context menu')
+    def delete_account_from_context_menu(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
         try:
-            self._open_context_menu_for_account(account_name).select('Delete')
+            self._open_context_menu_for_account(account_name).select_delete_account_from_context_menu()
             return RemoveWalletAccountPopup().wait_until_appears()
         except:
             if attempt:
-                return self.delete_account(account_name, attempt - 1)
+                return self.delete_account_from_context_menu(account_name, attempt - 1)
             else:
                 raise
 

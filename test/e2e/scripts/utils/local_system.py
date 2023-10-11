@@ -23,6 +23,12 @@ def find_process_by_port(port: int) -> int:
             pass
 
 
+def find_free_port(start: int, step: int):
+    while find_process_by_port(start):
+        start+=step
+    return start
+
+
 def wait_for_close(pid: int, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
     started_at = time.monotonic()
     while True:

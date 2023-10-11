@@ -21,3 +21,4 @@ def start_squish_server():
     squish_server.stop()
     if squish_server.config.exists():
         allure.attach.file(str(squish_server.config), 'Squish server config')
+        squish_server.config.unlink()

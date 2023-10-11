@@ -14,7 +14,7 @@ class SquishServer:
     def __init__(
             self,
             host: str = '127.0.0.1',
-            port: int = 4322
+            port: int = local_system.find_free_port(configs.squish.SERVET_PORT, 100)
     ):
         self.path = configs.testpath.SQUISH_DIR / 'bin' / 'squishserver'
         self.config = configs.testpath.ROOT / 'squish_server.ini'

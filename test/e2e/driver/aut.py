@@ -19,7 +19,7 @@ class AUT:
             self,
             app_path: system_path.SystemPath = configs.APP_DIR,
             host: str = '127.0.0.1',
-            port: int = configs.squish.AUT_PORT,
+            port: int = local_system.find_free_port(configs.squish.AUT_PORT, 1000),
             user_data: SystemPath = None
     ):
         super(AUT, self).__init__()
@@ -71,8 +71,6 @@ class AUT:
         SquishServer().set_aut_timeout()
 
         if configs.ATTACH_MODE:
-            while local_system.find_process_by_port(self.port):
-                self.port += 1000
             SquishServer().add_attachable_aut(self.aut_id, self.port)
             command = [
                 configs.testpath.SQUISH_DIR / 'bin' / 'startaut',

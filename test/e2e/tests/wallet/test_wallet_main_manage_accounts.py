@@ -27,7 +27,7 @@ def test_edit_default_wallet_account(main_screen: MainWindow, name: str, new_nam
         wallet.left_panel.select_account(name)
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -64,19 +64,19 @@ def test_manage_watch_only_account(main_screen: MainWindow, address: str, color:
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account'):
-        wallet.left_panel.delete_account(name).confirm()
+        wallet.left_panel.delete_account_from_context_menu(name).confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {name} is still displayed even it should not be'
 
     with step('Create watch-only wallet account via context menu'):
-        account_popup = wallet.left_panel.open_add_watch_only_account_popup()
+        account_popup = wallet.left_panel.select_add_watched_address_from_context_menu()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save()
         account_popup.wait_until_hidden()
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -116,7 +116,7 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -128,7 +128,7 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account(new_name).agree_and_confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -165,7 +165,7 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account(name).agree_and_confirm()
+        wallet.left_panel.delete_account_from_context_menu(name).agree_and_confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -202,7 +202,7 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -214,7 +214,7 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account'):
-        wallet.left_panel.delete_account(new_name).confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -260,7 +260,7 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -272,7 +272,7 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account(new_name).agree_and_confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -308,7 +308,7 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
-        account_popup = wallet.left_panel.open_edit_account_popup(name)
+        account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
         account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -320,7 +320,7 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Delete wallet account with agreement'):
-        wallet.left_panel.delete_account(new_name).agree_and_confirm()
+        wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
