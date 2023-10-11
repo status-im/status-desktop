@@ -389,21 +389,14 @@ status-go-clean:
 	rm -f $(STATUSGO)
 
 STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
-STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
-export STATUSKEYCARDGO_LIBDIR
-
-STATUSKEYCARDGO_RULE := build-lib
-ifeq ($(TEST_ENVIRONMENT),true)
-    STATUSKEYCARDGO_RULE := build-mocked-lib
-else ifeq ($(TEST_ENVIRONMENT),1)
-    STATUSKEYCARDGO_RULE := build-mocked-lib
-endif
+export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
 
 status-keycard-go: $(STATUSKEYCARDGO)
 $(STATUSKEYCARDGO): | deps
 	echo -e $(BUILD_MSG) "status-keycard-go"
-	+ cd vendor/status-keycard-go && \
-	  $(MAKE) $(STATUSKEYCARDGO_RULE) $(STATUSKEYCARDGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+	+ $(MAKE) -C vendor/status-keycard-go \
+		$(if $(filter 1 true,$(USE_MOCKED_KEYCARD_LIB)), build-mocked-lib, build-lib) \
+		$(STATUSKEYCARDGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 
