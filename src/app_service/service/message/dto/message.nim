@@ -208,9 +208,6 @@ proc toTransactionParameters*(jsonObj: JsonNode): TransactionParameters =
   discard jsonObj.getProp("signature", result.signature)
 
 proc toMessageDto*(jsonObj: JsonNode): MessageDto =
-
-  debug "<<< toMessageDto", jsonObj
-
   result = MessageDto()
   var contentType: int
   discard jsonObj.getProp("id", result.id)

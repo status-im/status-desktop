@@ -65,9 +65,6 @@ QtObject:
     result = self.banner
 
   proc toStatusCommunityLinkPreview*(jsonObj: JsonNode): StatusCommunityLinkPreview =
-    
-    debug "<<< toStatusCommunityLinkPreview", jsonObj = $jsonObj
-
     new(result, delete)
     result.setup()
 

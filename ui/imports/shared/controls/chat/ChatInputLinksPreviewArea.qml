@@ -101,32 +101,54 @@ Control {
                     model: d.filteredModel
                     delegate: LinkPreviewMiniCard {
                         // Model properties
-                        required property string title
-                        required property string url
-                        required property bool unfurled
-                        required property bool immutable
-                        required property string hostname
-                        required property string description
-                        required property int linkType
-                        required property int thumbnailWidth
-                        required property int thumbnailHeight
-                        required property string thumbnailUrl
-                        required property string thumbnailDataUri
 
                         required property int index
+                        required property bool unfurled
+                        required property bool empty
+                        required property string url
+                        required property bool immutable
+                        required property int previewType
+                        required property var standardPreview
+                        required property var standardPreviewThumbnail
+                        required property var statusContactPreview
+                        required property var statusContactPreviewThumbnail
+                        required property var statusCommunityPreview
+                        required property var statusCommunityPreviewIcon
+                        required property var statusCommunityPreviewBanner
+                        required property var statusCommunityChannelPreview
+                        required property var statusCommunityChannelCommunityPreview
+                        required property var statusCommunityChannelCommunityPreviewIcon
+                        required property var statusCommunityChannelCommunityPreviewBanner
+
+                        readonly property var thumbnail: {
+                            switch (previewType) {
+                                case Constants.Standard:
+                                    return standardPreviewThumbnail
+                                case Constants.StatusContact:
+                                    return statusContactPreviewThumbnail
+                                case Constants.StatusCommunity:
+                                    return statusCommunityPreviewIcon
+                                case Constants.StatusCommunityChannel:
+                                    return statusCommunityChannelCommunityPreviewIcon
+                            }
+                        }
+
+                        readonly property string thumbnailUrl: thumbnail ? thumbnail.url : ""
+                        readonly property string thumbnailDataUri: thumbnail ? thumbnail.dataUri : ""
+
 
                         Layout.preferredHeight: 64
 
-                        titleStr: title
-                        domain: hostname                //TODO: use domain when available
+                        titleStr: standardPreview ? standardPreview.title : statusContactPreview ? statusContactPreview.displayName : ""
+                        domain: standardPreview ? standardPreview.hostname : "" //TODO: use domain when available
                         favIconUrl: ""                  //TODO: use favicon when available
-                        communityName: ""               //TODO: add community info when available
-                        channelName: ""                 //TODO: add community info when available
+                        communityName: statusCommunityPreview ? statusCommunityPreview.displayName : ""
+                        channelName: statusCommunityChannelPreview ? statusCommunityChannelPreview.displayName : ""
 
                         thumbnailImageUrl: thumbnailUrl.length > 0 ? thumbnailUrl : thumbnailDataUri
-                        type: linkType === 0 ? LinkPreviewMiniCard.Type.Link : LinkPreviewMiniCard.Type.Image
-                        previewState: unfurled && hostname != "" ? LinkPreviewMiniCard.State.Loaded :
-                                    unfurled && hostname === "" ? LinkPreviewMiniCard.State.LoadingFailed :
+                        type: getCardType(previewType, standardPreview)
+                        previewState: unfurled && !empty ? LinkPreviewMiniCard.State.Loaded :
+                                    unfurled && empty ? LinkPreviewMiniCard.State.LoadingFailed :
                                     !unfurled ? LinkPreviewMiniCard.State.Loading : LinkPreviewMiniCard.State.Invalid
 
                         onClose: root.dismissLinkPreview(d.filteredModel.mapToSource(index))

@@ -29,7 +29,6 @@ proc linkPreviewsSeq*(self: LinkPreviewCache, urls: seq[string]): seq[LinkPrevie
 # If a url is already found in cache, correcponding link preview is updated.
 proc add*(self: LinkPreviewCache, linkPreviews: Table[string, LinkPreview]): seq[string] =
   for key, value in pairs(linkPreviews):
-    debug "<<< caching link preview", key, value
     result.add(key)
     self.cache[key] = value
 

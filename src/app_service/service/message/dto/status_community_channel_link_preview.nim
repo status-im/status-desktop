@@ -58,9 +58,6 @@ QtObject:
     return self.community
 
   proc toStatusCommunityChannelLinkPreview*(jsonObj: JsonNode): StatusCommunityChannelLinkPreview =
-
-    debug "<<< toStatusCommunityChannelLinkPreview", jsonObj = $jsonObj
-
     new(result, delete)
     result.setup()
 

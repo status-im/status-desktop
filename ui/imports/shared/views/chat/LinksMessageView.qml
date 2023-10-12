@@ -95,6 +95,7 @@ Flow {
             required property bool unfurled
             required property bool empty
             required property string url
+            required property bool immutable
             required property int previewType
             required property var standardPreview
             required property var standardPreviewThumbnail
@@ -111,7 +112,7 @@ Flow {
             readonly property string hostname: standardPreview ? standardPreview.hostname : ""
             readonly property string title: standardPreview ? standardPreview.title : ""
             readonly property string description: standardPreview ? standardPreview.description : ""
-            readonly property int standardLinkType: standardPreview ? standardPreview.standardLinkType : ""
+            readonly property int standardLinkType: standardPreview ? standardPreview.linkType : ""
             readonly property int thumbnailWidth: standardPreviewThumbnail ? standardPreviewThumbnail.width : ""
             readonly property int thumbnailHeight: standardPreviewThumbnail ? standardPreviewThumbnail.height : ""
             readonly property string thumbnailUrl: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""

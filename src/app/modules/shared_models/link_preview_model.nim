@@ -206,7 +206,6 @@ QtObject:
         continue
       item.unfurled = true
       item.linkPreview = linkPreviews[item.linkPreview.url]
-      debug "<<< updating link preview in model", linkPreview = $item.linkPreview
       let modelIndex = self.createIndex(row, 0, nil)
       defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)

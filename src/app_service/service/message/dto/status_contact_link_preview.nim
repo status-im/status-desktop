@@ -52,9 +52,6 @@ QtObject:
   
 
   proc toStatusContactLinkPreview*(jsonObj: JsonNode): StatusContactLinkPreview =
-
-    debug "<<< toStatusContactLinkPreview", jsonObj = $jsonObj
-
     var publicKey: string
     var displayName: string
     var description: string
