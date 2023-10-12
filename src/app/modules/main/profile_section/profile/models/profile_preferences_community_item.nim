@@ -8,6 +8,7 @@ type
     entryType*: ProfileShowcaseEntryType
     showcaseVisibility*: ProfileShowcaseVisibility
     order*: int
+
     name*: string
     memberRole*: MemberRole
     image*: string
@@ -41,20 +42,11 @@ proc order*(self: ProfileShowcaseCommunityItem): int {.inline.} =
 proc name*(self: ProfileShowcaseCommunityItem): string {.inline.} =
   self.name
 
-proc secondaryTitle*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.secondaryTitle
+proc memberRole*(self: ProfileShowcaseCommunityItem): MemberRole {.inline.} =
+  self.memberRole
 
 proc image*(self: ProfileShowcaseCommunityItem): string {.inline.} =
   self.image
 
-proc emoji*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.emoji
-
-proc colorId*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.colorId
-
 proc color*(self: ProfileShowcaseCommunityItem): string {.inline.} =
   self.color
-
-proc backgroundColor*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.backgroundColor

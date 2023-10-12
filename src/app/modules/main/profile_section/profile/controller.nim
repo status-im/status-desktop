@@ -6,10 +6,12 @@ import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
 import models/profile_preferences_community_item
+import models/profile_preferences_account_item
 
 type
   Controller* = ref object of RootObj
@@ -18,6 +20,7 @@ type
     profileService: profile_service.Service
     settingsService: settings_service.Service
     communityService: community_service.Service
+    walletAccountService: wallet_account_service.Service
 
   # Forward declaration
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto])
@@ -27,13 +30,15 @@ proc newController*(
     events: EventEmitter,
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
-    communityService: community_service.Service): Controller =
+    communityService: community_service.Service,
+    walletAccountService: wallet_account_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.profileService = profileService
   result.settingsService = settingsService
   result.communityService = communityService
+  result.walletAccountService = walletAccountService
 
 proc delete*(self: Controller) =
   discard
@@ -57,7 +62,8 @@ proc init*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
 
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto]) =
-  var profileItems: seq[ProfileShowcaseCommunityItem] = @[]
+  var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
 
   # Collect all joined & curated communities to fill perferences with defaults only on UI
   # NOTE: Is getJoinedCommunities() already contains getCuratedCommunities()
@@ -72,11 +78,26 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
         visibility: ProfileShowcaseVisibility.ToNoOne,
         order: 0
       )
-    profileItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
+    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
 
-  # TODO: accounts, collectibles, assets
+  # Collect wallet accounts
+  for walletAccount in self.walletAccountService.getWalletAccounts():
+    var profileEntry: ProfileShowcaseEntryDto
+    if accounts.contains(walletAccount.address):
+      profileEntry = accounts[walletAccount.address]
+    else:
+      profileEntry = ProfileShowcaseEntryDto(
+        id: walletAccount.address,
+        entryType: ProfileShowcaseEntryType.Account,
+        visibility: ProfileShowcaseVisibility.ToNoOne,
+        order: 0
+      )
+    profileAccountItems.add(initProfileShowcaseAccountItem(walletAccount, profileEntry))
 
-  self.delegate.setShowcaseCommunityPreferences(profileItems)
+  # TODO: collectibles, assets
+
+  self.delegate.setShowcaseCommunitiesPreferences(profileCommunityItems)
+  self.delegate.setShowcaseAccountsPreferences(profileAccountItems)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)

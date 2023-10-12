@@ -202,7 +202,7 @@ ColumnLayout {
         ProfileShowcaseAccountsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            // baseModel: root.profileStore.profileShowcaseAccountsModel
+            baseModel: root.profileStore.profileShowcaseAccountsModel
             // currentWallet: root.walletStore.overview.mixedcaseAddress
         }
 

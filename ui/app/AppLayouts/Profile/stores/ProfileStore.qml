@@ -26,6 +26,7 @@ QtObject {
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
+    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     // TODO: other models here
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true

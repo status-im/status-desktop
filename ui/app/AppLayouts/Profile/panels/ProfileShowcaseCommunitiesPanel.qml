@@ -24,6 +24,7 @@ ProfileShowcasePanel {
             tmpObj.showcaseVisibility = value
             showcaseModel.append(tmpObj)
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
+            console.log("=====> ", showcaseObj.id, ", ", showcaseVisibility, ", ", visualIndex)
         }
     }
     showcaseDraggableDelegateComponent: CommunityShowcaseDelegate {
@@ -39,6 +40,7 @@ ProfileShowcasePanel {
             } else {
                 showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
             }
+            console.log("=====> ", showcaseObj.id, ", ", showcaseVisibility, ", ", visualIndex)
         }
     }
 }

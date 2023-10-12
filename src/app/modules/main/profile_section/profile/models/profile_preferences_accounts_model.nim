@@ -1,6 +1,6 @@
 import NimQml, tables, strutils, sequtils, sugar
 
-import profile_preferences_community_item
+import profile_preferences_account_item
 
 type
   ModelRole {.pure.} = enum
@@ -8,41 +8,43 @@ type
     EntryType
     ShowcaseVisibility
     Order
+
     Name
-    MemberRole
-    Image
-    Color
+    Address
+    Emoji
+    WalletType
+    ColorId
 
 QtObject:
   type
-    ProfileShowcaseCommunitiesModel* = ref object of QAbstractListModel
-      items: seq[ProfileShowcaseCommunityItem]
+    ProfileShowcaseAccountsModel* = ref object of QAbstractListModel
+      items: seq[ProfileShowcaseAccountItem]
 
-  proc delete(self: ProfileShowcaseCommunitiesModel) =
+  proc delete(self: ProfileShowcaseAccountsModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: ProfileShowcaseCommunitiesModel) =
+  proc setup(self: ProfileShowcaseAccountsModel) =
     self.QAbstractListModel.setup
 
-  proc newProfileShowcaseCommunitiesModel*(): ProfileShowcaseCommunitiesModel =
+  proc newProfileShowcaseAccountsModel*(): ProfileShowcaseAccountsModel =
     new(result, delete)
     result.setup
 
-  proc countChanged(self: ProfileShowcaseCommunitiesModel) {.signal.}
-  proc getCount(self: ProfileShowcaseCommunitiesModel): int {.slot.} =
+  proc countChanged(self: ProfileShowcaseAccountsModel) {.signal.}
+  proc getCount(self: ProfileShowcaseAccountsModel): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
+  proc setItems*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc appendItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
+  proc appendItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -50,7 +52,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc removeItem*(self: ProfileShowcaseCommunitiesModel, id: string): bool =
+  proc removeItem*(self: ProfileShowcaseAccountsModel, id: string): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].id == id):
         let parentModelIndex = newQModelIndex()
@@ -62,7 +64,7 @@ QtObject:
         return true
     return false
 
-  proc updateItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem): bool =
+  proc updateItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].id == item.id):
         self.items[i] = item
@@ -73,25 +75,27 @@ QtObject:
 
     return false
 
-  proc items*(self: ProfileShowcaseCommunitiesModel): seq[ProfileShowcaseCommunityItem] =
+  proc items*(self: ProfileShowcaseAccountsModel): seq[ProfileShowcaseAccountItem] =
     self.items
 
-  method rowCount(self: ProfileShowcaseCommunitiesModel, index: QModelIndex = nil): int =
+  method rowCount(self: ProfileShowcaseAccountsModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: ProfileShowcaseCommunitiesModel): Table[int, string] =
+  method roleNames(self: ProfileShowcaseAccountsModel): Table[int, string] =
     {
       ModelRole.Id.int: "id",
       ModelRole.EntryType.int: "entryType",
       ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
       ModelRole.Order.int: "order",
+
       ModelRole.Name.int: "name",
-      ModelRole.MemberRole.int: "memberRole",
-      ModelRole.Image.int: "image",
-      ModelRole.Color.int: "color",
+      ModelRole.Address.int: "address",
+      ModelRole.WalletType.int: "walletType",
+      ModelRole.Emoji.int: "emoji",
+      ModelRole.ColorId.int: "colorId",
     }.toTable
 
-  method data(self: ProfileShowcaseCommunitiesModel, index: QModelIndex, role: int): QVariant =
+  method data(self: ProfileShowcaseAccountsModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -112,9 +116,11 @@ QtObject:
       result = newQVariant(item.order)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.MemberRole:
-      result = newQVariant(item.memberRole.int)
-    of ModelRole.Image:
-      result = newQVariant(item.image)
-    of ModelRole.Color:
-      result = newQVariant(item.color)
+    of ModelRole.Address:
+      result = newQVariant(item.address)
+    of ModelRole.WalletType:
+      result = newQVariant(item.walletType)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)

@@ -8,12 +8,14 @@ import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
 import models/profile_preferences_community_item
+import models/profile_preferences_account_item
 
 export io_interface
 
@@ -33,12 +35,13 @@ proc newModule*(
     events: EventEmitter,
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
-    communityService: community_service.Service): Module =
+    communityService: community_service.Service,
+    walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -96,5 +99,8 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     return
   self.updateSocialLinks(socialLinks)
 
-method setShowcaseCommunityPreferences(self: Module, items: seq[ProfileShowcaseCommunityItem]) =
-  self.view.setShowcaseCommunityPreferences(items)
+method setShowcaseCommunitiesPreferences(self: Module, items: seq[ProfileShowcaseCommunityItem]) =
+  self.view.setShowcaseCommunitiesPreferences(items)
+
+method setShowcaseAccountsPreferences(self: Module, items: seq[ProfileShowcaseAccountItem]) =
+  self.view.setShowcaseAccountsPreferences(items)
