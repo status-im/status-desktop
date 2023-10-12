@@ -94,6 +94,12 @@ type
     collectionImageUrl*: string
     communityInfo*: Option[CollectibleCommunityInfo]
 
+  # Mirrors services/wallet/collectibles/types.go CommunityCollectibleHeader
+  CommunityCollectibleHeader* = ref object of RootObj
+    id* : CollectibleUniqueID
+    name*: string
+    communityHeader*: CollectibleCommunityHeader
+
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
     tokenId*: UInt256
@@ -374,6 +380,20 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleDetails]): ref CollectibleDetails {.inline.} =
   result = new(CollectibleDetails)
   result[] = fromJson(t, CollectibleDetails)
+
+# CommunityCollectibleHeader
+proc `$`*(self: CommunityCollectibleHeader): string =
+  return fmt"""CommunityCollectibleHeader(
+    id:{self.id},
+    name:{self.name},
+    communityHeader:{self.communityHeader}
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[CommunityCollectibleHeader]): CommunityCollectibleHeader {.inline.} =
+  result = CommunityCollectibleHeader()
+  result.id = fromJson(t["id"], CollectibleUniqueID)
+  result.name = t["name"].getStr()
+  result.communityHeader = fromJson(t[communityHeaderField], CollectibleCommunityHeader)
 
 # CollectibleBalance
 proc `$`*(self: CollectibleBalance): string =
