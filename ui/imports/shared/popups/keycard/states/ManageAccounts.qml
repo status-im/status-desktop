@@ -82,7 +82,8 @@ Item {
                  root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard
 
         function onEmojiSelected (emojiText, atCursor) {
-            d.observedAccount.emoji = emojiText
+            let emoji = StatusQUtils.Emoji.deparse(emojiText)
+            d.observedAccount.emoji = emoji
         }
     }
 

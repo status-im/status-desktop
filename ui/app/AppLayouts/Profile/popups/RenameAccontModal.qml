@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 
@@ -35,7 +36,8 @@ StatusModal {
         enabled: popup.opened
         target: emojiPopup
         function onEmojiSelected(emojiText: string, atCursor: bool) {
-            popup.contentItem.accountNameInput.input.asset.emoji = emojiText
+            let emoji = StatusQUtils.Emoji.deparse(emojiText)
+            popup.contentItem.accountNameInput.input.asset.emoji = emoji
         }
     }
 
@@ -112,9 +114,11 @@ StatusModal {
             objectName: "renameAccountModalSaveBtn"
             text: qsTr("Change Name")
 
-            enabled: accountNameInput.text !== "" && accountNameInput.valid
-                        && (accountNameInput.text !== popup.account.name
-                            || (accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.account.color))
+            enabled: accountNameInput.text !== "" &&
+                     accountNameInput.valid &&
+                     (accountNameInput.text !== popup.account.name ||
+                      accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.account.color ||
+                      accountNameInput.input.asset.emoji !== popup.account.emoji)
 
             MessageDialog {
                 id: changeError
