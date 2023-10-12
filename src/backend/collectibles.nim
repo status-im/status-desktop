@@ -19,6 +19,7 @@ const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ow
 const eventCollectiblesOwnershipUpdatePartial*: string = "wallet-collectibles-ownership-update-partial"
 const eventCollectiblesOwnershipUpdateFinished*: string = "wallet-collectibles-ownership-update-finished"
 const eventCollectiblesOwnershipUpdateFinishedWithError*: string = "wallet-collectibles-ownership-update-finished-with-error"
+const eventCommunityCollectiblesReceived*: string = "wallet-collectibles-community-collectibles-received"
 
 const eventOwnedCollectiblesFilteringDone*: string = "wallet-owned-collectibles-filtering-done"
 const eventGetCollectiblesDetailsDone*: string = "wallet-get-collectibles-details-done"
@@ -56,6 +57,9 @@ type
   GetCollectiblesDetailsResponse* = object
     collectibles*: seq[CollectibleDetails]
     errorCode*: ErrorCode
+
+  CommunityCollectiblesReceivedPayload* = object
+    collectibles*: seq[CommunityCollectibleHeader]
 
 # CollectibleOwnershipState
 proc `$`*(self: OwnershipStatus): string =
@@ -107,6 +111,15 @@ proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesDetailsResponse]): GetCol
   result = T(
     collectibles: collectibles,
     errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+proc fromJson*(e: JsonNode, T: typedesc[CommunityCollectiblesReceivedPayload]): CommunityCollectiblesReceivedPayload {.inline.} =
+  var collectibles: seq[CommunityCollectibleHeader] = @[]
+  for item in e.getElems():
+    collectibles.add(fromJson(item, CommunityCollectibleHeader))
+
+  result = T(
+    collectibles: collectibles
   )
 
 rpc(getCollectiblesByOwnerWithCursor, "wallet"):
