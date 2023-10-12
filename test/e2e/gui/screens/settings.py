@@ -470,11 +470,13 @@ class EditNetworkSettings(WalletSettingsView):
         assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
 
-        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
-        assert driver.waitFor(lambda: self._network_revert_to_default.exists,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Revert to default button is not present"
+        assert not driver.waitForObjectExists(self._network_revert_to_default.real_name,
+                                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+            f"Revert to default button is enabled"
 
-        assert self._network_save_changes.exists, f"Save changes button is not present"
+        assert not driver.waitForObjectExists(self._network_save_changes.real_name,
+                                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+            f"Save changes button is enabled"
 
     @allure.step('Edit Main RPC url input field')
     def edit_network_main_json_rpc_url_input(self, test_value):
