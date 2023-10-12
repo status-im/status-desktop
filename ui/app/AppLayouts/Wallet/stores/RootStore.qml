@@ -3,9 +3,10 @@ pragma Singleton
 import QtQuick 2.13
 
 import utils 1.0
+
 import SortFilterProxyModel 0.2
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 QtObject {
     id: root
@@ -246,11 +247,11 @@ QtObject {
     // Returns object of type {type: null, object: null} or null if lookup didn't find anything
     function lookupAddressObject(address) {
         let res = null
-        let acc = ModelUtils.getByKey(root.accounts, "address", address)
+        let acc = SQUtils.ModelUtils.getByKey(root.accounts, "address", address)
         if (acc) {
             res = {type: RootStore.LookupType.Account, object: acc}
         } else {
-            let sa = ModelUtils.getByKey(walletSectionSavedAddresses.model, "address", address)
+            let sa = SQUtils.ModelUtils.getByKey(walletSectionSavedAddresses.model, "address", address)
             if (sa) {
                 res = {type: RootStore.LookupType.SavedAddress, object: sa}
             }
