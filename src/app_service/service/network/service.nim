@@ -173,9 +173,6 @@ proc getNetworkForCollectibles*(self: Service): NetworkDto =
 proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
   let network = self.getNetworkByChainId(chainId)
 
-  if network.rpcURL == newMainRpcInput and network.fallbackURL == newFailoverRpcUrl:
-    return
-
   if network.rpcURL != newMainRpcInput:
     network.rpcURL = newMainRpcInput
 
