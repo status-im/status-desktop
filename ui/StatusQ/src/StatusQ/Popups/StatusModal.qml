@@ -10,10 +10,10 @@ import "statusModal" as Spares
 
 /*!
    \qmltype StatusModal
-   \inherits Popup
+   \inherits StatusDialog
    \inqmlmodule StatusQ.Popups
    \since StatusQ.Popups 0.1
-   \brief The StatusModal provides a template for creating Modals.
+   \brief DEPRECATED: for new code, please use StatusDialog! The StatusModal provides a template for creating Modals.
 
    Example of how to use it:
 
@@ -134,7 +134,10 @@ StatusDialog {
         type: StatusModalHeaderSettings
         This property exposes the different properties of the standard header.
     */
-    property StatusModalHeaderSettings headerSettings: StatusModalHeaderSettings {}
+    property StatusModalHeaderSettings headerSettings: StatusModalHeaderSettings {
+        title: root.title
+        subTitle: root.subtitle
+    }
     /*!
        \qmlproperty rightButtons
         This property helps user assign the right buttons on the footer.
