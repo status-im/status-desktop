@@ -82,7 +82,6 @@ def test_toggle_testnet_toggle_on_and_close_the_confirmation(main_screen: MainWi
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703622',
                  'Network:  Network: Enable Testnets, toggle testnet toggle OFF, click cancel in confirmation')
 @pytest.mark.case(703621)
-# @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12247"), bug is now fixed
 def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: MainWindow):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 

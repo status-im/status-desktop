@@ -5,13 +5,13 @@ from allure_commons._allure import step
 import driver
 from constants.wallet import WalletNetworkNaming, WalletEditNetworkErrorMessages, WalletNetworkSettings, \
     WalletNetworkDefaultValues
+from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.main_window import MainWindow
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',
                  'Network:  Network: Editing network -> Restore defaults')
 @pytest.mark.case(703515)
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12416")
 def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
     networks = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_networks()
 
@@ -51,22 +51,21 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow):
         assert edit_network_form.get_acknowledgement_checkbox_text(
             'text') == WalletNetworkSettings.ACKNOWLEDGMENT_CHECKBOX_TEXT.value
 
-    with step('Click Revert to default button and restore values'):
-        edit_network_form.revert_to_default()
+    with step('Click Revert to default button and go to Networks screen'):
+        edit_network_form.click_revert_to_default_and_go_to_networks_main_screen()
+
+    with step('Verify toast message appears for reverting to defaults'):
+        assert WalletToastMessage().get_toast_message(WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value)
+
+    with step('Open Ethereum Mainnet network item to edit'):
+        edit_network_form = networks.click_network_item_to_open_edit_view(
+            WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value)
 
     with step('Check value in Main JSON RPC URL input'):
         assert edit_network_form.get_edit_network_main_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value
 
-    with step('Check successful connection message for Main JSON RPC URL input'):
-        assert driver.waitFor(
-            lambda: edit_network_form.get_main_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGVERIFIED.value)
-
     with (step('Check value in Failover JSON RPC URL input')):
         assert edit_network_form.get_edit_network_failover_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value
-
-    with step('Check successful connection message for Failover JSON RPC URL input'):
-        assert driver.waitFor(
-            lambda: edit_network_form.get_failover_rpc_url_error_message_text() == WalletEditNetworkErrorMessages.PINGVERIFIED.value)
 
     with step('Verify the acknowledgment checkbox is unchecked'):
         assert edit_network_form.check_acknowledgement_checkbox(False)

@@ -13,7 +13,9 @@ class WalletNetworkSettings(Enum):
     TESTNET_SUBTITLE = 'Switch entire Status app to testnet only mode'
     TESTNET_ENABLED_TOAST_MESSAGE = 'Testnet mode turned on'
     TESTNET_DISABLED_TOAST_MESSAGE = 'Testnet mode turned off'
-    ACKNOWLEDGMENT_CHECKBOX_TEXT = 'I understand that changing network settings can cause unforeseen issues, errors, security risks and potentially even loss of funds.'
+    ACKNOWLEDGMENT_CHECKBOX_TEXT = ('I understand that changing network settings can cause unforeseen issues, errors, '
+                                    'security risks and potentially even loss of funds.')
+    REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE = 'Live network settings for Mainnet reverted to default'
 
 
 class WalletNetworkNaming(Enum):

@@ -506,7 +506,7 @@ class EditNetworkSettings(WalletSettingsView):
         error = str(self._network_edit_failover_rpc_url_error_message.object.errorMessageCmp.text)
         return error
 
-    @allure.step('Click Revert to default button')
+    @allure.step('Click Revert button and make sure values are reset')
     def revert_to_default(self, attempts=2):
         current_value_main = self._network_main_json_rpc_url.text
         current_value_failover = self._network_failover_json_rpc_url.text
@@ -517,6 +517,12 @@ class EditNetworkSettings(WalletSettingsView):
             assert attempts > 0, "value not reverted"
             time.sleep(1)
             self.revert_to_default(attempts - 1)
+
+    @allure.step('Click Revert to default button and redirect to Networks screen')
+    def click_revert_to_default_and_go_to_networks_main_screen(self):
+        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_revert_to_default.click()
+        return NetworkWalletSettings().wait_until_appears()
 
     @allure.step('Get value from Main json rpc input')
     def get_edit_network_main_json_rpc_url_value(self):
