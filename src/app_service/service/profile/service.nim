@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables, json_serialization
+import NimQml, json, chronicles, tables, sugar, sequtils, json_serialization
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
@@ -19,10 +19,10 @@ logScope:
 
 type
   ProfileShowcasePreferencesArgs* = ref object of Args
-    communities*: seq[ProfileShowcaseEntryDto]
-    accounts*: seq[ProfileShowcaseEntryDto]
-    collectibles*: seq[ProfileShowcaseEntryDto]
-    tokens*: seq[ProfileShowcaseEntryDto]
+    communities*: Table[string, ProfileShowcaseEntryDto]
+    accounts*: Table[string, ProfileShowcaseEntryDto]
+    collectibles*: Table[string, ProfileShowcaseEntryDto]
+    assets*: Table[string, ProfileShowcaseEntryDto]
 
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
@@ -50,9 +50,6 @@ QtObject:
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
-
-    # Request preferences once on start
-    self.requestProfileShowcasePreferences()
 
   proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
     try:
@@ -124,12 +121,12 @@ QtObject:
     var communities = result{"communities"}.parseProfileShowcaseEntries()
     var accounts = result{"accounts"}.parseProfileShowcaseEntries()
     var collectibles = result{"collectibles"}.parseProfileShowcaseEntries()
-    var tokens = result{"tokens"}.parseProfileShowcaseEntries()
+    var assets = result{"assets"}.parseProfileShowcaseEntries()
 
     self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
       ProfileShowcasePreferencesArgs(
         communities: communities,
         accounts: accounts,
         collectibles: collectibles,
-        tokens: tokens
+        assets: assets
     ))

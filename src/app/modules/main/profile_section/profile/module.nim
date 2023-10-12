@@ -7,10 +7,13 @@ import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
+import app_service/service/community/service as community_service
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
+
+import models/profile_preferences_community_item
 
 export io_interface
 
@@ -25,13 +28,17 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  profileService: profile_service.Service, settingsService: settings_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    communityService: community_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -88,3 +95,6 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     # maybe we want in future popup or somehow display an error to a user
     return
   self.updateSocialLinks(socialLinks)
+
+method setShowcaseCommunityPreferences(self: Module, items: seq[ProfileShowcaseCommunityItem]) =
+  self.view.setShowcaseCommunityPreferences(items)

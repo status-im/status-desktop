@@ -4,8 +4,8 @@ import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
-import models/profile_preferences_model
-import models/profile_preferences_item
+import models/profile_preferences_community_model
+import models/profile_preferences_community_item
 
 import app_service/service/profile/dto/profile_showcase_entry
 
@@ -17,8 +17,8 @@ QtObject:
       socialLinksModelVariant: QVariant
       temporarySocialLinksModel: SocialLinksModel # used for editing purposes
       temporarySocialLinksModelVariant: QVariant
-      profileShowcasePreferencesModel: ProfileShowcasePreferencesModel
-      profileShowcasePreferencesModelVariant: QVariant
+      profileShowcaseCommunitiesModel: ProfileShowcaseCommunitiesModel
+      profileShowcaseCommunitiesModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -26,8 +26,8 @@ QtObject:
     self.socialLinksModelVariant.delete
     self.temporarySocialLinksModel.delete
     self.temporarySocialLinksModelVariant.delete
-    self.profileShowcasePreferencesModel.delete
-    self.profileShowcasePreferencesModelVariant.delete
+    self.profileShowcaseCommunitiesModel.delete
+    self.profileShowcaseCommunitiesModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -37,8 +37,8 @@ QtObject:
     result.socialLinksModelVariant = newQVariant(result.socialLinksModel)
     result.temporarySocialLinksModel = newSocialLinksModel()
     result.temporarySocialLinksModelVariant = newQVariant(result.temporarySocialLinksModel)
-    result.profileShowcasePreferencesModel = newProfileShowcasePreferencesModel()
-    result.profileShowcasePreferencesModelVariant = newQVariant(result.profileShowcasePreferencesModel)
+    result.profileShowcaseCommunitiesModel = newProfileShowcaseCommunitiesModel()
+    result.profileShowcaseCommunitiesModelVariant = newQVariant(result.profileShowcaseCommunitiesModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -87,7 +87,6 @@ QtObject:
   proc temporarySocialLinksJsonChanged*(self: View) {.signal.}
   proc getTemporarySocialLinksJson(self: View): string {.slot.} =
     $(%*self.temporarySocialLinksModel.items)
-
 
   QtProperty[string] socialLinksJson:
     read = getSocialLinksJson
@@ -152,11 +151,11 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
-  proc setShowcasePreferences*(self: View, items: seq[ProfileShowcasePreferencesItem]) =
-    self.profileShowcasePreferencesModel.setItems(items)
+  proc setShowcaseCommunityPreferences*(self: View, items: seq[ProfileShowcaseCommunityItem]) =
+    self.profileShowcaseCommunitiesModel.setItems(items)
 
-  proc getProfileShowcasePreferencesModel(self: View): QVariant {.slot.} =
-    return self.profileShowcasePreferencesModelVariant
+  proc getProfileShowcaseCommunitiesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcaseCommunitiesModelVariant
 
-  QtProperty[QVariant] profileShowcasePreferencesModel:
-    read = getProfileShowcasePreferencesModel
+  QtProperty[QVariant] profileShowcaseCommunitiesModel:
+    read = getProfileShowcaseCommunitiesModel

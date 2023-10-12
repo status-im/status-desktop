@@ -1,14 +1,15 @@
-import json, sugar, sequtils
+import json, sugar, sequtils, tables
 
 import io_interface
 
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
+import app_service/service/community/service as community_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
-import models/profile_preferences_item
+import models/profile_preferences_community_item
 
 type
   Controller* = ref object of RootObj
@@ -16,17 +17,23 @@ type
     events: EventEmitter
     profileService: profile_service.Service
     settingsService: settings_service.Service
+    communityService: community_service.Service
 
   # Forward declaration
-proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, tokens: seq[ProfileShowcaseEntryDto])
+proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto])
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  profileService: profile_service.Service, settingsService: settings_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    communityService: community_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.profileService = profileService
   result.settingsService = settingsService
+  result.communityService = communityService
 
 proc delete*(self: Controller) =
   discard
@@ -44,11 +51,32 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
     let args = ProfileShowcasePreferencesArgs(e)
-    self.updateShowcasePreferences(args.communities, args.accounts, args.collectibles, args.tokens)
+    self.updateShowcasePreferences(args.communities, args.accounts, args.collectibles, args.assets)
 
-proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, tokens: seq[ProfileShowcaseEntryDto]) =
-  let items = (communities & accounts & collectibles & tokens).map(item => initProfileShowcasePreferencesItem(item))
-  self.delegate.setShowcasePreferences(items)
+  # Request preferences once on controller init
+  self.profileService.requestProfileShowcasePreferences()
+
+proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto]) =
+  var profileItems: seq[ProfileShowcaseCommunityItem] = @[]
+
+  # Collect all joined & curated communities to fill perferences with defaults only on UI
+  # NOTE: Is getJoinedCommunities() already contains getCuratedCommunities()
+  for community in self.communityService.getJoinedCommunities() & self.communityService.getCuratedCommunities():
+    var profileEntry: ProfileShowcaseEntryDto
+    if communities.contains(community.id):
+      profileEntry = communities[community.id]
+    else:
+      profileEntry = ProfileShowcaseEntryDto(
+        id: community.id,
+        entryType: ProfileShowcaseEntryType.Community,
+        visibility: ProfileShowcaseVisibility.ToNoOne,
+        order: 0
+      )
+    profileItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
+
+  # TODO: accounts, collectibles, assets
+
+  self.delegate.setShowcaseCommunityPreferences(profileItems)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)

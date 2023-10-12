@@ -18,8 +18,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import SortFilterProxyModel 0.2
-
 ColumnLayout {
     id: root
 
@@ -198,50 +196,26 @@ ColumnLayout {
         ProfileShowcaseCommunitiesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: SortFilterProxyModel {
-                sourceModel: root.profileStore.profileShowcasePreferencesModel
-                filters: ValueFilter {
-                    roleName: "entryType"
-                    value: ProfileStore.ProfileShowcaseEntryType.Community
-                }
-            }
+            baseModel: root.profileStore.profileShowcaseCommunitiesModel
         }
 
         ProfileShowcaseAccountsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: SortFilterProxyModel {
-                sourceModel: root.profileStore.profileShowcasePreferencesModel
-                filters: ValueFilter {
-                    roleName: "entryType"
-                    value: ProfileStore.ProfileShowcaseEntryType.Account
-                }
-            }
-            currentWallet: root.walletStore.overview.mixedcaseAddress
+            // baseModel: root.profileStore.profileShowcaseAccountsModel
+            // currentWallet: root.walletStore.overview.mixedcaseAddress
         }
 
         ProfileShowcaseCollectiblesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: SortFilterProxyModel {
-                sourceModel: root.profileStore.profileShowcasePreferencesModel
-                filters: ValueFilter {
-                    roleName: "entryType"
-                    value: ProfileStore.ProfileShowcaseEntryType.Collectible
-                }
-            }
+           // baseModel: root.profileStore.profileShowcaseCollectiblesModel
         }
 
         ProfileShowcaseAssetsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: SortFilterProxyModel {
-                sourceModel: root.profileStore.profileShowcasePreferencesModel
-                filters: ValueFilter {
-                    roleName: "entryType"
-                    value: ProfileStore.ProfileShowcaseEntryType.Asset
-                }
-            }
+            // baseModel: root.profileStore.profileShowcaseAssetsModel
         }
     }
 }

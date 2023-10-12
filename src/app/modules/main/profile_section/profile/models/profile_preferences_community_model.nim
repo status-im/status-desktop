@@ -1,51 +1,48 @@
 import NimQml, tables, strutils, sequtils, sugar
 
-import profile_preferences_item
+import profile_preferences_community_item
 
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     EntryType
-    Visibility
+    ShowcaseVisibility
     Order
     Name
-    SecondaryTitle
+    MemberRole
     Image
-    Emoji
-    ColorId
     Color
-    BackgroundColor
 
 QtObject:
   type
-    ProfileShowcasePreferencesModel* = ref object of QAbstractListModel
-      items: seq[ProfileShowcasePreferencesItem]
+    ProfileShowcaseCommunitiesModel* = ref object of QAbstractListModel
+      items: seq[ProfileShowcaseCommunityItem]
 
-  proc delete(self: ProfileShowcasePreferencesModel) =
+  proc delete(self: ProfileShowcaseCommunitiesModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: ProfileShowcasePreferencesModel) =
+  proc setup(self: ProfileShowcaseCommunitiesModel) =
     self.QAbstractListModel.setup
 
-  proc newProfileShowcasePreferencesModel*(): ProfileShowcasePreferencesModel =
+  proc newProfileShowcaseCommunitiesModel*(): ProfileShowcaseCommunitiesModel =
     new(result, delete)
     result.setup
 
-  proc countChanged(self: ProfileShowcasePreferencesModel) {.signal.}
-  proc getCount(self: ProfileShowcasePreferencesModel): int {.slot.} =
+  proc countChanged(self: ProfileShowcaseCommunitiesModel) {.signal.}
+  proc getCount(self: ProfileShowcaseCommunitiesModel): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcasePreferencesModel, items: seq[ProfileShowcasePreferencesItem]) =
+  proc setItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc appendItem*(self: ProfileShowcasePreferencesModel, item: ProfileShowcasePreferencesItem) =
+  proc appendItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -53,7 +50,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc removeItem*(self: ProfileShowcasePreferencesModel, id: string): bool =
+  proc removeItem*(self: ProfileShowcaseCommunitiesModel, id: string): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].id == id):
         let parentModelIndex = newQModelIndex()
@@ -65,39 +62,36 @@ QtObject:
         return true
     return false
 
-  proc updateItem*(self: ProfileShowcasePreferencesModel, item: ProfileShowcasePreferencesItem): bool =
+  proc updateItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].id == item.id):
         self.items[i] = item
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.EntryType.int, ModelRole.Visibility.int, ModelRole.Order.int])
+        self.dataChanged(index, index, @[ModelRole.EntryType.int, ModelRole.ShowcaseVisibility.int, ModelRole.Order.int])
         return true
 
     return false
 
-  proc items*(self: ProfileShowcasePreferencesModel): seq[ProfileShowcasePreferencesItem] =
+  proc items*(self: ProfileShowcaseCommunitiesModel): seq[ProfileShowcaseCommunityItem] =
     self.items
 
-  method rowCount(self: ProfileShowcasePreferencesModel, index: QModelIndex = nil): int =
+  method rowCount(self: ProfileShowcaseCommunitiesModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: ProfileShowcasePreferencesModel): Table[int, string] =
+  method roleNames(self: ProfileShowcaseCommunitiesModel): Table[int, string] =
     {
       ModelRole.Id.int: "id",
       ModelRole.EntryType.int: "entryType",
-      ModelRole.Visibility.int: "visibility",
+      ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
       ModelRole.Order.int: "order",
       ModelRole.Name.int: "name",
-      ModelRole.SecondaryTitle.int: "secondaryTitle",
+      ModelRole.MemberRole.int: "memberRole",
       ModelRole.Image.int: "image",
-      ModelRole.Emoji.int: "emoji",
-      ModelRole.ColorId.int: "colorId",
       ModelRole.Color.int: "color",
-      ModelRole.BackgroundColor.int: "backgroundColor"
     }.toTable
 
-  method data(self: ProfileShowcasePreferencesModel, index: QModelIndex, role: int): QVariant =
+  method data(self: ProfileShowcaseCommunitiesModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -112,21 +106,15 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.EntryType:
       result = newQVariant(item.entryType.int)
-    of ModelRole.Visibility:
-      result = newQVariant(item.visibility.int)
+    of ModelRole.ShowcaseVisibility:
+      result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.SecondaryTitle:
-      result = newQVariant(item.secondaryTitle)
+    of ModelRole.MemberRole:
+      result = newQVariant(item.memberRole.int)
     of ModelRole.Image:
       result = newQVariant(item.image)
-    of ModelRole.Emoji:
-      result = newQVariant(item.emoji)
-    of ModelRole.ColorId:
-      result = newQVariant(item.colorId)
     of ModelRole.Color:
       result = newQVariant(item.color)
-    of ModelRole.BackgroundColor:
-      result = newQVariant(item.backgroundColor)

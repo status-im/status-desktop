@@ -1,18 +1,18 @@
-import json, strformat, strutils, stint, json_serialization
+import json, strformat, strutils, stint, json_serialization, tables
 include ../../../common/json_utils
 include ../../../common/utils
 
 type ProfileShowcaseEntryType* {.pure.}= enum
-  TypeCommunity = 0,
-  TypeAccount = 1,
-  TypeCollectible = 2,
-  TypeAsset = 3,
+  Community = 0,
+  Account = 1,
+  Collectible = 2,
+  Asset = 3,
 
 type ProfileShowcaseVisibility* {.pure.}= enum
-  NoOne = 0,
-  IDVerifiedContacts = 1,
-  Contacts = 2,
-  Everyone = 3,
+  ToNoOne = 0,
+  ToIDVerifiedContacts = 1,
+  ToContacts = 2,
+  ToEveryone = 3,
 
 type ProfileShowcaseEntryDto* = ref object of RootObj
   id*: string
@@ -45,8 +45,9 @@ proc toProfileShowcaseEntryDto*(jsonObj: JsonNode): ProfileShowcaseEntryDto =
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.visibility = ProfileShowcaseVisibility(visibilityInt)
 
-proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): seq[ProfileShowcaseEntryDto] =
-  var entries: seq[ProfileShowcaseEntryDto] = @[]
+proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): Table[string, ProfileShowcaseEntryDto] =
+  var entries: Table[string, ProfileShowcaseEntryDto] = initTable[string, ProfileShowcaseEntryDto]()
   for jsonMsg in jsonMsgs:
-    entries.add(jsonMsg.toProfileShowcaseEntryDto())
+    let item = jsonMsg.toProfileShowcaseEntryDto()
+    entries.add(item.id, item)
   return entries
