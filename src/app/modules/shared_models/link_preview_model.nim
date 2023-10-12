@@ -270,7 +270,7 @@ QtObject:
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]
     for item in self.items:
-      if item.unfurled and item.linkPreview.hostName != "":
+      if item.unfurled and not item.linkPreview.empty():
         result.add(item.linkPreview)
 
   proc getLinks*(self: Model): seq[string] =

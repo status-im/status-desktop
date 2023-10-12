@@ -96,7 +96,7 @@ method isFavorite*(self: AccessInterface, item: GifDto): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setText*(self: AccessInterface, text: string) {.base.} =
+method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
