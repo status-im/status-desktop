@@ -70,7 +70,8 @@ Item {
         target: root.store.emojiPopup
 
         function onEmojiSelected (emojiText, atCursor) {
-            root.store.addAccountModule.selectedEmoji = emojiText
+            let emoji = StatusQUtils.Emoji.deparse(emojiText)
+            root.store.addAccountModule.selectedEmoji = emoji
         }
     }
 
