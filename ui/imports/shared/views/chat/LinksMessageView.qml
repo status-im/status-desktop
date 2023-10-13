@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import shared.controls 1.0
 import shared.status 1.0
 import shared.panels 1.0
 import shared.stores 1.0
@@ -89,44 +90,90 @@ Flow {
         model: root.linkPreviewModel
         delegate: Loader {
             id: linkMessageLoader
-
             // properties from the model
-            required property string url
+
             required property bool unfurled
-            required property string hostname
-            required property string title
-            required property string description
-            required property int linkType
-            required property int thumbnailWidth
-            required property int thumbnailHeight
-            required property string thumbnailUrl
-            required property string thumbnailDataUri
+            required property bool empty
+            required property string url
+            required property bool immutable
+            required property int previewType
+            required property var standardPreview
+            required property var standardPreviewThumbnail
+            required property var statusContactPreview
+            required property var statusContactPreviewThumbnail
+            required property var statusCommunityPreview
+            required property var statusCommunityPreviewIcon
+            required property var statusCommunityPreviewBanner
+            required property var statusCommunityChannelPreview
+            required property var statusCommunityChannelCommunityPreview
+            required property var statusCommunityChannelCommunityPreviewIcon
+            required property var statusCommunityChannelCommunityPreviewBanner
+
+            readonly property string hostname: standardPreview ? standardPreview.hostname : ""
+            readonly property string title: standardPreview ? standardPreview.title : ""
+            readonly property string description: standardPreview ? standardPreview.description : ""
+            readonly property int standardLinkType: standardPreview ? standardPreview.linkType : ""
+            readonly property int thumbnailWidth: standardPreviewThumbnail ? standardPreviewThumbnail.width : ""
+            readonly property int thumbnailHeight: standardPreviewThumbnail ? standardPreviewThumbnail.height : ""
+            readonly property string thumbnailUrl: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""
+            readonly property string thumbnailDataUri: standardPreviewThumbnail ? standardPreviewThumbnail.dataUri : ""
             property bool animated: false
 
             asynchronous: true
-            active: unfurled && hostname != ""
+            active: unfurled && !empty
 
-            sourceComponent: LinkPreviewCard {
-                id: unfurledLink
-                leftTail: !root.isCurrentUser
-
-                bannerImageSource: thumbnailUrl.length > 0 ? thumbnailUrl : thumbnailDataUri
-                title: parent.title
-                description: parent.description
-                footer: hostname
-                onClicked:
-                    (mouse) => {
-                        switch (mouse.button) {
-                            case Qt.RightButton:
-                            root.imageClicked(unfurledLink, mouse, "", url) // request a dumb context menu with just "copy/open link" items
-                            break
-                            default:
-                            Global.openLinkWithConfirmation(url, hostname)
-                            break
-                        }
+            StateGroup {
+                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
+                states: [
+                    State {
+                        name: "standardLinkPreview"
+                        when: linkMessageLoader.previewType === Constants.LinkPreviewType.Standard
+                        PropertyChanges { target: linkMessageLoader; sourceComponent: standardLinkPreviewCard }
+                    },
+                    State {
+                        name: "statusContactLinkPreview"
+                        when: linkMessageLoader.previewType === Constants.LinkPreviewType.StatusContact
+                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledProfileLinkComponent }
                     }
-                highlight: root.highlightLink === url
-                onHoveredChanged: linksRepeater.hoveredUrl = hovered ? url : ""
+                ]
+            }
+        }
+    }
+    
+    Component {
+        id: standardLinkPreviewCard
+        LinkPreviewCard {
+            leftTail: !root.isCurrentUser // WARNING: Is this by design?
+            bannerImageSource: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""
+            title: standardPreview ? standardPreview.title : ""
+            description: standardPreview ? standardPreview.description : ""
+            footer: standardPreview ? standardPreview.hostname : ""
+            onClicked: (mouse) => {
+                switch (mouse.button) {
+                    case Qt.RightButton:
+                    root.imageClicked(unfurledLink, mouse, "", url) // request a dumb context menu with just "copy/open link" items
+                    break
+                    default:
+                    Global.openLinkWithConfirmation(url, hostname)
+                    break
+                }
+            }
+        }
+    }
+    
+    Component {
+        id: unfurledProfileLinkComponent
+        UserProfileCard {
+            id: unfurledProfileLink
+
+            leftTail: !root.isCurrentUser
+            userName: statusContactPreview && statusContactPreview.displayName ? statusContactPreview.displayName : ""
+            userPublicKey: statusContactPreview && statusContactPreview.publicKey ? statusContactPreview.publicKey : ""
+            userBio: statusContactPreview && statusContactPreview.description ? statusContactPreview.description : ""
+            userImage: statusContactPreviewThumbnail ? statusContactPreviewThumbnail.url : ""
+            ensVerified: false // not supported yet
+            onClicked: {
+                Global.openProfilePopup(userPublicKey)
             }
         }
     }
@@ -134,15 +181,12 @@ Flow {
     //TODO: Remove this once we have gif support in new unfurling flow
     Component {
         id: unfurledImageComponent
-
         CalloutCard {
             implicitWidth: linkImage.width
             implicitHeight: linkImage.height
             leftTail: !root.isCurrentUser
-
             StatusChatImageLoader {
                 id: linkImage
-
                 readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
                 readonly property string urlLink: link
                 property bool localAnimationEnabled: true
@@ -195,15 +239,11 @@ Flow {
             }
         }
     }
-
     // Code below can be dropped when New unfurling flow suppports GIFs.
-
     Component {
         id: invitationBubble
-
         InvitationBubbleView {
             property var invitationData: root.store.getLinkDataForStatusLinks(link)
-
             store: root.store
             communityId: invitationData && invitationData.communityData ? invitationData.communityData.communityId : ""
             communityData: invitationData && invitationData.communityData ? invitationData.communityData : null
@@ -214,7 +254,6 @@ Flow {
                 if (!invitationData)
                     linksModel.remove(index)
             }
-
             Connections {
                 enabled: !!invitationData && invitationData.fetching
                 target: root.store.communitiesModuleInst
@@ -225,10 +264,8 @@ Flow {
             }
         }
     }
-
     QtObject {
         id: d
-
         readonly property string uuid: Utils.uuid()
         readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
         readonly property string whiteListedUrls: JSON.stringify(localAccountSensitiveSettings.whitelistedUnfurlingSites)
@@ -241,18 +278,14 @@ Flow {
                                                                       whiteListedImgExtensions,
                                                                       localAccountSensitiveSettings.displayChatImages)
         }
-
-
         onGetLinkPreviewDataIdChanged: {
             linkFetchConnections.enabled = root.localUnfurlLinks !== ""
         }
     }
-
     Connections {
         id: linkFetchConnections
         enabled: false
         target: root.messageStore.messageModule
-
         function onLinkPreviewDataWasReceived(previewData, uuid) {
             if (d.uuid !== uuid)
                 return
@@ -265,12 +298,9 @@ Flow {
             }
         }
     }
-
     ListModel {
          id: linksModel
-
          property var rawData
-
          onRawDataChanged: {
              linksModel.clear()
              rawData.links.forEach((link) => {
@@ -280,34 +310,7 @@ Flow {
      }
 
     Component {
-        id: unfurledProfileLinkComponent
-        UserProfileCard {
-            id: unfurledProfileLink
-            readonly property var contact: Utils.parseContactUrl(parent.link)
-            readonly property var contactDetails: Utils.getContactDetailsAsJson(contact.publicKey)
-
-            readonly property string nickName: contactDetails ? contactDetails.localNickname : ""
-            readonly property string ensName: contactDetails ? contactDetails.name : ""
-            readonly property string displayName: contact && contact.displayName ? contact.displayName : 
-                                     contactDetails && contactDetails.displayName ? contactDetails.displayName : ""
-            readonly property string aliasName: contactDetails ? contactDetails.alias : ""
-
-            leftTail: !root.isCurrentUser
-            userName: ProfileUtils.displayName(nickName, ensName, displayName, aliasName)
-                      
-            userPublicKey: contactDetails && contactDetails.publicKey ? contactDetails.publicKey : ""
-            userBio: contactDetails && contactDetails.bio ? contactDetails.bio : ""
-            userImage: contactDetails && contactDetails.thumbnailImage ? contactDetails.thumbnailImage : ""
-            ensVerified: contactDetails && contactDetails.ensVerified ? contactDetails.ensVerified : false
-            onClicked: {
-                Global.openProfilePopup(userPublicKey)
-            }
-        }
-    }
-
-    Component {
         id: enableLinkComponent
-
         Rectangle {
             id: enableLinkRoot
             width: 300
@@ -316,7 +319,6 @@ Flow {
             border.width: 1
             border.color: Style.current.border
             color: Style.current.background
-
             StatusFlatRoundButton {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
@@ -327,7 +329,6 @@ Flow {
                 icon.name: "close-circle"
                 onClicked: linksModel.remove(index)
             }
-
             Image {
                 id: unfurlingImage
                 source: Style.png("unfurling-image")
@@ -337,7 +338,6 @@ Flow {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
             }
-
             StatusBaseText {
                 id: enableText
                 text: isImage ? qsTr("Enable automatic image unfurling") :
@@ -349,7 +349,6 @@ Flow {
                 anchors.topMargin: Style.current.halfPadding
                 color: Theme.palette.directColor1
             }
-
             StatusBaseText {
                 id: infoText
                 text: qsTr("Once enabled, links posted in the chat may share your metadata with their owners")
@@ -360,13 +359,11 @@ Flow {
                 font.pixelSize: 13
                 color: Theme.palette.baseColor1
             }
-
             Separator {
                 id: sep1
                 anchors.top: infoText.bottom
                 anchors.topMargin: Style.current.smallPadding
             }
-
             StatusFlatButton {
                 id: enableBtn
                 objectName: "LinksMessageView_enableBtn"
@@ -380,19 +377,16 @@ Flow {
                     background.radius = 0;
                 }
             }
-
             Separator {
                 id: sep2
                 anchors.top: enableBtn.bottom
                 anchors.topMargin: 0
             }
-
             Item {
                 width: parent.width
                 height: 44
                 anchors.top: sep2.bottom
                 clip: true
-
                 StatusFlatButton {
                     id: dontAskBtn
                     width: parent.width

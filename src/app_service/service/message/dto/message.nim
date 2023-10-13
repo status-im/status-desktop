@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strutils
+import json, strutils, chronicles
 import ../../../common/types
 import link_preview
 
@@ -263,7 +263,12 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   var linkPreviewsArr: JsonNode
   if jsonObj.getProp("linkPreviews", linkPreviewsArr):
     for element in linkPreviewsArr.getElems():
-      result.linkPreviews.add(element.toLinkPreview())
+      result.linkPreviews.add(element.toLinkPreview(true))
+
+  var statusLinkPreviewsArr: JsonNode
+  if jsonObj.getProp("statusLinkPreviews", statusLinkPreviewsArr):
+    for element in statusLinkPreviewsArr.getElems():
+      result.linkPreviews.add(element.toLinkPreview(false))
       
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):

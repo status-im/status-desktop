@@ -1216,6 +1216,14 @@ QtObject {
     }
 
     enum LinkPreviewType {
+        NoPreview = 0,
+        Standard = 1,
+        StatusContact = 2,
+        StatusCommunity = 3,
+        StatusCommunityChannel = 4
+    }
+
+    enum StandardLinkPreviewType {
         Link = 0,
         Image = 1
     }

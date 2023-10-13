@@ -51,9 +51,11 @@ QtObject:
       msg: string,
       replyTo: string,
       contentType: int) {.slot.} =
+    self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+    self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
@@ -212,7 +214,7 @@ QtObject:
     
   # Currently used to fetch link previews, but could be used elsewhere
   proc setText*(self: View, text: string) {.slot.} =
-    self.delegate.setText(text)
+    self.delegate.setText(text, true)
 
   proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)

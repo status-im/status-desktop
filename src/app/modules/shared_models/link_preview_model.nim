@@ -1,20 +1,37 @@
 import NimQml, strformat, tables, sequtils
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/dto/standard_link_preview
+import ../../../app_service/service/message/dto/status_link_preview
+import ../../../app_service/service/message/dto/status_contact_link_preview
+import ../../../app_service/service/message/dto/status_community_link_preview
+import ../../../app_service/service/message/dto/status_community_channel_link_preview
 
 type
   ModelRole {.pure.} = enum
     Url = UserRole + 1
     Unfurled
     Immutable
-    Hostname
-    Title
-    Description
-    LinkType
-    ThumbnailWidth
-    ThumbnailHeight
-    ThumbnailUrl
-    ThumbnailDataUri
+    Empty
+    PreviewType
+    # Standard unfurled link (oembed, opengraph, image)
+    StandardPreview
+    StandardPreviewThumbnail
+    # Status contact
+    StatusContactPreview
+    StatusContactPreviewThumbnail
+    # Status community
+    StatusCommunityPreview
+    StatusCommunityPreviewIcon
+    StatusCommunityPreviewBanner
+    # Status channel
+    StatusCommunityChannelPreview
+    # NOTE: I know "CommunityChannelCommunity" doesn't sound good, 
+    # and we could use existing `StatusCommunityPreview` role for this,
+    # but I decided no to mess things around. So there we have it:
+    StatusCommunityChannelCommunityPreview 
+    StatusCommunityChannelCommunityPreviewIcon
+    StatusCommunityChannelCommunityPreviewBanner
 
 QtObject:
   type
@@ -66,14 +83,23 @@ QtObject:
       ModelRole.Url.int:"url",
       ModelRole.Unfurled.int:"unfurled",
       ModelRole.Immutable.int:"immutable",
-      ModelRole.Hostname.int:"hostname",
-      ModelRole.Title.int:"title",
-      ModelRole.Description.int:"description",
-      ModelRole.LinkType.int:"linkType",
-      ModelRole.ThumbnailWidth.int:"thumbnailWidth",
-      ModelRole.ThumbnailHeight.int:"thumbnailHeight",
-      ModelRole.ThumbnailUrl.int:"thumbnailUrl",
-      ModelRole.ThumbnailDataUri.int:"thumbnailDataUri",
+      ModelRole.Empty.int:"empty",
+      ModelRole.PreviewType.int:"previewType",
+      # Standard
+      ModelRole.StandardPreview.int:"standardPreview",
+      ModelRole.StandardPreviewThumbnail.int:"standardPreviewThumbnail",
+      # Contact
+      ModelRole.StatusContactPreview.int:"statusContactPreview",
+      ModelRole.StatusContactPreviewThumbnail.int:"statusContactPreviewThumbnail",
+      # Community
+      ModelRole.StatusCommunityPreview.int:"statusCommunityPreview",
+      ModelRole.StatusCommunityPreviewIcon.int:"statusCommunityPreviewIcon",
+      ModelRole.StatusCommunityPreviewBanner.int:"statusCommunityPreviewBanner",
+      # Channel
+      ModelRole.StatusCommunityChannelPreview.int:"statusCommunityChannelPreview",
+      ModelRole.StatusCommunityChannelCommunityPreview.int:"statusCommunityChannelCommunityPreview",
+      ModelRole.StatusCommunityChannelCommunityPreviewIcon.int:"statusCommunityChannelCommunityPreviewIcon",
+      ModelRole.StatusCommunityChannelCommunityPreviewBanner.int:"statusCommunityChannelCommunityPreviewBanner",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -93,22 +119,45 @@ QtObject:
       result = newQVariant(item.unfurled)
     of ModelRole.Immutable:
       result = newQVariant(item.immutable)
-    of ModelRole.Hostname:
-      result = newQVariant(item.linkPreview.hostname)
-    of ModelRole.Title:
-      result = newQVariant(item.linkPreview.title)
-    of ModelRole.Description:
-      result = newQVariant(item.linkPreview.description)
-    of ModelRole.LinkType:
-      result = newQVariant(item.linkPreview.linkType.int)
-    of ModelRole.ThumbnailWidth:
-      result = newQVariant(item.linkPreview.thumbnail.width)
-    of ModelRole.ThumbnailHeight:
-      result = newQVariant(item.linkPreview.thumbnail.height)
-    of ModelRole.ThumbnailUrl:
-      result = newQVariant(item.linkPreview.thumbnail.url)
-    of ModelRole.ThumbnailDataUri:
-      result = newQVariant(item.linkPreview.thumbnail.dataUri)
+    of ModelRole.Empty:
+      result = newQVariant(item.linkPreview.empty()) 
+    of ModelRole.PreviewType:
+      result = newQVariant(item.linkPreview.previewType.int)
+    of ModelRole.StandardPreview:
+      if item.linkPreview.standardPreview != nil:
+        result = newQVariant(item.linkPreview.standardPreview)
+    of ModelRole.StandardPreviewThumbnail:
+      if item.linkPreview.standardPreview != nil:
+        result = newQVariant(item.linkPreview.standardPreview.getThumbnail())
+    of ModelRole.StatusContactPreview:
+      if item.linkPreview.statusContactPreview != nil:
+        result = newQVariant(item.linkPreview.statusContactPreview)
+    of ModelRole.StatusContactPreviewThumbnail:
+      if item.linkPreview.statusContactPreview != nil:
+        result = newQVariant(item.linkPreview.statusContactPreview.getIcon())
+    of ModelRole.StatusCommunityPreview:
+      if item.linkPreview.statusCommunityPreview != nil:
+        result = newQVariant(item.linkPreview.statusCommunityPreview)
+    of ModelRole.StatusCommunityPreviewIcon:
+      if item.linkPreview.statusCommunityPreview != nil:
+        result = newQVariant(item.linkPreview.statusCommunityPreview.getIcon())
+    of ModelRole.StatusCommunityPreviewBanner:
+      if item.linkPreview.statusCommunityPreview != nil:
+        result = newQVariant(item.linkPreview.statusCommunityPreview.getBanner())
+    of ModelRole.StatusCommunityChannelPreview:
+      if item.linkPreview.statusCommunityChannelPreview != nil:
+        result = newQVariant(item.linkPreview.statusCommunityChannelPreview)
+    of ModelRole.StatusCommunityChannelCommunityPreview:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
+        result = newQVariant(community)
+    of ModelRole.StatusCommunityChannelCommunityPreviewIcon:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
+        result = newQVariant(community.getIcon())
+    of ModelRole.StatusCommunityChannelCommunityPreviewBanner:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
+        result = newQVariant(community.getBanner())
+    else:
+      result = newQVariant()
 
   proc removeItemWithIndex(self: Model, ind: int) =
     if(ind < 0 or ind >= self.items.len):
@@ -220,7 +269,7 @@ QtObject:
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]
     for item in self.items:
-      if item.unfurled and item.linkPreview.hostName != "":
+      if item.unfurled and not item.linkPreview.empty():
         result.add(item.linkPreview)
 
   proc getLinks*(self: Model): seq[string] =

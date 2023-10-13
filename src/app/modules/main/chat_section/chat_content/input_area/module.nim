@@ -152,8 +152,8 @@ method addToRecentsGif*(self: Module, item: GifDto) =
 method isFavorite*(self: Module, item: GifDto): bool =
   return self.controller.isFavorite(item)
 
-method setText*(self: Module, text: string) =
-  self.controller.setText(text)
+method setText*(self: Module, text: string, unfurlUrls: bool) =
+  self.controller.setText(text, unfurlUrls)
 
 method clearLinkPreviewCache*(self: Module) {.slot.} =
   self.controller.clearLinkPreviewCache()

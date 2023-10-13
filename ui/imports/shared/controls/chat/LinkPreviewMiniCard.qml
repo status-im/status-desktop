@@ -21,11 +21,36 @@ CalloutCard {
     }
 
     enum Type {
+        Unknown = 0,
         Link,
         Image,
         Community,
         Channel,
         User
+    }
+
+    function getCardType(previewType, standardLinkPreview) {
+        switch (previewType) {
+            case Constants.StatusContact:
+                return LinkPreviewMiniCard.Type.User
+            case Constants.StatusCommunity:
+                return LinkPreviewMiniCard.Type.Community
+            case Constants.StatusCommunityChannel:
+                return LinkPreviewMiniCard.Type.Channel
+            case Constants.Standard:
+                if (!standardLinkPreview)
+                    return LinkPreviewMiniCard.Type.Unknown
+                switch (standardLinkPreview.linkType) {
+                case Constants.StandardLinkPreviewType.Link:
+                    return LinkPreviewMiniCard.Type.Link
+                case Constants.StandardLinkPreviewType.Image:
+                    return LinkPreviewMiniCard.Type.Image
+                default:
+                    return LinkPreviewMiniCard.Type.Unknown
+                }
+            default:
+                return LinkPreviewMiniCard.Type.Unknown
+        }
     }
 
     required property string titleStr
