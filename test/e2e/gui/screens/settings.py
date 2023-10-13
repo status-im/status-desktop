@@ -8,6 +8,7 @@ import configs.timeouts
 import driver
 from constants import UserCommunityInfo, wallet_account_list_item
 from constants.syncing import SyncingSettings
+from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
@@ -18,6 +19,7 @@ from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.components.social_links_popup import SocialLinksPopup
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
+from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.list import List
@@ -453,42 +455,114 @@ class EditNetworkSettings(WalletSettingsView):
         self._network_edit_main_rpc_url_error_message = QObject('mainRpcUrlInputObject')
         self._network_edit_failover_rpc_url_error_message = QObject('failoverRpcUrlInputObject')
 
+    @allure.step('Select Live Network tab')
+    def click_live_network_tab(self):
+        self._live_network_tab.click()
+
+    @allure.step('Select Test Network tab')
+    def click_test_network_tab(self):
+        self._test_network_tab.click()
+
+    @allure.step('Click Revert to default button and redirect to Networks screen')
+    def click_revert_to_default_and_go_to_networks_main_screen(self):
+        self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
+        self._network_revert_to_default.click()
+        return NetworkWalletSettings().wait_until_appears()
+
+    @allure.step('Check toast message')
+    def check_toast_message(self, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                WalletToastMessage().get_toast_message(
+                    WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value)
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                WalletToastMessage().get_toast_message(
+                    WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value)
+
     @allure.step('Verify elements for the edit network view')
-    def check_available_elements_on_edit_view(self):
-        assert self._network_edit_view_back_button.exists, f"Back button is not present"
-        assert self._live_network_tab.exists, f"Live tab is not present"
-        assert self._test_network_tab.exists, f"Test tab is not present"
-        assert self._network_name.exists, f"Network name input field is not present"
-        assert self._network_short_name.exists, f"Short name input field is not present"
-        assert self._network_chaid_id.exists, f"Chaid Id input field is not present"
-        assert self._network_native_token_symbol.exists, f"Native token symbol input field is not present"
-        assert self._network_main_json_rpc_url.exists, f"Main JSON RPC URL input field is not present"
-        assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
-        assert self._network_block_explorer.exists, f"Block explorer input field is not present"
+    def check_available_elements_on_edit_view(self, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                assert self._network_edit_view_back_button.exists, f"Back button is not present"
+                assert self._live_network_tab.exists, f"Live tab is not present"
+                assert self._test_network_tab.exists, f"Test tab is not present"
+                assert self._network_name.exists, f"Network name input field is not present"
+                assert self._network_short_name.exists, f"Short name input field is not present"
+                assert self._network_chaid_id.exists, f"Chaid Id input field is not present"
+                assert self._network_native_token_symbol.exists, f"Native token symbol input field is not present"
+                assert self._network_main_json_rpc_url.exists, f"Main JSON RPC URL input field is not present"
+                assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
+                assert self._network_block_explorer.exists, f"Block explorer input field is not present"
 
-        self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
-        assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
+                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
 
-        assert not driver.waitForObjectExists(self._network_revert_to_default.real_name,
-                                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
-            f"Revert to default button is enabled"
+                assert not driver.waitForObjectExists(self._network_revert_to_default.real_name,
+                                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+                    f"Revert to default button is enabled"
 
-        assert not driver.waitForObjectExists(self._network_save_changes.real_name,
-                                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
-            f"Save changes button is enabled"
+                assert not driver.waitForObjectExists(self._network_save_changes.real_name,
+                                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+                    f"Save changes button is enabled"
+
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                assert self._network_edit_view_back_button.exists, f"Back button is not present"
+                assert self._live_network_tab.exists, f"Live tab is not present"
+                assert self._test_network_tab.exists, f"Test tab is not present"
+                assert self._network_name.exists, f"Network name input field is not present"
+                assert self._network_short_name.exists, f"Short name input field is not present"
+                assert self._network_chaid_id.exists, f"Chaid Id input field is not present"
+                assert self._network_native_token_symbol.exists, f"Native token symbol input field is not present"
+                assert self._network_main_json_rpc_url.exists, f"Main JSON RPC URL input field is not present"
+                assert self._network_failover_json_rpc_url.exists, f"Failover JSON RPC URL input field is not present"
+                assert self._network_block_explorer.exists, f"Block explorer input field is not present"
+
+                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                assert driver.waitFor(lambda: self._network_acknowledgment_checkbox.exists,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f"Acknowldegment checkbox is not present"
+
+                assert not driver.waitForObjectExists(self._network_revert_to_default.real_name,
+                                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+                    f"Revert to default button is enabled"
+
+                assert not driver.waitForObjectExists(self._network_save_changes.real_name,
+                                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled, \
+                    f"Save changes button is enabled"
 
     @allure.step('Edit Main RPC url input field')
-    def edit_network_main_json_rpc_url_input(self, test_value):
-        self._network_main_json_rpc_url.text = test_value
+    def edit_network_main_json_rpc_url_input(self, test_value, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                self._network_main_json_rpc_url.text = test_value
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                self._network_main_json_rpc_url.text = test_value
 
     @allure.step('Edit Failover RPC url input field')
-    def edit_network_failover_json_rpc_url_input(self, test_value):
-        self._network_failover_json_rpc_url.text = test_value
+    def edit_network_failover_json_rpc_url_input(self, test_value, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                self._network_failover_json_rpc_url.text = test_value
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                self._network_failover_json_rpc_url.text = test_value
 
     @allure.step('Check acknowledgment checkbox')
-    def check_acknowledgement_checkbox(self, value: bool):
-        self._network_acknowledgment_checkbox.set(value)
+    def check_acknowledgement_checkbox(self, value: bool, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_acknowledgment_checkbox.set(value)
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                self._network_edit_scroll.vertical_down_to(self._network_acknowledgment_checkbox)
+                self._network_acknowledgment_checkbox.set(value)
         return self
 
     @allure.step('Get the text for consent when changing RPC urls')
@@ -531,6 +605,26 @@ class EditNetworkSettings(WalletSettingsView):
     @allure.step('Get value from Failover json rpc input')
     def get_edit_network_failover_json_rpc_url_value(self):
         return self._network_failover_json_rpc_url.text
+
+    @allure.step('Verify value in Main JSON RPC input')
+    def verify_edit_network_main_json_rpc_url_value(self, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                assert self.get_edit_network_main_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                assert self.get_edit_network_main_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_TEST_MAIN.value
+
+    @allure.step('Verify value in Failover JSON RPC input')
+    def verify_edit_network_failover_json_rpc_url_value(self, network_tab):
+        match network_tab:
+            case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
+                self._live_network_tab.click()
+                assert self.get_edit_network_failover_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value
+            case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
+                self._test_network_tab.click()
+                assert self.get_edit_network_failover_json_rpc_url_value() == WalletNetworkDefaultValues.ETHEREUM_TEST_FAILOVER.value
 
 
 class EditAccountOrderSettings(WalletSettingsView):

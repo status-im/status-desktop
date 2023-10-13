@@ -10,13 +10,15 @@ class DerivationPath(Enum):
 
 
 class WalletNetworkSettings(Enum):
+    EDIT_NETWORK_LIVE_TAB = 'Live Network'
+    EDIT_NETWORK_TEST_TAB = 'Test Network'
     TESTNET_SUBTITLE = 'Switch entire Status app to testnet only mode'
     TESTNET_ENABLED_TOAST_MESSAGE = 'Testnet mode turned on'
     TESTNET_DISABLED_TOAST_MESSAGE = 'Testnet mode turned off'
     ACKNOWLEDGMENT_CHECKBOX_TEXT = ('I understand that changing network settings can cause unforeseen issues, errors, '
                                     'security risks and potentially even loss of funds.')
     REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE = 'Live network settings for Mainnet reverted to default'
-
+    REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE = 'Test network settings for Mainnet reverted to default'
 
 class WalletNetworkNaming(Enum):
     LAYER1_ETHEREUM = 'Mainnet'
@@ -32,7 +34,9 @@ class WalletNetworkNaming(Enum):
 
 class WalletNetworkDefaultValues(Enum):
     ETHEREUM_LIVE_MAIN = 'https://eth-archival.gateway.pokt.network/v1/lb/************************'
+    ETHEREUM_TEST_MAIN = 'https://goerli-archival.gateway.pokt.network/v1/lb/************************'
     ETHEREUM_LIVE_FAILOVER = 'https://mainnet.infura.io/v3/********************************'
+    ETHEREUM_TEST_FAILOVER = 'https://goerli.infura.io/v3/********************************'
 
 
 class WalletEditNetworkErrorMessages(Enum):
