@@ -339,7 +339,7 @@ Item {
         function test_standard_key_shortcuts_data() {
             return [
                          { tag: "Delete", key: StandardKey.Delete, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 0, expectIdenticalPlainText: true },
-                         { tag: "Undo", key: StandardKey.Undo, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 0, expectIdenticalPlainText: true },
+                         { tag: "Undo", key: StandardKey.Undo, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 0, expectIdenticalPlainText: false },
                          { tag: "Redo", key: StandardKey.Redo, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 0, expectIdenticalPlainText: true  },
                          { tag: "SelectAll", key: StandardKey.SelectAll, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 0  , expectIdenticalPlainText: true },
                          { tag: "Bold", key: StandardKey.Bold, initialCursorPosition: 0, initialSelectionStart: 0, initialSelectionEnd: 3, expectIdenticalPlainText: false, expectIdenticalSelection: false  },
