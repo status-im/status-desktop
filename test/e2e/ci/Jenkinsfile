@@ -38,7 +38,7 @@ pipeline {
       'linux-04',
       'linux-05',
       ],
-      description: 'Agent name to run tests on it. '
+      description: 'Agent name to run tests on it.'
     )
     string(
       name: 'BUILD_URL',
@@ -79,7 +79,7 @@ pipeline {
   }
 
   stages {
-     stage('Download') {
+    stage('Download') {
       steps {
         script {
           sh "mkdir -p './tmp/pkg/'"
@@ -101,9 +101,9 @@ pipeline {
               target:       "./tmp"
             )
           }
-          def pkg_path = "${env.WORKSPACE}/${utils.findFile('tmp/pkg/*tar.gz')}"
-          sh "tar -zxvf '${pkg_path}' -C '${env.WORKSPACE}/tmp'"
-          env.APP_DIR = "${env.WORKSPACE}/${utils.findFile('tmp/*.AppImage')}"
+          def pkg_path = "./${utils.findFile('tmp/pkg/*tar.gz')}"
+          sh "tar -zxvf '${pkg_path}' -C './tmp'"
+          env.APP_DIR = "./${utils.findFile('tmp/*.AppImage')}"
         }
       }
     }
@@ -116,7 +116,13 @@ pipeline {
 
     stage('Test') {
       steps {
-        wrap([$class: 'Xvfb', autoDisplayName: true, parallelBuild: true, screen: '1920x1080x24', additionalOptions: '-dpi 1']) {
+        wrap([
+          $class:            'Xvfb',
+          autoDisplayName:   true,
+          parallelBuild:     true,
+          screen:            '1920x1080x24',
+          additionalOptions: '-dpi 1'
+        ]){
           script {
             sh "fluxbox &"
             def cmd = ''
@@ -126,9 +132,14 @@ pipeline {
             if (params.TEST_SCOPE != "") {
             cmd = cmd + " -m ${params.TEST_SCOPE}"
             }
-            sh "cp -f '${env.WORKSPACE}'/configs/_local.py.ci '${env.WORKSPACE}'/configs/_local.py"
-            withCredentials([usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW')]) {
-              sh "python3 -m pytest ${cmd} --disable-warnings --alluredir=${env.WORKSPACE}/allure-results"
+            sh "cp -f ./configs/_local.py.ci ./configs/_local.py"
+            withCredentials([
+              usernamePassword(
+                credentialsId: 'test-rail-api-devops',
+                usernameVariable: 'TESTRAIL_USR',
+                passwordVariable: 'TESTRAIL_PSW')
+              ]) {
+                sh "python3 -m pytest ${cmd} --disable-warnings --alluredir=./allure-results"
             }
           }
         }
