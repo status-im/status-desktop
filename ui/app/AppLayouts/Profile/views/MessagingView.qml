@@ -104,48 +104,6 @@ SettingsContentBase {
             }
         }
 
-        // Open Message Links With
-        StatusBaseText {
-            Layout.topMargin: Constants.settingsSection.itemSpacing
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            text: qsTr("Open Message Links With")
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-        }
-
-        SettingsRadioButton {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            label: qsTr("Status Browser")
-            group: browserGroup
-            checked: localAccountSensitiveSettings.openLinksInStatus
-            onClicked: {
-                localAccountSensitiveSettings.openLinksInStatus = true
-            }
-        }
-
-        SettingsRadioButton {
-            Layout.topMargin: Constants.settingsSection.itemSpacing / 2
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            label: qsTr("System Default Browser")
-            group: browserGroup
-            checked: !localAccountSensitiveSettings.openLinksInStatus
-            onClicked: {
-                localAccountSensitiveSettings.openLinksInStatus = false
-            }
-        }
-
-        Separator {
-            id: separator1
-            Layout.topMargin: Constants.settingsSection.itemSpacing
-            Layout.fillWidth: true
-        }
-
         // CONTACTS SECTION
         StatusContactRequestsIndicatorListItem {
             objectName: "MessagingView_ContactsListItem_btn"
