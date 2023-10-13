@@ -8,6 +8,7 @@ import allure
 import configs
 import constants.tesseract
 import driver
+from driver.objects_access import walk_children
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.button import Button
@@ -195,6 +196,12 @@ class SeedPhraseInputView(OnboardingView):
         self._seed_phrase_input_text_edit = TextEdit('mainWindow_statusSeedPhraseInputField_TextEdit')
         self._import_button = Button('mainWindow_Import_StatusButton')
 
+    @property
+    @allure.step('Get import button enabled state')
+    def is_import_button_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._import_button.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
     @allure.step('Input seed phrase')
     def input_seed_phrase(self, seed_phrase: typing.List[str], autocomplete: bool):
         if len(seed_phrase) == 12:
@@ -218,6 +225,8 @@ class SeedPhraseInputView(OnboardingView):
             else:
                 self._seed_phrase_input_text_edit.text = word
 
+    @allure.step('Click import button')
+    def import_seed_phrase(self):
         self._import_button.click()
         return YourProfileView().wait_until_appears()
 
@@ -246,6 +255,12 @@ class YourProfileView(OnboardingView):
         self._display_name_text_field = TextEdit('mainWindow_statusBaseInput_StatusBaseInput')
         self._erros_text_label = TextLabel('mainWindow_errorMessage_StatusBaseText')
         self._next_button = Button('mainWindow_Next_StatusButton')
+        self._login_input_object = QObject('mainWindow_nameInput_StatusInput')
+
+    @property
+    @allure.step('Get next button enabled state')
+    def is_next_button_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._next_button.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @property
     @allure.step('Get profile image')
@@ -360,18 +375,31 @@ class CreatePasswordView(OnboardingView):
         self._new_password_text_field = TextEdit('mainWindow_passwordViewNewPassword')
         self._confirm_password_text_field = TextEdit('mainWindow_passwordViewNewPasswordConfirm')
         self._create_button = Button('mainWindow_Create_password_StatusButton')
+        self._password_view_object = QObject('mainWindow_view_PasswordView')
 
     @property
     @allure.step('Verify: Create password button enabled')
     def is_create_password_button_enabled(self) -> bool:
-        # Verification is_enable can not be used
-        # LookupError, because of "Enable: True" in object real name, if button disabled
-        return self._create_button.is_visible
+        return driver.waitForObjectExists(self._create_button.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
+    @property
+    @allure.step('Get password error message')
+    def password_error_message(self) -> str:
+        return self._password_view_object.object.errorMsgText
+
+    @allure.step('Set password in first field')
+    def set_password_in_first_field(self, value: str):
+        self._new_password_text_field.clear().text = value
+
+    @allure.step('Set password in confirmation field')
+    def set_password_in_confirmation_field(self, value: str):
+        self._confirm_password_text_field.clear().text = value
 
     @allure.step('Set password and open Confirmation password view')
     def create_password(self, value: str) -> 'ConfirmPasswordView':
-        self._new_password_text_field.clear().text = value
-        self._confirm_password_text_field.clear().text = value
+        self.set_password_in_first_field(value)
+        self.set_password_in_confirmation_field(value)
         self._create_button.click()
         time.sleep(1)
         return ConfirmPasswordView().wait_until_appears()
@@ -388,10 +416,28 @@ class ConfirmPasswordView(OnboardingView):
         super(ConfirmPasswordView, self).__init__('mainWindow_ConfirmPasswordView')
         self._confirm_password_text_field = TextEdit('mainWindow_confirmAgainPasswordInput')
         self._confirm_button = Button('mainWindow_Finalise_Status_Password_Creation_StatusButton')
+        self._confirmation_password_view_object = QObject('mainWindow_passwordView_PasswordConfirmationView')
+
+    @property
+    @allure.step('Get finalise password creation button enabled state')
+    def is_confirm_password_button_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._confirm_button.real_name,
+                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
+    @property
+    @allure.step('Get confirmation error message')
+    def confirmation_error_message(self) -> str:
+        for child in walk_children(self._confirmation_password_view_object.object):
+            if getattr(child, 'id', '') == 'errorTxt':
+                return str(child.text)
+
+    @allure.step('Set password')
+    def set_password(self, value: str):
+        self._confirm_password_text_field.text = value
 
     @allure.step('Confirm password')
     def confirm_password(self, value: str):
-        self._confirm_password_text_field.text = value
+        self.set_password(value)
         self._confirm_button.click()
 
     @allure.step('Go back')
@@ -426,6 +472,12 @@ class LoginView(QObject):
         self._current_user_name_label = TextLabel('loginView_currentUserNameLabel')
         self._change_account_button = Button('loginView_changeAccountBtn')
         self._accounts_combobox = QObject('accountsView_accountListPanel')
+        self._password_object = QObject('mainWindow_txtPassword_Input')
+
+    @property
+    @allure.step('Get login error message')
+    def login_error_message(self) -> str:
+        return str(self._password_object.object.validationError)
 
     @allure.step('Log in user')
     def log_in(self, account):
