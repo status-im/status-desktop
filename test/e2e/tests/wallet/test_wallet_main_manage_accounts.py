@@ -9,7 +9,7 @@ import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
-from gui.screens.settings import KeycardSettingsView
+from gui.screens.settings_keycard import KeycardSettingsView
 
 pytestmark = allure.suite("Wallet")
 
