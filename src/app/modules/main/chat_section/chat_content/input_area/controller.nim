@@ -8,15 +8,10 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/gif/service as gif_service
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/settings/dto/settings
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
 import ./link_preview_cache
-
-type
-  LinkPreviewSetting* {.pure.} = enum
-    AlwaysAsk
-    Enabled
-    Disabled
 
 type
   Controller* = ref object of RootObj
@@ -31,8 +26,8 @@ type
     messageService: message_service.Service
     settingsService: settings_service.Service
     linkPreviewCache: LinkPreviewCache
-    linkPreviewPersistentSetting: LinkPreviewSetting
-    linkPreviewCurrentMessageSetting: LinkPreviewSetting
+    linkPreviewPersistentSetting: UrlUnfurlingMode
+    linkPreviewCurrentMessageSetting: UrlUnfurlingMode
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -58,8 +53,8 @@ proc newController*(
   result.messageService = messageService
   result.settingsService = settingsService
   result.linkPreviewCache = newLinkPreiewCache()
-  result.linkPreviewPersistentSetting = LinkPreviewSetting.AlwaysAsk
-  result.linkPreviewCurrentMessageSetting = LinkPreviewSetting.AlwaysAsk
+  result.linkPreviewPersistentSetting = UrlUnfurlingMode.AlwaysAsk
+  result.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.AlwaysAsk
 
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs)
 proc clearLinkPreviewCache*(self: Controller)
@@ -107,13 +102,13 @@ proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
   
 proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
-  self.linkPreviewCurrentMessageSetting = if enabled: LinkPreviewSetting.Enabled else: LinkPreviewSetting.Disabled
+  self.linkPreviewCurrentMessageSetting = if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc resetLinkPreviews(self: Controller) =
   self.delegate.setUrls(@[])
   self.linkPreviewCache.clear()
-  self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.AlwaysAsk
+  self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.AlwaysAsk
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc sendImages*(self: Controller, 
@@ -193,10 +188,10 @@ proc isFavorite*(self: Controller, item: GifDto): bool =
   return self.gifService.isFavorite(item)
 
 proc getLinkPreviewEnabled*(self: Controller): bool =
-  return self.linkPreviewPersistentSetting == LinkPreviewSetting.Enabled or self.linkPreviewCurrentMessageSetting == LinkPreviewSetting.Enabled
+  return self.linkPreviewPersistentSetting == UrlUnfurlingMode.Enabled or self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.Enabled
 
 proc canAskToEnableLinkPreview(self: Controller): bool =
-  return self.linkPreviewPersistentSetting == LinkPreviewSetting.AlwaysAsk and self.linkPreviewCurrentMessageSetting == LinkPreviewSetting.AlwaysAsk
+  return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   if text == "":
@@ -235,10 +230,10 @@ proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
 
 proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
   if(enabled):
-    self.linkPreviewPersistentSetting = LinkPreviewSetting.Enabled
-    self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.Enabled
+    self.linkPreviewPersistentSetting = UrlUnfurlingMode.Enabled
+    self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Enabled
   else:
-    self.linkPreviewPersistentSetting = LinkPreviewSetting.Disabled
-    self.linkPreviewCurrentMessageSetting = LinkPreviewSetting.Disabled
+    self.linkPreviewPersistentSetting = UrlUnfurlingMode.Disabled
+    self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Disabled
 
   self.delegate.setAskToEnableLinkPreview(false)

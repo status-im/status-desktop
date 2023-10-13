@@ -62,7 +62,6 @@ const PROFILE_PICTURES_SHOW_TO_EVERYONE* = 2
 const PROFILE_PICTURES_SHOW_TO_NO_ONE* = 3
 
 type UrlUnfurlingMode* {.pure.} = enum
-  UrlUnfurlingModeUnknown = 0
   UrlUnfurlingModeAlwaysAsk = 1,
   UrlUnfurlingModeEnableAll = 2,
   UrlUnfurlingModeDisableAll = 3,
@@ -71,7 +70,7 @@ proc toUrlUnfurlingMode*(value: int): UrlUnfurlingMode =
   try:
     return UrlUnfurlingMode(value)
   except RangeDefect:
-    return UrlUnfurlingModeUnknown
+    return UrlUnfurlingModeAlwaysAsk # this is the default value
 
 type NotificationsExemptions* = object
   muteAllMessages*: bool

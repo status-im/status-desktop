@@ -498,8 +498,6 @@ QtObject:
     return self.settings.urlUnfurlingMode
 
   proc saveUrlUnfurlingMode*(self: Service, value: UrlUnfurlingMode): bool =
-    if value == UrlUnfurlingModeUnknown:
-      return false
     if not self.saveSetting(KEY_URL_UNFURLING_MODE, int(value)):
       return false
     self.settings.urlUnfurlingMode = value
