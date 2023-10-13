@@ -12,6 +12,7 @@ SplitView {
         Component.onCompleted: {
             const emptyObject = {
                 "unfurled": true,
+                "immutable": false,
                 "empty": false,
                 "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
                 "previewType": 1,

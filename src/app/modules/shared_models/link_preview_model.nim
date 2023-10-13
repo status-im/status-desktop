@@ -1,4 +1,4 @@
-import NimQml, strformat, tables, sequtils, chronicles
+import NimQml, strformat, tables, sequtils
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
@@ -148,13 +148,13 @@ QtObject:
       if item.linkPreview.statusCommunityChannelPreview != nil:
         result = newQVariant(item.linkPreview.statusCommunityChannelPreview)
     of ModelRole.StatusCommunityChannelCommunityPreview:
-      if (let community = item.getChannelCommunity(); community) != nil:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
         result = newQVariant(community)
     of ModelRole.StatusCommunityChannelCommunityPreviewIcon:
-      if (let community = item.getChannelCommunity(); community) != nil:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
         result = newQVariant(community.getIcon())
     of ModelRole.StatusCommunityChannelCommunityPreviewBanner:
-      if (let community = item.getChannelCommunity(); community) != nil:
+      if (let community = item.linkPreview.getChannelCommunity(); community) != nil:
         result = newQVariant(community.getBanner())
     else:
       result = newQVariant()

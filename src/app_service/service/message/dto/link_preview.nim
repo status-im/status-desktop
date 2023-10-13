@@ -6,7 +6,7 @@ include ../../../common/json_utils
 
 type
   PreviewType {.pure.} = enum
-    NoPreiew = 0
+    NoPreview = 0
     StandardPreview
     StatusContactPreview
     StatusCommunityPreview
@@ -33,11 +33,11 @@ proc delete*(self: LinkPreview) =
 proc initLinkPreview*(url: string): LinkPreview =
   result = LinkPreview()
   result.url = url
-  result.previewType = PreviewType.NoPreiew
+  result.previewType = PreviewType.NoPreview
 
 proc toLinkPreview*(jsonObj: JsonNode, standard: bool): LinkPreview =
   result = LinkPreview()
-  result.previewType = PreviewType.NoPreiew
+  result.previewType = PreviewType.NoPreview
 
   if standard:
     discard jsonObj.getProp("url", result.url)
@@ -121,3 +121,8 @@ proc extractLinkPreviewsLists*(input: seq[LinkPreview]): (seq[StandardLinkPrevie
         discard
   
   return (standard, status)
+
+proc getChannelCommunity*(self: LinkPreview): StatusCommunityLinkPreview =
+  if self.statusCommunityChannelPreview == nil:
+    return nil
+  return self.statusCommunityChannelPreview.getCommunity()

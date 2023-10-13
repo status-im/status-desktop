@@ -24,10 +24,3 @@ proc `$`*(self: Item): string =
     immutable: {self.immutable},
     linkPreview: {self.linkPreview},
   )"""
-
-proc getChannelCommunity*(self: Item): StatusCommunityLinkPreview =
-  if self.linkPreview == nil:
-    return nil
-  if self.linkPreview.statusCommunityChannelPreview == nil:
-    return nil
-  return self.linkPreview.statusCommunityChannelPreview.getCommunity()

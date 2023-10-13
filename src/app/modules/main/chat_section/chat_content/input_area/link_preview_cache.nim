@@ -1,4 +1,4 @@
-import tables, chronicles
+import tables
 import ../../../../../../app_service/service/message/dto/link_preview
 
 type
