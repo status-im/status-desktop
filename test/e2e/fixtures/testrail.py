@@ -23,7 +23,7 @@ def init_testrail_api(request):
         testrail_api = TestRailAPI(
             configs.testrail.TESTRAIL_URL,
             configs.testrail.TESTRAIL_USR,
-            configs.testrail.TESTRAIL_PWD
+            configs.testrail.TESTRAIL_PSW
         )
         test_case_ids = get_test_ids_in_session(request)
         for test_case_id in test_case_ids:

@@ -2,9 +2,6 @@
 library 'status-jenkins-lib@v1.7.13'
 
 pipeline {
-  agent {
-    label 'linux && x86_64 && qt-5.15.2'
-  }
 
   environment {
     QT_QPA_PLATFORMTHEME = "qt5ct"
@@ -15,14 +12,10 @@ pipeline {
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
 
-    TESTRAIL_CREDS = credentials('test-rail-api-devops')
     TESTRAIL_URL = "https://ethstatus.testrail.net"
-
-    CI_CREDS = credentials('status-im-auto')
   }
 
   parameters {
-
     gitParameter(
       branch: '',
       branchFilter: 'origin/(.*)',
@@ -35,8 +28,20 @@ pipeline {
       tagFilter: '*',
       type: 'PT_BRANCH'
     )
+    choice(
+      name: 'AGENT',
+      choices: [
+      'linux',
+      'linux-01',
+      'linux-02',
+      'linux-03',
+      'linux-04',
+      'linux-05',
+      ],
+      description: 'Agent name to run tests on it. '
+    )
     string(
-      name: 'BUILD',
+      name: 'BUILD_URL',
       description: 'Link to tar.gz file.',
       defaultValue: ''
     )
@@ -57,6 +62,10 @@ pipeline {
     )
   }
 
+  agent {
+    label "${params.AGENT} && x86_64 && qt-5.15.2"
+  }
+
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
@@ -70,16 +79,30 @@ pipeline {
   }
 
   stages {
-    stage('Download') {
+     stage('Download') {
       steps {
         script {
-          sh "mkdir '${env.WORKSPACE}/tmp/'"
-        }
-        fileOperations([
-          fileDownloadOperation(url:"${params.BUILD}", userName:"${CI_CREDS_USR}", password:"${CI_CREDS_PSW}", targetLocation:"./tmp", targetFileName:"StatusIm-Desktop.tar.gz", proxyHost:"", proxyPort:"")
-        ])
-        script {
-          sh "tar -zxvf '${env.WORKSPACE}/tmp/StatusIm-Desktop.tar.gz' -C '${env.WORKSPACE}/tmp'"
+          sh "mkdir -p './tmp/pkg/'"
+          if (params.BUILD_URL != "") {
+            fileOperations([
+              fileDownloadOperation(
+                url:            params.BUILD_URL,
+                userName:       "",
+                password:       "",
+                targetLocation: "./tmp/pkg/",
+                targetFileName: "StatusIm-Desktop.tar.gz",
+              )
+            ])
+          } else {
+            copyArtifacts(
+              projectName:  "status-desktop/systems/linux/x86_64/package/",
+              filter:       'pkg/*-x86_64.tar.gz',
+              selector:     lastWithArtifacts(),
+              target:       "./tmp"
+            )
+          }
+          def pkg_path = "${env.WORKSPACE}/${utils.findFile('tmp/pkg/*tar.gz')}"
+          sh "tar -zxvf '${pkg_path}' -C '${env.WORKSPACE}/tmp'"
           env.APP_DIR = "${env.WORKSPACE}/${utils.findFile('tmp/*.AppImage')}"
         }
       }
@@ -92,26 +115,24 @@ pipeline {
     }
 
     stage('Test') {
-      steps { wrap([
-        $class: 'Xvfb',
-        autoDisplayName: true,
-        parallelBuild: true,
-        screen: '1920x1080x24',
-        additionalOptions: '-dpi 1'
-      ]) { script {
-        sh "fluxbox &"
-        env.TESTRAIL_USR = "${TESTRAIL_CREDS_USR}"
-        env.TESTRAIL_PWD = "${TESTRAIL_CREDS_PSW}"
-        def cmd = ''
-        if (params.TEST_NAME != "") {
-          cmd = cmd + " -k ${params.TEST_NAME}"
+      steps {
+        wrap([$class: 'Xvfb', autoDisplayName: true, parallelBuild: true, screen: '1920x1080x24', additionalOptions: '-dpi 1']) {
+          script {
+            sh "fluxbox &"
+            def cmd = ''
+            if (params.TEST_NAME != "") {
+              cmd = cmd + " -k ${params.TEST_NAME}"
+            }
+            if (params.TEST_SCOPE != "") {
+            cmd = cmd + " -m ${params.TEST_SCOPE}"
+            }
+            sh "cp -f '${env.WORKSPACE}'/configs/_local.py.ci '${env.WORKSPACE}'/configs/_local.py"
+            withCredentials([usernamePassword(credentialsId: 'test-rail-api-devops', usernameVariable: 'TESTRAIL_USR', passwordVariable: 'TESTRAIL_PSW')]) {
+              sh "python3 -m pytest ${cmd} --disable-warnings --alluredir=${env.WORKSPACE}/allure-results"
+            }
+          }
         }
-        if (params.TEST_SCOPE != "") {
-          cmd = cmd + " -m ${params.TEST_SCOPE}"
-        }
-        sh "cp -f '${env.WORKSPACE}'/configs/_local.py.ci '${env.WORKSPACE}'/configs/_local.py"
-        sh "python3 -m pytest ${cmd} --disable-warnings --alluredir=${env.WORKSPACE}/allure-results"
-      }}}
+      }
     }
   }
   post {
