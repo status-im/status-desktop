@@ -67,10 +67,12 @@ def test_settings_networks_edit_restore_defaults(main_screen: MainWindow, networ
             WalletNetworkNaming.ETHEREUM_MAINNET_NETWORK_ID.value)
 
     with step('Verify value in Main JSON RPC URL input'):
-        edit_network_form.verify_edit_network_main_json_rpc_url_value(network_tab)
+        assert edit_network_form.verify_edit_network_main_json_rpc_url_value(network_tab), \
+            f"Reverted value in Main JSON RPC is incorrect"
 
     with (step('Verify value in Failover JSON RPC URL input')):
-        edit_network_form.verify_edit_network_failover_json_rpc_url_value(network_tab)
+        assert edit_network_form.verify_edit_network_failover_json_rpc_url_value(network_tab), \
+            f"Reverted value in Failover JSON RPC is incorrect"
 
     with step('Verify the acknowledgment checkbox is unchecked'):
         assert edit_network_form.check_acknowledgement_checkbox(False, network_tab)
