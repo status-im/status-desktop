@@ -887,6 +887,8 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
     var chatImage = chat.icon
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
+    var sectionId = self.view.model().getItemBySectionType(SectionType.Chat).id()
+    var sectionName = self.view.model().getItemBySectionType(SectionType.Chat).name()
     if chat.chatType == ChatType.OneToOne:
       let contactDetails = self.controller.getContactDetails(chat.id)
       chatName = contactDetails.defaultDisplayName
@@ -894,6 +896,9 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
       if not contactDetails.dto.ensVerified:
         colorHash = self.controller.getColorHash(chat.id)
       colorId = self.controller.getColorId(chat.id)
+    elif chat.chatType == ChatType.CommunityChat:
+      sectionId = chat.communityId
+      sectionName = self.view.model().getItemById(sectionId).name()
     items.add(chat_search_item.initItem(
       chat.id,
       chatName,
@@ -901,8 +906,8 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
       colorId,
       chatImage,
       colorHash.toJson(),
-      chat.communityId,
-      self.view.model().getItemById(chat.communityId).name(),
+      sectionId,
+      sectionName,
     ))
 
   self.view.chatSearchModel().setItems(items)
