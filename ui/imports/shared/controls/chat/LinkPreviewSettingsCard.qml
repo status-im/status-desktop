@@ -87,7 +87,7 @@ CalloutCard {
                     enabled: optionsComboBox.enabled
                 }
             }
-            popup: ContextMenu {
+            popup: LinkPreviewSettingsCardMenu {
                 y: - (height + 4)
                 onEnableLinkPreviewForThisMessage: root.enableLinkPreviewForThisMessage()
                 onEnableLinkPreview: root.enableLinkPreview()

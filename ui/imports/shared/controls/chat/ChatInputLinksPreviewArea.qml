@@ -192,7 +192,7 @@ Control {
         }
     }
 
-    LinkPreviewSettingsCard.ContextMenu {
+    LinkPreviewSettingsCardMenu {
         id: settingsContextMenu
 
         onEnableLinkPreviewForThisMessage: root.enableLinkPreviewForThisMessage()
