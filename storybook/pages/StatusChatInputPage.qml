@@ -64,7 +64,7 @@ SplitView {
         Component.onCompleted: {
             RootStore.isGifWidgetEnabled = true
             RootStore.isWalletEnabled = true
-            RootStore.isTenorWarningAccepted = true
+            RootStore.gifUnfurlingEnabled = true
             RootStore.getSelectedTextWithFormationChars = rootStoreMock.getSelectedTextWithFormationChars
             RootStore.gifColumnA = rootStoreMock.gifColumnA
             rootStoreMock.ready = true

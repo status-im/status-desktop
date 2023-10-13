@@ -73,9 +73,6 @@ proc init*(self: Controller) =
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 
-proc getLinkPreviewWhitelist*(self: Controller): string =
-  return self.privacyService.getLinkPreviewWhitelist()
-
 proc changePassword*(self: Controller, password: string, newPassword: string) =
   self.privacyService.changePassword(password, newPassword)
 

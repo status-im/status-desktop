@@ -271,7 +271,7 @@ Item {
         }
 
         function onOpenLinkWithConfirmation(link: string, domain: string) {
-            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain) || !!localAccountSensitiveSettings.whitelistedUnfurlingSites[domain])
+            if (appMainLocalSettings.whitelistedUnfurledDomains.includes(domain))
                 globalConns.onOpenLink(link)
             else
                 popups.openConfirmExternalLinkPopup(link, domain)
@@ -1595,55 +1595,6 @@ Item {
                 appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.timestamp)
             }
         }
-    }
-
-    Component.onCompleted: {
-        const whitelist = appMain.rootStore.messagingStore.getLinkPreviewWhitelist()
-        try {
-            const whiteListedSites = JSON.parse(whitelist)
-            let settingsUpdated = false
-
-            // Add Status links to whitelist
-            whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-            whiteListedSites.push({title: "Status", address: Constants.externalStatusLink, imageSite: false})
-            let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
-
-            if (!settings) {
-                settings = {}
-            }
-
-            // Set Status links as true. We intercept those URLs so it is privacy-safe
-            if (!settings[Constants.deepLinkPrefix] || !settings[Constants.externalStatusLink]) {
-                settings[Constants.deepLinkPrefix] = true
-                settings[Constants.externalStatusLink] = true
-                settingsUpdated = true
-            }
-
-            const whitelistedHostnames = []
-
-            // Add whitelisted sites in to app settings that are not already there
-            whiteListedSites.forEach(site => {
-                                        if (!settings.hasOwnProperty(site.address))  {
-                                            settings[site.address] = false
-                                            settingsUpdated = true
-                                        }
-                                        whitelistedHostnames.push(site.address)
-                                     })
-            // Remove any whitelisted sites from app settings that don't exist in the
-            // whitelist from status-go
-            Object.keys(settings).forEach(settingsHostname => {
-                if (!whitelistedHostnames.includes(settingsHostname)) {
-                    delete settings[settingsHostname]
-                    settingsUpdated = true
-                }
-            })
-            if (settingsUpdated) {
-                localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-            }
-        } catch (e) {
-            console.error('Could not parse the whitelist for sites', e)
-        }
-        Global.settingsLoaded()
     }
 
     Loader {

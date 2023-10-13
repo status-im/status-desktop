@@ -702,7 +702,7 @@ Item {
         property ListModel gifColumnA: ListModel {}
 
         readonly property var formationChars: (["*", "`", "~"])
-        property bool isTenorWarningAccepted: true
+        property bool gifUnfurlingEnabled: true
         function getSelectedTextWithFormationChars(messageInputField) {
             let i = 1
             let text = ""
@@ -725,7 +725,7 @@ Item {
         Component.onCompleted: {
             RootStore.isGifWidgetEnabled = true
             RootStore.isWalletEnabled = true
-            RootStore.isTenorWarningAccepted = rootStoreMock.isTenorWarningAccepted
+            RootStore.gifUnfurlingEnabled = rootStoreMock.gifUnfurlingEnabled
             RootStore.getSelectedTextWithFormationChars = rootStoreMock.getSelectedTextWithFormationChars
             RootStore.gifColumnA = rootStoreMock.gifColumnA
 

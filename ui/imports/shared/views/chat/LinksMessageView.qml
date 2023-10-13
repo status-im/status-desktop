@@ -268,15 +268,14 @@ Flow {
         id: d
         readonly property string uuid: Utils.uuid()
         readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
-        readonly property string whiteListedUrls: JSON.stringify(localAccountSensitiveSettings.whitelistedUnfurlingSites)
         readonly property string getLinkPreviewDataId: {
             if (root.localUnfurlLinks === "")
                 return ""
             return root.messageStore.messageModule.getLinkPreviewData(root.localUnfurlLinks,
                                                                       d.uuid,
-                                                                      whiteListedUrls,
+                                                                      [],
                                                                       whiteListedImgExtensions,
-                                                                      localAccountSensitiveSettings.displayChatImages)
+                                                                      false)
         }
         onGetLinkPreviewDataIdChanged: {
             linkFetchConnections.enabled = root.localUnfurlLinks !== ""

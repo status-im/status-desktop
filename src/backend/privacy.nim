@@ -17,7 +17,3 @@ proc changeDatabasePassword*(keyUID: string, oldHashedPassword: string, newHashe
   except RpcException as e:
     error "error", methodName = "changeDatabasePassword", exception=e.msg
     raise newException(RpcException, e.msg)
-
-proc getLinkPreviewWhitelist*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = callPrivateRPC("getLinkPreviewWhitelist".prefix, payload)

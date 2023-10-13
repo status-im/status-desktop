@@ -204,9 +204,6 @@ StatusWindow {
                 if(localAccountSensitiveSettings.recentEmojis === "") {
                     localAccountSensitiveSettings.recentEmojis = [];
                 }
-                if (localAccountSensitiveSettings.whitelistedUnfurlingSites === "") {
-                    localAccountSensitiveSettings.whitelistedUnfurlingSites = {};
-                }
                 if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
                     localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
                 }

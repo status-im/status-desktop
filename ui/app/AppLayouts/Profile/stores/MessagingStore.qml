@@ -43,8 +43,4 @@ QtObject {
         }
         root.syncModule.enableAutomaticSelection(checked)
     }
-
-    function getLinkPreviewWhitelist() {
-        return root.privacyModule.getLinkPreviewWhitelist()
-    }
 }

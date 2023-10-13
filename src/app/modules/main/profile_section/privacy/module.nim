@@ -57,9 +57,6 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method getLinkPreviewWhitelist*(self: Module): string =
-  return self.controller.getLinkPreviewWhitelist()
-
 method changePassword*(self: Module, password: string, newPassword: string) =
   self.controller.changePassword(password, newPassword)
 
