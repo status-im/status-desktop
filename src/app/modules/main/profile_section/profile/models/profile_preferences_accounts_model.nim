@@ -44,14 +44,6 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc appendItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
-    self.endInsertRows()
-    self.countChanged()
-
   proc removeItem*(self: ProfileShowcaseAccountsModel, id: string): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].id == id):

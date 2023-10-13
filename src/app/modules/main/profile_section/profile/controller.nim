@@ -7,11 +7,14 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
+import models/profile_preferences_collectible_item
+import models/profile_preferences_token_item
 
 type
   Controller* = ref object of RootObj
@@ -21,6 +24,7 @@ type
     settingsService: settings_service.Service
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
+    tokenService: token_service.Service
 
   # Forward declaration
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto])
@@ -31,7 +35,8 @@ proc newController*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service): Controller =
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -39,6 +44,7 @@ proc newController*(
   result.settingsService = settingsService
   result.communityService = communityService
   result.walletAccountService = walletAccountService
+  result.tokenService = tokenService
 
 proc delete*(self: Controller) =
   discard
@@ -64,6 +70,8 @@ proc init*(self: Controller) =
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto]) =
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
   # Collect all joined & curated communities to fill perferences with defaults only on UI
   # NOTE: Is getJoinedCommunities() already contains getCuratedCommunities()
@@ -80,6 +88,8 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       )
     profileCommunityItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
 
+    # TODO: collect community tokens & collectibles 
+
   # Collect wallet accounts
   for walletAccount in self.walletAccountService.getWalletAccounts():
     var profileEntry: ProfileShowcaseEntryDto
@@ -94,10 +104,19 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       )
     profileAccountItems.add(initProfileShowcaseAccountItem(walletAccount, profileEntry))
 
-  # TODO: collectibles, assets
+    # Collect wallet assets & collectibles
+    for token in self.tokenService.getTokenList():
+      if token.tokenType == community_dto.TokenType.ERC20:
+      # Community ERC20 tokens
+        profileAssetItems.add(initProfileShowcaseAssetItem(token, profileEntry))
+      else:
+      # Community collectibles (ERC721 and others)
+        profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
 
-  self.delegate.setShowcaseCommunitiesPreferences(profileCommunityItems)
-  self.delegate.setShowcaseAccountsPreferences(profileAccountItems)
+    self.delegate.setShowcaseCommunitiesPreferences(profileCommunityItems)
+    self.delegate.setShowcaseAccountsPreferences(profileAccountItems)
+    self.delegate.setShowcaseCollectiblesPreferences(profileCollectibleItems)
+    self.delegate.setShowcaseAssetsPreferences(profileAssetItems)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)

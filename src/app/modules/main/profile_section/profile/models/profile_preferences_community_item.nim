@@ -1,14 +1,11 @@
+import profile_preferences_base_item
+
 import app_service/service/profile/dto/profile_showcase_entry
 import app_service/service/community/dto/community
 import app_service/common/types
 
 type
-  ProfileShowcaseCommunityItem* = object
-    id*: string
-    entryType*: ProfileShowcaseEntryType
-    showcaseVisibility*: ProfileShowcaseVisibility
-    order*: int
-
+  ProfileShowcaseCommunityItem* = ref object of ProfileShowcaseBaseItem
     name*: string
     memberRole*: MemberRole
     image*: string
@@ -18,26 +15,14 @@ proc initProfileShowcaseCommunityItem*(community: CommunityDto, entry: ProfileSh
   result = ProfileShowcaseCommunityItem()
 
   result.id = community.id
-  result.name = community.name
-  result.memberRole = community.memberRole
-  result.image = community.images.thumbnail
-  result.color = community.color
-
   result.entryType = entry.entryType
   result.showcaseVisibility = entry.visibility
   result.order = entry.order
 
-proc id*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.id
-
-proc entryType*(self: ProfileShowcaseCommunityItem): ProfileShowcaseEntryType {.inline.} =
-  self.entryType
-
-proc showcaseVisibility*(self: ProfileShowcaseCommunityItem): ProfileShowcaseVisibility {.inline.} =
-  self.showcaseVisibility
-
-proc order*(self: ProfileShowcaseCommunityItem): int {.inline.} =
-  self.order
+  result.name = community.name
+  result.memberRole = community.memberRole
+  result.image = community.images.thumbnail
+  result.color = community.color
 
 proc name*(self: ProfileShowcaseCommunityItem): string {.inline.} =
   self.name
