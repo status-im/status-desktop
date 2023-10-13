@@ -1233,7 +1233,6 @@ QtObject {
     }
 
     enum UrlUnfurlingMode {
-        UrlUnfurlingModeUnknown = 0,
         UrlUnfurlingModeAlwaysAsk = 1,
         UrlUnfurlingModeEnableAll = 2,
         UrlUnfurlingModeDisableAll = 3
