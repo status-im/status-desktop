@@ -121,6 +121,7 @@ Flow {
             title: standardPreview ? standardPreview.title : ""
             description: standardPreview ? standardPreview.description : ""
             footer: standardPreview ? standardPreview.hostname : ""
+            highlight: root.highlightLink === url
             onClicked: (mouse) => {
                 switch (mouse.button) {
                     case Qt.RightButton:
