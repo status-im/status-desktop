@@ -14,7 +14,7 @@ import app_service/service/profile/dto/profile_showcase_entry
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
-import models/profile_preferences_token_item
+import models/profile_preferences_asset_item
 
 type
   Controller* = ref object of RootObj
@@ -106,17 +106,16 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
 
     # Collect wallet assets & collectibles
     for token in self.tokenService.getTokenList():
-      if token.tokenType == community_dto.TokenType.ERC20:
-      # Community ERC20 tokens
-        profileAssetItems.add(initProfileShowcaseAssetItem(token, profileEntry))
-      else:
-      # Community collectibles (ERC721 and others)
-        profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
+      profileAssetItems.add(initProfileShowcaseAssetItem(token, profileEntry))
 
-    self.delegate.setShowcaseCommunitiesPreferences(profileCommunityItems)
-    self.delegate.setShowcaseAccountsPreferences(profileAccountItems)
-    self.delegate.setShowcaseCollectiblesPreferences(profileCollectibleItems)
-    self.delegate.setShowcaseAssetsPreferences(profileAssetItems)
+      # TODO collect collectibles
+      # # Community collectibles (ERC721 and others)
+      #   profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
+
+    self.delegate.setProfileShowcaseCommunitiesPreferences(profileCommunityItems)
+    self.delegate.setProfileShowcaseAccountsPreferences(profileAccountItems)
+    self.delegate.setProfileShowcaseCollectiblesPreferences(profileCollectibleItems)
+    self.delegate.setProfileShowcaseAssetsPreferences(profileAssetItems)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)

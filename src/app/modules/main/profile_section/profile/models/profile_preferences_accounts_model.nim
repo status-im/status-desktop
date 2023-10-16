@@ -44,29 +44,6 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc removeItem*(self: ProfileShowcaseAccountsModel, id: string): bool =
-    for i in 0 ..< self.items.len:
-      if (self.items[i].id == id):
-        let parentModelIndex = newQModelIndex()
-        defer: parentModelIndex.delete
-        self.beginRemoveRows(parentModelIndex, i, i)
-        self.items.delete(i)
-        self.endRemoveRows()
-        self.countChanged()
-        return true
-    return false
-
-  proc updateItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem): bool =
-    for i in 0 ..< self.items.len:
-      if (self.items[i].id == item.id):
-        self.items[i] = item
-        let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.EntryType.int, ModelRole.ShowcaseVisibility.int, ModelRole.Order.int])
-        return true
-
-    return false
-
   proc items*(self: ProfileShowcaseAccountsModel): seq[ProfileShowcaseAccountItem] =
     self.items
 

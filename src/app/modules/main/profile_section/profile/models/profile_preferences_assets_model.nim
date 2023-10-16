@@ -1,6 +1,6 @@
 import NimQml, tables, strutils, sequtils, sugar
 
-import profile_preferences_community_item
+import profile_preferences_asset_item
 
 type
   ModelRole {.pure.} = enum
@@ -10,58 +10,58 @@ type
     Order
 
     Name
-    MemberRole
-    Image
+    EnabledNetworkBalance
+    Symbol
     Color
 
 QtObject:
   type
-    ProfileShowcaseCommunitiesModel* = ref object of QAbstractListModel
-      items: seq[ProfileShowcaseCommunityItem]
+    ProfileShowcaseAssetsModel* = ref object of QAbstractListModel
+      items: seq[ProfileShowcaseAssetItem]
 
-  proc delete(self: ProfileShowcaseCommunitiesModel) =
+  proc delete(self: ProfileShowcaseAssetsModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: ProfileShowcaseCommunitiesModel) =
+  proc setup(self: ProfileShowcaseAssetsModel) =
     self.QAbstractListModel.setup
 
-  proc newProfileShowcaseCommunitiesModel*(): ProfileShowcaseCommunitiesModel =
+  proc newProfileShowcaseAssetsModel*(): ProfileShowcaseAssetsModel =
     new(result, delete)
     result.setup
 
-  proc countChanged(self: ProfileShowcaseCommunitiesModel) {.signal.}
-  proc getCount(self: ProfileShowcaseCommunitiesModel): int {.slot.} =
+  proc countChanged(self: ProfileShowcaseAssetsModel) {.signal.}
+  proc getCount(self: ProfileShowcaseAssetsModel): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
+  proc setItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc items*(self: ProfileShowcaseCommunitiesModel): seq[ProfileShowcaseCommunityItem] =
+  proc items*(self: ProfileShowcaseAssetsModel): seq[ProfileShowcaseAssetItem] =
     self.items
 
-  method rowCount(self: ProfileShowcaseCommunitiesModel, index: QModelIndex = nil): int =
+  method rowCount(self: ProfileShowcaseAssetsModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: ProfileShowcaseCommunitiesModel): Table[int, string] =
+  method roleNames(self: ProfileShowcaseAssetsModel): Table[int, string] =
     {
       ModelRole.Id.int: "id",
       ModelRole.EntryType.int: "entryType",
       ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
       ModelRole.Order.int: "order",
       ModelRole.Name.int: "name",
-      ModelRole.MemberRole.int: "memberRole",
-      ModelRole.Image.int: "image",
+      ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
+      ModelRole.Symbol.int: "symbol",
       ModelRole.Color.int: "color",
     }.toTable
 
-  method data(self: ProfileShowcaseCommunitiesModel, index: QModelIndex, role: int): QVariant =
+  method data(self: ProfileShowcaseAssetsModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -82,9 +82,9 @@ QtObject:
       result = newQVariant(item.order)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.MemberRole:
-      result = newQVariant(item.memberRole.int)
-    of ModelRole.Image:
-      result = newQVariant(item.image)
+    of ModelRole.EnabledNetworkBalance:
+      result = newQVariant(item.enabledNetworkBalance)
+    of ModelRole.Symbol:
+      result = newQVariant(item.symbol)
     of ModelRole.Color:
       result = newQVariant(item.color)

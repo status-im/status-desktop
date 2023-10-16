@@ -20,9 +20,9 @@ proc initProfileShowcaseCollectibleItem*(token: TokenDto, entry: ProfileShowcase
   result.order = entry.order
 
   result.name = token.name
-  result.collectionName = token.address
-  result.imageUrl = token.emoji
-  result.backgroundColor = token.walletType
+  # result.collectionName = TODO: community? name
+  # result.imageUrl = TODO: Collectible image
+  result.backgroundColor = token.color
 
 proc name*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
   self.name
