@@ -53,6 +53,12 @@ method getMessagesFromContactsOnly*(self: AccessInterface): bool {.base.} =
 method setMessagesFromContactsOnly*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method urlUnfurlingMode*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setUrlUnfurlingMode*(self: AccessInterface, value: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

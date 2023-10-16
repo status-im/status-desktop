@@ -293,7 +293,8 @@ QtObject:
           "text": ""
         },
       "profile-pictures-show-to": settings.PROFILE_PICTURES_SHOW_TO_EVERYONE,
-      "profile-pictures-visibility": settings.PROFILE_PICTURES_VISIBILITY_EVERYONE
+      "profile-pictures-visibility": settings.PROFILE_PICTURES_VISIBILITY_EVERYONE,
+      "url-unfurling-mode": int(settings.UrlUnfurlingMode.AlwaysAsk),
     }
 
   proc getAccountSettings(self: Service, accountId: string,

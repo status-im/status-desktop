@@ -146,6 +146,8 @@ Item {
             d.restoreInputAttachments()
         }
 
+        signal updateLinkPreviewsRequested
+
         readonly property var updateLinkPreviews: {
             return Backpressure.debounce(this, 250, () => {
                                              const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
@@ -162,6 +164,14 @@ Item {
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
             Qt.callLater(d.restoreInputState, preservedText)
+        }
+    }
+
+    Connections {
+        enabled: !root.rootStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
+        target: d
+        function onUpdateLinkPreviewsRequested() {
+            d.updateLinkPreviews()
         }
     }
 
@@ -277,7 +287,7 @@ Item {
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule) {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
-                            d.updateLinkPreviews()
+                            d.updateLinkPreviewsRequested()
                         }
                     }
 

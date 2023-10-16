@@ -92,7 +92,8 @@ const DEFAULT_STICKERS_ENS_ROPSTEN = false
 const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
 const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
 const DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED = false
-
+const LSS_KEY_GIF_UNFURLING_ENABLED* = "gifUnfurlingEnabled"
+const DEFAULT_GIF_UNFURLING_ENABLED* = false
 
 logScope:
   topics = "la-sensitive-settings"
@@ -727,6 +728,18 @@ QtObject:
     write = setUserDeclinedBackupBanner
     notify = userDeclinedBackupBannerChanged
 
+  proc gifUnfurlingEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getGifUnfurlingEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_GIF_UNFURLING_ENABLED, newQVariant(DEFAULT_GIF_UNFURLING_ENABLED))
+  proc setGifUnfurlingEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_GIF_UNFURLING_ENABLED, newQVariant(value)):
+      self.gifUnfurlingEnabledChanged()
+
+  QtProperty[bool] gifUnfurlingEnabled:
+    read = getGifUnfurlingEnabled
+    write = setGifUnfurlingEnabled
+    notify = gifUnfurlingEnabledChanged
+
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):
       return
@@ -776,3 +789,4 @@ QtObject:
       of LSS_KEY_COMPATIBILITY_MODE: self.compatibilityModeChanged()
       of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
       of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()
+      of LSS_KEY_GIF_UNFURLING_ENABLED: self.gifUnfurlingEnabledChanged()

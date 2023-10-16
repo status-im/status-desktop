@@ -28,6 +28,7 @@ const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
+const SIGNAL_URL_UNFURLING_MODEL_UPDATED* = "urlUnfurlingModeUpdated"
 
 logScope:
   topics = "settings-service"
@@ -44,11 +45,11 @@ type
     socialLinks*: SocialLinks
     error*: string
 
-  SettingProfilePictureArgs* = ref object of Args
-    value*: int
-
   SettingsBoolValueArgs* = ref object of Args
     value*: bool
+
+  UrlUnfurlingModeArgs* = ref object of Args
+    value*: UrlUnfurlingMode
 
 QtObject:
   type Service* = ref object of QObject
@@ -116,6 +117,9 @@ QtObject:
           if settingsField.name == PROFILE_MIGRATION_NEEDED:
             self.settings.profileMigrationNeeded = settingsField.value.getBool
             self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
+          if settingsField.name == KEY_URL_UNFURLING_MODE:
+            self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
+            self.events.emit(SIGNAL_URL_UNFURLING_MODEL_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
 
       if receivedData.socialLinksInfo.links.len > 0 or
         receivedData.socialLinksInfo.removed:
@@ -489,6 +493,16 @@ QtObject:
       self.settings.isSepoliaEnabled = newValue
       return true
     return false
+
+  proc urlUnfurlingMode*(self: Service): UrlUnfurlingMode =
+    return self.settings.urlUnfurlingMode
+
+  proc saveUrlUnfurlingMode*(self: Service, value: UrlUnfurlingMode): bool =
+    if not self.saveSetting(KEY_URL_UNFURLING_MODE, int(value)):
+      return false
+    self.settings.urlUnfurlingMode = value
+    self.events.emit(SIGNAL_URL_UNFURLING_MODEL_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+    return true
 
   proc notifSettingAllowNotificationsChanged*(self: Service) {.signal.}
   proc getNotifSettingAllowNotifications*(self: Service): bool {.slot.} =

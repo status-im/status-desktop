@@ -51,12 +51,27 @@ QtObject:
   proc getMessagesFromContactsOnly(self: View): bool {.slot.} =
     return self.delegate.getMessagesFromContactsOnly()
   proc setMessagesFromContactsOnly(self: View, value: bool) {.slot.} =
+    if self.getMessagesFromContactsOnly() == value:
+      return
     self.delegate.setMessagesFromContactsOnly(value)
     self.messagesFromContactsOnlyChanged()
   QtProperty[bool] messagesFromContactsOnly:
     read = getMessagesFromContactsOnly
     write = setMessagesFromContactsOnly
     notify = messagesFromContactsOnlyChanged
+
+  proc urlUnfurlingModeChanged(self: View) {.signal.}
+  proc getUrlUnfurlingMode(self: View): int {.slot.} =
+    return self.delegate.urlUnfurlingMode()
+  proc setUrlUnfurlingMode(self: View, value: int) {.slot.} =
+    if self.getUrlUnfurlingMode() == value:
+      return
+    self.delegate.setUrlUnfurlingMode(value)
+    self.urlUnfurlingModeChanged()
+  QtProperty[int] urlUnfurlingMode:
+    read = getUrlUnfurlingMode
+    write = setUrlUnfurlingMode
+    notify = urlUnfurlingModeChanged
 
   proc validatePassword*(self: View, password: string): bool {.slot.} =
     self.delegate.validatePassword(password)

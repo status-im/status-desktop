@@ -1231,4 +1231,10 @@ QtObject {
     enum HoldingType {
         Unknown, Asset, Collectible
     }
+
+    enum UrlUnfurlingMode {
+        UrlUnfurlingModeAlwaysAsk = 1,
+        UrlUnfurlingModeEnableAll = 2,
+        UrlUnfurlingModeDisableAll = 3
+    }
 }

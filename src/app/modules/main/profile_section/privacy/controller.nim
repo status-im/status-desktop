@@ -1,5 +1,5 @@
 import io_interface
-import uuids
+import uuids, chronicles
 
 import ../../../../../constants as main_constants
 import ../../../../global/global_singleton
@@ -93,6 +93,14 @@ proc getMessagesFromContactsOnly*(self: Controller): bool =
 
 proc setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
   return self.settingsService.saveMessagesFromContactsOnly(value)
+
+method urlUnfurlingMode*(self: Controller): int {.base.} =
+  return int(self.settingsService.urlUnfurlingMode())
+
+method setUrlUnfurlingMode*(self: Controller, value: int) {.base.} =
+  let mode = toUrlUnfurlingMode(value)
+  if not self.settingsService.saveUrlUnfurlingMode(mode):
+    error "failed to save url unfurling mode setting", value
 
 proc validatePassword*(self: Controller, password: string): bool =
   return self.privacyService.validatePassword(password)
