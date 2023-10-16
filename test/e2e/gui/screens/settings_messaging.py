@@ -10,10 +10,9 @@ from gui.components.settings.send_contact_request_popup import SendContactReques
 
 from gui.elements.button import Button
 from gui.elements.list import List
-from gui.elements.object import QObject
 from gui.screens.messages import MessagesScreen
-from gui.screens.settings import LeftPanel
 from scripts.tools.image import Image
+from gui.screens.settings import *
 
 
 class MessagingSettingsView(QObject):
