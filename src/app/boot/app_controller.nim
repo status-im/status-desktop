@@ -135,10 +135,10 @@ proc connect(self: AppController) =
   if not existsEnv("LOG_LEVEL"):
     self.statusFoundation.events.on(node_configuration_service.SIGNAL_NODE_LOG_LEVEL_UPDATE) do(a: Args):
       let args = NodeLogLevelUpdatedArgs(a)
-      if args.logLevel == LogLevel.DEBUG:
-        setLogLevel(LogLevel.DEBUG)
+      if args.logLevel == chronicles.LogLevel.DEBUG:
+        setLogLevel(chronicles.LogLevel.DEBUG)
       elif defined(production):
-        setLogLevel(LogLevel.INFO)
+        setLogLevel(chronicles.LogLevel.INFO)
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
@@ -440,7 +440,7 @@ proc load(self: AppController) =
   # Apply runtime log level settings
   if not existsEnv("LOG_LEVEL"):
     if self.nodeConfigurationService.isDebugEnabled():
-      setLogLevel(LogLevel.DEBUG)
+      setLogLevel(chronicles.LogLevel.DEBUG)
 
   # load main module
   self.mainModule.load(
