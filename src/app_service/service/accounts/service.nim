@@ -667,7 +667,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+    let nodeConfigJson = self.getLoginNodeConfig()
     let response = status_account.login(
       account.name,
       account.keyUid,
@@ -749,7 +749,7 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+      let nodeConfigJson = self.getLoginNodeConfig()
 
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
