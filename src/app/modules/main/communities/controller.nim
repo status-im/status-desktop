@@ -142,7 +142,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e:Args):
     let args = DiscordImportProgressArgs(e)
-    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.channelId, args.channelName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
 
   self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e:Args):
     let args = CommunityIdArgs(e)
@@ -293,6 +293,26 @@ proc requestImportDiscordCommunity*(
     filesToImport,
     fromTimestamp)
 
+proc requestImportDiscordChannel*(
+    self: Controller,
+    name: string,
+    discordChannelId: string,
+    communityId: string,
+    description: string,
+    color: string,
+    emoji: string,
+    filesToImport: seq[string],
+    fromTimestamp: int) =
+  self.communityService.requestImportDiscordChannel(
+    name,
+    discordChannelId,
+    communityId,
+    description,
+    color,
+    emoji,
+    filesToImport,
+    fromTimestamp)
+
 proc reorderCommunityChat*(
     self: Controller,
     communityId: string,
@@ -344,6 +364,9 @@ proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport
 
 proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
   self.communityService.requestCancelDiscordCommunityImport(id)
+
+proc requestCancelDiscordChannelImport*(self: Controller, discordChannelId: string) =
+  self.communityService.requestCancelDiscordChannelImport(discordChannelId)
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)

@@ -51,6 +51,11 @@ method requestImportDiscordCommunity*(self: AccessInterface, name: string, descr
                         fromTimestamp: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method requestImportDiscordChannel*(self: AccessInterface, name: string, discordChannelId: string, communityId: string, description: string,
+                        color: string, emoji: string, filesToImport: seq[string],
+                        fromTimestamp: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -138,10 +143,13 @@ method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesT
 method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) {.base.} =
+method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, channelId: string, channelName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestCancelDiscordCommunityImport*(self: AccessInterface, id: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestCancelDiscordChannelImport*(self: AccessInterface, discordChannelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityHistoryArchivesDownloadStarted*(self: AccessInterface, communityId: string) {.base.} =

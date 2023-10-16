@@ -350,7 +350,7 @@ StatusScrollView {
             cancelButtonLabel: root.importingSingleChannel ? qsTr("Cancel") : qsTr("Continue importing")
             onConfirmButtonClicked: {
                 if (root.importingSingleChannel)
-                    root.store.requestCancelDiscordChannelImport(root.store.discordImportChannelName)
+                    root.store.requestCancelDiscordChannelImport(root.store.discordImportChannelId)
                 else
                     root.store.requestCancelDiscordCommunityImport(root.store.discordImportCommunityId)
                 cancelConfirmationPopup.close()

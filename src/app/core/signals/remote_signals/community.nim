@@ -28,6 +28,8 @@ type DiscordCommunityImportProgressSignal* = ref object of Signal
   communityId*: string
   communityImages*: Images
   communityName*: string
+  channelId*: string
+  channelName*: string
   tasks*: seq[DiscordImportTaskProgress]
   progress*: float
   errorsCount*: int
@@ -89,6 +91,8 @@ proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): 
 
     result.communityId = importProgressObj{"communityId"}.getStr()
     result.communityName = importProgressObj{"communityName"}.getStr()
+    result.channelId = importProgressObj{"channelId"}.getStr()
+    result.channelName = importProgressObj{"channelName"}.getStr()
     result.progress = importProgressObj{"progress"}.getFloat()
     result.errorsCount = importProgressObj{"errorsCount"}.getInt()
     result.warningsCount = importProgressObj{"warningsCount"}.getInt()

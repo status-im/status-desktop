@@ -27,6 +27,7 @@ StatusStackModal {
     property bool isEdit: false
     property bool isDeleteable: false
 
+    property string communityId: ""
     property string chatId: ""
     property string categoryId: ""
     property string channelName: ""
@@ -64,6 +65,7 @@ StatusStackModal {
 
         function _getChannelConfig() {
             return {
+                communityId: root.communityId,
                 discordChannelId: root.communitiesStore.discordImportChannelId,
                 categoryId: root.categoryId,
                 name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
@@ -465,6 +467,11 @@ StatusStackModal {
                                         checked: model.selected
                                         visible: model.categoryId === categoryCheckbox.categoryId
                                         onToggled: root.communitiesStore.toggleOneDiscordChannel(model.id)
+                                        Component.onCompleted: {
+                                            if (model.selected) {
+                                                root.communitiesStore.toggleOneDiscordChannel(model.id)
+                                            }
+                                        }
                                     }
                                 }
                             }

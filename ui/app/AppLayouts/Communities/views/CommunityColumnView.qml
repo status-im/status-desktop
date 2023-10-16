@@ -120,7 +120,9 @@ Item {
             text: qsTr("Create channel via Discord import")
             icon.name: "download"
             enabled: !d.discordImportInProgress
-            onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
+            onTriggered: {
+                Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: communityData.id})
+            }
         }
 
         StatusAction {
@@ -206,7 +208,7 @@ Item {
                     text: qsTr("Create channel via Discord import")
                     icon.name: "download"
                     enabled: !d.discordImportInProgress
-                    onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
+                    onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: root.communityData.id})
                 }
 
                 StatusAction {

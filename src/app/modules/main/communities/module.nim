@@ -369,6 +369,11 @@ method requestImportDiscordCommunity*(self: Module, name: string, description, i
   self.view.setDiscordImportHasCommunityImage(imagePath != "")
   self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
 
+method requestImportDiscordChannel*(self: Module, name: string, discordChannelId: string, communityId: string, description: string,
+                        color: string, emoji: string, filesToImport: seq[string],
+                        fromTimestamp: int) =
+  self.controller.requestImportDiscordChannel(name, discordChannelId, communityId, description, color, emoji, filesToImport, fromTimestamp)
+
 proc getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
   return initDiscordImportTaskItem(
       t.`type`,
@@ -383,6 +388,8 @@ method discordImportProgressUpdated*(
     self: Module,
     communityId: string,
     communityName: string,
+    channelId: string,
+    channelName: string,
     communityImage: string,
     tasks: seq[DiscordImportTaskProgress],
     progress: float,
@@ -400,6 +407,8 @@ method discordImportProgressUpdated*(
 
   self.view.setDiscordImportCommunityId(communityId)
   self.view.setDiscordImportCommunityName(communityName)
+  self.view.setDiscordImportChannelId(channelId)
+  self.view.setDiscordImportChannelName(channelName)
   self.view.setDiscordImportCommunityImage(communityImage)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
@@ -415,6 +424,9 @@ method discordImportProgressUpdated*(
 
 method requestCancelDiscordCommunityImport*(self: Module, id: string) =
   self.controller.requestCancelDiscordCommunityImport(id)
+
+method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string) =
+  self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
 method communityInfoAlreadyRequested*(self: Module) =
   self.view.communityInfoAlreadyRequested()

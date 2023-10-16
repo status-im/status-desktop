@@ -214,7 +214,7 @@ StatusSectionLayout {
                 BannerPanel {
                     readonly property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
                     text: importInProgress ?
-                        qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName) :
+                        qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName || root.communitiesStore.discordImportChannelName) :
                         qsTr("Import existing Discord community into Status")
                     buttonText: qsTr("Import existing")
                     icon.name: "download"
