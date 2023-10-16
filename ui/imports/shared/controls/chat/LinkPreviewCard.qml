@@ -33,7 +33,8 @@ CalloutCard {
     implicitHeight: 290
     implicitWidth: 305
     hoverEnabled: true
-    borderColor: hovered || highlight ? Style.current.borderTertiary : Style.current.border
+    dropShadow: d.highlight
+    borderColor: d.highlight ? Style.current.background : Style.current.border
 
     Behavior on borderColor {
         ColorAnimation { duration: 200 }
@@ -116,5 +117,6 @@ CalloutCard {
     QtObject {
         id: d
         property real bannerImageMargins: 1 / Screen.devicePixelRatio // image size isn't pixel perfect..
+        property bool highlight: root.highlight || root.hovered
     }
 }
