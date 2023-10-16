@@ -73,6 +73,7 @@ SettingsContentBase {
                 objectName: "myProfileSettingsView"
                 profileStore: root.profileStore
                 privacyStore: root.privacyStore
+                walletStore: root.walletStore
 
                 onVisibleChanged: if (visible) stackLayout.Layout.preferredHeight = settingsView.implicitHeight
                 Component.onCompleted: stackLayout.Layout.preferredHeight = Qt.binding(() => settingsView.implicitHeight)

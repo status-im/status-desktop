@@ -27,7 +27,8 @@ QtObject {
 
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
-    // TODO: other models here
+    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
+    readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
@@ -89,5 +90,13 @@ QtObject {
 
     function setBio(bio) {
         root.profileModule.setBio(bio)
+    }
+
+    function storeProfileShowcasePreferences(profileChanges) {
+        root.profileModule.storeProfileShowcasePreferences(JSON.stringify(profileChanges))
+    }
+
+    function requestProfileShowcasePreferences() {
+         root.profileModule.requestProfileShowcasePreferences()
     }
 }

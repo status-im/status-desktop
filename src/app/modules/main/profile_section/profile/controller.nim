@@ -64,9 +64,6 @@ proc init*(self: Controller) =
     let args = ProfileShowcasePreferencesArgs(e)
     self.updateShowcasePreferences(args.communities, args.accounts, args.collectibles, args.assets)
 
-  # Request preferences once on controller init
-  self.profileService.requestProfileShowcasePreferences()
-
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto]) =
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
@@ -74,8 +71,8 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
   # Collect all joined & curated communities to fill perferences with defaults only on UI
-  # NOTE: Is getJoinedCommunities() already contains getCuratedCommunities()
-  for community in self.communityService.getJoinedCommunities() & self.communityService.getCuratedCommunities():
+  # NOTE: Should i also include getCuratedCommunities()?
+  for community in self.communityService.getJoinedCommunities():
     var profileEntry: ProfileShowcaseEntryDto
     if communities.contains(community.id):
       profileEntry = communities[community.id]
@@ -92,25 +89,35 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
 
   # Collect wallet accounts
   for walletAccount in self.walletAccountService.getWalletAccounts():
-    var profileEntry: ProfileShowcaseEntryDto
+    var walletProfileEntry: ProfileShowcaseEntryDto
     if accounts.contains(walletAccount.address):
-      profileEntry = accounts[walletAccount.address]
+      walletProfileEntry = accounts[walletAccount.address]
     else:
-      profileEntry = ProfileShowcaseEntryDto(
+      walletProfileEntry = ProfileShowcaseEntryDto(
         id: walletAccount.address,
         entryType: ProfileShowcaseEntryType.Account,
         visibility: ProfileShowcaseVisibility.ToNoOne,
         order: 0
       )
-    profileAccountItems.add(initProfileShowcaseAccountItem(walletAccount, profileEntry))
+    profileAccountItems.add(initProfileShowcaseAccountItem(walletAccount, walletProfileEntry))
 
-    # Collect wallet assets & collectibles
-    for token in self.tokenService.getTokenList():
-      profileAssetItems.add(initProfileShowcaseAssetItem(token, profileEntry))
+    # Collect tokens for each wallet address
+    for token in self.walletAccountService.getTokensByAddress(walletAccount.address):
+      var tokenProfileEntry: ProfileShowcaseEntryDto
+      if accounts.contains(token.symbol):
+        tokenProfileEntry = accounts[token.symbol]
+      else:
+        tokenProfileEntry = ProfileShowcaseEntryDto(
+          id: token.symbol,
+          entryType: ProfileShowcaseEntryType.Account,
+          visibility: ProfileShowcaseVisibility.ToNoOne,
+          order: 0
+        )
+      profileAssetItems.add(initProfileShowcaseAssetItem(token, tokenProfileEntry))
 
-      # TODO collect collectibles
-      # # Community collectibles (ERC721 and others)
-      #   profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
+    # TODO collect collectibles
+    # Community collectibles (ERC721 and others)
+    #   profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
 
     self.delegate.setProfileShowcaseCommunitiesPreferences(profileCommunityItems)
     self.delegate.setProfileShowcaseAccountsPreferences(profileAccountItems)
@@ -137,3 +144,10 @@ proc getBio*(self: Controller): string =
 
 proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
+
+proc storeProfileShowcasePreferences*(self: Controller, profileChanges: string) =
+  echo "--------------> storeProfileShowcasePreferences: ", profileChanges
+  # TODO: storeProfileShowcasePreferences in service
+
+proc requestProfileShowcasePreferences*(self: Controller) =
+  self.profileService.requestProfileShowcasePreferences()

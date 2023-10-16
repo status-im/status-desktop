@@ -11,6 +11,7 @@ type
 
     Name
     EnabledNetworkBalance
+    VisibleForNetworkWithPositiveBalance
     Symbol
     Color
 
@@ -57,6 +58,7 @@ QtObject:
       ModelRole.Order.int: "order",
       ModelRole.Name.int: "name",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
+      ModelRole.VisibleForNetworkWithPositiveBalance.int: "visibleForNetworkWithPositiveBalance",
       ModelRole.Symbol.int: "symbol",
       ModelRole.Color.int: "color",
     }.toTable
@@ -84,6 +86,8 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.enabledNetworkBalance)
+    of ModelRole.VisibleForNetworkWithPositiveBalance:
+      result = newQVariant(item.visibleForNetworkWithPositiveBalance)
     of ModelRole.Symbol:
       result = newQVariant(item.symbol)
     of ModelRole.Color:

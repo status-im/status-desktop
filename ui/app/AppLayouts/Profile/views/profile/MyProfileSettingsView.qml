@@ -25,6 +25,9 @@ ColumnLayout {
 
     property PrivacyStore privacyStore
     property ProfileStore profileStore
+    property WalletStore walletStore
+
+    property var profileShowcaseChanges: new Map()
 
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
@@ -38,7 +41,8 @@ ColumnLayout {
                                   descriptionPanel.bio.text !== profileStore.bio ||
                                   profileStore.socialLinksDirty ||
                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
-                                  profileHeader.icon !== profileStore.profileLargeImage
+                                  profileHeader.icon !== profileStore.profileLargeImage ||
+                                  profileShowcaseChanges.size > 0
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -48,6 +52,12 @@ ColumnLayout {
         profileStore.resetSocialLinks()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+
+        profileShowcaseChanges.clear()
+        profileShowcaseCommunities.baseModel = profileStore.profileShowcaseCommunitiesModel
+        profileShowcaseAccounts.baseModel = profileStore.profileShowcaseAccountsModel
+        profileShowcaseCollectibles.baseModel = profileStore.profileShowcaseCollectiblesModel
+        profileShowcaseAssets.baseModel = profileStore.profileShowcaseAssetsModel
     }
 
     function save() {
@@ -70,8 +80,16 @@ ColumnLayout {
         else if (!biometricsSwitch.checked)
             root.privacyStore.tryRemoveFromKeyChain()
 
+        console.log("==================-----> ", profileShowcaseChanges)
+        if (profileShowcaseChanges.size > 0){
+            profileStore.storeProfileShowcasePreferences(profileShowcaseChanges)
+        }
+
         reset()
     }
+
+    onVisibleChanged: profileStore.requestProfileShowcasePreferences()
+    Component.onCompleted: profileStore.requestProfileShowcasePreferences()
 
     Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
@@ -194,28 +212,36 @@ ColumnLayout {
         currentIndex: showcaseTabBar.currentIndex
 
         ProfileShowcaseCommunitiesPanel {
+            id: profileShowcaseCommunities
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseCommunitiesModel
+            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
         }
 
         ProfileShowcaseAccountsPanel {
+            id: profileShowcaseAccounts
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseAccountsModel
-            // currentWallet: root.walletStore.overview.mixedcaseAddress
+            currentWallet: root.walletStore.overview.mixedcaseAddress
+            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
         }
 
         ProfileShowcaseCollectiblesPanel {
+            id: profileShowcaseCollectibles
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-           // baseModel: root.profileStore.profileShowcaseCollectiblesModel
+            baseModel: root.profileStore.profileShowcaseCollectiblesModel
+            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
         }
 
         ProfileShowcaseAssetsPanel {
+            id: profileShowcaseAssets
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            // baseModel: root.profileStore.profileShowcaseAssetsModel
+            baseModel: root.profileStore.profileShowcaseAssetsModel
+            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
         }
     }
 }

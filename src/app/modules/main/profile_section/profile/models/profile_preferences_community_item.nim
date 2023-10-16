@@ -14,7 +14,7 @@ type
 proc initProfileShowcaseCommunityItem*(community: CommunityDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseCommunityItem =
   result = ProfileShowcaseCommunityItem()
 
-  result.id = community.id
+  result.id = entry.id
   result.entryType = entry.entryType
   result.showcaseVisibility = entry.visibility
   result.order = entry.order

@@ -14,7 +14,7 @@ type
 proc initProfileShowcaseAccountItem*(account: WalletAccountDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAccountItem =
   result = ProfileShowcaseAccountItem()
 
-  result.id = account.address
+  result.id = entry.id
   result.entryType = entry.entryType
   result.showcaseVisibility = entry.visibility
   result.order = entry.order

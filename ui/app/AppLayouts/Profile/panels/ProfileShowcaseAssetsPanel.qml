@@ -7,10 +7,9 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    settingsKey: "assets"
-    keyRole: "symbol"
-    roleNames: ["symbol", "name", "visibleForNetworkWithPositiveBalance", "enabledNetworkBalance"]
-    filterFunc: (modelData) => modelData.visibleForNetworkWithPositiveBalance && !showcaseModel.hasItem(modelData.symbol)
+    keyRole: "id"
+    roleNames: ["id", "symbol", "name", "visibleForNetworkWithPositiveBalance", "enabledNetworkBalance"]
+    filterFunc: (modelData) => modelData.visibleForNetworkWithPositiveBalance && !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
 

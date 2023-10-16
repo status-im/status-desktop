@@ -7,10 +7,9 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    settingsKey: "collectibles"
-    keyRole: "uid"
-    roleNames: ["uid", "name", "collectionName", "backgroundColor", "imageUrl"]
-    filterFunc: (modelData) => !showcaseModel.hasItem(modelData.uid)
+    keyRole: "id"
+    roleNames: ["id", "name", "collectionName", "backgroundColor", "imageUrl"]
+    filterFunc: (modelData) => !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Collectibles here will show on your profile")
     showcasePlaceholderBanner: qsTr("Collectibles here will be hidden from your profile")
 

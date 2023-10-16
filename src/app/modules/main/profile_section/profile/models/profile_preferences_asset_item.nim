@@ -1,17 +1,19 @@
 import profile_preferences_base_item
 
 import app_service/service/profile/dto/profile_showcase_entry
-import app_service/service/token/dto
+import app_service/service/wallet_account/dto/token_dto
+import ../../../../shared_models/currency_amount
 
 type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem
     name*: string
-    enabledNetworkBalance*: string
+    enabledNetworkBalance*: CurrencyAmount
+    visibleForNetworkWithPositiveBalance*: bool
     symbol*: string
     color*: string
+    # TODO: marketValuesSummary
 
-
-proc initProfileShowcaseAssetItem*(token: TokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAssetItem =
+proc initProfileShowcaseAssetItem*(token: WalletTokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
   result.id = entry.id
@@ -20,15 +22,22 @@ proc initProfileShowcaseAssetItem*(token: TokenDto, entry: ProfileShowcaseEntryD
   result.order = entry.order
 
   result.name = token.name
-  # result.enabledNetworkBalance = TODO: how to calculate?
-  # result.imageUrl = TODO: Asset symbol
+
+  result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
+  result.visibleForNetworkWithPositiveBalance = true;# TODO: from wallet section
+
+  result.symbol = token.symbol
   result.color = token.color
+  #TODO: from wallet section, using marketValuesSummary, currencyAmountToItem(marketValues.price, currencyFormat),
 
 proc name*(self: ProfileShowcaseAssetItem): string {.inline.} =
   self.name
 
-proc enabledNetworkBalance*(self: ProfileShowcaseAssetItem): string {.inline.} =
+proc enabledNetworkBalance*(self: ProfileShowcaseAssetItem): CurrencyAmount {.inline.} =
   self.enabledNetworkBalance
+
+proc visibleForNetworkWithPositiveBalance*(self: ProfileShowcaseAssetItem): bool {.inline.} =
+  self.visibleForNetworkWithPositiveBalance
 
 proc symbol*(self: ProfileShowcaseAssetItem): string {.inline.} =
   self.symbol

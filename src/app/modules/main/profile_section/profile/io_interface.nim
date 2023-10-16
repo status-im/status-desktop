@@ -58,6 +58,12 @@ method setProfileShowcaseCollectiblesPreferences*(self: AccessInterface, items: 
 method setProfileShowcaseAssetsPreferences*(self: AccessInterface, items: seq[ProfileShowcaseAssetItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method storeProfileShowcasePreferences*(self: AccessInterface, profileChanges: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
