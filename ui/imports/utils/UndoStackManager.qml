@@ -122,25 +122,46 @@ Item {
             }
         }
 
+        function extrapolatePreviousCursorPosition() {
+            const previousText = root.textEdit.getText(0, root.textEdit.length)
+            const previousCursorPosition = root.textEdit.cursorPosition - root.textEdit.length + d.previousText.length
+            return previousCursorPosition
+        }
+
         readonly property Connections textChangedConnection: Connections {
             target: root.textEdit
             enabled: root.enabled && !d.aboutToChangeText
             function onTextChanged() {
                 const unformattedText = root.textEdit.getText(0, root.textEdit.length)
+
                 if(d.previousText !== unformattedText) {
                     const newFormattedText = root.textEdit.text
+                    const newCursorPosition = root.textEdit.cursorPosition
+
                     const previousFormattedTextCopy = d.previousFormattedText
+                    const previousCursorPosition = d.extrapolatePreviousCursorPosition()
+
                     d.undoStack.push({
                         undo: function() {
                             d.aboutToChangeText = true
+                            //restore
                             root.textEdit.text = previousFormattedTextCopy
-                            root.textEdit.cursorPosition = root.textEdit.length
+                            root.textEdit.cursorPosition = previousCursorPosition
+                            //snapshot
+                            d.previousText = root.textEdit.getText(0, root.textEdit.length)
+                            d.previousFormattedText = root.textEdit.text
+
                             d.aboutToChangeText = false
                         },
                         redo: function() {
                             d.aboutToChangeText = true
+                            //restore
                             root.textEdit.text = newFormattedText
-                            root.textEdit.cursorPosition = root.textEdit.length
+                            root.textEdit.cursorPosition = newCursorPosition
+                            //snapshot
+                            d.previousText = root.textEdit.getText(0, root.textEdit.length)
+                            d.previousFormattedText = root.textEdit.text
+
                             d.aboutToChangeText = false
                         }
                     })
