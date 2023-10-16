@@ -349,6 +349,44 @@ QtObject:
     result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
+  proc getLoginNodeConfig(self: Service): JsonNode =
+    # To create appropriate NodeConfig for Login we set only params that maybe be set via env variables or cli flags
+    result = %*{}
+
+    for n in NETWORKS:
+      let nObj = %* {
+        "chainId": n["chainId"],
+        "rpcUrl": n["rpcUrl"],
+        "fallbackUrl": n["fallbackUrl"],
+      }
+      result["Networks"] = n
+
+    result["UpstreamConfig"]["URL"] = %* NETWORKS[0]{"rpcUrl"}
+    result["ShhextConfig"]["VerifyENSURL"] = %* NETWORKS[0]{"fallbackUrl"}
+    result["ShhextConfig"]["VerifyTransactionURL"] = %* NETWORKS[0]{"fallbackUrl"}
+    result["UpstreamConfig"]["URL"] = %* NETWORKS[0]{"fallbackUrl"}
+    result["WakuV2Config"]["Port"] = %* WAKU_V2_PORT
+    result["WakuV2Config"]["UDPPort"] = %* WAKU_V2_PORT
+    result["WalletConfig"]["OpenseaAPIKey"] = %* OPENSEA_API_KEY_RESOLVED
+    result["WalletConfig"]["AlchemyAPIKeys"] = %* {
+      "1": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+      "5": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+      "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+      "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+      "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+      "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED
+    }
+    result["WalletConfig"]["InfuraAPIKey"] = %* INFURA_TOKEN_RESOLVED
+    result["WalletConfig"]["InfuraAPIKeySecret"] = %* INFURA_TOKEN_SECRET_RESOLVED
+    result["TorrentConfig"]["Port"] = %* TORRENT_CONFIG_PORT
+    result["TorrentConfig"]["DataDir"] = %* DEFAULT_TORRENT_CONFIG_DATADIR
+    result["TorrentConfig"]["TorrentDir"] = %* DEFAULT_TORRENT_CONFIG_TORRENTDIR
+
+    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
+
+    if STATUS_PORT != 0:
+      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
+
   proc setLocalAccountSettingsFile(self: Service) =
     if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
       singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
@@ -614,7 +652,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+    let nodeConfigJson = self.getLoginNodeConfig()
     let response = status_account.login(
       account.name,
       account.keyUid,
@@ -696,7 +734,7 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+      let nodeConfigJson = self.getLoginNodeConfig()
 
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
