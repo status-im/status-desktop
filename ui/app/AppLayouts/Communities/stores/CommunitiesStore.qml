@@ -192,7 +192,7 @@ QtObject {
     }
 
     function requestCancelDiscordChannelImport(id) {
-        console.warn("!!! IMPLEMENT ME requestCancelDiscordChannelImport(id)") // FIXME
+        root.communitiesModuleInst.requestCancelDiscordChannelImport(id)
     }
 
     function resetDiscordImport() {
@@ -227,6 +227,7 @@ QtObject {
     }
 
     function requestImportDiscordChannel(args = {
+                                         communityId: "",
                                          discordChannelId: "",
                                          name: "",
                                          description: "",
@@ -236,7 +237,9 @@ QtObject {
                                              // TODO
                                          }
                                       }, from = 0) {
-        console.warn("!!! IMPLEMENT ME requestImportDiscordChannel") // FIXME
+        communitiesModuleInst.requestImportDiscordChannel(args.name, args.discordChannelId, args.communityId,
+                                                        args.description, args.color, args.emoji, from)
+//        console.warn("!!! IMPLEMENT ME requestImportDiscordChannel") // FIXME
     }
 
     readonly property Connections connections: Connections {

@@ -112,6 +112,8 @@ type
     communityId*: string
     communityImage*: string
     communityName*: string
+    channelId*: string
+    channelName*: string
     tasks*: seq[DiscordImportTaskProgress]
     progress*: float
     errorsCount*: int
@@ -366,6 +368,8 @@ QtObject:
         communityId: receivedData.communityId,
         communityImage: receivedData.communityImages.thumbnail,
         communityName: receivedData.communityName,
+        channelId: receivedData.channelId,
+        channelName: receivedData.channelName,
         tasks: receivedData.tasks,
         progress: receivedData.progress,
         errorsCount: receivedData.errorsCount,
@@ -1047,6 +1051,34 @@ QtObject:
 
     except Exception as e:
       error "Error importing discord community", msg = e.msg
+
+  proc requestImportDiscordChannel*(
+        self: Service,
+        name: string,
+        discordChannelId: string,
+        communityId: string,
+        description: string,
+        color: string,
+        emoji: string,
+        filesToImport: seq[string],
+        fromTimestamp: int) =
+      try:
+        let response = status_go.requestImportDiscordChannel(
+          name,
+          discordChannelId,
+          communityId,
+          description,
+          color,
+          emoji,
+          filesToImport,
+          fromTimestamp)
+
+        if response.error != nil:
+          let error = Json.decode($response.error, RpcError)
+          raise newException(RpcException, "Error importing discord channel: " & error.message)
+
+      except Exception as e:
+        error "Error importing discord channel", msg = e.msg
 
   proc createCommunity*(
       self: Service,
@@ -2083,6 +2115,12 @@ QtObject:
       discard status_go.requestCancelDiscordCommunityImport(communityId)
     except Exception as e:
       error "Error canceling discord community import", msg = e.msg
+
+  proc requestCancelDiscordChannelImport*(self: Service, discordChannelId: string) =
+    try:
+      discard status_go.requestCancelDiscordChannelImport(discordChannelId)
+    except Exception as e:
+      error "Error canceling discord channel import", msg = e.msg
 
   proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
     try:

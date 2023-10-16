@@ -257,6 +257,27 @@ proc requestImportDiscordCommunity*(
       "filesToImport": filesToImport
     }])
 
+proc requestImportDiscordChannel*(
+    name: string,
+    discordChannelId: string,
+    communityId: string,
+    description: string,
+    color: string,
+    emoji: string,
+    filesToImport: seq[string],
+    fromTimestamp: int,
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("requestImportDiscordChannel".prefix, %*[{
+      "name": name,
+      "discordChannelId": discordChannelId,
+      "communityId": communityId,
+      "description": description,
+      "color": color,
+      "emoji": emoji,
+      "filesToImport": filesToImport,
+      "from": fromTimestamp
+    }])
+
 proc createCommunityTokenPermission*(communityId: string, permissionType: int, tokenCriteria: string, chatIDs: seq[string], isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunityTokenPermission".prefix, %*[{
     "communityId": communityId,
@@ -284,6 +305,10 @@ proc deleteCommunityTokenPermission*(communityId: string, permissionId: string):
 
 proc requestCancelDiscordCommunityImport*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestCancelDiscordCommunityImport".prefix, %*[communityId])
+
+proc requestCancelDiscordChannelImport*(discordChannelId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("requestCancelDiscordChannelImport".prefix, %*[discordChannelId])
+
 
 proc createCommunityChannel*(
     communityId: string,
