@@ -69,13 +69,8 @@ Loader {
     readonly property var gifLinks: {
         if (!links)
             return []
-        const separator = " "
-        const arr = links.split(separator)
-        const filtered = arr.filter(value => {
-                                        return value.toLowerCase().endsWith('.gif')
-                                    })
-        console.log("<<< calculating gifLinks:", filtered)
-        return filtered
+        const arr = links.split(" ")
+        return arr.filter(value => value.toLowerCase().endsWith('.gif'))
     }
 
     property string responseToMessageWithId: ""

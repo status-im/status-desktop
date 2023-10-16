@@ -31,12 +31,12 @@ Flow {
 
     spacing: 12
 
+    //TODO: remove once GIF previews are unfurled sender side
+
     QtObject {
         id: d
         property bool localAskAboutUnfurling: true
     }
-
-    //TODO: remove once GIF previews are unfurled sender side
 
     Loader {
         visible: root.gifLinks && root.gifLinks.length > 0
