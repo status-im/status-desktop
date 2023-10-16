@@ -55,9 +55,9 @@ proc prepareLogging() =
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
-  let defaultLogLvl = if defined(production): LogLevel.INFO else: LogLevel.DEBUG
+  let defaultLogLvl = if defined(production): chronicles.LogLevel.INFO else: chronicles.LogLevel.DEBUG
   # default log level can be overriden by LOG_LEVEL env parameter
-  let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
+  let logLvl = try: parseEnum[chronicles.LogLevel](main_constants.LOG_LEVEL)
                except: defaultLogLvl
 
   setLogLevel(logLvl)
@@ -79,6 +79,11 @@ proc setupRemoteSignalsHandling() =
     if keycardServiceQObjPointer != nil:
       signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
   keycard_go.setSignalEventCallback(callbackKeycardGo)
+
+proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
+  createDir(dataDir)
+  createDir(tmpDir)
+  createDir(logDir)
 
 proc mainProc() =
 

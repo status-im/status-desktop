@@ -277,7 +277,7 @@ QtObject:
       "wallet-root-address": account.derivedAccounts.walletRoot.address,
       "preview-privacy?": true,
       "signing-phrase": generateSigningPhrase(3),
-      "log-level": $LogLevel.INFO,
+      "log-level": main_constants.LOG_LEVEL,
       "latest-derived-path": 0,
       "currency": "usd",
       "networks/networks": @[],
@@ -308,7 +308,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
-  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool, login: bool = false): JsonNode =
+  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.StatusProd
     let dnsDiscoveryURL = @["enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"]
 
@@ -339,25 +339,68 @@ QtObject:
       result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
       result["Rendezvous"] = newJBool(false)
 
-    # Source the connection port from the environment for debugging or if default port not accessible
-    if existsEnv("STATUS_PORT"):
-      let wV1Port = $getEnv("STATUS_PORT")
-      # Waku V1 config
-      result["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
+    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
 
-    # Don't override log level on login. For onboarding it is required, nothing to override
-    if login:
-      result.delete("LogLevel")
-
-    if existsEnv("LOG_LEVEL"):
-      let logLvl = getEnv("LOG_LEVEL")
-      if logLvl in @["ERROR", "WARN", "INFO", "DEBUG", "TRACE"]:
-        result["LogLevel"] = newJString($logLvl)
+    if STATUS_PORT != 0:
+      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
     result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
     result["KeycardPairingDataFile"] = newJString(main_constants.KEYCARDPAIRINGDATAFILE)
     result["ProcessBackedupMessages"] = newJBool(recoverAccount)
+
+  proc getLoginNodeConfig(self: Service): JsonNode =
+    # To create appropriate NodeConfig for Login we set only params that maybe be set via env variables or cli flags
+    result = %*{}
+
+    # mandatory params
+    result["NetworkId"] = NETWORKS[0]{"chainId"}
+    result["DataDir"] = %* "./ethereum/mainnet"
+    result["KeyStoreDir"] = %* "./keystore"
+    result["KeycardPairingDataFile"] = %* main_constants.KEYCARDPAIRINGDATAFILE
+
+    # other params
+    result["Networks"] = NETWORKS
+
+    result["UpstreamConfig"] = %* {
+      "URL": NETWORKS[0]{"rpcUrl"},
+      "Enabled": true,
+    }
+
+    result["ShhextConfig"] = %* {
+      "VerifyENSURL": NETWORKS[0]{"fallbackUrl"},
+      "VerifyTransactionURL": NETWORKS[0]{"fallbackUrl"}
+    }
+
+    result["WakuV2Config"] = %* {
+      "Port": WAKU_V2_PORT,
+      "UDPPort": WAKU_V2_PORT
+    }
+
+    result["WalletConfig"] = %* {
+      "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
+      "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
+      "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
+      "AlchemyAPIKeys": %* {
+        "1": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
+        "5": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
+        "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+        "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+        "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+        "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED
+      }
+    }
+
+    result["TorrentConfig"] = %* {
+      "Port": TORRENT_CONFIG_PORT,
+      "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
+      "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
+    }
+
+    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
+
+    if STATUS_PORT != 0:
+      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
   proc setLocalAccountSettingsFile(self: Service) =
     if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
@@ -484,7 +527,7 @@ QtObject:
         "wallet-root-address": walletRootAddress,
         "preview-privacy?": true,
         "signing-phrase": generateSigningPhrase(3),
-        "log-level": $LogLevel.INFO,
+        "log-level": main_constants.LOG_LEVEL,
         "latest-derived-path": 0,
         "currency": "usd",
         "networks/networks": @[],
@@ -624,7 +667,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
     let response = status_account.login(
       account.name,
       account.keyUid,
@@ -706,7 +749,7 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
 
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
