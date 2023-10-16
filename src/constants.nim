@@ -90,5 +90,5 @@ const APP_VERSION* = if defined(production): DESKTOP_VERSION else: fmt("{GIT_COM
 # Name of the test environment var to check for
 const STATUS_RUNTIME_TEST_MODE_VAR* = "STATUS_RUNTIME_TEST_MODE"
 
-const TEST_MODE_ENABLED* = getEnv(STATUS_RUNTIME_TEST_MODE_VAR).toUpperAscii() == "TRUE" or
+let TEST_MODE_ENABLED* = getEnv(STATUS_RUNTIME_TEST_MODE_VAR).toUpperAscii() == "TRUE" or
   getEnv(STATUS_RUNTIME_TEST_MODE_VAR) == "1"
