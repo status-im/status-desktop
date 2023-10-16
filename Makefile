@@ -42,6 +42,9 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-statusq-sanity-checker \
         statusq-tests \
         run-statusq-tests \
+        storybook-build \
+        run-storybook \
+        run-storybook-tests \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -321,6 +324,47 @@ statusq-tests:
 run-statusq-tests: statusq-tests
 	echo -e "\033[92mRunning:\033[39m StatusQ Unit Tests"
 	$(STATUSQ_BUILD_PATH)/bin/TestStatusQ
+
+
+##
+##	Storybook
+##
+
+STORYBOOK_SOURCE_PATH := storybook
+STORYBOOK_BUILD_PATH := $(STORYBOOK_SOURCE_PATH)/build
+STORYBOOK_CMAKE_CACHE := $(STORYBOOK_BUILD_PATH)/CMakeCache.txt
+
+$(STORYBOOK_CMAKE_CACHE): | deps
+	echo -e "\033[92mConfiguring:\033[39m Storybook"
+	cmake \
+		-DCMAKE_INSTALL_PREFIX=$(STORYBOOK_INSTALL_PATH) \
+		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
+		-DSTATUSQ_SHADOW_BUILD=OFF \
+		$(COMMON_CMAKE_CONFIG_PARAMS) \
+		-B $(STORYBOOK_BUILD_PATH) \
+		-S $(STORYBOOK_SOURCE_PATH) \
+		-Wno-dev \
+		$(HANDLE_OUTPUT)
+
+storybook-configure: | $(STORYBOOK_CMAKE_CACHE)
+
+storybook-build: | storybook-configure
+	echo -e "\033[92mBuilding:\033[39m Storybook"
+	cmake --build $(STORYBOOK_BUILD_PATH) \
+		--config $(COMMON_CMAKE_BUILD_TYPE) \
+		$(HANDLE_OUTPUT)
+
+run-storybook: storybook-build
+	echo -e "\033[92mRunning:\033[39m Storybook"
+	$(STORYBOOK_BUILD_PATH)/bin/Storybook
+
+run-storybook-tests: storybook-build
+	echo -e "\033[92mRunning:\033[39m Storybook Tests"
+	ctest -V --test-dir $(STORYBOOK_BUILD_PATH)
+
+storybook-clean:
+	echo -e "\033[92mCleaning:\033[39m Storybook"
+	rm -rf $(STORYBOOK_BUILD_PATH)
 
 ##
 ##	DOtherSide
@@ -792,7 +836,7 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-clean: | clean-common statusq-clean status-go-clean dotherside-clean
+clean: | clean-common statusq-clean status-go-clean dotherside-clean storybook-clean
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
