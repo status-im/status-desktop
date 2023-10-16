@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.7.16'
+library 'status-jenkins-lib@v1.7.17'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -97,7 +97,7 @@ pipeline {
 
     stage('Client') {
       environment {
-        GANACHE_NETWORK_RPC_URL = "http://localhost:${env.GANACHE_RPC_PORT}"
+        STATUS_RUNTIME_GANACHE_NETWORK_RPC_URL = "http://localhost:${env.GANACHE_RPC_PORT}"
       }
       steps { script {
         linux.bundle('nim_status_client')
