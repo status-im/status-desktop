@@ -71,6 +71,10 @@ SettingsContentBase {
             }
         }
 
+        Separator {
+            Layout.fillWidth: true
+        }
+
         // CONTACTS SECTION
         StatusContactRequestsIndicatorListItem {
             objectName: "MessagingView_ContactsListItem_btn"
@@ -162,29 +166,6 @@ SettingsContentBase {
             checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
             onClicked: {
                 root.messagingStore.privacyModule.urlUnfurlingMode = Constants.UrlUnfurlingModeDisableAll
-            }
-        }
-
-        // SYNC WAKU SECTION
-
-        StatusListItem {
-            Layout.fillWidth: true
-            title: qsTr("History nodes")
-            label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
-            components: [
-                StatusIcon {
-                    icon: "next"
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: Global.openPopup(wakuStoreModalComponent)
-        }
-
-        Component {
-            id: wakuStoreModalComponent
-            WakuStoreModal {
-                messagingStore: root.messagingStore
-                advancedStore: root.advancedStore
             }
         }
     }
