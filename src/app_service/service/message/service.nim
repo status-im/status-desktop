@@ -58,7 +58,6 @@ const SIGNAL_MESSAGE_DELIVERED* = "messageDelivered"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
 const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
-const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
 const SIGNAL_GET_MESSAGE_FINISHED* = "getMessageFinished"
@@ -120,10 +119,6 @@ type
   MessageEditedArgs* = ref object of Args
     chatId*: string
     message*: MessageDto
-
-  LinkPreviewDataArgs* = ref object of Args
-    response*: JsonNode
-    uuid*: string
 
   LinkPreviewV2DataArgs* = ref object of Args
     linkPreviews*: Table[string, LinkPreview]
@@ -809,32 +804,6 @@ QtObject:
 
     except Exception as e:
       error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
-
-  proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onAsyncGetLinkPreviewData"
-      return
-
-    let args = LinkPreviewDataArgs(
-      response: responseObj["previewData"], 
-      uuid: responseObj["uuid"].getStr()
-    )
-    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, args)
-
-  proc asyncGetLinkPreviewData*(self: Service, links: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
-    let arg = AsyncGetLinkPreviewDataTaskArg(
-      tptr: cast[ByteAddress](asyncGetLinkPreviewDataTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onAsyncGetLinkPreviewData",
-      links: links,
-      whiteListedUrls: whiteListedSites,
-      whiteListedImgExtensions: whiteListedImgExtensions,
-      unfurlImages: unfurlImages,
-      uuid: uuid
-    )
-    self.threadpool.start(arg)
-    return $genOid()
 
   proc getTextUrls*(self: Service, text: string): seq[string] =
     try:

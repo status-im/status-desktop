@@ -40,7 +40,7 @@ Control {
     property string messageAttachments: ""
     property var reactionIcons: []
     property var linkPreviewModel
-    property var localUnfurlLinks
+    property var gifLinks
 
     property string messageId: ""
     property bool editMode: false
@@ -359,8 +359,8 @@ Control {
                         Layout.fillWidth: true
                         active: !root.editMode &&
                                 ((!!root.linkPreviewModel && root.linkPreviewModel.count > 0)
-                                || (!!root.localUnfurlLinks && root.localUnfurlLinks.length > 0))
-                        visible: active
+                                || (!!root.gifLinks && root.gifLinks.length > 0))
+                        visible: active 
                     }
                     Loader {
                         id: transactionBubbleLoader

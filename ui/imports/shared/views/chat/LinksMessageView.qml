@@ -20,7 +20,7 @@ Flow {
     required property var messageStore
 
     required property var linkPreviewModel
-    required property var localUnfurlLinks
+    required property var gifLinks
 
     required property bool isCurrentUser
 
@@ -31,55 +31,24 @@ Flow {
 
     spacing: 12
 
+    QtObject {
+        id: d
+        property bool localAskAboutUnfurling: true
+    }
+
     //TODO: remove once GIF previews are unfurled sender side
-       Repeater {
+
+    Loader {
+        visible: root.gifLinks && root.gifLinks.length > 0
+                 && !RootStore.gifUnfurlingEnabled
+                 && d.localAskAboutUnfurling && !RootStore.neverAskAboutUnfurlingAgain
+        sourceComponent: enableLinkComponent
+    }
+
+    Repeater {
         id: tempRepeater
-        visible: !RootStore.neverAskAboutUnfurlingAgain
-        model: linksModel
-
-        delegate: Loader {
-            id: tempLoader
-
-            required property var result
-            required property string link
-            required property int index
-            required property bool unfurl
-            required property bool success
-            required property bool isStatusDeepLink
-            readonly property bool isImage: result.contentType && result.contentType.startsWith("image/") ? true : false
-            readonly property bool isUserProfileLink: link.toLowerCase().startsWith(Constants.userLinkPrefix.toLowerCase())
-            readonly property string thumbnailUrl: result && result.thumbnailUrl ? result.thumbnailUrl : ""
-            readonly property string title: result && result.title ? result.title : ""
-            readonly property string hostname: result && result.site ? result.site : ""
-            readonly property bool animated: isImage && result.contentType === "image/gif" // TODO support more types of animated images?
-
-            StateGroup {
-                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
-                id: linkPreviewLoaderState
-                states: [
-                   State {
-                        name: "askToEnableUnfurling"
-                        when: !tempLoader.unfurl
-                        PropertyChanges { target: tempLoader; sourceComponent: enableLinkComponent }
-                    },
-                    State {
-                        name: "loadImage"
-                        when: tempLoader.unfurl && tempLoader.isImage
-                        PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
-                    },
-                    State {
-                        name: "userProfileLink"
-                        when: unfurl && isUserProfileLink && isStatusDeepLink
-                        PropertyChanges { target: tempLoader; sourceComponent: unfurledProfileLinkComponent }
-                    }
-//                    State {
-//                        name: "statusInvitation"
-//                        when: unfurl && isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
-//                    }
-                ]
-            }
-        }
+        model: RootStore.gifUnfurlingEnabled ? gifLinks : []
+        delegate: gifComponent
     }
 
     Repeater {
@@ -117,7 +86,6 @@ Flow {
             readonly property int thumbnailHeight: standardPreviewThumbnail ? standardPreviewThumbnail.height : ""
             readonly property string thumbnailUrl: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""
             readonly property string thumbnailDataUri: standardPreviewThumbnail ? standardPreviewThumbnail.dataUri : ""
-            property bool animated: false
 
             asynchronous: true
             active: unfurled && !empty
@@ -180,7 +148,7 @@ Flow {
 
     //TODO: Remove this once we have gif support in new unfurling flow
     Component {
-        id: unfurledImageComponent
+        id: gifComponent
         CalloutCard {
             implicitWidth: linkImage.width
             implicitHeight: linkImage.height
@@ -188,19 +156,19 @@ Flow {
             StatusChatImageLoader {
                 id: linkImage
                 readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
-                readonly property string urlLink: link
+                readonly property string urlLink: modelData
                 property bool localAnimationEnabled: true
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
-                source: thumbnailUrl
+                source: urlLink
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
                 playing: globalAnimationEnabled && localAnimationEnabled
                 isOnline: root.store.mainModuleInst.isOnline
                 asynchronous: true
-                isAnimated: animated
+                isAnimated: true
                 onClicked: {
-                    if (isAnimated && !playing)
+                    if (!playing)
                         localAnimationEnabled = true
                     else
                         root.imageClicked(linkImage.imageAlias, mouse, source, urlLink)
@@ -239,77 +207,10 @@ Flow {
             }
         }
     }
-    // Code below can be dropped when New unfurling flow suppports GIFs.
-    Component {
-        id: invitationBubble
-        InvitationBubbleView {
-            property var invitationData: root.store.getLinkDataForStatusLinks(link)
-            store: root.store
-            communityId: invitationData && invitationData.communityData ? invitationData.communityData.communityId : ""
-            communityData: invitationData && invitationData.communityData ? invitationData.communityData : null
-            anchors.left: parent.left
-            visible: !!invitationData
-            loading: invitationData.fetching
-            onInvitationDataChanged: {
-                if (!invitationData)
-                    linksModel.remove(index)
-            }
-            Connections {
-                enabled: !!invitationData && invitationData.fetching
-                target: root.store.communitiesModuleInst
-                function onCommunityAdded(communityId:  string) {
-                    if (communityId !== invitationData.communityId) return
-                    invitationData = root.store.getLinkDataForStatusLinks(link)
-                }
-            }
-        }
-    }
-    QtObject {
-        id: d
-        readonly property string uuid: Utils.uuid()
-        readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
-        readonly property string getLinkPreviewDataId: {
-            if (root.localUnfurlLinks === "")
-                return ""
-            return root.messageStore.messageModule.getLinkPreviewData(root.localUnfurlLinks,
-                                                                      d.uuid,
-                                                                      [],
-                                                                      whiteListedImgExtensions,
-                                                                      false)
-        }
-        onGetLinkPreviewDataIdChanged: {
-            linkFetchConnections.enabled = root.localUnfurlLinks !== ""
-        }
-    }
-    Connections {
-        id: linkFetchConnections
-        enabled: false
-        target: root.messageStore.messageModule
-        function onLinkPreviewDataWasReceived(previewData, uuid) {
-            if (d.uuid !== uuid)
-                return
-            linkFetchConnections.enabled = false
-            try {
-                linksModel.rawData = JSON.parse(previewData)
-            }
-            catch(e) {
-                console.warn("error parsing link preview data", previewData)
-            }
-        }
-    }
-    ListModel {
-         id: linksModel
-         property var rawData
-         onRawDataChanged: {
-             linksModel.clear()
-             rawData.links.forEach((link) => {
-                 linksModel.append(link)
-             })
-         }
-     }
 
     Component {
         id: enableLinkComponent
+
         Rectangle {
             id: enableLinkRoot
             width: 300
@@ -326,7 +227,7 @@ Flow {
                 icon.width: 20
                 icon.height: 20
                 icon.name: "close-circle"
-                onClicked: linksModel.remove(index)
+                onClicked: d.localAskAboutUnfurling = false
             }
             Image {
                 id: unfurlingImage
@@ -339,8 +240,7 @@ Flow {
             }
             StatusBaseText {
                 id: enableText
-                text: isImage ? qsTr("Enable automatic image unfurling") :
-                                    qsTr("Enable link previews in chat?")
+                text: qsTr("Enable automatic GIF unfurling")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -397,7 +297,7 @@ Flow {
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: Style.current.halfPadding
                             font: dontAskBtn.font
-                            color: dontAskBtn.enabled ? dontAskBtn.textColor : dontAskBtn.disabledTextColor
+                            color: dontAskBtn.textColor
                             text: qsTr("Don't ask me again")
                         }
                     }
