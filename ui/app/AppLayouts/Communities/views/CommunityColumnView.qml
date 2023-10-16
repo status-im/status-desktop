@@ -57,6 +57,8 @@ Item {
 
         readonly property bool showJoinButton: !communityData.joined || root.communityData.amIBanned
         readonly property bool showFinaliseOwnershipButton: root.isPendingOwnershipRequest
+        readonly property bool discordImportInProgress: (root.communitiesStore.discordImportProgress > 0 && root.communitiesStore.discordImportProgress < 100)
+                                                        || root.communitiesStore.discordImportInProgress
 
         property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
         property bool isJoinBtnLoading: false
@@ -100,6 +102,7 @@ Item {
     StatusMenu {
         id: adminPopupMenu
         enabled: root.isSectionAdmin
+        hideDisabledItems: !showInviteButton
 
         property bool showInviteButton: false
 
@@ -116,6 +119,7 @@ Item {
             objectName: "importCommunityChannelBtn"
             text: qsTr("Create channel via Discord import")
             icon.name: "download"
+            enabled: !d.discordImportInProgress
             onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
         }
 
@@ -189,6 +193,7 @@ Item {
                                                          })
 
             popupMenu: StatusMenu {
+                hideDisabledItems: false
                 StatusAction {
                     text: qsTr("Create channel")
                     icon.name: "channel"
@@ -200,6 +205,7 @@ Item {
                     objectName: "importCommunityChannelBtn"
                     text: qsTr("Create channel via Discord import")
                     icon.name: "download"
+                    enabled: !d.discordImportInProgress
                     onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true})
                 }
 
@@ -432,15 +438,12 @@ Item {
         anchors.bottomMargin: active ? Style.current.padding : 0
         active: root.isSectionAdmin
         sourceComponent: Component {
-            StatusBaseText {
+            StatusLinkText {
                 id: createChannelOrCategoryBtn
                 objectName: "createChannelOrCategoryBtn"
-                color: Theme.palette.baseColor1
                 height: visible ? implicitHeight : 0
                 text: qsTr("Create channel or category")
                 font.underline: true
-                font.pixelSize: 13
-                textFormat: Text.RichText
 
                 MouseArea {
                     anchors.fill: parent
