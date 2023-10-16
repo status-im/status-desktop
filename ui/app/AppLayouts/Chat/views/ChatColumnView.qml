@@ -287,7 +287,7 @@ Item {
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule) {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
-                            d.updateLinkPreviews()
+                            d.updateLinkPreviewsRequested()
                         }
                     }
 
