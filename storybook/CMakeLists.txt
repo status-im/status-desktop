@@ -79,6 +79,8 @@ target_link_libraries(
 
 add_dependencies(${PROJECT_NAME} StatusQ)
 
+enable_testing()
+
 add_executable(
   PagesValidator
   validator_main.cpp
@@ -87,12 +89,14 @@ add_executable(
 target_link_libraries(
     PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)
 
+add_dependencies(PagesValidator StatusQ)
+
 target_compile_definitions(PagesValidator PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
     )
 
-enable_testing()
+add_test(NAME PagesValidator COMMAND PagesValidator)
 
 add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
 target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt5::Test ${PROJECT_LIB})
@@ -114,7 +118,7 @@ target_compile_definitions(QmlTests PRIVATE
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
 target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB} SortFilterProxyModel)
-add_test(NAME QmlTests COMMAND QmlTests)
+add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
