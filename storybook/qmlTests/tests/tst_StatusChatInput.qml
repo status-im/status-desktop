@@ -288,6 +288,124 @@ Item {
             verify(textWithPubKey.includes("@0x0JohnDoe"),
                    "Expected @pubKey to replace @contactName")
         }
+
+//      Scenario: The user can undo and redo text changes
+//      Given the user has typed text in StatusChatInput
+//      """
+//      123456789
+//      """
+//      When the user hits undo shortcut
+//      Then the last text change is reverted
+//      And the cursor position is reverted
+//      And the user can redo the text change
+//      And the cursor position is restored
+        function test_user_can_undo_and_redo_text_changes() {
+            testHelper.when_text_is_typed(statusChatInputKeyboardInputExpectedAsText,
+                                                    "123456789", (typedText) => {})
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "12345678")
+            compare(controlUnderTest.textInput.cursorPosition, 8)
+
+            keySequence(StandardKey.Redo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 9)
+
+            keySequence(StandardKey.Undo)
+            keySequence(StandardKey.Undo)
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456")
+            compare(controlUnderTest.textInput.cursorPosition, 6)
+
+            keySequence(StandardKey.Redo)
+            keySequence(StandardKey.Redo)
+            keySequence(StandardKey.Redo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 9)
+
+            keyClick(Qt.Key_Backspace)
+            compare(controlUnderTest.getPlainText(), "12345678")
+            compare(controlUnderTest.textInput.cursorPosition, 8)
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 9)
+
+            keyClick(Qt.Key_Backspace)
+            compare(controlUnderTest.getPlainText(), "12345678")
+            compare(controlUnderTest.textInput.cursorPosition, 8)
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 9)
+        }
+
+//      Scenario: The user can undo and redo text changes with selection
+//      Given the user has typed text in StatusChatInput
+//      """
+//      123456789
+//      """
+//      And cursor is moved to the middle of the text, at position 5
+//      And the user selects and deletes text from position 5 to 3
+//      When the user hits undo shortcut
+//      Then the last text change is reverted
+
+        function test_user_can_undo_and_redo_text_changes_with_selection() {
+            testHelper.when_text_is_typed(statusChatInputKeyboardInputExpectedAsText,
+                                                    "123456789", (typedText) => {})
+
+            controlUnderTest.textInput.cursorPosition = 5
+            controlUnderTest.textInput.select(5, 3)
+            keySequence(StandardKey.Delete)
+            compare(controlUnderTest.getPlainText(), "1236789")
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 5)
+
+
+            controlUnderTest.textInput.select(5, 3)
+            keySequence(StandardKey.Delete)
+            compare(controlUnderTest.getPlainText(), "1236789")
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 5)
+
+            controlUnderTest.textInput.cursorPosition = 4
+            controlUnderTest.textInput.select(4, 2)
+            keySequence(StandardKey.Delete)
+            compare(controlUnderTest.getPlainText(), "1256789")
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 4)
+        }
+
+//      Scenario: The user can undo and redo the entire text
+//      Given the user has typed text in StatusChatInput
+//      """
+//      123456789
+//      """
+//      And the user selects and deletes the entire text
+//      When the user hits undo shortcut
+//      Then the last text change is reverted
+        function test_user_can_undo_and_redo_the_entire_text() {
+            testHelper.when_text_is_typed(statusChatInputKeyboardInputExpectedAsText,
+                                                    "123456789", (typedText) => {})
+
+            controlUnderTest.textInput.select(0, 9)
+            keySequence(StandardKey.Delete)
+            compare(controlUnderTest.getPlainText(), "")
+
+            keySequence(StandardKey.Undo)
+            compare(controlUnderTest.getPlainText(), "123456789")
+            compare(controlUnderTest.textInput.cursorPosition, 9)
+
+            keySequence(StandardKey.Redo)
+            compare(controlUnderTest.getPlainText(), "")
+            compare(controlUnderTest.textInput.cursorPosition, 0)
+        }
     }
 
     TestCase {
