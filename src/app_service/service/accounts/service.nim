@@ -277,7 +277,7 @@ QtObject:
       "wallet-root-address": account.derivedAccounts.walletRoot.address,
       "preview-privacy?": true,
       "signing-phrase": generateSigningPhrase(3),
-      "log-level": $LogLevel.INFO,
+      "log-level": main_constants.LOG_LEVEL,
       "latest-derived-path": 0,
       "currency": "usd",
       "networks/networks": @[],
@@ -308,7 +308,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
-  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool, login: bool = false): JsonNode =
+  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.StatusProd
     let dnsDiscoveryURL = @["enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"]
 
@@ -339,20 +339,10 @@ QtObject:
       result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
       result["Rendezvous"] = newJBool(false)
 
-    # Source the connection port from the environment for debugging or if default port not accessible
-    if existsEnv("STATUS_PORT"):
-      let wV1Port = $getEnv("STATUS_PORT")
-      # Waku V1 config
-      result["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
+    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
 
-    # Don't override log level on login. For onboarding it is required, nothing to override
-    if login:
-      result.delete("LogLevel")
-
-    if existsEnv("LOG_LEVEL"):
-      let logLvl = getEnv("LOG_LEVEL")
-      if logLvl in @["ERROR", "WARN", "INFO", "DEBUG", "TRACE"]:
-        result["LogLevel"] = newJString($logLvl)
+    if STATUS_PORT != 0:
+      result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
     result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
@@ -484,7 +474,7 @@ QtObject:
         "wallet-root-address": walletRootAddress,
         "preview-privacy?": true,
         "signing-phrase": generateSigningPhrase(3),
-        "log-level": $LogLevel.INFO,
+        "log-level": main_constants.LOG_LEVEL,
         "latest-derived-path": 0,
         "currency": "usd",
         "networks/networks": @[],
@@ -624,7 +614,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
     let response = status_account.login(
       account.name,
       account.keyUid,
@@ -706,7 +696,7 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
 
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,

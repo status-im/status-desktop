@@ -1,73 +1,5 @@
-import json, os, chronicles, strutils
+import json, os, strutils
 import ../../constants as main_constants
-
-proc resolveEnvVar(envVar: string, defaultValue: string): string =
-  let envVarValue = $getEnv(envVar)
-  if envVarValue != "":
-    return envVarValue
-  else:
-    return defaultValue
-
-# provider Tokens
-# allow runtime override via environment variable; core contributors can set a
-# release token in this way for local development
-
-# set via `nim c` param `-d:POKT_TOKEN:[token]`; should be set in CI/release builds
-const POKT_TOKEN {.strdefine.} = ""
-let POKT_TOKEN_RESOLVED* = resolveEnvVar("POKT_TOKEN", POKT_TOKEN)
-
-# set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
-const INFURA_TOKEN {.strdefine.} = ""
-let INFURA_TOKEN_RESOLVED* = resolveEnvVar("INFURA_TOKEN", INFURA_TOKEN)
-
-# set via `nim c` param `-d:INFURA_TOKEN_SECRET:[token]`; should be set in CI/release builds
-const INFURA_TOKEN_SECRET {.strdefine.} = ""
-let INFURA_TOKEN_SECRET_RESOLVED* = resolveEnvVar("INFURA_TOKEN_SECRET", INFURA_TOKEN_SECRET)
-
-# set via `nim c` param `-d:ALCHEMY_ETHEREUM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_ETHEREUM_MAINNET_TOKEN {.strdefine.} = ""
-let ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ETHEREUM_MAINNET_TOKEN", ALCHEMY_ETHEREUM_MAINNET_TOKEN)
-
-# set via `nim c` param `-d:ALCHEMY_ETHEREUM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_ETHEREUM_GOERLI_TOKEN {.strdefine.} = ""
-let ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ETHEREUM_GOERLI_TOKEN", ALCHEMY_ETHEREUM_GOERLI_TOKEN)
-
-# set via `nim c` param `-d:ALCHEMY_ARBITRUM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_ARBITRUM_MAINNET_TOKEN {.strdefine.} = ""
-let ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ARBITRUM_MAINNET_TOKEN", ALCHEMY_ARBITRUM_MAINNET_TOKEN)
-
-# set via `nim c` param `-d:ALCHEMY_ARBITRUM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_ARBITRUM_GOERLI_TOKEN {.strdefine.} = ""
-let ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_ARBITRUM_GOERLI_TOKEN", ALCHEMY_ARBITRUM_GOERLI_TOKEN)
-
-# set via `nim c` param `-d:ALCHEMY_OPTIMISM_MAINNET_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_OPTIMISM_MAINNET_TOKEN {.strdefine.} = ""
-let ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_OPTIMISM_MAINNET_TOKEN", ALCHEMY_OPTIMISM_MAINNET_TOKEN)
-
-# set via `nim c` param `-d:ALCHEMY_OPTIMISM_GOERLI_TOKEN:[token]`; should be set in CI/release builds
-const ALCHEMY_OPTIMISM_GOERLI_TOKEN {.strdefine.} = ""
-let ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED* = resolveEnvVar("ALCHEMY_OPTIMISM_GOERLI_TOKEN", ALCHEMY_OPTIMISM_GOERLI_TOKEN)
-
-# set via `nim c` param `-d:OPENSEA_API_KEY:[token]`; should be set in CI/release builds
-const OPENSEA_API_KEY {.strdefine.} = ""
-let OPENSEA_API_KEY_RESOLVED* = resolveEnvVar("OPENSEA_API_KEY", OPENSEA_API_KEY)
-
-const GANACHE_NETWORK_RPC_URL = $getEnv("GANACHE_NETWORK_RPC_URL")
-
-const DEFAULT_TORRENT_CONFIG_PORT = 0 # Random
-let TORRENT_CONFIG_PORT* = if (existsEnv("TORRENT_PORT")):
-              parseInt($getEnv("TORRENT_PORT"))
-            else:
-              DEFAULT_TORRENT_CONFIG_PORT
-
-const DEFAULT_WAKU_V2_PORT = 0 # Random
-let WAKU_V2_PORT* = if (existsEnv("WAKU_PORT")):
-              parseInt($getEnv("WAKU_PORT"))
-            else:
-              DEFAULT_WAKU_V2_PORT
-
-let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
-let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
 
 var NETWORKS* = %* [
   {
@@ -344,7 +276,7 @@ var NODE_CONFIG* = %* {
   # Docs: https://pkg.go.dev/gopkg.in/natefinch/lumberjack.v2@v2.0.0#readme-cleaning-up-old-log-files
   "LogMaxBackups": 1,
   "LogMaxSize": 100, # MB
-  "LogLevel": $LogLevel.INFO,
+  "LogLevel": LOG_LEVEL,
   "MailserversConfig": {
     "Enabled": true
   },
