@@ -49,7 +49,6 @@ proc getTokensByAddresses*(self: Service, addresses: seq[string]): seq[WalletTok
 
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   try:
-    var visibleSymbols: seq[string]
     let chainIds = self.networkService.getNetworks().map(n => n.chainId)
 
     let responseObj = response.parseJson
@@ -82,13 +81,7 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
           if storeResult:
             self.storeTokensForAccount(wAddress, tokens, hasBalanceCache, hasMarketValuesCache)
             self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
-            # Gather symbol for visible tokens
-            for token in tokens:
-              if token.getVisibleForNetworkWithPositiveBalance(chainIds) and find(visibleSymbols, token.symbol) == -1:
-                visibleSymbols.add(token.symbol)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
-    if visibleSymbols.len > 0:
-      discard backend.updateVisibleTokens(visibleSymbols)
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 

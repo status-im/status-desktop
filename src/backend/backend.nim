@@ -138,9 +138,6 @@ rpc(getWalletToken, "wallet"):
 rpc(startWallet, "wallet"):
   discard
 
-rpc(updateVisibleTokens, "wallet"):
-  symbols: seq[string]
-
 rpc(getTransactionEstimatedTime, "wallet"):
   chainId: int
   maxFeePerGas: float
