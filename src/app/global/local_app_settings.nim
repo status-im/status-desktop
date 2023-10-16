@@ -17,7 +17,7 @@ const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabl
 const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
 const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
-const DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
+let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
 const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
 const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 
