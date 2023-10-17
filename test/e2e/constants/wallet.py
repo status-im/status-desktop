@@ -20,6 +20,7 @@ class WalletNetworkSettings(Enum):
     REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE = 'Live network settings for Mainnet reverted to default'
     REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE = 'Test network settings for Mainnet reverted to default'
 
+
 class WalletNetworkNaming(Enum):
     LAYER1_ETHEREUM = 'Mainnet'
     LAYER2_OPTIMISIM = 'Optimism'
