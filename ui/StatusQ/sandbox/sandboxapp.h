@@ -23,6 +23,7 @@ private:
 
 #ifdef QT_DEBUG
     QFileSystemWatcher m_watcher;
+    void watchDirectoryChanges(const QString& path);
 #endif
 
     const QUrl m_url {
@@ -32,8 +33,6 @@ private:
         QStringLiteral("qrc:/main.qml")
 #endif
     };
-
-    void watchDirectoryChanges(const QString& path);
 };
 
 #endif // SANDBOXAPP_H

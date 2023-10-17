@@ -37,9 +37,12 @@ import StatusQ.Core.Theme 0.1
 
 Control {
     id: root
-    width: 343
-    height: !!secondaryText || title.lineCount > 1 ? 68 : 48
-    anchors.right: parent.right
+    implicitWidth: 374
+
+    topPadding: 15
+    bottomPadding: 15
+    leftPadding: 12
+    rightPadding: 8
 
     /*!
         \qmlproperty bool StatusToastMessage::open
@@ -95,7 +98,8 @@ Control {
     property int type: StatusToastMessage.Type.Default
     enum Type {
         Default,
-        Success
+        Success,
+        Danger
     }
 
     /*!
@@ -209,11 +213,8 @@ Control {
     }
 
     contentItem: Item {
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-        anchors.right: parent.right
-        anchors.rightMargin: 4
-        height: parent.height
+        implicitWidth: layout.implicitWidth
+        implicitHeight: layout.implicitHeight
         MouseArea {
             anchors.fill: parent
             onMouseXChanged: {
@@ -224,15 +225,25 @@ Control {
             }
         }
         RowLayout {
+            id: layout
             anchors.fill: parent
-            spacing: 16
+            spacing: 12
             Rectangle {
                 implicitWidth: 32
                 implicitHeight: 32
                 Layout.alignment: Qt.AlignVCenter
                 radius: (root.width/2)
-                color: (root.type === StatusToastMessage.Type.Success) ?
-                        Theme.palette.successColor2 : Theme.palette.primaryColor3
+                color: {
+                    print("color type", root.type)
+                    switch(root.type) {
+                    case StatusToastMessage.Type.Success:
+                        return Theme.palette.successColor2
+                    case StatusToastMessage.Type.Danger:
+                        return Theme.palette.dangerColor3
+                    default:
+                        return Theme.palette.primaryColor3
+                    }
+                }
                 visible: loader.sourceComponent != undefined
                 Loader {
                     id: loader
@@ -244,8 +255,14 @@ Control {
                     Component {
                         id: loadingInd
                         StatusLoadingIndicator {
-                            color: (root.type === StatusToastMessage.Type.Success) ?
-                                   Theme.palette.successColor1 : Theme.palette.primaryColor1
+                            color: switch(root.type) {
+                                case StatusToastMessage.Type.Success:
+                                    return Theme.palette.successColor1
+                                case StatusToastMessage.Type.Danger:
+                                    return Theme.palette.dangerColor1
+                                default:
+                                   return Theme.palette.primaryColor1
+                            }
                         }
                     }
                     Component {
@@ -254,8 +271,17 @@ Control {
                             anchors.centerIn: parent
                             width: root.icon.width
                             height: root.icon.height
-                            color: (root.type === StatusToastMessage.Type.Success) ?
-                                   Theme.palette.successColor1 : Theme.palette.primaryColor1
+                            color: {
+                                print("color type", root.type)
+                                    switch(root.type) {
+                                    case StatusToastMessage.Type.Success:
+                                        return Theme.palette.successColor1
+                                    case StatusToastMessage.Type.Danger:
+                                        return Theme.palette.dangerColor1
+                                    default:
+                                        return Theme.palette.primaryColor1
+                                }
+                            }
                             icon: root.icon.name
                         }
                     }
@@ -271,8 +297,12 @@ Control {
                     color: Theme.palette.directColor1
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
+                    textFormat: Text.RichText
                     text: root.primaryText
-                    maximumLineCount: 2
+                    maximumLineCount: root.secondaryText ? 2 : 3
+                    onLinkActivated: {
+                        root.linkActivated(link);
+                    }
                 }
                 StatusBaseText {
                     Layout.fillWidth: true
@@ -293,7 +323,7 @@ Control {
                     hoveredLinkColor: Theme.palette.primaryColor1
                     text: "<p><a style=\"text-decoration:none\" href=\'" + root.linkUrl + " \'>" + root.secondaryText + "</a></p>"
                     onLinkActivated: {
-                        root.linkActivated(root.linkUrl);
+                        root.linkActivated(link);
                     }
                 }
             }

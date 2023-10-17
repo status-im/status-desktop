@@ -1228,6 +1228,9 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
   var finalEphNotifType = EphemeralNotificationType.Default
   if(ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
+  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+    finalEphNotifType = EphemeralNotificationType.Danger
+    
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon,
   loading, finalEphNotifType, url, details)
   self.view.ephemeralNotificationModel().addItem(item)
