@@ -51,6 +51,7 @@ def test_permissions_screen_overview(main_screen: MainWindow, params):
         pytest.param(True, 'Ether', 'Dai Stablecoin', '10', 'viewOnly', '#general', '10 ETH', '10 DAI', 'View only'),
         pytest.param(False, False, False, False, 'becomeAdmin', False, False, False, 'Become an admin')
     ])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_adding_permissions(main_screen: MainWindow, params, checkbox_state: bool, first_asset, second_asset, amount,
                             allowed_to: str, in_general, asset_title, second_asset_title, allowed_to_title: str):
     main_screen.create_community(params)
