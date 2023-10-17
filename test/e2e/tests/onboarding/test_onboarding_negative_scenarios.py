@@ -161,7 +161,7 @@ def test_sign_up_with_wrong_password_in_confirmation_again_field(keys_screen, us
 def test_sign_up_with_wrong_seed_phrase(keys_screen, seed_phrase: str):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
-        input_view.input_seed_phrase(seed_phrase.split())
+        input_view.input_seed_phrase(seed_phrase.split(), autocomplete=False)
 
     with step('Verify that import button is disabled'):
         assert input_view.is_import_button_enabled is False
