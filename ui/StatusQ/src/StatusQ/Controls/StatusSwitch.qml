@@ -8,6 +8,8 @@ import StatusQ.Components 0.1
 Switch {
     id: root
 
+    property color textColor: Theme.palette.directColor1
+
     background: MouseArea {
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton
@@ -18,8 +20,9 @@ Switch {
 
         implicitWidth: 52
         implicitHeight: 28
-        x: root.leftPadding
-        y: parent.height / 2 - height / 2
+        anchors.left: parent.left
+        anchors.leftMargin: root.leftPadding
+        anchors.verticalCenter: parent.verticalCenter
 
         Rectangle {
             anchors.fill: parent
@@ -71,8 +74,9 @@ Switch {
     contentItem: StatusBaseText {
         text: root.text
         opacity: enabled ? 1.0 : 0.3
+        color: root.textColor
         verticalAlignment: Text.AlignVCenter
-        leftPadding: !!root.text ? root.indicator.width + root.spacing
-                                 : root.indicator.width
+        leftPadding: root.mirrored ? 0 : !!root.text ? root.indicator.width + root.spacing : root.indicator.width
+        rightPadding: root.mirrored ? !!root.text ? root.indicator.width + root.spacing : root.indicator.width : 0
     }
 }

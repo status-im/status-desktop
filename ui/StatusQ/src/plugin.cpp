@@ -15,6 +15,9 @@
 #include "StatusQ/submodelproxymodel.h"
 
 
+#include "wallet/managetokenscontroller.h"
+#include "wallet/managetokensmodel.h"
+
 class StatusQPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
@@ -27,6 +30,9 @@ public:
         qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
         qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
+
+        qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
+        qmlRegisterType<ManageTokensModel>("StatusQ.Models", 0, 1, "ManageTokensModel");
 
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");

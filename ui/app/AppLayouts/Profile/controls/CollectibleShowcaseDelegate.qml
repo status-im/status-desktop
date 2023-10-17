@@ -9,5 +9,5 @@ ShowcaseDelegate {
 
     icon.source: hasImage ? showcaseObj.imageUrl : ""
     bgRadius: Style.current.radius
-    bgColor: !!showcaseObj && !!showcaseObj.backgroundColor ? showcaseObj.backgroundColor : "transparent"
+    assetBgColor: !!showcaseObj && !!showcaseObj.backgroundColor ? showcaseObj.backgroundColor : "transparent"
 }

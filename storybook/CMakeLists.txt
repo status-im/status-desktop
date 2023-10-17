@@ -76,7 +76,7 @@ target_link_libraries(
     ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView)
 
 target_link_libraries(
-        ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
+    ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
 
 add_dependencies(${PROJECT_NAME} StatusQ)
 
@@ -123,6 +123,7 @@ add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/pages")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/stubs")
