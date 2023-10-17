@@ -109,6 +109,7 @@ def test_edit_community_separately(main_screen, community_params):
         'outro': 'Updated Outro'
     }
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_edit_community(main_screen: MainWindow, params):
     main_screen.create_community(constants.community_params)
 
@@ -148,6 +149,7 @@ def test_edit_community(main_screen: MainWindow, params):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703049', 'Create community channel')
 @pytest.mark.case(703049)
 @pytest.mark.parametrize('channel_name, channel_description, channel_emoji', [('Channel', 'Description', 'sunglasses')])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_create_community_channel(main_screen: MainWindow, channel_name, channel_description, channel_emoji):
     main_screen.create_community(constants.community_params)
     community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
@@ -194,6 +196,7 @@ def test_edit_community_channel(main_screen, channel_name, channel_description, 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703051', 'Delete community channel')
 @pytest.mark.case(703051)
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_delete_community_channel(main_screen):
     main_screen.create_community(constants.community_params)
 
@@ -209,6 +212,7 @@ def test_delete_community_channel(main_screen):
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
