@@ -9,6 +9,7 @@ QtObject {
     property var getSelectedTextWithFormationChars
     property var gifColumnA
     property var currentCurrency
+    property bool neverAskAboutUnfurlingAgain: false
 
     property var currencyStore
     property var history
@@ -30,5 +31,10 @@ QtObject {
 
     function copyToClipboard(text) {
         console.warn("STUB: copyToClipboard:", text)
+    }
+
+    function setNeverAskAboutUnfurlingAgain(value) {
+        console.log("STUB: setNeverAskAboutUnfurlingAgain:", value)
+        neverAskAboutUnfurlingAgain = value
     }
 }

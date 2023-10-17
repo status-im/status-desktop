@@ -29,6 +29,10 @@ Flow {
 
     signal imageClicked(var image, var mouse, var imageSource, string url)
 
+    function resetLocalAskAboutUnfurling() {
+        d.localAskAboutUnfurling = true
+    }
+
     spacing: 12
 
     //TODO: remove once GIF previews are unfurled sender side
@@ -39,7 +43,8 @@ Flow {
     }
 
     Loader {
-        visible: root.gifLinks && root.gifLinks.length > 0
+        visible: active
+        active: root.gifLinks && root.gifLinks.length > 0
                  && !RootStore.gifUnfurlingEnabled
                  && d.localAskAboutUnfurling && !RootStore.neverAskAboutUnfurlingAgain
         sourceComponent: enableLinkComponent
@@ -213,12 +218,13 @@ Flow {
 
         Rectangle {
             id: enableLinkRoot
-            width: 300
-            height: childrenRect.height + Style.current.smallPadding
+            implicitWidth: 300
+            implicitHeight: childrenRect.height + Style.current.smallPadding
             radius: 16
             border.width: 1
             border.color: Style.current.border
             color: Style.current.background
+
             StatusFlatRoundButton {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
