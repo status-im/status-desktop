@@ -79,3 +79,6 @@ method onUserAuthenticated*(self: AccessInterface, pin: string, password: string
 
 method backupData*(self: AccessInterface): int64 {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onUrlUnfurlingModeUpdated*(self: AccessInterface, mode: int) {.base.} =
+  raise newException(ValueError, "No implementation available")

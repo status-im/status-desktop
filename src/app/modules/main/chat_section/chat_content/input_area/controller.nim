@@ -53,9 +53,10 @@ proc newController*(
   result.messageService = messageService
   result.settingsService = settingsService
   result.linkPreviewCache = newLinkPreiewCache()
-  result.linkPreviewPersistentSetting = UrlUnfurlingMode.AlwaysAsk
-  result.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.AlwaysAsk
+  result.linkPreviewPersistentSetting = settingsService.urlUnfurlingMode()
+  result.linkPreviewCurrentMessageSetting = result.linkPreviewPersistentSetting
 
+proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode)
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs)
 proc clearLinkPreviewCache*(self: Controller)
 
@@ -95,6 +96,10 @@ proc init*(self: Controller) =
     let args = LinkPreviewV2DataArgs(e)
     self.onUrlsUnfurled(args)
 
+  self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e:Args):
+    let args = UrlUnfurlingModeArgs(e)
+    self.onUnfurlingModeChanged(args.value)
+
 proc getChatId*(self: Controller): string =
   return self.chatId
 
@@ -108,7 +113,7 @@ proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
 proc resetLinkPreviews(self: Controller) =
   self.delegate.setUrls(@[])
   self.linkPreviewCache.clear()
-  self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.AlwaysAsk
+  self.linkPreviewCurrentMessageSetting = self.linkPreviewPersistentSetting
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc sendImages*(self: Controller, 
@@ -230,11 +235,16 @@ proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
     self.messageService.asyncUnfurlUrls(urls)
 
 proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
-  if(enabled):
+  if enabled and self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Enabled):
     self.linkPreviewPersistentSetting = UrlUnfurlingMode.Enabled
     self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Enabled
-  else:
+  elif not enabled and self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Disabled):
     self.linkPreviewPersistentSetting = UrlUnfurlingMode.Disabled
     self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Disabled
 
   self.delegate.setAskToEnableLinkPreview(false)
+
+proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
+  self.linkPreviewPersistentSetting = value
+  self.resetLinkPreviews()
+  self.setText(self.delegate.getPlainText(), self.getLinkPreviewEnabled())

@@ -64,7 +64,7 @@ QtObject:
     if self.getUrlUnfurlingMode() == value:
       return
     self.delegate.setUrlUnfurlingMode(value)
-    self.urlUnfurlingModeChanged()
+
   QtProperty[int] urlUnfurlingMode:
     read = getUrlUnfurlingMode
     write = setUrlUnfurlingMode
@@ -92,3 +92,6 @@ QtObject:
     
   proc backupData*(self: View): int {.slot.} =
     return self.delegate.backupData().int
+  
+  proc emitUrlUnfurlingModeUpdated*(self: View, mode: int) =
+    self.urlUnfurlingModeChanged()

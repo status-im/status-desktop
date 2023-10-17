@@ -99,6 +99,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getPlainText*(self: AccessInterface): string =
+  raise newException(ValueError, "No implementation available")
+
 method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

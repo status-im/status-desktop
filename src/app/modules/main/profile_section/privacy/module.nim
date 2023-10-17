@@ -124,3 +124,6 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
 
 method backupData*(self: Module): int64 =
   return self.controller.backupData()
+
+method onUrlUnfurlingModeUpdated*(self: Module, mode: int) =
+  self.view.emitUrlUnfurlingModeUpdated(mode)

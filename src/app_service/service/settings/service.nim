@@ -28,7 +28,7 @@ const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
-const SIGNAL_URL_UNFURLING_MODEL_UPDATED* = "urlUnfurlingModeUpdated"
+const SIGNAL_URL_UNFURLING_MODE_UPDATED* = "urlUnfurlingModeUpdated"
 
 logScope:
   topics = "settings-service"
@@ -119,7 +119,7 @@ QtObject:
             self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
           if settingsField.name == KEY_URL_UNFURLING_MODE:
             self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
-            self.events.emit(SIGNAL_URL_UNFURLING_MODEL_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+            self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
 
       if receivedData.socialLinksInfo.links.len > 0 or
         receivedData.socialLinksInfo.removed:
@@ -501,7 +501,7 @@ QtObject:
     if not self.saveSetting(KEY_URL_UNFURLING_MODE, int(value)):
       return false
     self.settings.urlUnfurlingMode = value
-    self.events.emit(SIGNAL_URL_UNFURLING_MODEL_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+    self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
     return true
 
   proc notifSettingAllowNotificationsChanged*(self: Service) {.signal.}
