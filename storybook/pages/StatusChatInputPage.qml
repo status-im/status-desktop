@@ -62,7 +62,6 @@ SplitView {
         }
 
         Component.onCompleted: {
-            RootStore.isGifWidgetEnabled = true
             RootStore.isWalletEnabled = true
             RootStore.gifUnfurlingEnabled = true
             RootStore.getSelectedTextWithFormationChars = rootStoreMock.getSelectedTextWithFormationChars

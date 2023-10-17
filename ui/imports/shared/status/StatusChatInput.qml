@@ -1472,7 +1472,7 @@ Rectangle {
                                 objectName: "gifPopupButton"
                                 implicitHeight: 32
                                 implicitWidth: 32
-                                visible: !isEdit && RootStore.isGifWidgetEnabled
+                                visible: !isEdit
                                 icon.name: "gif"
                                 icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
                                                                      : Theme.palette.baseColor1

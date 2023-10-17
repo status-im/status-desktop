@@ -723,7 +723,6 @@ Item {
         }
 
         Component.onCompleted: {
-            RootStore.isGifWidgetEnabled = true
             RootStore.isWalletEnabled = true
             RootStore.gifUnfurlingEnabled = rootStoreMock.gifUnfurlingEnabled
             RootStore.getSelectedTextWithFormationChars = rootStoreMock.getSelectedTextWithFormationChars

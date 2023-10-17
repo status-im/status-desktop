@@ -18,8 +18,6 @@ const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
 const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
-const LSS_KEY_IS_GIF_WIDGET_ENABLED* = "isGifWidgetEnabled"
-const DEFAULT_IS_GIF_WIDGET_ENABLED = true
 const DEFAULT_IS_MULTI_NETWORK_ENABLED = false
 const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
 const DEFAULT_RECENT_EMOJIS = ""
@@ -270,18 +268,6 @@ QtObject:
     write = setExpandUsersList
     notify = expandUsersListChanged
 
-
-  proc isGifWidgetEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsGifWidgetEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_GIF_WIDGET_ENABLED, newQVariant(DEFAULT_IS_GIF_WIDGET_ENABLED))
-  proc setIsGifWidgetEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_GIF_WIDGET_ENABLED, newQVariant(value)):
-      self.isGifWidgetEnabledChanged()
-
-  QtProperty[bool] isGifWidgetEnabled:
-    read = getIsGifWidgetEnabled
-    write = setIsGifWidgetEnabled
-    notify = isGifWidgetEnabledChanged
 
   proc recentEmojisChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getRecentEmojis*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
@@ -708,7 +694,6 @@ QtObject:
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
-      of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()
       of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
