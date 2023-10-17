@@ -1565,7 +1565,7 @@ Item {
         anchors.rightMargin: 8
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 60
-        width: 343
+        width: 374
         height: Math.min(parent.height - 120, toastArea.contentHeight)
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
@@ -1573,6 +1573,7 @@ Item {
         clip: false
 
         delegate: StatusToastMessage {
+            width: ListView.view.width
             primaryText: model.title
             secondaryText: model.subTitle
             icon.name: model.icon
@@ -1585,8 +1586,12 @@ Item {
                 this.open = false
             }
             onLinkActivated: {
-                if (link.startsWith("#")) // internal link to section
-                    globalConns.onAppSectionBySectionTypeChanged(link.substring(1))
+                if (link.startsWith("#") && link !== "#") { // internal link to section
+                    const sectionArgs = link.substring(1).split("/")
+                    const section = sectionArgs[0]
+                    let subsection = sectionArgs.length > 1 ? sectionArgs[1] : 0
+                    Global.changeAppSectionBySectionType(section, subsection)
+                }
                 else
                     Global.openLink(link)
             }
