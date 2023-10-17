@@ -15,7 +15,7 @@ SandboxApp::SandboxApp(int &argc, char **argv)
     });
 #endif
 }
-
+#ifdef QT_DEBUG
 void SandboxApp::watchDirectoryChanges(const QString& path)
 {
     qDebug() << "Iterating to watch over:" << path;
@@ -29,7 +29,7 @@ void SandboxApp::watchDirectoryChanges(const QString& path)
         }
     }
 }
-
+#endif
 void SandboxApp::startEngine()
 {
 #ifdef QT_DEBUG

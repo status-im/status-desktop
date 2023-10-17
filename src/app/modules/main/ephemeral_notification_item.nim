@@ -4,6 +4,7 @@ type
   EphemeralNotificationType* {.pure.} = enum
     Default = 0
     Success
+    Danger
 
 type
   Item* = object
