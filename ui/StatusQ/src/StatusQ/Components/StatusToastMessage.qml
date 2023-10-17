@@ -39,8 +39,7 @@ Control {
     id: root
     implicitWidth: 374
 
-    topPadding: 15
-    bottomPadding: 15
+    verticalPadding: 15
     leftPadding: 12
     rightPadding: 8
 
@@ -151,6 +150,14 @@ Control {
 
         readonly property string openedState: "opened"
         readonly property string closedState: "closed"
+        readonly property string iconColor: switch(root.type) {
+            case StatusToastMessage.Type.Success:
+                return Theme.palette.successColor1
+            case StatusToastMessage.Type.Danger:
+                return Theme.palette.dangerColor1
+            default:
+                return Theme.palette.primaryColor1
+        }
     }
 
     Timer {
@@ -234,7 +241,6 @@ Control {
                 Layout.alignment: Qt.AlignVCenter
                 radius: (root.width/2)
                 color: {
-                    print("color type", root.type)
                     switch(root.type) {
                     case StatusToastMessage.Type.Success:
                         return Theme.palette.successColor2
@@ -255,14 +261,7 @@ Control {
                     Component {
                         id: loadingInd
                         StatusLoadingIndicator {
-                            color: switch(root.type) {
-                                case StatusToastMessage.Type.Success:
-                                    return Theme.palette.successColor1
-                                case StatusToastMessage.Type.Danger:
-                                    return Theme.palette.dangerColor1
-                                default:
-                                   return Theme.palette.primaryColor1
-                            }
+                            color: d.iconColor
                         }
                     }
                     Component {
@@ -271,17 +270,7 @@ Control {
                             anchors.centerIn: parent
                             width: root.icon.width
                             height: root.icon.height
-                            color: {
-                                print("color type", root.type)
-                                    switch(root.type) {
-                                    case StatusToastMessage.Type.Success:
-                                        return Theme.palette.successColor1
-                                    case StatusToastMessage.Type.Danger:
-                                        return Theme.palette.dangerColor1
-                                    default:
-                                        return Theme.palette.primaryColor1
-                                }
-                            }
+                            color: d.iconColor
                             icon: root.icon.name
                         }
                     }

@@ -89,6 +89,13 @@ Item {
             chatSectionModule: root.rootStore.chatCommunitySectionModule
         }
 
+        readonly property string linkPreviewBeginAnchor: `<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.messaging}">`
+        readonly property string linkPreviewEndAnchor: `</a>`
+
+        readonly property string linkPreviewEnabledNotification: qsTr("Link previews will be shown for all sites. You can manage link previews in %1.", "Go to settings").arg(linkPreviewBeginAnchor + qsTr("Settings", "Go to settings page") + linkPreviewEndAnchor)
+        readonly property string linkPreviewDisabledNotification: qsTr("Link previews will never be shown. You can manage link previews in %1.").arg(linkPreviewBeginAnchor + qsTr("Settings", "Go to settings page") + linkPreviewEndAnchor)
+        readonly property string linkPreviewEnabledForMessageNotification: qsTr("Link previews will be shown for this message. You can manage link previews in %1.").arg(linkPreviewBeginAnchor + qsTr("Settings", "Go to settings page") + linkPreviewEndAnchor)
+
         function getChatContentModule(chatId) {
             root.parentModule.prepareChatContentModuleForChatId(chatId)
             return root.parentModule.getChatContentModule()
@@ -335,10 +342,21 @@ Item {
                     }
                     
                     onLinkPreviewReloaded: (link) => d.activeChatContentModule.inputAreaModule.reloadLinkPreview(link)
-                    onEnableLinkPreview: () => d.activeChatContentModule.inputAreaModule.enableLinkPreview()
-                    onDisableLinkPreview: () => d.activeChatContentModule.inputAreaModule.disableLinkPreview()
-                    onEnableLinkPreviewForThisMessage: () => d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(true)
-                    onDismissLinkPreviewSettings: () => d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
+                    onEnableLinkPreview: () => {
+                        d.activeChatContentModule.inputAreaModule.enableLinkPreview()
+                        Global.displayToastMessage(d.linkPreviewEnabledNotification, "", "show", false, Constants.ephemeralNotificationType.success, "")
+                    }
+                    onDisableLinkPreview: () => {
+                        d.activeChatContentModule.inputAreaModule.disableLinkPreview()
+                        Global.displayToastMessage(d.linkPreviewDisabledNotification, "", "hide", false, Constants.ephemeralNotificationType.danger, "")
+                    }
+                    onEnableLinkPreviewForThisMessage: () => {
+                        d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(true)
+                        Global.displayToastMessage(d.linkPreviewEnabledForMessageNotification, "", "show", false, Constants.ephemeralNotificationType.success, "")
+                    }
+                    onDismissLinkPreviewSettings: () => {
+                        d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
+                    }
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
                 }
 
