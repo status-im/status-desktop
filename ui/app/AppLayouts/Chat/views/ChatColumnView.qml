@@ -19,6 +19,7 @@ import shared.popups.send 1.0
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.panels 1.0
 
 import "../helpers"
 import "../controls"
@@ -26,7 +27,6 @@ import "../popups"
 import "../panels"
 import "../../Wallet"
 import "../stores"
-import AppLayouts.Communities.panels 1.0
 
 Item {
     id: root
@@ -153,8 +153,6 @@ Item {
             d.restoreInputAttachments()
         }
 
-        signal updateLinkPreviewsRequested
-
         readonly property var updateLinkPreviews: {
             return Backpressure.debounce(this, 250, () => {
                                              const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
@@ -171,14 +169,6 @@ Item {
             d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
             Qt.callLater(d.restoreInputState, preservedText)
-        }
-    }
-
-    Connections {
-        enabled: root.rootStore.privacyModule.urlUnfurlingMode !== Constants.UrlUnfurlingModeDisableAll
-        target: d
-        function onUpdateLinkPreviewsRequested() {
-            d.updateLinkPreviews()
         }
     }
 
@@ -294,7 +284,7 @@ Item {
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule) {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
-                            d.updateLinkPreviewsRequested()
+                            d.updateLinkPreviews()
                         }
                     }
 

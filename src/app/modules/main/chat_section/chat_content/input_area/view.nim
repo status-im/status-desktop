@@ -216,6 +216,9 @@ QtObject:
   proc setText*(self: View, text: string) {.slot.} =
     self.delegate.setText(text, true)
 
+  proc getPlainText*(self: View): string {.slot.} =
+    return plain_text(self.preservedProperties.getText())
+
   proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)

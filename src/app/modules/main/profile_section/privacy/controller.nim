@@ -70,6 +70,10 @@ proc init*(self: Controller) =
     var args = OperationSuccessArgs(e)
     self.delegate.onPasswordChanged(args.success, args.errorMsg)
 
+  self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e: Args):
+    var args = UrlUnfurlingModeArgs(e)
+    self.delegate.onUrlUnfurlingModeUpdated(args.value.int)
+
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 

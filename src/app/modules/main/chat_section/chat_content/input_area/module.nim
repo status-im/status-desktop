@@ -157,6 +157,9 @@ method isFavorite*(self: Module, item: GifDto): bool =
 method setText*(self: Module, text: string, unfurlUrls: bool) =
   self.controller.setText(text, unfurlUrls)
 
+method getPlainText*(self: Module): string =
+  return self.view.getPlainText()
+
 method clearLinkPreviewCache*(self: Module) {.slot.} =
   self.controller.clearLinkPreviewCache()
 
