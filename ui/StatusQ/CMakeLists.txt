@@ -109,6 +109,12 @@ add_library(StatusQ SHARED
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
+
+        # wallet
+        src/wallet/managetokenscontroller.cpp
+        src/wallet/managetokenscontroller.h
+        src/wallet/managetokensmodel.cpp
+        src/wallet/managetokensmodel.h
         )
 
 set_target_properties(StatusQ PROPERTIES

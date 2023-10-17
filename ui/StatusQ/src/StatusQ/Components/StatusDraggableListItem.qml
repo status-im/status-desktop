@@ -146,9 +146,14 @@ ItemDelegate {
     property int visualIndex
     /*!
        \qmlproperty bool StatusDraggableListItem::draggable
-       This property holds whether this item can be dragged (and whether the drag handle is displayed)
+       This property holds whether the drag handle is displayed
     */
     property bool draggable
+    /*!
+       \qmlproperty bool StatusDraggableListItem::dragEnabled
+       This property holds whether this item can be dragged (and whether the drag handle is displayed)
+    */
+    property bool dragEnabled: draggable
     /*!
        \qmlproperty bool StatusDraggableListItem::customizable
        This property holds whether this item can be customized
@@ -200,6 +205,13 @@ ItemDelegate {
     */
     property color bgColor: "transparent"
 
+    /*!
+       \qmlproperty color StatusDraggableListItem::assetBgColor
+       This property holds icon/image background color, if any
+       Defaults to "transparent" (ie no background)
+    */
+    property color assetBgColor: "transparent"
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
@@ -209,7 +221,7 @@ ItemDelegate {
        \qmlproperty readonly bool StatusDraggableListItem::dragActive
        This property holds whether a drag is currently in progress
     */
-    readonly property bool dragActive: draggable && dragHandler.drag.active
+    readonly property bool dragActive: dragHandler.drag.active
     onDragActiveChanged: {
         if (dragActive)
             Drag.start()
@@ -234,19 +246,25 @@ ItemDelegate {
     ]
 
     background: Rectangle {
-        color: root.dragActive && !root.customizable ? Theme.palette.indirectColor2 : "transparent"
+        color: root.dragActive && !root.customizable ? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
         border.width: root.customizable ? 0 : 1
         border.color: Theme.palette.baseColor2
-        radius: customizable ? 0 : 8
+        radius: root.customizable ? 0 : 8
 
         MouseArea {
             id: dragHandler
             anchors.fill: parent
-            drag.target: root.draggable ? root : null
+            drag.target: root.dragEnabled ? root : null
             drag.axis: root.dragAxis
             preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
             hoverEnabled: true
-            cursorShape: root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+            cursorShape: {
+                if (!root.enabled)
+                    return undefined
+                if (root.dragEnabled)
+                    return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                return Qt.PointingHandCursor
+            }
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
                 root.clicked(mouse);
@@ -255,8 +273,8 @@ ItemDelegate {
     }
 
     // inset to simulate spacing
-    topInset: 6
-    bottomInset: 6
+    topInset: 4
+    bottomInset: 4
 
     horizontalPadding: 12
     verticalPadding: 16
@@ -273,10 +291,10 @@ ItemDelegate {
             Layout.preferredHeight: 20
             icon: "justify"
             visible: root.draggable && !root.customizable
+            color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
         }
 
         Loader {
-            Layout.leftMargin: root.spacing/2
             asynchronous: true
             active: !!root.icon.name || !!root.icon.source
             visible: active
@@ -293,7 +311,7 @@ ItemDelegate {
                 visible: text
                 elide: Text.ElideRight
                 maximumLineCount: 1
-                font.weight: root.highlighted ? Font.Medium : Font.Normal
+                font.weight: Font.Medium
             }
 
             Row {
@@ -302,6 +320,8 @@ ItemDelegate {
                 spacing: 8
 
                 StatusBaseText {
+                    width: Math.min(parent.width - (secondaryTitleIconLoader.item ? parent.spacing + secondaryTitleIconLoader.item.width : 0),
+                                    implicitWidth)
                     text: root.secondaryTitle
                     color: Theme.palette.baseColor1
                     elide: Text.ElideRight
@@ -309,6 +329,8 @@ ItemDelegate {
                 }
 
                 Loader {
+                    id: secondaryTitleIconLoader
+                    anchors.verticalCenter: parent.verticalCenter
                     asynchronous: true
                     active: !!root.secondaryTitleIcon
                     visible: active
@@ -349,13 +371,10 @@ ItemDelegate {
         id: imageComponent
         StatusRoundedImage {
             radius: root.bgRadius
-            color: root.bgColor
+            color: root.assetBgColor
             width: root.icon.width
             height: root.icon.height
             image.source: root.icon.source
-            image.sourceSize: Qt.size(width, height)
-            image.smooth: false
-            image.mipmap: true
             showLoadingIndicator: true
             image.fillMode: Image.PreserveAspectCrop
         }

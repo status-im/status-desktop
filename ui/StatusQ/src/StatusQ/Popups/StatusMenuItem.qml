@@ -23,8 +23,10 @@ MenuItem {
         readonly property bool subMenuOpened: isSubMenu && root.subMenu.opened
         readonly property bool hasAction: !!root.action
         readonly property bool isStatusAction: d.hasAction && (root.action instanceof StatusAction)
-        readonly property bool isStatusDangerAction: d.isStatusAction && root.action.type === StatusAction.Type.Danger
-        readonly property bool isStatusSuccessAction: d.isStatusAction && root.action.type === StatusAction.Type.Success
+        readonly property bool isStatusDangerAction: (d.isStatusAction && root.action.type === StatusAction.Type.Danger) ||
+                                                     (d.isStatusSubMenu && root.subMenu.type === StatusAction.Type.Danger)
+        readonly property bool isStatusSuccessAction: (d.isStatusAction && root.action.type === StatusAction.Type.Success) ||
+                                                      (d.isStatusSubMenu && root.subMenu.type === StatusAction.Type.Success)
 
         readonly property StatusAssetSettings originalAssetSettings: d.isStatusSubMenu && root.subMenu.assetSettings
                                                              ? root.subMenu.assetSettings

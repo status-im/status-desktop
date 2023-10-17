@@ -36,13 +36,23 @@ Menu {
     property real maxImplicitWidth: 640
     readonly property color defaultIconColor: Theme.palette.primaryColor1
 
+    property int type: StatusAction.Type.Normal
+
     property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: 18
         height: 18
         rotation: 0
         isLetterIdenticon: false
         isImage: false
-        color: root.defaultIconColor
+        color: {
+            if (!root.enabled)
+                return Theme.palette.baseColor1
+            if (root.type === StatusAction.Type.Danger)
+                return Theme.palette.dangerColor1
+            if (root.type === StatusAction.Type.Success)
+                return Theme.palette.successColor1
+            return Theme.palette.primaryColor1
+        }
     }
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
@@ -56,8 +66,6 @@ Menu {
 
     property var openHandler
     property var closeHandler
-
-    signal menuItemClicked(int menuIndex)
 
     function checkIfEmpty() {
         for (let i = 0; i < root.contentItem.count; ++i) {
@@ -98,7 +106,8 @@ Menu {
         visible: root.hideDisabledItems ? enabled : true
         height: visible ? implicitHeight : 0
         onImplicitWidthChanged: {
-            d.maxDelegateImplWidth = Math.max(d.maxDelegateImplWidth, implicitWidth)
+            if (visible)
+                d.maxDelegateImplWidth = Math.max(d.maxDelegateImplWidth, implicitWidth)
         }
     }
 

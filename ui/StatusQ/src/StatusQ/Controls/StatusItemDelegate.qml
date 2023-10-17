@@ -18,7 +18,10 @@ ItemDelegate {
     icon.width: 16
     icon.height: 16
 
-    contentItem:  RowLayout {
+    font.family: Theme.palette.baseFont.name
+    font.pixelSize: 15
+
+    contentItem: RowLayout {
         spacing: root.spacing
 
         StatusIcon {

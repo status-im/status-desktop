@@ -23,6 +23,7 @@ Action {
         imgIsIdenticon: false
         color: root.icon.color
         name: root.icon.name
+        hoverColor: Theme.palette.statusMenu.hoverBackgroundColor
     }
 
     property StatusFontSettings fontSettings: StatusFontSettings {}

@@ -74,7 +74,6 @@ CheckBox {
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: parent.width
-        color: Theme.palette.directColor1
         lineHeight: 1.2
         leftPadding: root.leftSide? (!!root.text ? root.indicator.width + root.spacing
                                  : root.indicator.width) : 0
