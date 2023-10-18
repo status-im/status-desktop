@@ -45,6 +45,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width
         StatusListItem {
+            objectName: "walletKeyPairDelegate"
             Layout.fillWidth: true
             title: !!root.keyPair? d.isWatchOnly ? qsTr("Watched addresses") : root.keyPair.name : ""
             statusListItemSubTitle.textFormat: Qt.RichText
