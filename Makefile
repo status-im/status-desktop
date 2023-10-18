@@ -360,7 +360,12 @@ run-storybook: storybook-build
 
 run-storybook-tests: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Tests"
-	ctest -V --test-dir $(STORYBOOK_BUILD_PATH)
+	ctest -V --test-dir $(STORYBOOK_BUILD_PATH) -E PagesValidator
+
+# repeat because of https://bugreports.qt.io/browse/QTBUG-92236 (Qt < 5.15.4)
+run-storybook-pages-validator: storybook-build
+	echo -e "\033[92mRunning:\033[39m Storybook Pages Validator"
+	ctest -V --test-dir $(STORYBOOK_BUILD_PATH) -R PagesValidator --repeat until-pass:3
 
 storybook-clean:
 	echo -e "\033[92mCleaning:\033[39m Storybook"

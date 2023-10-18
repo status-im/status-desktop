@@ -103,6 +103,20 @@ pipeline {
       } }
     }
 
+    stage('Check Storybook Pages Validator') {
+      steps { script {
+        /* Needed for QGuiApplication to import QtQuick.Dialogs */
+        wrap([
+          $class: 'Xvfb',
+          autoDisplayName: true,
+          parallelBuild: true,
+          screen: '2560x1440x24',
+        ]) {
+          sh('make run-storybook-pages-validator')
+        }
+      } }
+    }
+
     stage('Upload') {
       steps { script {
         env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
