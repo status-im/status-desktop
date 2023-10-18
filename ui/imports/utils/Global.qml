@@ -18,7 +18,6 @@ QtObject {
 
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal settingsLoaded()
     signal openCreateChatView()
     signal closeCreateChatView()
 

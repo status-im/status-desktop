@@ -322,10 +322,6 @@ QtObject {
         return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.externalStatusLink)
     }
 
-    function hasImageExtension(url) {
-        return Constants.acceptedImageExtensions.some(ext => url.toLowerCase().includes(ext))
-    }
-
     function removeGifUrls(message) {
         return message.replace(/(?:https?|ftp):\/\/[\n\S]*(\.gif)+/gm, '');
     }

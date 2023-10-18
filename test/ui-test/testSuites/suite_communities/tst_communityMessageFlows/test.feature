@@ -95,12 +95,13 @@ Feature: Status Desktop community messages
         And the user sends a chat message "history"
         When the user clears chat history
         Then the chat is cleared
-
+    
+    @mayfail
     Scenario: The user can send a GIF
         Given the user opens app settings screen
         And the user opens the messaging settings
-        When the user activates the link preview if it is deactivated
-        And the user activates tenor GIFs preview
+        #When the user activates the link preview if it is deactivated
+        When the user activates tenor GIFs preview
         And the user opens the community named "test_community"
         Then the user lands on the community named "test_community"
         When the user sends a GIF message

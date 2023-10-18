@@ -1,7 +1,9 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+
 import shared.views.chat 1.0
+import shared.stores 1.0
 
 SplitView {
 
@@ -14,20 +16,10 @@ SplitView {
                 "unfurled": true,
                 "immutable": false,
                 "empty": false,
-                "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+                "url": "",
                 "previewType": 1,
-                "standardPreview": {
-                    "hostname": "www.youtube.com",
-                    "title": "PSY - GANGNAM STYLE(강남스타일) M/V",
-                    "description": "PSY - ‘I LUV IT’ M/V @ https://youtu.be/Xvjnoagk6GU PSY - ‘New Face’ M/V @https://youtu.be/OwJPPaEyqhI PSY - 8TH ALBUM '4X2=8' on iTunes @ https://smarturl.it/PSY_8thAlbum PSY - GANGNAM STYLE(강남스타일) on iTunes @ http://smarturl.it/PsyGangnam #PSY #싸이 #GANGNAMSTYLE #강남스타일 More about PSY@ http://www.psyp...",
-                    "linkType": 0,
-                },
-                "standardPreviewThumbnail": {
-                    "width": 480,
-                    "height": 360,
-                    "url": "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg",
-                    "dataUri": "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg",
-                },
+                "standardPreview": {},
+                "standardPreviewThumbnail": {},
                 "statusContactPreview": {},
                 "statusContactPreviewThumbnail": {},
                 "statusCommunityPreview": {},
@@ -47,7 +39,7 @@ SplitView {
             preview1.standardPreview.hostname = "www.youtube.com"
             preview1.standardPreview.title = "PSY - GANGNAM STYLE(강남스타일) M/V"
             preview1.standardPreview.description = "PSY - ‘I LUV IT’ M/V @ https://youtu.be/Xvjnoagk6GU PSY - ‘New Face’ M/V @https://youtu.be/OwJPPaEyqhI PSY - 8TH ALBUM '4X2=8' on iTunes @ https://smarturl.it/PSY_8thAlbum PSY - GANGNAM STYLE(강남스타일) on iTunes @ http://smarturl.it/PsyGangnam #PSY #싸이 #GANGNAMSTYLE #강남스타일 More about PSY@ http://www.psyp..."
-            preview1.standardPreview.standardLinkType = 0
+            preview1.standardPreview.linkType = 0
             preview1.standardPreviewThumbnail.width = 480
             preview1.standardPreviewThumbnail.height = 360
             preview1.standardPreviewThumbnail.url = "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg"
@@ -127,7 +119,7 @@ SplitView {
             store: {}
             messageStore: {}
             linkPreviewModel: mockedLinkPreviewModel
-            localUnfurlLinks: {}
+            gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
             isCurrentUser: true
 
             onImageClicked: {
@@ -150,6 +142,23 @@ SplitView {
                     text: qsTr("Current user")
                     checked: linksMessageView.isCurrentUser
                     onToggled: linksMessageView.isCurrentUser = !linksMessageView.isCurrentUser
+                }
+                Label {
+                    text: qsTr("GIF unfuring settings")
+                }
+                CheckBox {
+                    text: qsTr("Enabled")
+                    checked: RootStore.gifUnfurlingEnabled
+                    onToggled: RootStore.gifUnfurlingEnabled = !RootStore.gifUnfurlingEnabled
+                }
+                CheckBox {
+                    text: qsTr("Never ask about GIF unfurling again")
+                    checked: RootStore.neverAskAboutUnfurlingAgain
+                    onClicked: RootStore.neverAskAboutUnfurlingAgain = !RootStore.neverAskAboutUnfurlingAgain
+                }
+                Button {
+                    text: qsTr("Reset local `askAboutUnfurling` setting")
+                    onClicked: linksMessageView.resetLocalAskAboutUnfurling()
                 }
             }
         }

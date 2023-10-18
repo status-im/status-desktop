@@ -1,4 +1,4 @@
-import io_interface, chronicles, tables, sequtils
+import io_interface, chronicles, tables, sequtils, strutils, sugar
 
 
 import ../../../../../../app_service/service/settings/service as settings_service
@@ -199,7 +199,8 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
     return
 
   let urls = self.messageService.getTextUrls(text)
-  self.delegate.setUrls(urls)
+  let supportedUrls = urls.filter(x => not x.endsWith(".gif")) # GIFs are currently unfurled by receiver
+  self.delegate.setUrls(supportedUrls)
   let newUrls = self.linkPreviewCache.unknownUrls(urls)
 
   let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()

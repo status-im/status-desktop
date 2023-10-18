@@ -79,8 +79,7 @@ Popup {
         size: StatusBaseButton.Size.Small
 
         onClicked: {
-            RootStore.setIsTenorWarningAccepted(true)
-            RootStore.updateWhitelistedUnfurlingSites("media.tenor.com", true)
+            RootStore.setGifUnfurlingEnabled(true)
             RootStore.getTrendingsGifs()
             root.close()
         }

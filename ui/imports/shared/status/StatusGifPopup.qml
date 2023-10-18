@@ -61,7 +61,7 @@ Popup {
     onAboutToShow: {
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
-        if (RootStore.isTenorWarningAccepted) {
+        if (RootStore.gifUnfurlingEnabled) {
             RootStore.getTrendingsGifs()
         }
     }
@@ -94,7 +94,7 @@ Popup {
                 SearchBox {
                     id: searchBox
                     placeholderText: qsTr("Search")
-                    enabled: RootStore.isTenorWarningAccepted
+                    enabled: RootStore.gifUnfurlingEnabled
                     anchors.right: parent.right
                     anchors.rightMargin: gifHeader.headerMargin
                     anchors.top: parent.top
@@ -136,7 +136,7 @@ Popup {
 
             Loader {
                 id: gifsLoader
-                active: root.opened && RootStore.isTenorWarningAccepted
+                active: root.opened && RootStore.gifUnfurlingEnabled
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 Layout.preferredHeight: {
@@ -160,7 +160,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Trending)
                     }
-                    enabled: RootStore.isTenorWarningAccepted
+                    enabled: RootStore.gifUnfurlingEnabled
                 }
 
                 StatusTabBarIconButton {
@@ -169,7 +169,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Recent)
                     }
-                    enabled: RootStore.isTenorWarningAccepted
+                    enabled: RootStore.gifUnfurlingEnabled
                 }
 
                 StatusTabBarIconButton {
@@ -178,7 +178,7 @@ Popup {
                     onClicked: {
                         toggleCategory(GifPopupDefinitions.Category.Favorite)
                     }
-                    enabled: RootStore.isTenorWarningAccepted
+                    enabled: RootStore.gifUnfurlingEnabled
                 }
             }
         }
@@ -200,7 +200,7 @@ Popup {
         sourceComponent: ConfirmationPopup {
             visible: true
         }
-        active: !RootStore.isTenorWarningAccepted
+        active: !RootStore.gifUnfurlingEnabled
     }
 
     Component {

@@ -18,13 +18,7 @@ const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
 const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
-const LSS_KEY_IS_GIF_WIDGET_ENABLED* = "isGifWidgetEnabled"
-const DEFAULT_IS_GIF_WIDGET_ENABLED = true
 const DEFAULT_IS_MULTI_NETWORK_ENABLED = false
-const LSS_KEY_IS_TENOR_WARNING_ACCEPTED* = "isTenorWarningAccepted"
-const DEFAULT_IS_TENOR_WARNING_ACCEPTED = false
-const LSS_KEY_DISPLAY_CHAT_IMAGES* = "displayChatImages"
-const DEFAULT_DISPLAY_CHAT_IMAGES = false
 const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
 const DEFAULT_RECENT_EMOJIS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS* = "hiddenCommunityWelcomeBanners"
@@ -33,8 +27,6 @@ const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* = "hiddenCommuni
 const DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
 const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
-const LSS_KEY_WITHLISTED_UNFURLING_SITES* = "whitelistedUnfurlingSites"
-const DEFAULT_WITHLISTED_UNFURLING_SITES = ""
 const LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN* = "neverAskAboutUnfurlingAgain"
 const DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN = false
 const LSS_KEY_HIDE_CHANNEL_SUGGESTIONS* = "hideChannelSuggestions"
@@ -277,44 +269,6 @@ QtObject:
     notify = expandUsersListChanged
 
 
-  proc isGifWidgetEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsGifWidgetEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_GIF_WIDGET_ENABLED, newQVariant(DEFAULT_IS_GIF_WIDGET_ENABLED))
-  proc setIsGifWidgetEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_GIF_WIDGET_ENABLED, newQVariant(value)):
-      self.isGifWidgetEnabledChanged()
-
-  QtProperty[bool] isGifWidgetEnabled:
-    read = getIsGifWidgetEnabled
-    write = setIsGifWidgetEnabled
-    notify = isGifWidgetEnabledChanged
-
-  proc isTenorWarningAcceptedChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsTenorWarningAccepted*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_TENOR_WARNING_ACCEPTED, newQVariant(DEFAULT_IS_TENOR_WARNING_ACCEPTED))
-  proc setIsTenorWarningAccepted*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_TENOR_WARNING_ACCEPTED, newQVariant(value)):
-      self.isTenorWarningAcceptedChanged()
-
-  QtProperty[bool] isTenorWarningAccepted:
-    read = getIsTenorWarningAccepted
-    write = setIsTenorWarningAccepted
-    notify = isTenorWarningAcceptedChanged
-
-
-  proc displayChatImagesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getDisplayChatImages*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_DISPLAY_CHAT_IMAGES, newQVariant(DEFAULT_DISPLAY_CHAT_IMAGES))
-  proc setDisplayChatImages*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_DISPLAY_CHAT_IMAGES, newQVariant(value)):
-      self.displayChatImagesChanged()
-
-  QtProperty[bool] displayChatImages:
-    read = getDisplayChatImages
-    write = setDisplayChatImages
-    notify = displayChatImagesChanged
-
-
   proc recentEmojisChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getRecentEmojis*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_RECENT_EMOJIS, newQVariant(DEFAULT_RECENT_EMOJIS))
@@ -363,20 +317,6 @@ QtObject:
     read = getHiddenCommunityBackUpBanners
     write = setHiddenCommunityBackUpBanners
     notify = hiddenCommunityBackUpBannersChanged
-
-
-  proc whitelistedUnfurlingSitesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getWhitelistedUnfurlingSites*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, newQVariant(DEFAULT_WITHLISTED_UNFURLING_SITES))
-  proc setWhitelistedUnfurlingSites*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_WITHLISTED_UNFURLING_SITES, value):
-      self.whitelistedUnfurlingSitesChanged()
-
-  QtProperty[QVariant] whitelistedUnfurlingSites:
-    read = getWhitelistedUnfurlingSites
-    write = setWhitelistedUnfurlingSites
-    notify = whitelistedUnfurlingSitesChanged
-
 
   proc neverAskAboutUnfurlingAgainChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNeverAskAboutUnfurlingAgain*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -754,14 +694,10 @@ QtObject:
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
-      of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()
-      of LSS_KEY_IS_TENOR_WARNING_ACCEPTED: self.isTenorWarningAcceptedChanged()
-      of LSS_KEY_DISPLAY_CHAT_IMAGES: self.displayChatImagesChanged()
       of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS: self.hiddenCommunityBackUpBannersChanged()
-      of LSS_KEY_WITHLISTED_UNFURLING_SITES: self.whitelistedUnfurlingSitesChanged()
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
       of LSS_KEY_FONT_SIZE: self.fontSizeChanged()

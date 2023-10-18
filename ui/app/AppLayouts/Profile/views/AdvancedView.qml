@@ -342,6 +342,32 @@ SettingsContentBase {
                 }
             }
 
+            // SYNC WAKU SECTION
+
+            StatusListItem {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+                title: qsTr("History nodes")
+                label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
+                components: [
+                    StatusIcon {
+                        icon: "next"
+                        color: Theme.palette.baseColor1
+                    }
+                ]
+                onClicked: Global.openPopup(wakuStoreModalComponent)
+            }
+
+            Component {
+                id: wakuStoreModalComponent
+                WakuStoreModal {
+                    messagingStore: root.messagingStore
+                    advancedStore: root.advancedStore
+                }
+            }
+
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right

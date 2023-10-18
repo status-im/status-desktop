@@ -25,9 +25,6 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLinkPreviewWhitelist*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method changePassword*(self: AccessInterface, password: string, newPassword: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

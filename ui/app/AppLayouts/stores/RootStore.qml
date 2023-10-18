@@ -163,7 +163,7 @@ QtObject {
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
     readonly property bool showBrowserSelector: localAccountSensitiveSettings.showBrowserSelector
-    readonly property bool openLinksInStatus: localAccountSensitiveSettings.openLinksInStatus
+    readonly property bool openLinksInStatus: false
 
     property var allNetworks: networksModule.all
 

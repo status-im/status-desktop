@@ -168,7 +168,7 @@ Item {
     }
 
     Connections {
-        enabled: !root.rootStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
+        enabled: root.rootStore.privacyModule.urlUnfurlingMode !== Constants.UrlUnfurlingModeDisableAll
         target: d
         function onUpdateLinkPreviewsRequested() {
             d.updateLinkPreviews()

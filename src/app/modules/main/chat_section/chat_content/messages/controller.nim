@@ -192,10 +192,6 @@ proc init*(self: Controller) =
       return
     self.delegate.onHistoryCleared()
 
-  self.events.on(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED) do(e: Args):
-    let args = LinkPreviewDataArgs(e)
-    self.delegate.onPreviewDataLoaded($(args.response), args.uuid)
-
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     let args = ActiveSectionChatArgs(e)
     if(self.sectionId != args.sectionId or self.chatId != args.chatId):
@@ -279,9 +275,6 @@ proc deleteMessage*(self: Controller, messageId: string) =
 
 proc editMessage*(self: Controller, messageId: string, contentType: int, updatedMsg: string) =
   self.messageService.editMessage(messageId, contentType, updatedMsg)
-
-proc getLinkPreviewData*(self: Controller, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
-  self.messageService.asyncGetLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
   
 proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId

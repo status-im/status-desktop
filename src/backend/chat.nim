@@ -149,9 +149,6 @@ proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: 
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
 
-proc getLinkPreviewData*(link: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("getLinkPreviewData".prefix, %* [link])
-
 proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
 

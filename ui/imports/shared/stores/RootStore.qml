@@ -17,9 +17,7 @@ QtObject {
 
     property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false
-    property bool isGifWidgetEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isGifWidgetEnabled : false
-    property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
-    property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
+    property bool gifUnfurlingEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.gifUnfurlingEnabled : false
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
     property string currentCurrency: Global.appIsReady? walletSectionInst.currentCurrency : ""
@@ -93,8 +91,8 @@ QtObject {
         localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
     }
 
-    function setIsTenorWarningAccepted(value) {
-        localAccountSensitiveSettings.isTenorWarningAccepted = value;
+    function setGifUnfurlingEnabled(value) {
+        localAccountSensitiveSettings.gifUnfurlingEnabled = value
     }
 
     function copyToClipboard(text) {
@@ -120,22 +118,6 @@ QtObject {
     function getTrendingsGifs() {
         if (chatSectionChatContentInputAreaInst)
             chatSectionChatContentInputAreaInst.getTrendingsGifs()
-    }
-
-    function updateWhitelistedUnfurlingSites(hostname, whitelisted) {
-        // no way to send update notification for individual array entries
-        let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
-
-        if (!settings)
-            settings = {}
-
-        if (settings[hostname] === whitelisted)
-            return
-
-        settings[hostname] = whitelisted
-        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-        if(hostname === "media.tenor.com" && whitelisted === false)
-            RootStore.setIsTenorWarningAccepted(false)
     }
 
     function getRecentsGifs() {

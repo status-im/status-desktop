@@ -42,21 +42,6 @@ QtObject:
   proc init*(self: Service) =
     discard
 
-  proc getLinkPreviewWhitelist*(self: Service): string =
-    try:
-      let response = status_privacy.getLinkPreviewWhitelist()
-
-      if(response.result.kind != JArray):
-        var errMsg = "response is not an array"
-        if(response.result.contains("error")):
-          errMsg = response.result["error"].getStr
-        error "error: ", procName="getLinkPreviewWhitelist", errDesription = errMsg
-        return
-
-      return $(response.result)
-    except Exception as e:
-      error "error: ", procName="getLinkPreviewWhitelist", errName = e.name, errDesription = e.msg
-
   proc getDefaultAccount(self: Service): string =
     try:
       let response = status_eth.getAccounts()

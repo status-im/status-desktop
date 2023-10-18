@@ -18,9 +18,6 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc getLinkPreviewWhitelist*(self: View): string {.slot.} =
-    return self.delegate.getLinkPreviewWhitelist()
-
   proc changePassword*(self: View, password: string, newPassword: string) {.slot.} =
     self.delegate.changePassword(password, newPassword)
 
