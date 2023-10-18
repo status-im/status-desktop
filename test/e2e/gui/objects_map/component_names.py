@@ -290,6 +290,7 @@ settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName"
 
 # Back up seed phrase banner
 mainWindow_secureYourSeedPhraseBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "secureYourSeedPhraseBanner", "type": "ModuleWarning", "visible": True}
+mainWindow_secureYourSeedPhraseBanner_Button = {"container": statusDesktop_mainWindow, "id": "button", "text": "Back up now", "type": "Button", "unnamed": 1, "visible": True}
 
 # Sync new device popup
 copy_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncCodeCopyButton", "type": "StatusButton", "visible": True}
