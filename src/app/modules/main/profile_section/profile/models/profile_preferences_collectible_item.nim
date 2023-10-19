@@ -16,7 +16,7 @@ proc initProfileShowcaseCollectibleItem*(token: TokenDto, entry: ProfileShowcase
 
   result.id = entry.id
   result.entryType = entry.entryType
-  result.showcaseVisibility = entry.visibility
+  result.showcaseVisibility = entry.showcaseVisibility
   result.order = entry.order
 
   result.name = token.name

@@ -20,6 +20,7 @@ Control {
     property var baseModel
 
     readonly property alias showcaseModel: showcaseModel
+    readonly property var baseRoleNames: ["id", "entryType", "showcaseVisibility", "order"]
 
     // to override
     property string keyRole
@@ -30,7 +31,7 @@ Control {
     property Component draggableDelegateComponent
     property Component showcaseDraggableDelegateComponent
 
-    signal showcaseEntryChanged(string entryId, int showcaseVisibility)
+    signal showcaseEntryChanged(var entry)
 
     background: null
 
@@ -64,7 +65,7 @@ Control {
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
                     showcaseModel.append(tmpObj)
-                    root.showcaseEntryChanged(tmpObj.id, tmpObj.showcaseVisibility)
+                    root.showcaseEntryChanged(tmpObj)
                 }
             }
         }
@@ -129,8 +130,8 @@ Control {
             id: showcaseItemsListView
             Layout.fillWidth: true
             Layout.minimumHeight: Math.floor(targetDropArea.height + targetDropArea.anchors.bottomMargin)
+            Layout.preferredHeight: contentHeight
             model: showcaseModel
-            implicitHeight: contentHeight
             interactive: false
 
             displaced: Transition {
@@ -239,6 +240,7 @@ Control {
             Layout.fillWidth: true
             Layout.minimumHeight: empty ? Math.floor(hiddenTargetDropArea.height + hiddenTargetDropArea.anchors.topMargin)
                                         : d.defaultDelegateHeight * Math.min(count, 4)
+            Layout.preferredHeight: contentHeight
             model: root.baseModel
 
             readonly property bool empty: !contentHeight

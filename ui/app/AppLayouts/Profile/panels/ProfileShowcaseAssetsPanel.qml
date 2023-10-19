@@ -8,7 +8,7 @@ ProfileShowcasePanel {
     id: root
 
     keyRole: "id"
-    roleNames: ["id", "symbol", "name", "visibleForNetworkWithPositiveBalance", "enabledNetworkBalance"]
+    roleNames: ["symbol", "name", "visibleForNetworkWithPositiveBalance", "enabledNetworkBalance"].concat(baseRoleNames)
     filterFunc: (modelData) => modelData.visibleForNetworkWithPositiveBalance && !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")

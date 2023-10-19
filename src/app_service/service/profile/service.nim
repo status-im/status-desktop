@@ -89,7 +89,7 @@ QtObject:
 
   proc setDisplayName*(self: Service, displayName: string) =
     try:
-      let response =  status_accounts.setDisplayName(displayName)
+      let response = status_accounts.setDisplayName(displayName)
       if(not response.error.isNil):
         error "could not set display name"
         return
@@ -117,7 +117,6 @@ QtObject:
       return
 
     let result =  rpcResponseObj{"response"}{"result"}
-
     var communities = result{"communities"}.parseProfileShowcaseEntries()
     var accounts = result{"accounts"}.parseProfileShowcaseEntries()
     var collectibles = result{"collectibles"}.parseProfileShowcaseEntries()
@@ -130,3 +129,11 @@ QtObject:
         collectibles: collectibles,
         assets: assets
     ))
+
+  proc setProfileShowcasePreferences*(self: Service, preferences: JsonNode) =
+    try:
+      let response = status_accounts.setProfileShowcasePreferences(preferences)
+      if not response.error.isNil:
+        error "error saving profile showcase preferences"
+    except Exception as e:
+      error "error: ", procName="setProfileShowcasePreferences", errName = e.name, errDesription = e.msg

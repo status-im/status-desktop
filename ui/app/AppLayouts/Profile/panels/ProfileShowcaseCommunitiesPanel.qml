@@ -8,7 +8,7 @@ ProfileShowcasePanel {
     id: root
 
     keyRole: "id"
-    roleNames: ["id", "name", "memberRole", "image", "color", "showcaseVisibility"]
+    roleNames: ["name", "memberRole", "image", "color"].concat(baseRoleNames)
     filterFunc: (modelData) => !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Communities here will show on your profile")
     showcasePlaceholderBanner: qsTr("Communities here will be hidden from your profile")
@@ -24,7 +24,7 @@ ProfileShowcasePanel {
             tmpObj.showcaseVisibility = value
             showcaseModel.append(tmpObj)
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
-            root.showcaseEntryChanged(tmpObj.id, tmpObj.showcaseVisibility)
+            root.showcaseEntryChanged(tmpObj)
         }
     }
     showcaseDraggableDelegateComponent: CommunityShowcaseDelegate {
@@ -40,7 +40,7 @@ ProfileShowcasePanel {
             } else {
                 showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
             }
-            root.showcaseEntryChanged(modelData.id, value)
+            root.showcaseEntryChanged(value)
         }
     }
 }

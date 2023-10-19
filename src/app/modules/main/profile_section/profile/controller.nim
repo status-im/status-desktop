@@ -1,4 +1,4 @@
-import json, sugar, sequtils, tables
+import json, sugar, sequtils, tables, json_serialization, logging
 
 import io_interface
 
@@ -80,7 +80,7 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       profileEntry = ProfileShowcaseEntryDto(
         id: community.id,
         entryType: ProfileShowcaseEntryType.Community,
-        visibility: ProfileShowcaseVisibility.ToNoOne,
+        showcaseVisibility: ProfileShowcaseVisibility.ToNoOne,
         order: 0
       )
     profileCommunityItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
@@ -96,7 +96,7 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       walletProfileEntry = ProfileShowcaseEntryDto(
         id: walletAccount.address,
         entryType: ProfileShowcaseEntryType.Account,
-        visibility: ProfileShowcaseVisibility.ToNoOne,
+        showcaseVisibility: ProfileShowcaseVisibility.ToNoOne,
         order: 0
       )
     profileAccountItems.add(initProfileShowcaseAccountItem(walletAccount, walletProfileEntry))
@@ -109,8 +109,8 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       else:
         tokenProfileEntry = ProfileShowcaseEntryDto(
           id: token.symbol,
-          entryType: ProfileShowcaseEntryType.Account,
-          visibility: ProfileShowcaseVisibility.ToNoOne,
+          entryType: ProfileShowcaseEntryType.Asset,
+          showcaseVisibility: ProfileShowcaseVisibility.ToNoOne,
           order: 0
         )
       profileAssetItems.add(initProfileShowcaseAssetItem(token, tokenProfileEntry))
@@ -146,8 +146,34 @@ proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
 
 proc storeProfileShowcasePreferences*(self: Controller, profileChanges: string) =
-  echo "--------------> storeProfileShowcasePreferences: ", profileChanges
-  # TODO: storeProfileShowcasePreferences in service
+  let profileChangeseObj = profileChanges.parseJson
+
+  var profileCommunityItems: seq[JsonNode] = @[]
+  var profileAccountItems: seq[JsonNode] = @[]
+  var profileCollectibleItems: seq[JsonNode] = @[]
+  var profileAssetItems: seq[JsonNode] = @[]
+
+  for key in profileChangeseObj.keys():
+    let entryObject = profileChangeseObj{key}
+    case entryObject{"entryType"}.getInt():
+    of ProfileShowcaseEntryType.Community.int:
+      profileCommunityItems.add(entryObject)
+    of ProfileShowcaseEntryType.Account.int:
+      profileAccountItems.add(entryObject)
+    of ProfileShowcaseEntryType.Collectible.int:
+      profileCollectibleItems.add(entryObject)
+    of ProfileShowcaseEntryType.Asset.int:
+      profileAssetItems.add(entryObject)
+    else:
+      warn "Unrecognised entry type fo object: ", entryObject
+
+  let preferences = %* {
+    "communities": profileCommunityItems,
+    "accounts": profileAccountItems,
+    "collectibles": profileCollectibleItems,
+    "assets": profileAssetItems
+  }
+  self.profileService.setProfileShowcasePreferences(preferences)
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()

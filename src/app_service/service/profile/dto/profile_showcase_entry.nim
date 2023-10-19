@@ -17,14 +17,14 @@ type ProfileShowcaseVisibility* {.pure.}= enum
 type ProfileShowcaseEntryDto* = ref object of RootObj
   id*: string
   entryType*: ProfileShowcaseEntryType
-  visibility*: ProfileShowcaseVisibility
+  showcaseVisibility*: ProfileShowcaseVisibility
   order*: int
 
 proc `$`*(self: ProfileShowcaseEntryDto): string =
   result = fmt"""ProfileShowcaseEntryDto(
     id: {$self.id},
     entryType: {self.entryType},
-    visibility: {self.visibility},
+    showcaseVisibility: {self.showcaseVisibility},
     order: {self.order}
     )"""
 
@@ -34,16 +34,16 @@ proc toProfileShowcaseEntryDto*(jsonObj: JsonNode): ProfileShowcaseEntryDto =
   discard jsonObj.getProp("order", result.order)
 
   var entryTypeInt: int
-  if (jsonObj.getProp("type", entryTypeInt) and
+  if (jsonObj.getProp("entryType", entryTypeInt) and
     (entryTypeInt >= ord(low(ProfileShowcaseEntryType)) and
     entryTypeInt <= ord(high(ProfileShowcaseEntryType)))):
       result.entryType = ProfileShowcaseEntryType(entryTypeInt)
 
   var visibilityInt: int
-  if (jsonObj.getProp("contactVerificationStatus", visibilityInt) and
+  if (jsonObj.getProp("showcaseVisibility", visibilityInt) and
     (visibilityInt >= ord(low(ProfileShowcaseVisibility)) and
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
-      result.visibility = ProfileShowcaseVisibility(visibilityInt)
+      result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
 proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): Table[string, ProfileShowcaseEntryDto] =
   var entries: Table[string, ProfileShowcaseEntryDto] = initTable[string, ProfileShowcaseEntryDto]()

@@ -28,6 +28,8 @@ ColumnLayout {
     property WalletStore walletStore
 
     property var profileShowcaseChanges: new Map()
+    // Map in qml has no signals
+    property bool hasAnyProfileShowcaseChanges: false
 
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
@@ -42,7 +44,7 @@ ColumnLayout {
                                   profileStore.socialLinksDirty ||
                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
                                   profileHeader.icon !== profileStore.profileLargeImage ||
-                                  profileShowcaseChanges.size > 0
+                                  hasAnyProfileShowcaseChanges
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -54,6 +56,7 @@ ColumnLayout {
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
 
         profileShowcaseChanges.clear()
+        hasAnyProfileShowcaseChanges = false
         profileShowcaseCommunities.baseModel = profileStore.profileShowcaseCommunitiesModel
         profileShowcaseAccounts.baseModel = profileStore.profileShowcaseAccountsModel
         profileShowcaseCollectibles.baseModel = profileStore.profileShowcaseCollectiblesModel
@@ -61,6 +64,10 @@ ColumnLayout {
     }
 
     function save() {
+        if (hasAnyProfileShowcaseChanges){
+            profileStore.storeProfileShowcasePreferences(profileShowcaseChanges)
+        }
+
         if (!descriptionPanel.isEnsName)
             profileStore.setDisplayName(descriptionPanel.displayName.text)
         profileStore.setBio(descriptionPanel.bio.text.trim())
@@ -80,12 +87,12 @@ ColumnLayout {
         else if (!biometricsSwitch.checked)
             root.privacyStore.tryRemoveFromKeyChain()
 
-        console.log("==================-----> ", profileShowcaseChanges)
-        if (profileShowcaseChanges.size > 0){
-            profileStore.storeProfileShowcasePreferences(profileShowcaseChanges)
-        }
-
         reset()
+    }
+
+    function appendProfileShowcaseChange(entry) {
+        root.profileShowcaseChanges[entry.id] = entry
+        root.hasAnyProfileShowcaseChanges = true
     }
 
     onVisibleChanged: profileStore.requestProfileShowcasePreferences()
@@ -216,7 +223,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseCommunitiesModel
-            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
+            onShowcaseEntryChanged: appendProfileShowcaseChange(entry)
         }
 
         ProfileShowcaseAccountsPanel {
@@ -225,7 +232,7 @@ ColumnLayout {
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseAccountsModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
-            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
+            onShowcaseEntryChanged: appendProfileShowcaseChange(entry)
         }
 
         ProfileShowcaseCollectiblesPanel {
@@ -233,7 +240,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseCollectiblesModel
-            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
+            onShowcaseEntryChanged: appendProfileShowcaseChange(entry)
         }
 
         ProfileShowcaseAssetsPanel {
@@ -241,7 +248,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.profileStore.profileShowcaseAssetsModel
-            onShowcaseEntryChanged: profileShowcaseChanges.set(entryId, showcaseVisibility)
+            onShowcaseEntryChanged: appendProfileShowcaseChange(entry)
         }
     }
 }

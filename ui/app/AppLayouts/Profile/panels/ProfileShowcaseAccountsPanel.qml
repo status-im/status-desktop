@@ -10,7 +10,7 @@ ProfileShowcasePanel {
     property string currentWallet
 
     keyRole: "id"
-    roleNames: [ "id", "name", "address", "walletType", "emoji", "colorId", "showcaseVisibility"]
+    roleNames: ["name", "address", "walletType", "emoji", "colorId" ].concat(baseRoleNames)
     filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
     showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")

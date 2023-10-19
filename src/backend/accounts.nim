@@ -476,3 +476,6 @@ proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonN
 
 proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("getProfileShowcasePreferences".prefix, %*[])
+
+proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)
