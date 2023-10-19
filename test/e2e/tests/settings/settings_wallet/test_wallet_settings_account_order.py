@@ -16,7 +16,6 @@ from scripts.tools import image
     pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
                  'WatchOnly', '#2a4af5', 'sunglasses', 'Generated', '#216266', 'thumbsup')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/165")
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
                                                name: str, color: str, emoji: str, second_name: str, second_color: str,
                                                second_emoji: str):
@@ -54,7 +53,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert driver.waitFor(lambda: account_order.accounts[1].name == second_name)
             assert driver.waitFor(lambda: account_order.accounts[2].name == default_name)
         with step('Account order is correct in wallet'):
-            wallet = main_screen.left_panel.open_wallet()
+            wallet = main_screen.left_panel.open_wallet().wait_until_appears()
             assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == second_name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name)
