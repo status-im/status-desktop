@@ -132,7 +132,7 @@ pipeline {
             if (params.TEST_SCOPE != "") {
             cmd = cmd + " -m ${params.TEST_SCOPE}"
             }
-            sh "cp -f ./configs/_local.py.ci ./configs/_local.py"
+            dir ('configs') { sh 'ln -s _local.ci.py _local.py' }
             withCredentials([
               usernamePassword(
                 credentialsId: 'test-rail-api-devops',

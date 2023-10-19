@@ -10,8 +10,8 @@ try:
 except ImportError:
     exit(
         'Config file: "_local.py" not found in "./configs".\n'
-        'Please use template "_.local.py.default" to create file or execute command: \n'
-        rf'cp {testpath.ROOT}/configs/_local.py.default {testpath.ROOT}/configs/_local.py'
+        'Please use template "_.local.default.py" to create file or execute command: \n'
+        rf'cp {testpath.ROOT}/configs/_local.default.py {testpath.ROOT}/configs/_local.py'
     )
 
 if APP_DIR is None:
