@@ -11,18 +11,15 @@ _logger = logging.getLogger(__name__)
 
 class SquishServer:
 
-    def __init__(
-            self,
-            host: str = '127.0.0.1',
-            port: int = local_system.find_free_port(configs.squish.SERVET_PORT, 100)
-    ):
+    def __init__(self):
         self.path = configs.testpath.SQUISH_DIR / 'bin' / 'squishserver'
         self.config = configs.testpath.ROOT / 'squish_server.ini'
-        self.host = host
-        self.port = port
+        self.host = '127.0.0.1'
+        self.port = None
         self.pid = None
 
     def start(self):
+        self.port = local_system.find_free_port(configs.squish.SERVET_PORT, 100)
         cmd = [
             f'"{self.path}"',
             '--configfile', str(self.config),
@@ -35,6 +32,7 @@ class SquishServer:
         if self.pid is not None:
             local_system.kill_process(self.pid, verify=True)
             self.pid = None
+        self.port = None
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):

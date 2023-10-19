@@ -62,12 +62,5 @@ def pytest_exception_interact(node):
             name='Screenshot on fail',
             body=screenshot.read_bytes(),
             attachment_type=allure.attachment_type.PNG)
-        driver.context.detach()
-        # The maximum count of multiple instances in tests now is 3
-        max_instances = configs.squish.MAX_INSTANCES
-        for port in range(configs.squish.AUT_PORT, configs.squish.AUT_PORT + (max_instances * 1000), 1000):
-            pid = local_system.find_process_by_port(port)
-            if pid is not None:
-                local_system.kill_process(pid, verify=True)
     except Exception as ex:
         _logger.debug(ex)
