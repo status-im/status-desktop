@@ -11,7 +11,7 @@ from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
-from gui.components.wallet.wallet_account_popups import AccountPopup
+from gui.components.wallet.wallet_account_popups import AccountPopup, EditAccountFromSettingsPopup
 from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
@@ -29,6 +29,7 @@ class WalletSettingsView(QObject):
         self._wallet_settings_add_new_account_button = Button('settings_Wallet_MainView_AddNewAccountButton')
         self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
         self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
+        self._status_account_in_keypair = QObject('settingsWalletAccountDelegate_Status_account')
 
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self):
@@ -44,6 +45,39 @@ class WalletSettingsView(QObject):
     def open_account_order(self):
         self._account_order_button.click()
         return EditAccountOrderSettings().wait_until_appears()
+
+    @allure.step('Open Status account view in wallet settings')
+    def open_status_account_in_settings(self):
+        self._status_account_in_keypair.click()
+        return AccountDetailsView().wait_until_appears()
+
+
+class AccountDetailsView(WalletSettingsView):
+    def __init__(self):
+        super(AccountDetailsView, self).__init__()
+        self._back_button = Button('main_toolBar_back_button')
+        self._edit_account_button = Button('walletAccountViewEditAccountButton')
+        self._wallet_account_title = TextLabel('walletAccountViewAccountName')
+        self._wallet_account_emoji = QObject('walletAccountViewAccountEmoji')
+
+    @allure.step('Click Edit button')
+    def click_edit_account_button(self):
+        self._edit_account_button.click()
+        return EditAccountFromSettingsPopup().wait_until_appears()
+
+    @allure.step('Get account name')
+    def get_account_name_value(self):
+        return self._wallet_account_title.text
+
+    @allure.step('Get account color value')
+    def get_account_color_value(self):
+        color_name = str(self._wallet_account_title.get_object_attribute('color')['name'])
+        return color_name
+
+    @allure.step('Get account emoji id')
+    def get_account_emoji_id(self):
+        emoji_id = str(self._wallet_account_emoji.get_object_attribute('emojiId'))
+        return emoji_id
 
 
 class NetworkWalletSettings(WalletSettingsView):
@@ -281,7 +315,7 @@ class EditNetworkSettings(WalletSettingsView):
         match network_tab:
             case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
                 self._live_network_tab.click()
-                current_value =  self.get_edit_network_main_json_rpc_url_value()
+                current_value = self.get_edit_network_main_json_rpc_url_value()
                 return True if current_value.startswith(
                     WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value) and current_value.endswith("****") \
                     else False

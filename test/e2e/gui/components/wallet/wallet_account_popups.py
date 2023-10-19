@@ -1,3 +1,4 @@
+import random
 import typing
 
 import allure
@@ -5,6 +6,7 @@ import allure
 import configs
 import constants.wallet
 import driver
+from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
@@ -14,6 +16,7 @@ from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
+
 
 GENERATED_PAGES_LIMIT = 20
 
@@ -124,6 +127,44 @@ class AccountPopup(BasePopup):
     @allure.step('Save added account')
     def save(self):
         self._add_account_button.wait_until_appears().click()
+        return self
+
+
+class EditAccountFromSettingsPopup(BasePopup):
+    def __init__(self):
+        super(EditAccountFromSettingsPopup, self).__init__()
+        self._change_name_button = Button('editWalletSettings_renameButton')
+        self._account_name_input = TextEdit('editWalletSettings_AccountNameInput')
+        self._emoji_selector = QObject('editWalletSettings_EmojiSelector')
+        self._color_radiobutton = QObject('editWalletSettings_ColorSelector')
+        self._emoji_item = QObject('editWalletSettings_EmojiItem')
+
+    @allure.step('Click Change name button')
+    def click_change_name_button(self):
+        self._change_name_button.click()
+
+    @allure.step('Type in name for account')
+    def type_in_account_name(self, value: str):
+        self._account_name_input.text = value
+        return self
+
+    @allure.step('Select random color for account')
+    def select_random_color_for_account(self):
+        if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
+            del self._color_radiobutton.real_name['radioButtonColor']
+        colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
+        self._color_radiobutton.real_name['radioButtonColor'] =\
+            random.choice([color for color in colors if color != '#2a4af5'])  # exclude status default color
+        self._color_radiobutton.click()
+        return self
+
+    @allure.step('Click emoji button')
+    def select_random_emoji_for_account(self):
+        self._emoji_selector.click()
+        EmojiPopup().wait_until_appears()
+        emojis = [str(item.objectName) for item in driver.findAllObjects(self._emoji_item.real_name)]
+        value = ((random.choice(emojis)).split('_', 1))[1]
+        EmojiPopup().wait_until_appears().select(value)
         return self
 
 
