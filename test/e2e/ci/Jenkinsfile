@@ -3,16 +3,8 @@ library 'status-jenkins-lib@v1.7.13'
 
 pipeline {
 
-  environment {
-    QT_QPA_PLATFORMTHEME = "qt5ct"
-    QT_LOGGING_DEBUG = 1
-    QT_DEBUG_PLUGINS = 1
-
-    SQUISH_DIR = "/opt/squish-runner-7.1-20230222-1555"
-    PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
-    LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
-
-    TESTRAIL_URL = "https://ethstatus.testrail.net"
+  agent {
+    label "${params.AGENT} && x86_64 && qt-5.15.2"
   }
 
   parameters {
@@ -27,18 +19,6 @@ pipeline {
       sortMode: 'ASCENDING_SMART',
       tagFilter: '*',
       type: 'PT_BRANCH'
-    )
-    choice(
-      name: 'AGENT',
-      choices: [
-      'linux',
-      'linux-01',
-      'linux-02',
-      'linux-03',
-      'linux-04',
-      'linux-05',
-      ],
-      description: 'Agent name to run tests on it.'
     )
     string(
       name: 'BUILD_URL',
@@ -60,10 +40,12 @@ pipeline {
       description: 'Test run ID in Test Rail.',
       defaultValue: ''
     )
-  }
-
-  agent {
-    label "${params.AGENT} && x86_64 && qt-5.15.2"
+    /* FIXME: This is temporary and should be removed. */
+    choice(
+      name: 'AGENT',
+      description: 'Agent name to run tests on it.',
+      choices: ['linux', 'linux-01', 'linux-02', 'linux-03', 'linux-04', 'linux-05']
+    )
   }
 
   options {
@@ -78,27 +60,39 @@ pipeline {
     ))
   }
 
+  environment {
+    QT_QPA_PLATFORMTHEME = 'qt5ct'
+    QT_LOGGING_DEBUG = 1
+    QT_DEBUG_PLUGINS = 1
+
+    SQUISH_DIR = '/opt/squish-runner-7.1-20230222-1555'
+    PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
+    LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
+
+    TESTRAIL_URL = 'https://ethstatus.testrail.net'
+  }
+
   stages {
     stage('Download') {
       steps {
         script {
-          sh "mkdir -p './tmp/pkg/'"
-          if (params.BUILD_URL != "") {
+          sh 'mkdir -p ./tmp/pkg/'
+          if (params.BUILD_URL != '') {
             fileOperations([
               fileDownloadOperation(
                 url:            params.BUILD_URL,
-                userName:       "",
-                password:       "",
-                targetLocation: "./tmp/pkg/",
-                targetFileName: "StatusIm-Desktop.tar.gz",
+                userName:       '',
+                password:       '',
+                targetLocation: './tmp/pkg/',
+                targetFileName: 'StatusIm-Desktop.tar.gz',
               )
             ])
           } else {
             copyArtifacts(
-              projectName:  "status-desktop/systems/linux/x86_64/package/",
+              projectName:  'status-desktop/systems/linux/x86_64/package/',
               filter:       'pkg/*-x86_64.tar.gz',
               selector:     lastWithArtifacts(),
-              target:       "./tmp"
+              target:       './tmp'
             )
           }
           def pkg_path = "./${utils.findFile('tmp/pkg/*tar.gz')}"
@@ -115,7 +109,11 @@ pipeline {
     }
 
     stage('Test') {
-      steps {
+      steps { script {
+        def flags = []
+        if (params.TEST_NAME)  { flags.add("-k=${params.TEST_NAME}")  }
+        if (params.TEST_SCOPE) { flags.add("-m=${params.TEST_SCOPE}") }
+        dir ('configs') { sh 'ln -s _local.ci.py _local.py' }
         wrap([
           $class:            'Xvfb',
           autoDisplayName:   true,
@@ -123,27 +121,22 @@ pipeline {
           screen:            '1920x1080x24',
           additionalOptions: '-dpi 1'
         ]){
-          script {
-            sh "fluxbox &"
-            def cmd = ''
-            if (params.TEST_NAME != "") {
-              cmd = cmd + " -k ${params.TEST_NAME}"
-            }
-            if (params.TEST_SCOPE != "") {
-            cmd = cmd + " -m ${params.TEST_SCOPE}"
-            }
-            dir ('configs') { sh 'ln -s _local.ci.py _local.py' }
-            withCredentials([
-              usernamePassword(
-                credentialsId: 'test-rail-api-devops',
-                usernameVariable: 'TESTRAIL_USR',
-                passwordVariable: 'TESTRAIL_PSW')
-              ]) {
-                sh "python3 -m pytest ${cmd} --disable-warnings --alluredir=./allure-results"
-            }
+          sh 'fluxbox &'
+          withCredentials([
+            usernamePassword(
+              credentialsId: 'test-rail-api-devops',
+              usernameVariable: 'TESTRAIL_USR',
+              passwordVariable: 'TESTRAIL_PSW'
+            )
+          ]) {
+            sh """
+              python3 -m pytest ${flags.join(" ")} \
+                --disable-warnings \
+                --alluredir=./allure-results
+            """
           }
         }
-      }
+      } }
     }
   }
   post {
