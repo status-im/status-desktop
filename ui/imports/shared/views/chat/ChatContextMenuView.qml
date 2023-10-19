@@ -59,8 +59,18 @@ StatusMenu {
         onTriggered: { root.addRemoveGroupMember() }
     }
 
+    StatusAction {
+        text: qsTr("Copy channel link")
+        icon.name: "copy"
+        enabled: root.isCommunityChat
+        onTriggered: {
+            const link = Utils.getCommunityChannelShareLinkWithChatId(root.chatId)
+            Utils.copyToClipboard(link)
+        }
+    }
+
     StatusMenuSeparator {
-        visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat
+        visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat || root.isCommunityChat
     }
 
     StatusAction {
