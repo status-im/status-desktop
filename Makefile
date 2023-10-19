@@ -792,7 +792,7 @@ ICON_TOOL := node_modules/.bin/fileicon
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)" \
-	./bin/nim_status_client
+	./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
@@ -802,12 +802,12 @@ run-macos: nim_status_client
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
-	./bin/StatusDev.app/Contents/MacOS/nim_status_client
+	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
 	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
-	./bin/nim_status_client.exe
+	./bin/nim_status_client.exe $(ARGS)
 
 tests-nim-linux: | dotherside
 	LD_LIBRARY_PATH="$(QT5_LIBDIR):$(LD_LIBRARY_PATH)" \
