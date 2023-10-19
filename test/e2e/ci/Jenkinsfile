@@ -9,11 +9,11 @@ pipeline {
 
   parameters {
     gitParameter(
-      branch: '',
-      branchFilter: 'origin/(.*)',
-      defaultValue: 'master',
-      description: 'Git branch to checkout.',
       name: 'GIT_REF',
+      description: 'Git branch to checkout.',
+      branchFilter: 'origin/(.*)',
+      branch: '',
+      defaultValue: 'master',
       quickFilterEnabled: false,
       selectedValue: 'DEFAULT',
       sortMode: 'ASCENDING_SMART',
@@ -21,8 +21,8 @@ pipeline {
       type: 'PT_BRANCH'
     )
     string(
-      name: 'BUILD_URL',
-      description: 'Link to tar.gz file.',
+      name: 'BUILD_SOURCE',
+      description: 'URL to tar.gz file OR path to Jenkins build.',
       defaultValue: ''
     )
     string(
@@ -73,38 +73,44 @@ pipeline {
   }
 
   stages {
-    stage('Download') {
-      steps {
-        script {
-          sh 'mkdir -p ./tmp/pkg/'
-          if (params.BUILD_URL != '') {
-            fileOperations([
-              fileDownloadOperation(
-                url:            params.BUILD_URL,
-                userName:       '',
-                password:       '',
-                targetLocation: './tmp/pkg/',
-                targetFileName: 'StatusIm-Desktop.tar.gz',
-              )
-            ])
-          } else {
-            copyArtifacts(
-              projectName:  'status-desktop/systems/linux/x86_64/package/',
-              filter:       'pkg/*-x86_64.tar.gz',
-              selector:     lastWithArtifacts(),
-              target:       './tmp'
-            )
-          }
-          def pkg_path = "./${utils.findFile('tmp/pkg/*tar.gz')}"
-          sh "tar -zxvf '${pkg_path}' -C './tmp'"
-          env.APP_DIR = "./${utils.findFile('tmp/*.AppImage')}"
-        }
-      }
-    }
-
     stage('Setup') {
       steps { script {
         sh 'pip3 install --user -r requirements.txt'
+      } }
+    }
+
+    stage('Download') {
+      when { expression { params.BUILD_SOURCE.startsWith('http') } }
+      steps { script {
+        sh 'mkdir -p ./tmp/pkg/'
+        fileOperations([
+          fileDownloadOperation(
+            url:            params.BUILD_SOURCE,
+            targetFileName: 'StatusIm-Desktop.tar.gz',
+            targetLocation: './tmp/pkg/',
+            userName:       '',
+            password:       '',
+          )
+        ])
+      } }
+    }
+
+    stage('Copy') {
+      when { expression { ! params.BUILD_SOURCE.startsWith('http') } }
+      steps { script {
+        copyArtifacts(
+          projectName: params.BUILD_SOURCE,
+          filter:      'pkg/*-x86_64.tar.gz',
+          selector:    lastWithArtifacts(),
+          target:      './tmp'
+        )
+      } }
+    }
+
+    stage('Unpack') {
+      steps { script {
+        sh "tar -zxvf '${utils.findFile('tmp/pkg/*tar.gz')}' -C './tmp'"
+        env.APP_DIR = utils.findFile('tmp/*.AppImage')
       } }
     }
 
@@ -120,7 +126,7 @@ pipeline {
           parallelBuild:     true,
           screen:            '1920x1080x24',
           additionalOptions: '-dpi 1'
-        ]){
+        ]) {
           sh 'fluxbox &'
           withCredentials([
             usernamePassword(
@@ -142,12 +148,12 @@ pipeline {
   post {
     always { script {
       allure([
-        jdk: '',
-        properties: [],
         results: [[path: 'allure-results']],
         reportBuildPolicy: 'ALWAYS',
+        properties: [],
+        jdk: '',
       ])
-    }}
+    } }
     cleanup { cleanWs() }
   }
 }
