@@ -127,7 +127,7 @@ QtObject:
   proc communityInfoAlreadyRequested*(self: View) {.signal.}
 
   proc communityTagsChanged*(self: View) {.signal.}
-  
+
   proc setCommunityTags*(self: View, communityTags: string) =
     self.communityTags = newQVariant(communityTags)
     self.communityTagsChanged()
@@ -285,7 +285,7 @@ QtObject:
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
     self.communityAdded(item.id)
-  
+
   proc updateItem(self: View, item: SectionItem) =
     self.model.editItem(item)
     self.communityChanged(item.id)
@@ -295,7 +295,7 @@ QtObject:
       self.updateItem(item)
     else:
       self.addItem(item)
-  
+
   proc model*(self: View): SectionModel =
     result = self.model
 
@@ -674,11 +674,6 @@ QtObject:
     return self.delegate.shareCommunityChannelUrlWithData(communityId, chatId)
 
   proc userAuthenticationCanceled*(self: View) {.signal.}
-
-  proc authenticateWithCallback*(self: View) {.slot.} =
-    self.delegate.authenticateWithCallback()
-  
-  proc callbackFromAuthentication*(self: View, authenticated: bool) {.signal.}
 
   proc requestToJoinCommunityWithAuthentication*(self: View, communityId: string, ensName: string) {.slot.} =
     self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, @[], "")
