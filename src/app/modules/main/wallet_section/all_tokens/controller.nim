@@ -45,3 +45,12 @@ method getHistoricalDataForToken*(self: Controller, symbol: string, currency: st
 
 method fetchHistoricalBalanceForTokenAsJson*(self: Controller, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
   self.tokenService.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
+
+proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
+  return self.tokenService.getSourcesOfTokensList()
+
+proc getFlatTokensList*(self: Controller): var seq[TokenItem] =
+  return self.tokenService.getFlatTokensList()
+
+proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
+  return self.tokenService.getTokenBySymbolList()

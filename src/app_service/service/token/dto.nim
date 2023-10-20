@@ -1,64 +1,67 @@
-import json
+import json, strformat
 
-include  ../../common/json_utils
+include app_service/common/json_utils
 
-import
-  web3/ethtypes, json_serialization
-from web3/conversions import `$`
+import json_serialization
 
+# TODO: remove once this is moved to wallet_accounts service
 const WEEKLY_TIME_RANGE* = 0
 const MONTHLY_TIME_RANGE* = 1
 const HALF_YEARLY_TIME_RANGE* = 2
 const YEARLY_TIME_RANGE* = 3
 const ALL_TIME_RANGE* = 4
 
+# Only contains DTO used for deserialisation of data from go lib
+
 type
   TokenDto* = ref object of RootObj
-    name*: string
-    chainId*: int
-    address*: Address
-    symbol*: string
-    decimals*: int
-    hasIcon* {.dontSerialize.}: bool
-    color*: string
-    isCustom* {.dontSerialize.}: bool
-    isVisible* {.dontSerialize.}: bool
-    communityId*: string
+    address* {.serializedFieldName("address").}: string
+    name* {.serializedFieldName("name").}: string
+    symbol* {.serializedFieldName("symbol").}: string
+    decimals* {.serializedFieldName("decimals").}: int
+    chainID* {.serializedFieldName("chainId").}: int
+    communityID* {.serializedFieldName("communityId").}: string
 
+proc `$`*(self: TokenDto): string =
+  result = fmt"""TokenDto[
+    address: {self.address},
+    name: {self.name},
+    symbol: {self.symbol},
+    decimals: {self.decimals},
+    chainID: {self.chainID},
+    communityID: {self.communityID}
+    ]"""
+
+# TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
 proc newTokenDto*(
+  address: string,
   name: string,
-  chainId: int,
-  address: Address,
   symbol: string,
   decimals: int,
-  hasIcon: bool,
-  isCustom: bool = false,
+  chainId: int,
   communityId: string = ""
 ): TokenDto =
   return TokenDto(
-    name: name,
-    chainId: chainId,
     address: address,
+    name: name,
     symbol: symbol,
     decimals: decimals,
-    hasIcon: hasIcon,
-    communityId: communityId,
-    isCustom: isCustom
+    chainId: chainId,
+    communityId: communityId
   )
 
-proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCustom: bool = true): TokenDto =
-  result = TokenDto()
-  result.isCustom = isCustom
-  result.hasIcon = hasIcon
+type TokenSourceDto* = ref object of RootObj
+    name* {.serializedFieldName("name").}: string
+    tokens* {.serializedFieldName("tokens").}: seq[TokenDto]
+    updatedAt* {.serializedFieldName("updatedAt").}: int64
+    source* {.serializedFieldName("source").}: string
+    version* {.serializedFieldName("version").}: string
 
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("chainId", result.chainId)
-  discard jsonObj.getProp("address", result.address)
-  discard jsonObj.getProp("symbol", result.symbol)
-  discard jsonObj.getProp("decimals", result.decimals)
-  discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("communityId", result.communityId)
-  result.isVisible = isVisible
-
-proc addressAsString*(self: TokenDto): string =
-  return $self.address
+proc `$`*(self: TokenSourceDto): string =
+  result = fmt"""TokenSourceDto[
+    name: {self.name},
+    tokens: {self.tokens},
+    updatedAt: {self.updatedAt},
+    source: {self.source},
+    version: {self.version}
+    ]"""

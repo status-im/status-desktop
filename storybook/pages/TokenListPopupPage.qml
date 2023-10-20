@@ -29,10 +29,6 @@ SplitView {
             ExpressionRole {
                 name: "explorerUrl"
                 expression: { return  "https://status.im/" }
-            },
-            ExpressionRole {
-                name: "jsArraySources"
-                expression: model.sources.split(";")
             }
         ]
     }
@@ -89,8 +85,9 @@ SplitView {
                             sourceModel: root.tokensProxyModel
 
                             // Filter by source
-                            filters: ExpressionFilter {
-                                expression: model.jsArraySources.includes(keyFilter.value)
+                            filters: RegExpFilter {
+                                roleName: "sources"
+                                pattern: "\;" + keyFilter.value + "\;"
                             }
                         }
 

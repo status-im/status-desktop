@@ -7,7 +7,11 @@ const Optimism = 10
 const Poa = 99
 const XDai = 100
 
+const NETWORK_LAYER_1 = 1
+const NETWORK_LAYER_2 = 2
+
 export Mainnet, Ropsten, Rinkeby, Goerli, Optimism, Poa, XDai, Sepolia
+export NETWORK_LAYER_1, NETWORK_LAYER_2
 
 type
   NetworkType* {.pure.} = enum

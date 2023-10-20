@@ -451,5 +451,5 @@ QtObject:
     let account = self.walletAccountService.getWalletAccount(0).address
     let network = self.networkService.getNetworkForStickers()
 
-    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
-    return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
+    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.address]).result
+    return ens_utils.hex2Token(balances{account}{token.address}.getStr, token.decimals)

@@ -95,6 +95,9 @@ rpc(checkConnected, "wallet"):
 rpc(getTokens, "wallet"):
   chainId: int
 
+rpc(getTokenList, "wallet"):
+  discard
+
 rpc(getTokensBalancesForChainIDs, "wallet"):
   chainIds: seq[int]
   accounts: seq[string]

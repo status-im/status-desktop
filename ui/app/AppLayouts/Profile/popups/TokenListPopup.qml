@@ -22,7 +22,7 @@ StatusDialog {
     required property int sourceUpdatedAt
     required property string sourceVersion
     required property int tokensCount
-    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
+    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl, isTest
 
     signal linkClicked(string link)
 
@@ -45,7 +45,6 @@ StatusDialog {
         bottomMargin: Style.current.padding
         implicitHeight: contentHeight
 
-        model: root.tokensListModel
         header: ColumnLayout {
             spacing: 20
             width: list.width
@@ -60,6 +59,10 @@ StatusDialog {
             CustomHeaderDelegate {}
         }
         delegate: CustomDelegate {}
+        /* This late binding has been added here because without it all
+        the items in the list get initialised before the popup is launched
+        creating a delay */
+        Component.onCompleted: model = Qt.binding(() => root.tokensListModel)
     }
 
     header: StatusDialogHeader {
@@ -102,6 +105,7 @@ StatusDialog {
             Layout.fillWidth: true
 
             text: textBlock.text
+            elide: Text.ElideRight
             color: Theme.palette.baseColor1
         }
     }
@@ -118,7 +122,7 @@ StatusDialog {
         textColor: Theme.palette.baseColor1
         textHoverColor: Theme.palette.directColor1
         icon.name: "external-link"
-        onClicked: root.linkClicked(root.sourceUrl)
+        onClicked: root.linkClicked(link)
     }
 
     component CustomSourceInfoComponent: ColumnLayout {
@@ -236,7 +240,7 @@ StatusDialog {
                     StatusBaseText {
                         Layout.fillWidth: true
 
-                        text: model.chainName
+                        text: model.chainName + (model.isTest? " " + qsTr("(Test)") : "")
                         elide: Text.ElideMiddle
                         color: Theme.palette.baseColor1
                     }

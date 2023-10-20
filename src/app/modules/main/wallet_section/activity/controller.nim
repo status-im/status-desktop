@@ -18,6 +18,7 @@ import app/core/signals/types
 import backend/activity as backend_activity
 import backend/backend as backend
 
+import app_service/common/conversion
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
@@ -361,7 +362,7 @@ QtObject:
           assets.add(backend_activity.Token(
             tokenType: tokenType,
             chainId: backend_activity.ChainId(token.chainId),
-            address: some(token.address)
+            address: some(parseAddress(token.address))
           ))
 
     self.currentActivityFilter.assets = assets

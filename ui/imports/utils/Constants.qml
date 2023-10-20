@@ -789,8 +789,8 @@ QtObject {
     }
 
     readonly property QtObject supportedTokenSources: QtObject {
-        readonly property string uniswap: "uniswap"
-        readonly property string status: "status"
+        readonly property string uniswap: "Uniswap Labs Default Token List"
+        readonly property string status: "Status Token List"
         readonly property string custom: "custom"
     }
 

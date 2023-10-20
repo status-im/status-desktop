@@ -1,7 +1,6 @@
-
 import Tables, NimQml, sequtils, sugar
 
-import ../../../../../app_service/service/network/dto
+import app_service/service/network/[dto, types]
 import ./io_interface
 import ./model
 import ./item
@@ -17,6 +16,7 @@ QtObject:
       enabled: Model
       layer1: Model
       layer2: Model
+      flatNetworks: Model
       areTestNetworksEnabled: bool
 
   proc setup(self: View) =
@@ -32,6 +32,7 @@ QtObject:
     result.layer1 = newModel()
     result.layer2 = newModel()
     result.enabled = newModel()
+    result.flatNetworks = newModel()
     result.setup()
 
   proc areTestNetworksEnabledChanged*(self: View) {.signal.}
@@ -74,6 +75,14 @@ QtObject:
     read = getLayer2
     notify = layer2Changed
 
+
+  proc flatNetworksChanged*(self: View) {.signal.}
+  proc getFlatNetworks(self: View): QVariant {.slot.} =
+    return newQVariant(self.flatNetworks)
+  QtProperty[QVariant] flatNetworks:
+    read = getFlatNetworks
+    notify = flatNetworksChanged
+
   proc enabledChanged*(self: View) {.signal.}
 
   proc getEnabled(self: View): QVariant {.slot.} =
@@ -105,18 +114,19 @@ QtObject:
         networkEnabledToUxEnabledState(n.enabled, allEnabled)
       ))
 
-    self.all.setItems(items)
-    self.layer1.setItems(items.filter(i => i.getLayer() == 1))
-    self.layer2.setItems(items.filter(i => i.getLayer() == 2))
-    self.enabled.setItems(items.filter(i => i.getIsEnabled()))
+    let filteredItems = items.filter(i => i.getIsTest() == self.areTestNetworksEnabled)
+    self.flatNetworks.setItems(items)
+    self.all.setItems(filteredItems)
+    self.layer1.setItems(filteredItems.filter(i => i.getLayer() == NETWORK_LAYER_1))
+    self.layer2.setItems(filteredItems.filter(i => i.getLayer() == NETWORK_LAYER_2))
+    self.enabled.setItems(filteredItems.filter(i => i.getIsEnabled()))
 
     self.allChanged()
     self.layer1Changed()
     self.layer2Changed()
     self.enabledChanged()
 
-  proc load*(self: View, networks: seq[NetworkDto]) =
-    self.setItems(networks)    
+  proc load*(self: View) =
     self.delegate.viewDidLoad()
 
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =

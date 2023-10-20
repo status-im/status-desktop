@@ -165,10 +165,13 @@ proc getChainIdForStickers*(self: Controller): int =
 proc getStatusToken*(self: Controller): string =
   let token = self.stickerService.getStatusToken()
 
+  if token == nil:
+    return $ %*{}
+
   let jsonObj = %* {
     "name": token.name,
     "symbol": token.symbol,
-    "address": token.addressAsString()
+    "address": token.address
   }
   return $jsonObj
 

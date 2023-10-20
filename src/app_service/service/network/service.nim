@@ -58,6 +58,14 @@ proc resetNetworks*(self: Service) =
 proc getCombinedNetworks*(self: Service): seq[CombinedNetworkDto] =
   return self.fetchNetworks()
 
+# TODO:: update the networks service to unify the model exposed from this service
+# We currently have 3 types: combined, test/mainet and flat and probably can be optimized
+# follow up task https://github.com/status-im/status-desktop/issues/12717
+proc getFlatNetworks*(self: Service): seq[NetworkDto] =
+  for network in self.fetchNetworks():
+      result.add(network.test)
+      result.add(network.prod)
+
 proc getNetworks*(self: Service): seq[NetworkDto] = 
   let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
     
@@ -66,6 +74,11 @@ proc getNetworks*(self: Service): seq[NetworkDto] =
       result.add(network.test)
     else:
       result.add(network.prod)
+
+proc getAllNetworkChainIds*(self: Service): seq[int] =
+  for network in self.fetchNetworks():
+      result.add(network.test.chainId)
+      result.add(network.prod.chainId)
 
 proc upsertNetwork*(self: Service, network: NetworkDto): bool =
   let response = backend.addEthereumChain(backend.Network(

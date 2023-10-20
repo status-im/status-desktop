@@ -1,5 +1,6 @@
 import NimQml, Tables, strutils, strformat, sequtils, sugar, json, stint
 
+import app_service/service/network/types
 import app/modules/shared_models/currency_amount
 import ./network_item, ./suggested_route_item
 
@@ -322,6 +323,6 @@ QtObject:
 
   proc getLayer1Network*(self: NetworkModel): int =
     for item in self.items:
-      if item.getLayer() == 1:
+      if item.getLayer() == NETWORK_LAYER_1:
         return item.getChainId()
     return 0

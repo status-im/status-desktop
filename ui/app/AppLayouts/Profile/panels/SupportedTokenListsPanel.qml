@@ -94,8 +94,9 @@ StatusListView {
                     sourceModel: root.tokensListModel
 
                     // Filter by source
-                    filters: ExpressionFilter {
-                        expression: (model.jsArraySources).includes(keyFilter.value)
+                    filters: RegExpFilter {
+                        roleName: "sources"
+                        pattern: "\;" + keyFilter.value + "\;"
                     }
                 }
 

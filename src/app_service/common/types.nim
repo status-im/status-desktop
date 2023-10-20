@@ -83,3 +83,10 @@ type Shard* = object
 proc initShard*(cluster: int = -1, index: int = -1): Shard =
   result.cluster = cluster
   result.index = index
+
+# ToDo: Will be streamlined to single TokenType under https://github.com/status-im/status-desktop/pull/12654/files
+type NewTokenType* {.pure.} = enum
+  Native = 0
+  ERC20 = 1,
+  ERC721 = 2,
+  ERC1155
