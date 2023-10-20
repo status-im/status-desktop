@@ -39,7 +39,6 @@ type
     tmpRequestToJoinEnsName: string
     tmpAddressesToShare: seq[string]
     tmpAirdropAddress: string
-    tmpAuthenticationWithCallbackInProgress: bool
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -66,7 +65,6 @@ proc newController*(
   result.tmpRequestToJoinEnsName = ""
   result.tmpAirdropAddress = ""
   result.tmpAddressesToShare = @[]
-  result.tmpAuthenticationWithCallbackInProgress = false
 
 proc delete*(self: Controller) =
   discard
@@ -204,10 +202,6 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER:
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
-    if self.tmpAuthenticationWithCallbackInProgress:
-      let authenticated = not (args.password == "" and args.pin == "")
-      self.delegate.callbackFromAuthentication(authenticated)
-      self.tmpAuthenticationWithCallbackInProgress = false
 
     self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
       let args = CheckPermissionsToJoinFailedArgs(e)
@@ -429,9 +423,6 @@ proc authenticateToEditSharedAddresses*(self: Controller, communityId: string, a
   self.tmpAddressesToShare = addressesToShare
   self.authenticate()
 
-proc authenticateWithCallback*(self: Controller) =
-  self.tmpAuthenticationWithCallbackInProgress = true
-  self.authenticate()
 
 proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
   result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)

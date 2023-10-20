@@ -191,12 +191,6 @@ method editSharedAddressesWithAuthentication*(self: AccessInterface, communityId
     {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateWithCallback*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

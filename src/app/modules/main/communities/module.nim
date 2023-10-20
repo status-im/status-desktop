@@ -549,11 +549,7 @@ method requestToJoinCommunityWithAuthentication*(self: Module, communityId, ensN
 method editSharedAddressesWithAuthentication*(self: Module, communityId: string, addressesToShare: seq[string], airdropAddress: string) =
   self.controller.authenticateToEditSharedAddresses(communityId, addressesToShare, airdropAddress)
 
-method authenticateWithCallback*(self: Module) =
-  self.controller.authenticateWithCallback()
 
-method callbackFromAuthentication*(self: Module, authenticated: bool) =
-  self.view.callbackFromAuthentication(authenticated)
 
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
