@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.7.17'
+library 'status-jenkins-lib@debug_linux_bundle'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -59,7 +59,7 @@ pipeline {
   environment {
     TARGET = "linux/${getArch()}"
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j1 V=${params.VERBOSE}"
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.15.2/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
@@ -86,7 +86,7 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+        linux.bundle('tgz-linux', 1)
       } }
     }
 

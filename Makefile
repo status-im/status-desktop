@@ -5,7 +5,7 @@
 # at your option. This file may not be copied, modified, or distributed except
 # according to those terms.
 
-SHELL := bash # the shell used internally by Make
+SHELL := bash -x # the shell used internally by Make
 
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
@@ -690,6 +690,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	echo sign-linux
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
 endif
 
