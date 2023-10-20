@@ -7,14 +7,18 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/token/service as token_service
+import app_service/service/network/service as network_service
 import app_service/common/social_links
+
+import app/modules/shared_modules/collectibles/controller as collectiblesc
 
 import app_service/service/profile/dto/profile_showcase_entry
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
+
+import backend/collectibles as backend_collectibles
 
 type
   Controller* = ref object of RootObj
@@ -24,10 +28,12 @@ type
     settingsService: settings_service.Service
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
-    tokenService: token_service.Service
+    collectiblesController: collectiblesc.Controller
+    networkService: network_service.Service
 
   # Forward declaration
 proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: Table[string, ProfileShowcaseEntryDto])
+proc getEnabledChainIds*(self: Controller): seq[int]
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -36,7 +42,7 @@ proc newController*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    tokenService: token_service.Service): Controller =
+    networkService: network_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -44,10 +50,16 @@ proc newController*(
   result.settingsService = settingsService
   result.communityService = communityService
   result.walletAccountService = walletAccountService
-  result.tokenService = tokenService
+  result.networkService = networkService
+
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
+    autofetch = false,
+    events = events
+  )
 
 proc delete*(self: Controller) =
-  discard
+  self.collectiblesController.delete
 
 proc init*(self: Controller) =
   self.settingsService.fetchAndStoreSocialLinks()
@@ -85,10 +97,15 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
       )
     profileCommunityItems.add(initProfileShowcaseCommunityItem(community, profileEntry))
 
-    # TODO: collect community tokens & collectibles 
-
+  var collectibleAddresses: seq[string] = @[]
   # Collect wallet accounts
   for walletAccount in self.walletAccountService.getWalletAccounts():
+    # Skip watch-only accounts
+    if walletAccount.walletType == WalletTypeWatch:
+      continue
+
+    collectibleAddresses.add(walletAccount.address)
+
     var walletProfileEntry: ProfileShowcaseEntryDto
     if accounts.contains(walletAccount.address):
       walletProfileEntry = accounts[walletAccount.address]
@@ -115,9 +132,9 @@ proc updateShowcasePreferences(self: Controller, communities, accounts, collecti
         )
       profileAssetItems.add(initProfileShowcaseAssetItem(token, tokenProfileEntry))
 
-    # TODO collect collectibles
-    # Community collectibles (ERC721 and others)
-    #   profileCollectibleItems.add(initProfileShowcaseCollectibleItem(token, profileEntry))
+    let enabledNetworks = self.getEnabledChainIds()
+    self.collectiblesController.globalFilterChanged(collectibleAddresses, enabledNetworks)
+    self.collectiblesController.loadMoreItems()
 
     self.delegate.setProfileShowcaseCommunitiesPreferences(profileCommunityItems)
     self.delegate.setProfileShowcaseAccountsPreferences(profileAccountItems)
@@ -177,3 +194,6 @@ proc storeProfileShowcasePreferences*(self: Controller, profileChanges: string) 
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
+
+proc getEnabledChainIds*(self: Controller): seq[int] =
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)

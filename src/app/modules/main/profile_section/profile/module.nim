@@ -9,7 +9,7 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/token/service as token_service
+import app_service/service/network/service as network_service
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
@@ -40,12 +40,12 @@ proc newModule*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    tokenService: token_service.Service): Module =
+    networkService: network_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, tokenService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, networkService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

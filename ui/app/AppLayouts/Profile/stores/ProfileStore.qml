@@ -97,6 +97,6 @@ QtObject {
     }
 
     function requestProfileShowcasePreferences() {
-         root.profileModule.requestProfileShowcasePreferences()
+        root.profileModule.requestProfileShowcasePreferences()
     }
 }
