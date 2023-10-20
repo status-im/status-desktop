@@ -7,8 +7,6 @@ from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
 from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.main_window import MainWindow
 
-pytestmark = allure.suite("Wallet")
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')
 @pytest.mark.case(703505)

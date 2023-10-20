@@ -57,6 +57,7 @@ class AccountDetailsView(WalletSettingsView):
         super(AccountDetailsView, self).__init__()
         self._back_button = Button('main_toolBar_back_button')
         self._edit_account_button = Button('walletAccountViewEditAccountButton')
+        self._delete_account_button = Button('walletAccountViewDeleteAccountButton')
         self._wallet_account_title = TextLabel('walletAccountViewAccountName')
         self._wallet_account_emoji = QObject('walletAccountViewAccountEmoji')
 
@@ -64,6 +65,10 @@ class AccountDetailsView(WalletSettingsView):
     def click_edit_account_button(self):
         self._edit_account_button.click()
         return EditAccountFromSettingsPopup().wait_until_appears()
+
+    @allure.step('Verify Delete button presence')
+    def is_delete_account_button_present(self):
+        return self._delete_account_button.is_visible
 
     @allure.step('Get account name')
     def get_account_name_value(self):

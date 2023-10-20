@@ -71,6 +71,7 @@ settingsWalletAccountDelegate_Status_account = {"container": settingsContentBase
 walletAccountViewEditAccountButton = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewEditAccountButton", "type": "StatusButton"}
 walletAccountViewAccountName = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewAccountName", "type": "StatusBaseText"}
 walletAccountViewAccountEmoji = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewAccountImage", "type": "StatusEmoji", "visible": True}
+walletAccountViewDeleteAccountButton = {"container": statusDesktop_mainWindow, "objectName": "deleteAccountButton", "type": "StatusButton"}
 
 # Wallet edit network view
 settingsContentBaseScrollView_editPreviwTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, "objectName": "editPreviwTabBar", "type": "StatusTabBar"}

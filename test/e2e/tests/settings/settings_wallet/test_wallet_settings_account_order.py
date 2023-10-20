@@ -53,7 +53,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert driver.waitFor(lambda: account_order.accounts[1].name == second_name)
             assert driver.waitFor(lambda: account_order.accounts[2].name == default_name)
         with step('Account order is correct in wallet'):
-            wallet = main_screen.left_panel.open_wallet().wait_until_appears()
+            wallet = main_screen.left_panel.open_wallet()
             assert driver.waitFor(lambda: wallet.left_panel.accounts[0].name == name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[1].name == second_name)
             assert driver.waitFor(lambda: wallet.left_panel.accounts[2].name == default_name)

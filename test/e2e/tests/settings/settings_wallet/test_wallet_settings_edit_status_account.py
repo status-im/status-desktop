@@ -35,6 +35,8 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
     current_color = status_acc_view.get_account_color_value()
     account_emoji_id_after = status_acc_view.get_account_emoji_id()
 
+    assert not status_acc_view.is_delete_account_button_present(), \
+        f"Delete button should not be present for Status account"
     assert status_acc_view.get_account_name_value() == new_name, f"Account name has not been changed"
     assert account_emoji_id_before != account_emoji_id_after, f"Account emoji has not been changed"
     assert WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value != current_color, \
