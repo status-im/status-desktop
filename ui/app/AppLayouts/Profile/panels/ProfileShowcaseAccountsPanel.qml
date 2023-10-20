@@ -28,6 +28,7 @@ ProfileShowcasePanel {
             tmpObj.showcaseVisibility = value
             showcaseModel.append(tmpObj)
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
+            root.showcaseEntryChanged()
         }
     }
     showcaseDraggableDelegateComponent: AccountShowcaseDelegate {
@@ -44,6 +45,7 @@ ProfileShowcasePanel {
             } else {
                 showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
             }
+            root.showcaseEntryChanged()
         }
     }
 }

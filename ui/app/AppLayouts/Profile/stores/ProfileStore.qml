@@ -27,6 +27,11 @@ QtObject {
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
+    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
+    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
+    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
+    readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
             localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
@@ -85,5 +90,13 @@ QtObject {
 
     function setBio(bio) {
         root.profileModule.setBio(bio)
+    }
+
+    function storeProfileShowcasePreferences(profileChanges) {
+        root.profileModule.storeProfileShowcasePreferences(profileChanges)
+    }
+
+    function requestProfileShowcasePreferences() {
+        root.profileModule.requestProfileShowcasePreferences()
     }
 }

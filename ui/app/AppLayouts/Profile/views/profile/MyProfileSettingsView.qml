@@ -28,6 +28,8 @@ ColumnLayout {
     property WalletStore walletStore
     property var communitiesModel
 
+    property bool hasAnyProfileShowcaseChanges: false
+
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
         property string bio: descriptionPanel.bio.text
@@ -40,7 +42,8 @@ ColumnLayout {
                                   descriptionPanel.bio.text !== profileStore.bio ||
                                   profileStore.socialLinksDirty ||
                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
-                                  profileHeader.icon !== profileStore.profileLargeImage
+                                  profileHeader.icon !== profileStore.profileLargeImage ||
+                                  hasAnyProfileShowcaseChanges
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -50,9 +53,12 @@ ColumnLayout {
         profileStore.resetSocialLinks()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+        hasAnyProfileShowcaseChanges = false
     }
 
     function save() {
+        // TODO: if hasAnyProfileShowcaseChanges, save
+
         if (!descriptionPanel.isEnsName)
             profileStore.setDisplayName(descriptionPanel.displayName.text)
         profileStore.setBio(descriptionPanel.bio.text.trim())
@@ -74,6 +80,9 @@ ColumnLayout {
 
         reset()
     }
+
+    onVisibleChanged: profileStore.requestProfileShowcasePreferences()
+    Component.onCompleted: profileStore.requestProfileShowcasePreferences()
 
     Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
@@ -161,7 +170,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
-        text: qsTr("Showcase (demo only)")
+        text: qsTr("Showcase")
         color: Theme.palette.baseColor1
     }
 
@@ -199,6 +208,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.communitiesModel
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseAccountsPanel {
@@ -206,18 +216,21 @@ ColumnLayout {
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.accounts
             currentWallet: root.walletStore.overview.mixedcaseAddress
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseCollectiblesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.collectibles
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseAssetsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.assets
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
     }
 }

@@ -34,6 +34,8 @@ Control {
     property Component draggableDelegateComponent
     property Component showcaseDraggableDelegateComponent
 
+    signal showcaseEntryChanged()
+
     background: null
 
     component VisibilityDropArea: AbstractButton {
@@ -66,6 +68,7 @@ Control {
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
                     showcaseModel.append(tmpObj)
+                    root.showcaseEntryChanged()
                 }
             }
         }
@@ -115,11 +118,13 @@ Control {
                 let item = get(i)
                 result.push(item)
             }
+            console.log("----- SAVE -->", JSON.stringify(result))
             settings.setValue(root.settingsKey, JSON.stringify(result))
         }
 
         function load() {
             const data = settings.value(root.settingsKey)
+            console.log("----- LOAD -->", data)
             try {
                 const arr = JSON.parse(data)
                 for (const i in arr)
@@ -299,6 +304,7 @@ Control {
 
                 onDropped: function(drop) {
                     showcaseModel.remove(drop.source.visualIndex)
+                    root.showcaseEntryChanged()
                 }
 
                 Rectangle {
