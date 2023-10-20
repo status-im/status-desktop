@@ -119,9 +119,15 @@ class LeftPanel(QObject):
         return SettingsScreen().wait_until_appears()
 
     @allure.step('Open Wallet section')
-    def open_wallet(self) -> WalletScreen:
+    def open_wallet(self, attempts: int = 2) -> WalletScreen:
         self._wallet_button.click()
-        return WalletScreen().wait_until_appears()
+        try:
+            return WalletScreen().wait_until_appears()
+        except AssertionError as err:
+            if attempts:
+                return self.open_wallet(attempts - 1)
+            else:
+                raise err
 
 
 class MainWindow(Window):
