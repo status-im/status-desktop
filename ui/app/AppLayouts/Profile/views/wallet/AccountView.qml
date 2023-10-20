@@ -95,6 +95,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
+        objectName: "AccountDetails_TextLabel"
         Layout.topMargin: Style.current.bigPadding
         text: qsTr("Account details")
         font.pixelSize: 15
@@ -114,6 +115,7 @@ ColumnLayout {
             width: parent.width
             spacing: 0
             WalletAccountDetailsListItem {
+                objectName: "Balance_ListItem"
                 Layout.fillWidth: true
                 title: qsTr("Balance")
                 subTitle: !!root.account && root.account.balance ? LocaleUtils.currencyAmountToLocaleString(root.account.balance): ""
@@ -124,6 +126,7 @@ ColumnLayout {
                 color: Theme.palette.baseColor2
             }
             WalletAccountDetailsListItem {
+                objectName: "Address_ListItem"
                 Layout.fillWidth: true
                 isInteractive: true
                 moreButtonEnabled: true
@@ -140,6 +143,7 @@ ColumnLayout {
                 color: Theme.palette.baseColor2
             }
             StatusBaseText {
+                objectName: "Keypair_TextLabel"
                 text: qsTr("Keypair")
                 Layout.leftMargin: 16
                 Layout.topMargin: 12
@@ -148,6 +152,7 @@ ColumnLayout {
                 visible: !d.watchOnlyAccount
             }
             WalletAccountDetailsKeypairItem {
+                objectName: "KeyPair_Item"
                 Layout.fillWidth: true
                 keyPair: root.keyPair
                 visible: !d.watchOnlyAccount
@@ -160,6 +165,7 @@ ColumnLayout {
                 visible: !d.watchOnlyAccount
             }
             WalletAccountDetailsListItem {
+                objectName: "Origin_ListItem"
                 Layout.fillWidth: true
                 title: qsTr("Origin")
                 subTitle: {
@@ -186,6 +192,7 @@ ColumnLayout {
                 color: Theme.palette.baseColor2
             }
             WalletAccountDetailsListItem {
+                objectName: "DerivationPath_ListItem"
                 id: derivationPath
                 Layout.fillWidth: true
                 isInteractive: true
@@ -202,6 +209,7 @@ ColumnLayout {
                 visible: derivationPath.visible
             }
             WalletAccountDetailsListItem {
+                objectName: "Stored_ListItem"
                 Layout.fillWidth: true
                 title: qsTr("Stored")
                 subTitle: Utils.getKeypairLocation(root.keyPair, true)
@@ -238,6 +246,7 @@ ColumnLayout {
     }
 
     StatusListItem {
+        objectName: "PreferredNetworks_ListItem"
         Layout.fillWidth: true
         Layout.topMargin: Style.current.halfPadding
         title: qsTr("Preferred networks when sharing this address")
