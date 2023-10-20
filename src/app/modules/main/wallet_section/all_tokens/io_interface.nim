@@ -1,3 +1,17 @@
+import app_service/service/token/service_items
+
+type
+  SourcesOfTokensModelDataSource* = tuple[
+    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem]
+  ]
+type
+  FlatTokenModelDataSource* = tuple[
+    getFlatTokensList: proc(): var seq[TokenItem]
+  ]
+type
+  TokenBySymbolModelDataSource* = tuple[
+    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem]
+  ]
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -24,6 +38,15 @@ method fetchHistoricalBalanceForTokenAsJson*(self: AccessInterface, address: str
   raise newException(ValueError, "No implementation available")
 
 method tokenBalanceHistoryDataResolved*(self: AccessInterface, balanceHistoryJson: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSourcesOfTokensModelDataSource*(self: AccessInterface): SourcesOfTokensModelDataSource {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getFlatTokenModelDataSource*(self: AccessInterface): FlatTokenModelDataSource {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTokenBySymbolModelDataSource*(self: AccessInterface): TokenBySymbolModelDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

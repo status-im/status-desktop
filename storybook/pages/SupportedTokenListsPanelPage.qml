@@ -31,10 +31,6 @@ SplitView {
             ExpressionRole {
                 name: "explorerUrl"
                 expression: { return  "https://status.im/" }
-            },
-            ExpressionRole {
-                name: "jsArraySources"
-                expression: model.sources.split(";")
             }
         ]
     }

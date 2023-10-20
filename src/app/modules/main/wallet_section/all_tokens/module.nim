@@ -39,6 +39,12 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
 
+  # Passing on the events for changes in model to abstract model
+  self.events.on(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED) do(e: Args):
+    self.view.modelsAboutToUpdate()
+  self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
+    self.view.modelsUpdated()
+
   self.controller.init()
   self.view.load()
 
@@ -62,9 +68,34 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.setTokenHistoricalDataReady(tokenDetails)
 
-
 method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
   self.controller.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol,timeIntervalEnum)
 
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
+
+method getFlatTokensList*(self: Module): var seq[TokenItem]  =
+  return self.controller.getFlatTokensList()
+
+method getTokenBySymbolList*(self: Module): var seq[TokenBySymbolItem] =
+  return self.controller.getTokenBySymbolList()
+
+method getSourcesOfTokensList*(self: Module): var seq[SupportedSourcesItem] =
+  return self.controller.getSourcesOfTokensList()
+
+# Interfaces for getting lists from the service files into the abstract models
+
+method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
+  return (
+    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.getSourcesOfTokensList()
+  )
+
+method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
+  return (
+    getFlatTokensList: proc(): var seq[TokenItem] = self.getFlatTokensList()
+  )
+
+method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
+  return (
+    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.getTokenBySymbolList()
+  )

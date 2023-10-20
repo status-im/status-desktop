@@ -341,7 +341,7 @@ QtObject:
       else:
         let network = self.networkService.getNetwork(chainID)
         let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSym)
-        toAddress = token.address
+        toAddress = parseAddress(token.address)
 
       let transfer = Transfer(
         to: parseAddress(to_addr),

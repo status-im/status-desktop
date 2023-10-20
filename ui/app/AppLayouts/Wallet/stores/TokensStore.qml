@@ -9,13 +9,13 @@ QtObject {
     id: root
 
     /* PRIVATE: Modules used to get data from backend */
-    readonly property var _walletModule: walletSectionNewModule
+    readonly property var _allTokensModule: walletSectionAllTokens
     readonly property var _networksModule: networksModule
 
     /* This contains the different sources for the tokens list
        ex. uniswap list, status tokens list */
     readonly property var sourcesOfTokensModel: SortFilterProxyModel {
-        sourceModel: root._walletModule.sourcesOfTokensModel
+        sourceModel: root._allTokensModule.sourcesOfTokensModel
         proxyRoles: ExpressionRole {
             function sourceImage(sourceKey) {
                 return Constants.getSupportedTokenSourceImage(sourceKey)
@@ -23,16 +23,26 @@ QtObject {
             name: "image"
             expression: sourceImage(model.key)
         }
+        filters: AnyOf {
+            ValueFilter {
+                roleName: "key"
+                value: Constants.supportedTokenSources.uniswap
+            }
+            ValueFilter {
+                roleName: "key"
+                value: Constants.supportedTokenSources.status
+            }
+        }
     }
 
     /* This list contains the complete list of tokens with separate
        entry per token which has a unique [address + network] pair */
-    readonly property var flatTokensModel: root._walletModule.flatTokensModel
+    readonly property var flatTokensModel: root._allTokensModule.flatTokensModel
 
     /* PRIVATE: This model just combines tokens and network information in one */
     readonly property LeftJoinModel _joinFlatTokensModel : LeftJoinModel {
         leftModel: root.flatTokensModel
-        rightModel: root._networksModule.all
+        rightModel: root._networksModule.flatNetworks
 
         joinRole: "chainId"
     }
@@ -46,7 +56,7 @@ QtObject {
         proxyRoles:  [
             ExpressionRole {
                 name: "explorerUrl"
-                expression: { return  model.blockExplorerURL + "/" + model.address } // TO REVIEW the correct composition!!
+                expression: model.blockExplorerURL + "/token/" + model.address
             },
             ExpressionRole {
                 function tokenIcon(symbol) {
@@ -54,10 +64,6 @@ QtObject {
                 }
                 name: "image"
                 expression: tokenIcon(model.symbol)
-            },
-            ExpressionRole {
-                name: "jsArraySources"
-                expression: model.sources.split(";")
             }
         ]
     }
@@ -68,7 +74,7 @@ QtObject {
        there will be one entry per address + network pair */
     // TODO in #12513
     readonly property var tokensBySymbolModel: SortFilterProxyModel {
-        sourceModel: root._walletModule.tokensBySymbolModel
+        sourceModel: root._allTokensModule.tokensBySymbolModel
         proxyRoles: [
             ExpressionRole {
                 function tokenIcon(symbol) {

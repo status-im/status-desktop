@@ -1,14 +1,33 @@
 import times
-include ../../common/json_utils
+import backend/backend as backend
 
-import ../../../backend/backend as backend
-import ./dto
+include app_service/common/json_utils
 #################################################
 # Async load transactions
 #################################################
 
 const DAYS_IN_WEEK = 7
 const HOURS_IN_DAY = 24
+
+type
+  GetTokenListTaskArg = ref object of QObjectTaskArg
+
+const getSupportedTokenList*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetTokenListTaskArg](argEncoded)
+  var response: RpcResponse[JsonNode]
+  try:
+    response = backend.getTokenList()
+    let output = %* {
+        "supportedTokensJson": response,
+        "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+        "supportedTokensJson": response,
+        "error": e.msg
+    }
+    arg.finish(output)
 
 type
   GetTokenHistoricalDataTaskArg = ref object of QObjectTaskArg

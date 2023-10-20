@@ -155,10 +155,13 @@ proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
 proc getStatusToken*(self: Controller): string =
   let token = self.ensService.getStatusToken()
 
+  if token == nil:
+    return $ %*{}
+
   let jsonObj = %* {
     "name": token.name,
     "symbol": token.symbol,
-    "address": token.addressAsString()
+    "address": token.address
   }
   return $jsonObj
 

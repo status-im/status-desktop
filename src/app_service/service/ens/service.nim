@@ -414,8 +414,8 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let balances = status_go_backend.getTokensBalancesForChainIDs(@[self.getChainId()], @[account], @[token.addressAsString()]).result
-    return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
+    let balances = status_go_backend.getTokensBalancesForChainIDs(@[self.getChainId()], @[account], @[token.address]).result
+    return ens_utils.hex2Token(balances{account}{token.address}.getStr, token.decimals)
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:

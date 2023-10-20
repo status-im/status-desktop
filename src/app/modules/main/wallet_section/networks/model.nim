@@ -1,5 +1,6 @@
 import NimQml, Tables, strutils, strformat, sequtils, sugar
 
+import app_service/service/network/types
 import ./item
 
 const EXPLORER_TX_PREFIX* = "/tx/"
@@ -193,7 +194,7 @@ QtObject:
 
   proc getLayer1Network*(self: Model, testNet: bool): int =
     for item in self.items:
-      if item.getLayer() == 1 and item.getIsTest() == testNet:
+      if item.getLayer() == NETWORK_LAYER_1 and item.getIsTest() == testNet:
         return item.getChainId()
     return 0
 

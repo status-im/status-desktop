@@ -419,11 +419,11 @@ QtObject:
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let networksDto = self.networkService.getNetworks()
-    var token = newTokenDto(networksDto[0].nativeCurrencyName, networksDto[0].chainId, parseAddress(ZERO_ADDRESS), networksDto[0].nativeCurrencySymbol, networksDto[0].nativeCurrencyDecimals, true)
+    var token = self.tokenService.findTokenByAddress(networksDto[0].chainId, ZERO_ADDRESS)
 
     if message.transactionParameters.contract != "":
       for networkDto in networksDto:
-        let tokenFound = self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
+        let tokenFound = self.tokenService.findTokenByAddress(networkDto.chainId, message.transactionParameters.contract)
         if tokenFound == nil:
           continue
 
