@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.7.13'
+library 'status-jenkins-lib@v1.8.0'
 
 pipeline {
 
@@ -75,6 +75,7 @@ pipeline {
   stages {
     stage('Setup') {
       steps { script {
+        currentBuild.displayName = getNewBuildName()
         sh 'pip3 install --user -r requirements.txt'
       } }
     }
@@ -155,5 +156,17 @@ pipeline {
       ])
     } }
     cleanup { cleanWs() }
+  }
+}
+
+def getNewBuildName() {
+  /* For URLs we need to parse the filename to get attributes. */
+  if (params.BUILD_SOURCE.startsWith('http')) {
+    def tokens = utils.parseFilename(utils.baseName(params.BUILD_SOURCE))
+    return [
+      (tokens.tstamp ?: tokens.version), tokens.commit, tokens.build
+    ].grep().join('-')
+  } else {
+    return utils.baseName(params.BUILD_SOURCE)
   }
 }
