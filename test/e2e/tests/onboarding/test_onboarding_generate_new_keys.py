@@ -12,7 +12,6 @@ from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 
 _logger = logging.getLogger(__name__)
-pytestmark = allure.suite("Onboarding")
 
 
 @pytest.fixture

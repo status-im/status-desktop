@@ -15,7 +15,6 @@ from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
     SyncCodeView, SyncDeviceFoundView
 
-pytestmark = allure.suite("Syncing")
 
 
 @pytest.fixture
@@ -31,7 +30,6 @@ def sync_screen(main_window) -> SyncCodeView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'user_account_one'])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/174")
 def test_sync_device_during_onboarding(multiple_instance, user_data):
     user: UserAccount = constants.user_account_one
     main_window = MainWindow()
