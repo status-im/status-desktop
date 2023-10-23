@@ -635,3 +635,15 @@ proc isAdmin*(self: CommunityDto): bool =
 
 proc isPrivilegedUser*(self: CommunityDto): bool =
   return self.isControlNode or self.isOwner or self.isTokenMaster or self.isAdmin
+
+proc getOwnerTokenAddressFromPermissions*(self: CommunityDto): (int, string) =
+  for _, tokenPermission in self.tokenPermissions.pairs:
+    if tokenPermission.`type` == TokenPermissionType.BecomeTokenOwner:
+      if len(tokenPermission.tokenCriteria) == 0:
+        return (0, "")
+      let addresses = tokenPermission.tokenCriteria[0].contractAddresses
+      # should be one address
+      for ch, add in addresses.pairs:
+        return (ch, add)
+  return (0, "")
+      

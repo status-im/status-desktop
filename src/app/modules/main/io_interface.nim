@@ -153,7 +153,7 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
-  setActive: bool = false,) {.base.} =
+  setActive: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
@@ -229,6 +229,9 @@ method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getContactDetailsAsJson*(self: AccessInterface, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getOwnerTokenAsJson*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isEnsVerified*(self: AccessInterface, publicKey: string): bool {.base.} =
@@ -318,10 +321,13 @@ method onOwnerTokenDeployStateChanged*(self: AccessInterface, communityId: strin
 method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenRemoved*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string) =
+method onCommunityTokenRemoved*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onBurnStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onFinaliseOwnershipStatusChanged*(self: AccessInterface, isPending: bool, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onRemoteDestructed*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, addresses: seq[string]) {.base.} =

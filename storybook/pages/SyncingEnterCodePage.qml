@@ -6,6 +6,7 @@ import Storybook 1.0
 
 import mainui 1.0
 import shared.views 1.0
+import shared.stores 1.0
 
 SplitView {
     id: root
@@ -16,6 +17,7 @@ SplitView {
     Popups {
         popupParent: root
         rootStore: QtObject {}
+        communityTokensStore: CommunityTokensStore {}
     }
 
     Item {

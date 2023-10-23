@@ -14,6 +14,7 @@ StatusDialog {
 
     // Community related props:
     required property string communityName
+    required property string communityId
 
     signal cancelClicked
     signal declineClicked

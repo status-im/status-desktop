@@ -211,6 +211,9 @@ QtObject:
   proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string {.slot.} =
     return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus)
 
+  proc getOwnerTokenAsJson(self: View, communityId: string): string {.slot.} =
+    return self.delegate.getOwnerTokenAsJson(communityId)
+
   proc isEnsVerified(self:View, publicKey: string): bool {.slot.} =
     return self.delegate.isEnsVerified(publicKey)
 

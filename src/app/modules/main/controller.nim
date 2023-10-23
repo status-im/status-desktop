@@ -194,6 +194,7 @@ proc init*(self: Controller) =
       self.communityTokensService,
       setActive = args.fromUserAction
     )
+    self.delegate.onFinaliseOwnershipStatusChanged(args.isPendingOwnershipRequest, args.community.id)
 
   self.events.on(TOGGLE_SECTION) do(e:Args):
     let args = ToggleSectionArgs(e)
@@ -341,6 +342,10 @@ proc init*(self: Controller) =
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
       self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
     self.delegate.onBurnStateChanged(communityToken.communityId, communityToken.chainId, communityToken.address, args.status)
+
+  self.events.on(SIGNAL_FINALISE_OWNERSHIP_STATUS) do(e: Args):
+    let args = FinaliseOwnershipStatusArgs(e)
+    self.delegate.onFinaliseOwnershipStatusChanged(args.isPending, args.communityId)
 
   self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)

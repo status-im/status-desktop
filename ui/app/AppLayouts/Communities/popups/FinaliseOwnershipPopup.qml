@@ -107,10 +107,7 @@ StatusDialog {
                         text: qsTr("Make this device the control node and update smart contract")
                         enabled: d.ackCheck && !root.isFeeLoading && root.feeErrorText === ""
 
-                        onClicked: {
-                            root.finaliseOwnershipClicked()
-                            close()
-                        }
+                        onClicked: root.finaliseOwnershipClicked()
                     }
                     PropertyChanges { target: rejectBtn; visible: false }
                     PropertyChanges {

@@ -306,3 +306,20 @@ QtObject:
     except Exception as e:
       error "Error marking as dismissed", msg = e.msg
       result = e.msg
+
+  proc deleteActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
+    try:
+      discard backend.deleteActivityCenterNotifications(notificationIds)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, RemoveActivityCenterNotificationsArgs(
+          notificationIds: notificationIds
+          ))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+    except Exception as e:
+      error "Error deleting notifications", msg = e.msg
+      result = e.msg
+
+  proc getNotificationForTypeAndCommunityId*(self: Service, notificationType: ActivityCenterNotificationType, communityId: string): ActivityCenterNotificationDto =
+    let acNotifications = self.getActivityCenterNotifications()
+    for acNotification in acNotifications:
+      if acNotification.notificationType == notificationType and acNotification.communityId == communityId:
+        return acNotification

@@ -46,6 +46,7 @@ type
     PubsubTopic
     PubsubTopicKey
     ShardIndex
+    IsPendingOwnershipRequest
 
 QtObject:
   type
@@ -122,6 +123,7 @@ QtObject:
       ModelRole.PubsubTopic.int:"pubsubTopic",
       ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
       ModelRole.ShardIndex.int:"shardIndex",
+      ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -213,6 +215,8 @@ QtObject:
       result = newQVariant(item.pubsubTopicKey)
     of ModelRole.ShardIndex:
       result = newQVariant(item.shardIndex)
+    of ModelRole.IsPendingOwnershipRequest:
+      result = newQVariant(item.isPendingOwnershipRequest)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -370,6 +374,15 @@ QtObject:
     for item in self.items:
       if item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community:
         result += item.notificationsCount
+
+  proc updateIsPendingOwnershipRequest*(self: SectionModel, id: string, isPending: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.items[i].setIsPendingOwnershipRequest(isPending)
+        self.dataChanged(index, index, @[ModelRole.IsPendingOwnershipRequest.int])
+        return
 
   proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
     for i in 0 ..< self.items.len:

@@ -102,10 +102,12 @@ QtObject {
             required property SetSignerFeesSubscriber subscriber
             readonly property var requestArgs: ({
                 type: TransactionFeesBroker.FeeType.SetSigner,
-                tokenKey: subscriber.tokenKey,
+                chainId: subscriber.chainId,
+                contractAddress: subscriber.contractAddress,
                 accountAddress: subscriber.accountAddress
             })
-            isReady: !!subscriber.tokenKey &&
+            isReady: !!subscriber.chainId &&
+                     !!subscriber.contractAddress &&
                     !!subscriber.accountAddress &&
                     subscriber.enabled
 
@@ -140,6 +142,10 @@ QtObject {
             }
 
             function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
+                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
+            }
+
+            function onSetSignerFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
                 d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
             }
         }
@@ -190,7 +196,7 @@ QtObject {
         }
 
         function computeSetSignerFee(args, topic) {
-            communityTokensStore.computeSetSignerFee(args.tokenKey, args.accountAddress, topic)
+            communityTokensStore.computeSetSignerFee(args.chainId, args.contractAddress, args.accountAddress, topic)
         }
     }
 

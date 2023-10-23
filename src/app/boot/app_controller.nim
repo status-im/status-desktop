@@ -225,7 +225,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.transactionService, result.tokenService, result.settingsService, result.walletAccountService)
+    result.transactionService, result.tokenService, result.settingsService, result.walletAccountService, result.activityCenterService, result.communityService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
   result.networkConnectionService = network_connection_service.newService(statusFoundation.events, result.walletAccountService, result.networkService, result.nodeService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)

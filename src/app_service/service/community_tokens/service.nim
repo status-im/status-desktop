@@ -2,14 +2,19 @@ import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/signals/types
+
 import ../../../app/modules/shared_models/currency_amount
 
+import ../../../backend/collectibles as collectibles_backend
 import ../../../backend/communities as communities_backend
 import ../../../backend/community_tokens as tokens_backend
 import ../transaction/service as transaction_service
 import ../token/service as token_service
 import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
+import ../activity_center/service as ac_service
+import ../community/service as community_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
 from backend/collectibles_types import CollectibleOwner
@@ -78,6 +83,13 @@ type
     chainId*: int
 
 type
+  OwnerTokenOwnerAddressArgs* = ref object of Args
+    chainId*: int
+    contractAddress*: string
+    address*: string
+    addressName*: string
+
+type
   RemoteDestructArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
@@ -90,7 +102,6 @@ type
     transactionHash*: string
     status*: ContractTransactionStatus
 
-
 type
   ComputeFeeArgs* = ref object of Args
     ethCurrency*: CurrencyAmount
@@ -98,6 +109,13 @@ type
     errorCode*: ComputeFeeErrorCode
     contractUniqueKey*: string # used for minting
     requestId*: string
+
+type
+  SetSignerArgs* = ref object of Args
+    transactionHash*: string
+    status*: ContractTransactionStatus
+    communityId*: string
+    chainId*: int
 
 proc `%`*(self: ComputeFeeArgs): JsonNode =
     result = %* {
@@ -143,25 +161,58 @@ type
     communityTokens*: seq[CommunityTokenDto]
     communityTokenJsonItems*: JsonNode
 
-# Signals which may be emitted by this service:
-const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
-const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED* = "communityTokenDeploymentStarted"
-const SIGNAL_COMPUTE_DEPLOY_FEE* = "computeDeployFee"
-const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "computeSelfDestructFee"
-const SIGNAL_COMPUTE_BURN_FEE* = "computeBurnFee"
-const SIGNAL_COMPUTE_AIRDROP_FEE* = "computeAirdropFee"
-const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokenOwnersFetched"
-const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokenRemoteDestructStatus"
-const SIGNAL_BURN_STATUS* = "communityTokenBurnStatus"
-const SIGNAL_AIRDROP_STATUS* = "airdropStatus"
-const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "removeCommunityTokenFailed"
-const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokenRemoved"
-const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "ownerTokenDeployStatus"
-const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "ownerTokenDeploymentStarted"
-const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokenDetailsLoaded"
-const SIGNAL_ALL_COMMUNITY_TOKENS_LOADED* = "allCommunityTokensLoaded"
+type
+  OwnerTokenReceivedArgs* =  ref object of Args
+    communityId*: string
+    communityName*: string
+    chainId*: int
+    contractAddress*: string
 
-const SIGNAL_DEPLOY_OWNER_TOKEN* = "deployOwnerToken"
+type
+  FinaliseOwnershipStatusArgs* =  ref object of Args
+    isPending*: bool
+    communityId*: string
+
+type ContractDetails* = object
+  chainId*: int
+  contractAddress*: string
+  communityId*: string
+
+proc `%`*(self: ContractDetails): JsonNode =
+  result = %* {
+    "chainId": self.chainId,
+    "contractAddress": self.contractAddress,
+    "communityId": self.communityId,
+  }
+
+proc toContractDetails*(jsonObj: JsonNode): ContractDetails =
+  result = ContractDetails()
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
+
+# Signals which may be emitted by this service:
+const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokens-communityTokenDeployStatus"
+const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED* = "communityTokens-communityTokenDeploymentStarted"
+const SIGNAL_COMPUTE_DEPLOY_FEE* = "communityTokens-computeDeployFee"
+const SIGNAL_COMPUTE_SET_SIGNER_FEE* = "communityTokens-computeSetSignerFee"
+const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "communityTokens-computeSelfDestructFee"
+const SIGNAL_COMPUTE_BURN_FEE* = "communityTokens-computeBurnFee"
+const SIGNAL_COMPUTE_AIRDROP_FEE* = "communityTokens-computeAirdropFee"
+const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokens-communityTokenOwnersFetched"
+const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokens-communityTokenRemoteDestructStatus"
+const SIGNAL_BURN_STATUS* = "communityTokens-communityTokenBurnStatus"
+const SIGNAL_AIRDROP_STATUS* = "communityTokens-airdropStatus"
+const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "communityTokens-removeCommunityTokenFailed"
+const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokens-communityTokenRemoved"
+const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "communityTokens-ownerTokenDeployStatus"
+const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "communityTokens-ownerTokenDeploymentStarted"
+const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokens-communityTokenDetailsLoaded"
+const SIGNAL_ALL_COMMUNITY_TOKENS_LOADED* = "communityTokens-allCommunityTokensLoaded"
+const SIGNAL_OWNER_TOKEN_RECEIVED* = "communityTokens-ownerTokenReceived"
+const SIGNAL_SET_SIGNER_STATUS* = "communityTokens-setSignerStatus"
+const SIGNAL_FINALISE_OWNERSHIP_STATUS* = "communityTokens-finaliseOwnershipStatus"
+const SIGNAL_OWNER_TOKEN_OWNER_ADDRESS* = "communityTokens-ownerTokenOwnerAddress"
 
 QtObject:
   type
@@ -172,6 +223,8 @@ QtObject:
       tokenService: token_service.Service
       settingsService: settings_service.Service
       walletAccountService: wallet_account_service.Service
+      acService: ac_service.Service
+      communityService: community_service.Service
 
       tokenOwnersTimer: QTimer
       tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
@@ -186,6 +239,7 @@ QtObject:
   proc fetchAllTokenOwners*(self: Service)
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner]
   proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
+  proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto
 
   proc delete*(self: Service) =
       delete(self.tokenOwnersTimer)
@@ -198,7 +252,9 @@ QtObject:
     transactionService: transaction_service.Service,
     tokenService: token_service.Service,
     settingsService: settings_service.Service,
-    walletAccountService: wallet_account_service.Service
+    walletAccountService: wallet_account_service.Service,
+    acService: ac_service.Service,
+    communityService: community_service.Service
   ): Service =
     result = Service()
     result.QObject.setup
@@ -208,6 +264,8 @@ QtObject:
     result.tokenService = tokenService
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
+    result.acService = acService
+    result.communityService = communityService
     result.tokenOwnersTimer = newQTimer()
     result.tokenOwnersTimer.setInterval(10*60*1000)
     signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
@@ -216,9 +274,69 @@ QtObject:
     result.tokenOwners1SecTimer.setSingleShot(true)
     signalConnect(result.tokenOwners1SecTimer, "timeout()", result, "onFetchTempTokenOwners()", 2)
 
+  proc processReceivedCollectiblesWalletEvent(self: Service, jsonMessage: string) =
+    try:
+      let dataMessageJson = parseJson(jsonMessage)
+      let tokenDataPayload = fromJson(dataMessageJson, CommunityCollectiblesReceivedPayload)
+      for coll in tokenDataPayload.collectibles:
+        let privilegesLevel = coll.communityHeader.privilegesLevel
+        let communityId = coll.communityHeader.communityId
+        let community = self.communityService.getCommunityById(communityId)
+        if privilegesLevel == PrivilegesLevel.Owner and not community.isOwner():
+          let communityName = coll.communityHeader.communityName
+          let chainId = coll.id.contractID.chainID
+          let contractAddress = coll.id.contractID.address
+          debug "received owner token", contractAddress=contractAddress, chainId=chainId
+          let tokenReceivedArgs = OwnerTokenReceivedArgs(communityId: communityId, communityName: communityName, chainId: chainId, contractAddress: contractAddress)
+          self.events.emit(SIGNAL_OWNER_TOKEN_RECEIVED, tokenReceivedArgs)
+          let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: true, communityId: communityId)
+          self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
+          let response = tokens_backend.registerOwnerTokenReceivedNotification(communityId)
+          self.acService.parseActivityCenterResponse(response)
+    except Exception as e:
+      error "Error registering owner token received notification", msg=e.msg
+
+  proc processSetSignerTransactionEvent(self: Service, transactionArgs: TransactionMinedArgs) =
+    try:
+      if not transactionArgs.success:
+        error "Signer not set"
+      let contractDetails = transactionArgs.data.parseJson().toContractDetails()
+      if transactionArgs.success:
+        # promoteSelfToControlNode will be moved to status-go in next phase
+        discard tokens_backend.promoteSelfToControlNode(contractDetails.communityId)
+        let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: contractDetails.communityId)
+        self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
+
+      let data = SetSignerArgs(status: if transactionArgs.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed,
+                              chainId: transactionArgs.chainId,
+                              transactionHash: transactionArgs.transactionHash,
+                              communityId: contractDetails.communityId)
+      self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
+      let response = if transactionArgs.success: tokens_backend.registerReceivedOwnershipNotification(contractDetails.communityId) else: tokens_backend.registerSetSignerFailedNotification(contractDetails.communityId)
+      self.acService.parseActivityCenterResponse(response)
+      let notificationToSetRead = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, contractDetails.communityId)
+      if notificationToSetRead != nil:
+        let markAsReadProps = MarkAsReadNotificationProperties(
+          notificationIds: @[notificationToSetRead.id],
+          communityId: contractDetails.communityId,
+          notificationTypes: @[notification.ActivityCenterNotificationType.OwnerTokenReceived]
+        )
+        discard self.acService.markActivityCenterNotificationRead(notificationToSetRead.id, markAsReadProps)
+    except Exception as e:
+      error "Error processing set signer transaction", msg=e.msg
+
   proc init*(self: Service) =
     self.fetchAllTokenOwners()
     self.tokenOwnersTimer.start()
+
+    self.events.on(SignalType.Wallet.event) do(e:Args):
+      var data = WalletSignal(e)
+      if data.eventType == collectibles_backend.eventCommunityCollectiblesReceived:
+        self.processReceivedCollectiblesWalletEvent(data.message)
+
+    self.events.on(PendingTransactionTypeDto.SetSigner.event) do(e: Args):
+      let receivedData = TransactionMinedArgs(e)
+      self.processSetSignerTransactionEvent(receivedData)
 
     self.events.on(PendingTransactionTypeDto.DeployCommunityToken.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
@@ -425,7 +543,7 @@ QtObject:
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
       var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, temporaryOwnerContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.Owner)
-      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.TokenMaster)
+      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(transactionHash), communityId, addressFrom, PrivilegesLevel.Master)
 
       var croppedImage = croppedImageJson.parseJson
       ownerToken.image = croppedImage{"imagePath"}.getStr
@@ -673,6 +791,12 @@ QtObject:
     let price = self.tokenService.getTokenPrice(cryptoSymbol, currentCurrency)
     return cryptoBalance * price
 
+  proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =
+    let allTokens = self.getAllCommunityTokens()
+    for token in allTokens:
+      if common_utils.contractUniqueKey(token.chainId, token.address) == contractUniqueKey:
+        return token
+
   proc computeDeployFee*(self: Service, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
     try:
       if tokenType != TokenType.ERC20 and tokenType != TokenType.ERC721:
@@ -692,6 +816,24 @@ QtObject:
       #TODO: handle error - emit error signal
       error "Error loading fees", msg = e.msg
 
+  proc computeSetSignerFee*(self: Service, chainId: int, contractAddress: string, accountAddress: string, requestId: string) =
+    try:
+      let arg = AsyncSetSignerFeesArg(
+        tptr: cast[ByteAddress](asyncSetSignerFeesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onSetSignerFees",
+        chainId: chainId,
+        contractAddress: contractAddress,
+        addressFrom: accountAddress,
+        requestId: requestId,
+        newSignerPubKey: singletonInstance.userProfile.getPubKey()
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      #TODO: handle error - emit error signal
+      error "Error loading fees", msg = e.msg
+
+
   proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
     try:
       let arg = AsyncDeployOwnerContractsFeesArg(
@@ -710,12 +852,6 @@ QtObject:
     except Exception as e:
       #TODO: handle error - emit error signal
       error "Error loading fees", msg = e.msg
-
-  proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =
-    let allTokens = self.getAllCommunityTokens()
-    for token in allTokens:
-      if common_utils.contractUniqueKey(token.chainId, token.address) == contractUniqueKey:
-        return token
 
   proc getOwnerBalances(self: Service, contractOwners: seq[CommunityCollectibleOwner], ownerAddress: string): seq[CollectibleBalance] =
     for owner in contractOwners:
@@ -837,6 +973,35 @@ QtObject:
     except Exception as e:
       error "Burn error", msg = e.msg
 
+  proc setSigner*(self: Service, password: string, communityId: string, chainId: int, contractAddress: string, addressFrom: string) =
+    try:
+      let txData = self.buildTransactionDataDto(addressFrom, chainId, contractAddress)
+      debug "Set signer ", chainId=chainId, address=contractAddress
+      let signerPubKey = singletonInstance.userProfile.getPubKey()
+      let response = tokens_backend.setSignerPubKey(chainId, contractAddress, %txData, signerPubKey, common_utils.hashPassword(password))
+      let transactionHash = response.result.getStr()
+      debug "Set signer transaction hash ", transactionHash=transactionHash
+
+      let data = SetSignerArgs(status: ContractTransactionStatus.InProgress,
+                              chainId: chainId,
+                              transactionHash: transactionHash,
+                              communityId: communityId)
+
+      self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
+
+      # observe transaction state
+      let contractDetails = ContractDetails(chainId: chainId, contractAddress: contractAddress, communityId: communityId)
+      self.transactionService.watchTransaction(
+        transactionHash,
+        addressFrom,
+        contractAddress,
+        $PendingTransactionTypeDto.SetSigner,
+        $(%contractDetails),
+        chainId,
+      )
+    except Exception as e:
+      error "Set signer error", msg = e.msg
+
   proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
@@ -945,6 +1110,9 @@ QtObject:
 
   proc onDeployFees*(self:Service, response: string) {.slot.} =
     self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
+
+  proc onSetSignerFees*(self: Service, response: string) {.slot.} =
+    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SET_SIGNER_FEE)
 
   proc onAirdropFees*(self:Service, response: string) {.slot.} =
     var wholeEthCostForChainWallet: Table[ChainWalletTuple, float]
@@ -1101,5 +1269,47 @@ QtObject:
   proc getTokenMasterToken*(self: Service, communityId: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)
     for token in communityTokens:
-      if token.privilegesLevel == PrivilegesLevel.TokenMaster:
+      if token.privilegesLevel == PrivilegesLevel.Master:
         return token
+
+  proc declineOwnership*(self: Service, communityId: string) =
+    let notification = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
+    if notification != nil:
+      discard self.acService.deleteActivityCenterNotifications(@[notification.id])
+    try:
+      let response = tokens_backend.registerSetSignerDeclinedNotification(communityId)
+      self.acService.parseActivityCenterResponse(response)
+    except Exception as e:
+      error "Error registering decline set signer notification", msg=e.msg
+    let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: communityId)
+    self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
+
+  proc asyncGetOwnerTokenOwnerAddress*(self: Service, chainId: int, contractAddress: string) =
+    let arg = GetOwnerTokenOwnerAddressArgs(
+      tptr: cast[ByteAddress](getOwnerTokenOwnerAddressTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onGetOwnerTokenOwner",
+      chainId: chainId,
+      contractAddress: contractAddress
+    )
+    self.threadpool.start(arg)
+
+  proc onGetOwnerTokenOwner*(self:Service, response: string) {.slot.} =
+    var ownerTokenArgs = OwnerTokenOwnerAddressArgs()
+    try:
+      let responseJson = response.parseJson()
+      ownerTokenArgs.chainId = responseJson{"chainId"}.getInt
+      ownerTokenArgs.contractAddress = responseJson{"contractAddress"}.getStr
+      let errorMsg = responseJson["error"].getStr
+      if errorMsg != "":
+        error "can't get owner token owner address", errorMsg
+      else:
+        ownerTokenArgs.address = responseJson{"address"}.getStr
+        let acc = self.walletAccountService.getAccountByAddress(ownerTokenArgs.address)
+        if acc == nil:
+          error "getAccountByAddress result is nil"
+        else:
+          ownerTokenArgs.addressName = acc.name
+    except Exception:
+      error "can't get owner token owner address", message = getCurrentExceptionMsg()
+    self.events.emit(SIGNAL_OWNER_TOKEN_OWNER_ADDRESS, ownerTokenArgs)

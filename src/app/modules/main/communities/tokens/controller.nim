@@ -56,6 +56,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMPUTE_BURN_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
     self.communityTokensModule.onBurnFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode, args.requestId)
+  self.events.on(SIGNAL_COMPUTE_SET_SIGNER_FEE) do(e:Args):
+    let args = ComputeFeeArgs(e)
+    self.communityTokensModule.onSetSignerFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode, args.requestId)
   self.events.on(SIGNAL_COMPUTE_AIRDROP_FEE) do(e:Args):
     let args = AirdropFeesArgs(e)
     self.communityTokensModule.onAirdropFeesComputed(args)
@@ -80,6 +83,18 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
     let args = AirdropArgs(e)
     self.communityTokensModule.onAirdropStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
+  self.events.on(SIGNAL_OWNER_TOKEN_RECEIVED) do(e: Args):
+    let args = OwnerTokenReceivedArgs(e)
+    self.communityTokensModule.onOwnerTokenReceived(args.communityId, args.communityName, args.chainId, args.contractAddress)
+  self.events.on(SIGNAL_SET_SIGNER_STATUS) do(e: Args):
+    let args = SetSignerArgs(e)
+    self.communityTokensModule.onSetSignerStateChanged(args.communityId, args.chainId, args.transactionHash, args.status)
+  self.events.on(SIGNAL_COMMUNITY_LOST_OWNERSHIP) do(e: Args):
+    let args = CommunityIdArgs(e)
+    self.communityTokensModule.onLostOwnership(args.communityId)
+  self.events.on(SIGNAL_OWNER_TOKEN_OWNER_ADDRESS) do(e: Args):
+    let args = OwnerTokenOwnerAddressArgs(e)
+    self.communityTokensModule.onOwnerTokenOwnerAddress(args.chainId, args.contractAddress, args.address, args.addressName)
 
 proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
   self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)
@@ -106,6 +121,9 @@ proc selfDestructCollectibles*(self: Controller, communityId: string, password: 
 proc burnTokens*(self: Controller, communityId: string, password: string, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
   self.communityTokensService.burnTokens(communityId, password, contractUniqueKey, amount, addressFrom)
 
+proc setSigner*(self: Controller, password: string, communityId: string, chainId: int, contractAddress: string, addressFrom: string) =
+  self.communityTokensService.setSigner(password, communityId, chainId, contractAddress, addressFrom)
+
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_DEPLOY_COLLECTIBLES_COMMUNITY_TOKENS_MODULE_IDENTIFIER, keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
@@ -115,6 +133,9 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 
 proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
   self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType, requestId)
+
+proc computeSetSignerFee*(self: Controller, chainId: int, contractAddress: string, addressFrom: string, requestId: string) =
+  self.communityTokensService.computeSetSignerFee(chainId, contractAddress, addressFrom, requestId)
 
 proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
   self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress, communityId, ownerDeploymentParams, masterDeploymentParams, requestId)
@@ -139,3 +160,9 @@ proc getTokenMasterToken*(self: Controller, communityId: string): CommunityToken
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
+
+proc declineOwnership*(self: Controller, communityId: string) =
+  self.communityTokensService.declineOwnership(communityId)
+
+proc asyncGetOwnerTokenOwnerAddress*(self: Controller, chainId: int, contractAddress: string) =
+  self.communityTokensService.asyncGetOwnerTokenOwnerAddress(chainId, contractAddress)
