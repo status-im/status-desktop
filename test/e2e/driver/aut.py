@@ -7,6 +7,7 @@ from PIL import ImageGrab
 
 import configs
 import driver
+from configs.system import IS_LIN
 from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
@@ -43,7 +44,7 @@ class AUT:
             screenshot = configs.testpath.RUN / 'screenshot.png'
             if screenshot.exists():
                 screenshot = configs.testpath.RUN / f'screenshot_{datetime.now():%H%M%S}.png'
-            ImageGrab.grab().save(screenshot)
+            ImageGrab.grab(xdisplay=":0" if IS_LIN else None).save(screenshot)
             allure.attach(
                 name='Screenshot on fail',  body=screenshot.read_bytes(), attachment_type=allure.attachment_type.PNG)
         self.detach().stop()

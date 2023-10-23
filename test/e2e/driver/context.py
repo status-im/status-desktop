@@ -5,6 +5,7 @@ import allure
 import squish
 
 import configs
+from driver.server import SquishServer
 
 _logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ def attach(aut_id: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC)
     _logger.debug(f'Attaching to {aut_id}')
     while True:
         try:
-            context = squish.attachToApplication(aut_id)
+            context = squish.attachToApplication(aut_id, SquishServer().host, SquishServer().port)
             _logger.info(f'AUT: {aut_id} attached')
             return context
         except RuntimeError as err:

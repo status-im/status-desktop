@@ -7,6 +7,7 @@ from PIL import ImageGrab
 
 import configs
 import driver
+from configs.system import IS_LIN
 from fixtures.path import generate_test_info
 from scripts.utils import local_system
 from scripts.utils.system_path import SystemPath
@@ -57,7 +58,7 @@ def pytest_exception_interact(node):
         screenshot = node_dir / 'screenshot.png'
         if screenshot.exists():
             screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
-        ImageGrab.grab().save(screenshot)
+        ImageGrab.grab(xdisplay=":0" if IS_LIN else None).save(screenshot)
         allure.attach(
             name='Screenshot on fail',
             body=screenshot.read_bytes(),

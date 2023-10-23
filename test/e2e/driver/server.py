@@ -10,40 +10,50 @@ _logger = logging.getLogger(__name__)
 
 
 class SquishServer:
+    __instance = None
+    path = configs.testpath.SQUISH_DIR / 'bin' / 'squishserver'
+    config = configs.testpath.ROOT / 'squish_server.ini'
+    host = '127.0.0.1'
+    port = None
+    pid = None
 
-    def __init__(self):
-        self.path = configs.testpath.SQUISH_DIR / 'bin' / 'squishserver'
-        self.config = configs.testpath.ROOT / 'squish_server.ini'
-        self.host = '127.0.0.1'
-        self.port = None
-        self.pid = None
+    def __new__(cls):
+        if not SquishServer.__instance:
+            SquishServer.__instance = super(SquishServer, cls).__new__(cls)
+        return SquishServer.__instance
 
-    def start(self):
-        self.port = local_system.find_free_port(configs.squish.SERVET_PORT, 100)
+    @classmethod
+    def start(cls):
+        cls.port = local_system.find_free_port(configs.squish.SERVER_PORT, 100)
         cmd = [
-            f'"{self.path}"',
-            '--configfile', str(self.config),
-            f'--host={self.host}',
-            f'--port={self.port}',
+            f'"{cls.path}"',
+            '--configfile', str(cls.config),
+            f'--host={cls.host}',
+            f'--port={cls.port}',
         ]
-        self.pid = local_system.execute(cmd)
+        cls.pid = local_system.execute(cmd)
 
-    def stop(self):
-        if self.pid is not None:
-            local_system.kill_process(self.pid, verify=True)
-            self.pid = None
-        self.port = None
+    @classmethod
+    def stop(cls):
+        if cls.pid is not None:
+            local_system.kill_process(cls.pid, verify=True)
+            cls.pid = None
+        cls.port = None
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
-    def configuring(self, action: str, options: typing.Union[int, str, list]):
+    @classmethod
+    def configuring(cls, action: str, options: typing.Union[int, str, list]):
         local_system.run(
-            [f'"{self.path}"', '--configfile', str(self.config), '--config', action, ' '.join(options)])
+            [f'"{cls.path}"', '--configfile', str(cls.config), '--config', action, ' '.join(options)])
 
-    def add_executable_aut(self, aut_id, app_dir):
-        self.configuring('addAUT', [aut_id, f'"{app_dir}"'])
+    @classmethod
+    def add_executable_aut(cls, aut_id, app_dir):
+        cls.configuring('addAUT', [aut_id, f'"{app_dir}"'])
 
-    def add_attachable_aut(self, aut_id: str, port: int):
-        self.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])
+    @classmethod
+    def add_attachable_aut(cls, aut_id: str, port: int):
+        cls.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])
 
-    def set_aut_timeout(self, value: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
-        self.configuring('setAUTTimeout', [str(value)])
+    @classmethod
+    def set_aut_timeout(cls, value: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+        cls.configuring('setAUTTimeout', [str(value)])
