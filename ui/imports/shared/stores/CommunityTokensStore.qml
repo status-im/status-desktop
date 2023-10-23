@@ -16,6 +16,7 @@ QtObject {
     signal selfDestructFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
     signal airdropFeeUpdated(var airdropFees)
     signal burnFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
+    signal setSignerFeeUpdated(var ethCurrency, var fiatCurrency, int error, string responseId)
 
     signal deploymentStateChanged(string communityId, int status, string url)
     signal ownerTokenDeploymentStateChanged(string communityId, int status, string url)
@@ -23,6 +24,7 @@ QtObject {
     signal burnStateChanged(string communityId, string tokenName, int status, string url)
     signal airdropStateChanged(string communityId, string tokenName, string chainName, int status, string url)
     signal ownerTokenDeploymentStarted(string communityId, string url)
+    signal setSignerStateChanged(string communityId, string communityName, int status, string url)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -60,8 +62,13 @@ QtObject {
         communityTokensModuleInst.removeCommunityToken(communityId, parts[0], parts[1])
     }
 
-    function updateSmartContract(communityId, collectibleItem) {
+    function updateSmartContract(tokenKey, accountAddress) {
         console.warn("TODO: Backend to update smart contract and finalise community transfer ownership! The token owner is: " + collectibleItem.symbol)
+        //communityTokensModuleInst.setSigner(tokenKey, accountAddress)
+    }
+
+    function ownershipDeclined() {
+            console.warn("TODO: Backend update notification center and display a toast: Ownership Declined!")
     }
 
     readonly property Connections connections: Connections {
@@ -81,6 +88,11 @@ QtObject {
 
         function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
             root.burnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId)
+        }
+
+        function onSetSignerFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
+            console.warn("TODO: Backend")
+            //root.setSignerFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId)
         }
 
         function onDeploymentStateChanged(communityId, status, url) {
@@ -106,6 +118,21 @@ QtObject {
         function onBurnStateChanged(communityId, tokenName, status, url) {
             root.burnStateChanged(communityId, tokenName, status, url)
         }
+
+        function onOwnerTokenReceived(communityId, communityName, chainId, communityAddress) {
+            console.warn("TODO: Backend")
+//            Global.displayToastMessage(qsTr("You received the Owner token for %1. To finalize ownership, make your device the control node.").arg(communityName),
+//                                       qsTr("Finalise ownership"),
+//                                       "",
+//                                       false,
+//                                       Constants.ephemeralNotificationType.normal,
+//                                       "")
+        }
+
+        function onSetSignerStateChanged(communityId, communityName, status, url) {
+            console.warn("TODO: Backend")
+            //root.setSignerStateChanged(communityId, communityName, status, url)
+        }
     }
 
         // Burn:
@@ -122,6 +149,11 @@ QtObject {
 
     function computeDeployFee(communityId, chainId, accountAddress, tokenType, isOwnerDeployment, requestId) {
         communityTokensModuleInst.computeDeployFee(communityId, chainId, accountAddress, tokenType, isOwnerDeployment, requestId)
+    }
+
+    function computeSetSignerFee(tokenKey, accountAddress, requestId) {
+        console.warn("TODO: Backend!")
+        //communityTokensModuleInst.computeSetSignerFee(tokenKey, accountAddress, requestId)
     }
 
     /**

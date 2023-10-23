@@ -57,8 +57,8 @@ StackLayout {
     property string pubsubTopicKey
 
     // Community transfer ownership related props:
-    required property var finaliseOwnershipTransferPopup
     required property bool isPendingOwnershipRequest
+    signal finaliseOwnershipClicked
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -204,7 +204,7 @@ StackLayout {
                 }
             }
             onImportControlNodeClicked: root.importControlNodeClicked()
-            onFinaliseOwnershipTransferClicked: Global.openPopup(root.finaliseOwnershipTransferPopup)
+            onFinaliseOwnershipTransferClicked: root.finaliseOwnershipClicked()
             //TODO update once the domain changes
             onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
         }

@@ -12,7 +12,8 @@ QtObject {
         Airdrop,
         Deploy,
         SelfDestruct,
-        Burn
+        Burn,
+        SetSigner
     }
 
     property CommunityTokensStore communityTokensStore
@@ -97,10 +98,26 @@ QtObject {
             onResponseChanged: subscriber.feesResponse = response
         }
 
+        component SetSignerFeeSubscription: Subscription {
+            required property SetSignerFeesSubscriber subscriber
+            readonly property var requestArgs: ({
+                type: TransactionFeesBroker.FeeType.SetSigner,
+                tokenKey: subscriber.tokenKey,
+                accountAddress: subscriber.accountAddress
+            })
+            isReady: !!subscriber.tokenKey &&
+                    !!subscriber.accountAddress &&
+                    subscriber.enabled
+
+            topic: isReady ? JSON.stringify(requestArgs) : ""
+            onResponseChanged: subscriber.feesResponse = response
+        }
+
         readonly property Component airdropFeeSubscriptionComponent: AirdropFeeSubscription {}
         readonly property Component deployFeeSubscriptionComponent: DeployFeeSubscription {}
         readonly property Component selfDestructFeeSubscriptionComponent: SelfDestructFeeSubscription {}
         readonly property Component burnFeeSubscriptionComponent: BurnTokenFeeSubscription {}
+        readonly property Component setSignerFeeSubscriptionComponent: SetSignerFeeSubscription {}
 
         readonly property SubscriptionBroker feesBroker: SubscriptionBroker {
             active: Global.applicationWindow.active
@@ -142,6 +159,9 @@ QtObject {
                 case TransactionFeesBroker.FeeType.Burn:
                     computeBurnFee(args, topic)
                     break
+                case TransactionFeesBroker.FeeType.SetSigner:
+                    computeSetSignerFee(args, topic)
+                    break
                 default:
                     console.error("Unknown fee type: " + args.type)
             }
@@ -168,6 +188,10 @@ QtObject {
             console.assert(typeof args.amount === "string")
             communityTokensStore.computeBurnFee(args.tokenKey, args.amount, args.accountAddress, topic)
         }
+
+        function computeSetSignerFee(args, topic) {
+            communityTokensStore.computeSetSignerFee(args.tokenKey, args.accountAddress, topic)
+        }
     }
 
     function registerAirdropFeesSubscriber(subscriberObj) {
@@ -187,6 +211,11 @@ QtObject {
 
     function registerBurnFeesSubscriber(subscriberObj) {
         const subscription = d.burnFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
+        d.feesBroker.subscribe(subscription)
+    }
+
+    function registerSetSignerFeesSubscriber(subscriberObj) {
+        const subscription = d.setSignerFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
         d.feesBroker.subscribe(subscription)
     }
 }
