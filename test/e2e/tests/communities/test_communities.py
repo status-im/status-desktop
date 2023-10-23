@@ -13,7 +13,6 @@ from gui.main_window import MainWindow
 from gui.screens.community import CommunityScreen
 from scripts.tools import image
 
-pytestmark = allure.suite("Communities")
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')

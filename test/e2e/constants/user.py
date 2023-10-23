@@ -1,27 +1,31 @@
+import random
+import string
 from collections import namedtuple
 
 import configs
 
-UserAccount = namedtuple('User', ['name', 'password', 'seed_phrase'])
+UserAccount = namedtuple('User', ['name', 'password', 'seed_phrase', 'status_address'])
 user_account_one = UserAccount('squisher', '0000000000', [
     'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
-])
+], '0x3286c371ef648fe6232324b27ee0515f4ded24d9')
 user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
-])
-user_account_three = UserAccount('nervous', '0000000000', [])
+], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
+user_account_three = UserAccount('nervous', '0000000000', [], '')
 
-user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [])
+user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345', [], '')
 
-user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [])
+user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')
 
 community_params = {
     'name': 'Name',
     'description': 'Description',
     'logo': {'fp': configs.testpath.TEST_FILES / 'tv_signal.png', 'zoom': None, 'shift': None},
     'banner': {'fp': configs.testpath.TEST_FILES / 'banner.png', 'zoom': None, 'shift': None},
-    'intro': 'Intro',
-    'outro': 'Outro'
+    'intro': ''.join(random.choices(string.ascii_letters +
+                                    string.digits, k=200)),
+    'outro': ''.join(random.choices(string.ascii_letters +
+                                    string.digits, k=80))
 }
 
 UserCommunityInfo = namedtuple('CommunityInfo', ['name', 'description', 'members', 'image'])

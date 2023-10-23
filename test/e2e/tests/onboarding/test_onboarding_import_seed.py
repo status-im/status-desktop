@@ -46,6 +46,13 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
         if not configs.DEV_BUILD:
             BetaConsentPopup().confirm()
 
+    with (step('Verify that restored account reveals correct status wallet address')):
+        status_acc_view = (
+            main_window.left_panel.open_settings().left_panel.open_wallet_settings().open_status_account_in_settings())
+        address = status_acc_view.get_account_address_value()
+        assert address == user_account.status_address, \
+            f"Recovered account should have address {user_account.status_address}, but has {address}"
+
     with step('Verify that the user logged in via seed phrase correctly'):
         user_canvas = main_window.left_panel.open_user_canvas()
         profile_popup = user_canvas.open_profile_popup()

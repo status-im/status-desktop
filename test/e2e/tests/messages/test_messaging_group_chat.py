@@ -9,7 +9,6 @@ from constants.group_chat import GroupChatMessages
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 
-pytestmark = allure.suite("Messaging")
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')

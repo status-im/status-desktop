@@ -72,6 +72,14 @@ walletAccountViewEditAccountButton = {"container": statusDesktop_mainWindow, "ob
 walletAccountViewAccountName = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewAccountName", "type": "StatusBaseText"}
 walletAccountViewAccountEmoji = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewAccountImage", "type": "StatusEmoji", "visible": True}
 walletAccountViewDeleteAccountButton = {"container": statusDesktop_mainWindow, "objectName": "deleteAccountButton", "type": "StatusButton"}
+walletAccountViewDetailsLabel = {"container": settingsContentBase_ScrollView, "objectName": "AccountDetails_TextLabel", "type": "StatusBaseText"}
+walletAccountViewBalance = {"container": settingsContentBase_ScrollView, "objectName": "Balance_ListItem", "type": "WalletAccountDetailsListItem"}
+walletAccountViewAddress = {"container": settingsContentBase_ScrollView, "objectName": "Address_ListItem", "type": "WalletAccountDetailsListItem"}
+walletAccountViewKeypairItem = {"container": settingsContentBase_ScrollView, "objectName": "KeyPair_Item", "type": "WalletAccountDetailsKeypairItem"}
+walletAccountViewOrigin = {"container": settingsContentBase_ScrollView, "objectName": "Origin_ListItem", "type": "WalletAccountDetailsListItem"}
+walletAccountViewDerivationPath = {"container": settingsContentBase_ScrollView, "objectName": "DerivationPath_ListItem", "type": "WalletAccountDetailsListItem"}
+walletAccountViewStored = {"container": settingsContentBase_ScrollView, "objectName": "Stored_ListItem", "type": "WalletAccountDetailsListItem"}
+walletAccountViewPreferredNetworks = {"container": settingsContentBase_ScrollView, "objectName": "PreferredNetworks_ListItem", "type": "StatusListItem"}
 
 # Wallet edit network view
 settingsContentBaseScrollView_editPreviwTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, "objectName": "editPreviwTabBar", "type": "StatusTabBar"}

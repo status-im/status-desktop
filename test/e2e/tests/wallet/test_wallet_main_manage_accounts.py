@@ -185,7 +185,7 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account,
                                       name: str, color: str, emoji: str, emoji_unicode: str,
                                       new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str,
                                       private_key: str):
-    with step('Create generated wallet account'):
+    with step('Import an account within private key'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()

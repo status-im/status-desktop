@@ -8,7 +8,6 @@ from constants.permissions import PermissionsElements
 from gui.main_window import MainWindow
 from scripts.tools import image
 
-pytestmark = allure.suite("Communities")
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',

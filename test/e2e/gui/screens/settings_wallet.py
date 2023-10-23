@@ -60,6 +60,14 @@ class AccountDetailsView(WalletSettingsView):
         self._delete_account_button = Button('walletAccountViewDeleteAccountButton')
         self._wallet_account_title = TextLabel('walletAccountViewAccountName')
         self._wallet_account_emoji = QObject('walletAccountViewAccountEmoji')
+        self._wallet_account_details_label = TextLabel('walletAccountViewDetailsLabel')
+        self._wallet_account_balance = QObject('walletAccountViewBalance')
+        self._wallet_account_keypair_item = QObject('walletAccountViewKeypairItem')
+        self._wallet_account_address = QObject('walletAccountViewAddress')
+        self._wallet_account_origin = TextLabel('walletAccountViewOrigin')
+        self._wallet_account_derivation_path = QObject('walletAccountViewDerivationPath')
+        self._wallet_account_stored = TextLabel('walletAccountViewStored')
+        self._wallet_preferred_networks = QObject('walletAccountViewPreferredNetworks')
 
     @allure.step('Click Edit button')
     def click_edit_account_button(self):
@@ -73,6 +81,12 @@ class AccountDetailsView(WalletSettingsView):
     @allure.step('Get account name')
     def get_account_name_value(self):
         return self._wallet_account_title.text
+
+    @allure.step("Get account address value")
+    def get_account_address_value(self):
+        raw_value = str(self._wallet_account_address.get_object_attribute('subTitle'))
+        address = raw_value.split(">")[-1]
+        return address
 
     @allure.step('Get account color value')
     def get_account_color_value(self):
