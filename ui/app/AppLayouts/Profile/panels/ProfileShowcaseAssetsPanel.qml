@@ -9,8 +9,8 @@ ProfileShowcasePanel {
 
     settingsKey: "assets"
     keyRole: "symbol"
-    roleNames: ["symbol", "name", "visibleForNetworkWithPositiveBalance", "enabledNetworkBalance"]
-    filterFunc: (modelData) => modelData.visibleForNetworkWithPositiveBalance && !showcaseModel.hasItem(modelData.symbol)
+    roleNames: ["symbol", "name", "enabledNetworkBalance"]
+    filterFunc: (modelData) => !showcaseModel.hasItem(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
 

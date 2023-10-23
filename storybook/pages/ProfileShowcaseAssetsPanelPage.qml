@@ -35,7 +35,6 @@ SplitView {
                     symbol: "MANA"
                 },
                 changePct24hour: -2.1,
-                visibleForNetworkWithPositiveBalance: true
             },
             {
                 name: "Ave Maria",
@@ -45,7 +44,6 @@ SplitView {
                     symbol: "AAVE"
                 },
                 changePct24hour: 4.56,
-                visibleForNetworkWithPositiveBalance: true
             },
             {
                 name: "Polymorphism",
@@ -55,7 +53,6 @@ SplitView {
                     symbol: "POLY"
                 },
                 changePct24hour: -11.6789,
-                visibleForNetworkWithPositiveBalance: true
             },
             {
                 name: "Common DDT",
@@ -65,7 +62,6 @@ SplitView {
                     symbol: "CDT"
                 },
                 changePct24hour: 0,
-                visibleForNetworkWithPositiveBalance: true
             },
             {
                 name: "Makers' choice",
@@ -75,14 +71,12 @@ SplitView {
                     symbol: "MKR"
                 },
                 changePct24hour: -1,
-                visibleForNetworkWithPositiveBalance: true
             },
             {
                 name: "GetOuttaHere",
                 symbol: "InvisibleHere",
                 enabledNetworkBalance: {},
                 changePct24hour: 0,
-                visibleForNetworkWithPositiveBalance: false
             }
         ]
         Component.onCompleted: append(data)
