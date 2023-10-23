@@ -58,11 +58,12 @@ SplitView {
                 valueRole: "value"
                 model: ListModel {
                          id: model
-                         ListElement { text: "Pending"; value: ActivityCenterStore.ActivityCenterMembershipStatus.Pending }
-                         ListElement { text: "Accepted"; value: ActivityCenterStore.ActivityCenterMembershipStatus.Accepted }
-                         ListElement { text: "Declined"; value: ActivityCenterStore.ActivityCenterMembershipStatus.Declined }
-                         ListElement { text: "AcceptedPending"; value: ActivityCenterStore.ActivityCenterMembershipStatus.AcceptedPending }
-                         ListElement { text: "DeclinedPending"; value: ActivityCenterStore.ActivityCenterMembershipStatus.DeclinedPending }
+
+                         ListElement { text: "Pending"; value: 1 } // ActivityCenterStore.ActivityCenterMembershipStatus.Pending }
+                         ListElement { text: "Accepted"; value: 2 } //ActivityCenterStore.ActivityCenterMembershipStatus.Accepted }
+                         ListElement { text: "Declined"; value: 3 } //ActivityCenterStore.ActivityCenterMembershipStatus.Declined }
+                         ListElement { text: "AcceptedPending"; value: 4 } //ActivityCenterStore.ActivityCenterMembershipStatus.AcceptedPending }
+                         ListElement { text: "DeclinedPending"; value: 5 } //ActivityCenterStore.ActivityCenterMembershipStatus.DeclinedPending }
                      }
             }
         }
@@ -178,4 +179,5 @@ SplitView {
     }
 }
 
+// category: Activity Center
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=35909-606817&mode=design&t=Ia7Z0AzyYIjkuPtr-0

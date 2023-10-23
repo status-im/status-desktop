@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import shared 1.0
 import shared.popups 1.0
@@ -72,8 +73,8 @@ Popup {
         onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
         onMarkAllReadClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
         onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
-                                                                                        ActivityCenterStore.ActivityCenterReadType.Unread :
-                                                                                        ActivityCenterStore.ActivityCenterReadType.All)
+                                                                                       ActivityCenterStore.ActivityCenterReadType.Unread :
+                                                                                       ActivityCenterStore.ActivityCenterReadType.All)
     }
 
     StatusListView {
@@ -95,28 +96,34 @@ Popup {
 
             sourceComponent: {
                 switch (model.notificationType) {
-                    case ActivityCenterStore.ActivityCenterNotificationType.Mention:
-                        return mentionNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.Reply:
-                        return replyNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
-                        return contactRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactVerification:
-                        return verificationRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
-                        return communityInvitationNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
-                        return membershipRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
-                        return communityRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
-                        return communityKickedNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
-                        return contactRemovedComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
-                        return newKeypairFromPairedDeviceComponent
-                    default:
-                        return null
+                case ActivityCenterStore.ActivityCenterNotificationType.Mention:
+                    return mentionNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.Reply:
+                    return replyNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
+                    return contactRequestNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.ContactVerification:
+                    return verificationRequestNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
+                    return communityInvitationNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
+                    return membershipRequestNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
+                    return communityRequestNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
+                    return communityKickedNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
+                    return contactRemovedComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
+                    return newKeypairFromPairedDeviceComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipSucceeded:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
+                case ActivityCenterStore.ActivityCenterNotificationType.NoLongerControlNode:
+                    return ownerTokenReceivedNotificationComponent
+                default:
+                    return null
                 }
             }
         }
@@ -230,6 +237,29 @@ Popup {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
+        id: ownerTokenReceivedNotificationComponent
+
+        ActivityNotificationTransferOwnership {
+
+            readonly property var community : notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            type: setType(notification)
+
+            communityName: community ? community.name : ""
+            communityColor: community ? community.color : Theme.palette.directColor1
+
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+
+            onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(notification.communityId)
+            onNavigateToCommunityClicked: root.store.setActiveCommunity(notification.communityId)
         }
     }
 }
