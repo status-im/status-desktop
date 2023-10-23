@@ -255,6 +255,7 @@ Item {
                     store: root.rootStore
                     usersStore: d.activeUsersStore
                     linkPreviewModel: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+                    urlsModel: d.activeChatContentModule.inputAreaModule.urlsModel
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
                             return false

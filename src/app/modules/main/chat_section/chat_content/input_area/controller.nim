@@ -111,7 +111,7 @@ proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc resetLinkPreviews(self: Controller) =
-  self.delegate.setUrls(@[])
+  self.delegate.setLinkPreviewUrls(@[])
   self.linkPreviewCache.clear()
   self.linkPreviewCurrentMessageSetting = self.linkPreviewPersistentSetting
   self.delegate.setAskToEnableLinkPreview(false)
@@ -201,12 +201,15 @@ proc canAskToEnableLinkPreview(self: Controller): bool =
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   if text == "":
     self.resetLinkPreviews()
+    self.delegate.setUrls(@[])
     return
 
   let urls = self.messageService.getTextUrls(text)
+  self.delegate.setUrls(urls)
+
   let supportedUrls = urls.filter(x => not x.endsWith(".gif")) # GIFs are currently unfurled by receiver
-  self.delegate.setUrls(supportedUrls)
-  let newUrls = self.linkPreviewCache.unknownUrls(urls)
+  self.delegate.setLinkPreviewUrls(supportedUrls)
+  let newUrls = self.linkPreviewCache.unknownUrls(supportedUrls)
 
   let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()
   self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
