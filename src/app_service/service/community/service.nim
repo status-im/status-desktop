@@ -15,6 +15,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/communities as status_go
+import ../../../backend/community_tokens as tokens_backend
 
 import ../../../app_service/common/types
 import ../../../app_service/common/utils
@@ -32,6 +33,7 @@ type
     communityId*: string # should be set when community is nil (i.e. error occured)
     error*: string
     fromUserAction*: bool
+    isPendingOwnershipRequest*: bool
 
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
@@ -241,6 +243,7 @@ const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinRespon
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
 
 const SIGNAL_COMMUNITY_METRICS_UPDATED* = "communityMetricsUpdated"
+const SIGNAL_COMMUNITY_LOST_OWNERSHIP* = "communityLostOwnership"
 
 const SIGNAL_COMMUNITY_SHARD_SET* = "communityShardSet"
 const SIGNAL_COMMUNITY_SHARD_SET_FAILED* = "communityShardSetFailed"
@@ -549,6 +552,12 @@ QtObject:
         return
 
       let prev_community = self.communities[community.id]
+
+      # ownership lost
+      if prev_community.isOwner and not community.isOwner:
+        self.events.emit(SIGNAL_COMMUNITY_LOST_OWNERSHIP, CommunityIdArgs(communityId: community.id))
+        let response = tokens_backend.registerLostOwnershipNotification(community.id)
+        self.activityCenterService.parseActivityCenterResponse(response)
 
       # If there's settings without `id` it means the original
       # signal didn't include actual communitySettings, hence we
@@ -958,8 +967,10 @@ QtObject:
       self.communities[communityId] = updatedCommunity
       self.chatService.loadChannelGroupById(communityId)
 
+      let ownerTokenNotification = self.activityCenterService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, communityId)
+
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
+      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true, isPendingOwnershipRequest: (ownerTokenNotification != nil)))
 
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id

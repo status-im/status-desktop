@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.views 1.0
+import shared.stores 1.0
 import mainui 1.0
 
 import StatusQ 0.1
@@ -106,6 +107,7 @@ SplitView {
                 }
             }
         }
+        communityTokensStore: CommunityTokensStore {}
     }
 
     SplitView {

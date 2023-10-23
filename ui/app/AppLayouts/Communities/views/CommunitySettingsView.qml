@@ -823,6 +823,14 @@ StatusSectionLayout {
                                            Constants.ephemeralNotificationType.normal, url)
             }
         }
+
+        function onOwnershipLost(communityId, communityName) {
+            if (root.community.id !== communityId)
+                return
+            let type = Constants.ephemeralNotificationType.normal
+            Global.displayToastMessage(qsTr("Your device is no longer the control node for Doodles.
+                                             Your ownership and admin rights for %1 have been transferred to the new owner.").arg(communityName), "", "", false, type, "")
+        }
     }
 
     Connections {

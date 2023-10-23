@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import mainui 1.0
+import shared.stores 1.0
 import AppLayouts.Communities.panels 1.0
 
 import Storybook 1.0
@@ -14,6 +15,7 @@ SplitView {
     Popups {
         popupParent: root
         rootStore: QtObject {}
+        communityTokensStore: CommunityTokensStore {}
     }
 
     EditSettingsPanel {

@@ -787,3 +787,4 @@ QtObject:
   proc sharedAddressesForAllNonKeycardKeypairsSigned(self: View) {.signal.}
   proc sendSharedAddressesForAllNonKeycardKeypairsSignedSignal*(self: View) =
     self.sharedAddressesForAllNonKeycardKeypairsSigned()
+  

@@ -24,6 +24,7 @@ import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
 import communities/tokens/models/token_item
+import communities/tokens/models/token_model
 import network_connection/module as network_connection_module
 import shared_urls/module as shared_urls_module
 
@@ -66,6 +67,7 @@ import ../../../app_service/service/network_connection/service as network_connec
 import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../../app_service/common/types
 import ../../../app_service/common/social_links
+import ../../../app_service/common/utils as common_utils
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -956,7 +958,7 @@ method communityJoined*[T](
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
-  setActive: bool = false,
+  setActive: bool = false
 ) =
   if self.channelGroupModules.contains(community.id):
     # The community is already spectated
@@ -1079,6 +1081,22 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   }
   return $jsonObj
 
+# used in FinaliseOwnershipPopup in UI
+method getOwnerTokenAsJson*[T](self: Module[T], communityId: string): string =
+  let item = self.view.model().getItemById(communityId)
+  if item.id == "":
+    return
+  let tokensModel = item.communityTokens()
+  let ownerToken = tokensModel.getOwnerToken()
+  let jsonObj = %* {
+    "symbol": ownerToken.tokenDto.symbol,
+    "chainName": ownerToken.chainName,
+    "accountName": ownerToken.accountName,
+    "accountAddress": ownerToken.tokenDto.deployer,
+    "contractUniqueKey": common_utils.contractUniqueKey(ownerToken.tokenDto.chainId, ownerToken.tokenDto.address)
+  }
+  return $jsonObj
+
 method isEnsVerified*[T](self: Module[T], publicKey: string): bool =
   return self.controller.getContact(publicKey).ensVerified
 
@@ -1128,6 +1146,9 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
+
+method onFinaliseOwnershipStatusChanged*[T](self: Module[T], isPending: bool, communityId: string) =
+  self.view.model().updateIsPendingOwnershipRequest(communityId, isPending)
 
 method onOwnerTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState, transactionHash: string) =
   let item = self.view.model().getItemById(communityId)

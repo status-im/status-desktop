@@ -129,6 +129,12 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+
+  proc getOwnerToken*(self: TokenModel): TokenItem =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].tokenDto.privilegesLevel == PrivilegesLevel.Owner):
+        return self.items[i]
+
   proc appendItem*(self: TokenModel, item: TokenItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete

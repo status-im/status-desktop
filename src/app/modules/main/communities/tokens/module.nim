@@ -8,6 +8,7 @@ import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../../app_service/common/conversion
 import ../../../../../app_service/common/types
+import ../../../../../app_service/common/utils as common_utils
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../../../shared_models/currency_amount
@@ -24,6 +25,7 @@ type
     SelfDestruct = 3
     Burn = 4
     DeployOwnerToken = 5
+    SetSigner = 6
 
 type
   Module*  = ref object of io_interface.AccessInterface
@@ -48,6 +50,7 @@ type
     tempMasterDeploymentParams: DeploymentParameters
     tempOwnerTokenMetadata: CommunityTokensMetadataDto
     tempMasterTokenMetadata: CommunityTokensMetadataDto
+    tempOwnerTokenCommunity: CommunityDto
 
 proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
@@ -160,6 +163,14 @@ method burnTokens*(self: Module, communityId: string, contractUniqueKey: string,
   self.tempContractAction = ContractAction.Burn
   self.authenticate()
 
+method setSigner*(self: Module, communityId: string, chainId: int, contractAddress: string, addressFrom: string) =
+  self.tempCommunityId = communityId
+  self.tempChainId = chainId
+  self.tempContractAddress = contractAddress
+  self.tempAddressFrom = addressFrom
+  self.tempContractAction = ContractAction.SetSigner
+  self.authenticate()
+
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                            supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
   let (ownerTokenAddress, masterTokenAddress, isDeployed) = self.getOwnerAndMasterTokensAddresses(communityId, chainId)
@@ -255,6 +266,8 @@ method onUserAuthenticated*(self: Module, password: string) =
                 self.tempOwnerDeploymentParams, self.tempOwnerTokenMetadata,
                 self.tempMasterDeploymentParams, self.tempMasterTokenMetadata,
                 self.tempTokenImageCropInfoJson, self.tempChainId)
+    elif self.tempContractAction == ContractAction.SetSigner:
+      self.controller.setSigner(password, self.tempCommunityId, self.tempChainId, self.tempContractAddress, self.tempAddressFrom)
 
 method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
   self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
@@ -268,12 +281,18 @@ method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
 method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
   self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
 
+method onSetSignerFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode, responseId: string) =
+  self.view.updateSetSignerFee(ethCurrency, fiatCurrency, errorCode.int, responseId)
+
 method computeDeployFee*(self: Module, communityId: string, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool, requestId: string) =
   if isOwnerDeployment:
     let (ownerDeploymentParams, masterDeploymentParams) = self.createOwnerAndMasterDeploymentParams(communityId)
     self.controller.computeDeployOwnerContractsFee(chainId, accountAddress, communityId, ownerDeploymentParams, masterDeploymentParams, requestId)
   else:
     self.controller.computeDeployFee(chainId, accountAddress, tokenType, requestId)
+
+method computeSetSignerFee*(self: Module, chainId: int, contractAddress: string, addressFrom: string, requestId: string) =
+  self.controller.computeSetSignerFee(chainId, contractAddress, addressFrom, requestId)
 
 method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string, requestId: string) =
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
@@ -314,3 +333,45 @@ method onAirdropStateChanged*(self: Module, communityId: string, tokenName: stri
   let url = self.createUrl(chainId, transactionHash)
   let chainName = self.getChainName(chainId)
   self.view.emitAirdropStateChanged(communityId, tokenName, chainName, status.int, url)
+
+method onOwnerTokenReceived*(self: Module, communityId: string, communityName: string, chainId: int, contractAddress: string) =
+  self.view.emitOwnerTokenReceived(communityId, communityName, chainId, contractAddress)
+
+method onSetSignerStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
+  let communityDto = self.controller.getCommunityById(communityId)
+  let communityName = communityDto.name
+  let url = self.createUrl(chainId, transactionHash)
+  self.view.emitSetSignerStateChanged(communityId, communityName, status.int, url)
+
+method onLostOwnership*(self: Module, communityId: string) =
+  let communityDto = self.controller.getCommunityById(communityId)
+  let communityName = communityDto.name
+  self.view.emitOwnershipLost(communityId, communityName)
+
+method declineOwnership*(self: Module, communityId: string) =
+  self.controller.declineOwnership(communityId)
+
+method asyncGetOwnerTokenDetails*(self: Module, communityId: string) =
+  self.tempOwnerTokenCommunity = self.controller.getCommunityById(communityId)
+  if self.tempOwnerTokenCommunity.id == "":
+    error "No community with id", communityId
+    return
+  let (chainId, contractAddress) = self.tempOwnerTokenCommunity.getOwnerTokenAddressFromPermissions()
+  self.controller.asyncGetOwnerTokenOwnerAddress(chainId, contractAddress)
+
+method onOwnerTokenOwnerAddress*(self: Module, chainId: int, contractAddress: string, address: string, addressName: string) =
+  let chainName = self.getChainName(chainId)
+  var symbol = ""
+  for tokenMetadata in self.tempOwnerTokenCommunity.communityTokensMetadata:
+    if tokenMetadata.addresses[chainId] == contractAddress:
+      symbol = tokenMetadata.symbol
+      break
+  let jsonObj = %* {
+    "symbol": symbol,
+    "chainName": chainName,
+    "accountName": addressName,
+    "accountAddress": address,
+    "chainId": chainId,
+    "contractAddress": contractAddress
+  }
+  self.view.setOwnerTokenDetails($jsonObj)

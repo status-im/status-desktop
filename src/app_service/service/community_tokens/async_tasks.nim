@@ -3,7 +3,7 @@ include ../../common/json_utils
 import ../../../backend/eth
 import ../../../backend/community_tokens
 import ../../../backend/collectibles
-import ../../../app/core/tasks/common
+include ../../../app/core/tasks/common
 import ../../../app/core/tasks/qt
 import ../transaction/dto
 import ../community/dto/community
@@ -73,6 +73,37 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
       else: community_tokens.deployAssetsEstimate().result.getInt
     
     gasTable[(arg.chainId, "")] = deployGas
+    arg.finish(%* {
+      "feeTable": tableToJsonArray(feeTable),
+      "gasTable": tableToJsonArray(gasTable),
+      "chainId": arg.chainId,
+      "addressFrom": arg.addressFrom,
+      "error": "",
+      "requestId": arg.requestId,
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "requestId": arg.requestId,
+    })
+
+type
+  AsyncSetSignerFeesArg = ref object of QObjectTaskArg
+    chainId: int
+    contractAddress: string
+    addressFrom: string
+    newSignerPubKey: string
+    requestId: string
+
+const asyncSetSignerFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSetSignerFeesArg](argEncoded)
+  try:
+    var gasTable: Table[ContractTuple, int] # gas per contract
+    var feeTable: Table[int, SuggestedFeesDto] # fees for chain
+    let response = eth.suggestedFees(arg.chainId).result
+    feeTable[arg.chainId] = response.toSuggestedFeesDto()
+    let gasUsed = community_tokens.estimateSetSignerPubKey(arg.chainId, arg.contractAddress, arg.addressFrom, arg.newSignerPubKey).result.getInt
+    gasTable[(arg.chainId, "")] = gasUsed
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
@@ -346,6 +377,30 @@ const getAllCommunityTokensTaskArg: Task = proc(argEncoded: string) {.gcsafe, ni
     arg.finish(output)
   except Exception as e:
     let output = %* {
+      "error": e.msg
+    }
+    arg.finish(output)
+
+type
+  GetOwnerTokenOwnerAddressArgs = ref object of QObjectTaskArg
+    chainId*: int
+    contractAddress*: string
+
+const getOwnerTokenOwnerAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetOwnerTokenOwnerAddressArgs](argEncoded)
+  try:
+    let response = tokens_backend.getOwnerTokenOwnerAddress(arg.chainId, arg.contractAddress)
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
+      "address": response.result.getStr(),
+      "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
       "error": e.msg
     }
     arg.finish(output)

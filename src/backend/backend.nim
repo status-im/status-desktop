@@ -170,6 +170,9 @@ rpc(acceptActivityCenterNotifications, "wakuext"):
 rpc(dismissActivityCenterNotifications, "wakuext"):
   ids: seq[string]
 
+rpc(deleteActivityCenterNotifications, "wakuext"):
+  ids: seq[string]
+
 rpc(hasUnseenActivityCenterNotifications, "wakuext"):
   discard
 

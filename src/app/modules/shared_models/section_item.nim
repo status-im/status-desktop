@@ -60,6 +60,7 @@ type
     pubsubTopic: string
     pubsubTopicKey: string
     shardIndex: int
+    isPendingOwnershipRequest: bool
 
 proc initItem*(
     id: string,
@@ -100,6 +101,7 @@ proc initItem*(
     pubsubTopic = "",
     pubsubTopicKey = "",
     shardIndex = -1,
+    isPendingOwnershipRequest: bool = false
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -145,6 +147,7 @@ proc initItem*(
   result.pubsubTopic = pubsubTopic
   result.pubsubTopicKey = pubsubTopicKey
   result.shardIndex = shardIndex
+  result.isPendingOwnershipRequest = isPendingOwnershipRequest
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -185,6 +188,7 @@ proc `$`*(self: SectionItem): string =
     declinedMemberRequests:{self.declinedMemberRequestsModel},
     encrypted:{self.encrypted},
     communityTokensModel:{self.communityTokensModel},
+    isPendingOwnershipRequest:{self.isPendingOwnershipRequest}
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -324,6 +328,12 @@ proc pendingMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
 
 proc declinedMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
   self.declinedMemberRequestsModel
+
+proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
+  self.isPendingOwnershipRequest
+
+proc setIsPendingOwnershipRequest*(self: var SectionItem, isPending: bool) {.inline.} =
+  self.isPendingOwnershipRequest = isPending
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

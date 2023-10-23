@@ -1,21 +1,17 @@
 import json, sequtils, stint, strutils, chronicles
 import ../../../../backend/response_type
+import ../../../../backend/community_tokens_types
 include ../../../common/json_utils
 import ../../../common/conversion
 import ../../community/dto/community
+
+export community_tokens_types
 
 type
   DeployState* {.pure.} = enum
     Failed,
     InProgress,
     Deployed
-
-# determines what is the type of the token: owner, master or normal community contract
-type
-  PrivilegesLevel* {.pure.} = enum
-    Owner,
-    TokenMaster,
-    Community
 
 type
   CommunityTokenDto* = object

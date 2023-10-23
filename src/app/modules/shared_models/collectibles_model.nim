@@ -1,9 +1,11 @@
-import NimQml, Tables, strutils, strformat, sequtils, stint
+import NimQml, Tables, strutils, strformat, sequtils, stint, json
 import logging
 
 import ./collectibles_item, ./collectible_trait_model
 import web3/ethtypes as eth
 import backend/activity as backend_activity
+import backend/community_tokens_types
+import ../../../app_service/common/utils as common_utils
 
 type
   CollectibleRole* {.pure.} = enum
@@ -380,3 +382,4 @@ QtObject:
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
       return $chainId & "+" & tokenAddress & "+" & tokenId
     return ""
+

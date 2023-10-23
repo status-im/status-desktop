@@ -117,10 +117,10 @@ Popup {
                 case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
                     return newKeypairFromPairedDeviceComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
-                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipSucceeded:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
-                case ActivityCenterStore.ActivityCenterNotificationType.NoLongerControlNode:
+                case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
                     return ownerTokenReceivedNotificationComponent
                 default:
                     return null

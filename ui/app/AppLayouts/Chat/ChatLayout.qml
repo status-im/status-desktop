@@ -43,7 +43,6 @@ StackLayout {
     signal openAppSearch()
 
     // Community transfer ownership related props/signals:
-    // TODO: Backend integrations:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
 
     onCurrentIndexChanged: {

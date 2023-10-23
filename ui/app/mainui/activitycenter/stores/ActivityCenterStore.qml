@@ -32,10 +32,10 @@ QtObject {
         ContactRemoved = 11,
         NewKeypairAddedToPairedDevice = 12,
         OwnerTokenReceived = 13,
-        OwnershipDeclined = 14,
-        OwnershipSucceeded = 15,
+        OwnershipReceived = 14,
+        OwnershipLost = 15,
         OwnershipFailed = 16,
-        NoLongerControlNode = 17
+        OwnershipDeclined = 17
     }
 
     enum ActivityCenterReadType {

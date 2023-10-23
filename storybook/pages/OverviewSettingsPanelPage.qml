@@ -26,7 +26,6 @@ SplitView {
         shardIndex: communityEditor.shardIndex
 
         isPendingOwnershipRequest: pendingOwnershipSwitch.checked
-        finaliseOwnershipTransferPopup: undefined
     }
 
     Pane {

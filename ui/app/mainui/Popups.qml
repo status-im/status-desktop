@@ -298,8 +298,8 @@ QtObject {
         openPopup(finaliseOwnershipPopup, { communityId: communityId })
     }
 
-    function openDeclineOwnershipPopup(communityName) {
-        openPopup(declineOwnershipPopup, { communityName: communityName })
+    function openDeclineOwnershipPopup(communityId, communityName) {
+        openPopup(declineOwnershipPopup, { communityName: communityName, communityId: communityId })
     }
 
     readonly property list<Component> _components: [
@@ -829,18 +829,17 @@ QtObject {
                 id: finalisePopup
 
                 property string communityId
-                readonly property var ownerToken: {
-                    let jsonObj = root.rootStore.mainModuleInst.getOwnerTokenAsJson(finalisePopup.communityId)
-                    return JSON.parse(jsonObj)
-                }
+                readonly property var ownerTokenDetails: root.communityTokensStore.ownerTokenDetails
                 readonly property var communityData : root.communitiesStore.getCommunityDetailsAsJson(communityId)
+
+                Component.onCompleted: root.communityTokensStore.asyncGetOwnerTokenDetails(communityId)
 
                 communityName: communityData.name
                 communityLogo: communityData.image
                 communityColor: communityData.color
 
-                tokenSymbol: ownerToken.symbol
-                tokenChainName: ownerToken.chainName
+                tokenSymbol: ownerTokenDetails.symbol
+                tokenChainName: ownerTokenDetails.chainName
 
                 feeText: feeSubscriber.feeText
                 feeErrorText: feeSubscriber.feeErrorText
@@ -850,9 +849,10 @@ QtObject {
 
                 destroyOnClose: true
 
-                onRejectClicked: Global.openDeclineOwnershipPopup(communityData.name)
+                onRejectClicked: Global.openDeclineOwnershipPopup(finalisePopup.communityId, communityData.name)
                 onFinaliseOwnershipClicked: signPopup.open()
-                onVisitCommunityClicked: rootStore.setActiveCommunity(communityData.id)
+
+                onVisitCommunityClicked: communitiesStore.navigateToCommunity(finalisePopup.communityId)
                 onOpenControlNodeDocClicked: Global.openLink(link)
 
                 SetSignerFeesSubscriber {
@@ -862,8 +862,9 @@ QtObject {
                         communityTokensStore: root.communityTokensStore
                     }
 
-                    tokenKey: finalisePopup.ownerToken.contractUniqueKey
-                    accountAddress: finalisePopup.ownerToken.accountAddress
+                    chainId: finalisePopup.ownerTokenDetails.chainId
+                    contractAddress: finalisePopup.ownerTokenDetails.contractAddress
+                    accountAddress: finalisePopup.ownerTokenDetails.accountAddress
                     enabled: finalisePopup.visible || signPopup.visible
                     Component.onCompleted: feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
                 }
@@ -874,7 +875,7 @@ QtObject {
                     title: qsTr("Sign transaction - update %1 smart contract").arg(finalisePopup.communityName)
                     totalFeeText: finalisePopup.isFeeLoading ? "" : finalisePopup.feeText
                     errorText: finalisePopup.feeErrorText
-                    accountName: finalisePopup.ownerToken.accountName
+                    accountName: finalisePopup.ownerTokenDetails.accountName
 
                     model: QtObject {
                         readonly property string title: finalisePopup.feeLabel
@@ -883,8 +884,8 @@ QtObject {
                     }
 
                     onSignTransactionClicked: {
-                        root.communityTokensStore.updateSmartContract(finalisePopup.communityId, finalisePopup.ownerToken.contractUniqueKey)
-                        close()
+                        finalisePopup.close()
+                        root.communityTokensStore.updateSmartContract(finalisePopup.communityId, finalisePopup.ownerTokenDetails.chainId, finalisePopup.ownerTokenDetails.contractAddress, finalisePopup.ownerTokenDetails.accountAddress)
                     }
                 }
 
@@ -892,7 +893,7 @@ QtObject {
                     target: root
                     onOwnershipDeclined: {
                         finalisePopup.close()
-                        root.communityTokensStore.ownershipDeclined()
+                        root.communityTokensStore.ownershipDeclined(communityId)
                     }
                 }
             }
@@ -903,7 +904,10 @@ QtObject {
             FinaliseOwnershipDeclinePopup {
                 destroyOnClose: true
 
-                onDeclineClicked: root.ownershipDeclined()
+                onDeclineClicked:  {
+                    close()
+                    root.ownershipDeclined()
+                }
             }
         }
         // End of components related to transfer community ownership flow.

@@ -72,6 +72,10 @@ proc estimateBurn*(chainId: int, contractAddress: string, fromAddress: string, a
   let payload = %* [chainId, contractAddress, fromAddress, amount.toString(10)]
   return core.callPrivateRPC("communitytokens_estimateBurn", payload)
 
+proc estimateSetSignerPubKey*(chainId: int, contractAddress: string, fromAddress: string, newSignerPubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, fromAddress, newSignerPubkey]
+  return core.callPrivateRPC("communitytokens_estimateSetSignerPubKey", payload)
+
 proc remainingSupply*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_remainingSupply", payload)
@@ -107,3 +111,35 @@ proc getOwnerTokenContractAddressFromHash*(chainId: int, transactionHash: string
 proc createCommunityTokenDeploymentSignature*(chainId: int, addressFrom: string, signerAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[chainId, addressFrom, signerAddress]
   return core.callPrivateRPC("wakuext_createCommunityTokenDeploymentSignature", payload)
+
+proc setSignerPubKey*(chainId: int, contractAddress: string, txData: JsonNode, newSignerPubKey: string, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, txData, hashedPassword, newSignerPubKey]
+  return core.callPrivateRPC("communitytokens_setSignerPubKey", payload)
+
+proc registerOwnerTokenReceivedNotification*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_registerOwnerTokenReceivedNotification", payload)
+
+proc registerReceivedOwnershipNotification*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_registerReceivedOwnershipNotification", payload)
+
+proc registerSetSignerFailedNotification*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_registerSetSignerFailedNotification", payload)
+
+proc registerSetSignerDeclinedNotification*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_registerSetSignerDeclinedNotification", payload)
+
+proc registerLostOwnershipNotification*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_registerLostOwnershipNotification", payload)
+
+proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_promoteSelfToControlNode", payload)
+
+proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, contractAddress]
+  return core.callPrivateRPC("communitytokens_ownerTokenOwnerAddress", payload)
