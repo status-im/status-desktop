@@ -197,7 +197,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
-  result.profileService = profile_service.newService(statusFoundation.events, result.settingsService)
+  result.profileService = profile_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,

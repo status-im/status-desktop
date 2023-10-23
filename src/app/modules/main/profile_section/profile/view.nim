@@ -4,6 +4,15 @@ import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+import models/profile_preferences_communities_model
+import models/profile_preferences_community_item
+import models/profile_preferences_accounts_model
+import models/profile_preferences_account_item
+import models/profile_preferences_collectibles_model
+import models/profile_preferences_collectible_item
+import models/profile_preferences_assets_model
+import models/profile_preferences_asset_item
+
 QtObject:
   type
     View* = ref object of QObject
@@ -12,6 +21,14 @@ QtObject:
       socialLinksModelVariant: QVariant
       temporarySocialLinksModel: SocialLinksModel # used for editing purposes
       temporarySocialLinksModelVariant: QVariant
+      profileShowcaseCommunitiesModel: ProfileShowcaseCommunitiesModel
+      profileShowcaseCommunitiesModelVariant: QVariant
+      profileShowcaseAccountsModel: ProfileShowcaseAccountsModel
+      profileShowcaseAccountsModelVariant: QVariant
+      profileShowcaseCollectiblesModel: ProfileShowcaseCollectiblesModel
+      profileShowcaseCollectiblesModelVariant: QVariant
+      profileShowcaseAssetsModel: ProfileShowcaseAssetsModel
+      profileShowcaseAssetsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -19,6 +36,14 @@ QtObject:
     self.socialLinksModelVariant.delete
     self.temporarySocialLinksModel.delete
     self.temporarySocialLinksModelVariant.delete
+    self.profileShowcaseCommunitiesModel.delete
+    self.profileShowcaseCommunitiesModelVariant.delete
+    self.profileShowcaseAccountsModel.delete
+    self.profileShowcaseAccountsModelVariant.delete
+    self.profileShowcaseCollectiblesModel.delete
+    self.profileShowcaseCollectiblesModelVariant.delete
+    self.profileShowcaseAssetsModel.delete
+    self.profileShowcaseAssetsModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -28,6 +53,14 @@ QtObject:
     result.socialLinksModelVariant = newQVariant(result.socialLinksModel)
     result.temporarySocialLinksModel = newSocialLinksModel()
     result.temporarySocialLinksModelVariant = newQVariant(result.temporarySocialLinksModel)
+    result.profileShowcaseCommunitiesModel = newProfileShowcaseCommunitiesModel()
+    result.profileShowcaseCommunitiesModelVariant = newQVariant(result.profileShowcaseCommunitiesModel)
+    result.profileShowcaseAccountsModel = newProfileShowcaseAccountsModel()
+    result.profileShowcaseAccountsModelVariant = newQVariant(result.profileShowcaseAccountsModel)
+    result.profileShowcaseCollectiblesModel = newProfileShowcaseCollectiblesModel()
+    result.profileShowcaseCollectiblesModelVariant = newQVariant(result.profileShowcaseCollectiblesModel)
+    result.profileShowcaseAssetsModel = newProfileShowcaseAssetsModel()
+    result.profileShowcaseAssetsModelVariant = newQVariant(result.profileShowcaseAssetsModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -141,3 +174,44 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  proc setProfileShowcaseCommunitiesPreferences*(self: View, items: seq[ProfileShowcaseCommunityItem]) =
+    self.profileShowcaseCommunitiesModel.setItems(items)
+
+  proc getProfileShowcaseCommunitiesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcaseCommunitiesModelVariant
+
+  QtProperty[QVariant] profileShowcaseCommunitiesModel:
+    read = getProfileShowcaseCommunitiesModel
+
+  proc setProfileShowcaseAccountsPreferences*(self: View, items: seq[ProfileShowcaseAccountItem]) =
+    self.profileShowcaseAccountsModel.setItems(items)
+
+  proc getProfileShowcaseAccountsModel(self: View): QVariant {.slot.} =
+    return self.profileShowcaseAccountsModelVariant
+
+  QtProperty[QVariant] profileShowcaseAccountsModel:
+    read = getProfileShowcaseAccountsModel
+
+  proc setProfileShowcaseCollectiblesPreferences*(self: View, items: seq[ProfileShowcaseCollectibleItem]) =
+    self.profileShowcaseCollectiblesModel.setItems(items)
+
+  proc getProfileShowcaseCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcaseCollectiblesModelVariant
+
+  QtProperty[QVariant] profileShowcaseCollectiblesModel:
+    read = getProfileShowcaseCollectiblesModel
+
+  proc setProfileShowcaseAssetsPreferences*(self: View, items: seq[ProfileShowcaseAssetItem]) =
+    self.profileShowcaseAssetsModel.setItems(items)
+
+  proc getProfileShowcaseAssetsModel(self: View): QVariant {.slot.} =
+    return self.profileShowcaseAssetsModelVariant
+
+  QtProperty[QVariant] profileShowcaseAssetsModel:
+    read = getProfileShowcaseAssetsModel
+
+  proc storeProfileShowcasePreferences(self: View, profileChanges: string) {.slot.} =
+    self.delegate.storeProfileShowcasePreferences(profileChanges)
+
+  proc requestProfileShowcasePreferences(self: View) {.slot.} =
+    self.delegate.requestProfileShowcasePreferences()

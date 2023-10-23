@@ -473,3 +473,9 @@ proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Excepti
 proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_verifyKeystoreFileForAccount", payload)
+
+proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("getProfileShowcasePreferences".prefix, %*[])
+
+proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)

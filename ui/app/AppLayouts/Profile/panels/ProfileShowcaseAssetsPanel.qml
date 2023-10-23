@@ -7,9 +7,8 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    settingsKey: "assets"
     keyRole: "symbol"
-    roleNames: ["symbol", "name", "enabledNetworkBalance"]
+    roleNames: ["symbol", "name", "enabledNetworkBalance"].concat(showcaseRoles)
     filterFunc: (modelData) => !showcaseModel.hasItem(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
@@ -23,9 +22,9 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(tmpObj)
+            showcaseModel.append(JSON.stringify(tmpObj))
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
-            root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
     showcaseDraggableDelegateComponent: AssetShowcaseDelegate {
@@ -39,9 +38,9 @@ ProfileShowcasePanel {
             if (value === Constants.ShowcaseVisibility.NoOne) {
                 showcaseModel.remove(visualIndex)
             } else {
-                showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
+                showcaseModel.setVisibility(showcaseObj.symbol, value)
             }
-            root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
 }

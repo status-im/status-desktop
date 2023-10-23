@@ -1028,7 +1028,7 @@ QtObject {
         NoOne = 0,
         IdVerifiedContacts = 1,
         Contacts = 2,
-        Everyone = 4
+        Everyone = 3
     }
 
     // refers to ContractTransactionStatus and DeployState in Nim

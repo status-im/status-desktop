@@ -7,9 +7,8 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    settingsKey: "communities"
     keyRole: "id"
-    roleNames: ["id", "name", "memberRole", "image", "color"]
+    roleNames: ["id", "name", "memberRole", "image", "color"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.joined && !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Communities here will show on your profile")
     showcasePlaceholderBanner: qsTr("Communities here will be hidden from your profile")
@@ -23,9 +22,9 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(tmpObj)
+            showcaseModel.append(JSON.stringify(tmpObj))
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
-            root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
     showcaseDraggableDelegateComponent: CommunityShowcaseDelegate {
@@ -39,9 +38,9 @@ ProfileShowcasePanel {
             if (value === Constants.ShowcaseVisibility.NoOne) {
                 showcaseModel.remove(visualIndex)
             } else {
-                showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
+                showcaseModel.setVisibility(showcaseObj.id, value)
             }
-            root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
 }

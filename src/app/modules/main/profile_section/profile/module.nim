@@ -12,6 +12,11 @@ import app_service/common/social_links
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+import models/profile_preferences_community_item
+import models/profile_preferences_account_item
+import models/profile_preferences_collectible_item
+import models/profile_preferences_asset_item
+
 export io_interface
 
 logScope:
@@ -88,3 +93,21 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     # maybe we want in future popup or somehow display an error to a user
     return
   self.updateSocialLinks(socialLinks)
+
+method setProfileShowcaseCommunitiesPreferences(self: Module, items: seq[ProfileShowcaseCommunityItem]) =
+  self.view.setProfileShowcaseCommunitiesPreferences(items)
+
+method setProfileShowcaseAccountsPreferences(self: Module, items: seq[ProfileShowcaseAccountItem]) =
+  self.view.setProfileShowcaseAccountsPreferences(items)
+
+method setProfileShowcaseCollectiblesPreferences(self: Module, items: seq[ProfileShowcaseCollectibleItem]) =
+  self.view.setProfileShowcaseCollectiblesPreferences(items)
+
+method setProfileShowcaseAssetsPreferences(self: Module, items: seq[ProfileShowcaseAssetItem]) =
+  self.view.setProfileShowcaseAssetsPreferences(items)
+
+method storeProfileShowcasePreferences(self: Module, profileChanges: string) =
+  self.controller.storeProfileShowcasePreferences(profileChanges)
+
+method requestProfileShowcasePreferences(self: Module) =
+  self.controller.requestProfileShowcasePreferences()

@@ -54,3 +54,9 @@ proc getBio*(self: Controller): string =
 
 proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
+
+proc storeProfileShowcasePreferences*(self: Controller, profileChanges: string) =
+  echo "-------> TODO: storeProfileShowcasePreferences: ", profileChanges
+
+proc requestProfileShowcasePreferences*(self: Controller) =
+  echo "-------> TODO: requestProfileShowcasePreferences"

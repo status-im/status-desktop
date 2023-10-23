@@ -1,5 +1,7 @@
 import NimQml, strformat, json
 
+include app_service/common/json_utils
+
 QtObject:
   type CurrencyAmount* = ref object of QObject
     amount: float64
@@ -68,3 +70,12 @@ QtObject:
       "displayDecimals": self.displayDecimals,
       "stripTrailingZeroes": self.stripTrailingZeroes
     }
+
+  # Needed by profile showcase
+  proc toCurrencyAmount*(jsonObj: JsonNode): CurrencyAmount =
+    new(result, delete)
+    result.setup
+    discard jsonObj.getProp("amount", result.amount)
+    discard jsonObj.getProp("symbol", result.symbol)
+    discard jsonObj.getProp("displayDecimals", result.displayDecimals)
+    discard jsonObj.getProp("stripTrailingZeroes", result.stripTrailingZeroes)

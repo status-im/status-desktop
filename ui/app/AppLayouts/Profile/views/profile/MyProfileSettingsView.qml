@@ -208,6 +208,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.communitiesModel
+            showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
@@ -215,6 +216,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.accounts
+            showcaseModel: root.profileStore.profileShowcaseAccountsModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
@@ -223,6 +225,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.collectibles
+            showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
@@ -230,6 +233,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.assets
+            showcaseModel: root.profileStore.profileShowcaseAssetsModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
     }
