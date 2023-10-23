@@ -33,19 +33,9 @@ Item {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        model: filteredModel
+        model: !!assets ? assets : null
         reuseItems: true
         delegate: delegateLoader
-    }
-
-    SortFilterProxyModel {
-        id: filteredModel
-        sourceModel: !!assets ? assets : null
-        filters: [
-            ExpressionFilter {
-                expression: visibleForNetworkWithPositiveBalance || loading
-            }
-        ]
     }
 
     Component {

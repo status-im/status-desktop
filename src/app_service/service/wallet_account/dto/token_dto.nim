@@ -6,15 +6,6 @@ include  app_service/common/json_utils
 
 export balance_dto
 
-const alwaysVisible = {
-  1: @["ETH", "SNT", "DAI"],
-  10: @["ETH", "SNT", "DAI"],
-  42161: @["ETH", "SNT", "DAI"],
-  5: @["ETH", "STT", "DAI"],
-  420: @["ETH", "STT", "DAI"],
-  421613: @["ETH", "STT", "DAI"],
-}.toTable
-
 type
   TokenMarketValuesDto* = object
     marketCap*: float64
@@ -187,13 +178,5 @@ proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: str
     if self.balancesPerChain.hasKey(chainId):
       sum += self.balancesPerChain[chainId].getCurrencyBalance(price)
   return sum
-
-proc getVisibleForNetworkWithPositiveBalance*(self: WalletTokenDto, chainIds: seq[int]): bool =
-  for chainId in chainIds:
-    if alwaysVisible.hasKey(chainId) and self.symbol in alwaysVisible[chainId]:
-      return true
-    if self.balancesPerChain.hasKey(chainId) and self.balancesPerChain[chainId].balance > 0:
-      return true
-  return false
 
 

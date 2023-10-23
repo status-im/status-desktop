@@ -286,7 +286,6 @@ SplitView {
                                             symbol: "MANA"
                                         },
                                         changePct24hour: -2.1,
-                                        visibleForNetworkWithPositiveBalance: true
                                     },
                                     {
                                         symbol: "AAVE",
@@ -295,7 +294,6 @@ SplitView {
                                             symbol: "AAVE"
                                         },
                                         changePct24hour: 4.56,
-                                        visibleForNetworkWithPositiveBalance: true
                                     },
                                     {
                                         symbol: "POLY",
@@ -304,7 +302,6 @@ SplitView {
                                             symbol: "POLY"
                                         },
                                         changePct24hour: -11.6789,
-                                        visibleForNetworkWithPositiveBalance: true
                                     },
                                     {
                                         symbol: "CDT",
@@ -313,7 +310,6 @@ SplitView {
                                             symbol: "CDT"
                                         },
                                         changePct24hour: 0,
-                                        visibleForNetworkWithPositiveBalance: true
                                     },
                                     {
                                         symbol: "MKR",
@@ -322,13 +318,11 @@ SplitView {
                                             symbol: "MKR"
                                         },
                                         //changePct24hour: undefined // NB 'undefined' on purpose
-                                        visibleForNetworkWithPositiveBalance: true
                                     },
                                     {
                                         symbol: "InvisibleHere",
                                         enabledNetworkBalance: {},
                                         changePct24hour: 0,
-                                        visibleForNetworkWithPositiveBalance: false
                                     }
                                 ]
                                 Component.onCompleted: append(data)

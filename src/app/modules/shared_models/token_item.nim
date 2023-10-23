@@ -14,7 +14,6 @@ type
     totalCurrencyBalance: CurrencyAmount
     enabledNetworkCurrencyBalance: CurrencyAmount
     enabledNetworkBalance: CurrencyAmount
-    visibleForNetworkWithPositiveBalance: bool
     balances: balance_model.BalanceModel
     description: string
     assetWebsiteUrl: string
@@ -37,7 +36,6 @@ proc initItem*(
   totalCurrencyBalance: CurrencyAmount,
   enabledNetworkBalance: CurrencyAmount,
   enabledNetworkCurrencyBalance: CurrencyAmount,
-  visibleForNetworkWithPositiveBalance: bool,
   balances: seq[balance_item.Item],
   description: string,
   assetWebsiteUrl: string,
@@ -61,7 +59,6 @@ proc initItem*(
   result.totalCurrencyBalance = totalCurrencyBalance
   result.enabledNetworkBalance = enabledNetworkBalance
   result.enabledNetworkCurrencyBalance = enabledNetworkCurrencyBalance
-  result.visibleForNetworkWithPositiveBalance = visibleForNetworkWithPositiveBalance
   result.balances = balance_model.newModel()
   result.balances.setItems(balances)
   result.description =  description
@@ -88,7 +85,6 @@ proc `$`*(self: Item): string =
     totalCurrencyBalance: {self.totalCurrencyBalance},
     enabledNetworkBalance: {self.enabledNetworkBalance},
     enabledNetworkCurrencyBalance: {self.enabledNetworkCurrencyBalance},
-    visibleForNetworkWithPositiveBalance: {self.visibleForNetworkWithPositiveBalance},
     description: {self.description},
     assetWebsiteUrl: {self.assetWebsiteUrl}
     builtOn: {self.builtOn}
@@ -114,7 +110,6 @@ proc initLoadingItem*(): Item =
     totalCurrencyBalance = newCurrencyAmount(),
     enabledNetworkBalance = newCurrencyAmount(),
     enabledNetworkCurrencyBalance = newCurrencyAmount(),
-    visibleForNetworkWithPositiveBalance = false,
     balances = @[],
     description = "",
     assetWebsiteUrl = "",
@@ -152,9 +147,6 @@ proc getEnabledNetworkBalance*(self: Item): CurrencyAmount =
 
 proc getEnabledNetworkCurrencyBalance*(self: Item): CurrencyAmount =
   return self.enabledNetworkCurrencyBalance
-
-proc getVisibleForNetworkWithPositiveBalance*(self: Item): bool =
-  return self.visibleForNetworkWithPositiveBalance
 
 proc getBalances*(self: Item): balance_model.BalanceModel =
   return self.balances

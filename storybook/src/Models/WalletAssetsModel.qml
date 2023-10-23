@@ -16,7 +16,6 @@ ListModel {
                 stripTrailingZeroes: true,
                 amount: 3.234
             }),
-            visibleForNetworkWithPositiveBalance: true,
             symbol: "ETH",
             name: "Ethereum",
             balances: [
@@ -46,7 +45,6 @@ ListModel {
                 stripTrailingZeroes: true,
                 amount: 23333213.234
             }),
-            visibleForNetworkWithPositiveBalance: true,
             symbol: "SNT",
             name: "Status",
             balances: [
@@ -76,7 +74,6 @@ ListModel {
                 stripTrailingZeroes: true,
                 amount: 53333213.234
             }),
-            visibleForNetworkWithPositiveBalance: true,
             symbol: "DAI",
             name: "DAI Stablecoin",
             balances: [
