@@ -41,8 +41,8 @@ Item {
     property var communityData
 
     // Community transfer ownership related props:
-    required property var finaliseOwnershipTransferPopup
     required property bool isPendingOwnershipRequest
+    signal finaliseOwnershipClicked
 
     readonly property bool isSectionAdmin:
         communityData.memberRole === Constants.memberRole.owner ||
@@ -586,7 +586,7 @@ Item {
 
             text: communityData.joined ? qsTr("Finalise community ownership") : qsTr("To join, finalise community ownership")
 
-            onClicked: Global.openPopup(root.finaliseOwnershipTransferPopup)
+            onClicked: root.finaliseOwnershipClicked()
         }
     }
 

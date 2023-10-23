@@ -218,6 +218,7 @@ Item {
         id: popups
         popupParent: appMain
         rootStore: appMain.rootStore
+        communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         isDevBuild: !production

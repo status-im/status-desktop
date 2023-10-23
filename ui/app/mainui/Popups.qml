@@ -9,10 +9,12 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.Chat.stores 1.0 as ChatStore
@@ -27,12 +29,14 @@ QtObject {
 
     required property var popupParent
     required property var rootStore
+    required property var communityTokensStore
     property var communitiesStore
     property var devicesStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
     signal saveDomainToUnfurledWhitelist(string domain)
+    signal ownershipDeclined
 
     property var activePopupComponents: []
 
@@ -68,6 +72,8 @@ QtObject {
         Global.openImportControlNodePopup.connect(openImportControlNodePopup)
         Global.openEditSharedAddressesFlow.connect(openEditSharedAddressesPopup)
         Global.openTransferOwnershipPopup.connect(openTransferOwnershipPopup)
+        Global.openFinaliseOwnershipPopup.connect(openFinaliseOwnershipPopup)
+        Global.openDeclineOwnershipPopup.connect(openDeclineOwnershipPopup)
     }
 
     property var currentPopup
@@ -286,6 +292,14 @@ QtObject {
 
     function openConfirmExternalLinkPopup(link, domain) {
         openPopup(confirmExternalLinkPopup, {link, domain})
+    }
+
+    function openFinaliseOwnershipPopup(communityId) {
+        openPopup(finaliseOwnershipPopup, { communityId: communityId })
+    }
+
+    function openDeclineOwnershipPopup(communityName) {
+        openPopup(declineOwnershipPopup, { communityName: communityName })
     }
 
     readonly property list<Component> _components: [
@@ -806,6 +820,92 @@ QtObject {
                 onOpenExternalLink: root.openExternalLink(link)
                 onSaveDomainToUnfurledWhitelist: root.saveDomainToUnfurledWhitelist(domain)
             }
+        },
+
+        // Components related to transfer community ownership flow:
+        Component {
+            id: finaliseOwnershipPopup
+            FinaliseOwnershipPopup {
+                id: finalisePopup
+
+                property string communityId
+                readonly property var ownerToken: {
+                    let jsonObj = root.rootStore.mainModuleInst.getOwnerTokenAsJson(finalisePopup.communityId)
+                    return JSON.parse(jsonObj)
+                }
+                readonly property var communityData : root.communitiesStore.getCommunityDetailsAsJson(communityId)
+
+                communityName: communityData.name
+                communityLogo: communityData.image
+                communityColor: communityData.color
+
+                tokenSymbol: ownerToken.symbol
+                tokenChainName: ownerToken.chainName
+
+                feeText: feeSubscriber.feeText
+                feeErrorText: feeSubscriber.feeErrorText
+                isFeeLoading: !feeSubscriber.feesResponse
+
+                accounts: WalletStore.RootStore.nonWatchAccounts
+
+                destroyOnClose: true
+
+                onRejectClicked: Global.openDeclineOwnershipPopup(communityData.name)
+                onFinaliseOwnershipClicked: signPopup.open()
+                onVisitCommunityClicked: rootStore.setActiveCommunity(communityData.id)
+                onOpenControlNodeDocClicked: Global.openLink(link)
+
+                SetSignerFeesSubscriber {
+                    id: feeSubscriber
+
+                    readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
+                        communityTokensStore: root.communityTokensStore
+                    }
+
+                    tokenKey: finalisePopup.ownerToken.contractUniqueKey
+                    accountAddress: finalisePopup.ownerToken.accountAddress
+                    enabled: finalisePopup.visible || signPopup.visible
+                    Component.onCompleted: feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
+                }
+
+                SignTransactionsPopup {
+                    id: signPopup
+
+                    title: qsTr("Sign transaction - update %1 smart contract").arg(finalisePopup.communityName)
+                    totalFeeText: finalisePopup.isFeeLoading ? "" : finalisePopup.feeText
+                    errorText: finalisePopup.feeErrorText
+                    accountName: finalisePopup.ownerToken.accountName
+
+                    model: QtObject {
+                        readonly property string title: finalisePopup.feeLabel
+                        readonly property string feeText: signPopup.totalFeeText
+                        readonly property bool error: finalisePopup.feeErrorText !== ""
+                    }
+
+                    onSignTransactionClicked: {
+                        root.communityTokensStore.updateSmartContract(finalisePopup.communityId, finalisePopup.ownerToken.contractUniqueKey)
+                        close()
+                    }
+                }
+
+                Connections {
+                    target: root
+                    onOwnershipDeclined: {
+                        finalisePopup.close()
+                        root.communityTokensStore.ownershipDeclined()
+                    }
+                }
+            }
+        },
+
+        Component {
+            id: declineOwnershipPopup
+            FinaliseOwnershipDeclinePopup {
+                destroyOnClose: true
+
+                onDeclineClicked: root.ownershipDeclined()
+            }
         }
+        // End of components related to transfer community ownership flow.
     ]
 }

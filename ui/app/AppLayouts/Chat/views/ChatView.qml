@@ -75,8 +75,8 @@ StatusSectionLayout {
     }
 
     // Community transfer ownership related props:
-    required property var finaliseOwnershipTransferPopup
     required property bool isPendingOwnershipRequest
+    signal finaliseOwnershipClicked
 
     signal communityInfoButtonClicked()
     signal communityManageButtonClicked()
@@ -246,10 +246,10 @@ StatusSectionLayout {
             communitiesStore: root.communitiesStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
-            finaliseOwnershipTransferPopup: root.finaliseOwnershipTransferPopup
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
+            onFinaliseOwnershipClicked: root.finaliseOwnershipClicked()
         }
     }
 
