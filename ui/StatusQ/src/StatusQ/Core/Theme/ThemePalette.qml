@@ -316,7 +316,13 @@ QtObject {
     }
 
     function getColor(name, alpha) {
-        return !!alpha ? alphaColor(StatusColors.colors[name], alpha)
-                       : StatusColors.colors[name]
+        if(StatusColors.colors[name])
+            // It means name is just the key to find inside the specific `StatusColors` object
+            return !!alpha ? alphaColor(StatusColors.colors[name], alpha)
+                           : StatusColors.colors[name]
+        else
+            // It means name is directly the color itself
+            return !!alpha ? alphaColor(name, alpha)
+                           : name
     }
 }
