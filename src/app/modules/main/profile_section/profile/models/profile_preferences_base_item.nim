@@ -10,4 +10,3 @@ proc showcaseVisibility*(self: ProfileShowcaseBaseItem): ProfileShowcaseVisibili
 
 proc order*(self: ProfileShowcaseBaseItem): int {.inline.} =
   self.order
-

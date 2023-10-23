@@ -32,11 +32,20 @@ Control {
     property Component showcaseDraggableDelegateComponent
 
     signal showcaseEntryChanged()
+    signal updateEntry(var entry)
 
     function updateModelsAfterChange() {
-        root.showcaseEntryChanged()
         hiddenItemsListView.model = null
         hiddenItemsListView.model = baseModel
+    }
+
+    function updateShowcaseEntryPreferences(modelData, entry) {
+        var tmpObj = Object()
+        root.roleNames.forEach(role => tmpObj[role] = modelData[role])
+        tmpObj.showcaseVisibility = entry.showcaseVisibility
+        tmpObj.order = entry.order
+        showcaseModel.insertOrUpdate(entry.id, JSON.stringify(tmpObj))
+        root.updateModelsAfterChange()
     }
 
     background: null
@@ -72,6 +81,7 @@ Control {
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
                     showcaseModel.append(JSON.stringify(tmpObj))
                     root.updateModelsAfterChange()
+                    root.showcaseEntryChanged()
                 }
             }
         }
@@ -258,6 +268,7 @@ Control {
                 onDropped: function(drop) {
                     showcaseModel.remove(drop.source.visualIndex)
                     root.updateModelsAfterChange()
+                    root.showcaseEntryChanged()
                 }
 
                 Rectangle {
@@ -307,6 +318,7 @@ Control {
                 onDropped: function(drop) {
                     showcaseModel.remove(drop.source.visualIndex)
                     root.updateModelsAfterChange()
+                    root.showcaseEntryChanged()
                 }
             }
         }

@@ -12,6 +12,7 @@ import app_service/common/social_links
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+import models/profile_preferences_source_item
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
@@ -94,18 +95,6 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     return
   self.updateSocialLinks(socialLinks)
 
-method setProfileShowcaseCommunitiesPreferences(self: Module, items: seq[ProfileShowcaseCommunityItem]) =
-  self.view.setProfileShowcaseCommunitiesPreferences(items)
-
-method setProfileShowcaseAccountsPreferences(self: Module, items: seq[ProfileShowcaseAccountItem]) =
-  self.view.setProfileShowcaseAccountsPreferences(items)
-
-method setProfileShowcaseCollectiblesPreferences(self: Module, items: seq[ProfileShowcaseCollectibleItem]) =
-  self.view.setProfileShowcaseCollectiblesPreferences(items)
-
-method setProfileShowcaseAssetsPreferences(self: Module, items: seq[ProfileShowcaseAssetItem]) =
-  self.view.setProfileShowcaseAssetsPreferences(items)
-
 method storeProfileShowcasePreferences(self: Module,
                                        communities: seq[ProfileShowcaseCommunityItem],
                                        accounts: seq[ProfileShowcaseAccountItem],
@@ -115,3 +104,6 @@ method storeProfileShowcasePreferences(self: Module,
 
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()
+
+method setProfileShowcasePreferences(self: Module, items: seq[ProfileShowcaseSourceItem]) =
+  self.view.setProfileShowcasePreferences(items)

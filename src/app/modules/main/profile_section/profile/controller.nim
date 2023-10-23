@@ -8,6 +8,8 @@ import app_service/service/settings/service as settings_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
+
+import models/profile_preferences_source_item
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
@@ -19,6 +21,9 @@ type
     events: EventEmitter
     profileService: profile_service.Service
     settingsService: settings_service.Service
+
+# Forward declaration
+proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: seq[ProfileShowcaseEntryDto])
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
   profileService: profile_service.Service, settingsService: settings_service.Service): Controller =
@@ -41,6 +46,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SOCIAL_LINKS_UPDATED) do(e: Args):
     let args = SocialLinksArgs(e)
     self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
+
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
+    let args = ProfileShowcasePreferences(e)
+    self.updateShowcasePreferences(args.communities, args.accounts, args.collectibles, args.assets)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
@@ -82,3 +91,13 @@ proc storeProfileShowcasePreferences*(self: Controller,
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
+
+proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: seq[ProfileShowcaseEntryDto]) =
+  let communities = communities.map(item => toProfileShowcaseSourceItem(item))
+  let accounts = accounts.map(item => toProfileShowcaseSourceItem(item))
+  let collectibles = collectibles.map(item => toProfileShowcaseSourceItem(item))
+  let assets = assets.map(item => toProfileShowcaseSourceItem(item))
+
+  # TODO: fetch data in c++/nim layer instead of resuing existing qmml models
+  self.delegate.setProfileShowcasePreferences(communities & accounts & collectibles & assets)
+

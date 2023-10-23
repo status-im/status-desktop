@@ -1,7 +1,7 @@
-import profile_preferences_base_item
+import json, strformat, strutils, stint, json_serialization, tables
 
+import profile_preferences_base_item
 import app_service/service/profile/dto/profile_showcase_entry
-import app_service/service/token/dto
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -13,18 +13,6 @@ type
     collectionName*: string
     imageUrl*: string
     backgroundColor*: string
-
-
-# proc initProfileShowcaseCollectibleItem*(token: TokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseCollectibleItem =
-#   result = ProfileShowcaseCollectibleItem()
-
-#   result.showcaseVisibility = entry.showcaseVisibility
-#   result.order = entry.order
-
-#   result.name = token.name
-#   # result.collectionName = TODO: community? name
-#   # result.imageUrl = TODO: Collectible image
-#   result.backgroundColor = token.color
 
 proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollectibleItem =
   result = ProfileShowcaseCollectibleItem()
@@ -44,6 +32,7 @@ proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollec
 
 proc getEntryDto*(self: ProfileShowcaseCollectibleItem): ProfileShowcaseEntryDto =
   result = ProfileShowcaseEntryDto()
+
   result.id = self.uid
   result.entryType = ProfileShowcaseEntryType.Collectible
   result.showcaseVisibility = self.showcaseVisibility

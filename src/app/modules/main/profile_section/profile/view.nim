@@ -1,9 +1,10 @@
-import NimQml, json
+import NimQml, json, sugar, sequtils
 
 import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+import models/profile_preferences_source_item
 import models/profile_preferences_communities_model
 import models/profile_preferences_community_item
 import models/profile_preferences_accounts_model
@@ -174,17 +175,11 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
-  proc setProfileShowcaseCommunitiesPreferences*(self: View, items: seq[ProfileShowcaseCommunityItem]) =
-    self.profileShowcaseCommunitiesModel.setItems(items)
-
   proc getProfileShowcaseCommunitiesModel(self: View): QVariant {.slot.} =
     return self.profileShowcaseCommunitiesModelVariant
 
   QtProperty[QVariant] profileShowcaseCommunitiesModel:
     read = getProfileShowcaseCommunitiesModel
-
-  proc setProfileShowcaseAccountsPreferences*(self: View, items: seq[ProfileShowcaseAccountItem]) =
-    self.profileShowcaseAccountsModel.setItems(items)
 
   proc getProfileShowcaseAccountsModel(self: View): QVariant {.slot.} =
     return self.profileShowcaseAccountsModelVariant
@@ -192,17 +187,11 @@ QtObject:
   QtProperty[QVariant] profileShowcaseAccountsModel:
     read = getProfileShowcaseAccountsModel
 
-  proc setProfileShowcaseCollectiblesPreferences*(self: View, items: seq[ProfileShowcaseCollectibleItem]) =
-    self.profileShowcaseCollectiblesModel.setItems(items)
-
   proc getProfileShowcaseCollectiblesModel(self: View): QVariant {.slot.} =
     return self.profileShowcaseCollectiblesModelVariant
 
   QtProperty[QVariant] profileShowcaseCollectiblesModel:
     read = getProfileShowcaseCollectiblesModel
-
-  proc setProfileShowcaseAssetsPreferences*(self: View, items: seq[ProfileShowcaseAssetItem]) =
-    self.profileShowcaseAssetsModel.setItems(items)
 
   proc getProfileShowcaseAssetsModel(self: View): QVariant {.slot.} =
     return self.profileShowcaseAssetsModelVariant
@@ -220,3 +209,8 @@ QtObject:
 
   proc requestProfileShowcasePreferences(self: View) {.slot.} =
     self.delegate.requestProfileShowcasePreferences()
+
+  proc profileShowcasePreferencesChanged*(self: View, jsonData: string) {.signal.}
+  proc setProfileShowcasePreferences*(self: View, items: seq[ProfileShowcaseSourceItem]) =
+    let payload: JsonNode = %(items.map(item => item.toQmlJson()))
+    self.profileShowcasePreferencesChanged($payload)

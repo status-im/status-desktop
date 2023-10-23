@@ -87,11 +87,14 @@ QtObject:
     of ModelRole.ColorId:
       result = newQVariant(item.colorId)
 
+  proc findIndexForAccount(self: ProfileShowcaseAccountsModel, address: string): int =
+    for index in 0 ..< self.items.len:
+      if (self.items[index].address == address):
+        return index
+    return -1
+
   proc hasItem(self: ProfileShowcaseAccountsModel, address: string): bool {.slot.} =
-    for item in self.items:
-      if item.address == address:
-        return true
-    return false
+    return self.findIndexForAccount(address) != -1
 
   proc append(self: ProfileShowcaseAccountsModel, item: string) {.slot.} =
     let parentModelIndex = newQModelIndex()
@@ -100,6 +103,26 @@ QtObject:
     self.items.add(item.parseJson.toProfileShowcaseAccountItem())
     self.endInsertRows()
     self.countChanged()
+
+  proc insertOrUpdate(self: ProfileShowcaseAccountsModel, address: string, item: string) {.slot.} =
+    let ind = self.findIndexForAccount(address)
+    if ind == -1:
+      self.append(item)
+      return
+
+    self.items[ind] = item.parseJson.toProfileShowcaseAccountItem()
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[
+      ModelRole.ShowcaseVisibility.int,
+      ModelRole.Order.int,
+      ModelRole.Address.int,
+      ModelRole.Name.int,
+      ModelRole.WalletType.int,
+      ModelRole.Emoji.int,
+      ModelRole.ColorId.int,
+    ])
 
   proc remove*(self: ProfileShowcaseAccountsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:

@@ -1,6 +1,7 @@
 import NimQml
 import app_service/common/social_links
 
+import models/profile_preferences_source_item
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
@@ -46,18 +47,6 @@ method saveSocialLinks*(self: AccessInterface) {.base.} =
 method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setProfileShowcaseCommunitiesPreferences*(self: AccessInterface, items: seq[ProfileShowcaseCommunityItem]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setProfileShowcaseAccountsPreferences*(self: AccessInterface, items: seq[ProfileShowcaseAccountItem]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setProfileShowcaseCollectiblesPreferences*(self: AccessInterface, items: seq[ProfileShowcaseCollectibleItem]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setProfileShowcaseAssetsPreferences*(self: AccessInterface, items: seq[ProfileShowcaseAssetItem]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method storeProfileShowcasePreferences*(self: AccessInterface,
                                         communities: seq[ProfileShowcaseCommunityItem],
                                         accounts: seq[ProfileShowcaseAccountItem],
@@ -66,6 +55,9 @@ method storeProfileShowcasePreferences*(self: AccessInterface,
   raise newException(ValueError, "No implementation available")
 
 method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setProfileShowcasePreferences*(self: AccessInterface, items: seq[ProfileShowcaseSourceItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

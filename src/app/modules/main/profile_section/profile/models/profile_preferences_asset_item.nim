@@ -1,7 +1,8 @@
-import profile_preferences_base_item
+import json, strformat, strutils, stint, json_serialization, tables
 
+import profile_preferences_base_item
 import app_service/service/profile/dto/profile_showcase_entry
-import app_service/service/wallet_account/dto/token_dto
+
 import ../../../../shared_models/currency_amount
 
 include app_service/common/json_utils
@@ -14,18 +15,6 @@ type
     enabledNetworkBalance*: CurrencyAmount
     visibleForNetworkWithPositiveBalance*: bool
     color*: string
-
-# proc initProfileShowcaseAssetItem*(token: WalletTokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAssetItem =
-#   result = ProfileShowcaseAssetItem()
-
-#   result.showcaseVisibility = entry.showcaseVisibility
-#   result.order = entry.order
-
-#   result.symbol = token.symbol
-#   result.name = token.name
-#   result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
-#   result.visibleForNetworkWithPositiveBalance = true; # TODO: from wallet section
-#   result.color = token.color
 
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
@@ -46,6 +35,7 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
 proc getEntryDto*(self: ProfileShowcaseAssetItem): ProfileShowcaseEntryDto =
   result = ProfileShowcaseEntryDto()
+
   result.id = self.symbol
   result.entryType = ProfileShowcaseEntryType.Asset
   result.showcaseVisibility = self.showcaseVisibility

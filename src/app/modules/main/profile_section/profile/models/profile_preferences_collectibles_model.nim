@@ -72,12 +72,12 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Uid:
-      result = newQVariant(item.uid)
     of ModelRole.ShowcaseVisibility:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Uid:
+      result = newQVariant(item.uid)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.CollectionName:
@@ -87,11 +87,14 @@ QtObject:
     of ModelRole.BackgroundColor:
       result = newQVariant(item.backgroundColor)
 
+  proc findIndexForCollectible(self: ProfileShowcaseCollectiblesModel, uid: string): int =
+    for i in 0 ..< self.items.len:
+      if (self.items[i].uid == uid):
+        return i
+    return -1
+
   proc hasItem(self: ProfileShowcaseCollectiblesModel, uid: string): bool {.slot.} =
-    for item in self.items:
-      if item.uid == uid:
-        return true
-    return false
+    return self.findIndexForCollectible(uid) != -1
 
   proc append(self: ProfileShowcaseCollectiblesModel, item: string) {.slot.} =
     let parentModelIndex = newQModelIndex()
@@ -100,6 +103,26 @@ QtObject:
     self.items.add(item.parseJson.toProfileShowcaseCollectibleItem())
     self.endInsertRows()
     self.countChanged()
+
+  proc insertOrUpdate(self: ProfileShowcaseCollectiblesModel, uid: string, item: string) {.slot.} =
+    let ind = self.findIndexForCollectible(uid)
+    if ind == -1:
+      self.append(item)
+      return
+
+    self.items[ind] = item.parseJson.toProfileShowcaseCollectibleItem()
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[
+      ModelRole.ShowcaseVisibility.int,
+      ModelRole.Order.int,
+      ModelRole.Uid.int,
+      ModelRole.Name.int,
+      ModelRole.CollectionName.int,
+      ModelRole.ImageUrl.int,
+      ModelRole.BackgroundColor.int,
+    ])
 
   proc remove*(self: ProfileShowcaseCollectiblesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:

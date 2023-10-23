@@ -72,12 +72,12 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Symbol:
-      result = newQVariant(item.symbol)
     of ModelRole.ShowcaseVisibility:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Symbol:
+      result = newQVariant(item.symbol)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.EnabledNetworkBalance:
@@ -87,11 +87,14 @@ QtObject:
     of ModelRole.Color:
       result = newQVariant(item.color)
 
+  proc findIndexForAsset(self: ProfileShowcaseAssetsModel, symbol: string): int =
+    for i in 0 ..< self.items.len:
+      if (self.items[i].symbol == symbol):
+        return i
+    return -1
+
   proc hasItem(self: ProfileShowcaseAssetsModel, symbol: string): bool {.slot.} =
-    for item in self.items:
-      if item.symbol == symbol:
-        return true
-    return false
+    return self.findIndexForAsset(symbol) != -1
 
   proc append(self: ProfileShowcaseAssetsModel, item: string) {.slot.} =
     let parentModelIndex = newQModelIndex()
@@ -100,6 +103,26 @@ QtObject:
     self.items.add(item.parseJson.toProfileShowcaseAssetItem())
     self.endInsertRows()
     self.countChanged()
+
+  proc insertOrUpdate(self: ProfileShowcaseAssetsModel, symbol: string, item: string) {.slot.} =
+    let ind = self.findIndexForAsset(symbol)
+    if ind == -1:
+      self.append(item)
+      return
+
+    self.items[ind] = item.parseJson.toProfileShowcaseAssetItem()
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[
+      ModelRole.ShowcaseVisibility.int,
+      ModelRole.Order.int,
+      ModelRole.Symbol.int,
+      ModelRole.Name.int,
+      ModelRole.EnabledNetworkBalance.int,
+      ModelRole.VisibleForNetworkWithPositiveBalance.int,
+      ModelRole.Color.int,
+    ])
 
   proc remove*(self: ProfileShowcaseAssetsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:

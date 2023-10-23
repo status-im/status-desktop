@@ -71,12 +71,12 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id:
-      result = newQVariant(item.id)
     of ModelRole.ShowcaseVisibility:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Id:
+      result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.MemberRole:
@@ -86,11 +86,14 @@ QtObject:
     of ModelRole.Color:
       result = newQVariant(item.color)
 
+  proc findIndexForCommunity(self: ProfileShowcaseCommunitiesModel, id: string): int =
+    for i in 0 ..< self.items.len:
+      if (self.items[i].id == id):
+        return i
+    return -1
+
   proc hasItem(self: ProfileShowcaseCommunitiesModel, id: string): bool {.slot.} =
-    for item in self.items:
-      if item.id == id:
-        return true
-    return false
+    return self.findIndexForCommunity(id) != -1
 
   proc append(self: ProfileShowcaseCommunitiesModel, item: string) {.slot.} =
     let parentModelIndex = newQModelIndex()
@@ -99,6 +102,26 @@ QtObject:
     self.items.add(item.parseJson.toProfileShowcaseCommunityItem())
     self.endInsertRows()
     self.countChanged()
+
+  proc insertOrUpdate(self: ProfileShowcaseCommunitiesModel, id: string, item: string) {.slot.} =
+    let ind = self.findIndexForCommunity(id)
+    if ind == -1:
+      self.append(item)
+      return
+
+    self.items[ind] = item.parseJson.toProfileShowcaseCommunityItem()
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[
+      ModelRole.ShowcaseVisibility.int,
+      ModelRole.Order.int,
+      ModelRole.Id.int,
+      ModelRole.Name.int,
+      ModelRole.MemberRole.int,
+      ModelRole.Image.int,
+      ModelRole.Color.int,
+    ])
 
   proc remove*(self: ProfileShowcaseCommunitiesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:

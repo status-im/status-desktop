@@ -1,4 +1,6 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQml 2.15
+
 import utils 1.0
 
 QtObject {
@@ -31,6 +33,8 @@ QtObject {
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
     readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+
+    signal profileShowcasePreferencesUpdated(var preferences)
 
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
@@ -98,5 +102,13 @@ QtObject {
 
     function requestProfileShowcasePreferences() {
         root.profileModule.requestProfileShowcasePreferences()
+    }
+
+    readonly property Connections profileModuleConnections: Connections {
+        target: root.profileModule
+
+        function onProfileShowcasePreferencesChanged(json: string) {
+            root.profileShowcasePreferencesUpdated(JSON.parse(json))
+        }
     }
 }

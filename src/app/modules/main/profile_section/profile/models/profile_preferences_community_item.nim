@@ -1,9 +1,7 @@
 import json, strformat, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
-
 import app_service/service/profile/dto/profile_showcase_entry
-import app_service/service/community/dto/community
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -15,18 +13,6 @@ type
     memberRole*: MemberRole
     image*: string
     color*: string
-
-# proc initProfileShowcaseCommunityItem*(community: CommunityDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseCommunityItem =
-#   result = ProfileShowcaseCommunityItem()
-
-#   result.showcaseVisibility = entry.showcaseVisibility
-#   result.order = entry.order
-
-#   result.id = community.id
-#   result.name = community.name
-#   result.memberRole = community.memberRole
-#   result.image = community.images.thumbnail
-#   result.color = community.color
 
 proc toProfileShowcaseCommunityItem*(jsonObj: JsonNode): ProfileShowcaseCommunityItem =
   result = ProfileShowcaseCommunityItem()
@@ -46,6 +32,7 @@ proc toProfileShowcaseCommunityItem*(jsonObj: JsonNode): ProfileShowcaseCommunit
 
 proc getEntryDto*(self: ProfileShowcaseCommunityItem): ProfileShowcaseEntryDto =
   result = ProfileShowcaseEntryDto()
+
   result.id = self.id
   result.entryType = ProfileShowcaseEntryType.Community
   result.showcaseVisibility = self.showcaseVisibility

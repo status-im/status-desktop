@@ -25,6 +25,17 @@ ProfileShowcasePanel {
             showcaseModel.append(JSON.stringify(tmpObj))
             showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
             root.updateModelsAfterChange()
+            root.showcaseEntryChanged()
+        }
+
+        readonly property Connections showcaseUpdateConnections: Connections {
+            target: root
+
+            function onUpdateEntry(entry) {
+                if (modelData && entry.id === modelData.id) { 
+                    root.updateShowcaseEntryPreferences(modelData, entry)
+                }
+            }
         }
     }
     showcaseDraggableDelegateComponent: CommunityShowcaseDelegate {
@@ -41,6 +52,7 @@ ProfileShowcasePanel {
                 showcaseModel.setVisibility(showcaseObj.id, value)
             }
             root.updateModelsAfterChange()
+            root.showcaseEntryChanged()
         }
     }
 }

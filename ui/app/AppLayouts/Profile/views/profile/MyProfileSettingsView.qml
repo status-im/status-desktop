@@ -86,7 +86,7 @@ ColumnLayout {
     onVisibleChanged: profileStore.requestProfileShowcasePreferences()
     Component.onCompleted: profileStore.requestProfileShowcasePreferences()
 
-    Connections {
+    readonly property Connections privacyStoreConnections: Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
 
         function onStoreToKeychainError(errorDescription: string) {
@@ -95,6 +95,29 @@ ColumnLayout {
 
         function onStoreToKeychainSuccess() {
             root.reset()
+        }
+    }
+
+    readonly property Connections profileStoreConnections: Connections {
+        target: profileStore
+
+        function onProfileShowcasePreferencesUpdated(entries) {
+            for (const entry of entries) {
+                switch (entry.entryType) {
+                case Constants.ShowcaseEntryType.Community:
+                     profileShowcaseCommunitiesPanel.updateEntry(entry)
+                     break
+                case Constants.ShowcaseEntryType.Account:
+                     profileShowcaseAccountsPanel.updateEntry(entry)
+                     break
+                case Constants.ShowcaseEntryType.Collectible:
+                     profileShowcaseCollectiblesPanel.updateEntry(entry)
+                     break
+                case Constants.ShowcaseEntryType.Asset:
+                     profileShowcaseAssetsPanel.updateEntry(entry)
+                     break
+                }
+            }
         }
     }
 
@@ -207,6 +230,7 @@ ColumnLayout {
         currentIndex: showcaseTabBar.currentIndex
 
         ProfileShowcaseCommunitiesPanel {
+            id: profileShowcaseCommunitiesPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.communitiesModel
@@ -215,6 +239,7 @@ ColumnLayout {
         }
 
         ProfileShowcaseAccountsPanel {
+            id: profileShowcaseAccountsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.accounts
@@ -224,6 +249,7 @@ ColumnLayout {
         }
 
         ProfileShowcaseCollectiblesPanel {
+            id: profileShowcaseCollectiblesPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.collectibles
@@ -232,6 +258,7 @@ ColumnLayout {
         }
 
         ProfileShowcaseAssetsPanel {
+            id: profileShowcaseAssetsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.assets
