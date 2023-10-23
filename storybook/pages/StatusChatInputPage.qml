@@ -112,6 +112,7 @@ SplitView {
 
                 enabled: enabledCheckBox.checked
                 linkPreviewModel: fakeLinksModel
+                urlsModel: fakeLinksModel
                 askToEnableLinkPreview: askToEnableLinkPreviewSwitch.checked
                 onAskToEnableLinkPreviewChanged: {
                     if(askToEnableLinkPreview) {

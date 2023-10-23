@@ -102,7 +102,7 @@ method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} 
 method getPlainText*(self: AccessInterface): string =
   raise newException(ValueError, "No implementation available")
 
-method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
+method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateLinkPreviewsFromCache*(self: AccessInterface, urls: seq[string]) {.base.} =
@@ -127,4 +127,7 @@ method setAskToEnableLinkPreview*(self: AccessInterface, value: bool) =
   raise newException(ValueError, "No implementation available")
 
 method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool) =
+  raise newException(ValueError, "No implementation available")
+
+method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")

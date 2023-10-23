@@ -65,6 +65,8 @@ Rectangle {
 
     property var linkPreviewModel: null
 
+    property var urlsModel: null
+
     property bool askToEnableLinkPreview: false
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
@@ -1366,7 +1368,7 @@ Rectangle {
                         TextEditHyperlinksFormatter {
                             id: hyperlinksFormatter
                             textEdit: messageInputField
-                            urlModel: control.linkPreviewModel
+                            urlModel: control.urlsModel
                             highlightUrl: linkPreviewArea.hoveredUrl
                             enabled: messageInputField.enabled && messageInputField.textFormat == TextEdit.RichText
                         }

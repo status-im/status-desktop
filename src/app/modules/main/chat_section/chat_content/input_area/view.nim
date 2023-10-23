@@ -2,6 +2,7 @@ import NimQml
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
+import ./urls_model
 import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
 import ../../../../../../app_service/service/gif/dto
 
@@ -17,6 +18,8 @@ QtObject:
       preservedPropertiesVariant: QVariant
       linkPreviewModel: link_preview_model.Model
       linkPreviewModelVariant: QVariant
+      urlsModel: urls_model.Model
+      urlsModelVariant: QVariant
       askToEnableLinkPreview: bool
 
   proc delete*(self: View) =
@@ -24,10 +27,12 @@ QtObject:
     self.gifColumnAModel.delete
     self.gifColumnBModel.delete
     self.gifColumnCModel.delete
-    self.preservedProperties.delete
     self.preservedPropertiesVariant.delete
-    self.linkPreviewModel.delete
+    self.preservedProperties.delete
     self.linkPreviewModelVariant.delete
+    self.linkPreviewModel.delete
+    self.urlsModelVariant.delete
+    self.urlsModel.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -41,6 +46,8 @@ QtObject:
     result.preservedPropertiesVariant = newQVariant(result.preservedProperties)
     result.linkPreviewModel = newLinkPreviewModel()
     result.linkPreviewModelVariant = newQVariant(result.linkPreviewModel)
+    result.urlsModel = newUrlsModel()
+    result.urlsModelVariant = newQVariant(result.urlsModel)
     result.askToEnableLinkPreview = false
 
   proc load*(self: View) =
@@ -223,7 +230,7 @@ QtObject:
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
 
-  proc setUrls*(self: View, urls: seq[string]) =
+  proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
     self.linkPreviewModel.setUrls(urls)
     if(self.delegate.getLinkPreviewEnabled()):
       self.updateLinkPreviewsFromCache(urls)
@@ -253,8 +260,19 @@ QtObject:
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
     let links = self.linkPreviewModel.getLinks()
     self.linkPreviewModel.clearItems()
-    self.setUrls(links)
+    self.setLinkPreviewUrls(links)
     self.loadLinkPreviews(links)
 
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)
+
+  proc urlsModelChanged(self: View) {.signal.}
+  proc getUrlsModel*(self: View): QVariant {.slot.} =
+    return self.urlsModelVariant
+
+  proc setUrls*(self: View, urls: seq[string]) =
+    self.urlsModel.setUrls(urls)
+
+  QtProperty[QVariant] urlsModel:
+    read = getUrlsModel
+    notify = urlsModelChanged
