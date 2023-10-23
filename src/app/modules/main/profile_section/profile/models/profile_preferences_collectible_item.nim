@@ -42,6 +42,13 @@ proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollec
   discard jsonObj.getProp("imageUrl", result.imageUrl)
   discard jsonObj.getProp("backgroundColor", result.backgroundColor)
 
+proc getEntryDto*(self: ProfileShowcaseCollectibleItem): ProfileShowcaseEntryDto =
+  result = ProfileShowcaseEntryDto()
+  result.id = self.uid
+  result.entryType = ProfileShowcaseEntryType.Collectible
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order
+
 proc name*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
   self.name
 

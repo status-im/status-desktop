@@ -18,11 +18,11 @@ logScope:
   topics = "profile-service"
 
 type
-  ProfileShowcasePreferencesArgs* = ref object of Args
-    communities*: Table[string, ProfileShowcaseEntryDto]
-    accounts*: Table[string, ProfileShowcaseEntryDto]
-    collectibles*: Table[string, ProfileShowcaseEntryDto]
-    assets*: Table[string, ProfileShowcaseEntryDto]
+  ProfileShowcasePreferences* = ref object of Args
+    communities*: seq[ProfileShowcaseEntryDto]
+    accounts*: seq[ProfileShowcaseEntryDto]
+    collectibles*: seq[ProfileShowcaseEntryDto]
+    assets*: seq[ProfileShowcaseEntryDto]
 
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
@@ -120,16 +120,27 @@ QtObject:
     var assets = result{"assets"}.parseProfileShowcaseEntries()
 
     self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
-      ProfileShowcasePreferencesArgs(
+      ProfileShowcasePreferences(
         communities: communities,
         accounts: accounts,
         collectibles: collectibles,
         assets: assets
     ))
 
-  proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesArgs) =
+  proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferences) =
     try:
-      let response = status_accounts.setProfileShowcasePreferences(%* preferences)
+      let communities = preferences.communities.map(entry => entry.toJsonNode())
+      let accounts = preferences.accounts.map(entry => entry.toJsonNode())
+      let collectibles = preferences.collectibles.map(entry => entry.toJsonNode())
+      let assets = preferences.assets.map(entry => entry.toJsonNode())
+
+      var payload = %*[{
+        "communities": communities,
+        "accounts": accounts,
+        "collectibles": collectibles,
+        "assets": assets,
+      }]
+      let response = status_accounts.setProfileShowcasePreferences(payload)
       if not response.error.isNil:
         error "error saving profile showcase preferences"
     except Exception as e:

@@ -92,8 +92,8 @@ QtObject {
         root.profileModule.setBio(bio)
     }
 
-    function storeProfileShowcasePreferences(profileChanges) {
-        root.profileModule.storeProfileShowcasePreferences(profileChanges)
+    function storeProfileShowcasePreferences() {
+        root.profileModule.storeProfileShowcasePreferences()
     }
 
     function requestProfileShowcasePreferences() {

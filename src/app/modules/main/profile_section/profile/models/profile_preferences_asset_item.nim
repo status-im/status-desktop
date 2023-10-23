@@ -44,6 +44,13 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
   result.enabledNetworkBalance = jsonObj{"enabledNetworkBalance"}.toCurrencyAmount()
 
+proc getEntryDto*(self: ProfileShowcaseAssetItem): ProfileShowcaseEntryDto =
+  result = ProfileShowcaseEntryDto()
+  result.id = self.symbol
+  result.entryType = ProfileShowcaseEntryType.Asset
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order
+
 proc symbol*(self: ProfileShowcaseAssetItem): string {.inline.} =
   self.symbol
 

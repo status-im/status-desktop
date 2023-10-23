@@ -120,3 +120,4 @@ QtObject:
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+

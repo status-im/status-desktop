@@ -210,8 +210,13 @@ QtObject:
   QtProperty[QVariant] profileShowcaseAssetsModel:
     read = getProfileShowcaseAssetsModel
 
-  proc storeProfileShowcasePreferences(self: View, profileChanges: string) {.slot.} =
-    self.delegate.storeProfileShowcasePreferences(profileChanges)
+  proc storeProfileShowcasePreferences(self: View) {.slot.} =
+    let communities = self.profileShowcaseCommunitiesModel.items()
+    let accounts = self.profileShowcaseAccountsModel.items()
+    let collectibles = self.profileShowcaseCollectiblesModel.items()
+    let assets = self.profileShowcaseAssetsModel.items()
+
+    self.delegate.storeProfileShowcasePreferences(communities, accounts, collectibles, assets)
 
   proc requestProfileShowcasePreferences(self: View) {.slot.} =
     self.delegate.requestProfileShowcasePreferences()

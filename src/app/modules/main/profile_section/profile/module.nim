@@ -106,8 +106,12 @@ method setProfileShowcaseCollectiblesPreferences(self: Module, items: seq[Profil
 method setProfileShowcaseAssetsPreferences(self: Module, items: seq[ProfileShowcaseAssetItem]) =
   self.view.setProfileShowcaseAssetsPreferences(items)
 
-method storeProfileShowcasePreferences(self: Module, profileChanges: string) =
-  self.controller.storeProfileShowcasePreferences(profileChanges)
+method storeProfileShowcasePreferences(self: Module,
+                                       communities: seq[ProfileShowcaseCommunityItem],
+                                       accounts: seq[ProfileShowcaseAccountItem],
+                                       collectibles: seq[ProfileShowcaseCollectibleItem],
+                                       assets: seq[ProfileShowcaseAssetItem]) =
+  self.controller.storeProfileShowcasePreferences(communities, accounts, collectibles, assets)
 
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()

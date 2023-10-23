@@ -42,6 +42,13 @@ proc toProfileShowcaseAccountItem*(jsonObj: JsonNode): ProfileShowcaseAccountIte
   discard jsonObj.getProp("walletType", result.walletType)
   discard jsonObj.getProp("colorId", result.colorId)
 
+proc getEntryDto*(self: ProfileShowcaseAccountItem): ProfileShowcaseEntryDto =
+  result = ProfileShowcaseEntryDto()
+  result.id = self.address
+  result.entryType = ProfileShowcaseEntryType.Account
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order
+
 proc name*(self: ProfileShowcaseAccountItem): string {.inline.} =
   self.name
 

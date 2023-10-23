@@ -23,8 +23,8 @@ type ProfileShowcaseEntryDto* = ref object of RootObj
 proc `$`*(self: ProfileShowcaseEntryDto): string =
   result = fmt"""ProfileShowcaseEntryDto(
     id: {$self.id},
-    entryType: {self.entryType},
-    showcaseVisibility: {self.showcaseVisibility},
+    entryType: {self.entryType.int},
+    showcaseVisibility: {self.showcaseVisibility.int},
     order: {self.order}
     )"""
 
@@ -45,9 +45,16 @@ proc toProfileShowcaseEntryDto*(jsonObj: JsonNode): ProfileShowcaseEntryDto =
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
-proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): Table[string, ProfileShowcaseEntryDto] =
-  var entries: Table[string, ProfileShowcaseEntryDto] = initTable[string, ProfileShowcaseEntryDto]()
+proc parseProfileShowcaseEntries*(jsonMsgs: JsonNode): seq[ProfileShowcaseEntryDto] =
+  var entries: seq[ProfileShowcaseEntryDto] = @[]
   for jsonMsg in jsonMsgs:
-    let item = jsonMsg.toProfileShowcaseEntryDto()
-    entries.add(item.id, item)
+    entries.add(jsonMsg.toProfileShowcaseEntryDto())
   return entries
+
+proc toJsonNode*(self: ProfileShowcaseEntryDto): JsonNode =
+  %* {
+    "id": self.id,
+    "entryType": self.entryType.int,
+    "showcaseVisibility": self.showcaseVisibility.int,
+    "order": self.order,
+  }

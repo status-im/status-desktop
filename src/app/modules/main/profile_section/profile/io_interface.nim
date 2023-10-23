@@ -58,7 +58,11 @@ method setProfileShowcaseCollectiblesPreferences*(self: AccessInterface, items: 
 method setProfileShowcaseAssetsPreferences*(self: AccessInterface, items: seq[ProfileShowcaseAssetItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeProfileShowcasePreferences*(self: AccessInterface, profileChanges: string) {.base.} =
+method storeProfileShowcasePreferences*(self: AccessInterface,
+                                        communities: seq[ProfileShowcaseCommunityItem],
+                                        accounts: seq[ProfileShowcaseAccountItem],
+                                        collectibles: seq[ProfileShowcaseCollectibleItem],
+                                        assets: seq[ProfileShowcaseAssetItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =

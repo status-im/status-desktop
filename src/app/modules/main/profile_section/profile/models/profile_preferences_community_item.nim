@@ -44,6 +44,13 @@ proc toProfileShowcaseCommunityItem*(jsonObj: JsonNode): ProfileShowcaseCommunit
   discard jsonObj.getProp("image", result.image)
   discard jsonObj.getProp("color", result.color)
 
+proc getEntryDto*(self: ProfileShowcaseCommunityItem): ProfileShowcaseEntryDto =
+  result = ProfileShowcaseEntryDto()
+  result.id = self.id
+  result.entryType = ProfileShowcaseEntryType.Community
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order
+
 proc name*(self: ProfileShowcaseCommunityItem): string {.inline.} =
   self.name
 

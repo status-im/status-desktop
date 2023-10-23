@@ -58,6 +58,8 @@ ColumnLayout {
 
     function save() {
         // TODO: if hasAnyProfileShowcaseChanges, save
+        if (hasAnyProfileShowcaseChanges)
+            profileStore.storeProfileShowcasePreferences()
 
         if (!descriptionPanel.isEnsName)
             profileStore.setDisplayName(descriptionPanel.displayName.text)

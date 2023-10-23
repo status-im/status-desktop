@@ -1,9 +1,17 @@
+import json, sugar, sequtils
+
 import io_interface
 
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/common/social_links
+
+import app_service/service/profile/dto/profile_showcase_entry
+import models/profile_preferences_community_item
+import models/profile_preferences_account_item
+import models/profile_preferences_collectible_item
+import models/profile_preferences_asset_item
 
 type
   Controller* = ref object of RootObj
@@ -55,8 +63,22 @@ proc getBio*(self: Controller): string =
 proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
 
-proc storeProfileShowcasePreferences*(self: Controller, profileChanges: string) =
-  echo "-------> TODO: storeProfileShowcasePreferences: ", profileChanges
+proc storeProfileShowcasePreferences*(self: Controller,
+                                      communities: seq[ProfileShowcaseCommunityItem],
+                                      accounts: seq[ProfileShowcaseAccountItem],
+                                      collectibles: seq[ProfileShowcaseCollectibleItem],
+                                      assets: seq[ProfileShowcaseAssetItem]) =
+  let communitiesDto = communities.map(item => item.getEntryDto())
+  let accountsDto = accounts.map(item => item.getEntryDto())
+  let collectiblesDto = collectibles.map(item => item.getEntryDto())
+  let assetsDto = assets.map(item => item.getEntryDto())
+
+  self.profileService.setProfileShowcasePreferences(ProfileShowcasePreferences(
+      communities: communitiesDto,
+      accounts: accountsDto,
+      collectibles: collectiblesDto,
+      assets: assetsDto
+  ))
 
 proc requestProfileShowcasePreferences*(self: Controller) =
-  echo "-------> TODO: requestProfileShowcasePreferences"
+  self.profileService.requestProfileShowcasePreferences()
