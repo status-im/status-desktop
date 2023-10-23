@@ -105,6 +105,17 @@ pipeline {
         }
       }
     }
+
+    stage('E2E') {
+      when { expression { getE2EBuildType() != null } }
+      steps { script {
+        build(
+          job: "status-desktop/e2e/${getE2EBuildType()}",
+          parameters: jenkins.mapToParams([BUILD_SOURCE: JOB_NAME]),
+          wait: false
+        )
+      } }
+    }
   }
   post {
     success { script { github.notifyPR(true) } }
@@ -114,12 +125,19 @@ pipeline {
 }
 
 def getArch() {
-    def tokens = Thread.currentThread().getName().split('/')
-    for (def arch in ['x86_64', 'aarch64']) {
-      if (tokens.contains(arch)) { return arch }
-    }
+  def tokens = Thread.currentThread().getName().split('/')
+  for (def arch in ['x86_64', 'aarch64']) {
+    if (tokens.contains(arch)) { return arch }
+  }
+}
+
+def getE2EBuildType() {
+  if (utils.isPRBuild()) { return 'prs' }
+  def parent = parentOrCurrentBuild()
+  if (parent != null && parent.name == 'nightly') { return nightly }
+  return null
 }
 
 def getMockedKeycardLibDefault() {
-    return utils.isReleaseBuild() ? 'false' : 'true'
+  return utils.isReleaseBuild() ? 'false' : 'true'
 }
