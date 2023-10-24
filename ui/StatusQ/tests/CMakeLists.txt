@@ -16,7 +16,9 @@ add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-add_test(NAME ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} -input "${CMAKE_CURRENT_SOURCE_DIR}")
+add_test(NAME ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} -input "${CMAKE_CURRENT_SOURCE_DIR}")
+
 add_custom_target("Run_${PROJECT_NAME}" COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${CMAKE_CURRENT_BINARY_DIR}")
 add_dependencies("Run_${PROJECT_NAME}" ${PROJECT_NAME})
 
@@ -38,3 +40,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         )
+
+add_executable(RolesRenamingModelTest tst_RolesRenamingModel.cpp)
+target_link_libraries(RolesRenamingModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+add_test(RolesRenamingModelTest COMMAND RolesRenamingModelTest)

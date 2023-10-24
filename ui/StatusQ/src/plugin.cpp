@@ -6,6 +6,7 @@
 #include "StatusQ/QClipboardProxy.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/permissionutilsinternal.h"
+#include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
@@ -23,6 +24,9 @@ public:
         qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
         qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
+
+        qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
+        qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
 
         qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
 

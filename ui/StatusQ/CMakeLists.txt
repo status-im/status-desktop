@@ -13,8 +13,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Although SHARED libraries set this to ON by default,
-# all static libraries, that are built into this SHARED, 
-# (which is qzxing in our case) should also be build with -fPIC. 
+# all static libraries, that are built into this SHARED,
+# (which is qzxing in our case) should also be build with -fPIC.
 # This fixes it.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -91,6 +91,7 @@ add_library(StatusQ SHARED
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/permissionutilsinternal.h
+        include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
@@ -99,13 +100,14 @@ add_library(StatusQ SHARED
         src/modelutilsinternal.cpp
         src/permissionutilsinternal.cpp
         src/plugin.cpp
+        src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
         )
 
-set_target_properties(StatusQ PROPERTIES 
+set_target_properties(StatusQ PROPERTIES
     ADDITIONAL_CLEAN_FILES bin/StatusQ/qmldir
     RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG ${STATUSQ_MODULE_PATH}
@@ -144,7 +146,7 @@ target_link_libraries(StatusQ PRIVATE
         qzxing
         )
 
-target_include_directories(StatusQ PRIVATE include)
+target_include_directories(StatusQ PUBLIC include)
 
 install(TARGETS StatusQ
         RUNTIME DESTINATION StatusQ
