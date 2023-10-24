@@ -27,10 +27,7 @@ proc `$`*(self: Filter): string =
 
 proc setFillterAllAddresses*(self: Filter) = 
   self.allAddresses = true
-  var allAccounts = self.controller.getWalletAccounts()
-  var accountsExclWatchAccs = allAccounts.filter(a => not a.hideFromTotalBalance)
-  if allAccounts.len != accountsExclWatchAccs.len:
-    self.allAddresses = false
+
   self.addresses = self.controller.getWalletAccounts().filter(a => not a.hideFromTotalBalance).map(a => a.address)
 
 proc setAddress*(self: Filter, address: string) =
