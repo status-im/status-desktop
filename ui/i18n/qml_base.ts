@@ -19845,8 +19845,8 @@ to login to Status?</translation>
     <message>
         <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="149" />
         <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="149" />
-        <source>"%1" successfuly added</source>
-        <translation>"%1" successfuly added</translation>
+        <source>"%1" successfully added</source>
+        <translation>"%1" successfully added</translation>
     </message>
 </context>
 <context>
