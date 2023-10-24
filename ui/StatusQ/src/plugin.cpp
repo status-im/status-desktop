@@ -4,6 +4,7 @@
 #include <qqmlsortfilterproxymodeltypes.h>
 
 #include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
@@ -25,6 +26,7 @@ public:
         qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
 
+        qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
 
