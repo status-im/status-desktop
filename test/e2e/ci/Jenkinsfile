@@ -115,7 +115,7 @@ pipeline {
     }
 
     stage('Unpack') {
-      steps { timeout(5) script {
+      steps { timeout(5) { script {
         sh "tar -zxvf '${utils.findFile('tmp/pkg/*tar.gz')}' -C './tmp'"
         env.APP_DIR = utils.findFile('tmp/*.AppImage')
       } } }
