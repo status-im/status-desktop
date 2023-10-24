@@ -73,9 +73,15 @@ pipeline {
   }
 
   stages {
-    stage('Setup') {
+    stage('Prep') {
       steps { script {
         currentBuild.displayName = getNewBuildName()
+        updateGitHubStatus()
+      } }
+    }
+
+    stage('Deps') {
+      steps { script {
         sh 'pip3 install --user -r requirements.txt'
       } }
     }
@@ -154,14 +160,7 @@ pipeline {
         properties: [],
         jdk: '',
       ])
-      /* For PR builds update check status. */
-      if (params.BUILD_SOURCE ==~ /.*\/PR-[0-9]+\/?$/) {
-        github.statusUpdate(
-          context: 'jenkins/prs/tests/e2e-new',
-          commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
-          repo_url: 'https://github.com/status-im/status-desktop'
-        )
-      }
+      updateGitHubStatus()
     } }
     cleanup { cleanWs() }
   }
@@ -176,5 +175,16 @@ def getNewBuildName() {
     ].grep().join('-')
   } else {
     return utils.baseName(params.BUILD_SOURCE)
+  }
+}
+
+def updateGitHubStatus() {
+  /* For PR builds update check status. */
+  if (params.BUILD_SOURCE ==~ /.*\/PR-[0-9]+\/?$/) {
+    github.statusUpdate(
+      context: 'jenkins/prs/tests/e2e-new',
+      commit: jenkins.getJobCommitByPath(params.BUILD_SOURCE),
+      repo_url: 'https://github.com/status-im/status-desktop'
+    )
   }
 }
