@@ -30,6 +30,7 @@ Column {
     signal runRemoveKeypairFlow(var model)
     signal runMoveKeypairToKeycardFlow(var model)
     signal runStopUsingKeycardFlow(var model)
+    signal goToManageTokensView()
 
     spacing: 8
 
@@ -130,6 +131,21 @@ Column {
         height: 64
         width: parent.width
         onClicked: goToAccountOrderView()
+        components: [
+            StatusIcon {
+                icon: "next"
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    Separator {}
+
+    StatusListItem {
+        title: qsTr("Manage Tokens")
+        height: 64
+        width: parent.width
+        onClicked: goToManageTokensView()
         components: [
             StatusIcon {
                 icon: "next"
