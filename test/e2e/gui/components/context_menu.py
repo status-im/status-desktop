@@ -28,3 +28,7 @@ class ContextMenu(QObject):
     @allure.step('Select edit account option from context menu')
     def select_edit_account_from_context_menu(self):
         self._context_edit_account_option.click()
+
+    @allure.step('Check delete option visibility in context menu')
+    def is_delete_account_option_present(self):
+        return self._context_delete_account_option.is_visible

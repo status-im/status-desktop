@@ -30,6 +30,7 @@ class WalletSettingsView(QObject):
         self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
         self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
         self._status_account_in_keypair = QObject('settingsWalletAccountDelegate_Status_account')
+        self._wallet_account_from_keypair = QObject('settingsWalletAccountDelegate')
 
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self):
@@ -49,6 +50,12 @@ class WalletSettingsView(QObject):
     @allure.step('Open Status account view in wallet settings')
     def open_status_account_in_settings(self):
         self._status_account_in_keypair.click()
+        return AccountDetailsView().wait_until_appears()
+
+    @allure.step('Open account view in wallet settings by name')
+    def open_account_in_settings(self, name):
+        self._wallet_account_from_keypair.real_name['objectName'] = name
+        self._wallet_account_from_keypair.click()
         return AccountDetailsView().wait_until_appears()
 
 

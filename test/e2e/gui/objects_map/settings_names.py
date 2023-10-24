@@ -1,4 +1,5 @@
 from gui.objects_map.main_names import statusDesktop_mainWindow
+from objectmaphelper import *
 
 mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "type": "ProfileLayout", "unnamed": 1, "visible": True}
 mainWindow_StatusSectionLayout_ContentItem = {"container": mainWindow_ProfileLayout, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
@@ -66,6 +67,7 @@ networkSettingsNetworks_Arbitrum_Goerli = {"container": settingsContentBase_Scro
 networkSettingsNetworks_Mainnet_Goerli_sensor = {"container": networkSettingsNetworks_Mainnet_Goerli, "objectName": "walletNetworkDelegate_Mainnet_5_sensor", "id": "sensor", "type": "MouseArea", "unnamed": 1, "visible": True}
 networkSettingsNetowrks_Mainnet_Testlabel = {"container": networkSettingsNetworks_Mainnet_Goerli_sensor, "objectName": "testnetLabel_Mainnet", "type": "StatusBaseText", "visible": True}
 settingsWalletAccountDelegate_Status_account = {"container": settingsContentBase_ScrollView, "objectName": "Status account", "type": "WalletAccountDelegate", "visible": True}
+settingsWalletAccountDelegate = {"container": settingsContentBase_ScrollView, "objectName": RegularExpression("*"), "type": "WalletAccountDelegate", "visible": True}
 
 # Wallet Account Details view
 walletAccountViewEditAccountButton = {"container": statusDesktop_mainWindow, "objectName": "walletAccountViewEditAccountButton", "type": "StatusButton"}
