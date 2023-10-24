@@ -22,7 +22,7 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
+            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
             root.updateModelsAfterChange()
         }

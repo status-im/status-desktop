@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, sugar, json
+import NimQml, tables, strutils, sequtils, json
 
 import profile_preferences_collectible_item
 import app_service/service/profile/dto/profile_showcase_entry
@@ -36,6 +36,10 @@ QtObject:
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc recalcOrder(self: ProfileShowcaseCollectiblesModel) =
+    for order, item in self.items:
+      item.order = order
 
   proc items*(self: ProfileShowcaseCollectiblesModel): seq[ProfileShowcaseCollectibleItem] =
     self.items
@@ -103,7 +107,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdateItemImpl(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
+  proc upsertItemImpl(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
     let ind = self.findIndexForCollectible(item.uid)
     if ind == -1:
       self.appendItem(item)
@@ -122,16 +126,18 @@ QtObject:
         ModelRole.BackgroundColor.int,
       ])
 
-  proc insertOrUpdateItemJson(self: ProfileShowcaseCollectiblesModel, itemJson: string) {.slot.} =
-    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseCollectibleItem())
+  proc upsertItemJson(self: ProfileShowcaseCollectiblesModel, itemJson: string) {.slot.} =
+    self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseCollectibleItem())
 
-  proc insertOrUpdateItem*(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
-    self.insertOrUpdateItemImpl(item)
+  proc upsertItem*(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
+    self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
-  proc insertOrUpdateItems*(self: ProfileShowcaseCollectiblesModel, items: seq[ProfileShowcaseCollectibleItem]) =
+  proc upsertItems*(self: ProfileShowcaseCollectiblesModel, items: seq[ProfileShowcaseCollectibleItem]) =
     for item in items:
-      self.insertOrUpdateItemImpl(item)
+      self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
   proc reset*(self: ProfileShowcaseCollectiblesModel) {.slot.} =
@@ -156,6 +162,17 @@ QtObject:
     let ind = self.findIndexForCollectible(uid)
     if ind != -1:
       self.remove(ind)
+
+  proc move*(self: ProfileShowcaseCollectiblesModel, fromIndex: int, toIndex: int) {.slot.} =
+    if fromIndex < 0 or fromIndex >= self.items.len:
+      return
+
+    self.beginResetModel()
+    let item = self.items[fromIndex]
+    self.items.delete(fromIndex)
+    self.items.insert(@[item], toIndex)
+    self.recalcOrder()
+    self.endResetModel()
 
   proc setVisibilityByIndex*(self: ProfileShowcaseCollectiblesModel, ind: int, visibility: int) {.slot.} =
     if (visibility >= ord(low(ProfileShowcaseVisibility)) and

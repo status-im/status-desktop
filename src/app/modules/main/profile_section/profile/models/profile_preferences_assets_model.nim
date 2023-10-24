@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, sugar, json
+import NimQml, tables, strutils, sequtils, json
 
 import profile_preferences_asset_item
 import app_service/service/profile/dto/profile_showcase_entry
@@ -35,6 +35,10 @@ QtObject:
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc recalcOrder(self: ProfileShowcaseAssetsModel) =
+    for order, item in self.items:
+      item.order = order
 
   proc items*(self: ProfileShowcaseAssetsModel): seq[ProfileShowcaseAssetItem] =
     self.items
@@ -99,7 +103,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdateItemImpl(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
+  proc upsertItemImpl(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
     let ind = self.findIndexForAsset(item.symbol)
     if ind == -1:
       self.appendItem(item)
@@ -117,16 +121,18 @@ QtObject:
         ModelRole.Color.int,
       ])
 
-  proc insertOrUpdateItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
-    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
+  proc upsertItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
+    self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
 
-  proc insertOrUpdateItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
-    self.insertOrUpdateItemImpl(item)
+  proc upsertItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
+    self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
-  proc insertOrUpdateItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
+  proc upsertItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
     for item in items:
-      self.insertOrUpdateItemImpl(item)
+      self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
   proc reset*(self: ProfileShowcaseAssetsModel) {.slot.} =
@@ -151,6 +157,17 @@ QtObject:
     let ind = self.findIndexForAsset(symbol)
     if ind != -1:
       self.remove(ind)
+
+  proc move*(self: ProfileShowcaseAssetsModel, fromIndex: int, toIndex: int) {.slot.} =
+    if fromIndex < 0 or fromIndex >= self.items.len:
+      return
+
+    self.beginResetModel()
+    let item = self.items[fromIndex]
+    self.items.delete(fromIndex)
+    self.items.insert(@[item], toIndex)
+    self.recalcOrder()
+    self.endResetModel()
 
   proc setVisibilityByIndex*(self: ProfileShowcaseAssetsModel, ind: int, visibility: int) {.slot.} =
     if (visibility >= ord(low(ProfileShowcaseVisibility)) and

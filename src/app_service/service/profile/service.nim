@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables, sugar, sequtils, json_serialization
+import NimQml, json, chronicles, tables, sugar, sequtils, json_serialization, std/algorithm
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
@@ -97,35 +97,41 @@ QtObject:
       error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
 
   proc requestProfileShowcasePreferences*(self: Service) =
-    try:
-      let arg = QObjectTaskArg(
-        tptr: cast[ByteAddress](asyncGetProfileShowcasePreferencesTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "asyncProfileShowcaseLoaded",
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error requesting profile showcase preferences", msg = e.msg
+    let arg = QObjectTaskArg(
+      tptr: cast[ByteAddress](asyncGetProfileShowcasePreferencesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncProfileShowcaseLoaded",
+    )
+    self.threadpool.start(arg)
 
   proc asyncProfileShowcaseLoaded*(self: Service, rpcResponse: string) {.slot.} =
-    let rpcResponseObj = rpcResponse.parseJson
-    if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-      error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
-      return
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
+        return
 
-    let result =  rpcResponseObj{"response"}{"result"}
-    var communities = result{"communities"}.parseProfileShowcaseEntries()
-    var accounts = result{"accounts"}.parseProfileShowcaseEntries()
-    var collectibles = result{"collectibles"}.parseProfileShowcaseEntries()
-    var assets = result{"assets"}.parseProfileShowcaseEntries()
+      let result =  rpcResponseObj["response"]["result"]
+      var communities = result["communities"].parseProfileShowcaseEntries()
+      var accounts = result["accounts"].parseProfileShowcaseEntries()
+      var collectibles = result["collectibles"].parseProfileShowcaseEntries()
+      var assets = result["assets"].parseProfileShowcaseEntries()
 
-    self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
-      ProfileShowcasePreferences(
-        communities: communities,
-        accounts: accounts,
-        collectibles: collectibles,
-        assets: assets
-    ))
+      # Sort by order before inserting in the model
+      communities.sort((a, b) => cmp(a.order, b.order))
+      accounts.sort((a, b) => cmp(a.order, b.order))
+      collectibles.sort((a, b) => cmp(a.order, b.order))
+      assets.sort((a, b) => cmp(a.order, b.order))
+
+      self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
+        ProfileShowcasePreferences(
+          communities: communities,
+          accounts: accounts,
+          collectibles: collectibles,
+          assets: assets
+      ))
+    except Exception as e:
+      error "Error requesting profile showcase preferences", msg = e.msg
 
   proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferences) =
     try:

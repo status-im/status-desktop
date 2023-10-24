@@ -10,7 +10,7 @@ ProfileShowcasePanel {
     property string currentWallet
 
     keyRole: "address"
-    roleNames: ["address", "name",  "walletType", "emoji", "colorId"].concat(showcaseRoles)
+    roleNames: ["address", "name", "walletType", "emoji", "colorId"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItemInShowcase(modelData.address)
     hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
     showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")
@@ -25,7 +25,7 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
+            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
             root.updateModelsAfterChange()
         }

@@ -1,4 +1,4 @@
-import NimQml, tables, strutils, sequtils, sugar, json
+import NimQml, tables, strutils, sequtils, json
 
 import profile_preferences_community_item
 import app_service/service/profile/dto/profile_showcase_entry
@@ -36,6 +36,10 @@ QtObject:
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc recalcOrder(self: ProfileShowcaseCommunitiesModel) =
+    for order, item in self.items:
+      item.order = order
 
   proc items*(self: ProfileShowcaseCommunitiesModel): seq[ProfileShowcaseCommunityItem] =
     self.items
@@ -102,7 +106,7 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdateItemImpl(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
+  proc upsertItemImpl(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     let ind = self.findIndexForCommunity(item.id)
     if ind == -1:
       self.appendItem(item)
@@ -121,16 +125,18 @@ QtObject:
         ModelRole.Color.int,
       ])
 
-  proc insertOrUpdateItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
-    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseCommunityItem())
+  proc upsertItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
+    self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseCommunityItem())
 
-  proc insertOrUpdateItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
-    self.insertOrUpdateItemImpl(item)
+  proc upsertItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
+    self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
-  proc insertOrUpdateItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
+  proc upsertItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
     for item in items:
-      self.insertOrUpdateItemImpl(item)
+      self.upsertItemImpl(item)
+    self.recalcOrder()
     self.itemsUpdated()
 
   proc reset*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
@@ -155,6 +161,17 @@ QtObject:
     let ind = self.findIndexForCommunity(id)
     if ind != -1:
       self.remove(ind)
+
+  proc move*(self: ProfileShowcaseCommunitiesModel, fromIndex: int, toIndex: int) {.slot.} =
+    if fromIndex < 0 or fromIndex >= self.items.len:
+      return
+
+    self.beginResetModel()
+    let item = self.items[fromIndex]
+    self.items.delete(fromIndex)
+    self.items.insert(@[item], toIndex)
+    self.recalcOrder()
+    self.endResetModel()
 
   proc setVisibilityByIndex*(self: ProfileShowcaseCommunitiesModel, ind: int, visibility: int) {.slot.} =
     if (visibility >= ord(low(ProfileShowcaseVisibility)) and

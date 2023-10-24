@@ -80,7 +80,7 @@ Control {
                     var tmpObj = Object()
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
-                    showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
+                    showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
                     root.showcaseEntryChanged()
                     root.updateModelsAfterChange()
                 }
@@ -164,7 +164,8 @@ Control {
                     const to = showcaseDraggableDelegateLoader.item.visualIndex
                     if (to === from)
                         return
-                    showcaseModel.move(from, to, 1)
+                    root.showcaseEntryChanged()
+                    showcaseModel.move(from, to)
                     drag.accept()
                 }
 
@@ -269,6 +270,7 @@ Control {
                 }
 
                 onDropped: function(drop) {
+
                     showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
                     root.showcaseEntryChanged()
                     root.updateModelsAfterChange()

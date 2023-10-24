@@ -116,9 +116,9 @@ proc updateShowcasePreferences(self: Controller, communityEntries, accountEntrie
     let account = self.walletAccountService.getAccountByAddress(accountEntry.id)
     profileAccountItems.add(initProfileShowcaseAccountItem(account, accountEntry))
 
-    # TODO: need wallet api to fetch token by symbol
-    for token in self.walletAccountService.getTokensByAddress(account.address):
-      for assetEntry in assetEntries:
+    for assetEntry in assetEntries:
+      # TODO: need wallet api to fetch token by symbol
+      for token in self.walletAccountService.getTokensByAddress(account.address):
         if assetEntry.id == token.symbol:
           profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry))
 

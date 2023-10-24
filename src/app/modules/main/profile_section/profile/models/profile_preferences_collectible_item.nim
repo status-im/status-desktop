@@ -1,4 +1,4 @@
-import json, strformat, strutils, stint, json_serialization, tables
+import json, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
 import app_service/service/profile/dto/profile_showcase_entry

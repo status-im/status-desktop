@@ -1,4 +1,4 @@
-import NimQml, json, sugar, sequtils
+import NimQml, json, sequtils
 
 import io_interface
 import app/modules/shared_models/social_links_model
@@ -214,7 +214,7 @@ QtObject:
                                         accounts: seq[ProfileShowcaseAccountItem],
                                         collectibles: seq[ProfileShowcaseCollectibleItem],
                                         assets: seq[ProfileShowcaseAssetItem]) =
-    self.profileShowcaseCommunitiesModel.insertOrUpdateItems(communities)
-    self.profileShowcaseAccountsModel.insertOrUpdateItems(accounts)
-    self.profileShowcaseCollectiblesModel.insertOrUpdateItems(collectibles)
-    self.profileShowcaseAssetsModel.insertOrUpdateItems(assets)
+    self.profileShowcaseCommunitiesModel.upsertItems(communities)
+    self.profileShowcaseAccountsModel.upsertItems(accounts)
+    self.profileShowcaseCollectiblesModel.upsertItems(collectibles)
+    self.profileShowcaseAssetsModel.upsertItems(assets)
