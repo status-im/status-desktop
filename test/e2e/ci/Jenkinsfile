@@ -88,7 +88,7 @@ pipeline {
 
     stage('Download') {
       when { expression { params.BUILD_SOURCE.startsWith('http') } }
-      steps { script {
+      steps { timeout(5) { script {
         sh 'mkdir -p ./tmp/pkg/'
         fileOperations([
           fileDownloadOperation(
@@ -99,30 +99,30 @@ pipeline {
             password:       '',
           )
         ])
-      } }
+      } } }
     }
 
     stage('Copy') {
       when { expression { ! params.BUILD_SOURCE.startsWith('http') } }
-      steps { script {
+      steps { timeout(5) { script {
         copyArtifacts(
           projectName: params.BUILD_SOURCE,
           filter:      'pkg/*-x86_64.tar.gz',
           selector:    lastWithArtifacts(),
           target:      './tmp'
         )
-      } }
+      } } }
     }
 
     stage('Unpack') {
-      steps { script {
+      steps { timeout(5) script {
         sh "tar -zxvf '${utils.findFile('tmp/pkg/*tar.gz')}' -C './tmp'"
         env.APP_DIR = utils.findFile('tmp/*.AppImage')
-      } }
+      } } }
     }
 
     stage('Test') {
-      steps { script {
+      steps { timeout(90) { script {
         def flags = []
         if (params.TEST_NAME)  { flags.add("-k=${params.TEST_NAME}")  }
         if (params.TEST_SCOPE) { flags.add("-m=${params.TEST_SCOPE}") }
@@ -149,7 +149,7 @@ pipeline {
             """
           }
         }
-      } }
+      } } }
     }
   }
   post {
