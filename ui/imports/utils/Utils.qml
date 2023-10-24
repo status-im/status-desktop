@@ -15,6 +15,7 @@ QtObject {
     property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
 
     readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
+    readonly property int communityIdLength: 68
 
     function isDigit(value) {
       return /^\d$/.test(value);
@@ -33,11 +34,19 @@ QtObject {
     }
 
     function isCommunityPublicKey(value) {
-        return (startsWith0x(value) && isHex(value) && value.length === 68) || globalUtilsInst.isCompressedPubKey(value)
+        return (startsWith0x(value) && isHex(value) && value.length === communityIdLength) || globalUtilsInst.isCompressedPubKey(value)
     }
 
     function isCompressedPubKey(pubKey) {
       return globalUtilsInst.isCompressedPubKey(pubKey)
+    }
+
+    function getCommunityIdFromFullChatId(fullChatId) {
+        return fullChatId.substr(0, communityIdLength)
+    }
+
+    function getChannelUuidFromFullChatId(fullChatId) {
+        return fullChatId.substr(communityIdLength, fullChatId.length)
     }
 
     function isValidETHNamePrefix(value) {
@@ -490,6 +499,18 @@ QtObject {
         }
 
         return communitiesModuleInst.shareCommunityUrlWithData(communityId)
+    }
+
+    function getCommunityChannelShareLink(communityId, channelId) {
+        if (communityId === "" || channelId === "")
+            return ""
+        return communitiesModuleInst.shareCommunityChannelUrlWithData(communityId, channelId)
+    }
+
+    function getCommunityChannelShareLinkWithChatId(chatId) {
+        const communityId = getCommunityIdFromFullChatId(chatId)
+        const channelId = getChannelUuidFromFullChatId(chatId)
+        return getCommunityChannelShareLink(communityId, channelId)
     }
 
     function getChatKeyFromShareLink(link) {
