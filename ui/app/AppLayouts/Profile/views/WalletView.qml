@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
@@ -17,7 +17,8 @@ import shared.status 1.0
 import "../controls"
 import "../popups"
 import "../panels"
-import "./wallet"
+
+import AppLayouts.Profile.views.wallet 1.0
 
 SettingsContentBase {
     id: root
@@ -31,10 +32,10 @@ SettingsContentBase {
     readonly property int editNetworksViewIndex: 2;
     readonly property int accountOrderViewIndex: 3;
     readonly property int accountViewIndex: 4;
+    readonly property int manageTokensViewIndex: 5
 
-    Component.onCompleted: {
-        root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
-    }
+    readonly property string walletSectionTitle: qsTr("Wallet")
+    readonly property string networksSectionTitle: qsTr("Networks")
 
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
@@ -57,7 +58,7 @@ SettingsContentBase {
 
         onCurrentIndexChanged: {
             root.rootStore.backButtonName = ""
-            root.sectionTitle = qsTr("Wallet")
+            root.sectionTitle = root.walletSectionTitle
             root.titleRowComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.sourceComponent = undefined
             root.titleRowLeftComponentLoader.visible = false
@@ -68,23 +69,30 @@ SettingsContentBase {
             }
 
             if(currentIndex == root.networksViewIndex) {
-                root.rootStore.backButtonName = qsTr("Wallet")
-                root.sectionTitle = qsTr("Networks")
+                root.rootStore.backButtonName = root.walletSectionTitle
+                root.sectionTitle = root.networksSectionTitle
             }
+
             if(currentIndex == root.editNetworksViewIndex) {
-                root.rootStore.backButtonName = qsTr("Networks")
-                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.chainName ? editNetwork.combinedNetwork.prod.chainName: "")
+                root.rootStore.backButtonName = root.networksSectionTitle
+                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.combinedNetwork.prod &&
+                                                        !!editNetwork.combinedNetwork.prod.chainName ? editNetwork.combinedNetwork.prod.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
                 root.titleRowLeftComponentLoader.sourceComponent = networkIcon
                 root.titleLayout.spacing = 12
-            }
-            else if(currentIndex == root.accountViewIndex) {
-                root.rootStore.backButtonName = qsTr("Wallet")
+
+            } else if(currentIndex == root.accountViewIndex) {
+                root.rootStore.backButtonName = root.walletSectionTitle
                 root.sectionTitle = ""
-            }
-            else if(currentIndex == root.accountOrderViewIndex) {
-                root.rootStore.backButtonName = qsTr("Wallet")
+
+            } else if(currentIndex == root.accountOrderViewIndex) {
+                root.rootStore.backButtonName = root.walletSectionTitle
                 root.sectionTitle = qsTr("Edit account order")
+
+            } else if(currentIndex == root.manageTokensViewIndex) {
+                root.rootStore.backButtonName = root.walletSectionTitle
+                root.titleRowLeftComponentLoader.visible = false
+                root.sectionTitle = qsTr("Manage tokens")
             }
         }
 
@@ -127,6 +135,9 @@ SettingsContentBase {
             }
             onRunStopUsingKeycardFlow: {
                 root.rootStore.keycardStore.runStopUsingKeycardPopup(model.keyPair.keyUid)
+            }
+            onGoToManageTokensView: {
+                stackContainer.currentIndex = manageTokensViewIndex
             }
         }
 
@@ -202,6 +213,12 @@ SettingsContentBase {
             onUpdateWatchAccountHiddenFromTotalBalance: {
                 root.walletStore.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
             }
+        }
+
+        ManageTokensView {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
         }
 
         DappPermissionsView {
@@ -297,5 +314,9 @@ SettingsContentBase {
                 keypairImport.item.open()
             }
         }
+    }
+
+    Component.onCompleted: {
+        root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
     }
 }

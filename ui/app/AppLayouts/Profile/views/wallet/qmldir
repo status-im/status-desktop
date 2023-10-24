@@ -1,3 +1,9 @@
+AccountOrderView 1.0 AccountOrderView.qml
+AccountView 1.0 AccountView.qml
+DappPermissionsView 1.0 DappPermissionsView.qml
 EditNetworkView 1.0 EditNetworkView.qml
 EditNetworkForm 1.0 EditNetworkForm.qml
-AccountView 1.0 AccountView.qml
+MainView 1.0 MainView.qml
+ManageTokensView 1.0 ManageTokensView.qml
+NetworksView 1.0 NetworksView.qml
+PermissionsListView 1.0 PermissionsListView.qml
