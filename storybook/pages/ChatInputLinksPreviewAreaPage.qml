@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
 import Storybook 1.0
+import Models 1.0
 
 import StatusQ.Core.Theme 0.1
 import shared.controls.chat 1.0
@@ -30,7 +31,7 @@ SplitView {
                     anchors.centerIn: parent
                     width: parent.width
                     imagePreviewArray: ["https://picsum.photos/200/300?random=1", "https://picsum.photos/200/300?random=1"]
-                    linkPreviewModel: showLinkPreviewSettings ? emptyModel : linkPreviewListModel
+                    linkPreviewModel: showLinkPreviewSettings ? emptyModel : mockedLinkPreviewModel
                     showLinkPreviewSettings: !linkPreviewEnabledSwitch.checked
                     visible: hasContent
 
@@ -78,123 +79,8 @@ SplitView {
         id: emptyModel
     }
 
-    ListModel {
-        id: linkPreviewListModel
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=1"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: false
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=2"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: ""
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=3"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=4"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=5"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=6"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=7"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=8"
-            thumbnailDataUri: ""
-        }
-        ListElement {
-            url: "https://www.youtube.com/watch?v=9bZkp7q19f0"
-            unfurled: true
-            immutable: false
-            hostname: "youtube.com"
-            title: "PSY - GANGNAM STYLE(강남스타일) M/V"
-            description: ""
-            linkType: 0
-            thumbnailWidth: 480
-            thumbnailHeight: 360
-            thumbnailUrl: "https://picsum.photos/480/360?random=9"
-            thumbnailDataUri: ""
-        }
+    LinkPreviewModel {
+        id: mockedLinkPreviewModel
     }
 }
 

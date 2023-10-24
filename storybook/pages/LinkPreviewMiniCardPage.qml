@@ -25,9 +25,9 @@ SplitView {
          LinkPreviewMiniCard {
              id: previewMiniCard
              anchors.centerIn: parent
-             titleStr: type === LinkPreviewMiniCard.Type.User ? userNameInput.text : titleInput.text
+             title: type === LinkPreviewMiniCard.Type.User ? userNameInput.text : titleInput.text
              domain: domainInput.text
-             favIconUrl: faviconInput.text
+             iconUrl: faviconInput.text
              previewState: stateInput.currentIndex
              thumbnailImageUrl: externalImageInput.text
              type: previewTypeInput.currentIndex
@@ -50,7 +50,7 @@ SplitView {
                     id: previewTypeInput
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    model: ["link", "image", "community", "channel", "user profile"]
+                    model: ["unknown", "link", "image", "community", "channel", "user profile"]
                 }
                 Label {
                     text: "Community name"

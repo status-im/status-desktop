@@ -29,35 +29,11 @@ CalloutCard {
         User
     }
 
-    function getCardType(previewType, standardLinkPreview) {
-        switch (previewType) {
-            case Constants.StatusContact:
-                return LinkPreviewMiniCard.Type.User
-            case Constants.StatusCommunity:
-                return LinkPreviewMiniCard.Type.Community
-            case Constants.StatusCommunityChannel:
-                return LinkPreviewMiniCard.Type.Channel
-            case Constants.Standard:
-                if (!standardLinkPreview)
-                    return LinkPreviewMiniCard.Type.Unknown
-                switch (standardLinkPreview.linkType) {
-                case Constants.StandardLinkPreviewType.Link:
-                    return LinkPreviewMiniCard.Type.Link
-                case Constants.StandardLinkPreviewType.Image:
-                    return LinkPreviewMiniCard.Type.Image
-                default:
-                    return LinkPreviewMiniCard.Type.Unknown
-                }
-            default:
-                return LinkPreviewMiniCard.Type.Unknown
-        }
-    }
-
-    required property string titleStr
+    required property string title
     required property string domain
     required property string communityName
     required property string channelName
-    required property url favIconUrl
+    required property url iconUrl
     required property url thumbnailImageUrl
     required property int previewState
     required property int type
@@ -113,7 +89,7 @@ CalloutCard {
                 borderColor: backgroundColor;
             }
             PropertyChanges { target: loadingAnimation; visible: false; }
-            PropertyChanges { target: titleText; text: root.titleStr; color: Theme.palette.directColor1 }
+            PropertyChanges { target: titleText; text: root.title; color: Theme.palette.directColor1 }
             PropertyChanges { target: subtitleText; visible: true; }
             PropertyChanges { target: reloadButton; visible: false; }
             PropertyChanges { target: favIcon; visible: true }
@@ -145,8 +121,8 @@ CalloutCard {
             PropertyChanges { 
                 target: favIcon
                 visible: true
-                name: root.titleStr
-                asset.isLetterIdenticon: true
+                name: root.title
+                asset.isLetterIdenticon: root.iconUrl.length === 0
                 asset.charactersLen: 2
                 asset.color: Theme.palette.miscColor9
             }
@@ -174,8 +150,8 @@ CalloutCard {
                 Layout.preferredWidth: 16
                 Layout.preferredHeight: 16
                 visible: false
-                name: root.titleStr
-                asset.name: root.favIconUrl
+                name: root.title
+                asset.name: root.iconUrl
                 asset.letterSize: asset.charactersLen == 1 ? 10 : 7
             }
             ColumnLayout {
@@ -190,7 +166,7 @@ CalloutCard {
                     spacing: 0
                     StatusBaseText {
                         id: titleText
-                        text: root.titleStr
+                        text: root.title
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         font.pixelSize: Style.current.additionalTextSize
