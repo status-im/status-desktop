@@ -108,7 +108,7 @@ Item {
 
         function onShowToastAccountAdded(name: string) {
             Global.displayToastMessage(
-                qsTr("\"%1\" successfuly added").arg(name),
+                qsTr("\"%1\" successfully added").arg(name),
                 "",
                 "checkmark-circle",
                 false,
