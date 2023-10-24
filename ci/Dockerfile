@@ -19,7 +19,7 @@ RUN python3 -m pip install setuptools \
 # Build Image ------------------------------------------------------------------
 FROM ubuntu:20.04
 
-ARG LINUXDEPLOYQT_VERSION=continuous
+ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
 
 # Adapted from a12e/docker-qt by Aurélien Brooke
@@ -58,7 +58,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
 
 # Install linuxdeployqt
 RUN mkdir -p /usr/local/bin \
- && curl -Lo/usr/local/bin/linuxdeployqt "https://github.com/probonopd/linuxdeployqt/releases/download/$LINUXDEPLOYQT_VERSION/linuxdeployqt-$LINUXDEPLOYQT_VERSION-x86_64.AppImage" \
+ && curl -Lo/usr/local/bin/linuxdeployqt "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage" \
  && chmod a+x /usr/local/bin/linuxdeployqt
 
 # Reconfigure locale

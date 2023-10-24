@@ -26,7 +26,9 @@ function install_build_dependencies {
 function install_release_dependencies {
   echo "Install release dependencies"
   mkdir -p /usr/local/bin
-  curl -Lo/usr/local/bin/linuxdeployqt "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  LINUXDEPLOYQT='linuxdeployqt-20230423-8428c59-x86_64.AppImage'
+  curl -L "https://status-misc.ams3.digitaloceanspaces.com/desktop/${LINUXDEPLOYQT}"
+    -o /usr/local/bin/linuxdeployqt
   chmod a+x /usr/local/bin/linuxdeployqt
 
   apt install -yq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
