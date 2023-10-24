@@ -39,11 +39,11 @@ ColumnLayout {
 
     readonly property bool dirty: (!descriptionPanel.isEnsName &&
                                    descriptionPanel.displayName.text !== profileStore.displayName) ||
-                                  descriptionPanel.bio.text !== profileStore.bio ||
-                                  profileStore.socialLinksDirty ||
-                                  biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
-                                  profileHeader.icon !== profileStore.profileLargeImage ||
-                                  hasAnyProfileShowcaseChanges
+                                   descriptionPanel.bio.text !== profileStore.bio ||
+                                   profileStore.socialLinksDirty ||
+                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
+                                   profileHeader.icon !== profileStore.profileLargeImage ||
+                                   hasAnyProfileShowcaseChanges
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -53,6 +53,12 @@ ColumnLayout {
         profileStore.resetSocialLinks()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+
+        profileShowcaseCommunitiesPanel.reset()
+        profileShowcaseAccountsPanel.reset()
+        profileShowcaseCollectiblesPanel.reset()
+        profileShowcaseAssetsPanel.reset()
+        root.profileStore.requestProfileShowcasePreferences()
         hasAnyProfileShowcaseChanges = false
     }
 
@@ -83,7 +89,7 @@ ColumnLayout {
         reset()
     }
 
-    onVisibleChanged: profileStore.requestProfileShowcasePreferences()
+    onVisibleChanged: if (visible) profileStore.requestProfileShowcasePreferences()
     Component.onCompleted: profileStore.requestProfileShowcasePreferences()
 
     readonly property Connections privacyStoreConnections: Connections {
@@ -95,29 +101,6 @@ ColumnLayout {
 
         function onStoreToKeychainSuccess() {
             root.reset()
-        }
-    }
-
-    readonly property Connections profileStoreConnections: Connections {
-        target: profileStore
-
-        function onProfileShowcasePreferencesUpdated(entries) {
-            for (const entry of entries) {
-                switch (entry.entryType) {
-                case Constants.ShowcaseEntryType.Community:
-                     profileShowcaseCommunitiesPanel.updateEntry(entry)
-                     break
-                case Constants.ShowcaseEntryType.Account:
-                     profileShowcaseAccountsPanel.updateEntry(entry)
-                     break
-                case Constants.ShowcaseEntryType.Collectible:
-                     profileShowcaseCollectiblesPanel.updateEntry(entry)
-                     break
-                case Constants.ShowcaseEntryType.Asset:
-                     profileShowcaseAssetsPanel.updateEntry(entry)
-                     break
-                }
-            }
         }
     }
 
@@ -216,6 +199,7 @@ ColumnLayout {
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Collectibles")
+            enabled: false // TODO: implement collectibles nim part
         }
 
         StatusTabButton {

@@ -37,12 +37,6 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
   proc items*(self: ProfileShowcaseAccountsModel): seq[ProfileShowcaseAccountItem] =
     self.items
 
@@ -72,12 +66,12 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Address:
-      result = newQVariant(item.address)
     of ModelRole.ShowcaseVisibility:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Address:
+      result = newQVariant(item.address)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.WalletType:
@@ -93,36 +87,59 @@ QtObject:
         return index
     return -1
 
-  proc hasItem(self: ProfileShowcaseAccountsModel, address: string): bool {.slot.} =
-    return self.findIndexForAccount(address) != -1
+  proc hasItemInShowcase*(self: ProfileShowcaseAccountsModel, address: string): bool {.slot.} =
+    let ind = self.findIndexForAccount(address)
+    if ind == -1:
+      return false
+    return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc append(self: ProfileShowcaseAccountsModel, item: string) {.slot.} =
+  proc itemsUpdated*(self: ProfileShowcaseAccountsModel) {.signal.}
+
+  proc appendItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item.parseJson.toProfileShowcaseAccountItem())
+    self.items.add(item)
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdate(self: ProfileShowcaseAccountsModel, address: string, item: string) {.slot.} =
-    let ind = self.findIndexForAccount(address)
+  proc insertOrUpdateItemImpl(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
+    let ind = self.findIndexForAccount(item.address)
     if ind == -1:
-      self.append(item)
-      return
+      self.appendItem(item)
+    else:
+      self.items[ind] = item
 
-    self.items[ind] = item.parseJson.toProfileShowcaseAccountItem()
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[
+        ModelRole.ShowcaseVisibility.int,
+        ModelRole.Order.int,
+        ModelRole.Address.int,
+        ModelRole.Name.int,
+        ModelRole.WalletType.int,
+        ModelRole.Emoji.int,
+        ModelRole.ColorId.int,
+      ])
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.ShowcaseVisibility.int,
-      ModelRole.Order.int,
-      ModelRole.Address.int,
-      ModelRole.Name.int,
-      ModelRole.WalletType.int,
-      ModelRole.Emoji.int,
-      ModelRole.ColorId.int,
-    ])
+  proc insertOrUpdateItemJson(self: ProfileShowcaseAccountsModel, itemJson: string) {.slot.} =
+    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseAccountItem())
+
+  proc insertOrUpdateItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
+    self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc insertOrUpdateItems*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
+    for item in items:
+      self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc reset*(self: ProfileShowcaseAccountsModel) {.slot.} =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+    self.itemsUpdated()
 
   proc remove*(self: ProfileShowcaseAccountsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -135,12 +152,21 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc setVisibility*(self: ProfileShowcaseAccountsModel, address: string, visibility: int) {.slot.} =
-    if (visibility >= ord(low(ProfileShowcaseVisibility)) and visibility <= ord(high(ProfileShowcaseVisibility))):
-      for i in 0 ..< self.items.len:
-        if self.items[i].address == address:
-          self.items[i].showcaseVisibility = ProfileShowcaseVisibility(visibility)
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+  proc removeEntry*(self: ProfileShowcaseAccountsModel, address: string) {.slot.} =
+    let ind = self.findIndexForAccount(address)
+    if ind != -1:
+      self.remove(ind)
 
+  proc setVisibilityByIndex*(self: ProfileShowcaseAccountsModel, ind: int, visibility: int) {.slot.} =
+    if (visibility >= ord(low(ProfileShowcaseVisibility)) and
+        visibility <= ord(high(ProfileShowcaseVisibility)) and
+        ind >= 0 and ind < self.items.len):
+      self.items[ind].showcaseVisibility = ProfileShowcaseVisibility(visibility)
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+
+  proc setVisibility*(self: ProfileShowcaseAccountsModel, address: string, visibility: int) {.slot.} =
+    let index = self.findIndexForAccount(address)
+    if index != -1:
+      self.setVisibilityByIndex(index, visibility)

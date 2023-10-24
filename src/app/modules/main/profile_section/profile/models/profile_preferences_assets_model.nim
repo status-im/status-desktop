@@ -11,7 +11,6 @@ type
     Symbol
     Name
     EnabledNetworkBalance
-    VisibleForNetworkWithPositiveBalance
     Color
 
 QtObject:
@@ -37,12 +36,6 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
   proc items*(self: ProfileShowcaseAssetsModel): seq[ProfileShowcaseAssetItem] =
     self.items
 
@@ -57,7 +50,6 @@ QtObject:
       ModelRole.Symbol.int: "symbol",
       ModelRole.Name.int: "name",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
-      ModelRole.VisibleForNetworkWithPositiveBalance.int: "visibleForNetworkWithPositiveBalance",
       ModelRole.Color.int: "color",
     }.toTable
 
@@ -82,8 +74,6 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.enabledNetworkBalance)
-    of ModelRole.VisibleForNetworkWithPositiveBalance:
-      result = newQVariant(item.visibleForNetworkWithPositiveBalance)
     of ModelRole.Color:
       result = newQVariant(item.color)
 
@@ -93,36 +83,58 @@ QtObject:
         return i
     return -1
 
-  proc hasItem(self: ProfileShowcaseAssetsModel, symbol: string): bool {.slot.} =
-    return self.findIndexForAsset(symbol) != -1
+  proc hasItemInShowcase*(self: ProfileShowcaseAssetsModel, symbol: string): bool {.slot.} =
+    let ind = self.findIndexForAsset(symbol)
+    if ind == -1:
+      return false
+    return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc append(self: ProfileShowcaseAssetsModel, item: string) {.slot.} =
+  proc itemsUpdated*(self: ProfileShowcaseAssetsModel) {.signal.}
+
+  proc appendItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item.parseJson.toProfileShowcaseAssetItem())
+    self.items.add(item)
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdate(self: ProfileShowcaseAssetsModel, symbol: string, item: string) {.slot.} =
-    let ind = self.findIndexForAsset(symbol)
+  proc insertOrUpdateItemImpl(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
+    let ind = self.findIndexForAsset(item.symbol)
     if ind == -1:
-      self.append(item)
-      return
+      self.appendItem(item)
+    else:
+      self.items[ind] = item
 
-    self.items[ind] = item.parseJson.toProfileShowcaseAssetItem()
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[
+        ModelRole.ShowcaseVisibility.int,
+        ModelRole.Order.int,
+        ModelRole.Symbol.int,
+        ModelRole.Name.int,
+        ModelRole.EnabledNetworkBalance.int,
+        ModelRole.Color.int,
+      ])
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.ShowcaseVisibility.int,
-      ModelRole.Order.int,
-      ModelRole.Symbol.int,
-      ModelRole.Name.int,
-      ModelRole.EnabledNetworkBalance.int,
-      ModelRole.VisibleForNetworkWithPositiveBalance.int,
-      ModelRole.Color.int,
-    ])
+  proc insertOrUpdateItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
+    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
+
+  proc insertOrUpdateItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
+    self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc insertOrUpdateItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
+    for item in items:
+      self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc reset*(self: ProfileShowcaseAssetsModel) {.slot.} =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+    self.itemsUpdated()
 
   proc remove*(self: ProfileShowcaseAssetsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -135,11 +147,21 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
+  proc removeEntry*(self: ProfileShowcaseAssetsModel, symbol: string) {.slot.} =
+    let ind = self.findIndexForAsset(symbol)
+    if ind != -1:
+      self.remove(ind)
+
+  proc setVisibilityByIndex*(self: ProfileShowcaseAssetsModel, ind: int, visibility: int) {.slot.} =
+    if (visibility >= ord(low(ProfileShowcaseVisibility)) and
+        visibility <= ord(high(ProfileShowcaseVisibility)) and
+        ind >= 0 and ind < self.items.len):
+      self.items[ind].showcaseVisibility = ProfileShowcaseVisibility(visibility)
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+
   proc setVisibility*(self: ProfileShowcaseAssetsModel, symbol: string, visibility: int) {.slot.} =
-    if (visibility >= ord(low(ProfileShowcaseVisibility)) and visibility <= ord(high(ProfileShowcaseVisibility))):
-      for i in 0 ..< self.items.len:
-        if self.items[i].symbol == symbol:
-          self.items[i].showcaseVisibility = ProfileShowcaseVisibility(visibility)
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+    let index = self.findIndexForAsset(symbol)
+    if index != -1:
+      self.setVisibilityByIndex(index, visibility)

@@ -9,7 +9,7 @@ ProfileShowcasePanel {
 
     keyRole: "uid"
     roleNames: ["uid", "name", "collectionName", "backgroundColor", "imageUrl"].concat(showcaseRoles)
-    filterFunc: (modelData) => !showcaseModel.hasItem(modelData.uid)
+    filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.uid)
     hiddenPlaceholderBanner: qsTr("Collectibles here will show on your profile")
     showcasePlaceholderBanner: qsTr("Collectibles here will be hidden from your profile")
 
@@ -22,20 +22,9 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(JSON.stringify(tmpObj))
-            showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
-            root.updateModelsAfterChange()
+            showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
-        }
-
-        readonly property Connections showcaseUpdateConnections: Connections {
-            target: root
-
-            function onUpdateEntry(entry) {
-                if (modelData && entry.id === modelData.uid) {
-                    root.updateShowcaseEntryPreferences(modelData, entry)
-                }
-            }
+            root.updateModelsAfterChange()
         }
     }
     showcaseDraggableDelegateComponent: CollectibleShowcaseDelegate {
@@ -46,13 +35,9 @@ ProfileShowcasePanel {
         dragAxis: Drag.YAxis
         showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
         onShowcaseVisibilityRequested: {
-            if (value === Constants.ShowcaseVisibility.NoOne) {
-                showcaseModel.remove(visualIndex)
-            } else {
-                showcaseModel.setVisibility(showcaseObj.uid, value)
-            }
-            root.updateModelsAfterChange()
+            showcaseModel.setVisibility(showcaseObj.uid, value)
             root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
 }

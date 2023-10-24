@@ -1,7 +1,9 @@
 import json, strformat, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
+
 import app_service/service/profile/dto/profile_showcase_entry
+import app_service/service/wallet_account/dto/account_dto
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -13,6 +15,18 @@ type
     emoji*: string
     walletType*: string
     colorId*: string
+
+proc initProfileShowcaseAccountItem*(account: WalletAccountDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAccountItem =
+  result = ProfileShowcaseAccountItem()
+
+  result.showcaseVisibility = entry.showcaseVisibility
+  result.order = entry.order
+
+  result.address = account.address
+  result.name = account.name
+  result.emoji = account.emoji
+  result.walletType = account.walletType
+  result.colorId = account.colorId
 
 proc toProfileShowcaseAccountItem*(jsonObj: JsonNode): ProfileShowcaseAccountItem =
   result = ProfileShowcaseAccountItem()

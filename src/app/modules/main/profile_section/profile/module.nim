@@ -7,12 +7,13 @@ import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
+import app_service/service/community/service as community_service
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
-import models/profile_preferences_source_item
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
@@ -31,13 +32,18 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  profileService: profile_service.Service, settingsService: settings_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    communityService: community_service.Service,
+    walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -105,5 +111,9 @@ method storeProfileShowcasePreferences(self: Module,
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()
 
-method setProfileShowcasePreferences(self: Module, items: seq[ProfileShowcaseSourceItem]) =
-  self.view.setProfileShowcasePreferences(items)
+method updateProfileShowcasePreferences(self: Module,
+                                       communities: seq[ProfileShowcaseCommunityItem],
+                                       accounts: seq[ProfileShowcaseAccountItem],
+                                       collectibles: seq[ProfileShowcaseCollectibleItem],
+                                       assets: seq[ProfileShowcaseAssetItem]) =
+  self.view.updateProfileShowcasePreferences(communities, accounts, collectibles, assets)

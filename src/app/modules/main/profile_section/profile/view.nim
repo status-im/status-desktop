@@ -4,7 +4,6 @@ import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
-import models/profile_preferences_source_item
 import models/profile_preferences_communities_model
 import models/profile_preferences_community_item
 import models/profile_preferences_accounts_model
@@ -210,7 +209,12 @@ QtObject:
   proc requestProfileShowcasePreferences(self: View) {.slot.} =
     self.delegate.requestProfileShowcasePreferences()
 
-  proc profileShowcasePreferencesChanged*(self: View, jsonData: string) {.signal.}
-  proc setProfileShowcasePreferences*(self: View, items: seq[ProfileShowcaseSourceItem]) =
-    let payload: JsonNode = %(items.map(item => item.toQmlJson()))
-    self.profileShowcasePreferencesChanged($payload)
+  proc updateProfileShowcasePreferences*(self: View,
+                                        communities: seq[ProfileShowcaseCommunityItem],
+                                        accounts: seq[ProfileShowcaseAccountItem],
+                                        collectibles: seq[ProfileShowcaseCollectibleItem],
+                                        assets: seq[ProfileShowcaseAssetItem]) =
+    self.profileShowcaseCommunitiesModel.insertOrUpdateItems(communities)
+    self.profileShowcaseAccountsModel.insertOrUpdateItems(accounts)
+    self.profileShowcaseCollectiblesModel.insertOrUpdateItems(collectibles)
+    self.profileShowcaseAssetsModel.insertOrUpdateItems(assets)

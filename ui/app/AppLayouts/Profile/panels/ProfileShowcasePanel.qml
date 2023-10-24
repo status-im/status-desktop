@@ -32,20 +32,21 @@ Control {
     property Component showcaseDraggableDelegateComponent
 
     signal showcaseEntryChanged()
-    signal updateEntry(var entry)
 
     function updateModelsAfterChange() {
         hiddenItemsListView.model = null
         hiddenItemsListView.model = baseModel
     }
 
-    function updateShowcaseEntryPreferences(modelData, entry) {
-        var tmpObj = Object()
-        root.roleNames.forEach(role => tmpObj[role] = modelData[role])
-        tmpObj.showcaseVisibility = entry.showcaseVisibility
-        tmpObj.order = entry.order
-        showcaseModel.insertOrUpdate(entry.id, JSON.stringify(tmpObj))
-        root.updateModelsAfterChange()
+    function reset() {
+        showcaseModel.reset()
+        updateModelsAfterChange()
+    }
+
+    readonly property Connections showcaseUpdateConnections: Connections {
+        target: showcaseModel
+
+        function onItemsUpdated() { root.updateModelsAfterChange() }
     }
 
     background: null
@@ -79,9 +80,9 @@ Control {
                     var tmpObj = Object()
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
-                    showcaseModel.append(JSON.stringify(tmpObj))
-                    root.updateModelsAfterChange()
+                    showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
                     root.showcaseEntryChanged()
+                    root.updateModelsAfterChange()
                 }
             }
         }
@@ -152,9 +153,11 @@ Control {
                 }
 
                 width: ListView.view.width
-                height: showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
+                height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
 
                 keys: ["x-status-draggable-showcase-item"]
+
+                visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
 
                 onEntered: function(drag) {
                     const from = drag.source.visualIndex
@@ -266,9 +269,9 @@ Control {
                 }
 
                 onDropped: function(drop) {
-                    showcaseModel.remove(drop.source.visualIndex)
-                    root.updateModelsAfterChange()
+                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
                     root.showcaseEntryChanged()
+                    root.updateModelsAfterChange()
                 }
 
                 Rectangle {
@@ -316,9 +319,9 @@ Control {
                 }
 
                 onDropped: function(drop) {
-                    showcaseModel.remove(drop.source.visualIndex)
-                    root.updateModelsAfterChange()
+                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
                     root.showcaseEntryChanged()
+                    root.updateModelsAfterChange()
                 }
             }
         }

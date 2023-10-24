@@ -1,6 +1,8 @@
 import json, strformat, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
+
+import app_service/service/wallet_account/dto/account_dto
 import app_service/service/profile/dto/profile_showcase_entry
 
 import ../../../../shared_models/currency_amount
@@ -13,8 +15,19 @@ type
     symbol*: string
     name*: string
     enabledNetworkBalance*: CurrencyAmount
-    visibleForNetworkWithPositiveBalance*: bool
     color*: string
+
+proc initProfileShowcaseAssetItem*(token: WalletTokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAssetItem =
+  result = ProfileShowcaseAssetItem()
+
+  result.showcaseVisibility = entry.showcaseVisibility
+  result.order = entry.order
+
+  result.symbol = token.symbol
+  result.name = token.name
+  result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
+  result.color = token.color
+
 
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
@@ -28,7 +41,6 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("visibleForNetworkWithPositiveBalance", result.visibleForNetworkWithPositiveBalance)
   discard jsonObj.getProp("color", result.color)
 
   result.enabledNetworkBalance = jsonObj{"enabledNetworkBalance"}.toCurrencyAmount()
@@ -49,9 +61,6 @@ proc name*(self: ProfileShowcaseAssetItem): string {.inline.} =
 
 proc enabledNetworkBalance*(self: ProfileShowcaseAssetItem): CurrencyAmount {.inline.} =
   self.enabledNetworkBalance
-
-proc visibleForNetworkWithPositiveBalance*(self: ProfileShowcaseAssetItem): bool {.inline.} =
-  self.visibleForNetworkWithPositiveBalance
 
 proc color*(self: ProfileShowcaseAssetItem): string {.inline.} =
   self.color

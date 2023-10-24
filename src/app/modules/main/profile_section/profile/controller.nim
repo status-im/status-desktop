@@ -5,11 +5,12 @@ import io_interface
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
+import app_service/service/community/service as community_service
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
 
-import models/profile_preferences_source_item
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
@@ -21,17 +22,26 @@ type
     events: EventEmitter
     profileService: profile_service.Service
     settingsService: settings_service.Service
+    communityService: community_service.Service
+    walletAccountService: wallet_account_service.Service
 
 # Forward declaration
-proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: seq[ProfileShowcaseEntryDto])
+proc updateShowcasePreferences(self: Controller, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto])
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  profileService: profile_service.Service, settingsService: settings_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    communityService: community_service.Service,
+    walletAccountService: wallet_account_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.profileService = profileService
   result.settingsService = settingsService
+  result.communityService = communityService
+  result.walletAccountService = walletAccountService
 
 proc delete*(self: Controller) =
   discard
@@ -92,12 +102,26 @@ proc storeProfileShowcasePreferences*(self: Controller,
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
 
-proc updateShowcasePreferences(self: Controller, communities, accounts, collectibles, assets: seq[ProfileShowcaseEntryDto]) =
-  let communities = communities.map(item => toProfileShowcaseSourceItem(item))
-  let accounts = accounts.map(item => toProfileShowcaseSourceItem(item))
-  let collectibles = collectibles.map(item => toProfileShowcaseSourceItem(item))
-  let assets = assets.map(item => toProfileShowcaseSourceItem(item))
+proc updateShowcasePreferences(self: Controller, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto]) =
+  var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
-  # TODO: fetch data in c++/nim layer instead of resuing existing qmml models
-  self.delegate.setProfileShowcasePreferences(communities & accounts & collectibles & assets)
+  for communityEntry in communityEntries:
+    let community = self.communityService.getCommunityById(communityEntry.id)
+    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, communityEntry))
 
+  for accountEntry in accountEntries:
+    let account = self.walletAccountService.getAccountByAddress(accountEntry.id)
+    profileAccountItems.add(initProfileShowcaseAccountItem(account, accountEntry))
+
+    # TODO: need wallet api to fetch token by symbol
+    for token in self.walletAccountService.getTokensByAddress(account.address):
+      for assetEntry in assetEntries:
+        if assetEntry.id == token.symbol:
+          profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry))
+
+    # TODO: collectibles, need wallet api to fetch collectible by uid
+
+  self.delegate.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)

@@ -11,7 +11,7 @@ ProfileShowcasePanel {
 
     keyRole: "address"
     roleNames: ["address", "name",  "walletType", "emoji", "colorId"].concat(showcaseRoles)
-    filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItem(modelData.address)
+    filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItemInShowcase(modelData.address)
     hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
     showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")
 
@@ -25,20 +25,9 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(JSON.stringify(tmpObj))
-            showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
-            root.updateModelsAfterChange()
+            showcaseModel.insertOrUpdateItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
-        }
-
-        readonly property Connections showcaseUpdateConnections: Connections {
-            target: root
-
-            function onUpdateEntry(entry) {
-                if (modelData && entry.id === modelData.address) {
-                    root.updateShowcaseEntryPreferences(modelData, entry)
-                }
-            }
+            root.updateModelsAfterChange()
         }
     }
     showcaseDraggableDelegateComponent: AccountShowcaseDelegate {
@@ -50,13 +39,9 @@ ProfileShowcasePanel {
         dragAxis: Drag.YAxis
         showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
         onShowcaseVisibilityRequested: {
-            if (value === Constants.ShowcaseVisibility.NoOne) {
-                showcaseModel.remove(visualIndex)
-            } else {
-                showcaseModel.setVisibility(showcaseObj.address, value)
-            }
-            root.updateModelsAfterChange()
+            showcaseModel.setVisibility(showcaseObj.address, value)
             root.showcaseEntryChanged()
+            root.updateModelsAfterChange()
         }
     }
 }

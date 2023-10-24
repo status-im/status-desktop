@@ -37,12 +37,6 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
   proc items*(self: ProfileShowcaseCommunitiesModel): seq[ProfileShowcaseCommunityItem] =
     self.items
 
@@ -92,36 +86,59 @@ QtObject:
         return i
     return -1
 
-  proc hasItem(self: ProfileShowcaseCommunitiesModel, id: string): bool {.slot.} =
-    return self.findIndexForCommunity(id) != -1
+  proc hasItemInShowcase*(self: ProfileShowcaseCommunitiesModel, id: string): bool {.slot.} =
+    let ind = self.findIndexForCommunity(id)
+    if ind == -1:
+      return false
+    return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc append(self: ProfileShowcaseCommunitiesModel, item: string) {.slot.} =
+  proc itemsUpdated*(self: ProfileShowcaseCommunitiesModel) {.signal.}
+
+  proc appendItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item.parseJson.toProfileShowcaseCommunityItem())
+    self.items.add(item)
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdate(self: ProfileShowcaseCommunitiesModel, id: string, item: string) {.slot.} =
-    let ind = self.findIndexForCommunity(id)
+  proc insertOrUpdateItemImpl(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
+    let ind = self.findIndexForCommunity(item.id)
     if ind == -1:
-      self.append(item)
-      return
+      self.appendItem(item)
+    else:
+      self.items[ind] = item
 
-    self.items[ind] = item.parseJson.toProfileShowcaseCommunityItem()
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[
+        ModelRole.ShowcaseVisibility.int,
+        ModelRole.Order.int,
+        ModelRole.Id.int,
+        ModelRole.Name.int,
+        ModelRole.MemberRole.int,
+        ModelRole.Image.int,
+        ModelRole.Color.int,
+      ])
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.ShowcaseVisibility.int,
-      ModelRole.Order.int,
-      ModelRole.Id.int,
-      ModelRole.Name.int,
-      ModelRole.MemberRole.int,
-      ModelRole.Image.int,
-      ModelRole.Color.int,
-    ])
+  proc insertOrUpdateItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
+    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseCommunityItem())
+
+  proc insertOrUpdateItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
+    self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc insertOrUpdateItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
+    for item in items:
+      self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc reset*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+    self.itemsUpdated()
 
   proc remove*(self: ProfileShowcaseCommunitiesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -134,11 +151,21 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
+  proc removeEntry*(self: ProfileShowcaseCommunitiesModel, id: string) {.slot.} =
+    let ind = self.findIndexForCommunity(id)
+    if ind != -1:
+      self.remove(ind)
+
+  proc setVisibilityByIndex*(self: ProfileShowcaseCommunitiesModel, ind: int, visibility: int) {.slot.} =
+    if (visibility >= ord(low(ProfileShowcaseVisibility)) and
+        visibility <= ord(high(ProfileShowcaseVisibility)) and
+        ind >= 0 and ind < self.items.len):
+      self.items[ind].showcaseVisibility = ProfileShowcaseVisibility(visibility)
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+
   proc setVisibility*(self: ProfileShowcaseCommunitiesModel, id: string, visibility: int) {.slot.} =
-    if (visibility >= ord(low(ProfileShowcaseVisibility)) and visibility <= ord(high(ProfileShowcaseVisibility))):
-      for i in 0 ..< self.items.len:
-        if self.items[i].id == id:
-          self.items[i].showcaseVisibility = ProfileShowcaseVisibility(visibility)
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+    let index = self.findIndexForCommunity(id)
+    if index != -1:
+      self.setVisibilityByIndex(index, visibility)

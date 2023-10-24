@@ -34,8 +34,6 @@ QtObject {
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
     readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
 
-    signal profileShowcasePreferencesUpdated(var preferences)
-
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
             localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
@@ -102,13 +100,5 @@ QtObject {
 
     function requestProfileShowcasePreferences() {
         root.profileModule.requestProfileShowcasePreferences()
-    }
-
-    readonly property Connections profileModuleConnections: Connections {
-        target: root.profileModule
-
-        function onProfileShowcasePreferencesChanged(json: string) {
-            root.profileShowcasePreferencesUpdated(JSON.parse(json))
-        }
     }
 }

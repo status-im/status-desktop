@@ -37,12 +37,6 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: ProfileShowcaseCollectiblesModel, items: seq[ProfileShowcaseCollectibleItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
   proc items*(self: ProfileShowcaseCollectiblesModel): seq[ProfileShowcaseCollectibleItem] =
     self.items
 
@@ -93,36 +87,59 @@ QtObject:
         return i
     return -1
 
-  proc hasItem(self: ProfileShowcaseCollectiblesModel, uid: string): bool {.slot.} =
-    return self.findIndexForCollectible(uid) != -1
+  proc hasItemInShowcase*(self: ProfileShowcaseCollectiblesModel, uid: string): bool {.slot.} =
+    let ind = self.findIndexForCollectible(uid)
+    if ind == -1:
+      return false
+    return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc append(self: ProfileShowcaseCollectiblesModel, item: string) {.slot.} =
+  proc itemsUpdated*(self: ProfileShowcaseCollectiblesModel) {.signal.}
+
+  proc appendItem*(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item.parseJson.toProfileShowcaseCollectibleItem())
+    self.items.add(item)
     self.endInsertRows()
     self.countChanged()
 
-  proc insertOrUpdate(self: ProfileShowcaseCollectiblesModel, uid: string, item: string) {.slot.} =
-    let ind = self.findIndexForCollectible(uid)
+  proc insertOrUpdateItemImpl(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
+    let ind = self.findIndexForCollectible(item.uid)
     if ind == -1:
-      self.append(item)
-      return
+      self.appendItem(item)
+    else:
+      self.items[ind] = item
 
-    self.items[ind] = item.parseJson.toProfileShowcaseCollectibleItem()
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[
+        ModelRole.ShowcaseVisibility.int,
+        ModelRole.Order.int,
+        ModelRole.Uid.int,
+        ModelRole.Name.int,
+        ModelRole.CollectionName.int,
+        ModelRole.ImageUrl.int,
+        ModelRole.BackgroundColor.int,
+      ])
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.ShowcaseVisibility.int,
-      ModelRole.Order.int,
-      ModelRole.Uid.int,
-      ModelRole.Name.int,
-      ModelRole.CollectionName.int,
-      ModelRole.ImageUrl.int,
-      ModelRole.BackgroundColor.int,
-    ])
+  proc insertOrUpdateItemJson(self: ProfileShowcaseCollectiblesModel, itemJson: string) {.slot.} =
+    self.insertOrUpdateItemImpl(itemJson.parseJson.toProfileShowcaseCollectibleItem())
+
+  proc insertOrUpdateItem*(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
+    self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc insertOrUpdateItems*(self: ProfileShowcaseCollectiblesModel, items: seq[ProfileShowcaseCollectibleItem]) =
+    for item in items:
+      self.insertOrUpdateItemImpl(item)
+    self.itemsUpdated()
+
+  proc reset*(self: ProfileShowcaseCollectiblesModel) {.slot.} =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+    self.itemsUpdated()
 
   proc remove*(self: ProfileShowcaseCollectiblesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -135,11 +152,21 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
+  proc removeEntry*(self: ProfileShowcaseCollectiblesModel, uid: string) {.slot.} =
+    let ind = self.findIndexForCollectible(uid)
+    if ind != -1:
+      self.remove(ind)
+
+  proc setVisibilityByIndex*(self: ProfileShowcaseCollectiblesModel, ind: int, visibility: int) {.slot.} =
+    if (visibility >= ord(low(ProfileShowcaseVisibility)) and
+        visibility <= ord(high(ProfileShowcaseVisibility)) and
+        ind >= 0 and ind < self.items.len):
+      self.items[ind].showcaseVisibility = ProfileShowcaseVisibility(visibility)
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+
   proc setVisibility*(self: ProfileShowcaseCollectiblesModel, uid: string, visibility: int) {.slot.} =
-    if (visibility >= ord(low(ProfileShowcaseVisibility)) and visibility <= ord(high(ProfileShowcaseVisibility))):
-      for i in 0 ..< self.items.len:
-        if self.items[i].uid == uid:
-          self.items[i].showcaseVisibility = ProfileShowcaseVisibility(visibility)
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+    let index = self.findIndexForCollectible(uid)
+    if index != -1:
+      self.setVisibilityByIndex(index, visibility)
