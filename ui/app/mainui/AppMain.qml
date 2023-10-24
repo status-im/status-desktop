@@ -277,6 +277,10 @@ Item {
                 popups.openConfirmExternalLinkPopup(link, domain)
         }
 
+        function onActivateDeepLink(link: string) {
+            appMain.rootStore.mainModuleInst.activateStatusDeepLink(link)
+        }
+
         function onPlaySendMessageSound() {
             sendMessageSound.stop()
             sendMessageSound.play()

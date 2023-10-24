@@ -10,24 +10,29 @@ import StatusQ.Components 0.1
 import shared.controls 1.0
 import shared.status 1.0
 import shared.panels 1.0
-import shared.stores 1.0
-import shared.controls.chat 1.0
+
+import shared.controls.delegates 1.0
 
 Flow {
     id: root
 
-    required property var store
-    required property var messageStore
+    required property bool isOnline
+    required property bool playAnimations
 
     required property var linkPreviewModel
     required property var gifLinks
 
     required property bool isCurrentUser
 
+    required property bool gifUnfurlingEnabled
+    required property bool canAskToUnfurlGifs
+
     readonly property alias hoveredLink: linksRepeater.hoveredUrl
     property string highlightLink: ""
 
-    signal imageClicked(var image, var mouse, var imageSource, string url)
+    signal imageClicked(var image, var mouse, string imageSource, string url)
+    signal openContextMenu(var item, string url, string domain)
+    signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
 
     function resetLocalAskAboutUnfurling() {
         d.localAskAboutUnfurling = true
@@ -45,15 +50,25 @@ Flow {
     Loader {
         visible: active
         active: root.gifLinks && root.gifLinks.length > 0
-                 && !RootStore.gifUnfurlingEnabled
-                 && d.localAskAboutUnfurling && !RootStore.neverAskAboutUnfurlingAgain
+                 && !root.gifUnfurlingEnabled
+                 && d.localAskAboutUnfurling && root.canAskToUnfurlGifs
         sourceComponent: enableLinkComponent
     }
 
     Repeater {
         id: tempRepeater
-        model: RootStore.gifUnfurlingEnabled ? gifLinks : []
-        delegate: gifComponent
+        visible: root.canAskToUnfurlGifs
+        model: root.gifUnfurlingEnabled ? gifLinks : []
+
+        delegate: LinkPreviewGifDelegate {
+            required property string modelData
+
+            link: modelData
+            isOnline: root.isOnline
+            isCurrentUser: root.isCurrentUser
+            playAnimation: root.playAnimations
+            onClicked: root.imageClicked(imageAlias, mouse, link, link)
+        }
     }
 
     Repeater {
@@ -62,154 +77,26 @@ Flow {
         property string hoveredUrl: ""
 
         model: root.linkPreviewModel
-        delegate: Loader {
-            id: linkMessageLoader
-            // properties from the model
-
-            required property bool unfurled
-            required property bool empty
-            required property string url
-            required property bool immutable
-            required property int previewType
-            required property var standardPreview
-            required property var standardPreviewThumbnail
-            required property var statusContactPreview
-            required property var statusContactPreviewThumbnail
-            required property var statusCommunityPreview
-            required property var statusCommunityPreviewIcon
-            required property var statusCommunityPreviewBanner
-            required property var statusCommunityChannelPreview
-            required property var statusCommunityChannelCommunityPreview
-            required property var statusCommunityChannelCommunityPreviewIcon
-            required property var statusCommunityChannelCommunityPreviewBanner
-
-            readonly property string hostname: standardPreview ? standardPreview.hostname : ""
-            readonly property string title: standardPreview ? standardPreview.title : ""
-            readonly property string description: standardPreview ? standardPreview.description : ""
-            readonly property int standardLinkType: standardPreview ? standardPreview.linkType : ""
-            readonly property int thumbnailWidth: standardPreviewThumbnail ? standardPreviewThumbnail.width : ""
-            readonly property int thumbnailHeight: standardPreviewThumbnail ? standardPreviewThumbnail.height : ""
-            readonly property string thumbnailUrl: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""
-            readonly property string thumbnailDataUri: standardPreviewThumbnail ? standardPreviewThumbnail.dataUri : ""
-
-            asynchronous: true
-            active: unfurled && !empty
-
-            StateGroup {
-                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
-                states: [
-                    State {
-                        name: "standardLinkPreview"
-                        when: linkMessageLoader.previewType === Constants.LinkPreviewType.Standard
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: standardLinkPreviewCard }
-                    },
-                    State {
-                        name: "statusContactLinkPreview"
-                        when: linkMessageLoader.previewType === Constants.LinkPreviewType.StatusContact
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledProfileLinkComponent }
-                    }
-                ]
+        delegate: LinkPreviewCardDelegate {
+            id: delegate
+            isCurrentUser: root.isCurrentUser
+            highlight: url === root.highlightLink
+            onHoveredChanged: {
+                linksRepeater.hoveredUrl = hovered ? url : ""
             }
-        }
-    }
-    
-    Component {
-        id: standardLinkPreviewCard
-        LinkPreviewCard {
-            leftTail: !root.isCurrentUser // WARNING: Is this by design?
-            bannerImageSource: standardPreviewThumbnail ? standardPreviewThumbnail.url : ""
-            title: standardPreview ? standardPreview.title : ""
-            description: standardPreview ? standardPreview.description : ""
-            footer: standardPreview ? standardPreview.hostname : ""
-            highlight: root.highlightLink === url
             onClicked: (mouse) => {
-                switch (mouse.button) {
-                    case Qt.RightButton:
-                    root.imageClicked(unfurledLink, mouse, "", url) // request a dumb context menu with just "copy/open link" items
-                    break
-                    default:
-                    Global.openLinkWithConfirmation(url, hostname)
-                    break
+                if(mouse.button === Qt.RightButton) {
+                    const domain = previewType === Constants.LinkPreviewType.Standard ? linkData.domain : Constants.externalStatusLink
+                    root.openContextMenu(delegate, url, domain)
+                    return
                 }
-            }
-        }
-    }
-    
-    Component {
-        id: unfurledProfileLinkComponent
-        UserProfileCard {
-            id: unfurledProfileLink
 
-            leftTail: !root.isCurrentUser
-            userName: statusContactPreview && statusContactPreview.displayName ? statusContactPreview.displayName : ""
-            userPublicKey: statusContactPreview && statusContactPreview.publicKey ? statusContactPreview.publicKey : ""
-            userBio: statusContactPreview && statusContactPreview.description ? statusContactPreview.description : ""
-            userImage: statusContactPreviewThumbnail ? statusContactPreviewThumbnail.url : ""
-            ensVerified: false // not supported yet
-            onClicked: {
-                Global.openProfilePopup(userPublicKey)
-            }
-        }
-    }
+                if(previewType === Constants.LinkPreviewType.Standard) {
+                    Global.openLinkWithConfirmation(url, linkData.domain)
+                    return
+                }
 
-    //TODO: Remove this once we have gif support in new unfurling flow
-    Component {
-        id: gifComponent
-        CalloutCard {
-            implicitWidth: linkImage.width
-            implicitHeight: linkImage.height
-            leftTail: !root.isCurrentUser
-            StatusChatImageLoader {
-                id: linkImage
-                readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
-                readonly property string urlLink: modelData
-                property bool localAnimationEnabled: true
-                objectName: "LinksMessageView_unfurledImageComponent_linkImage"
-                anchors.centerIn: parent
-                source: urlLink
-                imageWidth: 300
-                isCurrentUser: root.isCurrentUser
-                playing: globalAnimationEnabled && localAnimationEnabled
-                isOnline: root.store.mainModuleInst.isOnline
-                asynchronous: true
-                isAnimated: true
-                onClicked: {
-                    if (!playing)
-                        localAnimationEnabled = true
-                    else
-                        root.imageClicked(linkImage.imageAlias, mouse, source, urlLink)
-                }
-                imageAlias.cache: localAnimationEnabled // GIFs can only loop/play properly with cache enabled
-                Loader {
-                    width: 45
-                    height: 38
-                    anchors.left: parent.left
-                    anchors.leftMargin: 12
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 12
-                    active: linkImage.isAnimated && !linkImage.playing
-                    sourceComponent: Item {
-                        anchors.fill: parent
-                        Rectangle {
-                            anchors.fill: parent
-                            color: "black"
-                            radius: Style.current.radius
-                            opacity: .4
-                        }
-                        StatusBaseText {
-                            anchors.centerIn: parent
-                            text: "GIF"
-                            font.pixelSize: 13
-                            color: "white"
-                        }
-                    }
-                }
-                Timer {
-                    id: animationPlayingTimer
-                    interval: 10000
-                    running: linkImage.isAnimated && linkImage.playing
-                    onTriggered: { linkImage.localAnimationEnabled = false }
-                }
+                Global.activateDeepLink(url)
             }
         }
     }
@@ -308,7 +195,7 @@ Flow {
                             text: qsTr("Don't ask me again")
                         }
                     }
-                    onClicked: RootStore.setNeverAskAboutUnfurlingAgain(true)
+                    onClicked: root.setNeverAskAboutUnfurlingAgain(true)
                     Component.onCompleted: {
                         background.radius = Style.current.padding;
                     }
@@ -316,5 +203,5 @@ Flow {
             }
         }
     }
-
 }
+

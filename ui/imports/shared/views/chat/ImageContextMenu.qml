@@ -7,6 +7,8 @@ StatusMenu {
 
     property string url
     property string imageSource
+    property string domain
+    property bool requireConfirmationOnOpen: false
 
     QtObject {
         id: d
@@ -43,6 +45,6 @@ StatusMenu {
         text: qsTr("Open link")
         icon.name: "browser"
         enabled: d.isUnfurled
-        onTriggered: Global.openLink(root.url)
+        onTriggered: requireConfirmationOnOpen ? Global.openLinkWithConfirmation(root.url, root.domain) : Global.openLink(root.url)
     }
 }
