@@ -100,7 +100,7 @@ pipeline {
         GANACHE_NETWORK_RPC_URL = "http://localhost:${env.GANACHE_RPC_PORT}"
       }
       steps { script {
-        sh 'make nim_status_client'
+        linux.bundle('nim_status_client')
       } }
     }
 
