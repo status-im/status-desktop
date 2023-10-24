@@ -54,9 +54,9 @@ pipeline {
     timeout(time: 120, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
-      numToKeepStr: '10',
-      daysToKeepStr: '30',
-      artifactNumToKeepStr: '3',
+      daysToKeepStr: '60',
+      numToKeepStr: '50',
+      artifactNumToKeepStr: '50',
     ))
   }
 
