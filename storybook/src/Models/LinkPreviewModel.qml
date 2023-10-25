@@ -21,6 +21,23 @@ ListModel {
         return preview
     }
 
+    function getImageLinkPreview() {
+        const preview = Object.assign({}, emptyObject)
+        preview.url = "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg"
+        preview.previewType = 1
+        preview.standardPreview = {}
+        preview.standardPreviewThumbnail = {}
+        preview.standardPreview.hostname = "i.ytimg.com"
+        preview.standardPreview.title = "Image_link_preview.png"
+        preview.standardPreview.description = "Image link preview"
+        preview.standardPreview.linkType = 1
+        preview.standardPreviewThumbnail.width = 480
+        preview.standardPreviewThumbnail.height = 360
+        preview.standardPreviewThumbnail.url = "https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg"
+        preview.standardPreviewThumbnail.dataUri = ""
+        return preview
+    }
+
     function getCommunityLinkPreview() {
         const preview = Object.assign({}, emptyObject)
         preview.url = "https://status.app/c/ixiACjAKDlRlc3QgQ29tbXVuaXR5Eg9PcGVuIGZvciBhbnlvbmUYdiIHI0ZGMDAwMCoCHwkD#zQ3shnd55dNx9yTihuL6XMbmyM6UNjzU6jk77h5Js31jxcT5V"
@@ -111,6 +128,7 @@ ListModel {
     // Create the model dynamically, because `ListElement` doesnt suppport nested elements
     Component.onCompleted: {
         append(getStandardLinkPreview())
+        append(getImageLinkPreview())
         append(getCommunityLinkPreview())
         append(getChannelLinkPreview())
         append(getContactLinkPreview())

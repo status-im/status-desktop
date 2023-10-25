@@ -6,4 +6,5 @@ QtObject {
     property string domain
     property string thumbnail
     property string image
+    property int    type
 }

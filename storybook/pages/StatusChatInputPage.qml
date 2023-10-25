@@ -171,7 +171,7 @@ SplitView {
                 fakeLinksModel.clear()
                 words.forEach(function(word){
                     if(Utils.isURL(word)) {
-                        let linkPreview = fakeLinksModel.getStandardLinkPreview()
+                        const linkPreview = fakeLinksModel.getStandardLinkPreview()
                         linkPreview.url = encodeURI(word)
                         linkPreview.unfurled = Math.random() > 0.2
                         linkPreview.immutable = !d.linkPreviewsEnabled

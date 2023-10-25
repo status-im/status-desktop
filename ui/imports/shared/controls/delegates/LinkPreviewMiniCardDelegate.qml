@@ -6,6 +6,26 @@ import shared.controls.chat 1.0
 LinkPreviewMiniCard {
     id: root
 
+    /*
+    * Model properties
+    * The following properties are required to be set by the user of this component
+    * unfurled: Whether the link has been unfurled or not
+    * empty: Whether the link preview is empty or not
+    * url: The url of the link
+    * immutable: Whether the link preview can be updated
+    * previewType: The type of the preview. See Constants.LinkPreviewType
+    * standardPreview: The standard preview data (title, description, linkType, hostname)
+    * standardPreviewThumbnail: The standard preview thumbnail data (url, dataUri)
+    * statusContactPreview: The status contact preview data (displayName, publicKey, description, icon)
+    * statusContactPreviewThumbnail: The status contact preview thumbnail data (url, dataUri)
+    * statusCommunityPreview: The status community preview data (communityId, displayName, description, membersCount, color)
+    * statusCommunityPreviewIcon: The status community preview icon data (url, dataUri)
+    * statusCommunityPreviewBanner: The status community preview banner data (url, dataUri)
+    * statusCommunityChannelPreview: The status community channel preview data (channelId, displayName, description, emoji, color)
+    * statusCommunityChannelCommunityPreview: The status community channel community preview data (communityId, displayName, description, membersCount, color)
+    * statusCommunityChannelCommunityPreviewIcon: The status community channel community preview icon data (url, dataUri)
+    * statusCommunityChannelCommunityPreviewBanner: The status community channel community preview banner data (url, dataUri)
+    */
     required property bool unfurled
     required property bool empty
     required property string url
@@ -23,70 +43,44 @@ LinkPreviewMiniCard {
     required property var statusCommunityChannelCommunityPreviewIcon
     required property var statusCommunityChannelCommunityPreviewBanner
 
-
-    title: ""
-    domain: ""
-    communityName: ""
-    channelName: ""
-    iconUrl: ""
-    thumbnailImageUrl: ""
-    type: LinkPreviewMiniCard.Type.Unknown
     previewState: !root.unfurled ? LinkPreviewMiniCard.State.Loading : root.unfurled && !root.empty ? LinkPreviewMiniCard.State.Loaded : LinkPreviewMiniCard.State.LoadingFailed
+    type: root.previewType
 
-
-    StateGroup {
-        states: [
-            State {
-                name: "standardPreview"
-                when: root.previewType == Constants.Standard && root.previewState == LinkPreviewMiniCard.State.Loaded
-                PropertyChanges {
-                    target: root
-                    title: root.standardPreview.title
-                    domain: root.standardPreview.hostname   //TODO: Use domainName when available
-                    iconUrl: ""                             //TODO: Add favicon when available
-                    thumbnailImageUrl: (root.standardPreviewThumbnail.url || root.standardPreviewThumbnail.dataUri) ?? ""
-                    type: root.standardPreview.linkType == Constants.StandardLinkPreviewType.Link ? LinkPreviewMiniCard.Type.Link : LinkPreviewMiniCard.Type.Image
-                }
-            },
-            State {
-                name: "statusContactPreview"
-                when: root.previewType == Constants.StatusContact && root.previewState == LinkPreviewMiniCard.State.Loaded
-                PropertyChanges {
-                    target: root
-                    title: root.statusContactPreview.displayName
-                    domain: Constants.externalStatusLink
-                    iconUrl: (root.statusContactPreviewThumbnail.url || root.statusContactPreviewThumbnail.dataUri) ?? ""
-                    thumbnailImageUrl: ""
-                    type: LinkPreviewMiniCard.Type.User
-                }
-            },
-            State {
-                name: "statusCommunityPreview"
-                when: root.previewType == Constants.StatusCommunity && root.previewState == LinkPreviewMiniCard.State.Loaded
-                PropertyChanges {
-                    target: root
-                    title: communityName
-                    domain: Constants.externalStatusLink
-                    iconUrl: (root.statusCommunityPreviewIcon.url || root.statusCommunityPreviewIcon.dataUri) ?? ""
-                    thumbnailImageUrl: ""
-                    type: LinkPreviewMiniCard.Type.Community
-                    communityName: root.statusCommunityPreview ? root.statusCommunityPreview.displayName : ""
-                }
-            },
-            State {
-                name: "statusCommunityChannelPreview"
-                when: root.previewType == Constants.StatusCommunityChannel && root.previewState == LinkPreviewMiniCard.State.Loaded
-                PropertyChanges {
-                    target: root
-                    title: root.statusCommunityChannelPreview ? root.statusCommunityChannelPreview.displayName : ""
-                    domain: Constants.externalStatusLink
-                    iconUrl: (root.statusCommunityChannelCommunityPreviewIcon.url || root.statusCommunityChannelCommunityPreviewIcon.dataUri) ?? ""
-                    thumbnailImageUrl: ""
-                    type: LinkPreviewMiniCard.Type.Channel
-                    channelName: "#" + title
-                    communityName: root.statusCommunityChannelCommunityPreview ? root.statusCommunityChannelCommunityPreview.displayName : ""
-                }
-            }
-        ]
+    linkData {
+        title: standardPreview ? standardPreview.title : ""
+        description: standardPreview ? standardPreview.description : ""
+        domain: standardPreview ? standardPreview.hostname : "" //TODO: Use domainName when available
+        thumbnail: standardPreviewThumbnail ? (standardPreviewThumbnail.url || standardPreviewThumbnail.dataUri) || "" : ""
+        image: "" //TODO: usefavicon when available
+        type: standardPreview ? standardPreview.linkType : Constants.StandardLinkPreviewType.Link
+    }
+    userData {
+        name: statusContactPreview ? statusContactPreview.displayName : ""
+        publicKey: statusContactPreview ? statusContactPreview.publicKey : ""
+        bio: statusContactPreview ? statusContactPreview.description : ""
+        image: statusContactPreviewThumbnail ? (statusContactPreviewThumbnail.url || statusContactPreviewThumbnail.dataUri) || "" : ""
+        ensVerified: false // not supported yet
+    }
+    communityData {
+        name: statusCommunityPreview ? statusCommunityPreview.displayName : ""
+        description: statusCommunityPreview ? statusCommunityPreview.description : ""
+        banner: statusCommunityPreviewBanner ? (statusCommunityPreviewBanner.url || statusCommunityPreviewBanner.dataUri) || "" : ""
+        image: statusCommunityPreviewIcon ? (statusCommunityPreviewIcon.url || statusCommunityPreviewIcon.dataUri) || "" : ""
+        membersCount: statusCommunityPreview ? statusCommunityPreview.membersCount : 0
+        color: statusCommunityPreview ? statusCommunityPreview.color : ""
+    }
+    channelData {
+        name: statusCommunityChannelPreview ? statusCommunityChannelPreview.displayName : ""
+        description: statusCommunityChannelPreview ? statusCommunityChannelPreview.description : ""
+        emoji: statusCommunityChannelPreview ? statusCommunityChannelPreview.emoji : ""
+        color: statusCommunityChannelPreview ? statusCommunityChannelPreview.color : ""
+        communityData {
+            name: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.displayName : ""
+            description: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.description : ""
+            banner: statusCommunityChannelCommunityPreviewBanner ? (statusCommunityChannelCommunityPreviewBanner.url || statusCommunityChannelCommunityPreviewBanner.dataUri) || "" : ""
+            image:  statusCommunityChannelCommunityPreviewIcon ? (statusCommunityChannelCommunityPreviewIcon.url || statusCommunityChannelCommunityPreviewIcon.dataUri) || "" : ""
+            membersCount: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.membersCount : 0
+            color: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.color : ""
+        }
     }
 }

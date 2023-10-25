@@ -63,7 +63,7 @@ LinkPreviewCard {
         name: statusContactPreview ? statusContactPreview.displayName : ""
         publicKey: statusContactPreview ? statusContactPreview.publicKey : ""
         bio: statusContactPreview ? statusContactPreview.description : ""
-        image: statusContactPreview ? (statusContactPreviewThumbnail.url || statusContactPreviewThumbnail.dataUri) || "" : ""
+        image: statusContactPreviewThumbnail ? (statusContactPreviewThumbnail.url || statusContactPreviewThumbnail.dataUri) || "" : ""
         ensVerified: false // not supported yet
     }
     communityData {

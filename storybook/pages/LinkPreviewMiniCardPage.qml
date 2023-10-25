@@ -25,15 +25,39 @@ SplitView {
          LinkPreviewMiniCard {
              id: previewMiniCard
              anchors.centerIn: parent
-             title: type === LinkPreviewMiniCard.Type.User ? userNameInput.text : titleInput.text
-             domain: domainInput.text
-             iconUrl: faviconInput.text
-             previewState: stateInput.currentIndex
-             thumbnailImageUrl: externalImageInput.text
              type: previewTypeInput.currentIndex
-             communityName: communityNameInput.text
-             channelName: channelNameInput.text
-         }
+             previewState: stateInput.currentIndex
+            linkData {
+                title: titleInput.text
+                description: ""
+                domain: domainInput.text
+                thumbnail: externalImageInput.text
+                image: faviconInput.text
+            }
+            userData {
+                name: userNameInput.text
+                publicKey: "zQ3shgmVJjmwwhkfAemjDizYJtv9nzot7QD4iRJ52ZkgdU6Ci"
+                image: faviconInput.text
+                ensVerified: false
+            }
+            communityData {
+                name: communityNameInput.text
+                banner: externalImageInput.text
+                image: faviconInput.text
+                color: "orchid"
+            }
+            channelData {
+                name: channelNameInput.text
+                emoji: ""
+                color: "blue"
+                communityData {
+                    name: communityNameInput.text
+                    banner: externalImageInput.text
+                    image: faviconInput.text
+                    color: "orchid"
+                }
+            }
+        }
     }
 
     Pane {
@@ -50,7 +74,7 @@ SplitView {
                     id: previewTypeInput
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    model: ["unknown", "link", "image", "community", "channel", "user profile"]
+                    model: ["unknown", "standard", "user profile", "community", "channel"]
                 }
                 Label {
                     text: "Community name"
