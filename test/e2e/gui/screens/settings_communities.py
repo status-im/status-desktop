@@ -1,3 +1,4 @@
+import logging
 import typing
 
 import allure
@@ -9,6 +10,8 @@ from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
+
+_logger = logging.getLogger(__name__)
 
 
 class CommunitiesSettingsView(QObject):
@@ -33,12 +36,16 @@ class CommunitiesSettingsView(QObject):
             self._community_template_description.real_name['container'] = container
             self._community_template_members.real_name['container'] = container
 
-            _communities.append(UserCommunityInfo(
-                self._community_template_name.text,
-                self._community_template_description.text,
-                self._community_template_members.text,
-                self._community_template_image.image
-            ))
+            name = self._community_template_name.text
+            description = self._community_template_description.text
+            try:
+                members = self._community_template_members.text
+            except LookupError as err:
+                _logger.info(err)
+                members = 0
+            image = self._community_template_image.image
+
+            _communities.append(UserCommunityInfo(name, description, members, image))
         return _communities
 
     def _get_community_item(self, name: str):

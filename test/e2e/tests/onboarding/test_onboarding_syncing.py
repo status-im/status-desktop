@@ -77,7 +77,8 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
             sync_result.sign_in()
             SplashScreen().wait_until_appears().wait_until_hidden()
             if not configs.DEV_BUILD:
-                BetaConsentPopup().confirm()
+                if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+                    BetaConsentPopup().confirm()
 
         with step('Verify user details are the same with user in first instance'):
             user_canvas = main_window.left_panel.open_user_canvas()

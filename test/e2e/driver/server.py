@@ -57,3 +57,7 @@ class SquishServer:
     @classmethod
     def set_aut_timeout(cls, value: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
         cls.configuring('setAUTTimeout', [str(value)])
+
+    @classmethod
+    def set_cursor_animation(cls, value: bool = configs.squish.CURSOR_ANIMATION):
+        cls.configuring('setCursorAnimation', [str(value)])

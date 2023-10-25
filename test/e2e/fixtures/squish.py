@@ -12,6 +12,7 @@ def start_squish_server():
     while True:
         try:
             squish_server.start()
+            squish_server.set_cursor_animation()
             break
         except AssertionError as err:
             attempt -= 1
