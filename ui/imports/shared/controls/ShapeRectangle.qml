@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -29,6 +30,7 @@ import utils 1.0
 Shape {
     id: root
 
+    property string icon
     property string text
     property color textColor: Theme.palette.baseColor1
     property alias font: description.font
@@ -46,13 +48,27 @@ Shape {
     implicitWidth: 448
     implicitHeight: 44
 
-    StatusBaseText {
-        id: description
+    RowLayout {
+        spacing: 4
         anchors.centerIn: parent
-        color: root.textColor
-        text: root.text
-        font.pixelSize: 13
-        visible: (!!text)
+
+        StatusIcon {
+            id: icon
+
+            visible: root.icon
+            color: root.textColor
+            icon: root.icon
+            width: 16
+            height: width
+        }
+
+        StatusBaseText {
+            id: description
+            color: root.textColor
+            text: root.text
+            font.pixelSize: 13
+            visible: !!text
+        }
     }
 
     ShapePath {
