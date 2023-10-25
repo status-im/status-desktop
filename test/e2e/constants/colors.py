@@ -47,3 +47,8 @@ boundaries = {
         [25, 255, 255]
     ]
 }
+
+
+class ColorCodes(Enum):
+    GREEN = '#4ebc60'
+

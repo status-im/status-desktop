@@ -8,6 +8,7 @@ import allure
 import configs
 import constants.tesseract
 import driver
+from constants import ColorCodes
 from driver.objects_access import walk_children
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -376,12 +377,40 @@ class CreatePasswordView(OnboardingView):
         self._confirm_password_text_field = TextEdit('mainWindow_passwordViewNewPasswordConfirm')
         self._create_button = Button('mainWindow_Create_password_StatusButton')
         self._password_view_object = QObject('mainWindow_view_PasswordView')
+        self._strength_indicator = QObject('mainWindow_strengthInditactor_StatusPasswordStrengthIndicator')
+        self._indicator_panel_object = QObject('mainWindow_RowLayout')
 
     @property
     @allure.step('Verify: Create password button enabled')
     def is_create_password_button_enabled(self) -> bool:
         return driver.waitForObjectExists(self._create_button.real_name,
                                           configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
+    @property
+    @allure.step('Get strength indicator color')
+    def strength_indicator_color(self) -> str:
+        return self._strength_indicator.object.fillColor['name']
+
+    @property
+    @allure.step('Get strength indicator text')
+    def strength_indicator_text(self) -> str:
+        return self._strength_indicator.object.text
+
+    @property
+    @allure.step('Get indicator panel green messages')
+    def green_indicator_messages(self) -> typing.List[str]:
+        messages = []
+        color = ColorCodes.GREEN.value
+        for child in walk_children(self._indicator_panel_object.object):
+            if getattr(child, 'id', '') == 'lowerCaseTxt' and child.color['name'] == color:
+                messages.append(str(child.text))
+            elif getattr(child, 'id', '') == 'upperCaseTxt' and child.color['name'] == color:
+                messages.append(str(child.text))
+            elif getattr(child, 'id', '') == 'numbersTxt' and child.color['name'] == color:
+                messages.append(str(child.text))
+            elif getattr(child, 'id', '') == 'symbolsTxt' and child.color['name'] == color:
+                messages.append(str(child.text))
+        return messages
 
     @property
     @allure.step('Get password error message')

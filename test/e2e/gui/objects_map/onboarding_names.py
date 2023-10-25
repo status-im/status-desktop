@@ -84,6 +84,8 @@ mainWindow_passwordViewNewPassword = {"container": mainWindow_CreatePasswordView
 mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "echoMode": 2, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
+mainWindow_RowLayout = {"container": mainWindow_StatusWindow, "type": "RowLayout", "unnamed": 1, "visible": True}
+mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": mainWindow_StatusWindow, "id": "strengthInditactor", "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
 
 # Confirm Password View
 mainWindow_ConfirmPasswordView = {"container": statusDesktop_mainWindow, "type": "ConfirmPasswordView", "unnamed": 1,"visible": True}
