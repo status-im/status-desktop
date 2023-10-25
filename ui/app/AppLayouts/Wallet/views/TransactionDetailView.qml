@@ -467,7 +467,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Token format")
-                            subTitle: root.isTransactionValid ? d.details.tokenType.toUpperCase() : ""
+                            subTitle: d.isDetailsValid ? d.details.tokenType.toUpperCase() : ""
                             visible: !!subTitle
                         }
                         TransactionDataTile {

@@ -119,6 +119,7 @@ QtObject:
       return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
                                     self.currencyService.getCurrencyFormat(symbol))
 
+    self.activityDetails = nil
     let entry = self.model.getEntry(entryIndex)
     if entry == nil:
       error "failed to find entry with index: ", entryIndex
@@ -127,11 +128,12 @@ QtObject:
     try:
       self.activityDetails = newActivityDetails(entry.getMetadata(), amountToCurrencyConvertor)
     except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
+      error "error: ", e.msg
       return
 
   proc getActivityDetails(self: Controller): QVariant {.slot.} =
+    if self.activityDetails == nil:
+      return newQVariant()
     return newQVariant(self.activityDetails)
 
   QtProperty[QVariant] activityDetails:
