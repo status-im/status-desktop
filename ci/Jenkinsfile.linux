@@ -133,7 +133,7 @@ def getArch() {
 
 def getE2EBuildType() {
   if (utils.isPRBuild()) { return 'prs' }
-  def parent = parentOrCurrentBuild()
+  def parent = utils.parentOrCurrentBuild()
   if (parent != null && parent.name == 'nightly') { return nightly }
   return null
 }
