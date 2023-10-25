@@ -51,8 +51,9 @@ class TestRolesRenamingModel: public QObject
     Q_OBJECT
 
 private slots:
-    void initializationTest()
+    void initializationWithBrokenMappingTest()
     {
+        TestSourceModel sourceModel({"id", "name", "color"});
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -63,9 +64,16 @@ private slots:
 
         mapping.append(&mapping, &rename);
 
-        QTest::ignoreMessage(QtWarningMsg, "RolesRenamingModel: specified source roles not found: (\"someIdFrom\")!");
+        model.setSourceModel(&sourceModel);
 
-        QCOMPARE(model.roleNames(), {});
+        QTest::ignoreMessage(QtWarningMsg,
+                             "RolesRenamingModel: specified source roles not "
+                             "found: (\"someIdFrom\")!");
+
+        QHash<int, QByteArray> expectedRoles = {
+            {0, "id"}, {1, "name"}, {2, "color"}
+        };
+        QCOMPARE(model.roleNames(), expectedRoles);
     }
 
     void remappingTest()
@@ -87,7 +95,9 @@ private slots:
 
         model.setSourceModel(&sourceModel);
 
-        QHash<int, QByteArray> expectedRoles = {{0, "tokenId"}, {1, "tokenName"}, {2, "color"}};
+        QHash<int, QByteArray> expectedRoles = {
+            {0, "tokenId"}, {1, "tokenName"}, {2, "color"}
+        };
         QCOMPARE(model.roleNames(), expectedRoles);
     }
 
@@ -105,14 +115,18 @@ private slots:
 
         model.setSourceModel(&sourceModel);
 
-        QHash<int, QByteArray> expectedRoles = {{0, "tokenId"}, {1, "name"}, {2, "color"}};
+        QHash<int, QByteArray> expectedRoles = {
+            {0, "tokenId"}, {1, "name"}, {2, "color"}
+        };
         QCOMPARE(model.roleNames(), expectedRoles);
 
         RoleRename rename_2;
         rename_2.setFrom("name");
         rename_2.setTo("tokenName");
 
-        QTest::ignoreMessage(QtWarningMsg, "RolesRenamingModel: role names mapping cannot be modified after fetching role names!");
+        QTest::ignoreMessage(QtWarningMsg,
+                             "RolesRenamingModel: role names mapping cannot be "
+                             "modified after fetching role names!");
         mapping.append(&mapping, &rename_2);
 
         QCOMPARE(model.roleNames(), expectedRoles);
@@ -132,7 +146,9 @@ private slots:
 
         model.setSourceModel(&sourceModel);
 
-        QTest::ignoreMessage(QtWarningMsg, "RolesRenamingModel: model cannot contain duplicated role names!");
+        QTest::ignoreMessage(QtWarningMsg,
+                             "RolesRenamingModel: model cannot contain "
+                             "duplicated role names!");
 
         QCOMPARE(model.roleNames(), {});
     }
@@ -146,7 +162,8 @@ private slots:
         QCOMPARE(rename.to(), "");
 
         QTest::ignoreMessage(QtWarningMsg,
-                             "RoleRename: property \"from\" is inteded to be initialized once and not changed!");
+                             "RoleRename: property \"from\" is intended to be "
+                             "initialized once and not changed!");
         rename.setFrom("id2");
         QCOMPARE(rename.from(), "id");
         QCOMPARE(rename.to(), "");
@@ -155,7 +172,9 @@ private slots:
         QCOMPARE(rename.from(), "id");
         QCOMPARE(rename.to(), "myId");
 
-        QTest::ignoreMessage(QtWarningMsg, "RoleRename: property \"to\" is inteded to be initialized once and not changed!");
+        QTest::ignoreMessage(QtWarningMsg,
+                             "RoleRename: property \"to\" is intended to be "
+                             "initialized once and not changed!");
         rename.setTo("myId2");
         QCOMPARE(rename.from(), "id");
         QCOMPARE(rename.to(), "myId");
