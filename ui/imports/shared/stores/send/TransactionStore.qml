@@ -61,7 +61,8 @@ QtObject {
     }
 
     function suggestedRoutes(amount) {
-        walletSectionSendInst.suggestedRoutes(amount)
+        const value = AmountsArithmetic.fromNumber(amount)
+        walletSectionSendInst.suggestedRoutes(value.toFixed())
     }
 
     function resolveENS(value) {
