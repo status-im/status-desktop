@@ -80,6 +80,30 @@ QtObject {
         return num.toLocaleString(locale, 'f', precision)
     }
 
+    function numberToLocaleStringInCompactForm(num, locale = null) {
+        locale = locale || Qt.locale()
+        const numberOfDigits = integralPartLength(num)
+        let oneArgStrFormat = "%1"
+        let formattedNumber = num
+        let multiplier = 1
+        if(numberOfDigits >=4 && numberOfDigits < 7) { // 1K - 999K
+            multiplier = 1 / 1000
+            oneArgStrFormat = qsTr("%1K", "Thousand")
+        } else if(numberOfDigits >= 7 && numberOfDigits < 10) { // 1M - 999M
+            multiplier = 1 / 1000000
+            oneArgStrFormat = qsTr("%1M", "Million")
+        } else if(numberOfDigits >= 10 && numberOfDigits < 13) { // 1B - 999B
+            multiplier = 1 / 1000000000
+            oneArgStrFormat = qsTr("%1B", "Billion")
+        } else if(numberOfDigits >= 13 && numberOfDigits < 16) { // 1T - 999T
+            multiplier = 1 / 1000000000000
+            oneArgStrFormat = qsTr("%1T", "Trillion")
+        }
+
+        const stringNumber = numberToLocaleString(num * multiplier, 2, locale)
+        return oneArgStrFormat.arg(stripTrailingZeroes(stringNumber, locale))
+    }
+
     function numberFromLocaleString(num, locale = null) {
         locale = locale || Qt.locale()
         try {

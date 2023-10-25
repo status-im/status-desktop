@@ -123,4 +123,168 @@ TestCase {
         compare(LocaleUtils.currencyAmountToLocaleString(
                     data.amount, null, locale), data.amountString)
     }
+    
+    function test_numberToLocaleStringInCompactForm_data() {
+        return [
+            {
+                amount: NaN,
+                amountString: "nan"
+            },
+            {
+                amount: null,
+                amountString: "0"
+            },
+            {
+                amount: "",
+                amountString: "0"
+            },
+            {
+                amount: "string",
+                amountString: "nan"
+            },
+            {
+                amount: {},
+                amountString: "nan"
+            },
+            {
+                amount: -1,
+                amountString: "-1"
+            },
+            {
+                amount: -1.1,
+                amountString: "-1.1"
+            },
+            {
+                amount: -1.1234,
+                amountString: "-1.12"
+            },
+            {
+                amount: -1000,
+                amountString: "-1K"
+            },
+            {
+                amount: -1000.1,
+                amountString: "-1K"
+            },
+            {
+                amount: -100000,
+                amountString: "-100K"
+            },
+            {
+                amount: -1001,
+                amountString: "-1K"
+            },
+            {
+                amount: -1100,
+                amountString: "-1.1K"
+            },
+            {
+                amount: -1000000,
+                amountString: "-1M"
+            },
+            {
+                amount: -1100000.123,
+                amountString: "-1.1M"
+            },
+            {
+                amount: -1000000000,
+                amountString: "-1B"
+            },
+            {
+                amount: -1100000000,
+                amountString: "-1.1B"
+            },
+            {
+                amount: -1000000000.123,
+                amountString: "-1B"
+            },
+            {
+                amount: -1000000000000,
+                amountString: "-1T"
+            },
+            {
+                amount: -999000000000000,
+                amountString: "-999T"
+            },
+            {
+                amount: -1000000000000000,
+                amountString: "-1,000,000,000,000,000"
+            },
+            {
+                amount: 0,
+                amountString: "0"
+            },
+            {
+                amount: 1,
+                amountString: "1"
+            },
+            {
+                amount: 1.1,
+                amountString: "1.1"
+            },
+            {
+                amount: 1.1234,
+                amountString: "1.12"
+            },
+            {
+                amount: 1000,
+                amountString: "1K"
+            },
+            {
+                amount: 1000.1,
+                amountString: "1K"
+            },
+            {
+                amount: 100000,
+                amountString: "100K"
+            },
+            {
+                amount: 1001,
+                amountString: "1K"
+            },
+            {
+                amount: 1100,
+                amountString: "1.1K"
+            },
+            {
+                amount: 1000000,
+                amountString: "1M"
+            },
+            {
+                amount: 1100000.123,
+                amountString: "1.1M"
+            },
+            {
+                amount: 1000000000,
+                amountString: "1B"
+            },
+            {
+                amount: 1100000000,
+                amountString: "1.1B"
+            },
+            {
+                amount: 1000000000.123,
+                amountString: "1B"
+            },
+            {
+                amount: 1000000000000,
+                amountString: "1T"
+            },
+            {
+                amount: 999000000000000,
+                amountString: "999T"
+            },
+            {
+                amount: 1000000000000000,
+                amountString: "1,000,000,000,000,000"
+            }
+        ]
+    }
+
+    function test_numberToLocaleStringInCompactForm(data) {
+        const locale = Qt.locale("en_US")
+
+        compare(LocaleUtils.numberToLocaleStringInCompactForm(
+                    data.amount, locale), data.amountString)
+    }
 }

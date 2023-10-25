@@ -1,1 +1,4 @@
 ContactListItemDelegate 1.0 ContactListItemDelegate.qml
+LinkPreviewCardDelegate 1.0 LinkPreviewCardDelegate.qml
+LinkPreviewGifDelegate 1.0 LinkPreviewGifDelegate.qml
+LinkPreviewMiniCardDelegate 1.0 LinkPreviewMiniCardDelegate.qml

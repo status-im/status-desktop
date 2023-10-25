@@ -74,7 +74,7 @@ SplitView {
         id: fakeUsersModel
     }
 
-    ListModel {
+    LinkPreviewModel {
         id: fakeLinksModel
     }
 
@@ -172,19 +172,12 @@ SplitView {
                 fakeLinksModel.clear()
                 words.forEach(function(word){
                     if(Utils.isURL(word)) {
-                        fakeLinksModel.append({
-                                url: encodeURI(word),
-                                unfurled: d.linkPreviewsEnabled,
-                                immutable: !d.linkPreviewsEnabled,
-                                hostname: Math.floor(Math.random() * 2) ? "youtube.com" : "",
-                                title: "PSY - GANGNAM STYLE(강남스타일) M/V",
-                                description: "This is the description of the link",
-                                linkType: Math.floor(Math.random() * 3),
-                                thumbnailWidth: 480,
-                                thumbnailHeight: 360,
-                                thumbnailUrl: "https://picsum.photos/480/360?random=1",
-                                thumbnailDataUri: ""
-                            })
+                        const linkPreview = fakeLinksModel.getStandardLinkPreview()
+                        linkPreview.url = encodeURI(word)
+                        linkPreview.unfurled = Math.random() > 0.2
+                        linkPreview.immutable = !d.linkPreviewsEnabled
+                        linkPreview.empty = Math.random() > 0.7
+                        fakeLinksModel.append(linkPreview)
                     }
                 })
             }

@@ -10,6 +10,8 @@ import shared 1.0
 
 import utils 1.0
 
+import "./private" 1.0
+
 CalloutCard {
     id: root
 
@@ -20,45 +22,11 @@ CalloutCard {
         Loaded
     }
 
-    enum Type {
-        Unknown = 0,
-        Link,
-        Image,
-        Community,
-        Channel,
-        User
-    }
+    readonly property LinkData linkData: LinkData { }
+    readonly property UserData userData: UserData { }
+    readonly property CommunityData communityData: CommunityData { }
+    readonly property ChannelData channelData: ChannelData { }
 
-    function getCardType(previewType, standardLinkPreview) {
-        switch (previewType) {
-            case Constants.StatusContact:
-                return LinkPreviewMiniCard.Type.User
-            case Constants.StatusCommunity:
-                return LinkPreviewMiniCard.Type.Community
-            case Constants.StatusCommunityChannel:
-                return LinkPreviewMiniCard.Type.Channel
-            case Constants.Standard:
-                if (!standardLinkPreview)
-                    return LinkPreviewMiniCard.Type.Unknown
-                switch (standardLinkPreview.linkType) {
-                case Constants.StandardLinkPreviewType.Link:
-                    return LinkPreviewMiniCard.Type.Link
-                case Constants.StandardLinkPreviewType.Image:
-                    return LinkPreviewMiniCard.Type.Image
-                default:
-                    return LinkPreviewMiniCard.Type.Unknown
-                }
-            default:
-                return LinkPreviewMiniCard.Type.Unknown
-        }
-    }
-
-    required property string titleStr
-    required property string domain
-    required property string communityName
-    required property string channelName
-    required property url favIconUrl
-    required property url thumbnailImageUrl
     required property int previewState
     required property int type
 
@@ -106,47 +74,78 @@ CalloutCard {
         },
         State {
             name: "loaded"
-            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.Link
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded &&
+                  root.type === Constants.LinkPreviewType.Standard &&
+                  root.linkData.type === Constants.StandardLinkPreviewType.Link
             PropertyChanges { 
                 target: root; visible: true; dashedBorder: false; borderWidth: 0;
                 backgroundColor: root.containsMouse ? Theme.palette.directColor8 : Theme.palette.indirectColor1; 
                 borderColor: backgroundColor;
             }
             PropertyChanges { target: loadingAnimation; visible: false; }
-            PropertyChanges { target: titleText; text: root.titleStr; color: Theme.palette.directColor1 }
-            PropertyChanges { target: subtitleText; visible: true; }
+            PropertyChanges { target: titleText; text: root.linkData.title; color: Theme.palette.directColor1 }
+            PropertyChanges { target: subtitleText; visible: true; text: root.linkData.domain; }
             PropertyChanges { target: reloadButton; visible: false; }
-            PropertyChanges { target: favIcon; visible: true }
-        },
-        State {
-            name: "loadedImage"
-            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.Image
-            extend: "loaded"
-            PropertyChanges { target: thumbnailImage; visible: root.thumbnailImageUrl != "" }
-            PropertyChanges { target: favIcon; visible: true; name: root.domain; asset.isLetterIdenticon: true; asset.color: Theme.palette.baseColor2; }
-        },
-        State {
-            name: "loadedCommunity"
-            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.Community
-            extend: "loaded"
-            PropertyChanges { target: titleText; text: root.communityName; }
-        },
-        State {
-            name: "loadedChannel"
-            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.Channel
-            extend: "loaded"
-            PropertyChanges { target: titleText; text: root.communityName; Layout.fillWidth: false; Layout.maximumWidth: Math.min(92, implicitWidth); }
-            PropertyChanges { target: secondTitleText; text: root.channelName; visible: true; }
-        },
-        State {
-            name: "loadedUser"
-            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === LinkPreviewMiniCard.Type.User
-            extend: "loaded"
             PropertyChanges { 
                 target: favIcon
                 visible: true
-                name: root.titleStr
-                asset.isLetterIdenticon: true
+                name: root.linkData.title
+                asset.isLetterIdenticon: !root.linkData.image
+                asset.color: Theme.palette.baseColor2
+            }
+        },
+        State {
+            name: "loadedImage"
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded &&
+                  root.type === Constants.LinkPreviewType.Standard &&
+                  root.linkData.type === Constants.StandardLinkPreviewType.Image
+            extend: "loaded"
+            PropertyChanges { target: thumbnailImage; visible: root.linkData.thumbnail != ""; image.source: root.linkData.thumbnail; }
+            PropertyChanges { target: favIcon; visible: true; name: root.linkData.domain; asset.isLetterIdenticon: true; asset.color: Theme.palette.baseColor2; }
+            PropertyChanges { target: subtitleText; visible: true; text: root.linkData.domain; }
+        },
+        State {
+            name: "loadedCommunity"
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === Constants.LinkPreviewType.StatusCommunity
+            extend: "loaded"
+            PropertyChanges { target: titleText; text: root.communityData.name; }
+            PropertyChanges { target: subtitleText; visible: true; text: Constants.externalStatusLink; }
+            PropertyChanges {
+                target: favIcon
+                visible: true
+                name: root.communityData.name
+                asset.isLetterIdenticon: root.communityData.image.length === 0
+                asset.color: root.communityData.color
+                asset.name: root.communityData.image
+            }
+        },
+        State {
+            name: "loadedChannel"
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === Constants.LinkPreviewType.StatusCommunityChannel
+            extend: "loadedCommunity"
+            PropertyChanges { target: titleText; text: root.channelData.communityData.name; Layout.fillWidth: false; Layout.maximumWidth: Math.min(92, implicitWidth); }
+            PropertyChanges { target: secondTitleText; text: "#" + root.channelData.name; visible: true; }
+            PropertyChanges {
+                target: favIcon
+                visible: true
+                name: root.channelData.communityData.name
+                asset.isLetterIdenticon: root.channelData.communityData.image.length === 0
+                asset.color: root.channelData.communityData.color
+                asset.name: root.channelData.communityData.image
+            }
+        },
+        State {
+            name: "loadedUser"
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === Constants.LinkPreviewType.StatusContact
+            extend: "loaded"
+            PropertyChanges { target: titleText; text: root.userData.name; Layout.fillWidth: false; Layout.maximumWidth: Math.min(92, implicitWidth); }
+            PropertyChanges { target: subtitleText; visible: true; text: Constants.externalStatusLink; }
+            PropertyChanges { 
+                target: favIcon
+                visible: true
+                name: root.userData.name
+                asset.name: root.userData.image
+                asset.isLetterIdenticon: root.userData.image.length === 0
                 asset.charactersLen: 2
                 asset.color: Theme.palette.miscColor9
             }
@@ -174,8 +173,6 @@ CalloutCard {
                 Layout.preferredWidth: 16
                 Layout.preferredHeight: 16
                 visible: false
-                name: root.titleStr
-                asset.name: root.favIconUrl
                 asset.letterSize: asset.charactersLen == 1 ? 10 : 7
             }
             ColumnLayout {
@@ -190,7 +187,6 @@ CalloutCard {
                     spacing: 0
                     StatusBaseText {
                         id: titleText
-                        text: root.titleStr
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         font.pixelSize: Style.current.additionalTextSize
@@ -227,7 +223,6 @@ CalloutCard {
                     Layout.fillHeight: true
                     font.pixelSize: Style.current.tertiaryTextFontSize
                     color: Theme.palette.baseColor1
-                    text: root.domain
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
                 }
@@ -239,7 +234,6 @@ CalloutCard {
                 implicitWidth: 34
                 implicitHeight: 34
                 radius: 4
-                image.source: root.thumbnailImageUrl
                 visible: false
             }
             StatusFlatButton {

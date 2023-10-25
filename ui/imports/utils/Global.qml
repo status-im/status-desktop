@@ -56,6 +56,7 @@ QtObject {
 
     signal openLink(string link)
     signal openLinkWithConfirmation(string link, string domain)
+    signal activateDeepLink(string link)
 
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection)

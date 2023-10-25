@@ -19,6 +19,5 @@ SendTransactionButton 1.0 SendTransactionButton.qml
 SentMessage 1.0 SentMessage.qml
 StateBubble 1.0 StateBubble.qml
 UserImage 1.0 UserImage.qml
-UserProfileCard 1.0 UserProfileCard.qml
 UsernameLabel 1.0 UsernameLabel.qml
 VerificationLabel 1.0 VerificationLabel.qml

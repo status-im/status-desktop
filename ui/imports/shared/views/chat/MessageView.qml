@@ -8,6 +8,7 @@ import shared.controls 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
+import shared.stores 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -570,7 +571,7 @@ Loader {
                         rootStore.chatCommunitySectionModule.switchToChannel(link.replace("#", ""))
                         return
                     } else if (Utils.isStatusDeepLink(link)) {
-                        rootStore.activateStatusDeepLink(link)
+                        Global.activateDeepLink(link)
                         return
                     }
 
@@ -755,14 +756,20 @@ Loader {
                         id: linksMessageView
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
-                        messageStore: root.messageStore
-                        store: root.rootStore
+                        playAnimations: root.messageStore.playAnimation
+                        isOnline: root.rootStore.mainModuleInst.isOnline
                         isCurrentUser: root.amISender
                         highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
+                        onOpenContextMenu: (item, url, domain) => {
+                            Global.openMenu(imageContextMenuComponent, item, { url: url, domain: domain, requireConfirmationOnOpen: true })
+                        }
                         onHoveredLinkChanged: delegate.highlightedLink = linksMessageView.hoveredLink
+                        gifUnfurlingEnabled: RootStore.gifUnfurlingEnabled
+                        canAskToUnfurlGifs: !RootStore.neverAskAboutUnfurlingAgain
+                        onSetNeverAskAboutUnfurlingAgain: RootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
                     }
                 }
 
