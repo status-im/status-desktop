@@ -7,6 +7,7 @@ class DerivationPath(Enum):
     ETHEREUM_ROPSTEN = 'Ethereum Testnet (Ropsten)'
     ETHEREUM_LEDGER = 'Ethereum (Ledger)'
     ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
+    STATUS_ACCOUNT_DERIVATION_PATH = "m / 44' / 60' / 0' / 0 / 0"
 
 
 class WalletNetworkSettings(Enum):
@@ -21,6 +22,11 @@ class WalletNetworkSettings(Enum):
     REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE = 'Test network settings for Mainnet reverted to default'
     STATUS_ACCOUNT_DEFAULT_NAME = 'Status account'
     STATUS_ACCOUNT_DEFAULT_COLOR = '#2a4af5'
+
+
+class WalletAccountSettings(Enum):
+    STATUS_ACCOUNT_ORIGIN = 'Derived from your default Status keypair'
+    STORED_ON_DEVICE = 'On device'
 
 
 class WalletNetworkNaming(Enum):

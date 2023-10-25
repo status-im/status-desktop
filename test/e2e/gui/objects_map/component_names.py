@@ -275,7 +275,7 @@ mainWindow_Turn_off_Button = {"checkable": False, "container": statusDesktop_mai
 
 # Wallet toast message
 mainWallet_Ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
-ephemeralNotificationList_StatusToastMessage = {"container": mainWallet_Ephemeral_Notification_List, "type": "StatusToastMessage", "unnamed": 1, "visible": True}
+ephemeralNotificationList_StatusToastMessage = {"container": mainWallet_Ephemeral_Notification_List, "objectName": "statusToastMessage", "type": "StatusToastMessage"}
 
 # Change password popup
 change_password_menu_current_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}

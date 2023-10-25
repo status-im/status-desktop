@@ -8,6 +8,7 @@ import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
+from gui.components.wallet.wallet_toast_message import WalletToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings_keycard import KeycardSettingsView
 
@@ -58,6 +59,8 @@ def test_manage_watch_only_account(main_screen: MainWindow, address: str, color:
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_eth_address(address).save()
         account_popup.wait_until_hidden()
 
+    # TODO: add toast verification when method is fixed
+
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
@@ -69,6 +72,8 @@ def test_manage_watch_only_account(main_screen: MainWindow, address: str, color:
     with step('Delete wallet account'):
         wallet.left_panel.delete_account_from_context_menu(name).confirm()
 
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {name} is still displayed even it should not be'
@@ -77,6 +82,8 @@ def test_manage_watch_only_account(main_screen: MainWindow, address: str, color:
         account_popup = wallet.left_panel.select_add_watched_address_from_context_menu()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save()
         account_popup.wait_until_hidden()
+
+    # TODO: add toast verification when method is fixed
 
     with step('Edit wallet account'):
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
@@ -110,6 +117,8 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
+    # TODO: add toast verification when method is fixed
+
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
@@ -132,6 +141,8 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
 
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
+
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -159,6 +170,8 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                                                                                            generated_address_index,
                                                                                            user_account.password).save()
 
+    # TODO: add toast verification when method is fixed
+
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
@@ -169,6 +182,8 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
 
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(name).agree_and_confirm()
+
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -191,9 +206,12 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_private_key(address_pair.private_key).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_private_key(
+            address_pair.private_key).save()
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
+
+    # TODO: add toast verification when method is fixed
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
@@ -225,6 +243,8 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
 
     with step('Delete wallet account'):
         wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
+
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -261,6 +281,8 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
+    # TODO: add toast verification when method is fixed
+
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
@@ -283,6 +305,8 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
 
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
+
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -309,6 +333,8 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         account_popup.wait_until_hidden()
 
+    # TODO: add toast verification when method is fixed
+
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
@@ -331,6 +357,8 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
 
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
+
+    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \

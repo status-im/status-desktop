@@ -105,6 +105,20 @@ class AccountDetailsView(WalletSettingsView):
         emoji_id = str(self._wallet_account_emoji.get_object_attribute('emojiId'))
         return emoji_id
 
+    @allure.step('Get account origin value')
+    def get_account_origin_value(self):
+        return str(self._wallet_account_origin.get_object_attribute('subTitle'))
+
+    @allure.step('Get account derivation path value')
+    def get_account_derivation_path_value(self):
+        return str(self._wallet_account_derivation_path.get_object_attribute('subTitle'))
+
+    @allure.step('Get account storage value')
+    def get_account_storage_value(self):
+        raw_value = str(self._wallet_account_stored.get_object_attribute('subTitle'))
+        storage = raw_value.split(">")[-1]
+        return storage
+
 
 class NetworkWalletSettings(WalletSettingsView):
 

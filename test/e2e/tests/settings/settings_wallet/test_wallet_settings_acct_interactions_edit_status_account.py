@@ -4,12 +4,12 @@ import string
 import allure
 import pytest
 
-from constants.wallet import WalletNetworkSettings
+from constants.wallet import WalletNetworkSettings, DerivationPath, WalletAccountSettings
 from gui.main_window import MainWindow
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
-                 'Account view: Edit Status default account')
+                 'Account view interactions: Edit Status default account')
 @pytest.mark.case(704433)
 @pytest.mark.parametrize('new_name', [
     pytest.param(''.join(random.choices(string.ascii_letters +
@@ -23,6 +23,15 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
         f"Status main account name must be {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value}"
     assert status_acc_view.get_account_color_value() == WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value, \
         f"Status main account color must be {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_COLOR.value}"
+
+    assert status_acc_view.get_account_origin_value() == WalletAccountSettings.STATUS_ACCOUNT_ORIGIN.value, \
+        f"Status account origin label is incorrect"
+
+    assert status_acc_view.get_account_derivation_path_value() == DerivationPath.STATUS_ACCOUNT_DERIVATION_PATH.value, \
+        f"Status account derivation path must be {DerivationPath.STATUS_ACCOUNT_DERIVATION_PATH.value}"
+
+    assert status_acc_view.get_account_storage_value() == WalletAccountSettings.STORED_ON_DEVICE.value, \
+        f"Status account storage should be {WalletAccountSettings.STORED_ON_DEVICE.value}"
 
     account_emoji_id_before = status_acc_view.get_account_emoji_id()
 
