@@ -1573,6 +1573,7 @@ Item {
         clip: false
 
         delegate: StatusToastMessage {
+            objectName: "statusToastMessage"
             width: ListView.view.width
             primaryText: model.title
             secondaryText: model.subTitle
