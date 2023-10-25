@@ -3,13 +3,34 @@ pragma Singleton
 import QtQuick 2.15
 
 QtObject {
+    id: root
 
     readonly property int ethNet: 1
-    readonly property int optimismNet: 2
-    readonly property int arbitrumNet: 3
+    readonly property int optimismNet: 10
+    readonly property int arbitrumNet: 42161
     readonly property int hermezNet: 4
     readonly property int testnetNet: 5
     readonly property int customNet: 6
+
+    function getChainName(chainId) {
+        if(chainId === root.ethNet)
+            return "Mainnet"
+
+        if(chainId === root.optimismNet)
+            return "Optimism"
+
+        if(chainId === root.arbitrumNet)
+            return "Arbitrum"
+
+        if(chainId === root.hermezNet)
+            return "Hermez"
+
+        if(chainId === root.testnetNet)
+            return "Goerli"
+
+        if(chainId === root.customNet)
+            return "Custom"
+    }
 
     component CustomNetworkModel: ListModel {
         // Simulate Nim's way of providing access to data

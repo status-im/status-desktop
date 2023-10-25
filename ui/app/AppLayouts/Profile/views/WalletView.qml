@@ -219,6 +219,9 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
+
+            sourcesOfTokensModel: undefined//tokensStore.sourcesOfTokensModel
+            tokensListModel: undefined//tokensStore.flatTokensModel
         }
 
         DappPermissionsView {
