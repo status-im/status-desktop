@@ -28,7 +28,8 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         networks.switch_testnet_mode_toggle().click_turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned on'):
-        WalletToastMessage().get_toast_message(WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value)
+        assert WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value in WalletToastMessage().get_toast_messages
+        assert len(WalletToastMessage().get_toast_messages) == 1
         TestnetModeBanner().wait_until_appears()
         assert networks.is_testnet_mode_toggle_checked(), f"Testnet toggle if off when it should not"
 

@@ -217,11 +217,11 @@ class EditNetworkSettings(WalletSettingsView):
     def check_toast_message(self, network_tab):
         match network_tab:
             case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
-                WalletToastMessage().get_toast_message(
-                    WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value)
+                assert (WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value in
+                        WalletToastMessage().get_toast_messages)
             case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
-                WalletToastMessage().get_toast_message(
-                    WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value)
+                assert (WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value in
+                        WalletToastMessage().get_toast_messages)
 
     @allure.step('Verify elements for the edit network view')
     def check_available_elements_on_edit_view(self, network_tab):
