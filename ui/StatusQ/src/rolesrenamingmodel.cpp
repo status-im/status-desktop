@@ -13,7 +13,8 @@ void RoleRename::setFrom(const QString& from)
         return;
 
     if (!m_from.isEmpty()) {
-        qWarning() << "RoleRename: property \"from\" is inteded to be initialized once and not changed!";
+        qWarning() << "RoleRename: property \"from\" is intended to be "
+                      "initialized once and not changed!";
         return;
     }
 
@@ -32,7 +33,8 @@ void RoleRename::setTo(const QString& to)
         return;
 
     if (!m_to.isEmpty()) {
-        qWarning() << "RoleRename: property \"to\" is inteded to be initialized once and not changed!";
+        qWarning() << "RoleRename: property \"to\" is intended to be "
+                      "initialized once and not changed!";
         return;
     }
 
@@ -63,7 +65,8 @@ QQmlListProperty<RoleRename> RolesRenamingModel::mapping()
                     listProperty->object);
 
         if (model->m_rolesFetched) {
-            qWarning() << "RolesRenamingModel: role names mapping cannot be modified after fetching role names!";
+            qWarning() << "RolesRenamingModel: role names mapping cannot be "
+                          "modified after fetching role names!";
             return;
         }
 
@@ -102,7 +105,8 @@ QHash<int, QByteArray> RolesRenamingModel::roleNames() const
     }
 
     if (roles.size() != roleNamesSet.size()) {
-        qWarning() << "RolesRenamingModel: model cannot contain duplicated role names!";
+        qWarning() << "RolesRenamingModel: model cannot contain duplicated "
+                      "role names!";
         return {};
     }
 
