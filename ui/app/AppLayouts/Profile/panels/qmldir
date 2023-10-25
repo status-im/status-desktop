@@ -3,3 +3,4 @@ ProfileShowcaseCommunitiesPanel 1.0 ProfileShowcaseCommunitiesPanel.qml
 ProfileShowcaseCollectiblesPanel 1.0 ProfileShowcaseCollectiblesPanel.qml
 ProfileShowcaseAccountsPanel 1.0 ProfileShowcaseAccountsPanel.qml
 ProfileShowcaseAssetsPanel 1.0 ProfileShowcaseAssetsPanel.qml
+SupportedTokenListsPanel 1.0 SupportedTokenListsPanel.qml

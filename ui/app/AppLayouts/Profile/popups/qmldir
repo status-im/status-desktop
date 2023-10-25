@@ -3,7 +3,8 @@ SetupSyncingPopup 1.0 SetupSyncingPopup.qml
 AddSocialLinkModal 1.0 AddSocialLinkModal.qml
 ModifySocialLinkModal 1.0 ModifySocialLinkModal.qml
 RenameKeypairPopup 1.0 RenameKeypairPopup.qml
-WalletKeypairAccountMenu 1.0 WalletKeypairAccountMenu.qml
-WalletAddressMenu 1.0 WalletAddressMenu.qml
 RenameAccontModal 1.0 RenameAccontModal.qml
 RemoveKeypairPopup 1.0 RemoveKeypairPopup.qml
+TokenListPopup 1.0 TokenListPopup.qml
+WalletKeypairAccountMenu 1.0 WalletKeypairAccountMenu.qml
+WalletAddressMenu 1.0 WalletAddressMenu.qml

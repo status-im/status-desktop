@@ -5,8 +5,13 @@ import StatusQ.Controls 0.1
 
 import shared.controls 1.0
 
+import AppLayouts.Profile.panels 1.0
+
 ColumnLayout {
     id: root
+
+    required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
+    required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
 
     StatusTabBar {
         id: tabBar
@@ -54,12 +59,12 @@ ColumnLayout {
             text: qsTr("You’ll be able to manage the display of your collectibles here")
         }
 
-        // TO BE REPLACED: Empty placeholder when no token lists; dashed rounded rectangle
-        ShapeRectangle {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: parent.width - 4 // The rectangular path is rendered outside
-            Layout.preferredHeight: 44
-            text: qsTr("Token List (coming soon)")
+        SupportedTokenListsPanel {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            sourcesOfTokensModel: root.sourcesOfTokensModel
+            tokensListModel: root.tokensListModel
         }
     }
 }

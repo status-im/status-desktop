@@ -5,18 +5,21 @@ BannerModel 1.0 BannerModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
 FeesModel 1.0 FeesModel.qml
+FlatTokensModel 1.0 FlatTokensModel.qml
 IconModel 1.0 IconModel.qml
 LinkPreviewModel 1.0 LinkPreviewModel.qml
 MintedTokensModel 1.0 MintedTokensModel.qml
 RecipientModel 1.0 RecipientModel.qml
+SourceOfTokensModel 1.0 SourceOfTokensModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml
 UsersModel 1.0 UsersModel.qml
+WalletSendAccountsModel 1.0 WalletSendAccountsModel.qml
 WalletAccountsModel 1.0 WalletAccountsModel.qml
 WalletAssetsModel 1.0 WalletAssetsModel.qml
 WalletCollectiblesModel 1.0 WalletCollectiblesModel.qml
 WalletKeyPairModel 1.0 WalletKeyPairModel.qml
 WalletNestedCollectiblesModel 1.0 WalletNestedCollectiblesModel.qml
+
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml
 singleton PermissionsModel 1.0 PermissionsModel.qml
-WalletSendAccountsModel 1.0 WalletSendAccountsModel.qml
