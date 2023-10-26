@@ -11,6 +11,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 QtObject {
     id: root
 
+    readonly property TokensStore tokensStore: TokensStore {}
+
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
 

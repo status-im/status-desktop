@@ -787,6 +787,12 @@ QtObject {
         readonly property int actionSyncDevice: 3
     }
 
+    readonly property QtObject supportedTokenSources: QtObject {
+        readonly property string uniswap: "uniswap"
+        readonly property string status: "status"
+        readonly property string custom: "custom"
+    }
+
     enum LocalPairingState {
         Idle = 0,
         Transferring = 1,
@@ -1138,6 +1144,18 @@ QtObject {
 
     function isDefaultTokenIcon(url) {
         return url.indexOf("DEFAULT-TOKEN") !== -1
+    }
+
+    function getSupportedTokenSourceImage(key, useDefault=true) {
+        if (key === supportedTokenSources.uniswap)
+            return Style.png("tokens/UNI")
+
+        if (key === supportedTokenSources.status)
+            return Style.png("tokens/SNT")
+
+        if (useDefault)
+            return Style.png("tokens/DEFAULT-TOKEN")
+        return ""
     }
 
     // Message outgoing status

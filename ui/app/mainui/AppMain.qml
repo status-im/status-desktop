@@ -39,6 +39,7 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -64,6 +65,8 @@ Item {
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
+    readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
+
     // set from main.qml
     property var sysPalette
 
@@ -1238,6 +1241,7 @@ Item {
                             systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
+                            tokensStore: appMain.tokensStore
                         }
                     }
 

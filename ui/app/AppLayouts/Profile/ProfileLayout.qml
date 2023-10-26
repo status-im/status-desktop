@@ -9,6 +9,7 @@ import shared.stores 1.0 as SharedStores
 import shared.popups.keycard 1.0
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0
 
 import "stores"
 import "popups"
@@ -28,6 +29,7 @@ StatusSectionLayout {
     property var systemPalette
     property var emojiPopup
     property var networkConnectionStore
+    required property TokensStore tokensStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -181,6 +183,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 rootStore: root.store
                 walletStore: root.store.walletStore
+                tokensStore: root.tokensStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth
