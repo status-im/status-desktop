@@ -170,7 +170,7 @@ def setNewBuildName() {
   /* For URLs we need to parse the filename to get attributes. */
   if (params.BUILD_SOURCE.startsWith('http')) {
     def tokens = utils.parseFilename(utils.baseName(params.BUILD_SOURCE))
-    currentBuild.displayName = tokens.build
+    currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
     currentBuild.description = formatMap([
       Node: NODE_NAME,
       Build: tokens.build,
@@ -178,7 +178,12 @@ def setNewBuildName() {
       Version: (tokens.tstamp ?: tokens.version),
     ])
   } else {
-    currentBuild.displayName = utils.baseName(params.BUILD_SOURCE).replace(/^pr/, 'PR-')
+    def parent = utils.parentOrCurrentBuild()
+    if (!(parent.getFullDisplayName() ==~ /prs/)) {
+      currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
+    } else {
+      currentBuild.displayName = utils.baseName(params.BUILD_SOURCE)
+    }
     currentBuild.description = formatMap([
       Node: NODE_NAME,
       Build: params.BUILD_SOURCE.minus('status-desktop/'),
