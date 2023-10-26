@@ -107,10 +107,10 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { getE2EBuildType() != null } }
+      when { expression { utils.isPRBuild() } }
       steps { script {
         build(
-          job: "status-desktop/e2e/${getE2EBuildType()}",
+          job: 'status-desktop/e2e/prs',
           parameters: jenkins.mapToParams([BUILD_SOURCE: JOB_NAME]),
           wait: false
         )
@@ -129,14 +129,6 @@ def getArch() {
   for (def arch in ['x86_64', 'aarch64']) {
     if (tokens.contains(arch)) { return arch }
   }
-}
-
-def getE2EBuildType() {
-  if (utils.isPRBuild()) { return 'prs' }
-  def parent = utils.parentOrCurrentBuild()
-  if (parent == null) { return null }
-  if (parent.getFullDisplayName() =~ /nightly/) { return 'nightly' }
-  return null
 }
 
 def getMockedKeycardLibDefault() {

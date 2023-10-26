@@ -8,7 +8,7 @@ pipeline {
     timestamps()
     disableConcurrentBuilds()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 60, unit: 'MINUTES')
+    timeout(time: 90, unit: 'MINUTES')
     /* Limit builds retained */
     buildDiscarder(logRotator(
       numToKeepStr: '30',
@@ -28,20 +28,30 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Linux/E2E') { steps { script {
-          linux_e2e = jenkins.Build('status-desktop/systems/linux/x86_64/tests-e2e')
-        } } }
         stage('Linux/x86_64') { steps { script {
-          linux_x86_64 = jenkins.Build('status-desktop/systems/linux/x86_64/package')
+          linux_x86_64 =   jenkins.Build('status-desktop/systems/linux/x86_64/package')
         } } }
         stage('Windows/x86_64') { steps { script {
           windows_x86_64 = jenkins.Build('status-desktop/systems/windows/x86_64/package')
         } } }
         stage('MacOS/x86_64') { steps { script {
-          macos_x86_64 = jenkins.Build('status-desktop/systems/macos/x86_64/package')
+          macos_x86_64 =   jenkins.Build('status-desktop/systems/macos/x86_64/package')
         } } }
         stage('MacOS/aarch64') { steps { script {
-          macos_aarch64 = jenkins.Build('status-desktop/systems/macos/aarch64/package')
+          macos_aarch64 =  jenkins.Build('status-desktop/systems/macos/aarch64/package')
+        } } }
+      }
+    }
+    stage('Tests') {
+      parallel {
+        stage('Linux/E2E/old') { steps { script {
+          linux_e2e = jenkins.Build('status-desktop/systems/linux/x86_64/tests-e2e-old')
+        } } }
+        stage('Linux/E2E/new') { steps { script {
+          linux_e2e = build(
+              job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
+              parameters: jenkins.mapToParams([BUILD_SOURCE: linux_x86_64.fullProjectName]),
+          )
         } } }
       }
     }
