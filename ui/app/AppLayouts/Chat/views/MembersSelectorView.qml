@@ -67,14 +67,14 @@ MembersSelectorBase {
             if (urlContactData) {
                 // Ignore all the data from the link, because it might be malformed.
                 // Except for the publicKey.
-                processContact({publicKey: urlContactData.publicKey})
+                processContact(urlContactData.publicKey)
                 return
             }
 
             value = Utils.dropUserLinkPrefix(value.trim())
 
             if (Utils.isChatKey(value)) {
-                processContact({publicKey: value})
+                processContact(value)
                 return
             }
 
@@ -86,8 +86,8 @@ MembersSelectorBase {
             root.suggestionsDialog.forceHide = false
         }
 
-        function processContact(contactData) {
-            const contactDetails = Utils.getContactDetailsAsJson(contactData.publicKey, false)
+        function processContact(publicKey) {
+            const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
             if (contactDetails.publicKey === "") {
                 // not a valid key given
                 root.suggestionsDialog.forceHide = false
@@ -108,24 +108,15 @@ MembersSelectorBase {
                 // List is empty and we have a contact request
                 // OR it's our own chat key or a banned user
                 // Then open the contact's profile popup
-                Global.openProfilePopup(contactDetails.publicKey, null,  popup => popup.closed.connect(root.rejected))
+                Global.openProfilePopup(contactDetails.publicKey, null,
+                                        popup => popup.closed.connect(root.rejected))
                 return
             }
 
             if (root.model.count === 0 && !hasPendingContactRequest) {
                 // List is empty and not a contact yet. Open the contact request popup
-
-                // If `displayName` is not undefined and not empty,
-                // then we open the popup with given `contactData`, which probably came from URL.
-                if (contactData.displayName) {
-                    // Open contact request if we have data from url
-                    Global.openContactRequestPopupWithContactData(contactData,
-                                                                  popup => popup.closed.connect(root.rejected))
-                    
-                } else {
-                    Global.openContactRequestPopup(contactDetails.publicKey,
-                                                   popup => popup.closed.connect(root.rejected))
-                }
+                Global.openContactRequestPopup(contactDetails.publicKey,
+                                               popup => popup.closed.connect(root.rejected))
                 return
             }
 
@@ -174,7 +165,7 @@ MembersSelectorBase {
                 root.suggestionsDialog.forceHide = false
                 return
             }
-            d.processContact({publicKey: resolvedPubKey})
+            d.processContact(resolvedPubKey)
         }
     }
 }
