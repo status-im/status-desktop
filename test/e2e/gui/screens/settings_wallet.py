@@ -38,9 +38,15 @@ class WalletSettingsView(QObject):
         return AccountPopup().wait_until_appears()
 
     @allure.step('Open networks in wallet settings')
-    def open_networks(self):
+    def open_networks(self, attempts: int = 2):
         self._wallet_network_button.click()
-        return NetworkWalletSettings().wait_until_appears()
+        try:
+            return NetworkWalletSettings().wait_until_appears()
+        except AssertionError as err:
+            if attempts:
+                return self.open_networks(attempts - 1)
+            else:
+                raise err
 
     @allure.step('Open account order in wallet settings')
     def open_account_order(self):

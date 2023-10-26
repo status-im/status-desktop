@@ -288,10 +288,16 @@ class YourProfileView(OnboardingView):
         return PictureEditPopup().wait_until_appears()
 
     @allure.step('Open Emoji and Icon view')
-    def next(self) -> 'EmojiAndIconView':
+    def next(self, attempts: int = 2) -> 'EmojiAndIconView':
         self._next_button.click()
-        time.sleep(1)
-        return EmojiAndIconView()
+        try:
+            return EmojiAndIconView().wait_until_appears()
+        except AssertionError as err:
+            if attempts:
+                return self.next(attempts - 1)
+            else:
+                raise err
+
 
     @allure.step('Go back')
     def back(self):

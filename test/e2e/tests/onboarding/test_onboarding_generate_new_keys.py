@@ -20,8 +20,8 @@ def keys_screen(main_window) -> KeysView:
         if configs.system.IS_MAC:
             AllowNotificationsView().wait_until_appears().allow()
         BeforeStartedPopUp().get_started()
-        wellcome_screen = WelcomeToStatusView().wait_until_appears()
-        return wellcome_screen.get_keys()
+        welcome_screen = WelcomeToStatusView().wait_until_appears()
+        return welcome_screen.get_keys()
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
