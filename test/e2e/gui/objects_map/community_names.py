@@ -1,4 +1,4 @@
-from .main_names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
+from .main_names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay, mainWindow_StatusWindow
 
 # Community Portal
 mainWindow_communitiesPortalLayout_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout", "visible": True}
@@ -45,16 +45,46 @@ mainWindow_listView_StatusListView = {"container": mainWindow_communityLoader_Lo
 overview_StatusNavigationListItem = {"container": mainWindow_listView_StatusListView, "objectName": "CommunitySettingsView_NavigationListItem_Overview", "type": "StatusNavigationListItem", "visible": True}
 members_StatusNavigationListItem = {"container": mainWindow_listView_StatusListView, "index": 1, "objectName": "CommunitySettingsView_NavigationListItem_Members", "type": "StatusNavigationListItem", "visible": True}
 permissions_StatusNavigationListItem = {"container": mainWindow_listView_StatusListView, "index": 2, "objectName": "CommunitySettingsView_NavigationListItem_Permissions", "type": "StatusNavigationListItem", "visible": True}
+tokens_StatusNavigationListItem = {"container": mainWindow_listView_StatusListView, "index": 3, "objectName": "CommunitySettingsView_NavigationListItem_Tokens", "type": "StatusNavigationListItem", "visible": True}
+airdrops_StatusNavigationListItem = {"container": mainWindow_listView_StatusListView, "index": 4, "objectName": "CommunitySettingsView_NavigationListItem_Airdrops", "type": "StatusNavigationListItem", "visible": True}
 
 # Overview Settings View
 mainWindow_OverviewSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "OverviewSettingsPanel", "unnamed": 1, "visible": True}
 communityOverviewSettingsCommunityName_StatusBaseText = {"container": mainWindow_OverviewSettingsPanel, "objectName": "communityOverviewSettingsCommunityName", "type": "StatusBaseText", "visible": True}
 communityOverviewSettingsCommunityDescription_StatusBaseText = {"container": mainWindow_OverviewSettingsPanel,  "objectName": "communityOverviewSettingsCommunityDescription", "type": "StatusBaseText", "visible": True}
 mainWindow_Edit_Community_StatusButton = {"checkable": False, "container": mainWindow_OverviewSettingsPanel, "objectName": "communityOverviewSettingsEditCommunityButton", "text": "Edit Community", "type": "StatusButton", "visible": True}
+
 # Members Settings View
 mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "MembersSettingsPanel", "unnamed": 1, "visible": True}
 embersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 memberItem_StatusMemberListItem = {"container": embersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+
+# Tokens View
+mainWindow_mintPanel_MintTokensSettingsPanel = {"container": mainWindow_StatusWindow, "id": "mintPanel", "type": "MintTokensSettingsPanel", "unnamed": 1, "visible": True}
+mainWindow_MintedTokensView = {"container": mainWindow_StatusWindow, "type": "MintedTokensView", "unnamed": 1, "visible": True}
+mainWindow_Mint_token_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+welcomeSettingsTokens_Image = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
+welcomeSettingsTokens_Title = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
+welcomeSettingsTokensSubtitle = {"container": mainWindow_MintedTokensView, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
+checkListText_0_Tokens = {"container": mainWindow_MintedTokensView, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
+checkListText_1_Tokens = {"container": mainWindow_MintedTokensView, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
+checkListText_2_Tokens = {"container": mainWindow_MintedTokensView, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
+mint_Owner_Tokens_InfoBoxPanel = {"container": mainWindow_MintedTokensView, "type": "StatusInfoBoxPanel", "unnamed": 1, "visible": True}
+mint_Owner_Tokens_StatusButton = {"checkable": False, "container": mainWindow_MintedTokensView, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Airdrops View
+mainWindow_airdropPanel_AirdropsSettingsPanel = {"container": mainWindow_StatusWindow, "id": "airdropPanel", "type": "AirdropsSettingsPanel", "unnamed": 1, "visible": True}
+mainWindow_WelcomeSettingsView = {"container": mainWindow_StatusWindow, "type": "WelcomeSettingsView", "unnamed": 1, "visible": True}
+mainWindow_New_Airdrop_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+welcomeSettingsAirdrops_Image = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
+welcomeSettingsAirdrops_Title = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
+welcomeSettingsAirdrops_Subtitle = {"container": mainWindow_WelcomeSettingsView, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
+checkListText_0_Airdrops = {"container": mainWindow_WelcomeSettingsView, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
+checkListText_1_Airdrops = {"container": mainWindow_WelcomeSettingsView, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
+checkListText_2_Airdrops = {"container": mainWindow_WelcomeSettingsView, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
+infoBox_StatusInfoBoxPanel = {"container": mainWindow_WelcomeSettingsView, "id": "infoBox", "type": "StatusInfoBoxPanel", "unnamed": 1, "visible": True}
+mint_Owner_token_Airdrops_StatusButton = {"checkable": False, "container": mainWindow_WelcomeSettingsView, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
+
 # Permissions Intro View
 community_welcome_screen_image = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
 community_welcome_screen_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
@@ -63,6 +93,7 @@ community_welcome_screen_checkList_element1 = {"container": statusDesktop_mainWi
 community_welcome_screen_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
 community_welcome_screen_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
 add_new_permission_button = {"container": statusDesktop_mainWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+
 # Permissions Settings View
 mainWindow_editPermissionView_EditPermissionView = {"container": statusDesktop_mainWindow, "id": "editPermissionView", "type": "EditPermissionView", "unnamed": 1, "visible": True}
 editPermissionView_Who_holds_StatusItemSelector = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "tokensSelector", "type": "StatusItemSelector", "unnamed": 1, "visible": True}

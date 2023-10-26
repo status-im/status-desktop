@@ -32,6 +32,8 @@ class LeftPanel(QObject):
         self._overview_button = Button('overview_StatusNavigationListItem')
         self._members_button = Button('members_StatusNavigationListItem')
         self._permissions_button = Button('permissions_StatusNavigationListItem')
+        self._tokens_button = Button('tokens_StatusNavigationListItem')
+        self._airdrops_button = Button('airdrops_StatusNavigationListItem')
 
     @allure.step('Open community main view')
     def back_to_community(self):
@@ -53,6 +55,16 @@ class LeftPanel(QObject):
     def open_permissions(self) -> 'PermissionsIntroView':
         self._permissions_button.click()
         return PermissionsIntroView().wait_until_appears()
+
+    @allure.step('Open tokens')
+    def open_tokens(self) -> 'TokensView':
+        self._tokens_button.click()
+        return TokensView().wait_until_appears()
+
+    @allure.step('Open airdrops')
+    def open_airdrops(self) -> 'AirdropsView':
+        self._airdrops_button.click()
+        return AirdropsView().wait_until_appears()
 
 
 class OverviewView(QObject):
@@ -211,6 +223,118 @@ class MembersView(QObject):
     @allure.step('Get community members')
     def members(self) -> typing.List[str]:
         return [str(member.title) for member in driver.findAllObjects(self._member_list_item.real_name)]
+
+
+class TokensView(QObject):
+    def __init__(self):
+        super(TokensView, self).__init__('mainWindow_mintPanel_MintTokensSettingsPanel')
+        self._mint_token_button = Button('mainWindow_Mint_token_StatusButton')
+        self._welcome_image = QObject('welcomeSettingsTokens_Image')
+        self._welcome_title = TextLabel('welcomeSettingsTokens_Title')
+        self._welcome_subtitle = TextLabel('welcomeSettingsTokensSubtitle')
+        self._welcome_checklist_1 = TextLabel('checkListText_0_Tokens')
+        self._welcome_checklist_2 = TextLabel('checkListText_1_Tokens')
+        self._welcome_checklist_3 = TextLabel('checkListText_2_Tokens')
+        self._get_started_infobox = QObject('mint_Owner_Tokens_InfoBoxPanel')
+        self._mint_owner_token_button = Button('mint_Owner_Tokens_StatusButton')
+
+    @property
+    @allure.step('Get mint token button visibility state')
+    def is_mint_token_button_visible(self) -> bool:
+        return self._mint_token_button.is_visible
+
+    @property
+    @allure.step('Get tokens welcome image')
+    def tokens_welcome_image(self) -> Image:
+        return self._welcome_image.image
+
+    @property
+    @allure.step('Get tokens welcome title')
+    def tokens_welcome_title(self) -> str:
+        return self._welcome_title.text
+
+    @property
+    @allure.step('Get tokens welcome subtitle')
+    def tokens_welcome_subtitle(self) -> str:
+        return self._welcome_subtitle.text
+
+    @property
+    @allure.step('Get tokens checklist')
+    def tokens_checklist(self) -> typing.List[str]:
+        tokens_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
+                            str(self._welcome_checklist_3.object.text)]
+        return tokens_checklist
+
+    @property
+    @allure.step('Get tokens info box title')
+    def tokens_infobox_title(self) -> str:
+        return str(self._get_started_infobox.object.title)
+
+    @property
+    @allure.step('Get tokens info box text')
+    def tokens_infobox_text(self) -> str:
+        return str(self._get_started_infobox.object.text)
+
+    @property
+    @allure.step('Get tokens mint owner token button visibility state')
+    def is_tokens_owner_token_button_visible(self) -> bool:
+        return self._mint_owner_token_button.is_visible
+
+
+class AirdropsView(QObject):
+    def __init__(self):
+        super(AirdropsView, self).__init__('mainWindow_airdropPanel_AirdropsSettingsPanel')
+        self._new_airdrop_button = Button('mainWindow_New_Airdrop_StatusButton')
+        self._welcome_image = QObject('welcomeSettingsAirdrops_Image')
+        self._welcome_title = TextLabel('welcomeSettingsAirdrops_Title')
+        self._welcome_subtitle = TextLabel('welcomeSettingsAirdrops_Subtitle')
+        self._welcome_checklist_1 = TextLabel('checkListText_0_Airdrops')
+        self._welcome_checklist_2 = TextLabel('checkListText_1_Airdrops')
+        self._welcome_checklist_3 = TextLabel('checkListText_2_Airdrops')
+        self._get_started_infobox = QObject('infoBox_StatusInfoBoxPanel')
+        self._mint_owner_token_button = Button('mint_Owner_token_Airdrops_StatusButton')
+
+    @property
+    @allure.step('Get new airdrop button visibility state')
+    def is_new_airdrop_button_visible(self) -> bool:
+        return self._new_airdrop_button.is_visible
+
+    @property
+    @allure.step('Get airdrops welcome image')
+    def airdrops_welcome_image(self) -> Image:
+        return self._welcome_image.image
+
+    @property
+    @allure.step('Get airdrops welcome title')
+    def airdrops_welcome_title(self) -> str:
+        return self._welcome_title.text
+
+    @property
+    @allure.step('Get airdrops welcome subtitle')
+    def airdrops_welcome_subtitle(self) -> str:
+        return self._welcome_subtitle.text
+
+    @property
+    @allure.step('Get airdrops checklist')
+    def airdrops_checklist(self) -> typing.List[str]:
+        airdrops_checklist = [str(self._welcome_checklist_1.object.text), str(self._welcome_checklist_2.object.text),
+                              str(self._welcome_checklist_3.object.text)]
+        return airdrops_checklist
+
+    @property
+    @allure.step('Get airdrops info box title')
+    def airdrops_infobox_title(self) -> str:
+        return self._get_started_infobox.object.title
+
+    @property
+    @allure.step('Get airdrops info box text')
+    def airdrops_infobox_text(self) -> str:
+        return self._get_started_infobox.object.text
+
+    @property
+    @allure.step('Get airdrops mint owner token button visibility state')
+    def is_airdrops_owner_token_button_visible(self) -> bool:
+        return self._mint_owner_token_button.is_visible
 
 
 class PermissionsIntroView(QObject):

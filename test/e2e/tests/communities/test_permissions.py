@@ -4,7 +4,7 @@ from allure_commons._allure import step
 
 import constants
 import driver
-from constants.permissions import PermissionsElements
+from constants.community_settings import PermissionsElements
 from gui.main_window import MainWindow
 from scripts.tools import image
 
