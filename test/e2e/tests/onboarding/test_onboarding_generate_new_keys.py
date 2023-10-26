@@ -32,6 +32,7 @@ def keys_screen(main_window) -> KeysView:
     pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', 5, shift_image(0, 1000, 1000, 0),
                  marks=pytest.mark.smoke),
 ])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/218")
 def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
     with step(f'Setup profile with name: {user_name} and image: {user_image}'):
 
