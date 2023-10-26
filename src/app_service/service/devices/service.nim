@@ -81,7 +81,6 @@ QtObject:
     self.localPairingStatus.update(data)
     self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
 
-
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e:Args):
       let receivedData = MessageSignal(e)
@@ -175,6 +174,12 @@ QtObject:
     let response = responseJson.parseJson
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:
+      let data = LocalPairingEventArgs(
+        eventType: EventCompletedAndNodeReady,
+        action: ActionPairingInstallation,
+        accountData: LocalPairingAccountData(),
+        error: "")
+      self.updateLocalPairingStatus(data)
       return
     error "failed to start bootstrapping device", errorDescription
     let data = LocalPairingEventArgs(

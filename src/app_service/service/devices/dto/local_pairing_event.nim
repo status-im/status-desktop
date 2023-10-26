@@ -16,6 +16,7 @@ type
     EventProcessSuccess
     EventProcessError
     EventReceivedKeystoreFiles
+    EventCompletedAndNodeReady
 
 type
   Action* {.pure.} = enum
