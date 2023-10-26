@@ -5,13 +5,12 @@ set -e
 [[ $(uname) != 'Darwin' ]] && { echo 'This only works on macOS.' >&2; exit 1; }
 [[ $# -lt 2 ]] && { echo 'sign-macos-bundle.sh <file_to_sign> <sign_identity>' >&2; exit 1; }
 
-# First is the target file/directory to sign
+# Firts is the target file/directory to sign
 TARGET="${1}"
 # Second argument is the signing identity
 CODESIGN_ID="${2}"
 # Rest are extra command line flags for codesign
-shift 2
-CODESIGN_OPTS_EXTRA=("${@}")
+CODESIGN_OPTS_EXTRA=("${@:3}")
 
 [[ ! -e "${TARGET}" ]] && { echo 'Target file does not exist.' >&2; exit 1; }
 
@@ -69,13 +68,13 @@ if [[ -n "${MACOS_KEYCHAIN_FILE}" ]]; then
     CODESIGN_OPTS+=("--keychain ${MACOS_KEYCHAIN_FILE}")
 fi
 
-# If 'TARGET' is a directory, we assume it's an app
-# bundle, otherwise we consider it to be a dmg.
-if [[ -d "${TARGET}" ]]; then
-    CODESIGN_OPTS+=("--deep")
-fi
+# # If 'TARGET' is a directory, we assume it's an app
+# # bundle, otherwise we consider it to be a dmg.
+# if [[ -d "${TARGET}" ]]; then
+#     CODESIGN_OPTS+=("--deep")
+# fi
 
-echo -e "\n### Signing target..."
+echo -e "\n### Signing target... ${CODESIGN_OPTS[@]} ${TARGET}"
 codesign ${CODESIGN_OPTS[@]} "${TARGET}"
 
 echo -e "\n### Verifying signature..."

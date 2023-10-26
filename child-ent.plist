@@ -4,10 +4,5 @@
 <dict>
 	<key>com.apple.security.device.camera</key>
 	<true/>
-    <key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:status.app</string>
-		<string>applinks:nextjs-git-main-felicio-statusim.vercel.app</string>
-	</array>
 </dict>
 </plist>
