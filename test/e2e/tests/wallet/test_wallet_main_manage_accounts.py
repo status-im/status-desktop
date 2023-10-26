@@ -159,6 +159,7 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
     pytest.param('Ethereum (Ledger Live/KeepKey)', '20', 'Ethereum Ledger Live', '#7140fd', 'sunglasses', '1f60e'),
     pytest.param('N/A', '95', 'Custom path', '#216266', 'sunglasses', '1f60e')
 ])
+@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/220')
 def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                                          derivation_path: str, generated_address_index: int,
                                          name: str, color: str, emoji: str, emoji_unicode: str):
