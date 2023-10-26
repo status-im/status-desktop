@@ -19,6 +19,7 @@ import "../popups"
 import "../panels"
 
 import AppLayouts.Profile.views.wallet 1.0
+import AppLayouts.Wallet.stores 1.0
 
 SettingsContentBase {
     id: root
@@ -26,6 +27,7 @@ SettingsContentBase {
     property var emojiPopup
     property var rootStore
     property var walletStore
+    required property TokensStore tokensStore
 
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
@@ -220,8 +222,8 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
 
-            sourcesOfTokensModel: undefined//tokensStore.sourcesOfTokensModel
-            tokensListModel: undefined//tokensStore.flatTokensModel
+            sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
+            tokensListModel: tokensStore.extendedFlatTokensModel
         }
 
         DappPermissionsView {
