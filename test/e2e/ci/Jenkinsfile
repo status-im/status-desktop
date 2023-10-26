@@ -75,7 +75,7 @@ pipeline {
   stages {
     stage('Prep') {
       steps { script {
-        currentBuild.displayName = getNewBuildName()
+        setNewBuildName()
         updateGitHubStatus()
       } }
     }
@@ -166,15 +166,23 @@ pipeline {
   }
 }
 
-def getNewBuildName() {
+def setNewBuildName() {
   /* For URLs we need to parse the filename to get attributes. */
   if (params.BUILD_SOURCE.startsWith('http')) {
     def tokens = utils.parseFilename(utils.baseName(params.BUILD_SOURCE))
-    return [
-      (tokens.tstamp ?: tokens.version), tokens.commit, tokens.build
-    ].grep().join('-')
+    currentBuild.displayName = tokens.build
+    currentBuild.description = formatMap([
+      Node: NODE_NAME,
+      Build: tokens.build,
+      Commit: tokens.commit,
+      Version: (tokens.tstamp ?: tokens.version),
+    ])
   } else {
-    return utils.baseName(params.BUILD_SOURCE)
+    currentBuild.displayName = utils.baseName(params.BUILD_SOURCE).replace(/^pr/, 'PR-')
+    currentBuild.description = formatMap([
+      Node: NODE_NAME,
+      Build: params.BUILD_SOURCE.minus('status-desktop/'),
+    ])
   }
 }
 
@@ -187,4 +195,10 @@ def updateGitHubStatus() {
       repo_url: 'https://github.com/status-im/status-desktop'
     )
   }
+}
+
+def formatMap(Map data=[:]) {
+  def text = ''
+  data.each { key, val -> text += "<b>${key}</b>: ${val}</a><br>\n" }
+  return text
 }
