@@ -75,7 +75,7 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux', 1)
+        linux.bundle('--debug=b tgz-linux', 1)
       } }
     }
 
