@@ -28,7 +28,7 @@ StatusDialog {
         id: d
         property string importErrorMessage
 
-        property bool communityFound: !!d.communityDetails && !!d.communityDetails.name
+        readonly property bool communityFound: !!d.communityDetails && !!d.communityDetails.name
         property var communityDetails: null
 
         property var requestedCommunityDetails: null
@@ -79,12 +79,6 @@ StatusDialog {
         }
     }
 
-    Timer {
-        interval: 20000  // 20s
-        onTriggered: {
-        }
-    }
-
     Connections {
         target: root.store
 
@@ -95,7 +89,7 @@ StatusDialog {
             d.communityInfoRequested = false
 
             if (errorMsg !== "") {
-                d.importErrorMessage = "Couldn't find community"
+                d.importErrorMessage = qsTr("Couldn't find community")
                 return
             }
 
