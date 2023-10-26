@@ -63,10 +63,11 @@ MembersSelectorBase {
         property ListModel selectedMembers: ListModel {}
 
         function lookupContact(value) {
-            let contactObj = Utils.parseContactUrl(value)
-
-            if (contactObj) {
-                processContact(contactObj)
+            const urlContactData = Utils.parseContactUrl(value)
+            if (urlContactData) {
+                // Ignore all the data from the link, because it might be malformed.
+                // Except for the publicKey.
+                processContact({publicKey: urlContactData.publicKey})
                 return
             }
 
@@ -90,7 +91,6 @@ MembersSelectorBase {
             if (contactDetails.publicKey === "") {
                 // not a valid key given
                 root.suggestionsDialog.forceHide = false
-
                 return
             }
 
@@ -101,7 +101,7 @@ MembersSelectorBase {
                 return
             }
 
-            let hasPendingContactRequest = root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)
+            const hasPendingContactRequest = root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)
 
             if ((root.model.count === 0 && hasPendingContactRequest) ||
                     contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey || contactDetails.isBlocked) {
