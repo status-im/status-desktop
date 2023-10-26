@@ -5,7 +5,7 @@
 # at your option. This file may not be copied, modified, or distributed except
 # according to those terms.
 
-SHELL := bash # the shell used internally by Make
+SHELL := bash -x # the shell used internally by Make
 
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
@@ -575,6 +575,17 @@ $(APPIMAGE_TOOL):
 	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
 	chmod +x $(APPIMAGE_TOOL)
 
+#TODO: move to nix
+LINUXDEPLOYQT_TOOL := tmp/linux/tools/linuxdeployqt
+LINUXDEPLOYQT_VERSION := 20230423-8428c59
+
+$(LINUXDEPLOYQT_TOOL):
+	echo -e "\033[92mFetching:\033[39m linuxdeployqt"
+	rm -rf $(LINUXDEPLOYQT_TOOL)
+	mkdir -p tmp/linux/tools
+	curl -Lo$(LINUXDEPLOYQT_TOOL) "https://status-misc.ams3.digitaloceanspaces.com/desktop/linuxdeployqt-$(LINUXDEPLOYQT_VERSION)-x86_64.AppImage"
+	chmod a+x $(LINUXDEPLOYQT_TOOL)
+
 STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
@@ -598,7 +609,7 @@ $(FCITX5_QT): | check-qt-dir deps
 PRODUCTION_PARAMETERS := -d:production
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
-$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
+$(STATUS_CLIENT_APPIMAGE): nim_status_client $(LINUXDEPLOYQT_TOOL) nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
 	rm -rf tmp/linux/dist
 	mkdir -p tmp/linux/dist/usr/bin
@@ -617,17 +628,22 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	mkdir -p tmp/linux/dist/usr/bin/StatusQ
 	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
 
+	# TODO: better fix for https://github.com/probonopd/linuxdeployqt/issues/591 ?
+	mkdir -p tmp/linux/dist/usr/share/doc/libc6/
+	touch tmp/linux/dist/usr/share/doc/libc6/copyright
+
 	# Libraries
-	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
-	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
+	#cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
+	#cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
+	#cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
+	#cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
+	# TODO: temporary disable glibc check
+	$(LINUXDEPLOYQT_TOOL) tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
@@ -636,9 +652,10 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp AppRun tmp/linux/dist/.
 
 	mkdir -p pkg
-	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+	appimagetool tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
+	echo here
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
 endif
 

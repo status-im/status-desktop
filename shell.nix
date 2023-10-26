@@ -1,28 +1,40 @@
-{ pkgs ? import (builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/e7603eba51f2c7820c0a182c6bbb351181caa8e7.zip";
-    sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
-  }) { } }:
+{
+  source ? builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/c140730d40d723c3c74a8d24bceef363495a3aef.zip";
+    sha256 = "sha256:1bcms35idl4mggickf97z6sydyr8iyjjw93iahhzwczwc42dgs0b";
+  },
+  pkgs ? import (source) { }
+}:
 
 let
-  qtCustom = with pkgs.qt515;
+  qtCustom = with pkgs.qt515; /* 5.15.8 */
     env "qt-custom-${qtbase.version}" ([
+# TODO: double check
+      qtbase
+      qtdeclarative
+      qtlottie
+      qtmultimedia
+      qtquickcontrols
       qtquickcontrols2
-      qtgraphicaleffects
-      qtbase qttools qtdeclarative
-      qtlottie qtmultimedia
-      qtquickcontrols qtquickcontrols2
-      qtsvg qtwebengine qtwebview
+      qtsvg
+      qttools
+      qtwebengine
+# checked
+      qtwebchannel
+      qtlocation
     ]);
 in pkgs.mkShell {
   name = "status-desktop-build-shell";
 
   buildInputs = with pkgs; [
-    qt5Full
+# TODO: to check
     bash curl wget git file unzip jq lsb-release
     cmake gnumake pkg-config gnugrep qtCustom
-    go_1_19
     pcre nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
+# checked
+    which go_1_19 cacert
+    appimagekit gnupg
   ] ++ (with gst_all_1; [
     gst-libav gstreamer
     gst-plugins-bad  gst-plugins-base
@@ -35,8 +47,33 @@ in pkgs.mkShell {
   LANGUAGE = "en_US.UTF-8";
 
   QTDIR = qtCustom;
+  # https://github.com/NixOS/nixpkgs/pull/109649
+  QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515.qtbase.qtPluginPrefix}";
 
-  shellHook = ''
-    export MAKEFLAGS="-j$NIX_BUILD_CORES"
-  '';
+  LD_LIBRARY_PATH = with pkgs; lib.makeLibraryPath [
+    alsa-lib
+    expat
+    fontconfig
+    freetype
+    gcc-unwrapped
+    glib
+    gmp
+    gst_all_1.gst-plugins-base
+    gst_all_1.gstreamer
+    harfbuzz
+    libglvnd
+    libkrb5
+    libpng
+    libpulseaudio
+    libxkbcommon
+    p11-kit
+    xorg.libICE
+    xorg.libSM
+    xorg.libXrender
+    xorg.xcbutilimage
+    xorg.xcbutilkeysyms
+    xorg.xcbutilrenderutil
+    xorg.xcbutilwm
+    zlib
+  ];
 }
