@@ -29,6 +29,7 @@ QtObject:
       chatsLoaded: bool
       communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
       permissionsCheckOngoing: bool
+      isControlNodeOffline: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -67,6 +68,7 @@ QtObject:
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
     result.communityMetrics = "[]"
+    result.isControlNodeOffline = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -389,6 +391,7 @@ QtObject:
   proc amIMemberChanged*(self: View) {.signal.}
 
   proc setAmIMember*(self: View, value: bool) =
+    writeStackTrace()
     if (value == self.amIMember):
       return
     self.amIMember = value
@@ -446,3 +449,18 @@ QtObject:
       return
     self.permissionsCheckOngoing = value
     self.permissionsCheckOngoingChanged()
+
+  proc getIsControlNodeOffline*(self: View): bool {.slot.} =
+    return self.isControlNodeOffline
+
+  proc isControlNodeOfflineChanged*(self: View) {.signal.}
+
+  proc setIsControlNodeOffline*(self: View, value: bool) =
+    if (value == self.isControlNodeOffline):
+      return
+    self.isControlNodeOffline = value
+    self.isControlNodeOfflineChanged()
+
+  QtProperty[bool] isControlNodeOffline:
+    read = getIsControlNodeOffline
+    notify = isControlNodeOfflineChanged

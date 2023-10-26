@@ -54,7 +54,17 @@ StackLayout {
     Loader {
         id: mainViewLoader
         readonly property var chatItem: root.rootStore.chatCommunitySectionModule
-        sourceComponent: chatItem.isCommunity() && chatItem.requiresTokenPermissionToJoin && !chatItem.amIMember ? joinCommunityViewComponent : chatViewComponent
+
+        sourceComponent: {
+            if (chatItem.isCommunity() && !chatItem.amIMember) {
+                if (chatItem.isControlNodeOffline) {
+                    return controlNodeOffline
+                } else if (chatItem.requiresTokenPermissionToJoin) {
+                    return joinCommunityViewComponent
+                }
+            }
+            return chatViewComponent
+        }
     }
 
     Component {
@@ -321,6 +331,39 @@ StackLayout {
             onDeclineClicked: {
                 console.warn("TODO: Backend update notification center and display a toast: Ownership Declined!")
                 root.ownershipDeclined()
+            }
+        }
+    }
+
+    Component {
+        id: controlNodeOffline
+        ControlNodeOfflineCommunityView {
+            id: joinCommunityView
+            readonly property var communityData: sectionItemModel
+            readonly property string communityId: communityData.id
+            name: communityData.name
+            communityDesc: communityData.description
+            color: communityData.color
+            image: communityData.image
+            membersCount: communityData.members.count
+            joinCommunity: true
+            amISectionAdmin: communityData.memberRole === Constants.memberRole.owner ||
+                             communityData.memberRole === Constants.memberRole.admin ||
+                             communityData.memberRole === Constants.memberRole.tokenMaster
+            communityItemsModel: root.rootStore.communityItemsModel
+            notificationCount: activityCenterStore.unreadNotificationsCount
+            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+            openCreateChat: rootStore.openCreateChat
+            onNotificationButtonClicked: Global.openActivityCenterPopup()
+            onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
+
+            Connections {
+                target: root.rootStore.communitiesModuleInst
+                function onCommunityAccessRequested(communityId: string) {
+                    if (communityId === joinCommunityView.communityId) {
+                        joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
+                    }
+                }
             }
         }
     }

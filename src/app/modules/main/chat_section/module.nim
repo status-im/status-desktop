@@ -339,6 +339,7 @@ method onChatsLoaded*(
   else:
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
+    self.view.setIsControlNodeOffline(self.controller.isCommunityRequestAwaitingAddress(community.id))
     self.initCommunityTokenPermissionsModel(channelGroup)
     self.onCommunityCheckAllChannelsPermissionsResponse(channelGroup.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
@@ -889,9 +890,12 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllCha
 
 method onKickedFromCommunity*(self: Module) =
   self.view.setAmIMember(false)
+  let communityId = self.controller.getMySectionId()
+  self.view.setIsControlNodeOffline(self.controller.isCommunityRequestAwaitingAddress(communityId))
 
 method onJoinedCommunity*(self: Module) =
   self.view.setAmIMember(true)
+  self.view.setIsControlNodeOffline(false)
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
@@ -1342,3 +1346,6 @@ method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
   for chatId, cModule in self.chatContentModules:
     if self.view.chatsModel().getItemPermissionsRequired(chatId):
       cModule.setPermissionsCheckOngoing(true)
+
+method onControlNodeOffline*(self: Module) =
+  self.view.setIsControlNodeOffline(true)

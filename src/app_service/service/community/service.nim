@@ -180,6 +180,7 @@ const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
+const SIGNAL_CONTROL_NODE_OFFLINE* = "controlNodeOffline"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_CURATED_COMMUNITIES_UPDATED* = "curatedCommunitiesUpdated"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
@@ -232,6 +233,7 @@ QtObject:
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
       requestedCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
+      myAwaitingRequestsToJoin: Table[string, CommunityMembershipRequestDto]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -328,6 +330,8 @@ QtObject:
             try:
               self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
                 requestToJoinState)
+              if requestToJoinState == RequestToJoinType.AwaitingAddress:
+                self.events.emit(SIGNAL_CONTROL_NODE_OFFLINE, CommunityIdArgs(communityId: membershipRequest.communityId))
             except Exception as e:
               error "Unknown request", msg = e.msg
 
@@ -431,6 +435,7 @@ QtObject:
   proc saveUpdatedCommunity(self: Service, community: var CommunityDto) =
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
+
     community.pendingRequestsToJoin = self.communities[community.id].pendingRequestsToJoin
     community.declinedRequestsToJoin = self.communities[community.id].declinedRequestsToJoin
     community.canceledRequestsToJoin = self.communities[community.id].canceledRequestsToJoin
@@ -660,6 +665,9 @@ QtObject:
 
       # If the community was not joined before but is now, we signal it
       if(not wasJoined and community.joined and community.isMember):
+        if community.id in self.myAwaitingRequestsToJoin:
+          self.myAwaitingRequestsToJoin.del(community.id)
+
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
@@ -712,10 +720,18 @@ QtObject:
 
       # My pending requests
       let myPendingRequestResponse = responseObj["myPendingRequestsToJoin"]
+
       if myPendingRequestResponse{"result"}.kind != JNull:
         for jsonCommunityReqest in myPendingRequestResponse["result"]:
           let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
           self.myCommunityRequests.add(communityRequest)
+
+      let myAwaitingRequestResponse = responseObj["myAwaitingRequestsToJoin"]
+
+      if myAwaitingRequestResponse{"result"}.kind != JNull:
+        for jsonCommunityReqest in myAwaitingRequestResponse["result"]:
+            let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+            self.myAwaitingRequestsToJoin[communityRequest.communityId] = communityRequest
 
       self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
     except Exception as e:
@@ -1641,7 +1657,7 @@ QtObject:
       error "error loading curated communities: ", errMsg
       self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
 
-  proc getCommunityMetrics*(self: Service, communityId: string, metricsType: CommunityMetricsType): CommunityMetricsDto = 
+  proc getCommunityMetrics*(self: Service, communityId: string, metricsType: CommunityMetricsType): CommunityMetricsDto =
     # NOTE: use metricsType when other metrics types added
     if self.communityMetrics.hasKey(communityId):
       return self.communityMetrics[communityId]
@@ -1807,12 +1823,17 @@ QtObject:
     var community = self.communities[communityId]
 
     if (indexPending != -1):
-      if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
+      if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled, RequestToJoinType.AwaitingAddress].any(x => x == newState):
         # If the state is now declined, add to the declined requests
         if newState == RequestToJoinType.Declined:
           community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
+
         # If the state is no longer pending, delete the request
         community.pendingRequestsToJoin.delete(indexPending)
+        # Delete if control node changed status for awaiting request to join
+        if communityId in self.myAwaitingRequestsToJoin:
+          self.myAwaitingRequestsToJoin.del(communityId)
+
       else:
         community.pendingRequestsToJoin[indexPending].state = newState.int
     else:
@@ -1979,9 +2000,12 @@ QtObject:
 
   proc isCommunityRequestPending*(self: Service, communityId: string): bool {.slot.} =
     for communityRequest in self.myCommunityRequests:
-      if (communityRequest.communityId == communityId):
+      if (communityRequest.communityId == communityId and RequestToJoinType(communityRequest.state) == RequestToJoinType.Pending):
         return true
     return false
+
+  proc isCommunityRequestAwaitingAddress*(self: Service, communityId: string): bool {.slot.} =
+    return communityId in self.myAwaitingRequestsToJoin
 
   proc requestExtractDiscordChannelsAndCategories*(self: Service, filesToImport: seq[string]) =
     try:
@@ -2120,7 +2144,7 @@ QtObject:
       memberPubkey: memberPubkey,
     )
     self.threadpool.start(arg)
-  
+
   proc onAsyncGetRevealedAccountsForMemberCompleted*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
@@ -2150,7 +2174,7 @@ QtObject:
       communityId: communityId,
     )
     self.threadpool.start(arg)
-  
+
   proc onAsyncGetRevealedAccountsForAllMembersCompleted*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
@@ -2179,13 +2203,13 @@ QtObject:
       communityId: communityId,
     )
     self.threadpool.start(arg)
-  
+
   proc onAsyncReevaluateCommunityMembersPermissionsCompleted*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
 
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(RpcException, rpcResponseObj["error"].getStr)
-      
+
     except Exception as e:
       error "error while reevaluating community members permissions", msg = e.msg

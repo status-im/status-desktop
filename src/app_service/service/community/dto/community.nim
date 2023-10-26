@@ -17,6 +17,7 @@ type RequestToJoinType* {.pure.}= enum
   Canceled = 4,
   AcceptedPending = 5,
   DeclinedPending = 6,
+  AwaitingAddress = 7,
 
 type MutedType* {.pure.}= enum
   For15min = 1,

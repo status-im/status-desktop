@@ -3,6 +3,7 @@ CommunityColumnView 1.0 CommunityColumnView.qml
 CommunitiesGridView 1.0 CommunitiesGridView.qml
 CommunitySettingsView 1.0 CommunitySettingsView.qml
 CommunityTokenView 1.0 CommunityTokenView.qml
+ControlNodeOfflineCommunityView 1.0 ControlNodeOfflineCommunityView.qml
 EditAirdropView 1.0 EditAirdropView.qml
 EditPermissionView 1.0 EditPermissionView.qml
 EditCommunityTokenView 1.0 EditCommunityTokenView.qml

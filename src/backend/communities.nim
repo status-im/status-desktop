@@ -98,6 +98,9 @@ proc checkAllCommunityChannelsPermissions*(communityId: string, addresses: seq[s
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
 
+proc myAwaitingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result =  callPrivateRPC("myAwaitingRequestsToJoin".prefix)
+
 proc myCanceledRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myCanceledRequestsToJoin".prefix)
 
@@ -467,3 +470,6 @@ proc getCommunityPublicKeyFromPrivateKey*(communityPrivateKey: string,): RpcResp
 
 proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCommunityMembersForWalletAddresses".prefix, %* [communityId, chainId])
+
+proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])
