@@ -78,7 +78,7 @@ proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
         self.state = LocalPairingState.Finished
 
   if self.mode == LocalPairingMode.Receiver and
-    data.eventType == EventTransferSuccess:
+    data.eventType == EventCompletedAndNodeReady:
       if self.pairingType == PairingType.AppSync and
         data.action == ActionPairingInstallation or
         self.pairingType == PairingType.KeypairSync:
