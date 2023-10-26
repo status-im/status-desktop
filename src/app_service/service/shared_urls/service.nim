@@ -25,10 +25,9 @@ QtObject:
   proc parseSharedUrl*(self: Service, url: string): UrlDataDto =
     try:
       let response = status_general.parseSharedUrl(url)
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr()
-        error "error while pasring shared url: ", errDesription = errMsg
-        return
-      return response.result.toUrlDataDto()
+      if not response.result.contains("error"):
+        return response.result.toUrlDataDto()
+      let errMsg = response.result["error"].getStr()
+      error "failed to parse shared url: ", url, errDesription = errMsg
     except Exception as e:
-      error "error while parsing shared url: ", msg = e.msg
+      error "failed to parse shared url: ", url, errDesription = e.msg
