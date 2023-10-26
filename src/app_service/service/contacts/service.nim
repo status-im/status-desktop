@@ -786,12 +786,12 @@ QtObject:
 
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = pubkeyAndRpcResponse.parseJson
-    let publicKey = $rpcResponseObj{"publicKey"}
+    let publicKey = rpcResponseObj{"publicKey"}.getStr
     let requestError = rpcResponseObj{"error"}
     var error : string
 
     if requestError.kind != JNull:
-      error = $requestError
+      error = requestError.getStr
     else:
       let responseError = rpcResponseObj{"response"}{"error"}
       if responseError.kind != JNull:
