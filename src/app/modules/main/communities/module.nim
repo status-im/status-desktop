@@ -346,6 +346,10 @@ method communityImported*(self: Module, community: CommunityDto) =
 
 method communityDataImported*(self: Module, community: CommunityDto) = 
   self.view.addItem(self.getCommunityItem(community))
+  self.view.emitCommunityInfoRequestCompleted(community.id, "")
+
+method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
+  self.view.emitCommunityInfoRequestCompleted(communityId, errorMsg)
 
 method importCommunity*(self: Module, communityId: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingInProgress.int, errorMsg = "")

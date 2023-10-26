@@ -15,111 +15,103 @@ import StatusQ.Controls 0.1
 
 StatusDialog {
     id: root
+
     property var store
+    property alias text: keyInput.text
+
+    signal joinCommunityRequested(string communityId, var communityDetails)
+
     width: 640
     title: qsTr("Import Community")
-
-    signal joinCommunity(string communityId, var communityDetails)
 
     QtObject {
         id: d
         property string importErrorMessage
 
-        property bool loading
-        property bool communityFound: (d.communityDetails !== null && !!d.communityDetails.name)
-        property var communityDetails: {
-            if (!isInputValid) {
-                loading = false
-                return null
-            }
-            loading = true
-            const key = isPublicKey ? Utils.getCompressedPk(publicKey) :
-                                      root.store.getCommunityPublicKeyFromPrivateKey(inputKey, true /*importing*/);
+        property bool communityFound: !!d.communityDetails && !!d.communityDetails.name
+        property var communityDetails: null
 
-            const details = root.store.getCommunityDetails(key)
-            if (!!details) // the above can return `null` in which case we continue loading
-                loading = false
-            return details
-        }
+        property var requestedCommunityDetails: null
 
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
         readonly property string inputKey: keyInput.text.trim()
-        readonly property bool isPrivateKey: (Utils.isPrivateKey(inputKey))
-        readonly property bool isPublicKey: (publicKey !== "")
-        readonly property string privateKey: inputKey
         readonly property string publicKey: {
-            if (!Utils.isStatusDeepLink(inputKey)) {
-                const key = Utils.dropCommunityLinkPrefix(inputKey)
-                if (!Utils.isCommunityPublicKey(key))
-                    return ""
-                if (!Utils.isCompressedPubKey(key))
-                    return key
-                return Utils.changeCommunityKeyCompression(key)
-            } else {
-                return Utils.getCommunityDataFromSharedLink(inputKey).communityId;
+            if (Utils.isStatusDeepLink(inputKey)) {
+                const linkData = Utils.getCommunityDataFromSharedLink(inputKey)
+                return !linkData ? "" : linkData.communityId
+            }
+            if (!Utils.isCommunityPublicKey(inputKey))
+                return ""
+            if (!Utils.isCompressedPubKey(inputKey))
+                return inputKey
+            return Utils.changeCommunityKeyCompression(inputKey)
+        }
+        readonly property bool isInputValid: publicKey !== ""
+
+        property bool communityInfoRequested: false
+
+        function updateCommunityDetails(requestIfNotFound) {
+            if (!isInputValid) {
+                d.communityInfoRequested = false
+                d.communityDetails = null
+                return
+            }
+
+            const details = root.store.getCommunityDetails(publicKey)
+
+            if (!!details) {
+                d.communityInfoRequested = false
+                d.communityDetails = details
+                return
+            }
+
+            if (requestIfNotFound) {
+                root.store.requestCommunityInfo(publicKey, false)
+                d.communityInfoRequested = true
+                d.communityDetails = null
             }
         }
-        readonly property bool isInputValid: isPrivateKey || isPublicKey
+
+        onPublicKeyChanged: {
+            // call later to make sure all proeprties used by `updateCommunityDetails` are udpated
+            Qt.callLater(() => { d.updateCommunityDetails(true) })
+        }
     }
 
     Timer {
         interval: 20000  // 20s
-        running: d.loading
         onTriggered: {
-            d.loading = false
-            d.importErrorMessage = qsTr("Timeout reached while getting community info")
         }
     }
 
     Connections {
         target: root.store
 
-        function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-            switch (state)
-            {
-            case Constants.communityImported:
-                const community = root.store.getCommunityDetailsAsJson(communityId)
-                d.loading = false
-                d.communityFound = true
-                d.communityDetails = community
-                d.importErrorMessage = ""
-                break
-            case Constants.communityImportingInProgress:
-                d.loading = true
-                break
-            case Constants.communityImportingError:
-                d.loading = false
-                d.communityFound = false
-                d.communityDetails = null
-                d.importErrorMessage = errorMsg
-                break
-            default:
-                const msg = qsTr("Error state '%1' while importing community: %2").arg(state).arg(communityId)
-                console.error(msg)
-                d.loading = false
-                d.communityFound = false
-                d.communityDetails = null
-                d.importErrorMessage = msg
+        function onCommunityInfoRequestCompleted(communityId, errorMsg) {
+            if (!d.communityInfoRequested)
+                return
+
+            d.communityInfoRequested = false
+
+            if (errorMsg !== "") {
+                d.importErrorMessage = "Couldn't find community"
                 return
             }
+
+            d.updateCommunityDetails(false)
+            d.importErrorMessage = ""
         }
     }
 
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
-                enabled: d.communityFound && ((d.isPublicKey) || (d.isPrivateKey && agreeToKeepOnline.checked))
-                loading: d.loading
-                text: d.isPrivateKey && d.communityFound ? qsTr("Make this device the control node for %1").arg(d.communityDetails.name)
-                                                         : qsTr("Import")
+                enabled: d.isInputValid && d.communityFound
+                loading: d.isInputValid && !d.communityFound && d.communityInfoRequested
+                text: qsTr("Import")
                 onClicked: {
-                    if (d.isPrivateKey) {
-                        root.store.importCommunity(d.privateKey);
-                        root.close();
-                    } else if (d.isPublicKey) {
-                        root.joinCommunity(d.publicKey, d.communityDetails);
-                    }
+                    root.joinCommunityRequested(d.publicKey, d.communityDetails)
                 }
             }
         }
@@ -139,7 +131,7 @@ StatusDialog {
             StatusBaseText {
                 id: infoText1
                 Layout.fillWidth: true
-                text: qsTr("Enter the public key of the community you wish to access, or enter the private key of a community you own. Remember to always keep any private key safe and never share a private key with anyone else.")
+                text: qsTr("Enter the public key of the community you wish to access")
                 wrapMode: Text.WordWrap
                 font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.baseColor1
@@ -178,41 +170,13 @@ StatusDialog {
                     font.pixelSize: Style.current.additionalTextSize
                     visible: !!d.inputKey
                     text: {
-                        if (d.errorMessage !== "") {
+                        if (d.errorMessage !== "")
                             return d.errorMessage
-                        }
-                        if (d.isPrivateKey) {
-                            return qsTr("Private key detected")
-                        }
-                        if (d.isPublicKey) {
+                        if (d.isInputValid)
                             return qsTr("Public key detected")
-                        }
+                        return ""
                     }
                     color: d.errorMessage === "" ? Theme.palette.successColor1 : Theme.palette.dangerColor1
-                }
-            }
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: (d.communityFound && d.isPrivateKey)
-                Layout.topMargin: 12
-                spacing: Style.current.padding
-                StatusWarningBox {
-                    Layout.fillWidth: true
-                    icon: "caution"
-                    text: qsTr("Another device might currently have the control node for this Community. Running multiple control nodes will cause unforeseen issues. Make sure you delete the private key in that other device in the community management tab.")
-                    bgColor: borderColor
-                }
-                StatusDialogDivider { Layout.fillWidth: true; Layout.topMargin: Style.current.padding }
-                StatusBaseText {
-                    Layout.topMargin: Style.current.halfPadding
-                    visible: (d.communityFound && d.isPrivateKey)
-                    text: qsTr("I acknowledge that...")
-                }
-                StatusCheckBox {
-                    id: agreeToKeepOnline
-                    Layout.fillWidth: true
-                    text: qsTr("I must keep this device online and running Status for the Community to function")
                 }
             }
         }
