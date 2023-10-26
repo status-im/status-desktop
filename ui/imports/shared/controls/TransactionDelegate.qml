@@ -52,7 +52,7 @@ StatusListItem {
     readonly property int transactionStatus: isModelDataValid ? modelData.status : Constants.TransactionStatus.Pending
     readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
     readonly property string currentCurrency: rootStore.currentCurrency
-    readonly property double cryptoValue: isModelDataValid && !isMultiTransaction ? modelData.amount : 0.0
+    readonly property double cryptoValue: isModelDataValid ? modelData.amount : 0.0
     readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? rootStore.getFiatValue(cryptoValue, modelData.symbol, currentCurrency) : 0.0
     readonly property double inCryptoValue: isModelDataValid ? modelData.inAmount : 0.0
     readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(inCryptoValue, modelData.inSymbol, currentCurrency): 0.0
