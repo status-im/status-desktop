@@ -248,13 +248,9 @@ QtObject:
   
   proc enableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(true)
-    let links = self.linkPreviewModel.getLinks()
-    self.linkPreviewModel.clearItems()
-    self.loadLinkPreviews(links)
   
   proc disableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(false)
-    self.linkPreviewModel.removeAllPreviewData()
   
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)

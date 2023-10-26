@@ -238,14 +238,10 @@ proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
     self.messageService.asyncUnfurlUrls(urls)
 
 proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
-  if enabled and self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Enabled):
-    self.linkPreviewPersistentSetting = UrlUnfurlingMode.Enabled
-    self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Enabled
-  elif not enabled and self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Disabled):
-    self.linkPreviewPersistentSetting = UrlUnfurlingMode.Disabled
-    self.linkPreviewCurrentMessageSetting = UrlUnfurlingMode.Disabled
-
-  self.delegate.setAskToEnableLinkPreview(false)
+  if enabled:
+    discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Enabled)
+    return
+  discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Disabled)
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
   self.linkPreviewPersistentSetting = value
