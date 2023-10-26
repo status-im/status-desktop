@@ -15,30 +15,30 @@ import shared.popups 1.0
 Control {
     id: root
 
-    implicitWidth: d.invitedCommunity || loading ? 270 /*by design*/ : 0
+    implicitWidth: d.invitedCommunity || d.loading ? 270 /*by design*/ : 0
     padding: 1
 
     property var store
     property string communityId
-    property bool loading: false
-    property var communityData
 
     QtObject {
         id: d
 
         property var invitedCommunity
-    
-        readonly property string communityName:         !!d.invitedCommunity ? d.invitedCommunity.name : (communityData ? communityData.displayName : "")
-        readonly property string communityDescription:  !!d.invitedCommunity ? d.invitedCommunity.description : (communityData ? communityData.description : "")
+
+        readonly property string communityName:         !!d.invitedCommunity ? d.invitedCommunity.name : ""
+        readonly property string communityDescription:  !!d.invitedCommunity ? d.invitedCommunity.description : ""
         readonly property string communityImage:        !!d.invitedCommunity ? d.invitedCommunity.image : ""
-        readonly property string communityColor:        !!d.invitedCommunity ? d.invitedCommunity.color : (communityData ? communityData.color : "")
-        readonly property int    communityNbMembers:    !!d.invitedCommunity ? d.invitedCommunity.nbMembers : (communityData ? communityData.membersCount : 0)
+        readonly property string communityColor:        !!d.invitedCommunity ? d.invitedCommunity.color : ""
+        readonly property int    communityNbMembers:    !!d.invitedCommunity ? d.invitedCommunity.nbMembers : 0
         readonly property bool   communityVerified:     false //!!d.invitedCommunity ? d.invitedCommunity.verified : false TODO: add this to the community object if we should support verified communities
         readonly property bool   communityJoined:       !!d.invitedCommunity ? d.invitedCommunity.joined : false
         readonly property bool   communitySpectated:    !!d.invitedCommunity ? d.invitedCommunity.spectated : false
 
         readonly property int margin: 12
         readonly property int radius: Style.current.padding
+
+        readonly property bool loading: !d.invitedCommunity
 
         function getCommunity() {
             try {
@@ -188,7 +188,7 @@ Control {
                 height: (parent.height+d.radius)
                 anchors.top: parent.top
                 anchors.topMargin: -d.radius
-                loading: root.loading
+                loading: d.loading
                 radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
                 contentItem: Item {
                     StatusBaseText {
