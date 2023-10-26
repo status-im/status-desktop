@@ -104,8 +104,8 @@ class AUT:
             return self
         except AssertionError as err:
             _logger.debug(err)
+            self.detach().stop()
             if attempt:
-                self.detach().stop()
                 return self.launch(attempt-1)
             else:
                 raise err
