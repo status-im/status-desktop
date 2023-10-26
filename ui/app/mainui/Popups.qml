@@ -42,7 +42,6 @@ QtObject {
         Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
         Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
-        Global.openContactRequestPopupWithContactData.connect(openContactRequestPopupWithContactData)
         Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
         Global.openDownloadModalRequested.connect(openDownloadModal)
         Global.openImagePopup.connect(openImagePopup)
@@ -199,14 +198,6 @@ QtObject {
             contactDetails: contactDetails
         }
 
-        openPopup(sendContactRequestPopupComponent, popupProperties, cb)
-    }
-
-    function openContactRequestPopupWithContactData(contactData, cb) {
-        const popupProperties = {
-            userPublicKey: contactData.publicKey,
-            contactDetails: { displayName: contactData.displayName }
-        }
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
 

@@ -66,9 +66,10 @@ StatusDialog {
         target: root.rootStore.contactStore.contactsModule
 
         function onContactInfoRequestFinished(publicKey, ok) {
-            if (ok && publicKey === root.userPublicKey) {
-                d.contactDetails = Utils.getContactDetailsAsJson(userPublicKey, false)
-            }
+            if (publicKey !== root.userPublicKey)
+                return
+            if (ok)
+                d.contactDetails = Utils.getContactDetailsAsJson(root.userPublicKey, false)
             d.loadingContactDetails = false
         }
     }

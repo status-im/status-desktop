@@ -535,21 +535,18 @@ QtObject {
     }
 
     function getCommunityDataFromSharedLink(link) {
-        let index = link.lastIndexOf("/c/")
-        if (index === -1) {
+        const index = link.lastIndexOf("/c/")
+        if (index === -1)
             return null
-        }
 
-        let communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
+        const communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
         try {
-            let communityData = JSON.parse(communityDataString)
-            return communityData
+            return JSON.parse(communityDataString)
         } catch (e) {
             console.warn("Error while parsing community data from url:", e.message)
             return null
         }
     }
-
 
     function changeCommunityKeyCompression(communityKey) {
         return globalUtilsInst.changeCommunityKeyCompression(communityKey)
@@ -701,15 +698,13 @@ QtObject {
     }
 
     function parseContactUrl(link) {
-        let index = link.lastIndexOf("/u/")
-        if (index === -1) {
+        const index = link.lastIndexOf("/u/")
+        if (index === -1)
             return null
-        }
 
-        let contactDataString = sharedUrlsModuleInst.parseContactSharedUrl(link)
+        const contactDataString = sharedUrlsModuleInst.parseContactSharedUrl(link)
         try {
-            let contactObj = JSON.parse(contactDataString)
-            return contactObj
+            return JSON.parse(contactDataString)
         } catch (e) {
             return null
         }
