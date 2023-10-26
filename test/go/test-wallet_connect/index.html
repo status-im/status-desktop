@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wallet Connect status-go test</title>
+  </head>
+
+  <body>
+    <input
+      type="text"
+      id="pairLinkInput"
+      placeholder="Insert pair link"
+      disabled
+    />
+
+    <div id="buttonRow">
+      <button id="pairButton" disabled>Pair</button>
+      <button id="authButton" disabled>Auth</button>
+      <button id="acceptButton" style="display: none">Accept</button>
+      <button id="rejectButton" style="display: none">Reject</button>
+    </div>
+
+    <div id="statusRow">
+      skd: <span id="statusText">-</span> ; status-go
+      <span id="statusGoStatusText">-</span>
+    </div>
+    <textarea id="echoTextArea" rows="10" cols="80"></textarea>
+
+    <script
+      src="bundle.js"
+      type="module"
+      onload="sdkLoaded()"
+      onerror="sdkFailLoading()"
+    ></script>
+
+    <script>
+      function statusGoReady() {}
+    </script>
+    <script>
+      function sdkLoaded() {
+        if (window.wc === undefined) {
+          goEcho(`FAILED missing "window.wc" SDK`);
+          setStatus(`FAILED missing "window.wc" SDK`);
+        } else {
+          window.getConfiguration().then(
+            (conf) => {
+              window.wc.init(conf.projectId).then(
+                (wc) => {
+                  pairLinkInput.disabled = false;
+                  setStatus("initialized");
+                },
+                (err) => {
+                  setStatus(`SDK error: ${JSON.stringify(err)}`, "red");
+                }
+              );
+            },
+            (err) => {
+              goEcho(`SDK getConfiguration error: ${JSON.stringify(err)}`);
+            }
+          );
+        }
+
+        const pairLinkInput = document.getElementById("pairLinkInput");
+        const pairButton = document.getElementById("pairButton");
+        const authButton = document.getElementById("authButton");
+        const acceptButton = document.getElementById("acceptButton");
+        const rejectButton = document.getElementById("rejectButton");
+
+        pairLinkInput.addEventListener("input", function () {
+          pairButton.disabled = !(pairLinkInput.value.length > 0);
+          /*authButton.disabled = !(
+            pairLinkInput.value.length > 0
+          );*/
+        });
+
+        pairButton.addEventListener("click", function () {
+          setStatus("Pairing...");
+          try {
+            wc.pair(pairLinkInput.value)
+              .then((sessionProposal) => {
+                setStatus(`Wait user pair`);
+                setDetails(
+                  `Pair ID: ${sessionProposal.id} ; Topic: ${sessionProposal.params.pairingTopic}`
+                );
+                acceptButton.addEventListener("click", function () {
+                  window.wc.approveSession(sessionProposal).then(
+                    () => {
+                      goEcho(`Session ${sessionProposal.id} approved`);
+                      setStatus(
+                        `Session ${sessionProposal.id} approved`
+                      );
+                      acceptButton.style.display = "none";
+                      rejectButton.style.display = "none";
+                    },
+                    (err) => {
+                      goEcho(
+                        `Session ${sessionProposal.id} approve error: ${err.message}`
+                      );
+                      setStatus(
+                        `Session ${sessionProposal.id} approve error: ${err.message}`
+                      );
+                    }
+                  );
+                });
+
+                rejectButton.addEventListener("click", function () {
+                  try {
+                    window.wc.rejectSession(sessionProposal.id).then(
+                      () => {
+                        goEcho(`Session ${sessionProposal.id} rejected`);
+                        setStatus(
+                          `Session ${sessionProposal.id} rejected`
+                        );
+                        acceptButton.style.display = "none";
+                        rejectButton.style.display = "none";
+                      },
+                      (err) => {
+                        goEcho(
+                          `Session ${sessionProposal.id} reject error`
+                        );
+                        setStatus(
+                          `Session ${sessionProposal.id} reject error`
+                        );
+                      }
+                    );
+                  } catch (err) {
+                    goEcho(
+                      `Session ${sessionProposal.id} reject error: ${err.message}`
+                    );
+                    setStatus(
+                      `Session ${sessionProposal.id} reject error: ${err.message}`
+                    );
+                  }
+                });
+                acceptButton.style.display = "inline";
+                rejectButton.style.display = "inline";
+              })
+              .catch((error) => {
+                goEcho(`Pairing error ${JSON.stringify(error)}`);
+                setStatus(`Pairing error: ${error.message}`, "red");
+              });
+          } catch (err) {
+            goEcho(`Pairing error ${JSON.stringify(err)}`);
+            setStatus(`Pairing error: ${err.message}`, "red");
+          }
+        });
+
+        authButton.addEventListener("click", function () {
+          setStatus("Authenticating...");
+          window.auth();
+        });
+
+        window.wc.registerForSessionRequest(event => {
+          setStatus(`Session topic ${event.topic}`);
+        })
+      }
+
+      function goEcho(message) {
+        window.echo(message);
+      }
+
+      function setStatusForElement(element, message, color) {
+        const statusText = document.getElementById(element);
+        statusText.textContent = message;
+        if (color === undefined) color = "green";
+        statusText.style.color = color;
+      }
+      function setStatus(message, color) {
+        setStatusForElement("statusText", message, color);
+      }
+      function setGoStatus(message, color) {
+        setStatusForElement("statusGoStatusText", message, color);
+      }
+      function setDetails(message) {
+        const echoTextArea = document.getElementById("echoTextArea");
+        echoTextArea.value = message;
+      }
+
+      function sdkFailLoading() {
+        setStatus("FAILED loading SDK", "red");
+      }
+
+      async function processGoEvents() {
+        while (true) {
+          try {
+            const event = await window.popNextEvent();
+            switch (event.name) {
+              case "nodeReady":
+                setGoStatus("ready");
+                statusGoReady();
+                break;
+              case "tokensAvailable":
+                setDetails(`${JSON.stringify(event.payload)}\n`);
+                break;
+              default:
+                await new Promise((resolve) => setTimeout(resolve, 100));
+                break;
+            }
+          } catch (err) {
+            goEcho(`GO event error: ${err.message}`);
+          }
+        }
+      }
+
+      processGoEvents();
+    </script>
+  </body>
+</html>
