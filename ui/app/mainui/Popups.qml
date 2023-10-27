@@ -504,7 +504,7 @@ QtObject {
             id: importCommunitiesPopupComponent
             ImportCommunityPopup {
                 store: root.communitiesStore
-                onJoinCommunity: {
+                onJoinCommunityRequested: {
                     close()
                     openCommunityIntroPopup(communityId,
                                             communityDetails.name,

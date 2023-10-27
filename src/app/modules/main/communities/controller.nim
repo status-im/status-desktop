@@ -85,7 +85,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_LOAD_DATA_FAILED) do(e: Args):
     let args = CommunityArgs(e)
-    self.delegate.onImportCommunityErrorOccured(args.communityId, args.error)
+    self.delegate.communityInfoRequestFailed(args.communityId, args.error)
 
   self.events.on(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED) do(e: Args):
     self.delegate.communityInfoAlreadyRequested()

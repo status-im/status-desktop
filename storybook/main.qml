@@ -141,6 +141,20 @@ ApplicationWindow {
                     }
 
                     CheckBox {
+                        id: windowAlwaysOnTopCheckBox
+
+                        Layout.fillWidth: true
+
+                        text: "Always on top"
+                        onCheckedChanged: {
+                            if (checked)
+                                root.flags |= Qt.WindowStaysOnTopHint
+                            else
+                                root.flags &= ~Qt.WindowStaysOnTopHint
+                        }
+                    }
+
+                    CheckBox {
                         id: darkModeCheckBox
 
                         Layout.fillWidth: true
@@ -346,6 +360,7 @@ Tips:
         property alias darkMode: darkModeCheckBox.checked
         property alias hotReloading: hotReloaderControls.enabled
         property alias figmaToken: settingsLayout.figmaToken
+        property alias windowAlwaysOnTop: windowAlwaysOnTopCheckBox.checked
     }
 
     Shortcut {

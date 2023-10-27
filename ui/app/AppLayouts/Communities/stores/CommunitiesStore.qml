@@ -62,6 +62,8 @@ QtObject {
 
     signal communityInfoAlreadyRequested()
 
+    signal communityInfoRequestCompleted(string communityId, string errorMsg)
+
     function createCommunity(args = {
                                 name: "",
                                 description: "",
@@ -120,19 +122,14 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey);
     }
 
-    function getCommunityDetails(communityId, importing = false) {
+    function getCommunityDetails(communityId) {
         const publicKey = Utils.isCompressedPubKey(communityId)
                             ? Utils.changeCommunityKeyCompression(communityId)
                             : communityId
         try {
             const communityJson = root.communitiesList.getSectionByIdJson(publicKey)
-
-            if (!communityJson) {
-                root.requestCommunityInfo(publicKey, importing)
-                return null
-            }
-
-            return JSON.parse(communityJson);
+            if (!!communityJson)
+                return JSON.parse(communityJson)
         } catch (e) {
             console.error("Error parsing community", e)
         }
@@ -250,6 +247,10 @@ QtObject {
 
         function onCommunityInfoAlreadyRequested() {
           root.communityInfoAlreadyRequested()
+        }
+
+        function onCommunityInfoRequestCompleted(communityId, erorrMsg) {
+            root.communityInfoRequestCompleted(communityId, erorrMsg)
         }
     }
 }

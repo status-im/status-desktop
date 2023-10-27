@@ -108,6 +108,9 @@ method communityImported*(self: AccessInterface, community: CommunityDto) {.base
 method communityDataImported*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityInfoRequestFailed*(self: AccessInterface, communityId: string, errorMsg: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onImportCommunityErrorOccured*(self: AccessInterface, communityId: string, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
