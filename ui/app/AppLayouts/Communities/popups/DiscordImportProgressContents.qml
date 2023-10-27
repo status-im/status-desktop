@@ -123,7 +123,7 @@ StatusScrollView {
                 return DiscordImportProgressContents.ImportStatus.Stopped
             }
             if (importProgress >= 100) {
-                if (hasWarnings)
+                if (hasWarnings || hasErrors)
                     return DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
                 return DiscordImportProgressContents.ImportStatus.CompletedSuccessfully
             }

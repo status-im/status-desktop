@@ -411,6 +411,11 @@ QtObject:
     self.events.on(SignalType.DiscordCommunityImportFinished.event) do(e: Args):
       var receivedData = DiscordCommunityImportFinishedSignal(e)
       self.handleMessagesReload(receivedData.communityId)
+    
+    self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
+      var receivedData = DiscordChannelImportFinishedSignal(e)
+      self.resetMessageCursor(receivedData.channelId)
+      self.asyncLoadMoreMessagesForChat(receivedData.channelId)
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let networksDto = self.networkService.getNetworks()

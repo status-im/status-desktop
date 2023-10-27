@@ -820,6 +820,7 @@ QtObject {
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
+    readonly property int communityImportingCanceled: 3
 
     readonly property int communityChatPublicAccess: 1
     readonly property int communityChatInvitationOnlyAccess: 2
