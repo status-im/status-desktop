@@ -481,6 +481,7 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
       name = token.name,
       symbol = token.symbol,
       color = token.color,
+      communityId = token.communityId,
       image = "",
       category = ord(TokenListItemCategory.General),
     )
