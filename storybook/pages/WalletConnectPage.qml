@@ -19,6 +19,8 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 
+import nim 1.0
+
 Item {
     id: root
 
@@ -29,10 +31,16 @@ Item {
         WalletConnect {
             id: walletConnect
 
-            SplitView.preferredWidth: 400
+            SplitView.fillWidth: true
 
-            projectId: SystemUtils.getEnvVar("WALLET_CONNECT_PROJECT_ID")
             backgroundColor: Theme.palette.statusAppLayout.backgroundColor
+
+            controller: WalletConnectController {
+                pairSessionProposal: function(sessionProposalJson) {
+                    proposeUserPair(sessionProposalJson, `{"eip155":{"methods":["eth_sendTransaction","personal_sign"],"chains":["eip155:5"],"events":["accountsChanged","chainChanged"],"accounts":["eip155:5:0x53780d79E83876dAA21beB8AFa87fd64CC29990b","eip155:5:0xBd54A96c0Ae19a220C8E1234f54c940DFAB34639","eip155:5:0x5D7905390b77A937Ae8c444aA8BF7Fa9a6A7DBA0"]}}`)
+                }
+                projectId: SystemUtils.getEnvVar("STATUS_BUILD_WALLET_CONNECT_PROJECT_ID")
+            }
 
             clip: true
         }
@@ -45,7 +53,8 @@ Item {
 
                 Text { text: "projectId" }
                 Text {
-                    text: walletConnect.projectId.substring(0, 3) + "..." + walletConnect.projectId.substring(walletConnect.projectId.length - 3)
+                    readonly property string projectId: walletConnect.controller.projectId
+                    text: projectId.substring(0, 3) + "..." + projectId.substring(projectId.length - 3)
                     font.bold: true
                 }
             }

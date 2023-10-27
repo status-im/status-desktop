@@ -5,6 +5,7 @@ import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import ../../shared_models/currency_amount
+import ./wallet_connect/controller as wcc
 
 QtObject:
   type
@@ -21,6 +22,7 @@ QtObject:
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
+      wcController: wcc.Controller
 
   proc setup(self: View) =
     self.QObject.setup
@@ -28,13 +30,15 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller, wcController: wcc.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityController = tmpActivityController
     result.collectiblesController = collectiblesController
     result.collectibleDetailsController = collectibleDetailsController
+    result.wcController = wcController
+
     result.setup()
 
   proc load*(self: View) =
@@ -203,3 +207,8 @@ QtObject:
   proc destroyKeypairImportPopup*(self: View) {.signal.}
   proc emitDestroyKeypairImportPopup*(self: View) =
     self.destroyKeypairImportPopup()
+
+  proc getWalletConnectController(self: View): QVariant {.slot.} =
+    return newQVariant(self.wcController)
+  QtProperty[QVariant] walletConnectController:
+    read = getWalletConnectController

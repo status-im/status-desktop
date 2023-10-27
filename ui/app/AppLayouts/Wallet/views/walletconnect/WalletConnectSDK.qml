@@ -22,30 +22,32 @@ WebView {
     required property string projectId
     required property color backgroundColor
 
-    readonly property string notReadyState: "not-ready"
-    readonly property string disconnectedState: "disconnected"
-    readonly property string waitingPairState: "waiting_pairing"
-    readonly property string pairedState: "paired"
+    readonly property alias sdkReady: d.sdkReady
 
-    state: root.notReadyState
-
-    property string optionalSdkPath: ""
+    signal sdkInit(bool success, var result)
+    signal pairSessionProposal(bool success, var sessionProposal)
+    signal pairAcceptedResult(bool success, var sessionType)
+    signal pairRejectedResult(bool success, var result)
+    signal responseTimeout()
 
     // TODO: proper report
     signal statusChanged(string message)
 
     function pair(pairLink) {
-        d.requestSdk(
-            "wcResult = {error: null}; try { wc.pair(\"" + pairLink + "\").then((sessionProposal) => { wcResult = {state: \"" + root.waitingPairState + "\", error: null, sessionProposal: sessionProposal}; }).catch((error) => { wcResult = {error: error}; }); } catch (e) { wcResult = {error: \"Exception: \" + e.message}; }; wcResult"
-        )
+        let callStr = d.generateSdkCall("pair", `"${pairLink}"`, RequestCodes.PairSuccess, RequestCodes.PairError)
+        d.requestSdk(callStr)
     }
 
-    function acceptPairing() {
-        d.acceptPair(d.sessionProposal)
+    function approvePairSession(sessionProposal, supportedNamespaces) {
+        let callStr = d.generateSdkCall("approvePairSession", `${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)}`, RequestCodes.ApprovePairSuccess, RequestCodes.ApprovePairSuccess)
+
+        d.requestSdk(callStr)
     }
 
-    function rejectPairing() {
-        d.rejectPair(d.sessionProposal.id)
+    function rejectPairSession(id) {
+        let callStr = d.generateSdkCall("rejectPairSession", id, RequestCodes.RejectPairSuccess, RequestCodes.RejectPairError)
+
+        d.requestSdk(callStr)
     }
 
     // TODO #12434: remove debugging WebEngineView code
@@ -101,47 +103,55 @@ WebView {
         onTriggered: {
             root.runJavaScript(
                 "wcResult",
-                function(result) {
-                    if (!result) {
+                function(wcResult) {
+                    if (!wcResult) {
                         return
                     }
 
                     let done = false
-                    if (result.error) {
+                    if (wcResult.error) {
+                        console.debug(`@dd wcResult - ${JSON.stringify(wcResult)}`)
                         done = true
-                        if (root.state === root.notReadyState) {
-                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Failed SDK init; error: ${result.error}</font>`)
+                        if (!d.sdkReady) {
+                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Failed SDK init; error: ${wcResult.error}</font>`)
                         } else {
-                            root.state = root.disconnectedState
-                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Operation error: ${result.error}</font>`)
+                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Operation error: ${wcResult.error}</font>`)
                         }
-                    } else if (result.state) {
-                        switch (result.state) {
-                            case root.disconnectedState: {
-                                root.statusChanged(`<font color="green">Ready to pair or auth</font>`)
+                    }
+
+                    if (wcResult.state !== undefined) {
+                        switch (wcResult.state) {
+                            case RequestCodes.SdkInitSuccess:
+                                d.sdkReady = true
+                                root.sdkInit(true, "")
                                 break
-                            }
-                            case root.waitingPairState: {
-                                d.sessionProposal = result.sessionProposal
-                                root.statusChanged("Pair ID: " + result.sessionProposal.id + "; Topic: " + result.sessionProposal.params.pairingTopic)
+                            case RequestCodes.SdkInitError:
+                                d.sdkReady = false
+                                root.sdkInit(false, wcResult.error)
                                 break
-                            }
-                            case root.pairedState: {
-                                d.sessionType = result.sessionType
-                                root.statusChanged(`<font color="blue">Paired: ${JSON.stringify(result.sessionType)}</font>`)
+                            case RequestCodes.PairSuccess:
+                                root.pairSessionProposal(true, wcResult.result)
                                 break
-                            }
-                            case root.disconnectedState: {
-                                root.statusChanged(`<font color="orange">User rejected PairID ${d.sessionProposal.id}</font>`)
+                            case RequestCodes.PairError:
+                                root.pairSessionProposal(false, wcResult.error)
                                 break
-                            }
+                            case RequestCodes.ApprovePairSuccess:
+                                root.pairAcceptedResult(true, "")
+                                break
+                            case RequestCodes.ApprovePairError:
+                                root.pairAcceptedResult(false, wcResult.error)
+                                break
+                            case RequestCodes.RejectPairSuccess:
+                                root.pairRejectedResult(true, "")
+                                break
+                            case RequestCodes.RejectPairError:
+                                root.pairRejectedResult(false, wcResult.error)
+                                break
                             default: {
-                                root.statusChanged(`<font color="red">[${timer.errorCount++}] Unknown state: ${result.state}</font>`)
-                                result.state = root.disconnectedState
+                                root.statusChanged(`<font color="red">[${timer.errorCount++}] Unknown state: ${wcResult.state}</font>`)
                             }
                         }
 
-                        root.state = result.state
                         done = true
                     }
 
@@ -162,8 +172,7 @@ WebView {
 
         onTriggered: {
             timer.stop()
-            root.state = root.disconnectedState
-            root.statusChanged(`<font color="red">Timeout waiting for response. The pairing might have been already attempted for the URI.</font>`)
+            root.responseTimeout()
         }
     }
 
@@ -172,37 +181,27 @@ WebView {
 
         property var sessionProposal: null
         property var sessionType: null
+        property bool sdkReady: false
 
         function isWaitingForSdk() {
             return timer.running
         }
 
+
+        function generateSdkCall(methodName, paramsStr, successState, errorState) {
+            return "wcResult = {error: null}; try { wc." + methodName  + "(" + paramsStr + ").then((callRes) => { wcResult = {state: " + successState + ", error: null, result: callRes}; }).catch((error) => { wcResult = {state: " + errorState + ", error: error}; }); } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message}; }; wcResult"
+        }
         function requestSdk(jsCode) {
-            console.debug(`@dd WalletConnectSDK.requestSdk; jsCode: ${jsCode}`)
             root.runJavaScript(jsCode,
                 function(result) {
-                    console.debug(`@dd WalletConnectSDK.requestSdk; result: ${JSON.stringify(result)}`)
                     timer.restart()
                 }
             )
         }
 
         function init(projectId) {
-            d.requestSdk(
-                "wcResult = {error: null}; try { wc.init(\"" + projectId + "\").then((wc) => { wcResult = {state: \"" + root.disconnectedState + "\", error: null}; }).catch((error) => { wcResult = {error: error}; }); } catch (e) { wcResult = {error: \"Exception: \" + e.message}; }; wcResult"
-            )
-        }
-
-        function acceptPair(sessionProposal) {
-            d.requestSdk(
-                "wcResult = {error: null}; try { wc.approveSession(" + JSON.stringify(sessionProposal) + ").then((sessionType) => { wcResult = {state: \"" + root.pairedState + "\", error: null, sessionType: sessionType}; }).catch((error) => { wcResult = {error: error}; }); } catch (e) { wcResult = {error: \"Exception: \" + e.message}; }; wcResult"
-            )
-        }
-
-        function rejectPair(id) {
-            d.requestSdk(
-                "wcResult = {error: null}; try { wc.rejectSession(" + JSON.stringify(id) + ").then(() => { wcResult = {state: \"" + root.disconnectedState + "\", error: null}; }).catch((error) => { wcResult = {error: error}; }); } catch (e) { wcResult = {error: \"Exception: \" + e.message}; }; wcResult"
-            )
+            console.debug(`@dd WC projectId - ${projectId}`)
+            d.requestSdk(generateSdkCall("init", `"${projectId}"`, RequestCodes.SdkInitSuccess, RequestCodes.SdkInitError))
         }
     }
 }

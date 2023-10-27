@@ -13,11 +13,10 @@ Item {
     implicitWidth: Math.min(mainLayout.implicitWidth, 400)
     implicitHeight: Math.min(mainLayout.implicitHeight, 700)
 
-
-    required property string projectId
     required property color backgroundColor
 
-    property alias optionalSdkPath: sdkView.optionalSdkPath
+    // wallet_connect.Controller \see wallet_section/wallet_connect/controller.nim
+    required property var controller
 
     ColumnLayout {
         id: mainLayout
@@ -45,7 +44,7 @@ Item {
                     statusText.text = "Pairing..."
                     sdkView.pair(pairLinkInput.text)
                 }
-                enabled: pairLinkInput.text.length > 0 && sdkView.state === sdkView.disconnectedState
+                enabled: pairLinkInput.text.length > 0 && sdkView.sdkReady
             }
 
             StatusButton {
@@ -54,29 +53,49 @@ Item {
                     statusText.text = "Authenticating..."
                     sdkView.auth()
                 }
-                enabled: false && pairLinkInput.text.length > 0 && sdkView.state === sdkView.disconnectedState
+                enabled: false && pairLinkInput.text.length > 0 && sdkView.sdkReady
             }
 
             StatusButton {
                 text: "Accept"
                 onClicked: {
-                    sdkView.acceptPairing()
+                    sdkView.approvePairSession(d.sessionProposal, d.supportedNamespaces)
                 }
-                visible: sdkView.state === sdkView.waitingPairState
+                visible: root.state === d.waitingPairState
             }
             StatusButton {
                 text: "Reject"
                 onClicked: {
-                    sdkView.rejectPairing()
+                    sdkView.rejectPairSession(d.sessionProposal.id)
                 }
-                visible: sdkView.state === sdkView.waitingPairState
+                visible: root.state === d.waitingPairState
             }
         }
 
-        RowLayout {
+        ColumnLayout {
             StatusBaseText {
                 id: statusText
                 text: "-"
+            }
+            Flickable {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 200
+                Layout.maximumHeight: 400
+
+                contentWidth: detailsText.width
+                contentHeight: detailsText.height
+
+                StatusBaseText {
+                    id: detailsText
+                    text: ""
+                    visible: text.length > 0
+
+                    color: "#FF00FF"
+                }
+
+                ScrollBar.vertical: ScrollBar {}
+
+                clip: true
             }
         }
 
@@ -126,16 +145,104 @@ Item {
         WalletConnectSDK {
             id: sdkView
 
-            projectId: root.projectId
+            projectId: controller.projectId
             backgroundColor: root.backgroundColor
 
             Layout.fillWidth: true
             // Note that a too smaller height might cause the webview to generate rendering errors
             Layout.preferredHeight: 10
 
+            onSdkInit: function(success, info) {
+                d.setDetailsText(info)
+                if (success) {
+                    d.setStatusText("Ready to pair or auth")
+                    root.state = d.sdkReadyState
+                } else {
+                    d.setStatusText("SDK Error", "red")
+                    root.state = ""
+                }
+            }
+
+            onPairSessionProposal: function(success, sessionProposal) {
+                d.setDetailsText(sessionProposal)
+                if (success) {
+                    d.setStatusText("Pair ID: " + sessionProposal.id + "; Topic: " + sessionProposal.params.pairingTopic)
+                    root.controller.pairSessionProposal(JSON.stringify(sessionProposal))
+                    // Expecting signal onProposeUserPair from controller
+                } else {
+                    d.setStatusText("Pairing error", "red")
+                }
+            }
+
+            onPairAcceptedResult: function(success, result) {
+                d.setDetailsText(result)
+                if (success) {
+                    d.setStatusText("Pairing OK")
+                    root.state = d.pairedState
+                } else {
+                    d.setStatusText("Pairing error", "red")
+                    root.state = d.sdkReadyState
+                }
+            }
+
+            onPairRejectedResult: function(success, result) {
+                d.setDetailsText(result)
+                root.state = d.sdkReadyState
+                if (success) {
+                    d.setStatusText("Pairing rejected")
+                } else {
+                    d.setStatusText("Rejecting pairing error", "red")
+                }
+            }
+
             onStatusChanged: function(message) {
                 statusText.text = message
             }
+
+            onResponseTimeout: {
+                d.setStatusText(`Timeout waiting for response. Reusing URI?`, "red")
+            }
+        }
+    }
+
+    QtObject {
+        id: d
+
+        property var sessionProposal: null
+        property var supportedNamespaces: null
+
+        readonly property string sdkReadyState: "sdk_ready"
+        readonly property string waitingPairState: "waiting_pairing"
+        readonly property string pairedState: "paired"
+
+        function setStatusText(message, textColor) {
+            statusText.text = message
+            if (textColor === undefined) {
+                textColor = "green"
+            }
+            statusText.color = textColor
+        }
+        function setDetailsText(message) {
+            if (message === undefined) {
+                message = "undefined"
+            } else if (typeof message !== "string") {
+                message = JSON.stringify(message, null, 2)
+            }
+            detailsText.text = message
+        }
+    }
+
+    Connections {
+        target: root.controller
+        function onProposeUserPair(sessionProposalJson, supportedNamespacesJson) {
+            d.setStatusText("Waiting user accept")
+
+            d.sessionProposal = JSON.parse(sessionProposalJson)
+            d.supportedNamespaces = JSON.parse(supportedNamespacesJson)
+
+            d.setDetailsText(JSON.stringify(d.supportedNamespaces, null, 2))
+
+            root.state = d.waitingPairState
         }
     }
 }

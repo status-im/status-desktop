@@ -27,12 +27,14 @@ QtObject {
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
+    // "walletSection" is a context property slow to lookup, so we cache it here
     property var walletSectionInst: walletSection
-    property var totalCurrencyBalance: walletSection.totalCurrencyBalance
-    property var activityController: walletSection.activityController
-    property var tmpActivityController: walletSection.tmpActivityController
-    property string signingPhrase: walletSection.signingPhrase
-    property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
+    property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
+    property var activityController: walletSectionInst.activityController
+    property var tmpActivityController: walletSectionInst.tmpActivityController
+    property string signingPhrase: walletSectionInst.signingPhrase
+    property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
+    property var walletConnectController: walletSectionInst.walletConnectController
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 

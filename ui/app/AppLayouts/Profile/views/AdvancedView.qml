@@ -24,6 +24,11 @@ import "../controls"
 import "../popups"
 import "../panels"
 
+// TODO: remove DEV import
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.views.walletconnect 1.0
+// TODO end
+
 SettingsContentBase {
     id: root
 
@@ -148,6 +153,55 @@ SettingsContentBase {
                     } else {
                         root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.nodeManagement)
                     }
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Debug Wallet Connect")
+                visible: root.advancedStore.isDebugEnabled
+
+                onClicked: {
+                    wcLoader.active = true
+                }
+
+                Component {
+                    id: wcDialogComponent
+                    StatusDialog {
+                        id: wcDialog
+
+                        onOpenedChanged: {
+                            if (!opened) {
+                                wcLoader.active = false
+                            }
+                        }
+
+                        WalletConnect {
+                            SplitView.preferredWidth: 400
+                            SplitView.preferredHeight: 600
+
+                            backgroundColor: wcDialog.backgroundColor
+
+                            controller: WalletStores.RootStore.walletConnectController
+                        }
+
+                        clip: true
+                    }
+                }
+
+                Loader {
+                    id: wcLoader
+
+                    active: false
+
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            wcLoader.item.open()
+                        }
+                    }
+
+                    sourceComponent: wcDialogComponent
                 }
             }
 

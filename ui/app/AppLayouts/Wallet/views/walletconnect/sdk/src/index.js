@@ -22,10 +22,9 @@ window.wc = {
             window.wc.web3wallet = await Web3Wallet.init({
                 core: window.wc.core, // <- pass the shared `core` instance
                 metadata: {
-                    // TODO: what values should be here?
-                    name: "Prototype",
-                    description: "Prototype Wallet/Peer",
-                    url: "https://github.com/status-im/status-desktop",
+                    name: "Status",
+                    description: "Status Wallet",
+                    url: "https://status.app",
                     icons: ['https://status.im/img/status-footer-logo.svg'],
                 },
             });
@@ -35,7 +34,7 @@ window.wc = {
                 metadata: window.wc.web3wallet.metadata,
             })
 
-            resolve(window.wc)
+            resolve()
         })
     },
 
@@ -44,10 +43,6 @@ window.wc = {
     // TODO: there is a corner case when attempting to pair with a link that is already paired or was rejected won't trigger any event back
     pair: function (uri) {
         let pairingTopic = getPairingTopicFromPairingUrl(uri);
-
-        let pairPromise = window.wc.web3wallet
-            .pair({ uri: uri })
-            .catch((error) => console.error(error));
 
         const pairings = window.wc.core.pairing.getPairings();
         // Find pairing by topic
@@ -59,6 +54,10 @@ window.wc = {
                 });
             }
         }
+
+        let pairPromise = window.wc.web3wallet
+            .pair({ uri: uri })
+
 
         return new Promise((resolve, reject) => {
             pairPromise
@@ -77,36 +76,24 @@ window.wc = {
         window.wc.web3wallet.on("session_request", callback);
     },
 
-    // TODO: ensure if session requests only one account we don't provide all accounts
-    approveSession: function (sessionProposal) {
+    registerForSessionDelete: function (callback) {
+        window.wc.web3wallet.on("session_delete", callback);
+    },
+
+    approvePairSession: function (sessionProposal, supportedNamespaces) {
         const { id, params } = sessionProposal;
 
-        // ------- namespaces builder util ------------ //
         const approvedNamespaces = buildApprovedNamespaces({
             proposal: params,
-            // TODO: source this from wallet
-            supportedNamespaces: {
-                eip155: {
-                    chains: ["eip155:1", "eip155:5"],
-                    methods: ["eth_sendTransaction", "personal_sign"],
-                    events: ["accountsChanged", "chainChanged"],
-                    accounts: [
-                        "eip155:1:0x0000000000000000000000000000000000000001",
-                        "eip155:5:0xe74E17D586227691Cb7b64ed78b1b7B14828B034",
-                    ],
-                },
-            },
+            supportedNamespaces: supportedNamespaces,
         });
-        // ------- end namespaces builder util ------------ //
 
-        const session = window.wc.web3wallet.approveSession({
+        return window.wc.web3wallet.approveSession({
             id,
             namespaces: approvedNamespaces,
         });
-
-        return session;
     },
-    rejectSession: function (id) {
+    rejectPairSession: function (id) {
         return window.wc.web3wallet.rejectSession({
             id: id,
             reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
@@ -115,10 +102,6 @@ window.wc = {
 
     auth: function (uri) {
         let pairingTopic = getPairingTopicFromPairingUrl(uri);
-
-        let pairPromise = window.wc.authClient.core.pairing
-            .pair({ uri })
-            .catch((error) => console.error(error));
 
         const pairings = window.wc.core.pairing.getPairings();
         // Find pairing by topic
@@ -130,6 +113,9 @@ window.wc = {
                 });
             }
         }
+
+        let pairPromise = window.wc.authClient.core.pairing
+            .pair({ uri })
 
         return new Promise((resolve, reject) => {
             pairPromise
