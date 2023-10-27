@@ -20,7 +20,7 @@ func loginToAccount(hashedPassword, userFolder, nodeConfigJson string) error {
 	}
 	accountsJson := statusgo.OpenAccounts(absUserFolder)
 	accounts := make([]multiaccounts.Account, 0)
-	err = getApiResponse(accountsJson, &accounts)
+	err = getCAPIResponse(accountsJson, &accounts)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func loginToAccount(hashedPassword, userFolder, nodeConfigJson string) error {
 	keystorePath := filepath.Join(filepath.Join(absUserFolder, "keystore/"), account.KeyUID)
 	initKeystoreJson := statusgo.InitKeystore(keystorePath)
 	apiResponse := statusgo.APIResponse{}
-	err = getApiResponse(initKeystoreJson, &apiResponse)
+	err = getCAPIResponse(initKeystoreJson, &apiResponse)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func loginToAccount(hashedPassword, userFolder, nodeConfigJson string) error {
 		return err
 	}
 	loginJson := statusgo.LoginWithConfig(string(accountJson), hashedPassword, nodeConfigJson)
-	err = getApiResponse(loginJson, &apiResponse)
+	err = getCAPIResponse(loginJson, &apiResponse)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ type jsonrpcRequest struct {
 	Params  json.RawMessage `json:"params,omitempty"`
 }
 
-func callPrivateMethod(method string, params interface{}) string {
+func callPrivateMethod(method string, params []interface{}) string {
 	var paramsJson json.RawMessage
 	var err error
 	if params != nil {
@@ -131,7 +131,7 @@ func processConfigArgs() (config *Config, nodeConfigJson string, userFolder stri
 	return
 }
 
-func getApiResponse[T any](responseJson string, res T) error {
+func getCAPIResponse[T any](responseJson string, res T) error {
 	apiResponse := statusgo.APIResponse{}
 	err := json.Unmarshal([]byte(responseJson), &apiResponse)
 	if err == nil {
@@ -149,6 +149,51 @@ func getApiResponse[T any](responseJson string, res T) error {
 	}
 
 	if err := json.Unmarshal([]byte(responseJson), &res); err != nil {
+		return fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	return nil
+}
+
+type jsonrpcSuccessfulResponse struct {
+	jsonrpcMessage
+	Result json.RawMessage `json:"result"`
+}
+
+type jsonrpcErrorResponse struct {
+	jsonrpcMessage
+	Error jsonError `json:"error"`
+}
+
+// jsonError represents Error message for JSON-RPC responses.
+type jsonError struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
+func getRPCAPIResponse[T any](responseJson string, res T) error {
+	errApiResponse := jsonrpcErrorResponse{}
+	err := json.Unmarshal([]byte(responseJson), &errApiResponse)
+	if err == nil && errApiResponse.Error.Code != 0 {
+		return fmt.Errorf("API error: %#v", errApiResponse.Error)
+	}
+
+	apiResponse := jsonrpcSuccessfulResponse{}
+	err = json.Unmarshal([]byte(responseJson), &apiResponse)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal jsonrpcSuccessfulResponse: %w", err)
+	}
+
+	typeOfT := reflect.TypeOf(res)
+	kindOfT := typeOfT.Kind()
+
+	// Check for valid types: pointer, slice, map
+	if kindOfT != reflect.Ptr && kindOfT != reflect.Slice && kindOfT != reflect.Map {
+		return fmt.Errorf("type T must be a pointer, slice, or map")
+	}
+
+	if err := json.Unmarshal(apiResponse.Result, &res); err != nil {
 		return fmt.Errorf("failed to unmarshal data: %w", err)
 	}
 

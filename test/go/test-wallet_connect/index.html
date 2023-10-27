@@ -13,7 +13,8 @@
     />
 
     <div id="buttonRow">
-      <button id="pairButton" disabled>Pair</button>
+      <!-- TODO DEV <button id="pairButton" disabled>Pair</button>-->
+      <button id="pairButton">Pair</button>
       <button id="authButton" disabled>Auth</button>
       <button id="acceptButton" style="display: none">Accept</button>
       <button id="rejectButton" style="display: none">Reject</button>
@@ -75,64 +76,27 @@
         pairButton.addEventListener("click", function () {
           setStatus("Pairing...");
           try {
+            // TODO DEV: remove harcode
             wc.pair(pairLinkInput.value)
               .then((sessionProposal) => {
+                //let sessionProposal = JSON.parse(`{"id":1698771618724119,"params":{"id":1698771618724119,"pairingTopic":"4c36da43ac0d351336663276de6b5e2182f42068b7021e3cd1a460d9d7077e20","expiry":1698771923,"requiredNamespaces":{"eip155":{"methods":["eth_sendTransaction","personal_sign"],"chains":["eip155:5"],"events":["chainChanged","accountsChanged"]}},"optionalNamespaces":{"eip155":{"methods":["eth_signTransaction","eth_sign","eth_signTypedData","eth_signTypedData_v4"],"chains":["eip155:5"],"events":[]}},"relays":[{"protocol":"irn"}],"proposer":{"publicKey":"5d648503f2ec0e5a263578c347e490dcacb4e4359f59d66f12905bb91b9f182d","metadata":{"description":"React App for WalletConnect","url":"https://react-app.walletconnect.com","icons":["https://avatars.githubusercontent.com/u/37784886"],"name":"React App","verifyUrl":"https://verify.walletconnect.com"}}},"verifyContext":{"verified":{"verifyUrl":"https://verify.walletconnect.com","validation":"UNKNOWN","origin":"https://react-app.walletconnect.com"}}}`);
                 setStatus(`Wait user pair`);
                 setDetails(
                   `Pair ID: ${sessionProposal.id} ; Topic: ${sessionProposal.params.pairingTopic}`
                 );
-                acceptButton.addEventListener("click", function () {
-                  window.wc.approveSession(sessionProposal).then(
-                    () => {
-                      goEcho(`Session ${sessionProposal.id} approved`);
-                      setStatus(
-                        `Session ${sessionProposal.id} approved`
-                      );
-                      acceptButton.style.display = "none";
-                      rejectButton.style.display = "none";
-                    },
-                    (err) => {
-                      goEcho(
-                        `Session ${sessionProposal.id} approve error: ${err.message}`
-                      );
-                      setStatus(
-                        `Session ${sessionProposal.id} approve error: ${err.message}`
-                      );
-                    }
-                  );
-                });
 
-                rejectButton.addEventListener("click", function () {
-                  try {
-                    window.wc.rejectSession(sessionProposal.id).then(
-                      () => {
-                        goEcho(`Session ${sessionProposal.id} rejected`);
-                        setStatus(
-                          `Session ${sessionProposal.id} rejected`
-                        );
-                        acceptButton.style.display = "none";
-                        rejectButton.style.display = "none";
-                      },
-                      (err) => {
-                        goEcho(
-                          `Session ${sessionProposal.id} reject error`
-                        );
-                        setStatus(
-                          `Session ${sessionProposal.id} reject error`
-                        );
-                      }
-                    );
-                  } catch (err) {
-                    goEcho(
-                      `Session ${sessionProposal.id} reject error: ${err.message}`
-                    );
-                    setStatus(
-                      `Session ${sessionProposal.id} reject error: ${err.message}`
-                    );
-                  }
-                });
-                acceptButton.style.display = "inline";
-                rejectButton.style.display = "inline";
+                window
+                  .pairSessionProposal(JSON.stringify(sessionProposal))
+                  .then((success) => {
+                    if (!success) {
+                      goEcho(
+                        `GO.pairSessionProposal call failed ${sessionProposal.id}`
+                      );
+                      setGoStatus(`GO.pairSessionProposal failed`, "red");
+                      return;
+                    }
+                  });
+                // Waiting for "proposeUserPair" event
               })
               .catch((error) => {
                 goEcho(`Pairing error ${JSON.stringify(error)}`);
@@ -149,9 +113,17 @@
           window.auth();
         });
 
-        window.wc.registerForSessionRequest(event => {
+      window.wc.registerForSessionRequest((event) => {
           setStatus(`Session topic ${event.topic}`);
-        })
+          window.sessionRequest(event).then((success) => {
+            if (!success) {
+              goEcho(`Session request status-go call failed ${event.topic}`);
+              setGoStatus(`Session ${event.id} rejected`, "purple");
+              return;
+            }
+            // Waiting for userApproveSession event
+          });
+        });
       }
 
       function goEcho(message) {
@@ -188,8 +160,65 @@
                 setGoStatus("ready");
                 statusGoReady();
                 break;
-              case "tokensAvailable":
-                setDetails(`${JSON.stringify(event.payload)}\n`);
+              case "proposeUserPair":
+                setGoStatus("Session proposed");
+                setDetails(JSON.stringify(event.payload.supportedNamespaces));
+                let sessionProposal = event.payload.sessionProposal;
+                acceptButton.addEventListener("click", function () {
+                  try {
+                    window.wc
+                      .approveSession(
+                        sessionProposal,
+                        event.payload.supportedNamespaces
+                      )
+                      .then(
+                        () => {
+                          goEcho(`Session ${sessionProposal.id} approved`);
+                          setStatus(`Session ${sessionProposal.id} approved`);
+                          acceptButton.style.display = "none";
+                          rejectButton.style.display = "none";
+                        },
+                        (err) => {
+                          goEcho(
+                            `Session ${sessionProposal.id} approve error: ${err}`
+                          );
+                          setStatus(
+                            `Session ${sessionProposal.id} approve error: ${err}`
+                          );
+                        }
+                      );
+                  } catch (err) {
+                    goEcho(`WTF error: ${err.message}`);
+                    setStatus(`WTF error: ${err.message}`);
+                  }
+                });
+
+                rejectButton.addEventListener("click", function () {
+                  try {
+                    window.wc.rejectSession(sessionProposal.id).then(
+                      () => {
+                        goEcho(`Session ${sessionProposal.id} rejected`);
+                        setStatus(`Session ${sessionProposal.id} rejected`);
+                        acceptButton.style.display = "none";
+                        rejectButton.style.display = "none";
+                      },
+                      (err) => {
+                        goEcho(`Session ${sessionProposal.id} reject error`);
+                        setStatus(`Session ${sessionProposal.id} reject error`);
+                      }
+                    );
+                  } catch (err) {
+                    goEcho(
+                      `Session ${sessionProposal.id} reject error: ${err.message}`
+                    );
+                    setStatus(
+                      `Session ${sessionProposal.id} reject error: ${err.message}`
+                    );
+                  }
+                });
+
+                acceptButton.style.display = "inline";
+                rejectButton.style.display = "inline";
                 break;
               default:
                 await new Promise((resolve) => setTimeout(resolve, 100));

@@ -14,6 +14,8 @@ import ./overview/module as overview_module
 import ./send/module as send_module
 
 import ./activity/controller as activityc
+import ./wallet_connect/controller as wcc
+
 import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
@@ -81,6 +83,8 @@ type
     # instance to be used in temporary, short-lived, workflows (e.g. send popup)
     tmpActivityController: activityc.Controller
 
+    wcController: wcc.Controller
+
 ## Forward declaration
 proc onUpdatedKeypairsOperability*(self: Module, updatedKeypairs: seq[KeypairDto])
 proc onLocalPairingStatusUpdate*(self: Module, data: LocalPairingStatus)
@@ -137,7 +141,9 @@ proc newModule*(
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectiblesController, result.collectibleDetailsController)
+  result.wcController = wcc.newController(events)
+
+  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectiblesController, result.collectibleDetailsController, result.wcController)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -152,6 +158,7 @@ method delete*(self: Module) =
   self.tmpActivityController.delete
   self.collectiblesController.delete
   self.collectibleDetailsController.delete
+  self.wcController.delete
 
   if not self.addAccountModule.isNil:
     self.addAccountModule.delete
