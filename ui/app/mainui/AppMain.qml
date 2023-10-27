@@ -354,6 +354,9 @@ Item {
                 title = qsTr("Failed to import community '%1'").arg(communityId)
                 subTitle = errorMsg
                 break
+            case Constants.communityImportingCanceled:
+                title = qsTr("Import community '%1' was canceled").arg(community.name)
+                break;
             default:
                 console.error("unknown state while importing community: %1").arg(state)
                 return

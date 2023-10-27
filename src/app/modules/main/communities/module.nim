@@ -39,6 +39,7 @@ type
     Imported = 0
     ImportingInProgress
     ImportingError
+    ImportingCanceled
 
 type
   Action {.pure.} = enum
@@ -411,6 +412,9 @@ method importCommunity*(self: Module, communityId: string) =
 method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
 
+method onImportCommunityCanceled*(self: Module, communityId: string) =
+  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingCanceled.int, errorMsg = "")
+
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
   self.view.setDiscordDataExtractionInProgress(true)
   self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
@@ -441,8 +445,6 @@ method discordImportProgressUpdated*(
     self: Module,
     communityId: string,
     communityName: string,
-    channelId: string,
-    channelName: string,
     communityImage: string,
     tasks: seq[DiscordImportTaskProgress],
     progress: float,
@@ -460,9 +462,51 @@ method discordImportProgressUpdated*(
 
   self.view.setDiscordImportCommunityId(communityId)
   self.view.setDiscordImportCommunityName(communityName)
+  self.view.setDiscordImportCommunityImage(communityImage)
+  self.view.setDiscordImportErrorsCount(errorsCount)
+  self.view.setDiscordImportWarningsCount(warningsCount)
+  # For some reason, exposing the global `progress` as QtProperty[float]`
+  # doesn't translate well into QML.
+  # That's why we pass it as integer instead.
+  self.view.setDiscordImportProgress((progress*100).int)
+  self.view.setDiscordImportProgressStopped(stopped)
+  self.view.setDiscordImportProgressTotalChunksCount(totalChunksCount)
+  self.view.setDiscordImportProgressCurrentChunk(currentChunk)
+  if stopped or progress.int >= 1:
+    self.view.setDiscordImportInProgress(false)
+
+method discordImportChannelFinished*(self: Module, channelId: string) =
+  if self.view.getDiscordImportChannelId() == channelId:
+    self.view.setDiscordImportProgress(100)
+    self.view.setDiscordImportProgressStopped(true)
+    self.view.setDiscordImportInProgress(false)
+
+method discordImportChannelCanceled*(self: Module, channelId: string) =
+  if self.view.getDiscordImportChannelId() == channelId:
+    self.view.setDiscordImportProgress(0)
+    self.view.setDiscordImportProgressStopped(true)
+    self.view.setDiscordImportInProgress(false)
+
+method discordImportChannelProgressUpdated*(
+    self: Module,
+    channelId: string,
+    channelName: string,
+    tasks: seq[DiscordImportTaskProgress],
+    progress: float,
+    errorsCount: int,
+    warningsCount: int,
+    stopped: bool,
+    totalChunksCount: int,
+    currentChunk: int
+  ) =
+  for task in tasks:
+    if not self.view.discordImportTasksModel().hasItemByType(task.`type`):
+      self.view.discordImportTasksModel().addItem(self.getDiscordImportTaskItem(task))
+    else:
+      self.view.discordImportTasksModel().updateItem(task)
+
   self.view.setDiscordImportChannelId(channelId)
   self.view.setDiscordImportChannelName(channelName)
-  self.view.setDiscordImportCommunityImage(communityImage)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
   # For some reason, exposing the global `progress` as QtProperty[float]`

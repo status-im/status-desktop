@@ -134,7 +134,19 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e:Args):
     let args = DiscordImportProgressArgs(e)
-    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.channelId, args.channelName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS) do(e:Args):
+    let args = DiscordImportChannelProgressArgs(e)
+    self.delegate.discordImportChannelProgressUpdated(args.channelId, args.channelName, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED) do(e:Args):
+    let args = CommunityChatIdArgs(e)
+    self.delegate.discordImportChannelFinished(args.chatId)
+
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED) do(e:Args):
+    let args = ChannelIdArgs(e)
+    self.delegate.discordImportChannelCanceled(args.channelId)
 
   self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e:Args):
     let args = CommunityIdArgs(e)
