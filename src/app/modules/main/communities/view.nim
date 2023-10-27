@@ -622,6 +622,11 @@ QtObject:
     self.discordImportChannelId = id
     self.discordImportChannelName = item.getName()
     self.discordImportChannelChanged()
+  
+  proc setDiscordImportChannelId*(self: View, id: string) {.slot.} =
+    if (self.discordImportChannelId == id): return
+    self.discordImportChannelId = id
+    self.discordImportChannelChanged()
 
   proc getDiscordImportChannelId(self: View): string {.slot.} =
     return self.discordImportChannelId
@@ -629,6 +634,11 @@ QtObject:
   QtProperty[string] discordImportChannelId:
     read = getDiscordImportChannelId
     notify = discordImportChannelChanged
+
+  proc setDiscordImportChannelName*(self: View, name: string) {.slot.} =
+    if (self.discordImportChannelName == name): return
+    self.discordImportChannelName = name
+    self.discordImportChannelChanged()
 
   proc getDiscordImportChannelName(self: View): string {.slot.} =
     return self.discordImportChannelName

@@ -41,6 +41,9 @@ type
   CommunityIdArgs* = ref object of Args
     communityId*: string
 
+  ChannelIdArgs* = ref object of Args
+    channelId*: string
+
   CommunityChatIdArgs* = ref object of Args
     communityId*: string
     chatId*: string
@@ -111,6 +114,17 @@ type
     communityId*: string
     communityImage*: string
     communityName*: string
+    tasks*: seq[DiscordImportTaskProgress]
+    progress*: float
+    errorsCount*: int
+    warningsCount*: int
+    stopped*: bool
+    totalChunksCount*: int
+    currentChunk*: int
+
+  DiscordImportChannelProgressArgs* = ref object of Args
+    channelId*: string
+    channelName*: string
     tasks*: seq[DiscordImportTaskProgress]
     progress*: float
     errorsCount*: int
@@ -191,6 +205,11 @@ const SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED* = "communityHistoryAr
 const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS* = "discordCommunityImportProgress"
+const SIGNAL_DISCORD_COMMUNITY_IMPORT_CANCELED* = "discordCommunityImportCanceled"
+const SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED* = "discordChannelImportFinished"
+const SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS* = "discordChannelImportProgress"
+const SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED* = "discordChannelImportCanceled"
+
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED* = "communityTokenPermissionCreated"
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED* = "communityTokenPermissionCreationFailed"
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED* = "communityTokenPermissionUpdated"
@@ -347,12 +366,38 @@ QtObject:
       var receivedData = DiscordCommunityImportFinishedSignal(e)
       self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
 
+    self.events.on(SignalType.DiscordCommunityImportCancelled.event) do(e: Args):
+      var receivedData = DiscordCommunityImportCancelledSignal(e)
+      self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_CANCELED, CommunityIdArgs(communityId: receivedData.communityId))
+
+    self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
+      var receivedData = DiscordChannelImportFinishedSignal(e)
+      self.events.emit(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED, ChannelIdArgs(channelId: receivedData.channelId))
+
+    self.events.on(SignalType.DiscordChannelImportCancelled.event) do(e: Args):
+      var receivedData = DiscordChannelImportCancelledSignal(e)
+      self.events.emit(SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED, ChannelIdArgs(channelId: receivedData.channelId))
+
     self.events.on(SignalType.DiscordCommunityImportProgress.event) do(e: Args):
       var receivedData = DiscordCommunityImportProgressSignal(e)
       self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS, DiscordImportProgressArgs(
         communityId: receivedData.communityId,
         communityImage: receivedData.communityImages.thumbnail,
         communityName: receivedData.communityName,
+        tasks: receivedData.tasks,
+        progress: receivedData.progress,
+        errorsCount: receivedData.errorsCount,
+        warningsCount: receivedData.warningsCount,
+        stopped: receivedData.stopped,
+        totalChunksCount: receivedData.totalChunksCount,
+        currentChunk: receivedData.currentChunk,
+      ))
+
+    self.events.on(SignalType.DiscordChannelImportProgress.event) do(e: Args):
+      var receivedData = DiscordChannelImportProgressSignal(e)
+      self.events.emit(SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS, DiscordImportChannelProgressArgs(
+        channelId: receivedData.channelId,
+        channelName: receivedData.channelName,
         tasks: receivedData.tasks,
         progress: receivedData.progress,
         errorsCount: receivedData.errorsCount,

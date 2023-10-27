@@ -141,6 +141,20 @@ method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories:
 method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method discordImportChannelProgressUpdated*(
+    self: AccessInterface,
+    channelId: string,
+    channelName: string,
+    tasks: seq[DiscordImportTaskProgress],
+    progress: float,
+    errorsCount: int,
+    warningsCount: int,
+    stopped: bool,
+    totalChunksCount: int,
+    currentChunk: int
+  ) {.base.} =
+    raise newException(ValueError, "No implementation available")
+
 method requestCancelDiscordCommunityImport*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

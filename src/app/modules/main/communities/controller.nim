@@ -144,6 +144,10 @@ proc init*(self: Controller) =
     let args = DiscordImportProgressArgs(e)
     self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
 
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS) do(e:Args):
+    let args = DiscordImportChannelProgressArgs(e)
+    self.delegate.discordImportChannelProgressUpdated(args.channelId, args.channelName, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+
   self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e:Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityHistoryArchivesDownloadStarted(args.communityId)
