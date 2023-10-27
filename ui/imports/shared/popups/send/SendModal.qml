@@ -309,6 +309,8 @@ StatusDialog {
 
                             formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+                            input.input.tabNavItem: recipientLoader.item
+                            Keys.onTabPressed: event.accepted = true
                         }
 
                         // Horizontal spacer
