@@ -31,31 +31,54 @@ proc getAllCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc spectateCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("spectateCommunity".prefix, %*[communityId])
 
+proc generateJoiningCommunityRequestsForSigning*(
+    memberPubKey: string,
+    communityId: string,
+    addressesToReveal: seq[string]
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[memberPubKey, communityId, addressesToReveal]
+  result = callPrivateRPC("generateJoiningCommunityRequestsForSigning".prefix, payload)
+
+proc generateEditCommunityRequestsForSigning*(
+    memberPubKey: string,
+    communityId: string,
+    addressesToReveal: seq[string]
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[memberPubKey, communityId, addressesToReveal]
+  result = callPrivateRPC("generateEditCommunityRequestsForSigning".prefix, payload)
+
+## `signParams` represents a json array of SignParamsDto.
+proc signData*(signParams: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  if signParams.kind != JArray:
+    raise newException(Exception, "signParams must be an array")
+  let payload = %*[signParams]
+  result = callPrivateRPC("signData".prefix, payload)
+
 proc requestToJoinCommunity*(
     communityId: string,
     ensName: string,
-    password: string,
     addressesToShare: seq[string],
+    signatures: seq[string],
     airdropAddress: string,
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestToJoinCommunity".prefix, %*[{
     "communityId": communityId,
     "ensName": ensName,
-    "password": password,
     "addressesToReveal": addressesToShare,
+    "signatures": signatures,
     "airdropAddress": airdropAddress,
   }])
 
 proc editSharedAddresses*(
     communityId: string,
-    password: string,
     addressesToShare: seq[string],
+    signatures: seq[string],
     airdropAddress: string,
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editSharedAddressesForCommunity".prefix, %*[{
     "communityId": communityId,
-    "password": password,
     "addressesToReveal": addressesToShare,
+    "signatures": signatures,
     "airdropAddress": airdropAddress,
   }])
 

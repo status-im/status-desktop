@@ -28,6 +28,7 @@ QtObject:
     syncedFrom: string
     accounts: KeyPairAccountModel
     observedAccount: KeyPairAccountItem
+    ownershipVerified: bool
 
   proc setup*(self: KeyPairItem,
     keyUid: string,
@@ -40,7 +41,8 @@ QtObject:
     derivedFrom: string,
     lastUsedDerivationIndex: int,
     migratedToKeycard: bool,
-    syncedFrom: string
+    syncedFrom: string,
+    ownershipVerified: bool
     ) =
     self.QObject.setup
     self.keyUid = keyUid
@@ -54,6 +56,7 @@ QtObject:
     self.lastUsedDerivationIndex = lastUsedDerivationIndex
     self.migratedToKeycard = migratedToKeycard
     self.syncedFrom = syncedFrom
+    self.ownershipVerified = ownershipVerified
     self.accounts = newKeyPairAccountModel()
 
   proc delete*(self: KeyPairItem) =
@@ -69,10 +72,11 @@ QtObject:
     derivedFrom = "",
     lastUsedDerivationIndex = 0,
     migratedToKeycard = false,
-    syncedFrom = ""): KeyPairItem =
+    syncedFrom = "",
+    ownershipVerified = false): KeyPairItem =
     new(result, delete)
     result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom, lastUsedDerivationIndex,
-      migratedToKeycard, syncedFrom)
+      migratedToKeycard, syncedFrom, ownershipVerified)
 
   proc `$`*(self: KeyPairItem): string =
     result = fmt"""KeyPairItem[
@@ -88,7 +92,8 @@ QtObject:
       migratedToKeycard: {self.migratedToKeycard},
       operability: {self.operability},
       syncedFrom: {self.syncedFrom},
-      accounts: {$self.accounts}
+      ownershipVerified: {$self.ownershipVerified}
+      accounts: {$self.accounts},
       ]"""
 
   proc keyUidChanged*(self: KeyPairItem) {.signal.}
@@ -224,6 +229,17 @@ QtObject:
     write = setSyncedFrom
     notify = syncedFromChanged
 
+  proc ownershipVerifiedChanged*(self: KeyPairItem) {.signal.}
+  proc getOwnershipVerified*(self: KeyPairItem): bool {.slot.} =
+    return self.ownershipVerified
+  proc setOwnershipVerified*(self: KeyPairItem, value: bool) {.slot.} =
+    self.ownershipVerified = value
+    self.ownershipVerifiedChanged()
+  QtProperty[bool] ownershipVerified:
+    read = getOwnershipVerified
+    write = setOwnershipVerified
+    notify = ownershipVerifiedChanged
+
   proc observedAccountChanged*(self: KeyPairItem) {.signal.}
   proc getObservedAccountAsVariant*(self: KeyPairItem): QVariant {.slot.} =
     return newQVariant(self.observedAccount)
@@ -288,4 +304,5 @@ QtObject:
     self.setMigratedToKeycard(item.getMigratedToKeycard())
     self.setLastUsedDerivationIndex(item.getLastUsedDerivationIndex())
     self.setAccounts(item.getAccountsModel().getItems())
+    self.setOwnershipVerified(item.getOwnershipVerified())
     self.setLastAccountAsObservedAccount()

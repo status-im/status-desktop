@@ -51,13 +51,14 @@ Control {
             enabled: d.dirty
             type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
             visible: root.isEditMode
-            icon.name: type === StatusBaseButton.Type.Normal && d.selectedAddressesDirty ? Constants.authenticationIconByType[root.loginType] : ""
+            icon.name: type === StatusBaseButton.Type.Normal && d.selectedAddressesDirty?
+                           !root.isEditMode? Constants.authenticationIconByType[root.loginType] : ""
+                            : ""
             text: d.lostCommunityPermission ? qsTr("Save changes & leave %1").arg(root.communityName) :
                                               d.lostChannelPermissions ? qsTr("Save changes & update my permissions")
-                                                                       : qsTr("Save changes")
+                                                                       : qsTr("Prove ownership")
             onClicked: {
-                root.saveSelectedAddressesClicked(root.selectedAirdropAddress, root.selectedSharedAddresses)
-                root.close()
+                root.prepareForSigning(root.selectedAirdropAddress, root.selectedSharedAddresses)
             }
         }
         StatusButton {
@@ -78,7 +79,7 @@ Control {
 
     signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
-    signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
+    signal prepareForSigning(string airdropAddress, var sharedAddresses)
 
     signal close()
 
@@ -118,11 +119,14 @@ Control {
 
     function setOldSharedAddresses(oldSharedAddresses) {
         d.initialSelectedSharedAddresses = oldSharedAddresses
+        accountSelector.selectedSharedAddresses = Qt.binding(() => d.initialSelectedSharedAddresses)
+        accountSelector.applyChange()
     }
 
     function setOldAirdropAddress(oldAirdropAddress) {
         d.initialSelectedAirdropAddress = oldAirdropAddress
-        accountSelector.selectedAirdropAddress = oldAirdropAddress
+        accountSelector.selectedAirdropAddress = Qt.binding(() => d.initialSelectedAirdropAddress)
+        accountSelector.applyChange()
     }
 
     SortFilterProxyModel {
@@ -178,7 +182,8 @@ Control {
             model: root.walletAccountsModel
             selectedSharedAddresses: d.initialSelectedSharedAddresses
             selectedAirdropAddress: d.initialSelectedAirdropAddress
-            onAddressesChanged: {
+            onAddressesChanged: accountSelector.applyChange()
+            function applyChange() {
                 root.selectedSharedAddresses = selectedSharedAddresses
                 root.selectedAirdropAddress = selectedAirdropAddress
                 root.sharedAddressesChanged(selectedAirdropAddress, selectedSharedAddresses)

@@ -109,6 +109,12 @@ QtObject:
       return
     item.setName(name)
 
+  proc setOwnershipVerified*(self: KeyPairModel, keyUid: string, ownershipVerified: bool) =
+    let item = self.findItemByKeyUid(keyUid)
+    if item.isNil:
+      return
+    item.setOwnershipVerified(ownershipVerified)
+
   proc setBalanceForAddress*(self: KeyPairModel, address: string, balance: CurrencyAmount) =
     for item in self.items:
       item.setBalanceForAddress(address, balance)

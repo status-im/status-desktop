@@ -242,7 +242,24 @@ SettingsContentBase {
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel
 
-            onJoined: chatStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
+            onPrepareForSigning: {
+                chatStore.prepareKeypairsForSigning(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress, false)
+
+                communityIntroDialog.keypairSigningModel = chatStore.communitiesModuleInst.keypairsSigningModel
+            }
+
+            onSignSharedAddressesForAllNonKeycardKeypairs: {
+                chatStore.signSharedAddressesForAllNonKeycardKeypairs()
+            }
+
+            onSignSharedAddressesForKeypair: {
+                chatStore.signSharedAddressesForKeypair(keyUid)
+            }
+
+            onJoinCommunity: {
+                chatStore.joinCommunityOrEditSharedAddresses()
+            }
+
             onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
 
             onSharedAddressesUpdated: {
@@ -250,6 +267,16 @@ SettingsContentBase {
             }
 
             onClosed: destroy()
+
+            Connections {
+                target: chatStore.communitiesModuleInst
+
+                function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                    if (!!communityIntroDialog.replaceItem) {
+                        communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                    }
+                }
+            }
         }
     }
 }

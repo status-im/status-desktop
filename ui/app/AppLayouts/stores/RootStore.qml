@@ -241,14 +241,20 @@ QtObject {
         mainModuleInst.windowDeactivated()
     }
 
-    function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
-        communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(
-            communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
+    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
+        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
     }
 
-    function editSharedAddressesWithAuthentication(communityId, addressesToShare = [], airdropAddress = "") {
-        communitiesModuleInst.editSharedAddressesWithAuthentication(
-            communityId, JSON.stringify(addressesToShare), airdropAddress)
+    function signSharedAddressesForAllNonKeycardKeypairs() {
+        communitiesModuleInst.signSharedAddressesForAllNonKeycardKeypairs()
+    }
+
+    function signSharedAddressesForKeypair(keyUid) {
+        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
+    }
+
+    function joinCommunityOrEditSharedAddresses() {
+        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
     }
 
     function updatePermissionsModel(communityId, sharedAddresses) {

@@ -1,26 +1,22 @@
-import stint, std/strutils
+import stint, std/strutils, uuids, os
 import ./io_interface
 
-import ../../../core/signals/types
-import ../../../core/eventemitter
-import ../../../../app_service/service/chat/dto/chat
-import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/network/service as networks_service
-import ../../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../../app_service/service/token/service as token_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import app/core/signals/types
+import app/core/eventemitter
+import app_service/service/chat/dto/chat
+import app_service/service/community/service as community_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/chat/service as chat_service
+import app_service/service/network/service as networks_service
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/token/service as token_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/keycard/service as keycard_service
 import backend/collectibles as backend_collectibles
-import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
-const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Action-Authentication"
-
-type
-  AuthenticationAction* {.pure.} = enum
-    None = 0,
-    CommunityJoin = 1,
-    CommunitySharedAddressesJoin = 2,
+const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"
+const UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER* = "CommunitiesModule-Signing"
 
 type
   Controller* = ref object of RootObj
@@ -32,13 +28,13 @@ type
     networksService: networks_service.Service
     tokenService: token_service.Service
     chatService: chat_service.Service
-    tmpCommunityId: string
-    tmpCommunityIdForChannelsPermisisons: string
-    tmpCommunityIdForRevealedAccounts: string
-    tmpAuthenticationAction: AuthenticationAction
-    tmpRequestToJoinEnsName: string
-    tmpAddressesToShare: seq[string]
-    tmpAirdropAddress: string
+    walletAccountService: wallet_account_service.Service
+    keycardService: keycard_service.Service
+    connectionKeycardResponse: UUID
+    ## the following are used for silent signing in case there are more then a single address for the same keypair
+    silentSigningPath: string
+    silentSigningKeyUid: string
+    silentSigningPin: string
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -49,6 +45,8 @@ proc newController*(
     networksService: networks_service.Service,
     tokenService: token_service.Service,
     chatService: chat_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    keycardService: keycard_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -59,12 +57,8 @@ proc newController*(
   result.networksService = networksService
   result.tokenService = tokenService
   result.chatService = chatService
-  result.tmpCommunityId = ""
-  result.tmpCommunityIdForChannelsPermisisons = ""
-  result.tmpCommunityIdForRevealedAccounts = ""
-  result.tmpRequestToJoinEnsName = ""
-  result.tmpAirdropAddress = ""
-  result.tmpAddressesToShare = @[]
+  result.walletAccountService = walletAccountService
+  result.keycardService = keycardService
 
 proc delete*(self: Controller) =
   discard
@@ -171,28 +165,22 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
     let args = CheckPermissionsToJoinResponseArgs(e)
-    if (args.communityId == self.tmpCommunityId):
-      self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
-      self.tmpCommunityId = ""
+    self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
 
   self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
     let args = CheckAllChannelsPermissionsResponseArgs(e)
-    if args.communityId == self.tmpCommunityIdForChannelsPermisisons:
-      self.delegate.onCommunityCheckAllChannelsPermissionsResponse(
-        args.communityId,
-        args.checkAllChannelsPermissionsResponse,
-      )
-      self.tmpCommunityIdForChannelsPermisisons = ""
+    self.delegate.onCommunityCheckAllChannelsPermissionsResponse(
+      args.communityId,
+      args.checkAllChannelsPermissionsResponse,
+    )
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):
     let args = CommunityMemberRevealedAccountsArgs(e)
-    if self.tmpCommunityIdForRevealedAccounts == args.communityId:
-      self.delegate.onCommunityMemberRevealedAccountsLoaded(
-        args.communityId,
-        args.memberPubkey,
-        args.memberRevealedAccounts,
-      )
-      self.tmpCommunityIdForRevealedAccounts = ""
+    self.delegate.onCommunityMemberRevealedAccountsLoaded(
+      args.communityId,
+      args.memberPubkey,
+      args.memberRevealedAccounts,
+    )
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
@@ -210,6 +198,12 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
       let args = CheckChannelsPermissionsErrorArgs(e)
       self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER:
+      return
+    self.delegate.onDataSigned(args.keyUid, args.path, args.r, args.s, args.v, args.pin)
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
@@ -363,78 +357,92 @@ proc shareCommunityChannelUrlWithChatKey*(self: Controller, communityId: string,
 proc shareCommunityChannelUrlWithData*(self: Controller, communityId: string, chatId: string): string =
   return self.communityService.shareCommunityChannelUrlWithData(communityId, chatId)
 
-proc userAuthenticationCanceled*(self: Controller) =
-  self.tmpAuthenticationAction = AuthenticationAction.None
-  self.tmpCommunityId = ""
-  self.tmpCommunityIdForChannelsPermisisons = ""
-  self.tmpRequestToJoinEnsName = ""
-  self.tmpAirdropAddress = ""
-  self.tmpAddressesToShare = @[]
+proc asyncRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string, addressesToShare: seq[string],
+  airdropAddress: string, signatures: seq[string]) =
+  self.communityService.asyncRequestToJoinCommunity(communityId, ensName, addressesToShare, airdropAddress,
+    signatures)
 
-proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
-  self.communityService.asyncRequestToJoinCommunity(
-    self.tmpCommunityId,
-    self.tmpRequestToJoinEnsName,
-    password,
-    self.tmpAddressesToShare,
-    self.tmpAirdropAddress
-  )
-  self.tmpAuthenticationAction = AuthenticationAction.None
-  self.tmpCommunityId = ""
-  self.tmpRequestToJoinEnsName = ""
-  self.tmpAirdropAddress = ""
-  self.tmpAddressesToShare = @[]
+proc asyncEditSharedAddresses*(self: Controller, communityId: string, addressesToShare: seq[string],
+  airdropAddress: string, signatures: seq[string]) =
+  self.communityService.asyncEditSharedAddresses(communityId, addressesToShare, airdropAddress, signatures)
 
-proc editSharedAddressesAuthenticated*(self: Controller, password: string) =
-  self.communityService.asyncEditSharedAddresses(
-    self.tmpCommunityId,
-    password,
-    self.tmpAddressesToShare,
-    self.tmpAirdropAddress,
-  )
-  self.tmpAuthenticationAction = AuthenticationAction.None
-  self.tmpCommunityId = ""
-  self.tmpAirdropAddress = ""
-  self.tmpAddressesToShare = @[]
-
-proc userAuthenticated*(self: Controller, password: string) =
-  if self.tmpAuthenticationAction == AuthenticationAction.CommunityJoin:
-    self.requestToJoinCommunityAuthenticated(password)
-  elif self.tmpAuthenticationAction == AuthenticationAction.CommunitySharedAddressesJoin:
-    self.editSharedAddressesAuthenticated(password)
-
-proc authenticate*(self: Controller, keyUid = "") =
-  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER,
-    keyUid: keyUid)
+proc authenticate*(self: Controller) =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
-
-proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string, addressesToShare: seq[string], airdropAddress: string) =
-  self.tmpCommunityId = communityId
-  self.tmpAuthenticationAction = AuthenticationAction.CommunityJoin
-  self.tmpRequestToJoinEnsName = ensName
-  self.tmpAirdropAddress = airdropAddress
-  self.tmpAddressesToShare = addressesToShare
-  self.authenticate()
-
-proc authenticateToEditSharedAddresses*(self: Controller, communityId: string, addressesToShare: seq[string], airdropAddress: string) =
-  self.tmpCommunityId = communityId
-  self.tmpAuthenticationAction = AuthenticationAction.CommunitySharedAddressesJoin
-  self.tmpAirdropAddress = airdropAddress
-  self.tmpAddressesToShare = addressesToShare
-  self.authenticate()
-
 
 proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
   result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
 proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string]) =
-  self.tmpCommunityId = communityId
   self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare)
 
 proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string]) =
-  self.tmpCommunityIdForChannelsPermisisons = communityId
   self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
 
 proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
-  self.tmpCommunityIdForRevealedAccounts = communityId
   self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
+
+proc generateJoiningCommunityRequestsForSigning*(self: Controller, memberPubKey: string, communityId: string,
+  addressesToReveal: seq[string]): seq[SignParamsDto] =
+  return self.communityService.generateJoiningCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+
+proc generateEditCommunityRequestsForSigning*(self: Controller, memberPubKey: string, communityId: string,
+  addressesToReveal: seq[string]): seq[SignParamsDto] =
+  return self.communityService.generateEditCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+
+proc signCommunityRequests*(self: Controller, communityId: string, signParams: seq[SignParamsDto]): seq[string] =
+  return self.communityService.signCommunityRequests(communityId, signParams)
+
+proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
+  return self.walletAccountService.getKeypairByAccountAddress(address)
+
+proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
+  return self.walletAccountService.getKeypairByKeyUid(keyUid)
+
+proc getKeypairs*(self: Controller): seq[KeypairDto] =
+  return self.walletAccountService.getKeypairs()
+
+proc disconnectKeycardReponseSignal(self: Controller) =
+  self.events.disconnect(self.connectionKeycardResponse)
+
+proc connectKeycardReponseSignal(self: Controller) =
+  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+    let args = KeycardLibArgs(e)
+    self.disconnectKeycardReponseSignal()
+    let currentFlow = self.keycardService.getCurrentFlow()
+    if currentFlow != KCSFlowType.Sign:
+      return
+    let keyUid = self.silentSigningKeyUid
+    let path = self.silentSigningPath
+    let pin = self.silentSigningPin
+    self.silentSigningKeyUid = ""
+    self.silentSigningPath = ""
+    self.silentSigningPin = ""
+    self.delegate.onDataSigned(keyUid, path, args.flowEvent.txSignature.r, args.flowEvent.txSignature.s, args.flowEvent.txSignature.v, pin)
+
+proc cancelCurrentFlow*(self: Controller) =
+  self.keycardService.cancelCurrentFlow()
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
+  sleep(200)
+
+proc runSignFlow(self: Controller, pin, path, dataToSign: string) =
+  self.cancelCurrentFlow()
+  self.connectKeycardReponseSignal()
+  self.keycardService.startSignFlow(path, dataToSign, pin)
+
+proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataToSign: string, pin: string) =
+  var finalDataToSign = dataToSign
+  if finalDataToSign.startsWith("0x"):
+    finalDataToSign = finalDataToSign[2..^1]
+  if pin.len == 0:
+    let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
+      keyUid: keyUid,
+      path: path,
+      dataToSign: finalDataToSign)
+    self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA, data)
+    return
+  self.silentSigningKeyUid = keyUid
+  self.silentSigningPath = path
+  self.silentSigningPin = pin
+  self.runSignFlow(pin, path, finalDataToSign)

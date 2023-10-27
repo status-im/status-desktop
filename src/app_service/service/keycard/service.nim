@@ -346,7 +346,7 @@ QtObject:
     self.currentFlow = KCSFlowType.StoreMetadata
     self.startFlow(payload)
 
-  proc startSignFlow*(self: Service, bip44Path: string, txHash: string, pin: string) =
+  proc startSignFlow*(self: Service, bip44Path: string, txHash: string, pin: string = "") =
     var payload = %* {
       RequestParamTXHash: EmptyTxHash,
       RequestParamBIP44Path: DefaultBIP44Path

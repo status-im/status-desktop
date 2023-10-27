@@ -229,8 +229,22 @@ StackLayout {
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
 
-            onJoined: {
-                root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
+            onPrepareForSigning: {
+                root.rootStore.prepareKeypairsForSigning(sharedAddresses)
+
+                communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+            }
+
+            onSignSharedAddressesForAllNonKeycardKeypairs: {
+                root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+            }
+
+            onSignSharedAddressesForKeypair: {
+                root.rootStore.signSharedAddressesForKeypair(keyUid)
+            }
+
+            onJoinCommunity: {
+                root.rootStore.joinCommunityOrEditSharedAddresses()
             }
 
             onCancelMembershipRequest: {
@@ -244,6 +258,16 @@ StackLayout {
 
             onClosed: {
                 destroy()
+            }
+
+            Connections {
+                target: root.rootStore.communitiesModuleInst
+
+                function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                    if (!!communityIntroDialog.replaceItem) {
+                        communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                    }
+                }
             }
         }
     }
