@@ -30,6 +30,7 @@ ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
 ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
 RequirementsCheckPendingLoader 1.0 RequirementsCheckPendingLoader.qml
 SharedAddressesPanel 1.0 SharedAddressesPanel.qml
+SharedAddressesSigningPanel 1.0 SharedAddressesSigningPanel.qml
 SortableTokenHoldersList 1.0 SortableTokenHoldersList.qml
 SortableTokenHoldersPanel 1.0 SortableTokenHoldersPanel.qml
 TagsPanel 1.0 TagsPanel.qml

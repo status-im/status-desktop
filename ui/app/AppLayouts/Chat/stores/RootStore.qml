@@ -394,8 +394,20 @@ QtObject {
         return communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
-    function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
-        communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
+    function prepareKeypairsForSigning(communityId, ensName, addressesToShare = [], airdropAddress = "", editMode = false) {
+        communitiesModuleInst.prepareKeypairsForSigning(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress, editMode)
+    }
+
+    function signSharedAddressesForAllNonKeycardKeypairs() {
+        communitiesModuleInst.signSharedAddressesForAllNonKeycardKeypairs()
+    }
+
+    function signSharedAddressesForKeypair(keyUid) {
+        communitiesModuleInst.signSharedAddressesForKeypair(keyUid)
+    }
+
+    function joinCommunityOrEditSharedAddresses() {
+        communitiesModuleInst.joinCommunityOrEditSharedAddresses()
     }
 
     function getChainIdForChat() {
@@ -612,9 +624,9 @@ QtObject {
         readonly property bool amIMember: chatCommunitySectionModule ? chatCommunitySectionModule.amIMember : false
 
         property var oneToOneChatContact: undefined
-        readonly property string oneToOneChatContactName: !!_d.oneToOneChatContact ? ProfileUtils.displayName(_d.oneToOneChatContact.localNickname, 
-                                                                                                    _d.oneToOneChatContact.name, 
-                                                                                                    _d.oneToOneChatContact.displayName, 
+        readonly property string oneToOneChatContactName: !!_d.oneToOneChatContact ? ProfileUtils.displayName(_d.oneToOneChatContact.localNickname,
+                                                                                                    _d.oneToOneChatContact.name,
+                                                                                                    _d.oneToOneChatContact.displayName,
                                                                                                     _d.oneToOneChatContact.alias) : ""
 
         //Update oneToOneChatContact when the contact is updated
@@ -674,7 +686,7 @@ QtObject {
 
         //Update oneToOneChatContact when activeChat id changes
         Binding on oneToOneChatContact {
-            when: _d.activeChatId && _d.activeChatType === Constants.chatType.oneToOne 
+            when: _d.activeChatId && _d.activeChatType === Constants.chatType.oneToOne
             value: Utils.getContactDetailsAsJson(_d.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }

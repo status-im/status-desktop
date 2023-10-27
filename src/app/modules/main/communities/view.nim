@@ -2,7 +2,7 @@ import NimQml, json, strutils, sequtils
 
 import ./io_interface
 import ../../shared_models/[section_model, section_item, token_list_model, token_list_item,
-  token_permissions_model]
+  token_permissions_model, keypair_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
 import ./models/discord_file_item
@@ -55,6 +55,8 @@ QtObject:
       checkingPermissionsInProgress: bool
       myRevealedAddressesStringForCurrentCommunity: string
       myRevealedAirdropAddressForCurrentCommunity: string
+      keypairsSigningModel: KeyPairModel
+      keypairsSigningModelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
@@ -75,6 +77,10 @@ QtObject:
     self.tokenListModelVariant.delete
     self.collectiblesListModel.delete
     self.collectiblesListModelVariant.delete
+    if not self.keypairsSigningModel.isNil:
+      self.keypairsSigningModel.delete
+    if not self.keypairsSigningModelVariant.isNil:
+      self.keypairsSigningModelVariant.delete
 
     self.QObject.delete
 
@@ -318,6 +324,15 @@ QtObject:
   proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
     self.delegate.prepareTokenModelForCommunity(communityId)
 
+  proc signSharedAddressesForAllNonKeycardKeypairs*(self: View) {.slot.} =
+    self.delegate.signSharedAddressesForAllNonKeycardKeypairs()
+
+  proc signSharedAddressesForKeypair*(self: View, keyUid: string) {.slot.} =
+    self.delegate.signSharedAddressesForKeypair(keyUid, pin = "")
+
+  proc joinCommunityOrEditSharedAddresses*(self: View) {.slot.} =
+    self.delegate.joinCommunityOrEditSharedAddresses()
+
   proc checkPermissions*(self: View, communityId: string, addressesToShare: string) {.slot.} =
     try:
       let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
@@ -460,7 +475,7 @@ QtObject:
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.slot.} =
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
                                   bannerJsonStr)
 
   proc clearFileList*(self: View) {.slot.} =
@@ -673,25 +688,9 @@ QtObject:
   proc shareCommunityChannelUrlWithData*(self: View, communityId: string, chatId: string): string {.slot.} =
     return self.delegate.shareCommunityChannelUrlWithData(communityId, chatId)
 
-  proc userAuthenticationCanceled*(self: View) {.signal.}
-
-  proc requestToJoinCommunityWithAuthentication*(self: View, communityId: string, ensName: string) {.slot.} =
-    self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, @[], "")
-
-  proc requestToJoinCommunityWithAuthenticationWithSharedAddresses*(self: View, communityId: string, ensName: string,
-      addressesToShare: string, airdropAddress: string) {.slot.} =
-    try:
-      let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, addressesArray, airdropAddress)
-    except Exception as e:
-      echo "Error requesting to join community with authentication and shared addresses: ", e.msg
-
-  proc editSharedAddressesWithAuthentication*(self: View, communityId: string, addressesToShare: string, airdropAddress: string) {.slot.} =
-    try:
-      let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.editSharedAddressesWithAuthentication(communityId, addressesArray, airdropAddress)
-    except Exception as e:
-      echo "Error editing shared addresses with authentication: ", e.msg
+  proc prepareKeypairsForSigning*(self: View, communityId: string, ensName: string, addresses: string,
+    airdropAddress: string, editMode: bool) {.slot.} =
+    self.delegate.prepareKeypairsForSigning(communityId, ensName, addresses, airdropAddress, editMode)
 
   proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
     result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
@@ -731,3 +730,25 @@ QtObject:
   QtProperty[bool] requirementsCheckPending:
     read = getCheckingPermissionsInProgress
     notify = checkingPermissionsInProgressChanged
+
+  proc keypairsSigningModel*(self: View): KeyPairModel =
+    return self.keypairsSigningModel
+
+  proc keypairsSigningModelChanged*(self: View) {.signal.}
+  proc getKeypairsSigningModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.keypairsSigningModel)
+  QtProperty[QVariant] keypairsSigningModel:
+    read = getKeypairsSigningModel
+    notify = keypairsSigningModelChanged
+
+  proc setKeypairsSigningModelItems*(self: View, items: seq[KeyPairItem]) =
+    if self.keypairsSigningModel.isNil:
+      self.keypairsSigningModel = newKeyPairModel()
+    if self.keypairsSigningModelVariant.isNil:
+      self.keypairsSigningModelVariant = newQVariant(self.keypairsSigningModel)
+    self.keypairsSigningModel.setItems(items)
+    self.keypairsSigningModelChanged()
+
+  proc sharedAddressesForAllNonKeycardKeypairsSigned(self: View) {.signal.}
+  proc sendSharedAddressesForAllNonKeycardKeypairsSignedSignal*(self: View) =
+    self.sharedAddressesForAllNonKeycardKeypairsSigned()

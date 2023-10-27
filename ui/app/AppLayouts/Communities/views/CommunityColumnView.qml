@@ -61,7 +61,8 @@ Item {
                                                         || root.communitiesStore.discordImportInProgress
 
         property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
-        property bool isJoinBtnLoading: false
+
+        property bool joiningCommunityInProgress: false
     }
 
     ColumnHeaderPanel {
@@ -468,7 +469,7 @@ Item {
             anchors.bottomMargin: Style.current.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: !root.communityData.amIBanned
-            loading: d.isJoinBtnLoading
+            loading: d.joiningCommunityInProgress
 
             text: {
                 if (root.communityData.amIBanned) return qsTr("You were banned from community")
@@ -479,22 +480,23 @@ Item {
             }
 
             onClicked: {
-                Global.openPopup(communityIntroDialog);
+                Global.openPopup(communityIntroDialogComponent);
             }
 
             Connections {
-                enabled: d.isJoinBtnLoading
+                enabled: d.joiningCommunityInProgress
                 target: root.store.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
                     if (communityId === communityData.id) {
                         d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
-                        d.isJoinBtnLoading = false
+                        d.joiningCommunityInProgress = false
                     }
                 }
-                function onCommunityAccessFailed(communityId: string) {
+
+                function onCommunityAccessFailed(communityId: string, error: string) {
                     if (communityId === communityData.id) {
                         d.invitationPending = false
-                        d.isJoinBtnLoading = false
+                        d.joiningCommunityInProgress = false
                         Global.displayToastMessage(qsTr("Request to join failed"),
                                                    qsTr("Please try again later"),
                                                    "",
@@ -503,15 +505,12 @@ Item {
                                                    "")
                     }
                 }
-                function onUserAuthenticationCanceled() {
-                    d.invitationPending = false
-                    d.isJoinBtnLoading = false
-                }
             }
 
             Component {
-                id: communityIntroDialog
+                id: communityIntroDialogComponent
                 CommunityIntroDialog {
+                    id: communityIntroDialog
 
                     isInvitationPending: d.invitationPending
                     requirementsCheckPending: root.store.requirementsCheckPending
@@ -528,19 +527,47 @@ Item {
                     assetsModel: root.store.assetsModel
                     collectiblesModel: root.store.collectiblesModel
 
-                    onJoined: {
-                        d.isJoinBtnLoading = true
-                        root.store.requestToJoinCommunityWithAuthentication(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress)
+                    onPrepareForSigning: {
+                        root.store.prepareKeypairsForSigning(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress, false)
+
+                        communityIntroDialog.keypairSigningModel = root.store.communitiesModuleInst.keypairsSigningModel
                     }
+
+                    onSignSharedAddressesForAllNonKeycardKeypairs: {
+                        root.store.signSharedAddressesForAllNonKeycardKeypairs()
+                    }
+
+                    onSignSharedAddressesForKeypair: {
+                        root.store.signSharedAddressesForKeypair(keyUid)
+                    }
+
+                    onJoinCommunity: {
+                        d.joiningCommunityInProgress = true
+                        root.store.joinCommunityOrEditSharedAddresses()
+                    }
+
                     onCancelMembershipRequest: {
                         root.store.cancelPendingRequest(communityData.id)
                         d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                     }
+
                     onSharedAddressesUpdated: {
                         root.store.updatePermissionsModel(communityData.id, sharedAddresses)
                     }
 
-                    onClosed: destroy()
+                    onClosed: {
+                        destroy()
+                    }
+
+                    Connections {
+                        target: root.store.communitiesModuleInst
+
+                        function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                            if (!!communityIntroDialog.replaceItem) {
+                                communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -157,15 +157,15 @@ type
   AsyncRequestToJoinCommunityTaskArg = ref object of QObjectTaskArg
     communityId: string
     ensName: string
-    password: string
     addressesToShare: seq[string]
+    signatures: seq[string]
     airdropAddress: string
 
 const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestToJoinCommunityTaskArg](argEncoded)
   try:
-    let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.password, arg.addressesToShare,
-      arg.airdropAddress)
+    let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.addressesToShare,
+      arg.signatures, arg.airdropAddress)
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,
@@ -180,14 +180,14 @@ const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe,
 type
   AsyncEditSharedAddressesTaskArg = ref object of QObjectTaskArg
     communityId: string
-    password: string
     addressesToShare: seq[string]
+    signatures: seq[string]
     airdropAddress: string
 
 const asyncEditSharedAddressesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncEditSharedAddressesTaskArg](argEncoded)
   try:
-    let response = status_go.editSharedAddresses(arg.communityId, arg.password, arg.addressesToShare,
+    let response = status_go.editSharedAddresses(arg.communityId, arg.addressesToShare, arg.signatures,
       arg.airdropAddress)
     arg.finish(%* {
       "response": response,

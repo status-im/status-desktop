@@ -2,6 +2,7 @@ import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strut
 import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto
+import ./dto/sign_params as sign_params_dto
 import ../community_tokens/dto/community_token as community_token_dto
 
 import ../activity_center/service as activity_center_service
@@ -20,7 +21,7 @@ import ../../../app_service/common/utils
 
 include ./async_tasks
 
-export community_dto
+export community_dto, sign_params_dto
 
 logScope:
   topics = "community-service"
@@ -1503,8 +1504,52 @@ QtObject:
         error: errMsg,
       ))
 
-  proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string,
-      addressesToShare: seq[string], airdropAddress: string) =
+  proc generateJoiningCommunityRequestsForSigning*(self: Service, memberPubKey: string, communityId: string,
+    addressesToReveal: seq[string]): seq[SignParamsDto] =
+    try:
+      let response = status_go.generateJoiningCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      result = map(response.result.getElems(), x => x.toSignParamsDto())
+    except Exception as e:
+      error "Error while generating join community request", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_FAILED, CommunityRequestFailedArgs(
+        communityId: communityId,
+        error: e.msg
+      ))
+
+  proc generateEditCommunityRequestsForSigning*(self: Service, memberPubKey: string, communityId: string,
+    addressesToReveal: seq[string]): seq[SignParamsDto] =
+    try:
+      let response = status_go.generateEditCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      result = map(response.result.getElems(), x => x.toSignParamsDto())
+    except Exception as e:
+      error "Error while generating edit community request", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED, CommunityRequestFailedArgs(
+        communityId: communityId,
+        error: e.msg
+      ))
+
+  proc signCommunityRequests*(self: Service, communityId: string, signParams: seq[SignParamsDto]): seq[string] =
+    try:
+      var data = %* []
+      for param in signParams:
+        data.add(param.toJson())
+      let response = status_go.signData(data)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+      result = map(response.result.getElems(), x => x.getStr())
+    except Exception as e:
+      error "Error while signing joining community request", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_FAILED, CommunityRequestFailedArgs(
+        communityId: communityId,
+        error: e.msg
+      ))
+
+  proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, addressesToShare: seq[string],
+    airdropAddress: string, signatures: seq[string]) =
     try:
       let arg = AsyncRequestToJoinCommunityTaskArg(
         tptr: cast[ByteAddress](asyncRequestToJoinCommunityTask),
@@ -1512,8 +1557,8 @@ QtObject:
         slot: "onAsyncRequestToJoinCommunityDone",
         communityId: communityId,
         ensName: ensName,
-        password: if password != "": utils.hashPassword(password) else: "",
         addressesToShare: addressesToShare,
+        signatures: signatures,
         airdropAddress: airdropAddress,
       )
       self.threadpool.start(arg)
@@ -1539,15 +1584,15 @@ QtObject:
         error: e.msg
       ))
 
-  proc asyncEditSharedAddresses*(self: Service, communityId: string, password: string, addressesToShare: seq[string],
-      airdropAddress: string) =
+  proc asyncEditSharedAddresses*(self: Service, communityId: string, addressesToShare: seq[string], airdropAddress: string,
+    signatures: seq[string]) =
     let arg = AsyncEditSharedAddressesTaskArg(
       tptr: cast[ByteAddress](asyncEditSharedAddressesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncEditSharedAddressesDone",
       communityId: communityId,
-      password: if password != "": utils.hashPassword(password) else: "",
       addressesToShare: addressesToShare,
+      signatures: signatures,
       airdropAddress: airdropAddress,
     )
     self.threadpool.start(arg)

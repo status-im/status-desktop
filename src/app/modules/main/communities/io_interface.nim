@@ -159,10 +159,10 @@ method curatedCommunitiesLoadingFailed*(self: AccessInterface) {.base.} =
 method curatedCommunitiesLoaded*(self: AccessInterface, curatedCommunities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method communityInfoAlreadyRequested*(self: AccessInterface) {.base.} = 
+method communityInfoAlreadyRequested*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string, tokenMetadata: CommunityTokensMetadataDto) {.base.} = 
+method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string, tokenMetadata: CommunityTokensMetadataDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onWalletAccountTokensRebuilt*(self: AccessInterface) {.base.} =
@@ -183,12 +183,20 @@ method shareCommunityChannelUrlWithData*(self: AccessInterface, communityId: str
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestToJoinCommunityWithAuthentication*(self: AccessInterface, communityId, ensName: string, addressesToShare: seq[string],
-    airdropAddress: string) {.base.} =
+method onDataSigned*(self: AccessInterface, keyUid: string, path: string, r: string, s: string, v: string, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method editSharedAddressesWithAuthentication*(self: AccessInterface, communityId: string, addressesToShare: seq[string], airdropAddress: string)
-    {.base.} =
+method prepareKeypairsForSigning*(self: AccessInterface, communityId: string, ensName: string, addresses: string,
+  airdropAddress: string, editMode: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method signSharedAddressesForAllNonKeycardKeypairs*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method signSharedAddressesForKeypair*(self: AccessInterface, keyUid: string, pin: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method joinCommunityOrEditSharedAddresses*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =

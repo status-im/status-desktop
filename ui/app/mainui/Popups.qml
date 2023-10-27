@@ -531,7 +531,24 @@ QtObject {
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
-                onJoined: root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress)
+                onPrepareForSigning: {
+                    root.rootStore.prepareKeypairsForSigning(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress, false)
+
+                    communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                }
+
+                onSignSharedAddressesForAllNonKeycardKeypairs: {
+                    root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+                }
+
+                onSignSharedAddressesForKeypair: {
+                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                }
+
+                onJoinCommunity: {
+                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                }
+
                 onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
                 Connections {
                     target: root.communitiesStore.communitiesModuleInst
@@ -541,12 +558,9 @@ QtObject {
                         root.communitiesStore.spectateCommunity(communityId);
                         communityIntroDialog.close();
                     }
-                    function onCommunityAccessFailed(communityId: string) {
+                    function onCommunityAccessFailed(communityId: string, error: string) {
                         if (communityId !== communityIntroDialog.communityId)
                             return
-                        communityIntroDialog.close();
-                    }
-                    function onUserAuthenticationCanceled() {
                         communityIntroDialog.close();
                     }
                 }
@@ -555,6 +569,16 @@ QtObject {
                 }
                 onAboutToShow: { root.rootStore.communityKeyToImport = communityIntroDialog.communityId; }
                 onClosed: { root.rootStore.communityKeyToImport = ""; destroy(); }
+
+                Connections {
+                    target: root.rootStore.communitiesModuleInst
+
+                    function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                        if (!!communityIntroDialog.replaceItem) {
+                            communityIntroDialog.replaceLoader.item.sharedAddressesForAllNonKeycardKeypairsSigned()
+                        }
+                    }
+                }
             }
         },
 
@@ -738,9 +762,33 @@ QtObject {
 
                 onSharedAddressesChanged: root.rootStore.updatePermissionsModel(
                     editSharedAddressesPopup.communityId, sharedAddresses)
-                onSaveSelectedAddressesClicked: root.rootStore.editSharedAddressesWithAuthentication(
-                    editSharedAddressesPopup.communityId, sharedAddresses, airdropAddress)
+                onPrepareForSigning: {
+                    root.rootStore.prepareKeypairsForSigning(editSharedAddressesPopup.communityId, "", sharedAddresses, airdropAddress, true)
+
+                    editSharedAddressesPopup.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
+                }
+
+                onSignSharedAddressesForAllNonKeycardKeypairs: {
+                    root.rootStore.signSharedAddressesForAllNonKeycardKeypairs()
+                }
+
+                onSignSharedAddressesForKeypair: {
+                    root.rootStore.signSharedAddressesForKeypair(keyUid)
+                }
+
+                onEditRevealedAddresses: {
+                    root.rootStore.joinCommunityOrEditSharedAddresses()
+                }
+
                 onClosed: destroy()
+
+                Connections {
+                    target: root.rootStore.communitiesModuleInst
+
+                    function onSharedAddressesForAllNonKeycardKeypairsSigned() {
+                        editSharedAddressesPopup.sharedAddressesForAllNonKeycardKeypairsSigned()
+                    }
+                }
             }
         },
 
