@@ -23,6 +23,7 @@ type
     color*: string
     isCustom* {.dontSerialize.}: bool
     isVisible* {.dontSerialize.}: bool
+    communityId*: string
 
 proc newTokenDto*(
   name: string,
@@ -32,6 +33,7 @@ proc newTokenDto*(
   decimals: int,
   hasIcon: bool,
   isCustom: bool = false,
+  communityId: string = ""
 ): TokenDto =
   return TokenDto(
     name: name,
@@ -40,6 +42,7 @@ proc newTokenDto*(
     symbol: symbol,
     decimals: decimals,
     hasIcon: hasIcon,
+    communityId: communityId,
     isCustom: isCustom
   )
 
@@ -54,6 +57,7 @@ proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCu
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("color", result.color)
+  discard jsonObj.getProp("communityId", result.communityId)
   result.isVisible = isVisible
 
 proc addressAsString*(self: TokenDto): string =
