@@ -48,6 +48,8 @@ Item {
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
+        readonly property bool authenticationOrSigning: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                                                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign
     }
 
     Timer {
@@ -236,7 +238,7 @@ Item {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
                     return true
             }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication &&
+            if (d.authenticationOrSigning &&
                     !!root.sharedKeycardModule.keyPairForProcessing &&
                     root.sharedKeycardModule.keyPairForProcessing.name !== "") {
                 if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
@@ -429,7 +431,7 @@ Item {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard))
                     return keyPairForProcessingComponent
             }
-            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+            if (d.authenticationOrSigning) {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
@@ -758,19 +760,19 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                pattern: d.authenticationOrSigning?
                              "" : Constants.keycardAnimations.strongError.pattern
-                source: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                source: d.authenticationOrSigning?
                             Style.png("keycard/plain-error") : ""
-                startImgIndexForTheFirstLoop: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                startImgIndexForTheFirstLoop: d.authenticationOrSigning?
                                                   0 : Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
-                startImgIndexForOtherLoops: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                startImgIndexForOtherLoops: d.authenticationOrSigning?
                                                 0 : Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
-                endImgIndex: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                endImgIndex: d.authenticationOrSigning?
                                  0 : Constants.keycardAnimations.strongError.endImgIndex
-                duration: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                duration: d.authenticationOrSigning?
                               0 : Constants.keycardAnimations.strongError.duration
-                loops: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                loops: d.authenticationOrSigning?
                            -1 : Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
@@ -831,7 +833,7 @@ Item {
             PropertyChanges {
                 target: message
                 text: {
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                    if (d.authenticationOrSigning ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk ||

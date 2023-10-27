@@ -19,9 +19,10 @@ method getNextPrimaryState*(self: EnterPinState, controller: Controller): State 
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone):
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
-  if self.flowType == FlowType.Authentication:
-    if controller.getPin().len == PINLengthForStatusApp:
-      controller.enterKeycardPin(controller.getPin())
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign:
+      if controller.getPin().len == PINLengthForStatusApp:
+        controller.enterKeycardPin(controller.getPin())
 
 method executePreSecondaryStateCommand*(self: EnterPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
@@ -38,9 +39,10 @@ method executePreSecondaryStateCommand*(self: EnterPinState, controller: Control
     self.flowType == FlowType.MigrateFromAppToKeycard:
       if controller.getPin().len == PINLengthForStatusApp:
         controller.enterKeycardPin(controller.getPin())
-  if self.flowType == FlowType.Authentication:
-    controller.setUsePinFromBiometrics(false)
-    controller.tryToObtainDataFromKeychain()
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign:
+      controller.setUsePinFromBiometrics(false)
+      controller.tryToObtainDataFromKeychain()
 
 method executeCancelCommand*(self: EnterPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
@@ -49,6 +51,7 @@ method executeCancelCommand*(self: EnterPinState, controller: Controller) =
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
@@ -184,29 +187,30 @@ method resolveKeycardNextState*(self: EnterPinState, keycardFlowType: string, ke
       )) # name and other params will be set by the user during the flow
       controller.setKeyPairForProcessing(item)
       return createState(StateType.PinVerified, self.flowType, nil)
-  if self.flowType == FlowType.Authentication:
-    if keycardFlowType == ResponseTypeValueEnterPIN and
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorPIN:
-      controller.setRemainingAttempts(keycardEvent.pinRetries)
-      if keycardEvent.pinRetries > 0:
-        if singletonInstance.userProfile.getUsingBiometricLogin() and not controller.usePinFromBiometrics():
-          return createState(StateType.WrongKeychainPin, self.flowType, nil)
-        return createState(StateType.WrongPin, self.flowType, nil)
-      return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPIN and
-      keycardEvent.error.len == 0:
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign:
+      if keycardFlowType == ResponseTypeValueEnterPIN and
+        keycardEvent.error.len > 0 and
+        keycardEvent.error == ErrorPIN:
+        controller.setRemainingAttempts(keycardEvent.pinRetries)
+        if keycardEvent.pinRetries > 0:
+          if singletonInstance.userProfile.getUsingBiometricLogin() and not controller.usePinFromBiometrics():
+            return createState(StateType.WrongKeychainPin, self.flowType, nil)
+          return createState(StateType.WrongPin, self.flowType, nil)
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and
-      keycardEvent.error.len == 0:
-        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+      if keycardFlowType == ResponseTypeValueEnterPIN and
+        keycardEvent.error.len == 0:
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-      if keycardEvent.error.len == 0:
-        if controller.offerToStoreUpdatedPinToKeychain():
-          controller.tryToStoreDataToKeychain(controller.getPin())
-        controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
-        return nil
+      if keycardFlowType == ResponseTypeValueEnterPUK and
+        keycardEvent.error.len == 0:
+          if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+            return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+      if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+        if keycardEvent.error.len == 0:
+          if controller.offerToStoreUpdatedPinToKeychain():
+            controller.tryToStoreDataToKeychain(controller.getPin())
+          controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+          return nil
   if self.flowType == FlowType.DisplayKeycardContent:
     if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and

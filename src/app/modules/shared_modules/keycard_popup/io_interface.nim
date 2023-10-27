@@ -21,6 +21,7 @@ type FlowType* {.pure.} = enum
   CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
   MigrateFromKeycardToApp = "MigrateFromKeycardToApp"
   MigrateFromAppToKeycard = "MigrateFromAppToKeycard"
+  Sign = "Sign"
 
 # For the following flows we don't run card syncing.
 const FlowsWeShouldNotTryAKeycardSyncFor* = @[
@@ -35,6 +36,7 @@ const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.CreateCopyOfAKeycard,
   FlowType.MigrateFromKeycardToApp,
   FlowType.MigrateFromAppToKeycard,
+  FlowType.Sign,
 ]
 
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"

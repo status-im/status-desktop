@@ -33,6 +33,7 @@ type
     initialized: bool
     tmpLocalState: State # used when flow is run, until response arrives to determine next state appropriatelly
     authenticationPopupIsAlreadyRunning: bool
+    runningFlow: FlowType # in general used to mark the global shared flow that is being running (`Authentication` or `Sign`)
 
 proc newModule*[T](delegate: T,
   uniqueIdentifier: string,
@@ -53,6 +54,7 @@ proc newModule*[T](delegate: T,
     networkService, privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
+  result.runningFlow = FlowType.General
 
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -209,8 +211,9 @@ proc preStateActivities[T](self: Module[T], currFlowType: FlowType, nextStateTyp
       let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
       self.controller.setCurrentKeycardStateToLocked(flowEvent.keyUid, flowEvent.instanceUID)
 
-  if currFlowType == FlowType.Authentication:
-    self.view.setLockedPropForKeyPairForProcessing(nextStateType == StateType.MaxPinRetriesReached)
+  if currFlowType == FlowType.Authentication or
+    currFlowType == FlowType.Sign:
+      self.view.setLockedPropForKeyPairForProcessing(nextStateType == StateType.MaxPinRetriesReached)
 
   if currFlowType == FlowType.UnlockKeycard:
     if nextStateType == StateType.UnlockKeycardOptions:
@@ -467,9 +470,8 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
   self.view.setKeyPairForProcessing(item)
 
 method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "", forceFlow = false, returnToFlow = FlowType.General) =
-  ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account
-  ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then
-  ## default key uid is always the key uid of the logged in user.
+  ## In case of `Authentication` or `Sign` flow, if keyUid is provided, that keypair will be authenticated,
+  ## otherwise the logged in profile will be authenticated.
   if flowToRun == FlowType.General:
     self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
     error "sm_cannot run an general flow"
@@ -501,15 +503,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
       self.controller.runLoadAccountFlow()
     return
   if flowToRun == FlowType.Authentication:
-    self.controller.connectKeychainSignals()
+    self.runningFlow = flowToRun
     if keyUid.len == 0 or keyUid == singletonInstance.userProfile.getKeyUid():
       if singletonInstance.userProfile.getIsKeycardUser():
         self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
         self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
         self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid(), bip44Paths)
-        return
-      if singletonInstance.userProfile.getUsingBiometricLogin():
-        self.controller.tryToObtainDataFromKeychain()
+        if singletonInstance.userProfile.getUsingBiometricLogin():
+          self.controller.connectKeychainSignals()
+          self.controller.tryToObtainDataFromKeychain()
         return
       self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
       self.authenticationPopupIsAlreadyRunning = true
@@ -520,6 +522,36 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
       self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
       self.controller.runAuthenticationFlow(keyUid, bip44Paths)
       return
+  if flowToRun == FlowType.Sign:
+    if bip44Paths.len == 0 or bip44Paths[0].len == 0:
+      error "sm_cannot path must be set when signing"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    if txHash.len == 0:
+      error "sm_cannot txHash must be set when signing"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    var finalKeyUid = keyUid
+    if keyUid.len == 0:
+      finalKeyUid = singletonInstance.userProfile.getKeyUid()
+    let keypair = self.controller.getKeypairByKeyUid(finalKeyUid)
+    if keypair.isNil:
+      error "sm_cannot resolve a keypair for signing"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    if not keypair.migratedToKeycard():
+      error "sm_cannot sign flow is spcified only for keycard migrated keypairs"
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    self.runningFlow = flowToRun
+    self.prepareKeyPairItemForAuthentication(keyUid)
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runSignFlow(keyUid, bip44Paths[0], txHash)
+    if finalKeyUid == singletonInstance.userProfile.getKeyUid() and
+      singletonInstance.userProfile.getUsingBiometricLogin():
+        self.controller.connectKeychainSignals()
+        self.controller.tryToObtainDataFromKeychain()
+    return
   if flowToRun == FlowType.UnlockKeycard:
     ## since we can run unlock keycard flow from an already running flow, in order to avoid changing displayed keypair
     ## (locked keypair) we have to set keycard uid of a keycard used in the flow we're jumping from to `UnlockKeycard` flow.
@@ -684,7 +716,7 @@ method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string
         self.controller.readyToDisplayPopup()
       return
   if not currStateObj.isNil:
-    self.view.setCurrentState(newBiometricsPinFailedState(FlowType.Authentication, nil))
+    self.view.setCurrentState(newBiometricsPinFailedState(self.runningFlow, nil))
 
 method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
   let currStateObj = self.view.currentStateObj()
@@ -706,4 +738,4 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
       self.controller.setPin(data)
       self.controller.enterKeycardPin(data)
     else:
-      self.view.setCurrentState(newBiometricsPinInvalidState(FlowType.Authentication, nil))
+      self.view.setCurrentState(newBiometricsPinInvalidState(self.runningFlow, nil))

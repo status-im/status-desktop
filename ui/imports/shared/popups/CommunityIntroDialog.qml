@@ -32,7 +32,12 @@ StatusStackModal {
 
     required property bool requirementsCheckPending
 
-    signal joined(string airdropAddress, var sharedAddresses)
+    property var keypairSigningModel
+
+    signal prepareForSigning(string airdropAddress, var sharedAddresses)
+    signal joinCommunity()
+    signal signSharedAddressesForAllNonKeycardKeypairs()
+    signal signSharedAddressesForKeypair(string keyUid)
     signal cancelMembershipRequest()
     signal sharedAddressesUpdated(var sharedAddresses)
 
@@ -43,21 +48,24 @@ StatusStackModal {
     rightButtons: [d.shareButton, finishButton]
 
     finishButton: StatusButton {
-        text: root.isInvitationPending ? qsTr("Cancel Membership Request")
-                                       : (root.accessType === Constants.communityChatOnRequestAccess
-                                          ? qsTr("Share your addresses to join")
-                                          : qsTr("Join %1").arg(root.name) )
+        text: root.isInvitationPending ?
+                  qsTr("Cancel Membership Request")
+                : root.accessType === Constants.communityChatOnRequestAccess?
+                       qsTr("Prove ownership")
+                     : qsTr("Join %1").arg(root.name)
+
         type: root.isInvitationPending ? StatusBaseButton.Type.Danger
                                        : StatusBaseButton.Type.Normal
-        icon.name: root.accessType === Constants.communityChatOnRequestAccess && !root.isInvitationPending ? Constants.authenticationIconByType[root.loginType] : ""
+
         onClicked: {
             if (root.isInvitationPending) {
                 root.cancelMembershipRequest()
-            } else {
-                root.joined(d.selectedAirdropAddress, d.selectedSharedAddresses)
+                root.close()
+                return
             }
 
-            root.close()
+            root.prepareForSigning(d.selectedAirdropAddress, d.selectedSharedAddresses)
+            root.replace(sharedAddressesSigningPanelComponent)
         }
     }
 
@@ -135,6 +143,27 @@ StatusStackModal {
             }
             onSharedAddressesChanged: {
                 root.sharedAddressesUpdated(sharedAddresses)
+            }
+        }
+    }
+
+    Component {
+        id: sharedAddressesSigningPanelComponent
+        SharedAddressesSigningPanel {
+
+            keypairSigningModel: root.keypairSigningModel
+
+            onSignSharedAddressesForAllNonKeycardKeypairs: {
+                root.signSharedAddressesForAllNonKeycardKeypairs()
+            }
+
+            onSignSharedAddressesForKeypair: {
+                root.signSharedAddressesForKeypair(keyUid)
+            }
+
+            onJoinCommunity: {
+                root.joinCommunity()
+                root.close()
             }
         }
     }

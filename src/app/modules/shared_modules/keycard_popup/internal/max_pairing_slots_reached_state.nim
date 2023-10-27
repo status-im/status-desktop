@@ -21,6 +21,7 @@ method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Contr
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
@@ -38,6 +39,7 @@ method executeCancelCommand*(self: MaxPairingSlotsReachedState, controller: Cont
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or

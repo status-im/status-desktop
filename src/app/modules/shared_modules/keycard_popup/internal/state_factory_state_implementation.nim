@@ -7,6 +7,7 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
   ## Handling factory reset or authentication or unlock keycard flow
   if state.flowType == FlowType.FactoryReset or
     state.flowType == FlowType.Authentication or
+    state.flowType == FlowType.Sign or
     state.flowType == FlowType.UnlockKeycard or
     state.flowType == FlowType.DisplayKeycardContent or
     state.flowType == FlowType.RenameKeycard or
@@ -269,6 +270,45 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
           return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.keyUid == controller.getKeyUidWhichIsBeingAuthenticating():
+        if singletonInstance.userProfile.getUsingBiometricLogin():
+          if keycardEvent.error.len > 0 and
+            keycardEvent.error == ErrorPIN:
+              controller.setRemainingAttempts(keycardEvent.pinRetries)
+              if keycardEvent.pinRetries > 0:
+                if not controller.usePinFromBiometrics():
+                  return createState(StateType.WrongKeychainPin, state.flowType, nil)
+                return createState(StateType.WrongPin, state.flowType, nil)
+              controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+              return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
+          return createState(StateType.BiometricsReadyToSign, state.flowType, nil)
+        return createState(StateType.EnterPin, state.flowType, nil)
+      return createState(StateType.WrongKeycard, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      if keycardEvent.error.len == 0:
+        controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+        return nil
+
+  ## Handling sign flow
+  if state.flowType == FlowType.Sign:
+    if keycardFlowType == ResponseTypeValueSwapCard and
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.NotKeycard, state.flowType, nil)
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.KeycardEmpty, state.flowType, nil)
+        if keycardEvent.error == ErrorFreePairingSlots:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
+        if keycardEvent.error == ErrorPUKRetries:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPIN:
+      if keycardEvent.keyUid == controller.getKeyUidWhichIsBeingSigning():
         if singletonInstance.userProfile.getUsingBiometricLogin():
           if keycardEvent.error.len > 0 and
             keycardEvent.error == ErrorPIN:

@@ -40,6 +40,7 @@ Item {
 
     Component.onCompleted: {
         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign ||
                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
             timer.start()
         }
@@ -84,7 +85,8 @@ Item {
         anchors.bottomMargin: Style.current.halfPadding
         anchors.leftMargin: Style.current.xlPadding
         anchors.rightMargin: Style.current.xlPadding
-        spacing: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+        spacing: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign?
                      Style.current.halfPadding : Style.current.padding
 
         KeycardImage {
@@ -127,7 +129,8 @@ Item {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
                     root.sharedKeycardModule.setPin(pinInput)
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication)
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign)
                         return
                     root.sharedKeycardModule.currentState.doSecondaryAction()
                 }
@@ -174,7 +177,8 @@ Item {
                         return true
                     }
                 }
-                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
@@ -193,7 +197,8 @@ Item {
                         return keyPairForProcessingComponent
                     }
                 }
-                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.sign) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {

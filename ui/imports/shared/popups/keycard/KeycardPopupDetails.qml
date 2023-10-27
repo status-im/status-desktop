@@ -220,6 +220,27 @@ QtObject {
                     }
                     break
 
+                case Constants.keycardSharedFlow.sign:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.wrongKeychainPin:
+                    case Constants.keycardSharedState.biometricsReadyToSign:
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.biometricsPinFailed:
+                    case Constants.keycardSharedState.biometricsPinInvalid:
+                    case Constants.keycardSharedState.enterPin:
+                        return true
+                    }
+                    break
+
                 case Constants.keycardSharedFlow.unlockKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
                     case Constants.keycardSharedState.pluginReader:
@@ -429,6 +450,32 @@ QtObject {
                     }
                     break
 
+                case Constants.keycardSharedFlow.sign:
+                    if (userProfile.usingBiometricLogin) {
+
+                        switch (root.sharedKeycardModule.currentState.stateType) {
+
+                        case Constants.keycardSharedState.enterPin:
+                        case Constants.keycardSharedState.wrongPin:
+                            return qsTr("Use biometrics")
+
+                        case Constants.keycardSharedState.pluginReader:
+                        case Constants.keycardSharedState.insertKeycard:
+                        case Constants.keycardSharedState.keycardInserted:
+                        case Constants.keycardSharedState.readingKeycard:
+                        case Constants.keycardSharedState.biometricsReadyToSign:
+                        case Constants.keycardSharedState.notKeycard:
+                        case Constants.keycardSharedState.biometricsPinFailed:
+                        case Constants.keycardSharedState.wrongKeycard:
+                        case Constants.keycardSharedState.keycardEmpty:
+                            return qsTr("Use PIN")
+
+                        case Constants.keycardSharedState.biometricsPinInvalid:
+                            return qsTr("Update PIN")
+                        }
+                    }
+                    break
+
                 case Constants.keycardSharedFlow.unlockKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
@@ -502,6 +549,19 @@ QtObject {
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.authentication:
+                    if (userProfile.usingBiometricLogin) {
+                        switch (root.sharedKeycardModule.currentState.stateType) {
+                        case Constants.keycardSharedState.pluginReader:
+                        case Constants.keycardSharedState.insertKeycard:
+                        case Constants.keycardSharedState.notKeycard:
+                        case Constants.keycardSharedState.wrongKeycard:
+                        case Constants.keycardSharedState.keycardEmpty:
+                            return false
+                        }
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.sign:
                     if (userProfile.usingBiometricLogin) {
                         switch (root.sharedKeycardModule.currentState.stateType) {
                         case Constants.keycardSharedState.pluginReader:
@@ -793,6 +853,38 @@ QtObject {
                         return qsTr("Update PIN & authenticate")
 
                     case Constants.keycardSharedState.biometricsPasswordFailed:
+                    case Constants.keycardSharedState.biometricsPinFailed:
+                    case Constants.keycardSharedState.biometricsPinInvalid:
+                        return qsTr("Try biometrics again")
+
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                        return qsTr("Unlock Keycard")
+
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.sign:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.biometricsReadyToSign:
+                    case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.enterPin:
+                        return qsTr("Sign")
+
+                    case Constants.keycardSharedState.keycardEmpty:
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.wrongKeychainPin:
+                        return qsTr("Update PIN & authenticate")
+
                     case Constants.keycardSharedState.biometricsPinFailed:
                     case Constants.keycardSharedState.biometricsPinInvalid:
                         return qsTr("Try biometrics again")
@@ -1178,6 +1270,20 @@ QtObject {
                     }
                     break
 
+                case Constants.keycardSharedFlow.sign:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.wrongKeychainPin:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.enterPin:
+                        return root.primaryButtonEnabled
+                    }
+                    break
+
                 case Constants.keycardSharedFlow.unlockKeycard:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
@@ -1261,6 +1367,24 @@ QtObject {
                         case Constants.keycardSharedState.keycardInserted:
                         case Constants.keycardSharedState.readingKeycard:
                         case Constants.keycardSharedState.biometricsPasswordFailed:
+                        case Constants.keycardSharedState.biometricsPinFailed:
+                        case Constants.keycardSharedState.biometricsPinInvalid:
+                        case Constants.keycardSharedState.biometricsReadyToSign:
+                        case Constants.keycardSharedState.notKeycard:
+                        case Constants.keycardSharedState.wrongKeycard:
+                            return "touch-id"
+                        }
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.sign:
+                    if (userProfile.usingBiometricLogin) {
+                        switch (root.sharedKeycardModule.currentState.stateType) {
+
+                        case Constants.keycardSharedState.pluginReader:
+                        case Constants.keycardSharedState.insertKeycard:
+                        case Constants.keycardSharedState.keycardInserted:
+                        case Constants.keycardSharedState.readingKeycard:
                         case Constants.keycardSharedState.biometricsPinFailed:
                         case Constants.keycardSharedState.biometricsPinInvalid:
                         case Constants.keycardSharedState.biometricsReadyToSign:

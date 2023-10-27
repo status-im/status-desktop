@@ -32,6 +32,8 @@ StatusModal {
             return qsTr("Factory reset a Keycard")
         case Constants.keycardSharedFlow.authentication:
             return qsTr("Authenticate")
+        case Constants.keycardSharedFlow.sign:
+            return qsTr("Signing")
         case Constants.keycardSharedFlow.unlockKeycard:
             return qsTr("Unlock Keycard")
         case Constants.keycardSharedFlow.displayKeycardContent:

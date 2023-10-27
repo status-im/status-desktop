@@ -28,6 +28,7 @@ method executePrePrimaryStateCommand*(self: WrongKeycardState, controller: Contr
 
 method executeCancelCommand*(self: WrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
