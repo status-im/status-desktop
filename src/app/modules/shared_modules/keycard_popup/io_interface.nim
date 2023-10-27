@@ -45,6 +45,8 @@ const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthe
 const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* = "sharedKeycarModuleUserAuthenticated"
 const SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC* = "sharedKeycarModuleTryKeycardSync"
 const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModuleKeycardSyncTerminated"
+const SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA* = "sharedKeycarModuleSignData"
+const SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED* = "sharedKeycarModuleDataSigned"
 
 ## Authentication in the app is a global thing and may be used from any part of the app. How to achieve that... it's enough just to send
 ## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` signal with properly set `SharedKeycarModuleAuthenticationArgs` and props there:
@@ -74,6 +76,10 @@ type
     keyUid*: string
     keycardUid*: string
     additinalPathsDetails*: Table[string, KeyDetails] # [path, KeyDetails]
+    path*: string
+    r*: string
+    s*: string
+    v*: string
 
 type
   SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
@@ -87,6 +93,12 @@ type
   SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
     keyUid*: string
     additionalBip44Paths*: seq[string] # can be used in authentication flow to export additinal paths if needed except encryption path
+
+type
+  SharedKeycarModuleSigningArgs* = ref object of SharedKeycarModuleBaseArgs
+    keyUid*: string
+    path*: string
+    dataToSign*: string
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

@@ -256,13 +256,13 @@ method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, com
 method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getKeycardSharedModuleForAuthentication*(self: AccessInterface): QVariant {.base.} =
+method getKeycardSharedModuleForAuthenticationOrSigning*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDisplayKeycardSharedModuleForAuthentication*(self: AccessInterface) {.base.} =
+method onDisplayKeycardSharedModuleForAuthenticationOrSigning*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSharedKeycarModuleForAuthenticationTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+method onSharedKeycarModuleForAuthenticationOrSigningTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
@@ -275,7 +275,8 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
   nextFlow: keycard_shared_module.FlowType, forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Paths: seq[string] = @[]) {.base.} =
+method runAuthenticationOrSigningPopup*(self: AccessInterface, flow: keycard_shared_module.FlowType, keyUid: string,
+  bip44Paths: seq[string] = @[], dataToSign: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSharedKeycarModuleRunningKeycardFlowsPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =

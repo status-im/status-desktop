@@ -103,7 +103,7 @@ type
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     nodeSectionModule: node_section_module.AccessInterface
-    keycardSharedModuleForAuthentication: keycard_shared_module.AccessInterface
+    keycardSharedModuleForAuthenticationOrSigning: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
     networkConnectionModule: network_connection_module.AccessInterface
@@ -214,7 +214,8 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService, networkService, transactionService, tokenService, chatService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,
+    networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -234,8 +235,8 @@ method delete*[T](self: Module[T]) =
   self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
-  if not self.keycardSharedModuleForAuthentication.isNil:
-    self.keycardSharedModuleForAuthentication.delete
+  if not self.keycardSharedModuleForAuthenticationOrSigning.isNil:
+    self.keycardSharedModuleForAuthenticationOrSigning.delete
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
     self.keycardSharedModuleKeycardSyncPurpose.delete
   if not self.keycardSharedModule.isNil:
@@ -267,7 +268,7 @@ proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, co
     if details["address"].getStr ==  tokenDto.address:
       tokenDetails = details
       break
-  
+
   if tokenDetails.kind == JNull:
     error "Token details not found for token", name = tokenDto.name, address = tokenDto.address
     return
@@ -1231,7 +1232,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     finalEphNotifType = EphemeralNotificationType.Success
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
-    
+
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon,
   loading, finalEphNotifType, url, details)
   self.view.ephemeralNotificationModel().addItem(item)
@@ -1327,34 +1328,38 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
   #  self.browserSectionModule.openUrl(url)
 
 ################################################################################
-## keycard shared module - authentication purpose
+## keycard shared module - authentication/sign purpose
 ################################################################################
-proc isSharedKeycardModuleForAuthenticationRunning[T](self: Module[T]): bool =
-  return not self.keycardSharedModuleForAuthentication.isNil
+proc isSharedKeycardModuleForAuthenticationOrSigningRunning[T](self: Module[T]): bool =
+  return not self.keycardSharedModuleForAuthenticationOrSigning.isNil
 
-method getKeycardSharedModuleForAuthentication*[T](self: Module[T]): QVariant =
-  if self.isSharedKeycardModuleForAuthenticationRunning():
-    return self.keycardSharedModuleForAuthentication.getModuleAsVariant()
+method getKeycardSharedModuleForAuthenticationOrSigning*[T](self: Module[T]): QVariant =
+  if self.isSharedKeycardModuleForAuthenticationOrSigningRunning():
+    return self.keycardSharedModuleForAuthenticationOrSigning.getModuleAsVariant()
 
-proc createSharedKeycardModuleForAuthentication[T](self: Module[T]) =
-  self.keycardSharedModuleForAuthentication = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER,
+proc createSharedKeycardModuleForAuthenticationOrSigning[T](self: Module[T], identifier: string) =
+  self.keycardSharedModuleForAuthenticationOrSigning = keycard_shared_module.newModule[Module[T]](self, identifier,
     self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
     self.walletAccountService, self.keychainService)
 
-method onSharedKeycarModuleForAuthenticationTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
-  if self.isSharedKeycardModuleForAuthenticationRunning():
-    self.view.emitDestroyKeycardSharedModuleForAuthentication()
-    self.keycardSharedModuleForAuthentication.delete
-    self.keycardSharedModuleForAuthentication = nil
+method onSharedKeycarModuleForAuthenticationOrSigningTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+  if self.isSharedKeycardModuleForAuthenticationOrSigningRunning():
+    self.view.emitDestroyKeycardSharedModuleForAuthenticationOrSigning()
+    self.keycardSharedModuleForAuthenticationOrSigning.delete
+    self.keycardSharedModuleForAuthenticationOrSigning = nil
 
-method runAuthenticationPopup*[T](self: Module[T], keyUid: string, bip44Paths: seq[string] = @[]) =
-  self.createSharedKeycardModuleForAuthentication()
-  if self.keycardSharedModuleForAuthentication.isNil:
+method runAuthenticationOrSigningPopup*[T](self: Module[T], flow: keycard_shared_module.FlowType, keyUid: string,
+  bip44Paths: seq[string] = @[], dataToSign = "") =
+  var identifier = UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER
+  if flow == keycard_shared_module.FlowType.Sign:
+    identifier = UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER
+  self.createSharedKeycardModuleForAuthenticationOrSigning(identifier)
+  if self.keycardSharedModuleForAuthenticationOrSigning.isNil:
     return
-  self.keycardSharedModuleForAuthentication.runFlow(keycard_shared_module.FlowType.Authentication, keyUid, bip44Paths)
+  self.keycardSharedModuleForAuthenticationOrSigning.runFlow(flow, keyUid, bip44Paths, dataToSign)
 
-method onDisplayKeycardSharedModuleForAuthentication*[T](self: Module[T]) =
-  self.view.emitDisplayKeycardSharedModuleForAuthentication()
+method onDisplayKeycardSharedModuleForAuthenticationOrSigning*[T](self: Module[T]) =
+  self.view.emitDisplayKeycardSharedModuleForAuthenticationOrSigning()
 ################################################################################
 
 ################################################################################

@@ -77,12 +77,12 @@ Item {
             popups.openProfilePopup(publicKey)
         }
 
-        function onDisplayKeycardSharedModuleForAuthentication() {
-            keycardPopupForAuthentication.active = true
+        function onDisplayKeycardSharedModuleForAuthenticationOrSigning() {
+            keycardPopupForAuthenticationOrSigning.active = true
         }
 
-        function onDestroyKeycardSharedModuleForAuthentication() {
-            keycardPopupForAuthentication.active = false
+        function onDestroyKeycardSharedModuleForAuthenticationOrSigning() {
+            keycardPopupForAuthenticationOrSigning.active = false
         }
 
         function onDisplayKeycardSharedModuleFlow() {
@@ -333,7 +333,7 @@ Item {
             let loading = false
             let notificationType = Constants.ephemeralNotificationType.normal
             let icon = ""
-            
+
             switch (state)
             {
             case Constants.communityImported:
@@ -1612,14 +1612,14 @@ Item {
     }
 
     Loader {
-        id: keycardPopupForAuthentication
+        id: keycardPopupForAuthenticationOrSigning
         active: false
         sourceComponent: KeycardPopup {
-            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthentication
+            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthenticationOrSigning
         }
 
         onLoaded: {
-            keycardPopupForAuthentication.item.open()
+            keycardPopupForAuthenticationOrSigning.item.open()
         }
     }
 
