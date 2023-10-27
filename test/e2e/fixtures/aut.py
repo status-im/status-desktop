@@ -13,10 +13,11 @@ from scripts.utils.system_path import SystemPath
 @pytest.fixture
 def application_logs():
     yield
-    for app_data in configs.testpath.STATUS_DATA.iterdir():
-        for log in (app_data / 'logs').iterdir():
-            allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
-            log.unlink()
+    if configs.testpath.STATUS_DATA.exists():
+        for app_data in configs.testpath.STATUS_DATA.iterdir():
+            for log in (app_data / 'logs').iterdir():
+                allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
+                log.unlink()
 
 
 @pytest.fixture
@@ -49,7 +50,7 @@ def multiple_instance():
 def main_window(aut: AUT, user_data):
     aut.launch()
     yield MainWindow().wait_until_appears().prepare()
-    aut.detach().stop()
+    aut.stop()
 
 
 @pytest.fixture

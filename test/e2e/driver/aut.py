@@ -47,43 +47,40 @@ class AUT:
             ImageGrab.grab(xdisplay=":0" if IS_LIN else None).save(screenshot)
             allure.attach(
                 name='Screenshot on fail',  body=screenshot.read_bytes(), attachment_type=allure.attachment_type.PNG)
-        self.detach().stop()
+        self.stop()
 
     @allure.step('Attach Squish to Test Application')
-    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, attempt: int = 2):
+    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
         if self.ctx is None:
             self.ctx = context.attach(self.aut_id, timeout_sec)
-        try:
-            squish.setApplicationContext(self.ctx)
-        except TypeError as err:
-            if attempt:
-                return self.attach(timeout_sec, attempt - 1)
-            else:
-                raise err
-
-    @allure.step('Detach Squish and Application')
-    def detach(self):
-        if self.ctx is not None:
-            squish.currentApplicationContext().detach()
-        self.ctx = None
-        return self
+        squish.setApplicationContext(self.ctx)
 
     @allure.step('Close application')
     def stop(self):
+        if self.ctx is not None:
+            squish.currentApplicationContext().detach()
+            self.ctx = None
+
+        if self.port is not None:
+            pid_list = local_system.find_process_by_port(self.port)
+            if pid_list:
+                for pid in pid_list:
+                    local_system.kill_process(pid, verify=True)
+            assert driver.waitFor(
+                lambda: not local_system.find_process_by_port(self.port), configs.timeouts.PROCESS_TIMEOUT_SEC), \
+                f'Port {self.port} still in use by process: {local_system.find_process_by_port(self.port)}'
+            self.port = None
+            if self.pid in pid_list:
+                self.pid = None
+
         if self.pid is not None:
             local_system.kill_process(self.pid, verify=True)
             self.pid = None
-        if self.port is not None:
-            assert driver.waitFor(lambda: local_system.find_process_by_port(self.port) is None,
-                                  configs.timeouts.PROCESS_TIMEOUT_SEC), \
-                f'Port {self.port} still in use by process: {local_system.find_process_by_port(self.port)}'
-            self.port = None
 
     @allure.step("Start application")
     def launch(self, attempt: int = 2) -> 'AUT':
         try:
             self.port = local_system.find_free_port(configs.squish.AUT_PORT, 1000)
-            SquishServer().set_aut_timeout()
             if configs.ATTACH_MODE:
                 SquishServer().add_attachable_aut(self.aut_id, self.port)
                 command = [
@@ -92,19 +89,19 @@ class AUT:
                     f'"{self.path}"',
                     f'-d={self.app_data}'
                 ]
-                local_system.execute(command)
+                self.pid = local_system.execute(command)
             else:
                 SquishServer().add_executable_aut(self.aut_id, self.path.parent)
                 command = [self.aut_id, f'-d={self.app_data}']
                 self.ctx = squish.startApplication(' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
+                self.pid = self.ctx.pid
 
             self.attach()
-            self.pid = self.ctx.pid
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             return self
-        except AssertionError as err:
+        except (AssertionError, TypeError) as err:
             _logger.debug(err)
-            self.detach().stop()
+            self.stop()
             if attempt:
                 return self.launch(attempt-1)
             else:
@@ -113,5 +110,5 @@ class AUT:
 
     @allure.step('Restart application')
     def restart(self):
-        self.detach().stop()
+        self.stop()
         self.launch()

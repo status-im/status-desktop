@@ -20,9 +20,8 @@ def attach(aut_id: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC)
             _logger.info(f'AUT: {aut_id} attached')
             return context
         except RuntimeError as err:
-            _logger.debug(err)
             time.sleep(1)
-        assert time.monotonic() - started_at < timeout_sec, f'Attach error: {aut_id}'
+            assert time.monotonic() - started_at < timeout_sec, str(err)
 
 
 @allure.step('Detaching')

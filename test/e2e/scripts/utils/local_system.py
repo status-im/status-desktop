@@ -3,6 +3,7 @@ import os
 import signal
 import subprocess
 import time
+import typing
 
 import allure
 import psutil
@@ -13,14 +14,16 @@ from configs.system import IS_WIN
 _logger = logging.getLogger(__name__)
 
 
-def find_process_by_port(port: int) -> int:
+def find_process_by_port(port: int) -> typing.List[int]:
+    pid_list = []
     for proc in psutil.process_iter():
         try:
             for conns in proc.connections(kind='inet'):
                 if conns.laddr.port == port:
-                    return proc.pid
+                    pid_list.append(proc.pid)
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
+    return pid_list
 
 
 def find_free_port(start: int, step: int):
