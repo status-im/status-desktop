@@ -2,24 +2,24 @@ import chronicles, tables, strutils, os, sequtils, sugar
 import uuids
 import io_interface
 
-import ../../../global/app_sections_config as conf
-import ../../../global/app_signals
-import ../../../global/global_singleton
-import ../../../core/signals/types
-import ../../../core/eventemitter
-import ../../startup/io_interface as startup_io
-import ../../../../app_service/common/utils
-import ../../../../app_service/common/account_constants
-import ../../../../app_service/service/keycard/service as keycard_service
-import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/service/privacy/service as privacy_service
-import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/keychain/service as keychain_service
-import ../../../../app_service/service/currency/dto
+import app/global/app_sections_config as conf
+import app/global/app_signals
+import app/global/global_singleton
+import app/core/signals/types
+import app/core/eventemitter
+import app/modules/startup/io_interface as startup_io
+import app_service/common/utils
+import app_service/common/account_constants
+import app_service/service/keycard/service as keycard_service
+import app_service/service/settings/service as settings_service
+import app_service/service/network/service as network_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/keychain/service as keychain_service
+import app_service/service/currency/dto
 
-import ../../shared_models/[keypair_item]
+import app/modules/shared_models/[keypair_item]
 
 logScope:
   topics = "keycard-popup-controller"
@@ -56,6 +56,7 @@ type
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
     tmpKeyUidWhichIsBeingAuthenticating: string
+    tmpKeyUidWhichIsBeingSigning: string
     tmpKeyUidWhichIsBeingSyncing: string
     tmpUsePinFromBiometrics: bool
     tmpOfferToStoreUpdatedPinToKeychain: bool
@@ -69,6 +70,7 @@ type
     tmpKeycardSyncingInProgress: bool
     tmpFlowData: SharedKeycarModuleFlowTerminatedArgs
     tmpRequestedPathsAlongWithAuthentication: seq[string]
+    tmpPathUsedForSigning: string
     tmpUnlockUsingSeedPhrase: bool # true - sp, false - puk
 
 proc newController*(delegate: io_interface.AccessInterface,
@@ -306,6 +308,9 @@ proc getPairingCode*(self: Controller): string =
 proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
   return self.tmpKeyUidWhichIsBeingAuthenticating
 
+proc getKeyUidWhichIsBeingSigning*(self: Controller): string =
+  return self.tmpKeyUidWhichIsBeingSigning
+
 proc getKeyUidWhichIsBeingSyncing*(self: Controller): string =
   return self.tmpKeyUidWhichIsBeingSyncing
 
@@ -531,9 +536,8 @@ proc runDeriveAccountFlow*(self: Controller, bip44Paths: seq[string], pin: strin
   self.keycardService.startExportPublicFlow(bip44Paths, exportMasterAddr=true, exportPrivateAddr=false, pin)
 
 proc runAuthenticationFlow*(self: Controller, keyUid = "", bip44Paths: seq[string] = @[]) =
-  ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction
-  ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key
-  ## uid of the logged in user.
+  ## In case of `Authentication` flow, if keyUid is provided, that keypair will be authenticated,
+  ## otherwise the logged in profile will be authenticated.
   if not serviceApplicable(self.keycardService):
     return
   self.tmpKeyUidWhichIsBeingAuthenticating = keyUid
@@ -545,6 +549,19 @@ proc runAuthenticationFlow*(self: Controller, keyUid = "", bip44Paths: seq[strin
     self.tmpRequestedPathsAlongWithAuthentication.add(bip44Paths)
     self.tmpRequestedPathsAlongWithAuthentication = self.tmpRequestedPathsAlongWithAuthentication.deduplicate()
   self.keycardService.startExportPublicFlow(self.tmpRequestedPathsAlongWithAuthentication, exportMasterAddr = false, exportPrivateAddr = true)
+
+proc runSignFlow*(self: Controller, keyUid, bip44Path, txHash: string) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.tmpKeyUidWhichIsBeingSigning = keyUid
+  if self.tmpKeyUidWhichIsBeingSigning.len == 0:
+    self.tmpKeyUidWhichIsBeingSigning = singletonInstance.userProfile.getKeyUid()
+  self.cancelCurrentFlow()
+  if bip44Path.len == 0:
+    error "path must be set"
+    return
+  self.tmpPathUsedForSigning = bip44Path
+  self.keycardService.startSignFlow(bip44Path, txHash)
 
 proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
   if not serviceApplicable(self.keycardService):
@@ -575,6 +592,7 @@ proc readyToDisplayPopup*(self: Controller) =
 proc cleanTmpData(self: Controller) =
   # we should not reset here `tmpKeycardSyncingInProgress` property
   self.tmpKeyUidWhichIsBeingAuthenticating = ""
+  self.tmpKeyUidWhichIsBeingSigning = ""
   self.tmpKeyUidWhichIsBeingSyncing = ""
   self.tmpAddingMigratedKeypairSuccess = false
   self.tmpConvertingProfileSuccess = false
@@ -614,21 +632,26 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nex
     continueWithKeyUid: nextKeyUid,
     returnToFlow: returnToFlow)
   if lastStepInTheCurrentFlow:
-    var exportedEncryptionPubKey: string
-    if flowEvent.generatedWalletAccounts.len > 0:
-      exportedEncryptionPubKey = flowEvent.generatedWalletAccounts[0].publicKey # encryption key is at position 0
-      if exportedEncryptionPubKey.len > 0:
-        self.tmpFlowData.password = exportedEncryptionPubKey
-        self.tmpFlowData.pin = self.getPin()
-        self.tmpFlowData.keyUid = flowEvent.keyUid
-        self.tmpFlowData.keycardUid = flowEvent.instanceUID
-        for i in 0..< self.tmpRequestedPathsAlongWithAuthentication.len:
-          var path = self.tmpRequestedPathsAlongWithAuthentication[i]
-          self.tmpFlowData.additinalPathsDetails[path] = KeyDetails(
-            address: flowEvent.generatedWalletAccounts[i].address,
-            publicKey: flowEvent.generatedWalletAccounts[i].publicKey,
-            privateKey: flowEvent.generatedWalletAccounts[i].privateKey
-          )
+    if flowEvent.instanceUID.len > 0:
+      self.tmpFlowData.keyUid = flowEvent.keyUid
+      self.tmpFlowData.keycardUid = flowEvent.instanceUID
+      self.tmpFlowData.pin = self.getPin()
+      self.tmpFlowData.path = self.tmpPathUsedForSigning
+      self.tmpFlowData.r = flowEvent.txSignature.r
+      self.tmpFlowData.s = flowEvent.txSignature.s
+      self.tmpFlowData.v = flowEvent.txSignature.v
+      var exportedEncryptionPubKey: string
+      if flowEvent.generatedWalletAccounts.len > 0:
+        exportedEncryptionPubKey = flowEvent.generatedWalletAccounts[0].publicKey # encryption key is at position 0
+        if exportedEncryptionPubKey.len > 0:
+          self.tmpFlowData.password = exportedEncryptionPubKey
+          for i in 0..< self.tmpRequestedPathsAlongWithAuthentication.len:
+            var path = self.tmpRequestedPathsAlongWithAuthentication[i]
+            self.tmpFlowData.additinalPathsDetails[path] = KeyDetails(
+              address: flowEvent.generatedWalletAccounts[i].address,
+              publicKey: flowEvent.generatedWalletAccounts[i].publicKey,
+              privateKey: flowEvent.generatedWalletAccounts[i].privateKey
+            )
     else:
       self.tmpFlowData.password = self.getPassword()
       self.tmpFlowData.keyUid = singletonInstance.userProfile.getKeyUid()

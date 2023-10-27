@@ -125,6 +125,7 @@ QtObject {
         readonly property string createCopyOfAKeycard: "CreateCopyOfAKeycard"
         readonly property string migrateFromKeycardToApp: "MigrateFromKeycardToApp"
         readonly property string migrateFromAppToKeycard: "MigrateFromAppToKeycard"
+        readonly property string sign: "Sign"
     }
 
     readonly property QtObject keycardSharedState: QtObject {

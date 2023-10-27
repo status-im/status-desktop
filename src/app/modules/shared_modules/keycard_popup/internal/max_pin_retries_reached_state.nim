@@ -33,12 +33,14 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
         controller.runSharedModuleFlow(FlowType.UnlockKeycard)
         return
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
-  if self.flowType == FlowType.Authentication:
-    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
-    controller.runSharedModuleFlow(FlowType.UnlockKeycard)
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
+      controller.runSharedModuleFlow(FlowType.UnlockKeycard)
 
 method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.Sign or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
