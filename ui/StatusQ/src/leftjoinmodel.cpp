@@ -22,41 +22,56 @@ void LeftJoinModel::initialize()
     auto leftRoleNames = m_leftModel->roleNames();
     auto rightRoleNames = m_rightModel->roleNames();
 
-    if (leftRoleNames.isEmpty() || rightRoleNames.isEmpty()) {
-        qWarning() << "Both left and right models have to contain some roles!";
+    auto leftNames = leftRoleNames.values();
+    auto rightNames = rightRoleNames.values();
+
+    QSet<QByteArray> leftNamesSet(leftNames.cbegin(), leftNames.cend());
+    QSet<QByteArray> rightNamesSet(rightNames.cbegin(), rightNames.cend());
+
+    if (leftNames.size() != leftNamesSet.size()
+            || rightNames.size() != rightNamesSet.size()) {
+        qWarning() << "Each of the source models must have unique role names!";
         return;
     }
 
-    auto leftModelJoinRoleList = leftRoleNames.keys(m_joinRole.toUtf8());
-    auto rightModelJoinRoleList = rightRoleNames.keys(m_joinRole.toUtf8());
+    auto namesIntersection = leftNamesSet.intersect(rightNamesSet);
+    auto hasCommonJoinRole = namesIntersection.remove(m_joinRole.toUtf8());
 
-    if (leftModelJoinRoleList.size() != 1
-            || rightModelJoinRoleList.size() != 1) {
+    if (!hasCommonJoinRole) {
         qWarning().noquote() << QString("Both left and right models have to "
                                         "contain join role %1!").arg(m_joinRole);
         return;
     }
 
-    m_leftModelJoinRole = leftModelJoinRoleList.at(0);
-    m_rightModelJoinRole = rightModelJoinRoleList.at(0);
+    if (!namesIntersection.isEmpty()) {
+        qWarning().nospace() << "Source models contain conflicting model names: "
+                             << QList(namesIntersection.cbegin(),
+                                      namesIntersection.cend())
+                             << "!";
+        return;
+    }
 
     auto leftRoles = leftRoleNames.keys();
     auto maxLeftRole = std::max_element(leftRoles.cbegin(), leftRoles.cend());
     auto rightRolesOffset = *maxLeftRole + 1;
     auto roleNames = leftRoleNames;
+    QVector<int> joinedRoles;
 
     auto i = rightRoleNames.constBegin();
     while (i != rightRoleNames.constEnd()) {
         if (i.value() != m_joinRole) {
             auto roleWithOffset = i.key() + rightRolesOffset;
             roleNames.insert(roleWithOffset, i.value());
-            m_joinedRoles.append(roleWithOffset);
+            joinedRoles.append(roleWithOffset);
         }
         ++i;
     }
 
+    m_roleNames = std::move(roleNames);
+    m_joinedRoles = std::move(joinedRoles);
+    m_leftModelJoinRole = leftRoleNames.key(m_joinRole.toUtf8());
+    m_rightModelJoinRole = rightRoleNames.key(m_joinRole.toUtf8());
     m_rightModelRolesOffset = rightRolesOffset;
-    m_roleNames = roleNames;
 
     connect(m_rightModel, &QAbstractItemModel::dataChanged, this,
             [this](auto& topLeft, auto& bottomRight, auto& roles) {

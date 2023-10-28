@@ -11,7 +11,6 @@ namespace {
 class TestSourceModel : public QAbstractListModel {
 
 public:
-
     explicit TestSourceModel(QList<QPair<QString, QVariantList>> data)
         : m_data(std::move(data))
     {
@@ -86,7 +85,7 @@ private:
     QHash<int, QByteArray> m_roles;
 };
 
-}
+} // anonymous namespace
 
 class TestLeftJoinModel: public QObject
 {
@@ -97,6 +96,25 @@ private slots:
     void emptyModelTest() {
         LeftJoinModel model;
         QAbstractItemModelTester tester(&model);
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+    }
+
+    void setSourceModelDirectlyTest()
+    {
+        TestSourceModel leftModel({
+           { "title", { "Token 1", "Token 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        QTest::ignoreMessage(QtWarningMsg,
+                             "Source model is not intended to be set directly "
+                             "on this model. Use setLeftModel and setRightModel instead!");
+        model.setSourceModel(&leftModel);
 
         QCOMPARE(model.rowCount(), 0);
         QCOMPARE(model.roleNames(), {});
@@ -135,23 +153,145 @@ private slots:
         QCOMPARE(model.roleNames(), roles);
     }
 
-    void setSourceModelDirectlyTest()
+    void collidingRolesTest()
     {
         TestSourceModel leftModel({
-           { "title", { "Token 1", "Token 2" }},
+           { "name", { "Token 1", "Token 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        TestSourceModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
         LeftJoinModel model;
         QAbstractItemModelTester tester(&model);
 
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Source model is not intended to be set directly "
-                             "on this model. Use setLeftModel and setRightModel instead!");
-        model.setSourceModel(&leftModel);
+        model.setLeftModel(&leftModel);
 
         QCOMPARE(model.rowCount(), 0);
         QCOMPARE(model.roleNames(), {});
+
+        model.setRightModel(&rightModel);
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+
+        QTest::ignoreMessage(QtWarningMsg,
+                             "Source models contain conflicting model names: "
+                             "(\"name\")!");
+
+        model.setJoinRole("communityId");
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+    }
+
+    void duplicatedRolesTest()
+    {
+        {
+            TestSourceModel leftModel({
+               { "name", { "Token 1", "Token 2" }},
+               { "name", { "Token 1", "Token 2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            TestSourceModel rightModel({
+               { "title", { "Community 1", "Community 2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
+            model.setLeftModel(&leftModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            model.setRightModel(&rightModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            QTest::ignoreMessage(QtWarningMsg,
+                                 "Each of the source models must have unique "
+                                 "role names!");
+
+            model.setJoinRole("communityId");
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+        }
+        {
+            TestSourceModel leftModel({
+               { "name", { "Token 1", "Token 2" }},
+               { "communityId", { "community_1", "community_2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            TestSourceModel rightModel({
+               { "title", { "Community 1", "Community 2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
+            model.setLeftModel(&leftModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            model.setRightModel(&rightModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            QTest::ignoreMessage(QtWarningMsg,
+                                 "Each of the source models must have unique "
+                                 "role names!");
+
+            model.setJoinRole("communityId");
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+        }
+        {
+            TestSourceModel leftModel({
+               { "name", { "Token 1", "Token 2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            TestSourceModel rightModel({
+               { "title", { "Community 1", "Community 2" }},
+               { "title", { "Community 1", "Community 2" }},
+               { "communityId", { "community_1", "community_2" }}
+            });
+
+            LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
+            model.setLeftModel(&leftModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            model.setRightModel(&rightModel);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+
+            QTest::ignoreMessage(QtWarningMsg,
+                                 "Each of the source models must have unique "
+                                 "role names!");
+
+            model.setJoinRole("communityId");
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+        }
     }
 
     void noJoinRoleTest()
@@ -266,6 +406,7 @@ private slots:
 
         TestSourceModel rightModel({
            { "name", { "Community 1", "Community 2" }},
+           { "color", { "red", "blue" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
@@ -283,6 +424,8 @@ private slots:
         QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
         QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
         QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(0, 0), 3), QString("red"));
+        QCOMPARE(model.data(model.index(1, 0), 3), QString("blue"));
     }
 
     void changesPropagationTest()
