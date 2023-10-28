@@ -1,3 +1,4 @@
+#include <QAbstractItemModelTester>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -28,7 +29,7 @@ public:
 
     QVariant data(const QModelIndex& index, int role) const override
     {
-        if (!index.isValid())
+        if (!index.isValid() || role < 0 || role >= m_data.size())
             return {};
 
         const auto row = index.row();
@@ -95,6 +96,7 @@ private slots:
 
     void emptyModelTest() {
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
 
         QCOMPARE(model.rowCount(), 0);
         QCOMPARE(model.roleNames(), {});
@@ -113,6 +115,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
 
         QCOMPARE(model.rowCount(), 0);
@@ -139,6 +143,7 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
 
         QTest::ignoreMessage(QtWarningMsg,
                              "Source model is not intended to be set directly "
@@ -163,6 +168,8 @@ private slots:
             });
 
             LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
             model.setLeftModel(&leftModel);
 
             QCOMPARE(model.rowCount(), 0);
@@ -194,6 +201,8 @@ private slots:
             });
 
             LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
             model.setLeftModel(&leftModel);
 
             QCOMPARE(model.rowCount(), 0);
@@ -225,6 +234,8 @@ private slots:
             });
 
             LeftJoinModel model;
+            QAbstractItemModelTester tester(&model);
+
             model.setLeftModel(&leftModel);
 
             QCOMPARE(model.rowCount(), 0);
@@ -259,6 +270,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -286,6 +299,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -341,6 +356,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -376,6 +393,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -411,6 +430,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -449,6 +470,8 @@ private slots:
         });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(&leftModel);
         model.setRightModel(&rightModel);
         model.setJoinRole("communityId");
@@ -493,6 +516,8 @@ private slots:
                     });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(leftModel.get());
         model.setRightModel(rightModel.get());
 
@@ -540,6 +565,8 @@ private slots:
                     });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(leftModel.get());
         model.setRightModel(rightModel.get());
 
@@ -588,6 +615,8 @@ private slots:
                     });
 
         LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
         model.setLeftModel(leftModel.get());
         model.setRightModel(rightModel.get());
 
