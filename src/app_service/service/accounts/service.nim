@@ -356,7 +356,7 @@ QtObject:
     # mandatory params
     result["NetworkId"] = NETWORKS[0]{"chainId"}
     result["DataDir"] = %* "./ethereum/mainnet"
-    result["KeyStoreDir"] = %* "./keystore"
+    result["KeyStoreDir"] = %* self.keyStoreDir.replace(main_constants.STATUSGODIR, "")
     result["KeycardPairingDataFile"] = %* main_constants.KEYCARDPAIRINGDATAFILE
 
     # other params
