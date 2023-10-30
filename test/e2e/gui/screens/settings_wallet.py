@@ -9,6 +9,7 @@ import driver
 from constants import wallet_account_list_item
 from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
+from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountConfirmationSettings
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
 from gui.components.wallet.wallet_account_popups import AccountPopup, EditAccountFromSettingsPopup
@@ -70,7 +71,7 @@ class AccountDetailsView(WalletSettingsView):
         super(AccountDetailsView, self).__init__()
         self._back_button = Button('main_toolBar_back_button')
         self._edit_account_button = Button('walletAccountViewEditAccountButton')
-        self._delete_account_button = Button('walletAccountViewDeleteAccountButton')
+        self._remove_account_button = Button('walletAccountViewRemoveAccountButton')
         self._wallet_account_title = TextLabel('walletAccountViewAccountName')
         self._wallet_account_emoji = QObject('walletAccountViewAccountEmoji')
         self._wallet_account_details_label = TextLabel('walletAccountViewDetailsLabel')
@@ -87,9 +88,14 @@ class AccountDetailsView(WalletSettingsView):
         self._edit_account_button.click()
         return EditAccountFromSettingsPopup().wait_until_appears()
 
-    @allure.step('Verify Delete button presence')
-    def is_delete_account_button_present(self):
-        return self._delete_account_button.is_visible
+    @allure.step('Click Remove account button')
+    def click_remove_account_button(self):
+        self._remove_account_button.click()
+        return RemoveAccountConfirmationSettings().wait_until_appears()
+
+    @allure.step('Check if Remove account button is visible')
+    def is_remove_account_button_visible(self):
+        return self._remove_account_button.is_visible
 
     @allure.step('Get account name')
     def get_account_name_value(self):

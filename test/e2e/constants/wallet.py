@@ -8,6 +8,7 @@ class DerivationPath(Enum):
     ETHEREUM_LEDGER = 'Ethereum (Ledger)'
     ETHEREUM_LEDGER_LIVE = 'Ethereum (Ledger Live/KeepKey)'
     STATUS_ACCOUNT_DERIVATION_PATH = "m / 44' / 60' / 0' / 0 / 0"
+    GENERATED_ACCOUNT_DERIVATION_PATH_1 = "m / 44' / 60' / 0' / 0 / 1"
 
 
 class WalletNetworkSettings(Enum):

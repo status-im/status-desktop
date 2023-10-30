@@ -263,6 +263,12 @@ editWalletSettings_EmojiSelector = {"container": statusDesktop_mainWindow_overla
 editWalletSettings_ColorSelector = {"container": statusDesktop_mainWindow_overlay, "type": "StatusColorRadioButton", "unnamed": 1, "visible": True}
 editWalletSettings_EmojiItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("statusEmoji_*"), "type": "StatusEmoji"}
 
+# Remove Account from settings popup
+removeConfirmationCrossCloseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "close-icon", "type": "StatusIcon", "visible": True}
+removeConfirmationTextTitle = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
+removeConfirmationTextBody = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+removeConfirmationRemoveButton = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("confirm*"), "type": "StatusButton"}
+
 # Testnet mode popup
 turn_on_testnet_mode_StatusButton = {"container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn on testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
 turn_off_testnet_mode_StatusButton = {"container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn off testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
