@@ -199,6 +199,7 @@ Loader {
                     }
                 }
             }
+            Keys.onTabPressed: event.accepted = true
             Keys.onReleased: {
                 let plainText =  store.plainText(input.edit.text)
                 if(!plainText) {
