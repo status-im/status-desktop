@@ -12,15 +12,21 @@ let
 
   #nixpkgsSrc = (import <nixpkgs> { }).lib.cleanSource "/home/jakubgs/work/nixpkgs";
 
-  # Glibc 2.31
-  #nixpkgsSrcOld = import "nixpkgs/nixos-20.09"
 
   # glibc 2.24
   #nixpkgs-old = import "nixpkgs/release-16.09";
+  #nixpkgs-old = builtins.fetchTarball {
+  #  url = "https://github.com/NixOS/nixpkgs/archive/52ef8b0d0d66055e799325f0b65d4ecb30f44e49.tar.gz";
+  #  #sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
+  #};
+
+  # Glibc 2.31
+  #nixpkgsSrcOld = import "nixpkgs/nixos-20.09"
+  # TODO: maybe -small ?
   nixpkgs-old = builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/52ef8b0d0d66055e799325f0b65d4ecb30f44e49.tar.gz";
+    url = "https://github.com/NixOS/nixpkgs/archive/1c1f5649bb9c1b0d98637c8c365228f57126f361.tar.gz";
     # TODO: find sha
-    sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
+    #sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
   };
 
   # Override some packages and utilities

@@ -102,6 +102,13 @@ in rec {
   old = import nixpkgs-old {};
   glibcSuper = super.glibc;
 
+  # Disable flacky test
+  # https://github.com/NixOS/nixpkgs/pull/243509
+  openldap = super.openldap.overrideAttrs (attrs: {
+      preCheck = attrs.preCheck
+      + "\nrm -f tests/scripts/test063-delta-multiprovider";
+      });
+
   # TODO: fix dependencies.
   # Alternative workaround - add old derivations (libunistring, libidn2)
   # https://github.com/flatironinstitute/nix-modules/blob/master/stdenv.nix
