@@ -17,6 +17,7 @@ QtObject {
         property ListModel model: ListModel{}
     }
 
+    property var allNetworksModel: NetworksModel.allNetworks
     property var fromNetworksModel: NetworksModel.sendFromNetworks
     property var toNetworksModel: NetworksModel.sendToNetworks
     property var selectedSenderAccount: senderAccounts.get(0)
@@ -235,10 +236,6 @@ QtObject {
         default:
             return qsTr("> 5 minutes")
         }
-    }
-
-    function getNetworkIcon(chainId) {
-        return ModelUtils.getByKey(NetworksModel.allNetworks, "chainId", Number(chainId), "iconUrl")
     }
 
     function resetStoredProperties() {

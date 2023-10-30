@@ -39,7 +39,6 @@ StatusDialog {
     property alias modalHeader: modalHeader.text
 
     property TransactionStore store: TransactionStore {}
-    property var collectiblesModel: store.collectiblesModel
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
     property var bestRoutes
     property bool isLoading: false
@@ -247,12 +246,10 @@ StatusDialog {
                             Layout.fillHeight: true
                             assetsModel: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
                             collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
+                            networksModel: popup.store.allNetworksModel
                             currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
                             visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
                                      (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
-                            getNetworkIcon: function(chainId){
-                                return popup.store.getNetworkIcon(chainId)
-                            }
                             onItemSelected: {
                                 d.setSelectedHoldingId(holdingId, holdingType)
                             }
@@ -376,12 +373,11 @@ StatusDialog {
                         visible: !d.selectedHolding
                         assets: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
                         collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
+                        networksModel: popup.store.allNetworksModel
                         onlyAssets: holdingSelector.onlyAssets
+                        // TODO remove this as address should be found directly in model itself
                         searchTokenSymbolByAddressFn: function (address) {
                             return store.findTokenSymbolByAddress(address)
-                        }
-                        getNetworkIcon: function(chainId){
-                            return popup.store.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
                             d.setSelectedHoldingId(symbol, holdingType)

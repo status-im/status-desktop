@@ -9,9 +9,6 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    property var getNetworkIcon: function(chainId) {
-        return ""
-    }
     signal itemSelected(var selectedItem)
     signal itemHovered(var selectedItem, bool hovered)
 
@@ -48,7 +45,7 @@ StatusListItem {
         StatusRoundedImage {
             width: 20
             height: 20
-            image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(chainId)))
+            image.source: Style.svg("tiny/%1".arg(networkIconUrl))
             visible: !isCollection && root.sensor.containsMouse
         },
         StatusIcon {

@@ -19,6 +19,7 @@ QtObject {
     property var assets: walletSectionAssets.assets
     property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
     property var toNetworksModel: walletSectionSendInst.toNetworksModel
+    property var allNetworksModel: networksModule.all
     property var senderAccounts: walletSectionSendInst.senderAccounts
     property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
     property var accounts: walletSectionSendInst.accounts
@@ -246,9 +247,5 @@ QtObject {
 
     function getShortChainIds(chainShortNames) {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
-    }
-
-    function getNetworkIcon(chainId) {
-        return walletSectionSendInst.getIconUrl(chainId)
     }
 }

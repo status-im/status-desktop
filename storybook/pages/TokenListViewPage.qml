@@ -23,12 +23,9 @@ SplitView {
 
             width: 400
 
-            getNetworkIcon: function(chainId) {
-                return "network/Network=Optimism"
-            }
-
             assets: WalletAssetsModel {}
             collectibles: WalletNestedCollectiblesModel {}
+            networksModel: NetworksModel.allNetworks
         }
     }
 

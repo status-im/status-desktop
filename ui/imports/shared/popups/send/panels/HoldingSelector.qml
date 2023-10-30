@@ -8,6 +8,7 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,6 +19,7 @@ Item {
     id: root
     property var assetsModel
     property var collectiblesModel
+    property var networksModel
     property string currentCurrencySymbol
     property bool onlyAssets: true
 
@@ -25,10 +27,6 @@ Item {
     implicitHeight: holdingItemSelector.implicitHeight
 
     property var searchAssetSymbolByAddressFn: function (address) {
-        return ""
-    }
-
-    property var getNetworkIcon: function(chainId){
         return ""
     }
 
@@ -118,8 +116,22 @@ Item {
             return !!item && item.iconUrl ? item.iconUrl : ""
         }
 
+        readonly property RolesRenamingModel renamedAllNetworksModel: RolesRenamingModel {
+            sourceModel: root.networksModel
+            mapping: RoleRename {
+                from: "iconUrl"
+                to: "networkIconUrl"
+            }
+        }
+
+        readonly property LeftJoinModel collectibleNetworksJointModel: LeftJoinModel {
+            leftModel: root.collectiblesModel
+            rightModel: d.renamedAllNetworksModel
+            joinRole: "chainId"
+        }
+
         property var collectibleComboBoxModel: SortFilterProxyModel {
-            sourceModel: root.collectiblesModel
+            sourceModel: d.collectibleNetworksJointModel
             filters: [
                 ExpressionFilter {
                     expression: {
@@ -183,6 +195,7 @@ Item {
               // collectible
               property var uid: model.uid
               property var iconUrl: model.iconUrl
+              property var networkIconUrl: model.networkIconUrl
               property var collectionUid: model.collectionUid
               property var collectionName: model.collectionName
               property var isCollection: model.isCollection
@@ -278,7 +291,11 @@ Item {
         TokenBalancePerChainDelegate {
             objectName: "AssetSelector_ItemDelegate_" + symbol
             width: holdingItemSelector.comboBoxControl.popup.width
-            getNetworkIcon: root.getNetworkIcon
+            balancesModel: LeftJoinModel {
+                leftModel: balances
+                rightModel: root.networksModel
+                joinRole: "chainId"
+            }
             onTokenSelected: {
                 holdingItemSelector.selectedItem = selectedToken
                 d.currentHoldingType = Constants.HoldingType.Asset
@@ -293,7 +310,6 @@ Item {
         CollectibleNestedDelegate {
             objectName: "CollectibleSelector_ItemDelegate_" + collectionUid
             width: holdingItemSelector.comboBoxControl.popup.width
-            getNetworkIcon: root.getNetworkIcon
             onItemSelected: {
                 if (isCollection) {
                     d.currentBrowsingCollectionName = collectionName
