@@ -1,10 +1,16 @@
 {
-  source ? builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/c140730d40d723c3c74a8d24bceef363495a3aef.zip";
-    sha256 = "sha256:1bcms35idl4mggickf97z6sydyr8iyjjw93iahhzwczwc42dgs0b";
-  },
-  pkgs ? import (source) { }
+  pkgs ? import ./pkgs.nix
 }:
+
+#pkgs.mkShell {
+#  name = "debug-shell";
+#
+#  buildInputs = with pkgs; [
+#  bash hello
+#  ];
+#
+#
+#}
 
 let
   qtCustom = with pkgs.qt515; /* 5.15.8 */
