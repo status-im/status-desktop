@@ -11,6 +11,7 @@ type
     isWatchOnlyAccount: bool
     isAllAccounts: bool
     colorIds: seq[string]
+    canSend: bool
 
 proc initItem*(
   name: string = "",
@@ -21,7 +22,8 @@ proc initItem*(
   emoji: string,
   isWatchOnlyAccount: bool=false,
   isAllAccounts: bool = false,
-  colorIds: seq[string] = @[]
+  colorIds: seq[string] = @[],
+  canSend: bool = true,
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
@@ -32,6 +34,7 @@ proc initItem*(
   result.isAllAccounts = isAllAccounts
   result.colorIds = colorIds
   result.isWatchOnlyAccount = isWatchOnlyAccount
+  result.canSend = canSend
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -72,3 +75,6 @@ proc getColorIds*(self: Item): string =
 
 proc getIsWatchOnlyAccount*(self: Item): bool =
   return self.isWatchOnlyAccount
+
+proc getCanSend*(self: Item): bool =
+  return self.canSend

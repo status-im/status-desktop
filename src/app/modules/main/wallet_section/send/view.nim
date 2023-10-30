@@ -184,8 +184,8 @@ QtObject:
     self.accounts.setItems(items)
     self.accountsChanged()
 
-    # need to remove watch only accounts as a user cant send a tx with a watch only account
-    self.senderAccounts.setItems(items.filter(a => a.walletType() != WalletTypeWatch))
+    # need to remove watch only accounts as a user cant send a tx with a watch only account + remove not operable account
+    self.senderAccounts.setItems(items.filter(a => a.canSend()))
     self.senderAccountsChanged()
 
   proc setNetworkItems*(self: View, fromNetworks: seq[NetworkItem], toNetworks: seq[NetworkItem]) =

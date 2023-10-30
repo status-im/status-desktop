@@ -9,6 +9,7 @@ QtObject:
   type AccountItem* = ref object of WalletAccountItem
     assets: token_model.Model
     currencyBalance: CurrencyAmount
+    canSend: bool
 
   proc setup*(self: AccountItem,
     name: string,
@@ -21,7 +22,8 @@ QtObject:
     position: int,
     areTestNetworksEnabled: bool,
     prodPreferredChainIds: string,
-    testPreferredChainIds: string
+    testPreferredChainIds: string,
+    canSend: bool
   ) =
     self.QObject.setup
     self.WalletAccountItem.setup(name,
@@ -39,6 +41,7 @@ QtObject:
       testPreferredChainIds)
     self.assets = assets
     self.currencyBalance = currencyBalance
+    self.canSend = canSend
 
   proc delete*(self: AccountItem) =
       self.QObject.delete
@@ -55,9 +58,10 @@ QtObject:
     prodPreferredChainIds: string = "",
     testPreferredChainIds: string = "",
     position: int = 0,
+    canSend: bool = true,
     ): AccountItem =
       new(result, delete)
-      result.setup(name, address, colorId, emoji, walletType, assets, currencyBalance, position, areTestNetworksEnabled, prodPreferredChainIds, testPreferredChainIds)
+      result.setup(name, address, colorId, emoji, walletType, assets, currencyBalance, position, areTestNetworksEnabled, prodPreferredChainIds, testPreferredChainIds, canSend)
 
   proc `$`*(self: AccountItem): string =
     result = "WalletSection-Send-Item("
@@ -83,3 +87,6 @@ QtObject:
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalanceAsQVariant
     notify = currencyBalanceChanged
+
+  proc canSend*(self: AccountItem): bool =
+    return self.canSend
