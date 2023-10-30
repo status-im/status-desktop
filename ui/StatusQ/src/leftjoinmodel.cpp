@@ -129,7 +129,7 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
     if (m_rightModelDestroyed)
         return {};
 
-    QVariant joinRoleLeftValue = m_leftModel->data(idx, m_leftModelJoinRole);
+    auto joinRoleLeftValue = m_leftModel->data(idx, m_leftModelJoinRole);
 
     if (m_lastUsedRightModelIndex.isValid()
             && m_rightModel->data(m_lastUsedRightModelIndex,
@@ -139,22 +139,15 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
                                   role - m_rightModelRolesOffset);
     }
 
-    int rightModelCount = m_rightModel->rowCount();
+    QModelIndexList match = m_rightModel->match(
+                m_rightModel->index(0, 0), m_rightModelJoinRole,
+                joinRoleLeftValue, 1, Qt::MatchExactly);
 
-    for (int i = 0; i < rightModelCount; i++) {
-        auto rightModelIdx =  m_rightModel->index(i, 0);
-        auto rightJointRoleValue = m_rightModel->data(rightModelIdx,
-                                                      m_rightModelJoinRole);
+    if (match.empty())
+        return {};
 
-        if (joinRoleLeftValue == rightJointRoleValue) {
-            m_lastUsedRightModelIndex = rightModelIdx;
-
-            return m_rightModel->data(rightModelIdx,
-                                      role - m_rightModelRolesOffset);
-        }
-    }
-
-    return {};
+    m_lastUsedRightModelIndex = match.first();
+    return match.first().data(role - m_rightModelRolesOffset);
 }
 
 void LeftJoinModel::setLeftModel(QAbstractItemModel* model)
