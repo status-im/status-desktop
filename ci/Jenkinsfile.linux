@@ -33,7 +33,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 25, unit: 'MINUTES')
+    //timeout(time: 25, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -62,14 +62,14 @@ pipeline {
   stages {
     stage('Deps') {
       steps { script {
-        nix.shell('make update', pure: false)
-        nix.shell('make deps', pure: false)
+        nix.shell('make update --debug V=1', pure: true)
+        nix.shell('make deps --debug V=1', pure: true)
       } }
     }
 
     stage('status-go') {
       steps { script {
-        nix.shell('make status-go', pure: false)
+        nix.shell('make status-go --debug V=1', pure: true)
       } }
     }
 
