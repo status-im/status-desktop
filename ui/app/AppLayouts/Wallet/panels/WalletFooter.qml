@@ -46,7 +46,7 @@ Rectangle {
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchSendModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount
+            visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend
         }
 
         StatusFlatButton {
@@ -64,7 +64,7 @@ Rectangle {
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
-            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer
+            visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
         }
         
         StatusFlatButton {

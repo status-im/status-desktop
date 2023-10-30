@@ -119,5 +119,6 @@ proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, tokens: seq[Wall
     currencyAmountToItem(currencyBalance, currencyFormat),
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
-    w.testPreferredChainIds
+    w.testPreferredChainIds,
+    canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
   )

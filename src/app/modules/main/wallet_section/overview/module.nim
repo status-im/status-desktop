@@ -82,6 +82,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
     self.view.setData(item)
   else:
     let walletAccount = walletAccounts[0]
+    let isWatchOnlyAccount = walletAccount.walletType == "watch"
     let item = initItem(
       walletAccount.name,
       walletAccount.mixedCaseAddress,
@@ -89,7 +90,8 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
       walletAccount.assetsLoading,
       walletAccount.colorId,
       walletAccount.emoji,
-      isWatchOnlyAccount=walletAccount.walletType == "watch"
+      isWatchOnlyAccount=isWatchOnlyAccount,
+      canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
     )
     self.view.setData(item)
 
