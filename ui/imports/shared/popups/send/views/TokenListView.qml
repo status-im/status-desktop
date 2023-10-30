@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,12 +18,12 @@ Item {
 
     property var assets: null
     property var collectibles: null
+    property var networksModel
     signal tokenSelected(string symbol, var holdingType)
     signal tokenHovered(string symbol, var holdingType, bool hovered)
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
-    property var getNetworkIcon: function(chainId){}
     property bool onlyAssets: false
     property int browsingHoldingType: Constants.HoldingType.Asset
 
@@ -53,6 +54,20 @@ Item {
                                              [qsTr("Assets"), qsTr("Collectibles")]
 
         property string currentBrowsingCollectionName
+
+        readonly property RolesRenamingModel renamedAllNetworksModel: RolesRenamingModel {
+            sourceModel: root.networksModel
+            mapping: RoleRename {
+                from: "iconUrl"
+                to: "networkIconUrl"
+            }
+        }
+
+        readonly property LeftJoinModel collectiblesNetworksJointModel: LeftJoinModel {
+            leftModel: root.collectibles
+            rightModel: d.renamedAllNetworksModel
+            joinRole: "chainId"
+        }
     }
 
     implicitWidth: contentLayout.implicitWidth
@@ -135,8 +150,9 @@ Item {
             }
         ]
     }
+
     property var collectiblesModel: SortFilterProxyModel {
-        sourceModel: root.collectibles
+        sourceModel: d.collectiblesNetworksJointModel
         filters: [
             ExpressionFilter {
                 expression: {
@@ -154,7 +170,11 @@ Item {
         id: tokenDelegate
         TokenBalancePerChainDelegate {
             width: ListView.view.width
-            getNetworkIcon: root.getNetworkIcon
+            balancesModel: LeftJoinModel {
+                leftModel: balances
+                rightModel: root.networksModel
+                joinRole: "chainId"
+            }
             onTokenSelected: root.tokenSelected(symbol, Constants.HoldingType.Asset)
             onTokenHovered: root.tokenHovered(symbol, Constants.HoldingType.Asset, hovered)
         }
@@ -172,7 +192,6 @@ Item {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
             width: ListView.view.width
-            getNetworkIcon: root.getNetworkIcon
             onItemHovered: root.tokenHovered(selectedItem.uid, Constants.HoldingType.Collectible, hovered)
             onItemSelected: {
                 if (isCollection) {

@@ -57,14 +57,9 @@ Item {
         secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : Constants.dummyText
         tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : Constants.dummyText
         balances: token && token.balances ? token.balances : null
+        networksModel: RootStore.allNetworks
         isLoading: root.assetsLoading
         errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
-        getNetworkColor: function(chainId){
-            return RootStore.getNetworkColor(chainId)
-        }
-        getNetworkIcon: function(chainId){
-            return RootStore.getNetworkIcon(chainId)
-        }
         formatBalance: function(balance){
             return LocaleUtils.currencyAmountToLocaleString(balance)
         }

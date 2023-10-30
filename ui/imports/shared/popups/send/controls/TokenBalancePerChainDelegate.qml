@@ -9,9 +9,7 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    property var getNetworkIcon: function(chainId){
-        return ""
-    }
+    property var balancesModel
     signal tokenSelected(var selectedToken)
     signal tokenHovered(var selectedToken, bool hovered)
 
@@ -50,13 +48,13 @@ StatusListItem {
     statusListItemLabel.anchors.verticalCenterOffset: -12
     statusListItemLabel.color: Theme.palette.directColor1
     statusListItemInlineTagsSlot.spacing: 0
-    tagsModel: balances.count > 0 ? balances : []
+    tagsModel: root.balancesModel
     tagsDelegate: expandedItem
     statusListItemInlineTagsSlot.children: Row {
         id: compactRow
         spacing: -6
         Repeater {
-            model: balances.count > 0 ? balances : []
+            model: root.balancesModel
             delegate: compactItem
         }
     }
@@ -72,7 +70,7 @@ StatusListItem {
             z: index + 1
             width: 16
             height: 16
-            image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(chainId)))
+            image.source: Style.svg("tiny/%1".arg(iconUrl))
             visible: !root.sensor.containsMouse || index > d.indexesThatCanBeShown
         }
     }
@@ -88,7 +86,7 @@ StatusListItem {
             asset.width: 16
             asset.height: 16
             asset.isImage: true
-            asset.name: Style.svg("tiny/%1".arg(root.getNetworkIcon(chainId)))
+            asset.name: Style.svg("tiny/%1".arg(iconUrl))
             visible: root.sensor.containsMouse && index <= d.indexesThatCanBeShown
         }
     }

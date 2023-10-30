@@ -30,11 +30,14 @@ QtObject {
     property bool isNonArchivalNode: Global.appIsReady && walletSectionInst.isNonArchivalNode
 
     property var marketValueStore: TokenMarketValuesStore{}
+    property var allNetworks: networksModule.all
 
     function resetFilter() {
         walletSectionInst.activityController.updateFilter()
     }
 
+    // TODO remove all these by linking chainId for networks and activity using LeftJoinModel
+    // not possible currently due to the current structure of the activity model
     function getNetworkColor(chainId) {
         return networksModule.all.getChainColor(chainId)
     }
