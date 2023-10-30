@@ -39,6 +39,6 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
         wallet.left_panel.open_saved_addresses().delete_saved_address(new_name)
 
     with step('Verify that saved address with new name is not in the list of saved addresses'):
-        assert driver.waitFor(
-            lambda: new_name not in wallet.left_panel.open_saved_addresses().address_names,
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {new_name} not found'
+        assert not driver.waitFor(
+            lambda: new_name in wallet.left_panel.open_saved_addresses().address_names,
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {new_name} is still present'
