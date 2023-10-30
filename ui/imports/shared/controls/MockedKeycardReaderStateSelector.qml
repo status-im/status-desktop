@@ -63,6 +63,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.readerStateReaderUnplugged
+            objectName: "readerStateReaderUnpluggedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardReaderStateSelector.State.NoReader
             }
@@ -70,6 +71,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.readerStateKeycardNotInserted
+            objectName: "readerStateKeycardNotInsertedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardReaderStateSelector.State.NoKeycard
             }
@@ -77,6 +79,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.readerStateKeycardInserted
+            objectName: "readerStateKeycardInsertedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardReaderStateSelector.State.KeycardInserted
             }

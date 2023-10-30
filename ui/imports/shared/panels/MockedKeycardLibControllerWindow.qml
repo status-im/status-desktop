@@ -46,6 +46,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Plugin Reader")
+                objectName: "pluginReaderButton"
 
                 onClicked: {
                     if (!!root.relatedModule) {
@@ -56,6 +57,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Unplug Reader")
+                objectName: "unplugReaderButton"
 
                 onClicked: {
                     if (!!root.relatedModule) {
@@ -66,6 +68,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Insert Keycard 1")
+                objectName: "insertKeycard1Button"
 
                 onClicked: {
                     if (!!root.relatedModule) {
@@ -76,6 +79,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Insert Keycard 2")
+                objectName: "insertKeycard2Button"
 
                 onClicked: {
                     if (!!root.relatedModule) {
@@ -86,6 +90,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Remove Keycard")
+                objectName: "removeKeycardButton"
 
                 onClicked: {
                     if (!!root.relatedModule) {
@@ -122,11 +127,13 @@ ApplicationWindow {
             width: implicitWidth
             leftPadding: 0
             text: qsTr("Keycard-1")
+            objectName: "keycard1Button"
         }
 
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Keycard-2")
+            objectName: "keycard2Button"
         }
     }
 
@@ -181,6 +188,7 @@ ApplicationWindow {
 
                 StatusInput {
                     id: mockedKeycard
+                    objectName: "mockedKeycardInput"
                     label: qsTr("Mocked Keycard")
                     implicitWidth: 400
                     minimumHeight: 200
@@ -193,6 +201,7 @@ ApplicationWindow {
 
                 StatusInput {
                     id: mockedKeycardHelper
+                    objectName: "specificKeycardDetailsInput"
                     label: qsTr("Specific keycard details")
                     implicitWidth: 400
                     minimumHeight: 200
@@ -206,6 +215,7 @@ ApplicationWindow {
 
             StatusButton {
                 text: qsTr("Register Keycard")
+                objectName: "registerKeycardButton"
                 onClicked: {
                     if (customSection.visible) {
                         mockedKeycard.input.valid = true

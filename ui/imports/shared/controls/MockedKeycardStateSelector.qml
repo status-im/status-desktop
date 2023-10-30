@@ -83,6 +83,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateNotStatusKeycard
+            objectName: "notStatusKeycardAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.NotStatusKeycard
             }
@@ -90,6 +91,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateEmptyKeycard
+            objectName: "emptyKeycardAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.EmptyKeycard
             }
@@ -97,6 +99,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateMaxPairingSlotsReached
+            objectName: "maxPairingSlotsReachedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.MaxPairingSlotsReached
             }
@@ -104,6 +107,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateMaxPINRetriesReached
+            objectName: "maxPINRetriesReachedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.MaxPINRetriesReached
             }
@@ -111,6 +115,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateMaxPUKRetriesReached
+            objectName: "maxPUKRetriesReachedAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.MaxPUKRetriesReached
             }
@@ -118,6 +123,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateKeycardWithMnemonicOnly
+            objectName: "keycardWithMnemonicOnlyAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.KeycardWithMnemonicOnly
             }
@@ -125,6 +131,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateKeycardWithMnemonicAndMedatada
+            objectName: "keycardWithMnemonicAndMedatadaAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.KeycardWithMnemonicAndMedatada
             }
@@ -132,6 +139,7 @@ ColumnLayout {
 
         StatusAction {
             text: d.kcStateCustomKeycard
+            objectName: "customKeycardAction"
             onTriggered: {
                 root.selectedState = MockedKeycardStateSelector.State.CustomKeycard
             }
