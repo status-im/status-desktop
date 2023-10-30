@@ -2,6 +2,7 @@ import allure
 
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
+from gui.elements.scroll import Scroll
 from gui.screens.settings_communities import CommunitiesSettingsView
 from gui.screens.settings_messaging import MessagingSettingsView
 from gui.screens.settings_profile import ProfileSettingsView
@@ -14,9 +15,12 @@ class LeftPanel(QObject):
     def __init__(self):
         super().__init__('mainWindow_LeftTabView')
         self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
+        self._scroll = Scroll('scrollView_Flickable')
 
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
+        if not self._settings_section_template.is_visible:
+            self._scroll.vertical_down_to(self._settings_section_template)
         self._settings_section_template.click()
 
     @allure.step('Check back up seed option menu item presence')
@@ -53,6 +57,10 @@ class LeftPanel(QObject):
     def open_syncing_settings(self):
         self._open_settings('8-MainMenuItem')
         return SyncingSettingsView()
+
+    @allure.step('Choose sign out and quit in settings')
+    def sign_out_and_quit(self):
+        self._open_settings('16-ExtraMenuItem')
 
 
 class SettingsScreen(QObject):

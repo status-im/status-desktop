@@ -1,0 +1,19 @@
+import allure
+import pytest
+from allure_commons._allure import step
+
+from gui.main_window import MainWindow
+from scripts.utils.local_system import wait_for_close
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
+@pytest.mark.case(703010)
+def test_sign_out_and_quit(aut, main_screen: MainWindow):
+    with step('Open settings'):
+        settings = main_screen.left_panel.open_settings()
+
+    with step('Click sign out and quit in settings'):
+        settings.left_panel.sign_out_and_quit()
+
+    with step('Check that app was closed'):
+        wait_for_close(aut.pid)
