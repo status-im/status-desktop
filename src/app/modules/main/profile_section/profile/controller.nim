@@ -11,11 +11,6 @@ import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_entry
 
-import models/profile_preferences_community_item
-import models/profile_preferences_account_item
-import models/profile_preferences_collectible_item
-import models/profile_preferences_asset_item
-
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -24,9 +19,6 @@ type
     settingsService: settings_service.Service
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
-
-# Forward declaration
-proc updateShowcasePreferences(self: Controller, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto])
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -59,7 +51,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
     let args = ProfileShowcasePreferences(e)
-    self.updateShowcasePreferences(args.communities, args.accounts, args.collectibles, args.assets)
+    self.delegate.updateProfileShowcasePreferences(args.communities, args.accounts, args.collectibles, args.assets)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
@@ -73,6 +65,15 @@ proc setDisplayName*(self: Controller, displayName: string) =
 proc getSocialLinks*(self: Controller): SocialLinks =
   return self.settingsService.getSocialLinks()
 
+proc getCommunityById*(self: Controller, id: string): CommunityDto =
+  return self.communityService.getCommunityById(id)
+
+proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
+
+proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto] =
+  return self.walletAccountService.getTokensByAddress(address)
+
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
 
@@ -82,46 +83,13 @@ proc getBio*(self: Controller): string =
 proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
 
-proc storeProfileShowcasePreferences*(self: Controller,
-                                      communities: seq[ProfileShowcaseCommunityItem],
-                                      accounts: seq[ProfileShowcaseAccountItem],
-                                      collectibles: seq[ProfileShowcaseCollectibleItem],
-                                      assets: seq[ProfileShowcaseAssetItem]) =
-  let communitiesDto = communities.map(item => item.getEntryDto())
-  let accountsDto = accounts.map(item => item.getEntryDto())
-  let collectiblesDto = collectibles.map(item => item.getEntryDto())
-  let assetsDto = assets.map(item => item.getEntryDto())
-
+proc storeProfileShowcasePreferences*(self: Controller, communities, accounts, collectibles, assets: seq[ProfileShowcaseEntryDto]) =
   self.profileService.setProfileShowcasePreferences(ProfileShowcasePreferences(
-      communities: communitiesDto,
-      accounts: accountsDto,
-      collectibles: collectiblesDto,
-      assets: assetsDto
+      communities: communities,
+      accounts: accounts,
+      collectibles: collectibles,
+      assets: assets
   ))
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
-
-proc updateShowcasePreferences(self: Controller, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto]) =
-  var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
-  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
-  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
-
-  for communityEntry in communityEntries:
-    let community = self.communityService.getCommunityById(communityEntry.id)
-    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, communityEntry))
-
-  for accountEntry in accountEntries:
-    let account = self.walletAccountService.getAccountByAddress(accountEntry.id)
-    profileAccountItems.add(initProfileShowcaseAccountItem(account, accountEntry))
-
-    for assetEntry in assetEntries:
-      # TODO: need wallet api to fetch token by symbol
-      for token in self.walletAccountService.getTokensByAddress(account.address):
-        if assetEntry.id == token.symbol:
-          profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry))
-
-    # TODO: collectibles, need wallet api to fetch collectible by uid
-
-  self.delegate.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)

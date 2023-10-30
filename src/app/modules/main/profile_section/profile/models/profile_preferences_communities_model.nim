@@ -96,7 +96,7 @@ QtObject:
       return false
     return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc itemsUpdated*(self: ProfileShowcaseCommunitiesModel) {.signal.}
+  proc baseModelFilterConditionsMayChanged*(self: ProfileShowcaseCommunitiesModel) {.signal.}
 
   proc appendItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     let parentModelIndex = newQModelIndex()
@@ -105,6 +105,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     let ind = self.findIndexForCommunity(item.id)
@@ -127,24 +128,26 @@ QtObject:
 
   proc upsertItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseCommunityItem())
+    self.recalcOrder()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItem*(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
     self.upsertItemImpl(item)
     self.recalcOrder()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItems*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
     for item in items:
       self.upsertItemImpl(item)
     self.recalcOrder()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc reset*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
     self.countChanged()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc remove*(self: ProfileShowcaseCommunitiesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -156,6 +159,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+    self.baseModelFilterConditionsMayChanged()
 
   proc removeEntry*(self: ProfileShowcaseCommunitiesModel, id: string) {.slot.} =
     let ind = self.findIndexForCommunity(id)
@@ -181,6 +185,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+      self.baseModelFilterConditionsMayChanged()
 
   proc setVisibility*(self: ProfileShowcaseCommunitiesModel, id: string, visibility: int) {.slot.} =
     let index = self.findIndexForCommunity(id)

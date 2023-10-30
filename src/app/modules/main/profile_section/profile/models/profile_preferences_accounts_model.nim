@@ -97,7 +97,7 @@ QtObject:
       return false
     return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc itemsUpdated*(self: ProfileShowcaseAccountsModel) {.signal.}
+  proc baseModelFilterConditionsMayChanged*(self: ProfileShowcaseAccountsModel) {.signal.}
 
   proc appendItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let parentModelIndex = newQModelIndex()
@@ -106,6 +106,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let ind = self.findIndexForAccount(item.address)
@@ -128,24 +129,26 @@ QtObject:
 
   proc upsertItemJson(self: ProfileShowcaseAccountsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAccountItem())
+    self.recalcOrder()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     self.upsertItemImpl(item)
     self.recalcOrder()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc upsertItems*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
     for item in items:
       self.upsertItemImpl(item)
     self.recalcOrder()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc reset*(self: ProfileShowcaseAccountsModel) {.slot.} =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
     self.countChanged()
-    self.itemsUpdated()
+    self.baseModelFilterConditionsMayChanged()
 
   proc remove*(self: ProfileShowcaseAccountsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -157,6 +160,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+    self.baseModelFilterConditionsMayChanged()
 
   proc removeEntry*(self: ProfileShowcaseAccountsModel, address: string) {.slot.} =
     let ind = self.findIndexForAccount(address)
@@ -182,6 +186,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
+      self.baseModelFilterConditionsMayChanged()
 
   proc setVisibility*(self: ProfileShowcaseAccountsModel, address: string, visibility: int) {.slot.} =
     let index = self.findIndexForAccount(address)

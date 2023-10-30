@@ -9,6 +9,7 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/profile/dto/profile_showcase_entry
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
@@ -106,14 +107,35 @@ method storeProfileShowcasePreferences(self: Module,
                                        accounts: seq[ProfileShowcaseAccountItem],
                                        collectibles: seq[ProfileShowcaseCollectibleItem],
                                        assets: seq[ProfileShowcaseAssetItem]) =
-  self.controller.storeProfileShowcasePreferences(communities, accounts, collectibles, assets)
+  let communitiesDto = communities.map(item => item.getEntryDto())
+  let accountsDto = accounts.map(item => item.getEntryDto())
+  let collectiblesDto = collectibles.map(item => item.getEntryDto())
+  let assetsDto = assets.map(item => item.getEntryDto())
+  self.controller.storeProfileShowcasePreferences(communitiesDto, accountsDto, collectiblesDto, assetsDto)
 
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()
 
-method updateProfileShowcasePreferences(self: Module,
-                                       communities: seq[ProfileShowcaseCommunityItem],
-                                       accounts: seq[ProfileShowcaseAccountItem],
-                                       collectibles: seq[ProfileShowcaseCollectibleItem],
-                                       assets: seq[ProfileShowcaseAssetItem]) =
-  self.view.updateProfileShowcasePreferences(communities, accounts, collectibles, assets)
+method updateProfileShowcasePreferences(self: Module, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto]) =
+  var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+
+  for communityEntry in communityEntries:
+    let community = self.controller.getCommunityById(communityEntry.id)
+    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, communityEntry))
+
+  for accountEntry in accountEntries:
+    let account = self.controller.getAccountByAddress(accountEntry.id)
+    profileAccountItems.add(initProfileShowcaseAccountItem(account, accountEntry))
+
+    for assetEntry in assetEntries:
+      # TODO: need wallet api to fetch token by symbol
+      for token in self.controller.getTokensByAddress(account.address):
+        if assetEntry.id == token.symbol:
+          profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry))
+
+    # TODO: collectibles, need wallet api to fetch collectible by uid
+
+  self.view.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)

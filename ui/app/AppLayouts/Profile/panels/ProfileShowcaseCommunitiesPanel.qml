@@ -24,7 +24,6 @@ ProfileShowcasePanel {
             tmpObj.showcaseVisibility = value
             showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
-            root.updateModelsAfterChange()
         }
     }
     showcaseDraggableDelegateComponent: CommunityShowcaseDelegate {
@@ -37,7 +36,6 @@ ProfileShowcasePanel {
         onShowcaseVisibilityRequested: {
             showcaseModel.setVisibility(showcaseObj.id, value)
             root.showcaseEntryChanged()
-            root.updateModelsAfterChange()
         }
     }
 }

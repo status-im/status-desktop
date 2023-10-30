@@ -33,20 +33,23 @@ Control {
 
     signal showcaseEntryChanged()
 
-    function updateModelsAfterChange() {
-        hiddenItemsListView.model = null
-        hiddenItemsListView.model = baseModel
-    }
-
     function reset() {
         showcaseModel.reset()
-        updateModelsAfterChange()
+        updateBaseModelFilters()
+    }
+
+    function updateBaseModelFilters() {
+        // Reset base model to update filter conditions
+        hiddenItemsListView.model = null
+        hiddenItemsListView.model = baseModel
     }
 
     readonly property Connections showcaseUpdateConnections: Connections {
         target: showcaseModel
 
-        function onItemsUpdated() { root.updateModelsAfterChange() }
+        function onBaseModelFilterConditionsMayChanged() {
+            root.updateBaseModelFilters()
+        }
     }
 
     background: null
@@ -82,7 +85,6 @@ Control {
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
                     showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
                     root.showcaseEntryChanged()
-                    root.updateModelsAfterChange()
                 }
             }
         }
@@ -273,7 +275,6 @@ Control {
 
                     showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
                     root.showcaseEntryChanged()
-                    root.updateModelsAfterChange()
                 }
 
                 Rectangle {
