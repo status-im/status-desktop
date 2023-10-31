@@ -74,7 +74,7 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
 
         with step('Sign in to synced account'):
             sync_result.sign_in()
-            SplashScreen().wait_until_appears().wait_until_hidden()
+            SplashScreen().wait_until_hidden()
             if not configs.DEV_BUILD:
                 if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
                     BetaConsentPopup().confirm()

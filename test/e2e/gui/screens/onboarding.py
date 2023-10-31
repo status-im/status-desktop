@@ -12,6 +12,7 @@ from constants import ColorCodes
 from driver.objects_access import walk_children
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
+from gui.components.splash_screen import SplashScreen
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
@@ -183,8 +184,13 @@ class SyncResultView(OnboardingView):
         return self
 
     @allure.step('Sign in')
-    def sign_in(self):
+    def sign_in(self, attempts: int = 2):
         self._sign_in_button.click()
+        try:
+            return SplashScreen().wait_until_appears()
+        except:
+            assert attempts > 0, f'Next button was not clicked'
+            self.sign_in(attempts - 1)
 
 
 class SeedPhraseInputView(OnboardingView):
@@ -297,7 +303,6 @@ class YourProfileView(OnboardingView):
                 return self.next(attempts - 1)
             else:
                 raise err
-
 
     @allure.step('Go back')
     def back(self):
