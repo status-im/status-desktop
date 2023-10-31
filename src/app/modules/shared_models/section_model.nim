@@ -43,6 +43,9 @@ type
     PendingMemberRequestsModel
     DeclinedMemberRequestsModel
     AmIBanned
+    PubsubTopic
+    PubsubTopicKey
+    ShardIndex
 
 QtObject:
   type
@@ -116,6 +119,9 @@ QtObject:
       ModelRole.PendingMemberRequestsModel.int:"pendingMemberRequests",
       ModelRole.DeclinedMemberRequestsModel.int:"declinedMemberRequests",
       ModelRole.AmIBanned.int:"amIBanned",
+      ModelRole.PubsubTopic.int:"pubsubTopic",
+      ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
+      ModelRole.ShardIndex.int:"shardIndex",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -201,6 +207,12 @@ QtObject:
       result = newQVariant(item.declinedMemberRequests)
     of ModelRole.AmIBanned:
       result = newQVariant(item.amIBanned)
+    of ModelRole.PubsubTopic:
+      result = newQVariant(item.pubsubTopic)
+    of ModelRole.PubsubTopicKey:
+      result = newQVariant(item.pubsubTopicKey)
+    of ModelRole.ShardIndex:
+      result = newQVariant(item.shardIndex)
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -415,6 +427,9 @@ QtObject:
           "ensOnly": item.ensOnly,
           "nbMembers": item.members.getCount(),
           "encrypted": item.encrypted,
+          "pubsubTopic": item.pubsubTopic,
+          "pubsubTopicKey": item.pubsubTopicKey,
+          "shardIndex": item.shardIndex,
         }
         return $jsonObj
 

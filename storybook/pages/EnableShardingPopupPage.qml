@@ -35,9 +35,22 @@ SplitView {
             closePolicy: Popup.NoAutoClose
 
             communityName: "Foobar"
-            publicKey: "0xdeadbeef"
-            shardingInProgress: ctrlShardingInProgress.checked
-            onEnableSharding: logs.logEvent("enableSharding", ["shardIndex"], arguments)
+            shardIndex: -1
+            pubsubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"0xdeadbeef"}'.arg(dialog.shardIndex)
+
+            onShardIndexChanged: {
+                shardingInProgress = true
+                logs.logEvent("enableSharding", ["shardIndex"], arguments)
+                shardSetterDelayer.start()
+            }
+        }
+
+        Timer {
+            id: shardSetterDelayer
+            interval: 1000
+            onTriggered: {
+                dialog.shardingInProgress = false
+            }
         }
     }
 
@@ -46,13 +59,6 @@ SplitView {
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
-
-        ColumnLayout {
-            Switch {
-                id: ctrlShardingInProgress
-                text: "Sharding in progress"
-            }
-        }
     }
 }
 

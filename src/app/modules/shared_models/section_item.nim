@@ -57,6 +57,9 @@ type
     declinedMemberRequestsModel: member_model.Model
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
+    pubsubTopic: string
+    pubsubTopicKey: string
+    shardIndex: int
 
 proc initItem*(
     id: string,
@@ -94,6 +97,9 @@ proc initItem*(
     declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
     communityTokens: seq[TokenItem] = @[],
+    pubsubTopic = "",
+    pubsubTopicKey = "",
+    shardIndex = -1,
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -136,6 +142,9 @@ proc initItem*(
   result.encrypted = encrypted
   result.communityTokensModel = newTokenModel()
   result.communityTokensModel.setItems(communityTokens)
+  result.pubsubTopic = pubsubTopic
+  result.pubsubTopicKey = pubsubTopicKey
+  result.shardIndex = shardIndex
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -366,3 +375,21 @@ proc updateMembershipStatus*(self: SectionItem, memberKey: string, status: Membe
     self.bannedMembersModel.updateMembershipStatus(memberKey, status)
   else:
     self.membersModel.updateMembershipStatus(memberKey, status)
+
+proc pubsubTopic*(self: SectionItem): string {.inline.} =
+  self.pubsubTopic
+
+proc `pubsubTopic=`*(self: var SectionItem, value: string) {.inline.} =
+  self.pubsubTopic = value
+
+proc pubsubTopicKey*(self: SectionItem): string {.inline.} =
+  self.pubsubTopicKey
+
+proc `pubsubTopicKey=`*(self: var SectionItem, value: string) {.inline.} =
+  self.pubsubTopicKey = value
+
+proc shardIndex*(self: SectionItem): int {.inline.} =
+  self.shardIndex
+
+proc `shardIndex=`*(self: var SectionItem, value: int) {.inline.} =
+  self.shardIndex = value

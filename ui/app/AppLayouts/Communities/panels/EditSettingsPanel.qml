@@ -23,9 +23,12 @@ StatusScrollView {
     property alias tags: baseLayout.tags
     property alias selectedTags: baseLayout.selectedTags
     property alias options: baseLayout.options
-    property string communityId
-    property bool communityShardingEnabled
-    property int communityShardIndex: -1
+
+    property bool shardingEnabled
+    property int shardIndex
+    property bool shardingInProgress
+    property string pubsubTopic
+    property string pubsubTopicKey
 
     property alias logoImageData: baseLayout.logoImageData
     property alias logoImagePath: baseLayout.logoImagePath
@@ -41,6 +44,8 @@ StatusScrollView {
                                                        (baseLayout.isDescriptionDirty && !baseLayout.isDescriptionValid) ||
                                                        (introMessageTextInput.input.dirty && !introMessageTextInput.valid) ||
                                                        (outroMessageTextInput.input.dirty && !outroMessageTextInput.valid))
+
+    signal shardIndexEdited(int shardIndex)
 
     padding: 0
 
@@ -75,14 +80,14 @@ StatusScrollView {
             Layout.fillWidth: true
             Layout.topMargin: -baseLayout.spacing
             Layout.bottomMargin: 2
-            visible: root.communityShardingEnabled
+            visible: root.shardingEnabled
         }
 
         RowLayout {
             spacing: Style.current.halfPadding
-            visible: root.communityShardingEnabled
+            visible: root.shardingEnabled
 
-            readonly property bool shardingActive: root.communityShardIndex !== -1
+            readonly property bool shardingActive: root.shardIndex !== -1
 
             StatusBaseText {
                 Layout.fillWidth: true
@@ -92,11 +97,12 @@ StatusScrollView {
             StatusBaseText {
                 color: Theme.palette.baseColor1
                 visible: parent.shardingActive
-                text: qsTr("Active: on shard #%1").arg(root.communityShardIndex)
+                text: qsTr("Active: on shard #%1").arg(root.shardIndex)
             }
             StatusButton {
                 size: StatusBaseButton.Size.Small
                 text: parent.shardingActive ? qsTr("Manage") : qsTr("Make %1 a sharded community").arg(root.name)
+                loading: root.shardingInProgress
                 onClicked: parent.shardingActive ? Global.openPopup(manageShardingPopupCmp) : Global.openPopup(enableShardingPopupCmp)
             }
         }
@@ -111,13 +117,17 @@ StatusScrollView {
         Component {
             id: enableShardingPopupCmp
             EnableShardingPopup {
+                id: enableShardingPopup
                 destroyOnClose: true
                 communityName: root.name
-                publicKey: root.communityId
-                shardingInProgress: false // TODO community sharding backend: set to "true" when generating the pubSub topic, or migrating
-                onEnableSharding: {
-                    console.warn("TODO: enable community sharding for shardIndex:", shardIndex) // TODO community sharding backend
-                    root.communityShardIndex = shardIndex
+                shardIndex: root.shardIndex
+                pubsubTopic: '{"pubsubTopic":"%1", "publicKey":"%2"}'.arg(root.pubsubTopic).arg(root.pubsubTopicKey)
+                shardingInProgress: root.shardingInProgress
+
+                onShardIndexChanged: root.shardIndexEdited(shardIndex)
+                onShardingInProgressChanged: if (!shardingInProgress) {
+                    // bring back the binding
+                    enableShardingPopup.shardIndex = Qt.binding(() => root.shardIndex)
                 }
             }
         }
@@ -125,16 +135,14 @@ StatusScrollView {
         Component {
             id: manageShardingPopupCmp
             ManageShardingPopup {
+                id: manageShardingPopup
                 destroyOnClose: true
                 communityName: root.name
-                shardIndex: root.communityShardIndex
-                pubSubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"%2"}'.arg(shardIndex).arg(root.communityId) // TODO community sharding backend
-                onDisableShardingRequested: {
-                    root.communityShardIndex = -1 // TODO community sharding backend
-                }
-                onEditShardIndexRequested: {
-                    Global.openPopup(enableShardingPopupCmp, {initialShardIndex: root.communityShardIndex})
-                }
+                shardIndex: root.shardIndex
+                pubsubTopic: '{"pubsubTopic":"%1", "publicKey":"%2"}'.arg(root.pubsubTopic).arg(root.pubsubTopicKey)
+
+                onDisableShardingRequested: root.shardIndexEdited(-1)
+                onEditShardIndexRequested: Global.openPopup(enableShardingPopupCmp)
             }
         }
     }

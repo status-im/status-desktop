@@ -17,6 +17,7 @@ SplitView {
     }
 
     EditSettingsPanel {
+        id: panel
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         name: communityEditor.name
@@ -24,10 +25,13 @@ SplitView {
         logoImageData: communityEditor.image
         description: communityEditor.description
         bannerImageData: communityEditor.banner
-        communityId: "0xdeadbeef"
-        communityShardingEnabled: communityEditor.shardingEnabled
-        communityShardIndex: communityEditor.shardIndex
-        onCommunityShardIndexChanged: communityEditor.shardIndex = communityShardIndex
+        shardingEnabled: communityEditor.shardingEnabled
+        shardIndex: communityEditor.shardIndex
+        onShardIndexEdited: {
+            panel.shardingInProgress = true
+            communityEditor.shardIndex = shardIndex
+            panel.shardingInProgress = false
+        }
     }
 
     ScrollView {
