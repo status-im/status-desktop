@@ -44,7 +44,7 @@ class AUT:
             screenshot = configs.testpath.RUN / 'screenshot.png'
             if screenshot.exists():
                 screenshot = configs.testpath.RUN / f'screenshot_{datetime.now():%H%M%S}.png'
-            ImageGrab.grab(xdisplay=":0" if IS_LIN else None).save(screenshot)
+            ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
             allure.attach(
                 name='Screenshot on fail',  body=screenshot.read_bytes(), attachment_type=allure.attachment_type.PNG)
         self.stop()

@@ -58,7 +58,7 @@ def pytest_exception_interact(node):
         screenshot = node_dir / 'screenshot.png'
         if screenshot.exists():
             screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
-        ImageGrab.grab(xdisplay=":0" if IS_LIN else None).save(screenshot)
+        ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
         allure.attach(
             name='Screenshot on fail',
             body=screenshot.read_bytes(),
