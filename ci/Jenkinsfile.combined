@@ -1,6 +1,9 @@
 #!/usr/bin/env groovy
 library 'status-jenkins-lib@v1.8.0'
 
+/* Object to store public URLs for description. */
+urls = [:]
+
 pipeline {
   agent { label 'linux' }
 
@@ -29,16 +32,24 @@ pipeline {
     stage('Build') {
       parallel {
         stage('Linux/x86_64') { steps { script {
-          linux_x86_64 =   jenkins.Build('status-desktop/systems/linux/x86_64/package')
+          linux_x86_64 = getArtifacts(
+            'Linux', jenkins.Build('status-desktop/systems/linux/x86_64/package')
+          )
         } } }
         stage('Windows/x86_64') { steps { script {
-          windows_x86_64 = jenkins.Build('status-desktop/systems/windows/x86_64/package')
+          windows_x86_64 = getArtifacts(
+            'Windows', jenkins.Build('status-desktop/systems/windows/x86_64/package')
+          )
         } } }
         stage('MacOS/x86_64') { steps { script {
-          macos_x86_64 =   jenkins.Build('status-desktop/systems/macos/x86_64/package')
+          macos_x86_64 = getArtifacts(
+            'MacOS/x86_64', jenkins.Build('status-desktop/systems/macos/x86_64/package')
+          )
         } } }
         stage('MacOS/aarch64') { steps { script {
-          macos_aarch64 =  jenkins.Build('status-desktop/systems/macos/aarch64/package')
+          macos_aarch64 = getArtifacts(
+            'MacOS/aarch64', jenkins.Build('status-desktop/systems/macos/aarch64/package')
+          )
         } } }
       }
     }
@@ -49,42 +60,11 @@ pipeline {
         } } }
         stage('Linux/E2E/new') { steps { script {
           linux_e2e = build(
-              job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
-              parameters: jenkins.mapToParams([BUILD_SOURCE: linux_x86_64.fullProjectName]),
+            job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
+            parameters: jenkins.mapToParams([BUILD_SOURCE: linux_x86_64.fullProjectName]),
           )
         } } }
       }
-    }
-    stage('Archive') {
-      steps { script {
-        sh('rm -f pkg/*')
-        jenkins.copyArts(linux_x86_64)
-        jenkins.copyArts(windows_x86_64)
-        jenkins.copyArts(macos_x86_64)
-        jenkins.copyArts(macos_aarch64)
-        sha = "pkg/${utils.pkgFilename(ext: 'sha256')}"
-        dir('pkg') {
-          /* generate sha256 checksums for upload */
-          sh "sha256sum * | tee ../${sha}"
-          archiveArtifacts('*')
-        }
-      } }
-    }
-    stage('Upload') {
-      steps { script {
-        /* object for easier URLs handling */
-        urls = [
-          /* mobile */
-          'Linux': utils.pkgUrl(linux_x86_64),
-          'Windows': utils.pkgUrl(windows_x86_64),
-          'MacOS/x86_64': utils.pkgUrl(macos_x86_64),
-          'MacOS/aarch64': utils.pkgUrl(macos_aarch64),
-          /* upload the sha256 checksums file too */
-          SHA: s3.uploadArtifact(sha),
-        ]
-        /* add URLs to the build description */
-        jenkins.setBuildDesc(urls)
-      } }
     }
     stage('Publish') {
       when { expression { params.PUBLISH } }
@@ -94,6 +74,14 @@ pipeline {
     }
   }
   post {
+    always { script { dir('pkg') {
+      /* Generate sha256 checksums for all artifacts. */
+      sha = "./${utils.pkgFilename(ext: 'sha256')}"
+      sh "sha256sum * | tee ../${sha}"
+      archiveArtifacts('*')
+      urls['SHA'] = s3.uploadArtifact(sha)
+      jenkins.setBuildDesc(urls)
+    } } }
     failure { script {
       withCredentials([
         string(
@@ -114,6 +102,7 @@ pipeline {
         )
       }
     } }
+    cleanup { cleanWs() }
   }
 }
 
@@ -125,4 +114,14 @@ def Boolean getPublishDefault(Boolean previousValue) {
   if (env.JOB_NAME.startsWith('status-desktop/release')) { return true }
   if (previousValue != null) { return previousValue }
   return false
+}
+
+/* Helper for getting artifacts from child builds. */
+def getArtifacts(key, childBuild) {
+  /* Copy artifacts from child build to parent. */
+  jenkins.copyArts(childBuild)
+  /* Add new URL from child build and update description. */
+  urls[key] = utils.pkgUrl(childBuild)
+  jenkins.setBuildDesc(urls)
+  return childBuild
 }
