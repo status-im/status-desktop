@@ -1,16 +1,16 @@
 import allure
 
 import configs
-from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.text_label import TextLabel
 from gui.screens.settings_wallet import *
+from gui.elements.object import QObject
 
 
-class RemoveAccountConfirmationSettings(BasePopup):
+class RemoveAccountConfirmationSettings(QObject):
 
     def __init__(self):
-        super(RemoveAccountConfirmationSettings, self).__init__()
+        super(RemoveAccountConfirmationSettings, self).__init__('removeConfirmationTextTitle')
         self._remove_confirmation_close_button = Button('removeConfirmationCrossCloseButton')
         self._remove_confirmation_title_text = TextLabel('removeConfirmationTextTitle')
         self._remove_confirmation_body_text = TextLabel('removeConfirmationTextBody')
