@@ -67,7 +67,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
   result.communityTokensService = communityTokensService
-  
+
 proc delete*(self: Controller) =
   self.events.disconnect()
 
@@ -303,6 +303,11 @@ proc init*(self: Controller) =
       let args = CheckChannelsPermissionsErrorArgs(e)
       if args.communityId == self.sectionId:
        self.delegate.setPermissionsToJoinCheckOngoing(false)
+
+    self.events.on(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN) do(e: Args):
+      let args = CommunityIdArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin()
 
     self.events.on(SignalType.Wallet.event, proc(e: Args) =
       var data = WalletSignal(e)
@@ -677,3 +682,6 @@ proc collectCommunityMetricsMessagesTimestamps*(self: Controller, intervals: str
 
 proc collectCommunityMetricsMessagesCount*(self: Controller, intervals: string) =
   self.communityService.collectCommunityMetricsMessagesCount(self.getMySectionId(), intervals)
+
+proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Controller, communityId: string): bool =
+  self.communityService.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(communityId)

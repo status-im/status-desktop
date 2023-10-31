@@ -1155,12 +1155,13 @@ method onRemoteDestructed*[T](self: Module[T], communityId: string, chainId: int
 method onRequestReevaluateMembersPermissionsIfRequired*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string) =
   let communityDto = self.controller.getCommunityById(communityId)
   for _, tokenPermission in communityDto.tokenPermissions.pairs:
-    for tokenCriteria in tokenPermission.tokenCriteria:
-      if tokenCriteria.contractAddresses.hasKey(chainId):
-        let actualAddress = tokenCriteria.contractAddresses[chainId]
-        if actualAddress == contractAddress:
-          self.controller.asyncReevaluateCommunityMembersPermissions(communityId)
-          return
+    if tokenPermission.type != TokenPermissionType.BecomeTokenOwner:
+      for tokenCriteria in tokenPermission.tokenCriteria:
+        if tokenCriteria.contractAddresses.hasKey(chainId):
+          let actualAddress = tokenCriteria.contractAddresses[chainId]
+          if actualAddress == contractAddress:
+            self.controller.asyncReevaluateCommunityMembersPermissions(communityId)
+            return
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)

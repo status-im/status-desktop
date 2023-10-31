@@ -11,12 +11,14 @@ const asyncLoadCommunitiesDataTask: Task = proc(argEncoded: string) {.gcsafe, ni
     let responseCommunities = status_go.getAllCommunities()
     let responseSettings = status_go.getCommunitiesSettings()
     let responseMyPendingRequestsToJoin = status_go.myPendingRequestsToJoin()
+    let responseMyAwaitingAddressesRequestsToJoin = status_go.myAwaitingAddressesRequestsToJoin()
 
     arg.finish(%* {
       "tags": responseTags,
       "communities": responseCommunities,
       "settings": responseSettings,
       "myPendingRequestsToJoin": responseMyPendingRequestsToJoin,
+      "myAwaitingAddressesRequestsToJoin": responseMyAwaitingAddressesRequestsToJoin,
       "error": "",
     })
   except Exception as e:

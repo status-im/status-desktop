@@ -405,3 +405,6 @@ method setChannelsPermissionsCheckOngoing*(self: AccessInterface, value: bool) {
 
 method getChannelsPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -29,6 +29,7 @@ QtObject:
       chatsLoaded: bool
       communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
       permissionsCheckOngoing: bool
+      isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -67,6 +68,7 @@ QtObject:
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
     result.communityMetrics = "[]"
+    result.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -446,3 +448,18 @@ QtObject:
       return
     self.permissionsCheckOngoing = value
     self.permissionsCheckOngoingChanged()
+
+  proc getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View): bool {.slot.} =
+    return self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
+
+  proc isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged*(self: View) {.signal.}
+
+  proc setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View, value: bool) =
+    if (value == self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin):
+      return
+    self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = value
+    self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged()
+
+  QtProperty[bool] isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin:
+    read = getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
+    notify = isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged

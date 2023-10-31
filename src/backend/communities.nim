@@ -8,7 +8,7 @@ export response_type
 
 proc getCommunityTags*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communityTags".prefix)
-  
+
 proc muteCategory*(communityId: string, categoryId: string, interval: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("muteCommunityCategory".prefix, %* [
     {
@@ -82,7 +82,7 @@ proc reevaluateCommunityMembersPermissions*(
   result = callPrivateRPC("reevaluateCommunityMembersPermissions".prefix, %*[{
     "communityId": communityId
   }])
-  
+
 proc checkCommunityChannelPermissions*(communityId: string, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("checkCommunityChannelPermissions".prefix, %*[{
     "communityId": communityId,
@@ -97,6 +97,9 @@ proc checkAllCommunityChannelsPermissions*(communityId: string, addresses: seq[s
 
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
+
+proc myAwaitingAddressesRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result =  callPrivateRPC("myAwaitingAddressesRequestsToJoin".prefix)
 
 proc myCanceledRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myCanceledRequestsToJoin".prefix)
@@ -255,7 +258,7 @@ proc deleteCommunityTokenPermission*(communityId: string, permissionId: string):
     "communityId": communityId,
     "permissionId": permissionId
   }])
-  
+
 proc requestCancelDiscordCommunityImport*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestCancelDiscordCommunityImport".prefix, %*[communityId])
 
@@ -423,9 +426,9 @@ proc unbanUserFromCommunity*(communityId: string, pubKey: string): RpcResponse[J
   }])
 
 proc setCommunityMuted*(communityId: string, mutedType: int): RpcResponse[JsonNode] {.raises: [Exception].}  =
-  return callPrivateRPC("setCommunityMuted".prefix, %*[{ 
-    "communityId": communityId, 
-    "mutedType": mutedType 
+  return callPrivateRPC("setCommunityMuted".prefix, %*[{
+    "communityId": communityId,
+    "mutedType": mutedType
   }])
 
 proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string], inviteMessage: string): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -467,3 +470,6 @@ proc getCommunityPublicKeyFromPrivateKey*(communityPrivateKey: string,): RpcResp
 
 proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCommunityMembersForWalletAddresses".prefix, %* [communityId, chainId])
+
+proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])

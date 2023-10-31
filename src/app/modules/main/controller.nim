@@ -543,3 +543,4 @@ proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: strin
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)
+  

@@ -54,7 +54,17 @@ StackLayout {
     Loader {
         id: mainViewLoader
         readonly property var chatItem: root.rootStore.chatCommunitySectionModule
-        sourceComponent: chatItem.isCommunity() && chatItem.requiresTokenPermissionToJoin && !chatItem.amIMember ? joinCommunityViewComponent : chatViewComponent
+
+        sourceComponent: {
+            if (chatItem.isCommunity() && !chatItem.amIMember) {
+                if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
+                    return controlNodeOfflineComponent
+                } else if (chatItem.requiresTokenPermissionToJoin) {
+                    return joinCommunityViewComponent
+                }
+            }
+            return chatViewComponent
+        }
     }
 
     Component {
@@ -322,6 +332,25 @@ StackLayout {
                 console.warn("TODO: Backend update notification center and display a toast: Ownership Declined!")
                 root.ownershipDeclined()
             }
+        }
+    }
+
+    Component {
+        id: controlNodeOfflineComponent
+        ControlNodeOfflineCommunityView {
+            id: controlNodeOfflineView
+            readonly property var communityData: sectionItemModel
+            readonly property string communityId: communityData.id
+            name: communityData.name
+            communityDesc: communityData.description
+            color: communityData.color
+            image: communityData.image
+            membersCount: communityData.members.count
+            communityItemsModel: root.rootStore.communityItemsModel
+            notificationCount: activityCenterStore.unreadNotificationsCount
+            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+            onNotificationButtonClicked: Global.openActivityCenterPopup()
+            onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
         }
     }
     // End of components related to transfer community ownership flow.
