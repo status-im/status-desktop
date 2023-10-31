@@ -1,7 +1,8 @@
 import json, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
-import app_service/service/profile/dto/profile_showcase_entry
+
+import app_service/service/profile/dto/profile_showcase_preferences
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -30,11 +31,10 @@ proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollec
   discard jsonObj.getProp("imageUrl", result.imageUrl)
   discard jsonObj.getProp("backgroundColor", result.backgroundColor)
 
-proc getEntryDto*(self: ProfileShowcaseCollectibleItem): ProfileShowcaseEntryDto =
-  result = ProfileShowcaseEntryDto()
+proc toShowcasePreferenceItem*(self: ProfileShowcaseCollectibleItem): ProfileShowcaseCollectiblePreference =
+  result = ProfileShowcaseCollectiblePreference()
 
-  result.id = self.uid
-  result.entryType = ProfileShowcaseEntryType.Collectible
+  result.uid = self.uid
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

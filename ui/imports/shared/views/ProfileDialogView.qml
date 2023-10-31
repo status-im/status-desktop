@@ -693,7 +693,7 @@ Pane {
                     Layout.preferredHeight: 300
 
                     currentTabIndex: showcaseTabBar.currentIndex
-                    isCurrentUser: d.isCurrentUser
+                    publicKey: root.publicKey
                     mainDisplayName: d.mainDisplayName
                     readOnly: root.readOnly
                     profileStore: root.profileStore

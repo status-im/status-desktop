@@ -101,4 +101,8 @@ QtObject {
     function requestProfileShowcasePreferences() {
         root.profileModule.requestProfileShowcasePreferences()
     }
+
+    function requestProfileShowcase(publicKey) {
+        root.profileModule.requestProfileShowcase(publicKey)
+    }
 }

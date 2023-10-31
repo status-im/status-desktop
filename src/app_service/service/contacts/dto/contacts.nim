@@ -2,6 +2,7 @@
 
 import json, strformat, strutils
 import ../../../common/social_links
+import ./contact_profile
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -53,6 +54,7 @@ type ContactsDto* = object
   localNickname*: string
   bio*: string
   socialLinks*: SocialLinks
+  profileShowcase*: ProfileShowcase
   image*: Images
   added*: bool
   blocked*: bool
@@ -166,6 +168,10 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   var socialLinksObj: JsonNode
   if(jsonObj.getProp("socialLinks", socialLinksObj)):
     result.socialLinks = toSocialLinks(socialLinksObj)
+
+  var profileShowcaseObj: JsonNode
+  if(jsonObj.getProp("profileShowcase", profileShowcaseObj)):
+    result.profileShowcase = toProfileShowcase(profileShowcaseObj)
 
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)

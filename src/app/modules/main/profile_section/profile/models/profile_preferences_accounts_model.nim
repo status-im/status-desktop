@@ -1,7 +1,7 @@
 import NimQml, tables, strutils, sequtils, json
 
 import profile_preferences_account_item
-import app_service/service/profile/dto/profile_showcase_entry
+import app_service/service/profile/dto/profile_showcase_preferences
 
 type
   ModelRole {.pure.} = enum
@@ -11,7 +11,6 @@ type
     Address
     Name
     Emoji
-    WalletType
     ColorId
 
 QtObject:
@@ -54,7 +53,6 @@ QtObject:
 
       ModelRole.Address.int: "address",
       ModelRole.Name.int: "name",
-      ModelRole.WalletType.int: "walletType",
       ModelRole.Emoji.int: "emoji",
       ModelRole.ColorId.int: "colorId",
     }.toTable
@@ -78,8 +76,6 @@ QtObject:
       result = newQVariant(item.address)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.WalletType:
-      result = newQVariant(item.walletType)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
     of ModelRole.ColorId:
@@ -97,7 +93,7 @@ QtObject:
       return false
     return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc baseModelFilterConditionsMayChanged*(self: ProfileShowcaseAccountsModel) {.signal.}
+  proc baseModelFilterConditionsMayHaveChanged*(self: ProfileShowcaseAccountsModel) {.signal.}
 
   proc appendItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let parentModelIndex = newQModelIndex()
@@ -106,7 +102,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     let ind = self.findIndexForAccount(item.address)
@@ -122,7 +118,6 @@ QtObject:
         ModelRole.Order.int,
         ModelRole.Address.int,
         ModelRole.Name.int,
-        ModelRole.WalletType.int,
         ModelRole.Emoji.int,
         ModelRole.ColorId.int,
       ])
@@ -130,25 +125,25 @@ QtObject:
   proc upsertItemJson(self: ProfileShowcaseAccountsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAccountItem())
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItem*(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
     self.upsertItemImpl(item)
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItems*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
     for item in items:
       self.upsertItemImpl(item)
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc reset*(self: ProfileShowcaseAccountsModel) {.slot.} =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc remove*(self: ProfileShowcaseAccountsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -160,7 +155,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc removeEntry*(self: ProfileShowcaseAccountsModel, address: string) {.slot.} =
     let ind = self.findIndexForAccount(address)
@@ -186,7 +181,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
-      self.baseModelFilterConditionsMayChanged()
+      self.baseModelFilterConditionsMayHaveChanged()
 
   proc setVisibility*(self: ProfileShowcaseAccountsModel, address: string, visibility: int) {.slot.} =
     let index = self.findIndexForAccount(address)

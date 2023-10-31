@@ -1,4 +1,4 @@
-import app_service/service/profile/dto/profile_showcase_entry
+import app_service/service/profile/dto/profile_showcase_preferences
 
 type
   ProfileShowcaseBaseItem* = object of RootObj

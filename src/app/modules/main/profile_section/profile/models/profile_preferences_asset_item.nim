@@ -3,7 +3,7 @@ import json, strutils, stint, json_serialization, tables
 import profile_preferences_base_item
 
 import app_service/service/wallet_account/dto/account_dto
-import app_service/service/profile/dto/profile_showcase_entry
+import app_service/service/profile/dto/profile_showcase_preferences
 
 import ../../../../shared_models/currency_amount
 
@@ -17,17 +17,16 @@ type
     enabledNetworkBalance*: CurrencyAmount
     color*: string
 
-proc initProfileShowcaseAssetItem*(token: WalletTokenDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAssetItem =
+proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
-  result.showcaseVisibility = entry.showcaseVisibility
-  result.order = entry.order
+  result.showcaseVisibility = visibility
+  result.order = order
 
   result.symbol = token.symbol
   result.name = token.name
   result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
   result.color = token.color
-
 
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
@@ -45,11 +44,10 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
   result.enabledNetworkBalance = jsonObj{"enabledNetworkBalance"}.toCurrencyAmount()
 
-proc getEntryDto*(self: ProfileShowcaseAssetItem): ProfileShowcaseEntryDto =
-  result = ProfileShowcaseEntryDto()
+proc toShowcasePreferenceItem*(self: ProfileShowcaseAssetItem): ProfileShowcaseAssetPreference =
+  result = ProfileShowcaseAssetPreference()
 
-  result.id = self.symbol
-  result.entryType = ProfileShowcaseEntryType.Asset
+  result.symbol = self.symbol
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

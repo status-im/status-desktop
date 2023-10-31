@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables, sugar, sequtils, json_serialization, std/algorithm
+import NimQml, json, chronicles, tables, sugar
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
@@ -10,7 +10,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
-import dto/profile_showcase_entry
+import dto/profile_showcase_preferences
 
 include async_tasks
 
@@ -18,11 +18,8 @@ logScope:
   topics = "profile-service"
 
 type
-  ProfileShowcasePreferences* = ref object of Args
-    communities*: seq[ProfileShowcaseEntryDto]
-    accounts*: seq[ProfileShowcaseEntryDto]
-    collectibles*: seq[ProfileShowcaseEntryDto]
-    assets*: seq[ProfileShowcaseEntryDto]
+  ProfileShowcasePreferencesArgs* = ref object of Args
+    preferences*: ProfileShowcasePreferencesDto
 
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
@@ -111,42 +108,16 @@ QtObject:
         error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
         return
 
-      let result =  rpcResponseObj["response"]["result"]
-      var communities = result["communities"].parseProfileShowcaseEntries()
-      var accounts = result["accounts"].parseProfileShowcaseEntries()
-      var collectibles = result["collectibles"].parseProfileShowcaseEntries()
-      var assets = result["assets"].parseProfileShowcaseEntries()
-
-      # Sort by order before inserting in the model
-      communities.sort((a, b) => cmp(a.order, b.order))
-      accounts.sort((a, b) => cmp(a.order, b.order))
-      collectibles.sort((a, b) => cmp(a.order, b.order))
-      assets.sort((a, b) => cmp(a.order, b.order))
+      let preferences = rpcResponseObj["response"]["result"].toProfileShowcasePreferencesDto()
 
       self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
-        ProfileShowcasePreferences(
-          communities: communities,
-          accounts: accounts,
-          collectibles: collectibles,
-          assets: assets
-      ))
+        ProfileShowcasePreferencesArgs(preferences: preferences))
     except Exception as e:
       error "Error requesting profile showcase preferences", msg = e.msg
 
-  proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferences) =
+  proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesDto) =
     try:
-      let communities = preferences.communities.map(entry => entry.toJsonNode())
-      let accounts = preferences.accounts.map(entry => entry.toJsonNode())
-      let collectibles = preferences.collectibles.map(entry => entry.toJsonNode())
-      let assets = preferences.assets.map(entry => entry.toJsonNode())
-
-      var payload = %*[{
-        "communities": communities,
-        "accounts": accounts,
-        "collectibles": collectibles,
-        "assets": assets,
-      }]
-      let response = status_accounts.setProfileShowcasePreferences(payload)
+      let response = status_accounts.setProfileShowcasePreferences(preferences.toJsonNode())
       if not response.error.isNil:
         error "error saving profile showcase preferences"
     except Exception as e:

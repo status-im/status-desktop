@@ -18,7 +18,8 @@ Control {
     id: root
 
     property alias currentTabIndex: stackLayout.currentIndex
-    property bool isCurrentUser
+
+    property string publicKey
     property string mainDisplayName
     property bool readOnly
     property var profileStore
@@ -26,6 +27,8 @@ Control {
     property var communitiesModel
 
     signal closeRequested()
+
+    onVisibleChanged: if (visible) profileStore.requestProfileShowcase(publicKey)
 
     horizontalPadding: readOnly ? 20 : 40 // smaller in settings/preview
     topPadding: Style.current.bigPadding
@@ -77,21 +80,12 @@ Control {
                 cellHeight: cellWidth/2
                 visible: count
                 model: SortFilterProxyModel {
-                    sourceModel: root.isCurrentUser ? root.communitiesModel : null // TODO show other users too
+                    sourceModel: root.profileStore.profileShowcaseCommunitiesModel
                     filters: ValueFilter {
-                        roleName: "joined"
-                        value: true
+                        roleName: "showcaseVisibility"
+                        value: Constants.ShowcaseVisibility.NoOne
+                        inverted: true
                     }
-                    sorters: [
-                        RoleSorter {
-                            roleName: "memberRole"
-                            sortOrder: Qt.DescendingOrder // admin first
-                        },
-                        StringSorter {
-                            roleName: "name"
-                            caseSensitivity: Qt.CaseInsensitive
-                        }
-                    ]
                 }
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusListItem { // TODO custom delegate
@@ -100,8 +94,8 @@ Control {
                     title: model.name
                     statusListItemTitle.font.pixelSize: 17
                     statusListItemTitle.font.bold: true
-                    subTitle: model.description
-                    tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
+                    //subTitle: model.description // TODO: no data in showcase model
+                    //tertiaryTitle: qsTr("%n member(s)", "", model.members.count) // TODO: no data in showcase model
                     asset.name: model.image ?? model.name
                     asset.isImage: asset.name.startsWith(Constants.dataImagePrefix)
                     asset.isLetterIdenticon: !model.image
@@ -150,10 +144,10 @@ Control {
                 spacing: Style.current.halfPadding
                 visible: count
                 model: SortFilterProxyModel {
-                    sourceModel: root.isCurrentUser ? root.walletStore.accounts : null // TODO show other users too
-                    filters: ValueFilter { // everything except keycards
-                        roleName: "walletType"
-                        value: Constants.keyWalletType
+                    sourceModel: root.profileStore.profileShowcaseAccountsModel
+                    filters: ValueFilter {
+                        roleName: "showcaseVisibility"
+                        value: Constants.ShowcaseVisibility.NoOne
                         inverted: true
                     }
                 }
@@ -175,7 +169,7 @@ Control {
                     components: [
                         StatusIcon {
                             anchors.verticalCenter: parent.verticalCenter
-                            visible: model.walletType === Constants.watchWalletType
+                            //visible: model.walletType === Constants.watchWalletType
                             icon: "show"
                             color: Theme.palette.directColor1
                         },
@@ -249,7 +243,14 @@ Control {
                 cellHeight: cellWidth
                 visible: count
                 // TODO Issue #11637: Dedicated controller for user's list of collectibles (no watch-only entries)
-                model: root.isCurrentUser ? root.walletStore.ownedCollectibles : null
+                model: SortFilterProxyModel {
+                    sourceModel: root.profileStore.profileShowcaseCollectiblesModel
+                    filters: ValueFilter {
+                        roleName: "showcaseVisibility"
+                        value: Constants.ShowcaseVisibility.NoOne
+                        inverted: true
+                    }
+                }
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusRoundedImage {
                     width: GridView.view.cellWidth - Style.current.smallPadding
@@ -336,16 +337,12 @@ Control {
                 cellHeight: cellWidth/2.5
                 visible: count
                 model: SortFilterProxyModel {
-                    // TODO show assets for all accounts, not just the current one?
-                    sourceModel: root.isCurrentUser ? root.walletStore.assets : null // TODO show other users too
-                    sorters: [
-                        StringSorter {
-                            roleName: "name"
-                        },
-                        StringSorter {
-                            roleName: "symbol"
-                        }
-                    ]
+                    sourceModel: root.profileStore.profileShowcaseAssetsModel
+                    filters: ValueFilter {
+                        roleName: "showcaseVisibility"
+                        value: Constants.ShowcaseVisibility.NoOne
+                        inverted: true
+                    }
                 }
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusListItem {

@@ -1,8 +1,10 @@
-import NimQml, json, sequtils
+import NimQml, json, sequtils, chronicles
 
 import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
+
+import app/global/global_singleton
 
 import models/profile_preferences_communities_model
 import models/profile_preferences_community_item
@@ -29,6 +31,7 @@ QtObject:
       profileShowcaseCollectiblesModelVariant: QVariant
       profileShowcaseAssetsModel: ProfileShowcaseAssetsModel
       profileShowcaseAssetsModelVariant: QVariant
+      presentedPublicKey: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -199,6 +202,10 @@ QtObject:
     read = getProfileShowcaseAssetsModel
 
   proc storeProfileShowcasePreferences(self: View) {.slot.} =
+    if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
+      error "Attempt to save preferences with wrong public key"
+      return
+
     let communities = self.profileShowcaseCommunitiesModel.items()
     let accounts = self.profileShowcaseAccountsModel.items()
     let collectibles = self.profileShowcaseCollectiblesModel.items()
@@ -206,15 +213,44 @@ QtObject:
 
     self.delegate.storeProfileShowcasePreferences(communities, accounts, collectibles, assets)
 
+  proc clearModels(self: View) {.slot.} =
+    self.profileShowcaseCommunitiesModel.reset()
+    self.profileShowcaseAccountsModel.reset()
+    self.profileShowcaseCollectiblesModel.reset()
+    self.profileShowcaseAssetsModel.reset()
+
+  proc requestProfileShowcase(self: View, publicKey: string) {.slot.} =
+    if self.presentedPublicKey != publicKey:
+      self.clearModels()
+
+    if publicKey == singletonInstance.userProfile.getPubKey():
+      self.delegate.requestProfileShowcasePreferences()
+    else:
+      self.delegate.requestProfileShowcase(publicKey)
+
   proc requestProfileShowcasePreferences(self: View) {.slot.} =
+    if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
+      self.clearModels()
+
     self.delegate.requestProfileShowcasePreferences()
+
+  proc updateProfileShowcase*(self: View,
+                              presentedPublicKey: string,
+                              communities: seq[ProfileShowcaseCommunityItem],
+                              accounts: seq[ProfileShowcaseAccountItem],
+                              collectibles: seq[ProfileShowcaseCollectibleItem],
+                              assets: seq[ProfileShowcaseAssetItem]) =
+    self.presentedPublicKey = presentedPublicKey
+
+    self.profileShowcaseCommunitiesModel.upsertItems(communities)
+    self.profileShowcaseAccountsModel.upsertItems(accounts)
+    self.profileShowcaseCollectiblesModel.upsertItems(collectibles)
+    self.profileShowcaseAssetsModel.upsertItems(assets)
 
   proc updateProfileShowcasePreferences*(self: View,
                                         communities: seq[ProfileShowcaseCommunityItem],
                                         accounts: seq[ProfileShowcaseAccountItem],
                                         collectibles: seq[ProfileShowcaseCollectibleItem],
                                         assets: seq[ProfileShowcaseAssetItem]) =
-    self.profileShowcaseCommunitiesModel.upsertItems(communities)
-    self.profileShowcaseAccountsModel.upsertItems(accounts)
-    self.profileShowcaseCollectiblesModel.upsertItems(collectibles)
-    self.profileShowcaseAssetsModel.upsertItems(assets)
+    self.updateProfileShowcase(singletonInstance.userProfile.getPubKey(), communities, accounts, collectibles, assets)
+
