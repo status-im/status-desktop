@@ -133,7 +133,7 @@ $(BOTTLES): | $(BOTTLES_DIR)
 
 $(BOTTLES_DIR):
 	echo -e "\033[92mUpdating:\033[39m macOS Homebrew"
-	if [[ $$(stat -f %u /usr/local/var/homebrew) -ne "$${UID}" ]]; then \
+	if [[ $$(stat -f %u /usr/local/var/homebrew) -ne "$${UID}" ]] && [[ $$(stat -f %u /opt/homebrew/bin/brew) -ne "$${UID}" ]]; then \
 		echo "Missing permissions to update Homebrew formulae!" >&2; \
 	else \
 		brew update >/dev/null; \
@@ -609,7 +609,7 @@ ifeq ($(detected_OS),Darwin)
 		bin/nim_status_client
 ifeq ("$(wildcard ./node_modules/.bin/fileicon)","")
 	echo -e "\033[92mInstalling:\033[39m fileicon"
-	npm i
+	yarn install
 endif
 endif
 
@@ -705,7 +705,7 @@ DMG_TOOL := node_modules/.bin/create-dmg
 
 $(DMG_TOOL):
 	echo -e "\033[92mInstalling:\033[39m create-dmg"
-	npm i
+	yarn install
 
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
 MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
