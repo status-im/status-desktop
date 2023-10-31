@@ -20,14 +20,11 @@ StatusSectionLayout {
     id: root
 
     // General properties:
-    property bool amISectionAdmin: false
-    property bool openCreateChat: false
     property string name
     property string communityDesc
     property color color
     property string channelName
     property string channelDesc
-    property bool joinCommunity: true // Otherwise it means join channel action
 
     // Blur view properties:
     property int membersCount
@@ -37,7 +34,6 @@ StatusSectionLayout {
     property string listUsersText
     property var messagesModel
 
-    signal infoButtonClicked
     signal adHocChatButtonClicked
 
 
@@ -48,7 +44,6 @@ StatusSectionLayout {
     }
 
     headerContent: JoinCommunityHeaderPanel {
-        joinCommunity: root.joinCommunity
         color: root.color
         name: root.name
         channelName: root.channelName
@@ -66,16 +61,15 @@ StatusSectionLayout {
             membersCount: root.membersCount
             image: root.image
             color: root.color
-            amISectionAdmin: root.amISectionAdmin
-            openCreateChat: root.openCreateChat
-            onInfoButtonClicked: if(root.amISectionAdmin) root.infoButtonClicked()
+            amISectionAdmin: false
+            openCreateChat: false
             onAdHocChatButtonClicked: root.adHocChatButtonClicked()
         }
 
         ColumnLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.halfPadding
-            layer.enabled: root.joinCommunity
+            layer.enabled: true
             layer.effect: fastBlur
 
             Repeater {

@@ -180,7 +180,7 @@ const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
-const SIGNAL_CONTROL_NODE_OFFLINE* = "controlNodeOffline"
+const SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN* = "waitingOnNewCommunityOwnerToConfirmRequestToRejoin"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_CURATED_COMMUNITIES_UPDATED* = "curatedCommunitiesUpdated"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
@@ -233,7 +233,7 @@ QtObject:
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
       requestedCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
-      myAwaitingRequestsToJoin: Table[string, CommunityMembershipRequestDto]
+      myAwaitingAddressesRequestsToJoin: Table[string, CommunityMembershipRequestDto]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -331,7 +331,7 @@ QtObject:
               self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
                 requestToJoinState)
               if requestToJoinState == RequestToJoinType.AwaitingAddress:
-                self.events.emit(SIGNAL_CONTROL_NODE_OFFLINE, CommunityIdArgs(communityId: membershipRequest.communityId))
+                self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
             except Exception as e:
               error "Unknown request", msg = e.msg
 
@@ -665,8 +665,8 @@ QtObject:
 
       # If the community was not joined before but is now, we signal it
       if(not wasJoined and community.joined and community.isMember):
-        if community.id in self.myAwaitingRequestsToJoin:
-          self.myAwaitingRequestsToJoin.del(community.id)
+        if community.id in self.myAwaitingAddressesRequestsToJoin:
+          self.myAwaitingAddressesRequestsToJoin.del(community.id)
 
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
@@ -726,12 +726,12 @@ QtObject:
           let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
           self.myCommunityRequests.add(communityRequest)
 
-      let myAwaitingRequestResponse = responseObj["myAwaitingRequestsToJoin"]
+      let myAwaitingRequestResponse = responseObj["myAwaitingAddressesRequestsToJoin"]
 
       if myAwaitingRequestResponse{"result"}.kind != JNull:
         for jsonCommunityReqest in myAwaitingRequestResponse["result"]:
             let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-            self.myAwaitingRequestsToJoin[communityRequest.communityId] = communityRequest
+            self.myAwaitingAddressesRequestsToJoin[communityRequest.communityId] = communityRequest
 
       self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
     except Exception as e:
@@ -1830,9 +1830,9 @@ QtObject:
 
         # If the state is no longer pending, delete the request
         community.pendingRequestsToJoin.delete(indexPending)
-        # Delete if control node changed status for awaiting request to join
-        if communityId in self.myAwaitingRequestsToJoin:
-          self.myAwaitingRequestsToJoin.del(communityId)
+        # Delete if control node changed status for awaiting addresses request to join
+        if communityId in self.myAwaitingAddressesRequestsToJoin:
+          self.myAwaitingAddressesRequestsToJoin.del(communityId)
 
       else:
         community.pendingRequestsToJoin[indexPending].state = newState.int
@@ -2004,8 +2004,8 @@ QtObject:
         return true
     return false
 
-  proc isCommunityRequestAwaitingAddress*(self: Service, communityId: string): bool {.slot.} =
-    return communityId in self.myAwaitingRequestsToJoin
+  proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Service, communityId: string): bool {.slot.} =
+    return communityId in self.myAwaitingAddressesRequestsToJoin
 
   proc requestExtractDiscordChannelsAndCategories*(self: Service, filesToImport: seq[string]) =
     try:

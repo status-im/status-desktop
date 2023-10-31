@@ -29,7 +29,7 @@ QtObject:
       chatsLoaded: bool
       communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
       permissionsCheckOngoing: bool
-      isControlNodeOffline: bool
+      isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -68,7 +68,7 @@ QtObject:
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
     result.communityMetrics = "[]"
-    result.isControlNodeOffline = false
+    result.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -391,7 +391,6 @@ QtObject:
   proc amIMemberChanged*(self: View) {.signal.}
 
   proc setAmIMember*(self: View, value: bool) =
-    writeStackTrace()
     if (value == self.amIMember):
       return
     self.amIMember = value
@@ -450,17 +449,17 @@ QtObject:
     self.permissionsCheckOngoing = value
     self.permissionsCheckOngoingChanged()
 
-  proc getIsControlNodeOffline*(self: View): bool {.slot.} =
-    return self.isControlNodeOffline
+  proc getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View): bool {.slot.} =
+    return self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
 
-  proc isControlNodeOfflineChanged*(self: View) {.signal.}
+  proc isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged*(self: View) {.signal.}
 
-  proc setIsControlNodeOffline*(self: View, value: bool) =
-    if (value == self.isControlNodeOffline):
+  proc setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View, value: bool) =
+    if (value == self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin):
       return
-    self.isControlNodeOffline = value
-    self.isControlNodeOfflineChanged()
+    self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin = value
+    self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged()
 
-  QtProperty[bool] isControlNodeOffline:
-    read = getIsControlNodeOffline
-    notify = isControlNodeOfflineChanged
+  QtProperty[bool] isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin:
+    read = getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
+    notify = isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged

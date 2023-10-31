@@ -47,12 +47,6 @@ ColumnLayout {
                     text: root.listUsersText
                     font.pixelSize: 13
                 }
-
-                StatusBaseText {
-                    text: qsTr("joined the channel")
-                    font.pixelSize: 13
-                    color: Theme.palette.baseColor1
-                }
             }
 
             ListView {

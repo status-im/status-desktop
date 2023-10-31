@@ -57,8 +57,8 @@ StackLayout {
 
         sourceComponent: {
             if (chatItem.isCommunity() && !chatItem.amIMember) {
-                if (chatItem.isControlNodeOffline) {
-                    return controlNodeOffline
+                if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
+                    return controlNodeOfflineComponent
                 } else if (chatItem.requiresTokenPermissionToJoin) {
                     return joinCommunityViewComponent
                 }
@@ -336,9 +336,9 @@ StackLayout {
     }
 
     Component {
-        id: controlNodeOffline
+        id: controlNodeOfflineComponent
         ControlNodeOfflineCommunityView {
-            id: joinCommunityView
+            id: controlNodeOfflineView
             readonly property var communityData: sectionItemModel
             readonly property string communityId: communityData.id
             name: communityData.name
@@ -346,25 +346,11 @@ StackLayout {
             color: communityData.color
             image: communityData.image
             membersCount: communityData.members.count
-            joinCommunity: true
-            amISectionAdmin: communityData.memberRole === Constants.memberRole.owner ||
-                             communityData.memberRole === Constants.memberRole.admin ||
-                             communityData.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
-            openCreateChat: rootStore.openCreateChat
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-
-            Connections {
-                target: root.rootStore.communitiesModuleInst
-                function onCommunityAccessRequested(communityId: string) {
-                    if (communityId === joinCommunityView.communityId) {
-                        joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
-                    }
-                }
-            }
         }
     }
     // End of components related to transfer community ownership flow.
