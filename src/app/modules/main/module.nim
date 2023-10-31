@@ -439,6 +439,10 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = AccountArgs(e)
     self.view.showToastAccountAdded(args.account.name)
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+    let args = AccountArgs(e)
+    self.view.showToastAccountRemoved(args.account.name)
+
   self.events.on(SIGNAL_KEYPAIR_NAME_CHANGED) do(e: Args):
     let args = KeypairArgs(e)
     self.view.showToastKeypairRenamed(args.oldKeypairName, args.keypair.name)
