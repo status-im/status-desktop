@@ -39,6 +39,7 @@ Button {
     property color disabledColor
 
     property color textColor
+    property color textHoverColor: textColor
     property color disabledTextColor
     property color borderColor: "transparent"
     property bool textFillWidth: false
@@ -53,7 +54,10 @@ Button {
 
     QtObject {
         id: d
-        readonly property color textColor: root.enabled || root.loading ? root.textColor : root.disabledTextColor
+
+        readonly property color textColor: root.hovered && (root.enabled || root.loading) ? root.textHoverColor :
+                                                                                            root.enabled || root.loading ? root.textColor
+                                                                                                                         : root.disabledTextColor
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
         readonly property int iconSize: {
             switch(root.size) {
