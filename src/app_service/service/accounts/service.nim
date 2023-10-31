@@ -264,7 +264,7 @@ QtObject:
         return self.prepareSubaccountJsonObject(self.importedAccount, displayName)
 
   proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
-    installationId: string, displayName: string): JsonNode =
+    installationId: string, displayName: string, omitTransfersHistory: bool = false): JsonNode =
     result = %* {
       "key-uid": account.keyUid,
       "mnemonic": account.mnemonic,
@@ -295,14 +295,16 @@ QtObject:
       "profile-pictures-show-to": settings.PROFILE_PICTURES_SHOW_TO_EVERYONE,
       "profile-pictures-visibility": settings.PROFILE_PICTURES_VISIBILITY_EVERYONE,
       "url-unfurling-mode": int(settings.UrlUnfurlingMode.AlwaysAsk),
+      "omit-transfers-history-scan?": omitTransfersHistory,
     }
 
   proc getAccountSettings(self: Service, accountId: string,
     installationId: string,
-    displayName: string): JsonNode =
+    displayName: string,
+    recoverAccount: bool): JsonNode =
     for acc in self.generatedAccounts:
       if(acc.id == accountId):
-        return self.prepareAccountSettingsJsonObject(acc, installationId, displayName)
+        return self.prepareAccountSettingsJsonObject(acc, installationId, displayName, recoverAccount == false)
 
     if(self.importedAccount.isValid()):
       if(self.importedAccount.id == accountId):
@@ -426,7 +428,7 @@ QtObject:
       var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
       self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
       let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-      var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
+      var settingsJson = self.getAccountSettings(accountId, installationId, displayName, recoverAccount)
       let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
 
       if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
