@@ -103,31 +103,31 @@ class AccountDetailsView(WalletSettingsView):
 
     @allure.step("Get account address value")
     def get_account_address_value(self):
-        raw_value = str(self._wallet_account_address.get_object_attribute('subTitle'))
+        raw_value = str(getattr(self._wallet_account_address, 'subTitle'))
         address = raw_value.split(">")[-1]
         return address
 
     @allure.step('Get account color value')
     def get_account_color_value(self):
-        color_name = str(self._wallet_account_title.get_object_attribute('color')['name'])
+        color_name = str(getattr(self._wallet_account_title, 'color')['name'])
         return color_name
 
     @allure.step('Get account emoji id')
     def get_account_emoji_id(self):
-        emoji_id = str(self._wallet_account_emoji.get_object_attribute('emojiId'))
+        emoji_id = str(getattr(self._wallet_account_emoji, 'emojiId'))
         return emoji_id
 
     @allure.step('Get account origin value')
     def get_account_origin_value(self):
-        return str(self._wallet_account_origin.get_object_attribute('subTitle'))
+        return str(getattr(self._wallet_account_origin, 'subTitle'))
 
     @allure.step('Get account derivation path value')
     def get_account_derivation_path_value(self):
-        return str(self._wallet_account_derivation_path.get_object_attribute('subTitle'))
+        return str(getattr(self._wallet_account_derivation_path, 'subTitle'))
 
     @allure.step('Get account storage value')
     def get_account_storage_value(self):
-        raw_value = str(self._wallet_account_stored.get_object_attribute('subTitle'))
+        raw_value = str(getattr(self._wallet_account_stored, 'subTitle'))
         storage = raw_value.split(">")[-1]
         return storage
 
@@ -155,7 +155,7 @@ class NetworkWalletSettings(WalletSettingsView):
     def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
         self._wallet_network_item_template.real_name['objectName'] = RegularExpression(
             f'walletNetworkDelegate_.*_{network_id}')
-        return self._wallet_network_item_template.get_object_attribute(attribute_name)
+        return getattr(self._wallet_network_item_template, attribute_name)
 
     @allure.step('Open network to check the details')
     def click_network_item_to_open_edit_view(self, network_id):
@@ -329,7 +329,7 @@ class EditNetworkSettings(WalletSettingsView):
 
     @allure.step('Get the text for consent when changing RPC urls')
     def get_acknowledgement_checkbox_text(self, attr):
-        text = str(self._network_acknowledgment_checkbox.get_object_attribute(attr))
+        text = str(getattr(self._network_acknowledgment_checkbox, attr))
         return text
 
     @allure.step('Get error message for Main RPC URL input')

@@ -1,6 +1,10 @@
+import logging
+
 import allure
 
 from gui.elements.object import QObject
+
+_logger = logging.getLogger(__name__)
 
 
 class TextLabel(QObject):

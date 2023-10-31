@@ -1,6 +1,9 @@
+import logging
 import allure
 
 from gui.elements.object import QObject
+
+_logger = logging.getLogger(__name__)
 
 
 class Slider(QObject):
@@ -21,7 +24,7 @@ class Slider(QObject):
         return int(self.object.value)
 
     @value.setter
-    @allure.step('Set value {1} {0}')
+    @allure.step('Set value {1} in {0}')
     def value(self, value: int):
         if value != self.value:
             if self.min <= value <= self.max:
@@ -31,3 +34,4 @@ class Slider(QObject):
                 if self.value > value:
                     while self.value > value:
                         self.object.decrease()
+            _logger.info(f'{self}: value changed to "{value}"')

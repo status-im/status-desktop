@@ -6,19 +6,30 @@ import allure
 
 import configs
 import driver
-from gui.elements.base_object import BaseObject
+from gui import objects_map
 from scripts.tools.image import Image
 
 _logger = logging.getLogger(__name__)
 
 
-class QObject(BaseObject):
+class QObject:
 
     def __init__(self, name, real_name: [str, dict] = None):
-        super().__init__(name, real_name)
+        self.symbolic_name = name
+        if real_name:
+            self.real_name = real_name
+        else:
+            self.real_name = getattr(objects_map, name)
         self._image = Image(self.real_name)
 
+    def __getattr__(self, attr: str):
+        value = getattr(self.object, attr)
+        return value
+
     def __str__(self):
+        return f'{type(self).__qualname__}({self.symbolic_name})'
+
+    def __repr__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
 
     @property
@@ -51,10 +62,6 @@ class QObject(BaseObject):
     def width(self) -> int:
         return int(self.bounds.width)
 
-    @allure.step('Get attribute {0}')
-    def get_object_attribute(self, attr: str):
-        return getattr(self.object, attr)
-
     @property
     @allure.step('Get height {0}')
     def height(self) -> int:
@@ -68,17 +75,17 @@ class QObject(BaseObject):
     @property
     @allure.step('Get enabled {0}')
     def is_enabled(self) -> bool:
-        return self.object.enabled
+        return getattr(self, 'enabled')
 
     @property
     @allure.step('Get selected {0}')
     def is_selected(self) -> bool:
-        return self.object.selected
+        return getattr(self, 'selected')
 
     @property
     @allure.step('Get checked {0}')
     def is_checked(self) -> bool:
-        return self.object.checked
+        return getattr(self, 'checked')
 
     @property
     @allure.step('Get visible {0}')
@@ -107,12 +114,14 @@ class QObject(BaseObject):
             y or self.height // 2,
             button or driver.Qt.LeftButton
         )
+        _logger.info(f'{self}: clicked')
 
     @allure.step('Hover {0}')
     def hover(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         def _hover():
             try:
                 driver.mouseMove(self.object)
+                _logger.info(f'{self}: mouse hovered')
                 return getattr(self.object, 'hovered', True)
             except RuntimeError as err:
                 _logger.debug(err)
@@ -133,3 +142,19 @@ class QObject(BaseObject):
             y or self.height // 2,
             driver.Qt.RightButton
         )
+        _logger.info(f'{self}: clicked via Right Mouse Button')
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        assert driver.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
+        _logger.info(f'{self}: is visible')
+        return self
+
+    @allure.step('Wait until hidden {0}')
+    def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        assert driver.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
+        _logger.info(f'{self}: is hidden')
+
+    @classmethod
+    def wait_for(cls, condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> bool:
+        return driver.waitFor(lambda: condition, timeout_msec)

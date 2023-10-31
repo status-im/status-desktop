@@ -1,8 +1,12 @@
+import logging
+
 import allure
 
 import configs
 import driver
 from gui.elements.object import QObject
+
+_logger = logging.getLogger(__name__)
 
 
 class TextEdit(QObject):
@@ -23,6 +27,7 @@ class TextEdit(QObject):
     @allure.step('Type: {1} in {0}')
     def type_text(self, value: str):
         driver.type(self.object, value)
+        _logger.info(f'{self}: value changed to "{value}"')
         return self
 
     @allure.step('Clear {0}')
@@ -31,4 +36,5 @@ class TextEdit(QObject):
         if verify:
             assert driver.waitFor(lambda: not self.text), \
                 f'Clear text field failed, value in field: "{self.text}"'
+        _logger.info(f'{self}: cleared')
         return self
