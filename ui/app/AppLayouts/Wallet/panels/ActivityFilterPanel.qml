@@ -18,6 +18,7 @@ Column {
     property var activityFilterStore
     property var store
     property bool isLoading: false
+    property bool hideNoResults: false
 
     spacing: 12
 
@@ -212,14 +213,15 @@ Column {
     }
 
     Separator {
-        visible: noResultsAfterFilter.visible
+        visible: noResultsAfterFilter.noResults
     }
 
     StatusBaseText {
         id: noResultsAfterFilter
+        readonly property bool noResults: !root.isLoading && activityFilterStore.transactionsList.count === 0 && activityFilterStore.filtersSet
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 16
-        visible: !root.isLoading && activityFilterStore.transactionsList.count === 0 && activityFilterStore.filtersSet
+        visible: !root.hideNoResults && noResults
         text: qsTr("No activity items for the current filter")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.baseColor1

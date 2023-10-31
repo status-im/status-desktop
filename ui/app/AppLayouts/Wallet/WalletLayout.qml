@@ -113,6 +113,7 @@ Item {
                 root.resetView()
                 RootStore.setFillterAllAddresses()
             }
+            onCurrentAddressChanged: root.resetView()
             onShowSavedAddressesChanged: {
                 if(showSavedAddresses)
                     rightPanelStackView.replace(cmpSavedAddresses)
