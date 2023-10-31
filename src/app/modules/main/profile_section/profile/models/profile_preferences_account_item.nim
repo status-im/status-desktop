@@ -2,8 +2,7 @@ import json, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
 
-import app_service/service/profile/dto/profile_showcase_entry
-import app_service/service/wallet_account/dto/account_dto
+import app_service/service/profile/dto/profile_showcase_preferences
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -13,23 +12,31 @@ type
     address*: string
     name*: string
     emoji*: string
-    walletType*: string
     colorId*: string
 
-proc initProfileShowcaseAccountItem*(account: WalletAccountDto, entry: ProfileShowcaseEntryDto): ProfileShowcaseAccountItem =
+proc initProfileShowcaseAccountItem*(
+    address: string,
+    name: string,
+    emoji: string,
+    colorId: string,
+    visibility: ProfileShowcaseVisibility,
+    order: int): ProfileShowcaseAccountItem =
   result = ProfileShowcaseAccountItem()
 
-  result.showcaseVisibility = entry.showcaseVisibility
-  result.order = entry.order
-
-  result.address = account.address
-  result.name = account.name
-  result.emoji = account.emoji
-  result.walletType = account.walletType
-  result.colorId = account.colorId
+  result.address = address
+  result.name = name
+  result.emoji = emoji
+  result.colorId = colorId
+  result.showcaseVisibility = visibility
+  result.order = order
 
 proc toProfileShowcaseAccountItem*(jsonObj: JsonNode): ProfileShowcaseAccountItem =
   result = ProfileShowcaseAccountItem()
+
+  discard jsonObj.getProp("address", result.address)
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("emoji", result.emoji)
+  discard jsonObj.getProp("colorId", result.colorId)
 
   discard jsonObj.getProp("order", result.order)
   var visibilityInt: int
@@ -38,17 +45,13 @@ proc toProfileShowcaseAccountItem*(jsonObj: JsonNode): ProfileShowcaseAccountIte
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
-  discard jsonObj.getProp("address", result.address)
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("emoji", result.emoji)
-  discard jsonObj.getProp("walletType", result.walletType)
-  discard jsonObj.getProp("colorId", result.colorId)
+proc toShowcasePreferenceItem*(self: ProfileShowcaseAccountItem): ProfileShowcaseAccountPreference =
+  result = ProfileShowcaseAccountPreference()
 
-proc getEntryDto*(self: ProfileShowcaseAccountItem): ProfileShowcaseEntryDto =
-  result = ProfileShowcaseEntryDto()
-
-  result.id = self.address
-  result.entryType = ProfileShowcaseEntryType.Account
+  result.address = self.address
+  result.name = self.name
+  result.emoji = self.emoji
+  result.colorId = self.colorId
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

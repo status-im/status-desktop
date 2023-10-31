@@ -47,7 +47,7 @@ Control {
     readonly property Connections showcaseUpdateConnections: Connections {
         target: showcaseModel
 
-        function onBaseModelFilterConditionsMayChanged() {
+        function onBaseModelFilterConditionsMayHaveChanged() {
             root.updateBaseModelFilters()
         }
     }

@@ -1,7 +1,7 @@
 import NimQml, tables, strutils, sequtils, json
 
 import profile_preferences_asset_item
-import app_service/service/profile/dto/profile_showcase_entry
+import app_service/service/profile/dto/profile_showcase_preferences
 
 type
   ModelRole {.pure.} = enum
@@ -93,7 +93,7 @@ QtObject:
       return false
     return self.items[ind].showcaseVisibility != ProfileShowcaseVisibility.ToNoOne
 
-  proc baseModelFilterConditionsMayChanged*(self: ProfileShowcaseAssetsModel) {.signal.}
+  proc baseModelFilterConditionsMayHaveChanged*(self: ProfileShowcaseAssetsModel) {.signal.}
 
   proc appendItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
     let parentModelIndex = newQModelIndex()
@@ -102,7 +102,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
     let ind = self.findIndexForAsset(item.symbol)
@@ -125,25 +125,25 @@ QtObject:
   proc upsertItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItem*(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
     self.upsertItemImpl(item)
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItems*(self: ProfileShowcaseAssetsModel, items: seq[ProfileShowcaseAssetItem]) =
     for item in items:
       self.upsertItemImpl(item)
     self.recalcOrder()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc reset*(self: ProfileShowcaseAssetsModel) {.slot.} =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc remove*(self: ProfileShowcaseAssetsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
@@ -155,7 +155,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
-    self.baseModelFilterConditionsMayChanged()
+    self.baseModelFilterConditionsMayHaveChanged()
 
   proc removeEntry*(self: ProfileShowcaseAssetsModel, symbol: string) {.slot.} =
     let ind = self.findIndexForAsset(symbol)
@@ -181,7 +181,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
-      self.baseModelFilterConditionsMayChanged()
+      self.baseModelFilterConditionsMayHaveChanged()
 
   proc setVisibility*(self: ProfileShowcaseAssetsModel, symbol: string, visibility: int) {.slot.} =
     let index = self.findIndexForAsset(symbol)
