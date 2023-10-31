@@ -184,8 +184,11 @@ StatusSectionLayout {
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
-            communityShardingEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
-            communityShardIndex: root.community.shardIndex ?? -1 // TODO community sharding backend
+            shardingEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
+            shardIndex: root.community.shardIndex
+            shardingInProgress: root.chatCommunitySectionModule.shardingInProgress
+            pubsubTopic: root.community.pubsubTopic
+            pubsubTopicKey: root.community.pubsubTopicKey
 
             sendModalPopup: root.sendModalPopup
             tokensModel: root.community.communityTokens
@@ -245,6 +248,9 @@ StatusSectionLayout {
                 mintPanel.openNewTokenForm(false/*Collectible owner token*/)
             }
 
+            onShardIndexEdited: if (root.community.shardIndex != shardIndex) {
+                root.chatCommunitySectionModule.setCommunityShard(shardIndex)
+            }
         }
 
         MembersSettingsPanel {
@@ -507,7 +513,7 @@ StatusSectionLayout {
             onAirdropClicked: communityTokensStore.airdrop(
                                    root.community.id, airdropTokens, addresses,
                                    feeAccountAddress)
-                                   
+
             onNavigateToMintTokenSettings: {
                 root.goTo(Constants.CommunitySettingsSections.MintTokens)
                 mintPanel.openNewTokenForm(isAssetType)

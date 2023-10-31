@@ -75,3 +75,11 @@ type
     Failed,
     InProgress,
     Completed
+
+type Shard* = object
+  cluster*: int
+  index*: int
+
+proc initShard*(cluster: int = -1, index: int = -1): Shard =
+  result.cluster = cluster
+  result.index = index

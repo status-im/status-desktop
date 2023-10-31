@@ -170,6 +170,9 @@ type CommunityDto* = object
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
   channelPermissions*: CheckAllChannelsPermissionsResponseDto
   activeMembersCount*: int64
+  pubsubTopic*: string
+  pubsubTopicKey*: string
+  shard*: Shard
 
 proc isAvailable*(communityDto: CommunityDto): bool =
   return communityDto.name != "" and communityDto.description != ""
@@ -455,6 +458,16 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     for tokenObj in communityTokensMetadataObj:
       result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
 
+  discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
+  discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
+
+  var shardObj: JsonNode
+  if(jsonObj.getProp("shard", shardObj)):
+    var shard = initShard()
+    discard shardObj.getProp("cluster", shard.cluster)
+    discard shardObj.getProp("index", shard.index)
+    result.shard = shard
+
 proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:
     of CommunityMemberPendingBanOrKick.Banned:
@@ -550,6 +563,9 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
     bannedMembersIds: communityDto.getBannedMembersIds(),
     encrypted: communityDto.encrypted,
+    shard: communityDto.shard,
+    pubsubTopic: communityDto.pubsubTopic,
+    pubsubTopicKey: communityDto.pubsubTopicKey,
   )
 
 proc parseCommunitiesSettings*(response: JsonNode): seq[CommunitySettingsDto] =

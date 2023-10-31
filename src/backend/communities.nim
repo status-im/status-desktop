@@ -496,3 +496,21 @@ proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): 
 
 proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])
+
+proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let mainStatusShardClusterID = 16
+  if index != -1:
+    result = callPrivateRPC("setCommunityShard".prefix, %*[
+      {
+        "communityId": communityId,
+        "shard": {
+          "cluster": mainStatusShardClusterID,
+          "index": index
+        },
+      }])
+  else: # unset community shard
+    result = callPrivateRPC("setCommunityShard".prefix, %*[
+      {
+        "communityId": communityId,
+      }])
+

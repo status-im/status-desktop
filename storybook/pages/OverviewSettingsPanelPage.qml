@@ -22,9 +22,9 @@ SplitView {
         isOwner: communityEditor.amISectionAdmin
         communitySettingsDisabled: !editable
 
-        communityShardingEnabled: communityEditor.shardingEnabled
-        communityShardIndex: communityEditor.shardIndex
-        
+        shardingEnabled: communityEditor.shardingEnabled
+        shardIndex: communityEditor.shardIndex
+
         isPendingOwnershipRequest: pendingOwnershipSwitch.checked
         finaliseOwnershipTransferPopup: undefined
     }

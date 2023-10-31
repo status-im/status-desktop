@@ -333,6 +333,16 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
 
+    self.events.on(SIGNAL_COMMUNITY_SHARD_SET) do(e: Args):
+      let args = CommunityShardSetArgs(e)
+      if args.communityId == self.sectionId:
+       self.delegate.setShardingInProgress(false)
+
+    self.events.on(SIGNAL_COMMUNITY_SHARD_SET_FAILED) do(e: Args):
+      let args = CommunityShardSetArgs(e)
+      if args.communityId == self.sectionId:
+       self.delegate.setShardingInProgress(false)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -685,3 +695,7 @@ proc collectCommunityMetricsMessagesCount*(self: Controller, intervals: string) 
 
 proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Controller, communityId: string): bool =
   self.communityService.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(communityId)
+
+proc setCommunityShard*(self: Controller, shardIndex: int) =
+  self.communityService.asyncSetCommunityShard(self.getMySectionId(), shardIndex)
+

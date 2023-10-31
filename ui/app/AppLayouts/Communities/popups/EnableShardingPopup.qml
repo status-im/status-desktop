@@ -16,22 +16,21 @@ StatusStackModal {
     id: root
 
     required property string communityName
-    required property string publicKey
-    property int initialShardIndex: -1
+    required property int shardIndex
+    required property string pubsubTopic
     property bool shardingInProgress
-
-    signal enableSharding(int shardIndex)
 
     stackTitle: qsTr("Enable community sharding for %1").arg(communityName)
     width: 640
 
     readonly property var cancelButton: StatusFlatButton {
+        visible: typeof(currentItem.canGoNext) == "undefined" || currentItem.cancellable
         text: qsTr("Cancel")
         onClicked: root.close()
     }
 
     nextButton: StatusButton {
-        text: qsTr("Next")
+        text: qsTr("Enable community sharding")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         loading: root.shardingInProgress
         onClicked: {
@@ -39,38 +38,34 @@ StatusStackModal {
             if (typeof(nextAction) == "function") {
                 return nextAction()
             }
-            root.currentIndex++
         }
     }
 
     finishButton: StatusButton {
-        text: qsTr("Enable community sharding")
+        text: qsTr("Close")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         onClicked: {
-            root.enableSharding(d.shardIndex)
+            root.currentIndex = 0
             root.close()
         }
     }
 
     rightButtons: [cancelButton, nextButton, finishButton]
 
-    QtObject {
-        id: d
-        readonly property string pubSubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"%2"}'.arg(shardIndex).arg(root.publicKey) // FIXME backend
-        property int shardIndex: root.initialShardIndex
-    }
-
     onAboutToShow: shardIndexEdit.focus = true
+    onShardingInProgressChanged: if (!root.shardingInProgress && root.currentIndex == 0) {
+        root.currentIndex++
+    }
 
     stackItems: [
         ColumnLayout {
             id: firstPage
             spacing: Style.current.halfPadding
 
-            readonly property bool canGoNext: shardIndexEdit.valid
+            readonly property bool cancellable: true
+            readonly property bool canGoNext: shardIndexEdit.valid && root.shardIndex != parseInt(shardIndexEdit.text)
             readonly property var nextAction: function () {
-                d.shardIndex = parseInt(shardIndexEdit.text)
-                root.currentIndex++
+                root.shardIndex = parseInt(shardIndexEdit.text)
             }
 
             StatusInput {
@@ -78,7 +73,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 label: qsTr("Enter shard number")
                 placeholderText: qsTr("Enter a number between 0 and 1023")
-                text: d.shardIndex !== -1 ? d.shardIndex : ""
+                text: root.shardIndex !== -1 ? root.shardIndex : ""
                 validators: [
                     StatusIntValidator {
                         bottom: 0
@@ -97,6 +92,7 @@ StatusStackModal {
             }
         },
         ColumnLayout {
+            readonly property bool cancellable: false
             readonly property bool canGoNext: agreement.checked
 
             StatusBaseText {
@@ -107,7 +103,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 138
                 readOnly: true
-                text: d.pubSubTopic
+                text: root.pubsubTopic
                 rightPadding: 48
                 wrapMode: TextEdit.Wrap
 

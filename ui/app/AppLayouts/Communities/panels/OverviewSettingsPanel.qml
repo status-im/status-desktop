@@ -50,9 +50,12 @@ StackLayout {
 
     property string overviewChartData: ""
 
-    property bool communityShardingEnabled
-    property int communityShardIndex: -1
-    
+    property bool shardingEnabled
+    property int shardIndex: -1
+    property bool shardingInProgress
+    property string pubsubTopic
+    property string pubsubTopicKey
+
     // Community transfer ownership related props:
     required property var finaliseOwnershipTransferPopup
     required property bool isPendingOwnershipRequest
@@ -73,6 +76,8 @@ StackLayout {
     signal exportControlNodeClicked
     signal importControlNodeClicked
     signal mintOwnerTokenClicked
+
+    signal shardIndexEdited(int shardIndex)
 
     clip: true
 
@@ -289,9 +294,11 @@ StackLayout {
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
 
-                communityId: root.communityId
-                communityShardingEnabled: root.communityShardingEnabled
-                communityShardIndex: root.communityShardIndex
+                shardingEnabled: root.shardingEnabled
+                shardIndex: root.shardIndex
+                shardingInProgress: root.shardingInProgress
+                pubsubTopic: root.pubsubTopic
+                pubsubTopicKey: root.pubsubTopicKey
 
                 bottomReservedSpace:
                     Qt.size(settingsDirtyToastMessage.implicitWidth,
@@ -305,6 +312,8 @@ StackLayout {
                     property: "bottomMargin"
                     value: 24
                 }
+
+                onShardIndexEdited: root.shardIndexEdited(shardIndex)
             }
         }
 

@@ -19,7 +19,7 @@ StatusDialog {
 
     required property string communityName
     required property int shardIndex
-    required property string pubSubTopic
+    required property string pubsubTopic
 
     signal disableShardingRequested()
     signal editShardIndexRequested()
@@ -66,7 +66,7 @@ StatusDialog {
             Layout.fillWidth: true
             Layout.preferredHeight: 138
             readOnly: true
-            text: root.pubSubTopic
+            text: root.pubsubTopic
             rightPadding: 48
             wrapMode: TextEdit.Wrap
 

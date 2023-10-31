@@ -292,3 +292,24 @@ const asyncReevaluateCommunityMembersPermissionsTask: Task = proc(argEncoded: st
       "communityId": arg.communityId,
       "error": e.msg,
     })
+
+
+type
+  AsyncSetCommunityShardArg = ref object of QObjectTaskArg
+    communityId: string
+    shardIndex: int
+
+const asyncSetCommunityShardTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncSetCommunityShardArg](argEncoded)
+  try:
+    let response = status_go.setCommunityShard(arg.communityId, arg.shardIndex)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "error": e.msg,
+    })

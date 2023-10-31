@@ -113,6 +113,9 @@ type ChannelGroupDto* = object
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
   channelPermissions*: CheckAllChannelsPermissionsResponseDto
+  pubsubTopic*: string
+  pubsubTopicKey*: string
+  shard*: Shard
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -373,6 +376,16 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
 
     for channelId, permissionResponse in checkChannelPermissionResponsesObj:
       result.channelPermissions.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
+
+  discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
+  discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
+
+  var shardObj: JsonNode
+  if(jsonObj.getProp("shard", shardObj)):
+    var shard = initShard()
+    discard shardObj.getProp("cluster", shard.cluster)
+    discard shardObj.getProp("index", shard.index)
+    result.shard = shard
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
 proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =

@@ -146,6 +146,9 @@ type
     memberPubkey*: string
     status*: MembershipRequestState
 
+  CommunityShardSetArgs* = ref object of Args
+    communityId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -219,6 +222,9 @@ const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinRespon
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
 
 const SIGNAL_COMMUNITY_METRICS_UPDATED* = "communityMetricsUpdated"
+
+const SIGNAL_COMMUNITY_SHARD_SET* = "communityShardSet"
+const SIGNAL_COMMUNITY_SHARD_SET_FAILED* = "communityShardSetFailed"
 
 QtObject:
   type
@@ -2258,3 +2264,32 @@ QtObject:
 
     except Exception as e:
       error "error while reevaluating community members permissions", msg = e.msg
+
+  proc asyncSetCommunityShard*(self: Service, communityId: string, shardIndex: int) =
+    try:
+      let arg = AsyncSetCommunityShardArg(
+        tptr: cast[ByteAddress](asyncSetCommunityShardTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncSetCommunityShardDone",
+        communityId: communityId,
+        shardIndex: shardIndex,
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error request to join community", msg = e.msg
+
+  proc onAsyncSetCommunityShardDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
+    let rpcResponseObj = communityIdAndRpcResponse.parseJson
+    try:
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let community = rpcResponse.result["communities"][0].toCommunityDto()
+
+      self.handleCommunityUpdates(@[community], @[], @[])
+      self.events.emit(SIGNAL_COMMUNITY_SHARD_SET, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))
+
+    except Exception as e:
+      error "Error setting community shard", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_SHARD_SET_FAILED, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))

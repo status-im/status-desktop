@@ -433,6 +433,9 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     ) else: @[],
     channelGroup.encrypted,
     communityTokensItems,
+    channelGroup.pubsubTopic,
+    channelGroup.pubsubTopicKey,
+    channelGroup.shard.index,
   )
 
 proc connectForNotificationsOnly[T](self: Module[T]) =

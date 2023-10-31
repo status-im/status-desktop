@@ -37,7 +37,7 @@ SplitView {
             communityName: "Foobar"
 
             shardIndex: 33
-            pubSubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"%2"}'.arg(shardIndex).arg("0xdeadbeef")
+            pubsubTopic: '{"pubsubTopic":"/waku/2/rs/16/%1", "publicKey":"%2"}'.arg(shardIndex).arg("0xdeadbeef")
 
             onDisableShardingRequested: logs.logEvent("ManageShardingPopup::disableShardingRequested")
             onEditShardIndexRequested: logs.logEvent("ManageShardingPopup::editShardIndexRequested")
