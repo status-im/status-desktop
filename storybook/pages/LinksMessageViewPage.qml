@@ -27,7 +27,6 @@ SplitView {
             playAnimations: true
             linkPreviewModel: mockedLinkPreviewModel
             gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
-            isCurrentUser: true
 
             gifUnfurlingEnabled: false
             canAskToUnfurlGifs: true
@@ -44,14 +43,6 @@ SplitView {
         ColumnLayout {
             spacing: 25
             ColumnLayout {
-                Label {
-                    text: qsTr("Sender")
-                }
-                CheckBox {
-                    text: qsTr("Current user")
-                    checked: linksMessageView.isCurrentUser
-                    onToggled: linksMessageView.isCurrentUser = !linksMessageView.isCurrentUser
-                }
                 Label {
                     text: qsTr("GIF unfuring settings")
                 }

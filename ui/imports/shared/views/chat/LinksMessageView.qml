@@ -22,8 +22,6 @@ Flow {
     required property var linkPreviewModel
     required property var gifLinks
 
-    required property bool isCurrentUser
-
     required property bool gifUnfurlingEnabled
     required property bool canAskToUnfurlGifs
 
@@ -65,7 +63,6 @@ Flow {
 
             link: modelData
             isOnline: root.isOnline
-            isCurrentUser: root.isCurrentUser
             playAnimation: root.playAnimations
             onClicked: root.imageClicked(imageAlias, mouse, link, link)
         }
@@ -79,7 +76,6 @@ Flow {
         model: root.linkPreviewModel
         delegate: LinkPreviewCardDelegate {
             id: delegate
-            isCurrentUser: root.isCurrentUser
             highlight: url === root.highlightLink
             onHoveredChanged: {
                 linksRepeater.hoveredUrl = hovered ? url : ""

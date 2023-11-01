@@ -48,9 +48,6 @@ LinkPreviewCard {
     required property var statusCommunityChannelCommunityPreviewBanner
 
     //View properties
-    property bool isCurrentUser: false
-
-    leftTail: !isCurrentUser
     type: root.previewType
     linkData {
         title: standardPreview ? standardPreview.title : ""
