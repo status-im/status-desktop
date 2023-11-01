@@ -418,6 +418,8 @@ QtObject:
       return self.settings.pinnedMailserver.statusTest
     elif (fleet == Fleet.StatusProd):
       return self.settings.pinnedMailserver.statusProd
+    elif (fleet == Fleet.ShardsTest):
+      return self.settings.pinnedMailserver.shardsTest
     return ""
 
   proc pinMailserver*(self: Service, mailserverID: string, fleet: Fleet): bool =
@@ -438,6 +440,8 @@ QtObject:
         self.settings.pinnedMailserver.statusTest = mailserverID
       elif (fleet == Fleet.StatusProd):
         self.settings.pinnedMailserver.statusProd = mailserverID
+      elif (fleet == Fleet.ShardsTest):
+        self.settings.pinnedMailserver.shardsTest = mailserverID
       return true
     return false
 

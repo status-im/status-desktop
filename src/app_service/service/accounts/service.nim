@@ -310,7 +310,7 @@ QtObject:
 
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.StatusProd
-    let dnsDiscoveryURL = @["enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"]
+    let dnsDiscoveryURL = "enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im"
 
     result = NODE_CONFIG.copy()
     result["ClusterConfig"]["Fleet"] = newJString($fleet)
@@ -326,8 +326,12 @@ QtObject:
 
     # TODO: fleet.status.im should have different sections depending on the node type
     #       or maybe it's not necessary because a node has the identify protocol
-    result["ClusterConfig"]["WakuNodes"] = %* dnsDiscoveryURL
-    result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* dnsDiscoveryURL
+    result["ClusterConfig"]["WakuNodes"] = %* @[dnsDiscoveryURL]
+
+    var discV5Bootnodes = self.fleetConfiguration.getNodes(fleet, FleetNodes.WakuENR)
+    discV5Bootnodes.add(dnsDiscoveryURL)
+
+    result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* discV5Bootnodes
 
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]
