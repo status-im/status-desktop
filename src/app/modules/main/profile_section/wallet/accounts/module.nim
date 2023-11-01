@@ -128,7 +128,7 @@ method refreshWalletAccounts*(self: Module) =
   let ownedWalletAccounts = walletAccounts.filter(a => a.walletType != WalletTypeWatch)
   let ownedWalletAccountAddresses = ownedWalletAccounts.map(a => a.address)
   let enabledNetworks = self.controller.getEnabledChainIds()
-  self.collectiblesController.globalFilterChanged(ownedWalletAccountAddresses, enabledNetworks)
+  self.collectiblesController.setFilterAddressesAndChains(ownedWalletAccountAddresses, enabledNetworks)
 
 method load*(self: Module) =
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
