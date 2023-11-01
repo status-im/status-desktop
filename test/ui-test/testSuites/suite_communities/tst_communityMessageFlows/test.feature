@@ -59,7 +59,8 @@ Feature: Status Desktop community messages
 
         When the user unpins the message at index 0
         Then the amount of pinned messages is 1
-
+	@mayfail
+	# https://github.com/status-im/status-desktop/issues/12440
     Scenario Outline: The user can reply to own message
         Given the user sends a chat message "<message>"
         When the user replies to community chat message at index 0 with "<reply>"
@@ -95,7 +96,7 @@ Feature: Status Desktop community messages
         And the user sends a chat message "history"
         When the user clears chat history
         Then the chat is cleared
-    
+
     @mayfail
     Scenario: The user can send a GIF
         Given the user opens app settings screen
