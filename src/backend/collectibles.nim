@@ -61,6 +61,17 @@ type
   CommunityCollectiblesReceivedPayload* = object
     collectibles*: seq[CommunityCollectibleHeader]
 
+  # see status-go/services/wallet/collectibles/filter.go FilterCommunityType
+  FilterCommunityType* {.pure.} = enum
+    All, OnlyNonCommunity, OnlyCommunity
+
+  # see status-go/services/wallet/collectibles/filter.go Filter
+  # All empty sequences mean include all
+  CollectibleFilter* = object
+    communityIds*: seq[string]
+    communityPrivilegesLevels*: seq[int]
+    filterCommunity*: FilterCommunityType
+
 # CollectibleOwnershipState
 proc `$`*(self: OwnershipStatus): string =
   return fmt"""OwnershipStatus(
@@ -73,6 +84,36 @@ proc fromJson*(t: JsonNode, T: typedesc[OwnershipStatus]): OwnershipStatus {.inl
         state: OwnershipState(t{"state"}.getInt),
         timestamp: t{"timestamp"}.getInt
     )
+
+# CollectibleFilter
+proc newCollectibleFilterAllCommunityIds*(): seq[string] {.inline.} =
+  return @[]
+
+proc newCollectibleFilterAllCommunityPrivilegesLevels*(): seq[int] {.inline.} =
+  return @[]
+
+proc newCollectibleFilterAllEntries*(): CollectibleFilter {.inline.} =
+  return CollectibleFilter(
+    communityIds: newCollectibleFilterAllCommunityIds(),
+    communityPrivilegesLevels: newCollectibleFilterAllCommunityPrivilegesLevels(),
+    filterCommunity: FilterCommunityType.All
+  )
+
+proc `$`*(self: CollectibleFilter): string =
+  return fmt"""CollectibleFilter(
+    communityIds:{self.communityIds}, 
+    communityPrivilegesLevels:{self.communityPrivilegesLevels}, 
+    filterCommunity:{self.filterCommunity}
+    """
+
+proc `%`*(t: CollectibleFilter): JsonNode {.inline.} =
+  result = newJObject()
+  result["community_ids"] = %(t.communityIds)
+  result["community_privileges_levels"] = %(t.communityPrivilegesLevels)
+  result["filter_community"] = %(t.filterCommunity.int)
+  
+proc `%`*(t: ref CollectibleFilter): JsonNode {.inline.} =
+  return %(t[])
 
 # Responses
 proc fromJson*(e: JsonNode, T: typedesc[FilterOwnedCollectiblesResponse]): FilterOwnedCollectiblesResponse {.inline.} =
@@ -146,6 +187,7 @@ rpc(filterOwnedCollectiblesAsync, "wallet"):
   requestId: int32
   chainIDs: seq[int]
   addresses: seq[string]
+  filter: CollectibleFilter
   offset: int
   limit: int
 

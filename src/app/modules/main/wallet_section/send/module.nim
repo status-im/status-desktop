@@ -356,7 +356,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
 proc updateCollectiblesFilter*(self: Module) =
   let addresses = @[self.view.getSenderAddressByIndex(self.senderCurrentAccountIndex)]
   let chainIds = self.controller.getChainIds()
-  self.collectiblesController.globalFilterChanged(addresses, chainIds)
+  self.collectiblesController.setFilterAddressesAndChains(addresses, chainIds)
 
 method setSelectedSenderAccountIndex*(self: Module, index: int) =
   self.senderCurrentAccountIndex = index

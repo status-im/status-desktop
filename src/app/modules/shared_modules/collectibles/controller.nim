@@ -22,6 +22,7 @@ QtObject:
 
       addresses: seq[string]
       chainIds: seq[int]
+      filter: backend_collectibles.CollectibleFilter
 
       ownershipStatus: Table[string, Table[int, OwnershipStatus]] # Table[address][chainID] -> OwnershipStatus
 
@@ -42,7 +43,6 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModelAsVariant
-
 
   proc checkModelState(self: Controller) =
     var overallState = OwnershipStateIdle
@@ -112,7 +112,7 @@ QtObject:
       offset = self.model.getCollectiblesCount()
     self.fetchFromStart = false
 
-    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, offset, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.model.setIsFetching(false)
       self.model.setIsError(true)
@@ -184,6 +184,7 @@ QtObject:
 
     result.addresses = @[]
     result.chainIds = @[]
+    result.filter = backend_collectibles.newCollectibleFilterAllEntries()
 
     result.setup()
 
@@ -191,7 +192,7 @@ QtObject:
 
     signalConnect(result.model, "loadMoreItems()", result, "loadMoreItems()")
 
-  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
+  proc setFilterAddressesAndChains*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
     if chainIds == self.chainIds and addresses == self.addresses:
       return
 
@@ -202,6 +203,14 @@ QtObject:
   
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
+
+    self.resetModel()
+  
+  proc setFilter*(self: Controller, filter: backend_collectibles.CollectibleFilter) =
+    if filter == self.filter:
+      return
+
+    self.filter = filter
 
     self.resetModel()
 
