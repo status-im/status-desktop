@@ -7,6 +7,8 @@ import Status.Assets
 
 SystemTrayIcon {
     id: root
+    
+    objectName: "systemTrayIcon"
 
     property bool production: true
 
@@ -23,6 +25,8 @@ SystemTrayIcon {
 
     menu: Menu {
         MenuItem {
+            objectName: "openTrayMenuItem"
+            
             text: qsTr("Open Status")
             onTriggered: root.showApplication()
         }
@@ -31,6 +35,8 @@ SystemTrayIcon {
         }
 
         MenuItem {
+            objectName: "quitTrayMenuItem"
+            
             text: qsTr("Quit")
             onTriggered: Qt.quit()
         }
