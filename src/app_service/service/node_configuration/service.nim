@@ -113,6 +113,10 @@ proc getBloomLevel*(self: Service): string =
     else:
       return BLOOM_LEVEL_LIGHT
 
+proc isShardFleet(config: NodeConfigDto): bool =
+  return case config.ClusterConfig.Fleet:
+    of $Fleet.ShardsTest: true
+    else: false
 
 proc setWakuConfig(configuration: NodeConfigDto, wakuVersion: int): NodeConfigDto =
   var newConfiguration = configuration
@@ -129,6 +133,7 @@ proc setWakuConfig(configuration: NodeConfigDto, wakuVersion: int): NodeConfigDt
     newConfiguration.WakuV2Config.EnableDiscV5 = true
     newConfiguration.WakuV2Config.DiscoveryLimit = 20
     newConfiguration.WakuV2Config.Rendezvous = true
+    newConfiguration.WakuV2Config.UseShardAsDefaultTopic = isShardFleet(newConfiguration)
 
   return newConfiguration
 
@@ -230,11 +235,18 @@ proc setFleet*(self: Service, fleet: string): bool =
       dnsDiscoveryURL.add("enrtree://AIO6LUM3IVWCU2KCPBBI6FEH2W42IGK3ASCZHZGG5TIXUR56OGQUO@test.status.nodes.status.im")
     of Fleet.StatusProd:
       dnsDiscoveryURL.add("enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im")
+    of Fleet.ShardsTest:
+      dnsDiscoveryURL.add("enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im")
     else:
       wakuVersion = 1
 
   newConfiguration.ClusterConfig.WakuNodes = dnsDiscoveryURL
-  newConfiguration.ClusterConfig.DiscV5BootstrapNodes = dnsDiscoveryURL
+
+  var discV5Bootnodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.WakuENR)
+  if dnsDiscoveryURL.len != 0:
+    discV5Bootnodes.add(dnsDiscoveryURL[0])
+
+  newConfiguration.ClusterConfig.DiscV5BootstrapNodes = discV5Bootnodes
 
   newConfiguration = setWakuConfig(newConfiguration, wakuVersion)
 
