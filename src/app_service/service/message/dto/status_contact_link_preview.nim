@@ -1,7 +1,11 @@
 import json, strformat, NimQml, chronicles
 import link_preview_thumbnail
-include ../../../common/json_utils
+import ../../contacts/dto/contact_details
 
+import ../../../../app/global/global_singleton
+import ../../../../app/global/utils as utils
+
+include ../../../common/json_utils
 
 QtObject:
   type StatusContactLinkPreview* = ref object of QObject
@@ -18,9 +22,11 @@ QtObject:
     self.QObject.delete()
     self.icon.delete()
 
-  proc newStatusContactLinkPreview*(publicKey: string, displayName: string, description: string, icon: LinkPreviewThumbnail): StatusContactLinkPreview =
+  proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail): StatusContactLinkPreview =
     new(result, delete)
     result.setup()
+    if singletonInstance.utils().isCompressedPubKey(publicKey):
+      publicKey = singletonInstance.utils().getDecompressedPk(publicKey)
     result.publicKey = publicKey
     result.displayName = displayName
     result.description = description
@@ -85,3 +91,21 @@ QtObject:
 
   proc empty*(self: StatusContactLinkPreview): bool =
     return self.publicKey.len == 0
+
+  proc setContactInfo*(self: StatusContactLinkPreview, contactDetails: ContactDetails): bool =
+    if self.publicKey != contactDetails.dto.id:
+      return false
+    
+    debug "setContactInfo", publicKey = $self.publicKey, displayName = $contactDetails.dto.displayname
+
+    if self.displayName != contactDetails.defaultDisplayName:
+      self.displayName = contactDetails.defaultDisplayName
+      self.displayNameChanged()
+    
+    if self.description != contactDetails.dto.bio:
+      self.description = contactDetails.dto.bio
+      self.descriptionChanged()
+    
+    self.icon.update(0, 0, contactDetails.dto.image.thumbnail, "")
+    
+    return true

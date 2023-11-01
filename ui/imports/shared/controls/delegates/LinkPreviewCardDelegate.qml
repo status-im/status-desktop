@@ -34,6 +34,8 @@ LinkPreviewCard {
     required property bool empty
     required property string url
     required property bool immutable
+    required property bool isLocalData
+    required property bool loadingLocalData
     required property int previewType
     required property var standardPreview
     required property var standardPreviewThumbnail
@@ -69,6 +71,7 @@ LinkPreviewCard {
         banner: statusCommunityPreviewBanner ? (statusCommunityPreviewBanner.url || statusCommunityPreviewBanner.dataUri) || "" : ""
         image: statusCommunityPreviewIcon ? (statusCommunityPreviewIcon.url || statusCommunityPreviewIcon.dataUri) || "" : ""
         membersCount: statusCommunityPreview ? statusCommunityPreview.membersCount : 0
+        activeMembersCount: statusCommunityPreview && isLocalData ? statusCommunityPreview.activeMembersCount : -1
         color: statusCommunityPreview ? statusCommunityPreview.color : ""
     }
     channelData {
@@ -82,6 +85,7 @@ LinkPreviewCard {
             banner: statusCommunityChannelCommunityPreviewBanner ? (statusCommunityChannelCommunityPreviewBanner.url || statusCommunityChannelCommunityPreviewBanner.dataUri) || "" : ""
             image:  statusCommunityChannelCommunityPreviewIcon ? (statusCommunityChannelCommunityPreviewIcon.url || statusCommunityChannelCommunityPreviewIcon.dataUri) || "" : ""
             membersCount: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.membersCount : 0
+            activeMembersCount: statusCommunityChannelCommunityPreview && isLocalData ? statusCommunityChannelCommunityPreview.activeMembersCount : -1
             color: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.color : ""
         }
     }

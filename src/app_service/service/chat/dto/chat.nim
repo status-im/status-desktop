@@ -5,6 +5,7 @@ import ../../community/dto/community
 
 include ../../../common/json_utils
 import ../../../../app_service/common/types
+import ../../../../app/global/global_singleton
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -415,3 +416,8 @@ proc hasMoreMessagesToRequest*(chatDto: ChatDto, syncedFrom: int64): bool =
 
 proc hasMoreMessagesToRequest*(chatDto: ChatDto): bool =
   chatDto.hasMoreMessagesToRequest(chatDto.syncedFrom)
+
+proc communityChannelUuid*(self: ChatDto): string =
+  if self.communityId == "":
+    return ""
+  return self.id[self.communityId.len .. ^1]

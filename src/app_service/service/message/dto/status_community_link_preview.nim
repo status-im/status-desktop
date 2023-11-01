@@ -1,13 +1,16 @@
 import json, strformat, NimQml, chronicles
 import link_preview_thumbnail
+import ../../community/dto/community
+
 include ../../../common/json_utils
 
 QtObject:
   type StatusCommunityLinkPreview* = ref object of QObject
-    communityID: string
+    communityId: string
     displayName: string
     description: string
     membersCount: int
+    activeMembersCount: int
     color: string
     icon: LinkPreviewThumbnail
     banner: LinkPreviewThumbnail
@@ -25,7 +28,7 @@ QtObject:
 
   proc communityIdChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getCommunityId*(self: StatusCommunityLinkPreview): string {.slot.} =
-    result = self.communityID
+    result = self.communityId
   QtProperty[string] communityId:
     read = getCommunityId
     notify = communityIdChanged
@@ -50,6 +53,13 @@ QtObject:
   QtProperty[int] membersCount:
     read = getMembersCount
     notify = membersCountChanged
+
+  proc activeMembersCountChanged*(self: StatusCommunityLinkPreview) {.signal.}
+  proc getActiveMembersCount*(self: StatusCommunityLinkPreview): int {.slot.} =
+    result = int(self.activeMembersCount)
+  QtProperty[int] activeMembersCount:
+    read = getActiveMembersCount
+    notify = activeMembersCountChanged
   
   proc colorChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getColor*(self: StatusCommunityLinkPreview): string {.slot.} =
@@ -71,10 +81,11 @@ QtObject:
     var icon: LinkPreviewThumbnail
     var banner: LinkPreviewThumbnail
 
-    discard jsonObj.getProp("communityId", result.communityID)
+    discard jsonObj.getProp("communityId", result.communityId)
     discard jsonObj.getProp("displayName", result.displayName)
     discard jsonObj.getProp("description", result.description)
     discard jsonObj.getProp("membersCount", result.membersCount)
+    discard jsonObj.getProp("activeMembersCount", result.activeMembersCount)
     discard jsonObj.getProp("color", result.color)
 
     var iconJson: JsonNode
@@ -90,10 +101,11 @@ QtObject:
 
   proc `$`*(self: StatusCommunityLinkPreview): string =
     result = fmt"""StatusCommunityLinkPreview(
-      communityId: {self.communityID},
+      communityId: {self.communityId},
       displayName: {self.displayName},
       description: {self.description},
       membersCount: {self.membersCount},
+      activeMembersCount: {self.activeMembersCount},
       color: {self.color},
       icon: {self.icon},
       banner: {self.banner}
@@ -101,14 +113,46 @@ QtObject:
 
   proc `%`*(self: StatusCommunityLinkPreview): JsonNode =
     result = %* {
-      "communityID": self.communityID,
+      "communityId": self.communityId,
       "displayName": self.displayName,
       "description": self.description,
       "membersCount": self.membersCount,
+      "activeMembersCount": self.activeMembersCount,
       "color": self.color,
       "icon": self.icon,
       "banner": self.banner
     }
 
   proc empty*(self: StatusCommunityLinkPreview): bool =
-    return self.communityID.len == 0
+    return self.communityId.len == 0
+
+  proc setCommunityInfo*(self: StatusCommunityLinkPreview, community: CommunityDto): bool =
+    if self.communityId != community.id:
+      return false
+
+    debug "setCommunityInfo", communityId = $self.communityId, communityName = community.name
+
+    if self.displayName != community.name:
+      self.displayName = community.name
+      self.displayNameChanged()
+
+    if self.description != community.description:
+      self.description = community.description
+      self.descriptionChanged()
+
+    if self.membersCount != community.members.len:
+      self.membersCount = community.members.len
+      self.membersCountChanged()
+
+    if self.activeMembersCount != community.activeMembersCount:
+      self.activeMembersCount = int(community.activeMembersCount)
+      self.activeMembersCountChanged()
+
+    if self.color != community.color:
+      self.color = community.color
+      self.colorChanged()
+
+    self.icon.update(0, 0, "", community.images.thumbnail)
+    self.banner.update(0, 0, "", community.images.banner)
+
+    return true

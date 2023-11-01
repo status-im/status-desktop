@@ -1,4 +1,4 @@
-import chronicles, uuids
+import chronicles, uuids, times
 import io_interface
 import json
 
@@ -213,8 +213,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
-      if (community.id == self.sectionId):
-        self.delegate.updateCommunityDetails(community)
+      self.delegate.updateCommunityDetails(community)
 
   self.events.on(SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED) do(e: Args):
     let args = FirstUnseenMessageLoadedArgs(e)
@@ -237,6 +236,12 @@ proc getChatDetails*(self: Controller): ChatDto =
 
 proc getCommunityDetails*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
+
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)
+
+proc requestCommunityInfo*(self: Controller, communityId: string, useDataabse: bool, requiredTimeSinceLastRequest: Duration) =
+  self.communityService.requestCommunityInfo(communityId, false, useDataabse, requiredTimeSinceLastRequest)
 
 proc getOneToOneChatNameAndImage*(self: Controller):
     tuple[name: string, image: string, largeImage: string] =
@@ -263,6 +268,9 @@ proc getContactById*(self: Controller, contactId: string): ContactsDto =
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
+
+proc requestContactInfo*(self: Controller, contactId: string) =
+  self.contactService.requestContactInfo(contactId)
 
 proc getNumOfPinnedMessages*(self: Controller): int =
   return self.messageService.getNumOfPinnedMessages(self.chatId)

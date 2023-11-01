@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
+import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar, times
 import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto
@@ -241,6 +241,7 @@ QtObject:
       requestedCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
       myAwaitingAddressesRequestsToJoin: Table[string, CommunityMembershipRequestDto]
+      communityInfoRequests: Table[string, Time]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -279,6 +280,7 @@ QtObject:
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
     result.requestedCommunityIds = initHashSet[string]()
     result.communityMetrics = initTable[string, CommunityMetricsDto]()
+    result.communityInfoRequests = initTable[string, Time]()
 
   proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
     result = initTable[string, CommunityDto]()
@@ -762,7 +764,6 @@ QtObject:
       return
 
     if not self.communities.hasKey(communityId):
-      error "requested community doesn't exist", communityId
       return
 
     return self.communities[communityId]
@@ -1469,11 +1470,13 @@ QtObject:
       return
 
     self.communities[community.id] = community
+    debug "asyncRequestCommunityInfoTask finished", communityId = requestedCommunityId, communityName = community.name
 
     if rpcResponseObj{"importing"}.getBool():
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+    self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
   proc asyncCheckPermissionsToJoin*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckPermissionsToJoinTaskArg(
@@ -1736,13 +1739,23 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
+  proc requestCommunityInfo*(self: Service, communityId: string, importing = false, useDatabase = true, requiredTimeSinceLastRequest = initDuration(0, 0)) =
 
     if communityId in self.requestedCommunityIds:
       info "requestCommunityInfo: skipping as already requested", communityId
       self.events.emit(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED, Args())
-      return
+      return      
 
+    let now = now().toTime()
+    if self.communityInfoRequests.hasKey(communityId):
+      let lastRequestTime = self.communityInfoRequests[communityId]
+      let actualTimeSincLastRequest = now - lastRequestTime
+      debug "requestCommunityInfo: TIME", communityId, now, lastRequestTime, requiredTimeSinceLastRequest, actualTimeSincLastRequest
+      if actualTimeSincLastRequest < requiredTimeSinceLastRequest:
+        debug "requestCommunityInfo: skipping as required time has not passed yet since last request", communityId, actualTimeSincLastRequest, requiredTimeSinceLastRequest
+        return
+
+    self.communityInfoRequests[communityId] = now
     self.requestedCommunityIds.incl(communityId)
 
     let arg = AsyncRequestCommunityInfoTaskArg(
@@ -1750,7 +1763,8 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncCommunityInfoLoaded",
       communityId: communityId,
-      importing: importing
+      importing: importing,
+      useDatabase: useDatabase
     )
     self.threadpool.start(arg)
 

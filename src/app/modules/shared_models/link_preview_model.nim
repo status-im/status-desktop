@@ -1,4 +1,4 @@
-import NimQml, strformat, tables, sequtils
+import NimQml, strformat, tables, sequtils, sets, times
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
@@ -6,12 +6,16 @@ import ../../../app_service/service/message/dto/status_link_preview
 import ../../../app_service/service/message/dto/status_contact_link_preview
 import ../../../app_service/service/message/dto/status_community_link_preview
 import ../../../app_service/service/message/dto/status_community_channel_link_preview
+import ../../../app_service/service/contacts/dto/contact_details
+import ../../../app_service/service/community/dto/community
 
 type
   ModelRole {.pure.} = enum
     Url = UserRole + 1
     Unfurled
     Immutable
+    IsLocalData
+    LoadingLocalData
     Empty
     PreviewType
     # Standard unfurled link (oembed, opengraph, image)
@@ -37,6 +41,7 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      forcedLocalDataTimestamp: Time
 
   proc delete*(self: Model) = 
     for i in 0 ..< self.items.len:
@@ -50,6 +55,7 @@ QtObject:
   proc newLinkPreviewModel*(linkPreviews: seq[LinkPreview] = @[]): Model =
     new(result, delete)
     result.setup
+    result.forcedLocalDataTimestamp = initTime(0, 0)
     for linkPreview in linkPreviews:
       var item = Item()
       item.unfurled = true
@@ -83,6 +89,8 @@ QtObject:
       ModelRole.Url.int:"url",
       ModelRole.Unfurled.int:"unfurled",
       ModelRole.Immutable.int:"immutable",
+      ModelRole.IsLocalData.int:"isLocalData",
+      ModelRole.LoadingLocalData.int:"loadingLocalData",
       ModelRole.Empty.int:"empty",
       ModelRole.PreviewType.int:"previewType",
       # Standard
@@ -119,6 +127,10 @@ QtObject:
       result = newQVariant(item.unfurled)
     of ModelRole.Immutable:
       result = newQVariant(item.immutable)
+    of ModelRole.IsLocalData:
+      result = newQVariant(item.isLocalData)
+    of ModelRole.LoadingLocalData:
+      result = newQVariant(item.loadingLocalData)
     of ModelRole.Empty:
       result = newQVariant(item.linkPreview.empty()) 
     of ModelRole.PreviewType:
@@ -234,6 +246,8 @@ QtObject:
       var item = Item()
       item.unfurled = false
       item.immutable = false
+      item.isLocalData = false
+      item.loadingLocalData = false
       item.linkPreview = linkPreview
 
       let parentModelIndex = newQModelIndex()
@@ -276,3 +290,67 @@ QtObject:
     result = @[]
     for item in self.items:
       result.add(item.linkPreview.url)
+
+
+  proc getContactIds*(self: Model): HashSet[string] =
+    for item in self.items:
+      let contactId = item.linkPreview.getContactId()
+      if contactId != "":
+        result.incl(contactId)
+
+  proc getCommunityIds*(self: Model): HashSet[string] =
+    for item in self.items:
+      let communityId = item.linkPreview.getCommunityId()
+      if communityId != "":
+        result.incl(communityId)
+
+  proc setItemLoadingLocalData(self: Model, row: int, item: Item, value: bool) = 
+    if item.loadingLocalData == value:
+      return
+    item.loadingLocalData = value
+    let modelIndex = self.createIndex(row, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.LoadingLocalData.int])
+
+  proc setItemIsLocalData(self: Model, row: int, item: Item) = 
+    if item.isLocalData:
+      return
+    var roles = @[ModelRole.IsLocalData.int]
+    item.isLocalData = true
+    if item.loadingLocalData:
+      item.loadingLocalData = false
+      roles.add(ModelRole.LoadingLocalData.int)
+    let modelIndex = self.createIndex(row, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, roles)
+
+  proc setContactInfo*(self: Model, contactDetails: ContactDetails) =
+    for row, item in self.items:
+      if item.linkPreview.setContactInfo(contactDetails):
+        self.setItemIsLocalData(row, item)
+
+  proc setCommunityInfo*(self: Model, community: CommunityDto) =
+    for row, item in self.items:
+      if item.linkPreview.setCommunityInfo(community):
+        self.setItemIsLocalData(row, item)
+
+  proc onContactDataRequested*(self: Model, contactId: string) =
+    for row, item in self.items:
+      if item.linkPreview.getContactId() == contactId:
+        self.setItemLoadingLocalData(row, item, true)
+
+  proc onCommunityInfoRequested*(self: Model, communityId: string) =
+    for row, item in self.items:
+      if item.linkPreview.getCommunityId() == communityId:
+        self.setItemLoadingLocalData(row, item, true)
+
+  # Checks the time since local data was previously forced.
+  # If more than 10 minutes passed, updates the timestamp to current timestamp.
+  # Returns true if timestamp was upates, i.e. a request from mailserver is expected to happen after.
+  proc updateForcedLocalDataTimestamp*(self: Model): bool =
+    let now = now().toTime()
+    if now - self.forcedLocalDataTimestamp < initDuration(minutes = 10):
+      return false
+    self.forcedLocalDataTimestamp = now
+    return true
+

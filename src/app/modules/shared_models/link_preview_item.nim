@@ -7,6 +7,8 @@ type
   Item* = ref object
     unfurled*: bool
     immutable*: bool
+    isLocalData*: bool
+    loadingLocalData*: bool
     linkPreview*: LinkPreview
 
 proc delete*(self: Item) =
