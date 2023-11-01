@@ -758,7 +758,6 @@ Loader {
                         gifLinks: root.gifLinks
                         playAnimations: root.messageStore.playAnimation
                         isOnline: root.rootStore.mainModuleInst.isOnline
-                        isCurrentUser: root.amISender
                         highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)

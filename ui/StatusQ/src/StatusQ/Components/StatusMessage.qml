@@ -315,7 +315,7 @@ Control {
                                     album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
                                     albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 1
                                     imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
-                                    shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                    shapeType: StatusImageMessage.ShapeType.LEFT_ROUNDED
                                     onImageClicked: root.imageClicked(image, mouse, imageSource)
                                 }
                             }
@@ -333,7 +333,7 @@ Control {
                                 delegate: StatusImageMessage {
                                     source: model.source
                                     onClicked: root.imageClicked(image, mouse, imageSource)
-                                    shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                    shapeType: StatusImageMessage.ShapeType.LEFT_ROUNDED
                                 }
                             }
                         }

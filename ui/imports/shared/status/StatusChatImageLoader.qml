@@ -10,7 +10,6 @@ Item {
 
     property int verticalPadding: 0
     property int imageWidth: 350
-    property bool isCurrentUser: false
     property url source
     property bool isActiveChannel: false
     property bool playing: Global.applicationWindow.active
@@ -20,6 +19,7 @@ Item {
     property bool isOnline: true // TODO: mark as required when migrating to 5.15 or above
     property bool imageLoaded: (imageMessage.status === Image.Ready)
     property alias asynchronous: imageMessage.asynchronous
+    property bool leftTail: true
 
     signal clicked(var image, var mouse)
 
@@ -90,7 +90,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: !root.isCurrentUser && !allCornersRounded
+                    visible: root.leftTail && !allCornersRounded
                 }
                 Rectangle {
                     anchors.bottom: parent.bottom
@@ -98,7 +98,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: root.isCurrentUser && !allCornersRounded
+                    visible: !root.leftTail && !allCornersRounded
                 }
             }
         }

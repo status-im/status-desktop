@@ -13,7 +13,6 @@ CalloutCard {
     required property string link
     required property bool playAnimation
     required property bool isOnline
-    required property bool isCurrentUser
 
     readonly property bool isPlaying: linkImage.playing
     readonly property alias imageAlias: linkImage.imageAlias
@@ -23,7 +22,6 @@ CalloutCard {
     
     implicitWidth: linkImage.width
     implicitHeight: linkImage.height
-    leftTail: !isCurrentUser
     
     StatusChatImageLoader {
         id: linkImage
@@ -34,7 +32,6 @@ CalloutCard {
         anchors.centerIn: parent
         source: root.link
         imageWidth: 300
-        isCurrentUser: root.isCurrentUser
         playing: root.playAnimation && localAnimationEnabled
         isOnline: root.isOnline
         asynchronous: true
