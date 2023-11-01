@@ -2,8 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import Qt.labs.settings 1.0
-
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -20,12 +18,11 @@ Control {
     id: root
 
     property var baseModel
+    property var showcaseModel
 
-    readonly property alias settings: settings
-    readonly property alias showcaseModel: showcaseModel
+    readonly property var showcaseRoles: ["showcaseVisibility", "order"]
 
     // to override
-    property string settingsKey
     property string keyRole
     property var roleNames: []
     property var filterFunc: (modelData) => true
@@ -33,6 +30,27 @@ Control {
     property string showcasePlaceholderBanner
     property Component draggableDelegateComponent
     property Component showcaseDraggableDelegateComponent
+
+    signal showcaseEntryChanged()
+
+    function reset() {
+        showcaseModel.reset()
+        updateBaseModelFilters()
+    }
+
+    function updateBaseModelFilters() {
+        // Reset base model to update filter conditions
+        hiddenItemsListView.model = null
+        hiddenItemsListView.model = baseModel
+    }
+
+    readonly property Connections showcaseUpdateConnections: Connections {
+        target: showcaseModel
+
+        function onBaseModelFilterConditionsMayChanged() {
+            root.updateBaseModelFilters()
+        }
+    }
 
     background: null
 
@@ -65,7 +83,8 @@ Control {
                     var tmpObj = Object()
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
-                    showcaseModel.append(tmpObj)
+                    showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+                    root.showcaseEntryChanged()
                 }
             }
         }
@@ -90,54 +109,6 @@ Control {
                     text: visibilityDropAreaLocal.text
                 }
             }
-        }
-    }
-
-    Component.onCompleted: showcaseModel.load()
-    Component.onDestruction: showcaseModel.save()
-
-    // NB temporary model until the backend knows the extra roles: "showcaseVisibility" and "order"
-    ListModel {
-        id: showcaseModel
-
-        function hasItem(itemId) {
-            for (let i = 0; i < count; i++) {
-                let item = get(i)
-                if (!!item && item[root.keyRole] === itemId)
-                    return true
-            }
-            return false
-        }
-
-        function save() {
-            var result = []
-            for (let i = 0; i < count; i++) {
-                let item = get(i)
-                result.push(item)
-            }
-            settings.setValue(root.settingsKey, JSON.stringify(result))
-        }
-
-        function load() {
-            const data = settings.value(root.settingsKey)
-            try {
-                const arr = JSON.parse(data)
-                for (const i in arr)
-                    showcaseModel.append(arr[i])
-            } catch (e) {
-                console.warn(e)
-            }
-        }
-    }
-
-    Settings {
-        id: settings
-        category: "Showcase"
-
-        function reset() {
-            showcaseModel.clear()
-            settings.setValue(root.settingsKey, "")
-            settings.sync()
         }
     }
 
@@ -184,16 +155,19 @@ Control {
                 }
 
                 width: ListView.view.width
-                height: showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
+                height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
 
                 keys: ["x-status-draggable-showcase-item"]
+
+                visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
 
                 onEntered: function(drag) {
                     const from = drag.source.visualIndex
                     const to = showcaseDraggableDelegateLoader.item.visualIndex
                     if (to === from)
                         return
-                    showcaseModel.move(from, to, 1)
+                    root.showcaseEntryChanged()
+                    showcaseModel.move(from, to)
                     drag.accept()
                 }
 
@@ -298,7 +272,9 @@ Control {
                 }
 
                 onDropped: function(drop) {
-                    showcaseModel.remove(drop.source.visualIndex)
+
+                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
+                    root.showcaseEntryChanged()
                 }
 
                 Rectangle {
@@ -346,7 +322,9 @@ Control {
                 }
 
                 onDropped: function(drop) {
-                    showcaseModel.remove(drop.source.visualIndex)
+                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
+                    root.showcaseEntryChanged()
+                    root.updateModelsAfterChange()
                 }
             }
         }

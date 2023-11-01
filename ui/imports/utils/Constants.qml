@@ -1028,7 +1028,14 @@ QtObject {
         NoOne = 0,
         IdVerifiedContacts = 1,
         Contacts = 2,
-        Everyone = 4
+        Everyone = 3
+    }
+
+    enum ShowcaseEntryType {
+        Community = 0,
+        Account = 1,
+        Collectible = 2,
+        Asset = 3
     }
 
     // refers to ContractTransactionStatus and DeployState in Nim

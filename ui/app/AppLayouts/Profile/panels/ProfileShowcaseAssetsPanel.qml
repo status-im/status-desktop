@@ -7,10 +7,9 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    settingsKey: "assets"
     keyRole: "symbol"
-    roleNames: ["symbol", "name", "enabledNetworkBalance"]
-    filterFunc: (modelData) => !showcaseModel.hasItem(modelData.symbol)
+    roleNames: ["symbol", "name", "enabledNetworkBalance"].concat(showcaseRoles)
+    filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
 
@@ -23,8 +22,8 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(tmpObj)
-            showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
+            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+            root.showcaseEntryChanged()
         }
     }
     showcaseDraggableDelegateComponent: AssetShowcaseDelegate {
@@ -35,11 +34,8 @@ ProfileShowcasePanel {
         dragAxis: Drag.YAxis
         showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
         onShowcaseVisibilityRequested: {
-            if (value === Constants.ShowcaseVisibility.NoOne) {
-                showcaseModel.remove(visualIndex)
-            } else {
-                showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
-            }
+            showcaseModel.setVisibility(showcaseObj.symbol, value)
+            root.showcaseEntryChanged()
         }
     }
 }

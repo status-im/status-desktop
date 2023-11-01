@@ -9,10 +9,9 @@ ProfileShowcasePanel {
 
     property string currentWallet
 
-    settingsKey: "accounts"
     keyRole: "address"
-    roleNames: ["name", "address", "walletType", "emoji", "colorId"]
-    filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItem(modelData.address)
+    roleNames: ["address", "name", "walletType", "emoji", "colorId"].concat(showcaseRoles)
+    filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItemInShowcase(modelData.address)
     hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
     showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")
 
@@ -26,8 +25,8 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.append(tmpObj)
-            showcaseVisibility = Constants.ShowcaseVisibility.NoOne // reset
+            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+            root.showcaseEntryChanged()
         }
     }
     showcaseDraggableDelegateComponent: AccountShowcaseDelegate {
@@ -39,11 +38,8 @@ ProfileShowcasePanel {
         dragAxis: Drag.YAxis
         showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
         onShowcaseVisibilityRequested: {
-            if (value === Constants.ShowcaseVisibility.NoOne) {
-                showcaseModel.remove(visualIndex)
-            } else {
-                showcaseModel.setProperty(visualIndex, "showcaseVisibility", value)
-            }
+            showcaseModel.setVisibility(showcaseObj.address, value)
+            root.showcaseEntryChanged()
         }
     }
 }

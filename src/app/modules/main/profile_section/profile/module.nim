@@ -7,10 +7,18 @@ import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
+import app_service/service/community/service as community_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/profile/dto/profile_showcase_entry
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
+
+import models/profile_preferences_community_item
+import models/profile_preferences_account_item
+import models/profile_preferences_collectible_item
+import models/profile_preferences_asset_item
 
 export io_interface
 
@@ -25,13 +33,18 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  profileService: profile_service.Service, settingsService: settings_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    communityService: community_service.Service,
+    walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -88,3 +101,41 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     # maybe we want in future popup or somehow display an error to a user
     return
   self.updateSocialLinks(socialLinks)
+
+method storeProfileShowcasePreferences(self: Module,
+                                       communities: seq[ProfileShowcaseCommunityItem],
+                                       accounts: seq[ProfileShowcaseAccountItem],
+                                       collectibles: seq[ProfileShowcaseCollectibleItem],
+                                       assets: seq[ProfileShowcaseAssetItem]) =
+  let communitiesDto = communities.map(item => item.getEntryDto())
+  let accountsDto = accounts.map(item => item.getEntryDto())
+  let collectiblesDto = collectibles.map(item => item.getEntryDto())
+  let assetsDto = assets.map(item => item.getEntryDto())
+  self.controller.storeProfileShowcasePreferences(communitiesDto, accountsDto, collectiblesDto, assetsDto)
+
+method requestProfileShowcasePreferences(self: Module) =
+  self.controller.requestProfileShowcasePreferences()
+
+method updateProfileShowcasePreferences(self: Module, communityEntries, accountEntries, collectibleEntries, assetEntries: seq[ProfileShowcaseEntryDto]) =
+  var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+
+  for communityEntry in communityEntries:
+    let community = self.controller.getCommunityById(communityEntry.id)
+    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, communityEntry))
+
+  for accountEntry in accountEntries:
+    let account = self.controller.getAccountByAddress(accountEntry.id)
+    profileAccountItems.add(initProfileShowcaseAccountItem(account, accountEntry))
+
+    for assetEntry in assetEntries:
+      # TODO: need wallet api to fetch token by symbol
+      for token in self.controller.getTokensByAddress(account.address):
+        if assetEntry.id == token.symbol:
+          profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry))
+
+    # TODO: collectibles, need wallet api to fetch collectible by uid
+
+  self.view.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)

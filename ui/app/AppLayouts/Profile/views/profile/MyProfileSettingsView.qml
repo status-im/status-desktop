@@ -28,6 +28,8 @@ ColumnLayout {
     property WalletStore walletStore
     property var communitiesModel
 
+    property bool hasAnyProfileShowcaseChanges: false
+
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
         property string bio: descriptionPanel.bio.text
@@ -37,10 +39,11 @@ ColumnLayout {
 
     readonly property bool dirty: (!descriptionPanel.isEnsName &&
                                    descriptionPanel.displayName.text !== profileStore.displayName) ||
-                                  descriptionPanel.bio.text !== profileStore.bio ||
-                                  profileStore.socialLinksDirty ||
-                                  biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
-                                  profileHeader.icon !== profileStore.profileLargeImage
+                                   descriptionPanel.bio.text !== profileStore.bio ||
+                                   profileStore.socialLinksDirty ||
+                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
+                                   profileHeader.icon !== profileStore.profileLargeImage ||
+                                   hasAnyProfileShowcaseChanges
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -50,9 +53,19 @@ ColumnLayout {
         profileStore.resetSocialLinks()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+
+        profileShowcaseCommunitiesPanel.reset()
+        profileShowcaseAccountsPanel.reset()
+        profileShowcaseCollectiblesPanel.reset()
+        profileShowcaseAssetsPanel.reset()
+        root.profileStore.requestProfileShowcasePreferences()
+        hasAnyProfileShowcaseChanges = false
     }
 
     function save() {
+        if (hasAnyProfileShowcaseChanges)
+            profileStore.storeProfileShowcasePreferences()
+
         if (!descriptionPanel.isEnsName)
             profileStore.setDisplayName(descriptionPanel.displayName.text)
         profileStore.setBio(descriptionPanel.bio.text.trim())
@@ -75,7 +88,10 @@ ColumnLayout {
         reset()
     }
 
-    Connections {
+    onVisibleChanged: if (visible) profileStore.requestProfileShowcasePreferences()
+    Component.onCompleted: profileStore.requestProfileShowcasePreferences()
+
+    readonly property Connections privacyStoreConnections: Connections {
         target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
 
         function onStoreToKeychainError(errorDescription: string) {
@@ -161,7 +177,7 @@ ColumnLayout {
     }
 
     StatusBaseText {
-        text: qsTr("Showcase (demo only)")
+        text: qsTr("Showcase")
         color: Theme.palette.baseColor1
     }
 
@@ -182,6 +198,7 @@ ColumnLayout {
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Collectibles")
+            enabled: false // TODO: implement collectibles nim part
         }
 
         StatusTabButton {
@@ -196,28 +213,40 @@ ColumnLayout {
         currentIndex: showcaseTabBar.currentIndex
 
         ProfileShowcaseCommunitiesPanel {
+            id: profileShowcaseCommunitiesPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.communitiesModel
+            showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseAccountsPanel {
+            id: profileShowcaseAccountsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.accounts
+            showcaseModel: root.profileStore.profileShowcaseAccountsModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseCollectiblesPanel {
+            id: profileShowcaseCollectiblesPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.collectibles
+            showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
 
         ProfileShowcaseAssetsPanel {
+            id: profileShowcaseAssetsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.assets
+            showcaseModel: root.profileStore.profileShowcaseAssetsModel
+            onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
     }
 }

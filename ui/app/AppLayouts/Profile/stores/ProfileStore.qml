@@ -1,4 +1,6 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQml 2.15
+
 import utils 1.0
 
 QtObject {
@@ -26,6 +28,11 @@ QtObject {
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
+
+    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
+    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
+    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
+    readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
 
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
@@ -85,5 +92,13 @@ QtObject {
 
     function setBio(bio) {
         root.profileModule.setBio(bio)
+    }
+
+    function storeProfileShowcasePreferences() {
+        root.profileModule.storeProfileShowcasePreferences()
+    }
+
+    function requestProfileShowcasePreferences() {
+        root.profileModule.requestProfileShowcasePreferences()
     }
 }
