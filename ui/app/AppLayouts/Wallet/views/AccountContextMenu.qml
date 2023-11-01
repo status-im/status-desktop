@@ -18,7 +18,6 @@ StatusMenu {
     signal addWatchOnlyAccountClicked()
     signal hideFromTotalBalanceClicked(string address, bool hideFromTotalBalance)
 
-    width: 204
 
     StatusSuccessAction {
         id: copyAddressAction
