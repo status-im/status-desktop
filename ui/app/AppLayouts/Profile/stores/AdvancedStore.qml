@@ -24,7 +24,8 @@ QtObject {
     property bool isWakuV2: root.fleet === Constants.waku_prod   ||
                             root.fleet === Constants.waku_test   ||
                             root.fleet === Constants.status_test ||
-                            root.fleet === Constants.status_prod
+                            root.fleet === Constants.status_prod ||
+                            root.fleet === Constants.shards_test
 
     readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
     property bool isManageCommunityOnTestModeEnabled: false

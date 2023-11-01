@@ -10,6 +10,7 @@ type
     GoWakuTest = "go-waku.test"
     StatusTest = "status.test"
     StatusProd = "status.prod"
+    ShardsTest = "shards.test"
 
   FleetNodes* {.pure.} = enum
     Bootnodes = "boot",
@@ -17,6 +18,10 @@ type
     Rendezvous = "rendezvous",
     Whisper = "whisper",
     Waku = "tcp/p2p/waku"
+    WakuENR = "enr/p2p/waku"
+    WakuBoot = "tcp/p2p/waku/boot"
+    WakuBootENR = "enr/p2p/waku/boot"
+    WakuStore = "tcp/p2p/waku/store"
     Websocket = "wss/p2p/waku"
 
   Meta* = object
@@ -54,14 +59,30 @@ proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
         self.fleet[fleet][nodes][server] = fleetJson["fleets"][fleet][nodes][server].getStr
 
 proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
-  if not self.fleet[$fleet].hasKey($nodeType): return
-  result = toSeq(self.fleet[$fleet][$nodeType].values)
+  var t = nodeType
+  if fleet == Fleet.ShardsTest:
+      case nodeType:
+       of Bootnodes: t = WakuBoot
+       of Mailservers: t = WakuStore
+       of WakuENR: t = WakuBootENR
+       else: discard
+
+  if not self.fleet[$fleet].hasKey($t): return
+  result = toSeq(self.fleet[$fleet][$t].values)
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet, isWakuV2: bool): Table[string, string] =
   # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes.
   # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
   # Discuss with @iurimatias, @cammellos and Vac team
-  let fleetKey = if isWakuV2: $FleetNodes.Waku else: $FleetNodes.Mailservers
+  var fleetKey: string
+  if isWakuV2:
+    if fleet == Fleet.ShardsTest:
+      fleetKey = $FleetNodes.WakuStore 
+    else:
+      fleetKey = $FleetNodes.Waku 
+  else:
+    fleetKey = $FleetNodes.Mailservers
+
   if not self.fleet[$fleet].hasKey(fleetKey) :
     result = initTable[string,string]()
     return
