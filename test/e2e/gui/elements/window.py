@@ -40,17 +40,17 @@ class Window(QObject):
     @allure.step("Close {0}")
     def close(self):
         driver.toplevel_window.close(self.real_name)
-        _logger.info(f'Window {getattr(self, "title", "")} closed')
+        _logger.info(f'{self} closed')
 
     @allure.step("Show {0}")
     def show(self):
         driver.waitForObjectExists(self.real_name).setVisible(True)
-        _logger.info(f'Window {getattr(self, "title", "")} is visible')
+        _logger.info(f'{self} is visible')
 
     @allure.step("Hide {0}")
     def hide(self):
         driver.waitForObjectExists(self.real_name).setVisible(False)
-        _logger.info(f'Window {getattr(self, "title", "")} hidden')
+        _logger.info(f'{self} hidden')
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         super().wait_until_appears(timeout_msec)

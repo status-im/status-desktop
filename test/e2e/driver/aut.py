@@ -41,12 +41,10 @@ class AUT:
 
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type:
-            screenshot = configs.testpath.RUN / 'screenshot.png'
-            if screenshot.exists():
-                screenshot = configs.testpath.RUN / f'screenshot_{datetime.now():%H%M%S}.png'
+            screenshot = configs.testpath.RUN / f'{self.aut_id}.png'
             ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
             allure.attach(
-                name='Screenshot on fail',  body=screenshot.read_bytes(), attachment_type=allure.attachment_type.PNG)
+                name=f'Screenshot on fail for multiple instance: {self.aut_id}',  body=screenshot.read_bytes(), attachment_type=allure.attachment_type.PNG)
         self.stop()
 
     @allure.step('Attach Squish to Test Application')
