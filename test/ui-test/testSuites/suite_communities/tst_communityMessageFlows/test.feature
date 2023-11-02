@@ -59,8 +59,7 @@ Feature: Status Desktop community messages
 
         When the user unpins the message at index 0
         Then the amount of pinned messages is 1
-	@mayfail
-	# https://github.com/status-im/status-desktop/issues/12440
+
     Scenario Outline: The user can reply to own message
         Given the user sends a chat message "<message>"
         When the user replies to community chat message at index 0 with "<reply>"
