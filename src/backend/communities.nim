@@ -410,7 +410,7 @@ proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: 
 
 proc requestCommunityInfo*(communityId: string, tryDatabase: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("fetchCommunity".prefix, %*[{
-    "communityId": communityId,
+    "communityKey": communityId,
     "tryDatabase": tryDatabase,
     "waitForResponse": true
   }])
