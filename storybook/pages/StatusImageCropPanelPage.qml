@@ -28,6 +28,10 @@ SplitView {
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
 
+    Component.onCompleted: {
+        workflowLoader.active = true
+    }
+
     Logs { id: logs }
 
     SplitView {

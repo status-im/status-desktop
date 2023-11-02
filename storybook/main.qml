@@ -19,7 +19,7 @@ ApplicationWindow {
     height: 840
     visible: true
 
-    property string currentPage
+    property string currentPage: "StatusImageCropPanel"
 
     title: "%1 – %2".arg(currentPage).arg(Qt.application.displayName)
 
@@ -354,7 +354,7 @@ Tips:
     Settings {
         id: settings
 
-        property alias currentPage: root.currentPage
+        //property alias currentPage: root.currentPage
         property alias loadAsynchronously: settingsLayout.loadAsynchronously
         property alias runTestsAutomatically: settingsLayout.runTestsAutomatically
         property alias darkMode: darkModeCheckBox.checked
