@@ -14,7 +14,8 @@ proc sortAsc[T](t1, t2: T): int =
 
 type
   GetSuggestedRoutesTaskArg* = ref object of QObjectTaskArg
-    account: string
+    accountFrom: string
+    accountTo: string
     amount: Uint256
     token: string
     disabledFromChainIDs: seq[int]
@@ -88,12 +89,14 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     except:
       discard
 
-    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, ord(arg.sendType), lockedInAmounts).result
+    let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.disabledFromChainIDs,
+      arg.disabledToChainIDs, arg.preferredChainIDs, ord(arg.sendType), lockedInAmounts).result
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     # retry along with unpreferred chains incase no route is possible with preferred chains
     if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
-      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], ord(arg.sendType), lockedInAmounts).result
+      let response = eth.suggestedRoutes(arg.accountFrom, arg.accountTo, amountAsHex, arg.token, arg.disabledFromChainIDs,
+        arg.disabledToChainIDs, @[], ord(arg.sendType), lockedInAmounts).result
       bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     bestPaths.sort(sortAsc[TransactionPathDto])
@@ -165,7 +168,7 @@ const getCryptoServicesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     error "Error fetching crypto services", message = e.msg
     arg.finish(%* {
       "result": @[],
-    }) 
+    })
 
 type
   FetchDecodedTxDataTaskArg* = ref object of QObjectTaskArg

@@ -507,7 +507,7 @@ StatusDialog {
             d.isPendingTx = false
             if (uuid !== d.uuid) return
             if (!!error) {
-                if (error.includes(Constants.walletSection.cancelledMessage)) {
+                if (error.includes(Constants.walletSection.authenticationCanceled)) {
                     return
                 }
                 sendingError.text = error

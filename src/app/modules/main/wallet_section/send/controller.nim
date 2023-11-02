@@ -104,8 +104,10 @@ proc authenticate*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
+proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
+  disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
+  let suggestedRoutes = self.transactionService.suggestedRoutes(accountFrom, accountTo, amount, token, disabledFromChainIDs,
+    disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,

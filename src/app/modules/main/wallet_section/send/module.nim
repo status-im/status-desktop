@@ -25,7 +25,7 @@ export io_interface
 logScope:
   topics = "wallet-send-module"
 
-const cancelledRequest* = "cancelled"
+const authenticationCanceled* = "authenticationCanceled"
 
 # Shouldn't be public ever, use only within this module.
 type TmpSendTransactionDetails = object
@@ -279,7 +279,7 @@ method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, 
 
 method onUserAuthenticated*(self: Module, password: string, pin: string) =
   if password.len == 0:
-    self.transactionWasSent()
+    self.transactionWasSent(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = authenticationCanceled)
   else:
     self.tmpPin = pin
     let doHashing = self.tmpPin.len == 0
@@ -323,12 +323,13 @@ method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent:
 
 method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: string) =
   if txHash.len == 0:
-    self.view.sendTransactionSentSignal(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = cancelledRequest)
+    self.view.sendTransactionSentSignal(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error)
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
+method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, disabledFromChainIDs,
+  disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
+  return self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
