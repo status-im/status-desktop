@@ -130,7 +130,7 @@ QtObject:
     if self.communityId != community.id:
       return false
 
-    debug "setCommunityInfo", communityId = $self.communityId, communityName = community.name
+    debug "setCommunityInfo", communityId = self.communityId, communityName = community.name
 
     if self.displayName != community.name:
       self.displayName = community.name

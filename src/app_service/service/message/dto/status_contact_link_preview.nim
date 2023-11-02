@@ -96,7 +96,7 @@ QtObject:
     if self.publicKey != contactDetails.dto.id:
       return false
     
-    debug "setContactInfo", publicKey = $self.publicKey, displayName = $contactDetails.dto.displayname
+    debug "setContactInfo", publicKey = self.publicKey, displayName = $contactDetails.dto.displayname
 
     if self.displayName != contactDetails.defaultDisplayName:
       self.displayName = contactDetails.defaultDisplayName

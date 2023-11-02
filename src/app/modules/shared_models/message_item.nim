@@ -396,8 +396,6 @@ proc seen*(self: Item): bool {.inline.} =
 
 proc `seen=`*(self: Item, value: bool) {.inline.} =
   self.seen = value
-  # if self.seen:
-  #   self.linkPreviewModel.forceLocalData()
 
 proc timestamp*(self: Item): int64 {.inline.} =
   self.timestamp

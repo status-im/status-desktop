@@ -322,8 +322,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.albumImagesCount,
         )
 
-      self.updateLinkPreviewsContacts(item, item.seen)
-      self.updateLinkPreviewsCommunities(item, item.seen)
+      self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
+      self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
 
       for r in reactions:
         if(r.messageId == message.id):
@@ -460,8 +460,8 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     )
     items.add(item)
 
-    self.updateLinkPreviewsContacts(item, item.seen)
-    self.updateLinkPreviewsCommunities(item, item.seen)
+    self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
+    self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
 
   self.view.model().insertItemsBasedOnClock(items)
 
@@ -789,28 +789,32 @@ method forceLinkPreviewsLocalData*(self: Module, messageId: string) =
     return
   if not item.linkPreviewModel.updateForcedLocalDataTimestamp():
     return
-  self.updateLinkPreviewsContacts(item, true)
-  self.updateLinkPreviewsCommunities(item, true)
+  self.updateLinkPreviewsContacts(item, requestFromMailserver = true)
+  self.updateLinkPreviewsCommunities(item, requestFromMailserver = true)
 
 proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool) =
   for contactId in item.linkPreviewModel.getContactIds().items:
     let contact = self.controller.getContactDetails(contactId)
+
     if contact.dto.displayName != "":
       item.linkPreviewModel.setContactInfo(contact)
+
+    if not requestFromMailserver:
       continue
-    if requestFromMailserver:
-      debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver", contactId
-      item.linkPreviewModel.onContactDataRequested(contactId)
-      self.controller.requestContactInfo(contactId)
+    
+    debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver", contactId
+    item.linkPreviewModel.onContactDataRequested(contactId)
+    self.controller.requestContactInfo(contactId)
   
 proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool) =
   for communityId in item.linkPreviewModel.getCommunityIds().items:
+    let community = self.controller.getCommunityById(communityId)
     
-    if (let community = self.controller.getCommunityById(communityId); community).id != "":
+    if community.id != "":
       item.linkPreviewModel.setCommunityInfo(community)
     
     if not requestFromMailserver:
-      return
+      continue
     
     debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
     item.linkPreviewModel.onCommunityInfoRequested(communityId)

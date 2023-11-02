@@ -409,7 +409,7 @@ proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: 
     }])
 
 proc requestCommunityInfo*(communityId: string, useDatabase: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("requestCommunityInfoFromMailserverV2".prefix, %*[{
+  result = callPrivateRPC("fetchCommunity".prefix, %*[{
     "communityId": communityId,
     "useDatabase": useDatabase,
     "waitForResponse": true

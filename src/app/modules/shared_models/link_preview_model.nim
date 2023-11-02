@@ -346,7 +346,7 @@ QtObject:
 
   # Checks the time since local data was previously forced.
   # If more than 10 minutes passed, updates the timestamp to current timestamp.
-  # Returns true if timestamp was upates, i.e. a request from mailserver is expected to happen after.
+  # Returns true if timestamp was updated, i.e. a request from mailserver is expected to happen after.
   proc updateForcedLocalDataTimestamp*(self: Model): bool =
     let now = now().toTime()
     if now - self.forcedLocalDataTimestamp < initDuration(minutes = 10):
