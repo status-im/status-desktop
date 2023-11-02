@@ -53,12 +53,12 @@ type
   AsyncRequestCommunityInfoTaskArg = ref object of QObjectTaskArg
     communityId: string
     importing: bool
-    useDatabase: bool
+    tryDatabase: bool
 
 const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestCommunityInfoTaskArg](argEncoded)
   try:
-    let response = status_go.requestCommunityInfo(arg.communityId, arg.useDatabase)
+    let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase)
     arg.finish(%* {
       "communityId": arg.communityId,
       "importing": arg.importing,
