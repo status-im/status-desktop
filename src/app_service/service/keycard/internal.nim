@@ -91,11 +91,9 @@ proc toTransactionSignature(jsonObj: JsonNode): TransactionSignature =
   discard jsonObj.getProp(ResponseParamTxSignatureS, result.s)
   var v: int
   discard jsonObj.getProp(ResponseParamTxSignatureV, v)
-  ## The signature must conform to the secp256k1 curve R, S and V values, where the V value must be 27 or 28 for legacy reasons.
-  ## Transform V from 0/1 to 27/28 (1b/1c) according to the yellow paper https://ethereum.github.io/yellowpaper/paper.pdf
-  result.v = "1b"
+  result.v = "00"
   if v == 1:
-    result.v = "1c"
+    result.v = "01"
 
 proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamErrorKey, result.error)

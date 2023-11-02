@@ -1109,7 +1109,7 @@ QtObject {
     }
 
     readonly property QtObject walletSection: QtObject {
-        readonly property string cancelledMessage: "cancelled"
+        readonly property string authenticationCanceled: "authenticationCanceled"
     }
 
     // list of symbols for which pngs are stored to avoid
