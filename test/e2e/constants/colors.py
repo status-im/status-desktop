@@ -51,4 +51,5 @@ boundaries = {
 
 class ColorCodes(Enum):
     GREEN = '#4ebc60'
+    BLUE = '#4360df'
 

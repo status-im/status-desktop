@@ -2,6 +2,7 @@ import allure
 
 import configs.timeouts
 import driver
+from gui.components.settings.keycard_popup import CreateNewKeycardAccountSeedPhrasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -22,6 +23,11 @@ class KeycardSettingsView(QObject):
     @allure.step('Check that keycard screen displayed')
     def check_keycard_screen_loaded(self):
         assert KeycardSettingsView().is_visible
+
+    @allure.step('Choose create new keycard account with new seed phrase')
+    def click_create_new_account_with_new_seed_phrase(self):
+        self._create_new_keycard_account_button.click()
+        return CreateNewKeycardAccountSeedPhrasePopup().wait_until_appears()
 
     @allure.step('Check that all keycard options displayed')
     def all_keycard_options_available(self):
