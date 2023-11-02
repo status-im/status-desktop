@@ -739,7 +739,7 @@ Item {
                     type: ModuleWarning.Warning
                     iconName: "warning"
                     active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
-
+                    delay: false
                     onClicked: Global.openTestnetPopup()
                     onCloseClicked: hide()
                 }
@@ -753,7 +753,7 @@ Item {
                     type: ModuleWarning.Danger
                     text: qsTr("Secure your seed phrase")
                     buttonText: qsTr("Back up now")
-
+                    delay: false
                     onClicked: popups.openBackUpSeedPopup()
 
                     onCloseClicked: {
@@ -776,7 +776,7 @@ Item {
                     readonly property string channelId: appMain.communitiesStore.discordImportChannelId
                     readonly property string channelName: appMain.communitiesStore.discordImportChannelName
                     readonly property string channelOrCommunityName: channelName || communityName
-
+                    delay: false
                     active: !cancelled && (inProgress || finished || stopped)
                     type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
                     text: {
@@ -824,6 +824,7 @@ Item {
                     type: ModuleWarning.Danger
                     text: qsTr("Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.")
                     closeBtnVisible: false
+                    delay: false
                 }
 
                 ModuleWarning {
@@ -879,6 +880,7 @@ Item {
                         objectName: "appVersionUpdateBanner"
                         Layout.fillWidth: true
                         type: ModuleWarning.Success
+                        delay: false
                         text: updateAvailable ? qsTr("A new version of Status (%1) is available").arg(version)
                                               : qsTr("Your version is up to date")
 

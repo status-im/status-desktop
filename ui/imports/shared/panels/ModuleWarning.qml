@@ -18,13 +18,14 @@ Item {
         Success
     }
 
-    property bool active
+    property bool active: false
     property int type: ModuleWarning.Danger
     property int progressValue: -1 // 0..100, -1 not visible
     property string text: ""
     property alias buttonText: button.text
     property alias closeBtnVisible: closeImg.visible
     property string iconName
+    property bool delay: true
 
     signal clicked()
     signal closeClicked()
@@ -54,22 +55,23 @@ Item {
 
     signal linkActivated(string link)
 
-    implicitHeight: active ? content.implicitHeight : 0
-    visible: implicitHeight > 0
-
     onActiveChanged: {
-        active ? showAnimation.start() : hideAnimation.start()
+        if (root.active && root.delay) {
+            showTimer.start();
+        }
     }
 
     NumberAnimation {
         id: showAnimation
         target: root
+        running: (root.active && !root.delay)
         property: "implicitHeight"
         from: 0
-        to: content.implicitHeight
+        to: 32
         duration: 500
         easing.type: Easing.OutCubic
         onStarted: {
+            root.visible = true;
             root.showStarted()
         }
         onFinished: {
@@ -79,17 +81,29 @@ Item {
 
     NumberAnimation {
         id: hideAnimation
+        running: !root.active
         target: root
         property: "implicitHeight"
+        from: 32
         to: 0
-        from: content.implicitHeight
         duration: 500
         easing.type: Easing.OutCubic
         onStarted: {
             root.hideStarted()
+            root.visible = false;
         }
         onFinished: {
             root.hideFinished()
+        }
+    }
+
+    Timer {
+        id: showTimer
+        interval: 3000
+        onTriggered: {
+            if (root.active) {
+                showAnimation.start();
+            }
         }
     }
 
@@ -104,9 +118,7 @@ Item {
 
     Rectangle {
         id: content
-        anchors.bottom: parent.bottom
-        width: parent.width
-        implicitHeight: 32
+        anchors.fill: parent
 
         readonly property color baseColor: {
             switch (root.type) {
