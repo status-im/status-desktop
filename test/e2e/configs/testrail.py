@@ -1,6 +1,11 @@
 import os
+from datetime import datetime
 
-TESTRAIL_RUN_ID = os.getenv('TESTRAIL_RUN_ID', '').strip()
-TESTRAIL_URL = os.getenv('TESTRAIL_URL', None)
-TESTRAIL_USR = os.getenv('TESTRAIL_USR', None)
-TESTRAIL_PSW = os.getenv('TESTRAIL_PSW', None)
+CI_BUILD_URL = os.getenv('BUILD_URL', '')
+CI_NIGHTLY = True if 'nightly' in CI_BUILD_URL else False
+
+RUN_NAME = os.getenv('TESTRAIL_RUN_NAME', f'Nightly regression {datetime.now():%d.%m.%Y}' if CI_NIGHTLY else '')
+PROJECT_ID = os.getenv('TESTRAIL_PROJECT_ID', '')
+URL = os.getenv('TESTRAIL_URL', '')
+USR = os.getenv('TESTRAIL_USR', '')
+PSW = os.getenv('TESTRAIL_PSW', '')

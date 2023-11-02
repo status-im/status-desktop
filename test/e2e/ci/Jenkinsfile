@@ -36,7 +36,7 @@ pipeline {
       defaultValue: ''
     )
     string(
-      name: 'TESTRAIL_RUN_ID',
+      name: 'TESTRAIL_RUN_NAME',
       description: 'Test run ID in Test Rail.',
       defaultValue: ''
     )
@@ -70,6 +70,7 @@ pipeline {
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
 
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
+    TESTRAIL_PROJECT_ID = 17
   }
 
   stages {
