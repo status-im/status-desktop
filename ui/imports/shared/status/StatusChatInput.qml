@@ -121,14 +121,9 @@ Rectangle {
     }
 
     function setText(text) {
-        const textInputEnabled = textInput.enabled
-        if(textInputEnabled) {
-            textInput.enabled = false
-        }
-
         textInput.clear()
+        hyperlinksFormatter.undoStackManager.clear()
         textInput.append(text)
-        textInput.enabled = textInputEnabled
     }
 
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
@@ -1250,6 +1245,10 @@ Rectangle {
                             bottomPadding: 9
                             leftPadding: 0
                             padding: 0
+                            // This is needed to make sure the text area is disabled when the input is disabled
+                            Binding on enabled {
+                                value: root.enabled
+                            }
                             Keys.onUpPressed: {
                                 if (isEdit && !activeFocus) {
                                     forceActiveFocus();
