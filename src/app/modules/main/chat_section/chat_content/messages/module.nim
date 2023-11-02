@@ -787,8 +787,6 @@ method forceLinkPreviewsLocalData*(self: Module, messageId: string) =
   debug "forceLinkPreviewsLocalData", messageId, itemFound = $(item != nil)
   if item == nil:
     return
-  if not item.linkPreviewModel.updateForcedLocalDataTimestamp():
-    return
   self.updateLinkPreviewsContacts(item, requestFromMailserver = true)
   self.updateLinkPreviewsCommunities(item, requestFromMailserver = true)
 

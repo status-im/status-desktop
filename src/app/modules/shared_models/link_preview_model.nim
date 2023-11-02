@@ -1,4 +1,4 @@
-import NimQml, strformat, tables, sequtils, sets, times
+import NimQml, strformat, tables, sequtils, sets
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
@@ -41,7 +41,6 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
-      forcedLocalDataTimestamp: Time
 
   proc delete*(self: Model) = 
     for i in 0 ..< self.items.len:
@@ -55,7 +54,6 @@ QtObject:
   proc newLinkPreviewModel*(linkPreviews: seq[LinkPreview] = @[]): Model =
     new(result, delete)
     result.setup
-    result.forcedLocalDataTimestamp = initTime(0, 0)
     for linkPreview in linkPreviews:
       var item = Item()
       item.unfurled = true
@@ -343,14 +341,3 @@ QtObject:
     for row, item in self.items:
       if item.linkPreview.getCommunityId() == communityId:
         self.setItemLoadingLocalData(row, item, true)
-
-  # Checks the time since local data was previously forced.
-  # If more than 10 minutes passed, updates the timestamp to current timestamp.
-  # Returns true if timestamp was updated, i.e. a request from mailserver is expected to happen after.
-  proc updateForcedLocalDataTimestamp*(self: Model): bool =
-    let now = now().toTime()
-    if now - self.forcedLocalDataTimestamp < initDuration(minutes = 10):
-      return false
-    self.forcedLocalDataTimestamp = now
-    return true
-
