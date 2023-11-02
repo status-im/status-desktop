@@ -210,9 +210,10 @@ QtObject:
     except Exception as e:
       discard
 
-    return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(),
+    return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
       parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
-      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(), self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
+      self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
+      self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
 
   proc switchSenderAccountByAddress*(self: View, address: string) =
     let (account, index) = self.senderAccounts.getItemByAddress(address)

@@ -451,12 +451,14 @@ QtObject:
       error "error handling suggestedRoutesReady response", errDesription=e.msg
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
+    disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "suggestedRoutesReady",
-      account: account,
+      accountFrom: accountFrom,
+      accountTo: accountTo,
       amount: amount,
       token: token,
       disabledFromChainIDs: disabledFromChainIDs,

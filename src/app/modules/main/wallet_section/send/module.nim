@@ -327,8 +327,9 @@ method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: stri
     return
   self.view.sendTransactionSentSignal(chainId, txHash, uuid, error)
 
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
+method suggestedRoutes*(self: Module, accountFrom: string, accountTo: string, amount: UInt256, token: string, disabledFromChainIDs,
+  disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): string =
+  return self.controller.suggestedRoutes(accountFrom, accountTo, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
   self.tmpSendTransactionDetails.paths = suggestedRoutes.best
