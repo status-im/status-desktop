@@ -7,8 +7,6 @@ import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
-pytestmark = allure.suite("Wallet")
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703021', 'Manage a saved address')
 @pytest.mark.case(703021)
