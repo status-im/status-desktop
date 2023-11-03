@@ -70,6 +70,17 @@ Item {
     // set from main.qml
     property var sysPalette
 
+    // Central UI point for managing app toasts:
+    ToastsManager {
+        id: toastsManager
+
+        rootStore: appMain.rootStore
+        rootChatStore: appMain.rootChatStore
+        communityTokensStore: appMain.communityTokensStore
+
+        sendModalPopup: sendModal
+    }
+
     Connections {
         target: rootStore.mainModuleInst
 
@@ -263,10 +274,6 @@ Item {
 
         function onOpenActivityCenterPopupRequested() {
             d.openActivityCenterPopup()
-        }
-
-        function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
-            appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
         }
 
         function onOpenLink(link: string) {
@@ -1594,15 +1601,22 @@ Item {
             primaryText: model.title
             secondaryText: model.subTitle
             icon.name: model.icon
+            iconColor: model.iconColor
             loading: model.loading
             type: model.ephNotifType
             linkUrl: model.url
+            actionRequired: model.actionType !== ToastsManager.ActionType.None
             duration: model.durationInMs
             onClicked: {
                 appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.timestamp)
                 this.open = false
             }
             onLinkActivated: {
+                if(actionRequired) {
+                    toastsManager.doAction(model.actionType, model.actionData)
+                    return
+                }
+
                 if (link.startsWith("#") && link !== "#") { // internal link to section
                     const sectionArgs = link.substring(1).split("/")
                     const section = sectionArgs[0]
@@ -1612,7 +1626,6 @@ Item {
                 else
                     Global.openLink(link)
             }
-
             onClose: {
                 appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.timestamp)
             }

@@ -9,9 +9,12 @@ type
     Title
     SubTitle
     Icon
+    IconColor
     Loading
     EphNotifType
     Url
+    ActionType
+    ActionData
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -39,9 +42,12 @@ QtObject:
       ModelRole.Title.int:"title",
       ModelRole.SubTitle.int:"subTitle",
       ModelRole.Icon.int:"icon",
+      ModelRole.IconColor.int:"iconColor",
       ModelRole.Loading.int:"loading",
       ModelRole.EphNotifType.int:"ephNotifType",
-      ModelRole.Url.int:"url"
+      ModelRole.Url.int:"url",
+      ModelRole.ActionType.int:"actionType",
+      ModelRole.ActionData.int:"actionData"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -65,12 +71,18 @@ QtObject:
         result = newQVariant(item.subTitle)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
+      of ModelRole.IconColor:
+        result = newQVariant(item.iconColor)
       of ModelRole.Loading:
         result = newQVariant(item.loading)
       of ModelRole.EphNotifType:
         result = newQVariant(item.ephNotifType.int)
       of ModelRole.Url:
         result = newQVariant(item.url)
+      of ModelRole.ActionType:
+        result = newQVariant(item.actionType)
+      of ModelRole.ActionData:
+        result = newQVariant(item.actionData)
 
   proc findIndexById(self: Model, id: int64): int =
     for i in 0 ..< self.items.len:

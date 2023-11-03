@@ -31,6 +31,9 @@ QtObject {
     signal ownerTokenDeploymentStarted(string communityId, string url)
     signal setSignerStateChanged(string communityId, string communityName, int status, string url)
     signal ownershipLost(string communityId, string communityName)
+    signal communityOwnershipDeclined(string communityName)
+    signal sendOwnerTokenStateChanged(string tokenName, int status, string url)
+    signal ownerTokenReceived(string communityId, string communityName)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -72,9 +75,10 @@ QtObject {
         communityTokensModuleInst.setSigner(communityId, chainId, contractAddress, accountAddress)
     }
 
-    function ownershipDeclined(communityId) {
+    function ownershipDeclined(communityId, communityName) {
             communityTokensModuleInst.declineOwnership(communityId)
-    }
+            root.communityOwnershipDeclined(communityName)
+        }
 
     readonly property Connections connections: Connections {
         target: communityTokensModuleInst
@@ -124,13 +128,7 @@ QtObject {
         }
 
         function onOwnerTokenReceived(communityId, communityName, chainId, communityAddress) {
-            // TODO clicking url should execute finalise flow
-            Global.displayToastMessage(qsTr("You received the Owner token for %1. To finalize ownership, make your device the control node.").arg(communityName),
-                                       qsTr("Finalise ownership"),
-                                       "",
-                                       false,
-                                       Constants.ephemeralNotificationType.normal,
-                                       "")
+            root.ownerTokenReceived(communityId, communityName)
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {
@@ -140,9 +138,15 @@ QtObject {
         function onOwnershipLost(communityId, communityName) {
             root.ownershipLost(communityId, communityName)
         }
+
+        // TODO: BACKEND!!!
+        function onSendOwnerTokenStateChanged(tokenName, status, url) {
+            console.warn("TODO: Backend missing! On Send owner token!")
+            root.onSendOwnerTokenStateChanged(tokenName, status, url)
+        }
     }
 
-        // Burn:
+    // Burn:
     function computeBurnFee(tokenKey, amount, accountAddress, requestId) {
         console.assert(typeof amount === "string")
         communityTokensModuleInst.computeBurnFee(tokenKey, amount, accountAddress, requestId)
