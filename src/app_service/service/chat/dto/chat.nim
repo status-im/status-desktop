@@ -5,7 +5,6 @@ import ../../community/dto/community
 
 include ../../../common/json_utils
 import ../../../../app_service/common/types
-import ../../../../app/global/global_singleton
 
 type ChatType* {.pure.}= enum
   Unknown = 0,

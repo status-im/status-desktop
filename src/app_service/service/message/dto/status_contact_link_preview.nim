@@ -2,9 +2,6 @@ import json, strformat, NimQml, chronicles
 import link_preview_thumbnail
 import ../../contacts/dto/contact_details
 
-import ../../../../app/global/global_singleton
-import ../../../../app/global/utils as utils
-
 include ../../../common/json_utils
 
 QtObject:
@@ -25,8 +22,6 @@ QtObject:
   proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail): StatusContactLinkPreview =
     new(result, delete)
     result.setup()
-    if singletonInstance.utils().isCompressedPubKey(publicKey):
-      publicKey = singletonInstance.utils().getDecompressedPk(publicKey)
     result.publicKey = publicKey
     result.displayName = displayName
     result.description = description
