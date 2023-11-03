@@ -53,8 +53,13 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
 
-                onJoined: logs.logEvent("CommunityIntroDialog::onJoined", ["airdropAddress", "sharedAddresses"], arguments)
                 onCancelMembershipRequest: logs.logEvent("CommunityIntroDialog::onCancelMembershipRequest()")
+
+                onPrepareForSigning: logs.logEvent("CommunityIntroDialog::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
+                onJoinCommunity: logs.logEvent("CommunityIntroDialog::onJoinCommunity")
+                onSignSharedAddressesForAllNonKeycardKeypairs: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForAllNonKeycardKeypairs")
+                onSignSharedAddressesForKeypair: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
+                onSharedAddressesUpdated: logs.logEvent("CommunityIntroDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
             }
         }
 
