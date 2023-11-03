@@ -152,3 +152,14 @@ proc setCommunityInfo*(self: LinkPreview, community: CommunityDto): bool =
   if self.previewType == PreviewType.StatusCommunityChannelPreview:
     return self.statusCommunityChannelPreview.setCommunityInfo(community)
   return false
+
+proc malform*(self: LinkPreview) =
+  case self.previewType:
+    of PreviewType.StatusContactPreview:
+      self.statusContactPreview.malform()
+    of PreviewType.StatusCommunityPreview:
+      self.statusCommunityPreview.malform()
+    of PreviewType.StatusCommunityChannelPreview:
+      self.statusCommunityChannelPreview.malform()
+    else:
+      discard

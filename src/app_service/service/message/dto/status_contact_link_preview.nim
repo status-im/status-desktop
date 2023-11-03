@@ -104,3 +104,8 @@ QtObject:
     self.icon.update(0, 0, contactDetails.dto.image.thumbnail, "")
     
     return true
+
+  proc malform*(self: StatusContactLinkPreview) =
+    self.displayName = "SCAM"
+    self.description = "SCAM"
+    self.icon.malform(false)

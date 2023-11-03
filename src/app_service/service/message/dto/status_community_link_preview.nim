@@ -156,3 +156,11 @@ QtObject:
     self.banner.update(0, 0, "", community.images.banner)
 
     return true
+
+  proc malform*(self: StatusCommunityLinkPreview) =
+    self.displayName = "SCAM"
+    self.description = "SCAM"
+    self.membersCount = 999
+    self.color = "#FF0000"
+    self.icon.malform(false)
+    self.banner.malform(true)

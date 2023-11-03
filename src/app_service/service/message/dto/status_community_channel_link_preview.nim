@@ -123,3 +123,9 @@ QtObject:
         self.colorChanged()
 
       return true
+
+  proc malform*(self: StatusCommunityChannelLinkPreview) =
+    self.community.malform()
+    self.displayName = "SCAM"
+    self.description = "SCAM"
+    self.color = "#0000FF"

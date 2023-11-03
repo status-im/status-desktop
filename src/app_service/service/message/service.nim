@@ -852,6 +852,7 @@ QtObject:
     if unfurlResponse.getProp("statusLinkPreviews", statusLinkPreviewsArr):
       for element in statusLinkPreviewsArr.getElems():
         let linkPreview = element.toLinkPreview(false)
+        linkPreview.malform()
         linkPreviews[linkPreview.url] = linkPreview
 
     for url in requestedUrls:
