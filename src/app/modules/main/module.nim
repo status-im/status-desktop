@@ -1256,9 +1256,25 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     finalEphNotifType = EphemeralNotificationType.Success
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
+    
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, "",
+  loading, finalEphNotifType, url, 0, "", details)
+  self.view.ephemeralNotificationModel().addItem(item)
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon,
-  loading, finalEphNotifType, url, details)
+# TO UNIFY with the one above.
+# Further refactor will be done in a next step
+method displayEphemeralWithActionNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, iconColor: string, loading: bool,
+  ephNotifType: int, actionType: int, actionData: string, details = NotificationDetails()) =
+  let now = getTime()
+  let id = now.toUnix * 1000000000 + now.nanosecond
+  var finalEphNotifType = EphemeralNotificationType.Default
+  if(ephNotifType == EphemeralNotificationType.Success.int):
+    finalEphNotifType = EphemeralNotificationType.Success
+  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+    finalEphNotifType = EphemeralNotificationType.Danger
+    
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, iconColor,
+  loading, finalEphNotifType, "", actionType, actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =

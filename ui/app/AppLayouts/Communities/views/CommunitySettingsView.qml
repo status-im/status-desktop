@@ -801,36 +801,6 @@ StatusSectionLayout {
             Global.displayToastMessage(title1, url, "", true, type, url)
             Global.displayToastMessage(title2, url, "", true, type, url)
         }
-
-        function onSetSignerStateChanged(communityId, communityName, status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            if (status === Constants.ContractTransactionStatus.Completed) {
-                Global.displayToastMessage(qsTr("%1 smart contract amended").arg(communityName),
-                                           qsTr("View on etherscan"), "", false,
-                                           Constants.ephemeralNotificationType.success, url)
-                Global.displayToastMessage(qsTr("Your device is now the control node for %1. You now have full Community admin rights.").arg(communityName),
-                                           qsTr("%1 Community admin"), "", false,
-                                           Constants.ephemeralNotificationType.success, "" /*TODO internal link*/)
-            } else if (status === Constants.ContractTransactionStatus.Failed) {
-                Global.displayToastMessage(qsTr("%1 smart contract update failed").arg(communityName),
-                                           qsTr("View on etherscan"), "", false,
-                                           Constants.ephemeralNotificationType.normal, url)
-            } else if (status ===  Constants.ContractTransactionStatus.InProgress) {
-                Global.displayToastMessage(qsTr("Updating %1 smart contract").arg(communityName),
-                                           qsTr("View on etherscan"), "", true,
-                                           Constants.ephemeralNotificationType.normal, url)
-            }
-        }
-
-        function onOwnershipLost(communityId, communityName) {
-            if (root.community.id !== communityId)
-                return
-            let type = Constants.ephemeralNotificationType.normal
-            Global.displayToastMessage(qsTr("Your device is no longer the control node for Doodles.
-                                             Your ownership and admin rights for %1 have been transferred to the new owner.").arg(communityName), "", "", false, type, "")
-        }
     }
 
     Connections {

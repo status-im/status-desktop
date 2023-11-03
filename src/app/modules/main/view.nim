@@ -105,6 +105,12 @@ QtObject:
     ephNotifType: int, url: string) {.slot.} =
     self.delegate.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
 
+  # TO UNIFY with the one above. Now creating a specific method for not introuducing regression.
+  # Further refactor will be done in a next step
+  proc displayEphemeralWithActionNotification*(self: View, title: string, subTitle: string, icon: string, iconColor: string, loading: bool,
+    ephNotifType: int, actionType: int, actionData: string) {.slot.} =
+    self.delegate.displayEphemeralWithActionNotification(title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData)
+
   proc removeEphemeralNotification*(self: View, id: string) {.slot.} =
     self.delegate.removeEphemeralNotification(id.parseInt)
 

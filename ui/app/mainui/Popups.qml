@@ -904,9 +904,9 @@ QtObject {
             FinaliseOwnershipDeclinePopup {
                 destroyOnClose: true
 
-                onDeclineClicked:  {
+                onDeclineClicked: {
                     close()
-                    root.ownershipDeclined()
+                    root.rootStore.communityTokensStore.ownershipDeclined(communityId, communityName)
                 }
             }
         }

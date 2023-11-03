@@ -102,6 +102,18 @@ Control {
     }
 
     /*!
+        \qmlproperty bool StatusToastMessage::actionRequired
+        This property holds if the specific toast message will enable a specific UI action apart from an external link navigation.
+    */
+    property bool actionRequired: false
+
+    /*!
+        \qmlproperty bool StatusToastMessage::iconColor
+        This property holds icon color if it needs a customized color, otherwise, it will depend on toast type.
+    */
+    property string iconColor: ""
+
+    /*!
         \qmlmethod
         This function is used to open the ToastMessage setting all its properties.
         Examples of usage:
@@ -150,13 +162,35 @@ Control {
 
         readonly property string openedState: "opened"
         readonly property string closedState: "closed"
-        readonly property string iconColor: switch(root.type) {
+        readonly property string iconColor: {
+            // If specified:
+            if(root.iconColor != "")
+                return root.iconColor
+
+            // If not specified
+            switch(root.type) {
             case StatusToastMessage.Type.Success:
                 return Theme.palette.successColor1
             case StatusToastMessage.Type.Danger:
                 return Theme.palette.dangerColor1
             default:
                 return Theme.palette.primaryColor1
+            }
+        }
+        readonly property string iconBgColor: {
+            // If specified:
+            if(root.iconColor != "")
+                return Theme.palette.getColor(root.iconColor, 0.1)
+
+            // If not specified
+            switch(root.type) {
+            case StatusToastMessage.Type.Success:
+                return Theme.palette.successColor2
+            case StatusToastMessage.Type.Danger:
+                return Theme.palette.dangerColor3
+            default:
+                return Theme.palette.primaryColor3
+            }
         }
     }
 
@@ -240,16 +274,7 @@ Control {
                 implicitHeight: 32
                 Layout.alignment: Qt.AlignVCenter
                 radius: (root.width/2)
-                color: {
-                    switch(root.type) {
-                    case StatusToastMessage.Type.Success:
-                        return Theme.palette.successColor2
-                    case StatusToastMessage.Type.Danger:
-                        return Theme.palette.dangerColor3
-                    default:
-                        return Theme.palette.primaryColor3
-                    }
-                }
+                color: d.iconBgColor
                 visible: loader.sourceComponent != undefined
                 Loader {
                     id: loader
@@ -295,7 +320,7 @@ Control {
                 }
                 StatusBaseText {
                     Layout.fillWidth: true
-                    visible: (!root.linkUrl && !!root.secondaryText)
+                    visible: (!linkText.visible && !!root.secondaryText)
                     height: visible ? contentHeight : 0
                     font.pixelSize: 13
                     color: Theme.palette.baseColor1
@@ -305,8 +330,10 @@ Control {
                     maximumLineCount: 2
                 }
                 StatusSelectableText {
+                    id: linkText
+
                     Layout.fillWidth: true
-                    visible: (!!root.linkUrl)
+                    visible: (!!root.linkUrl) || root.actionRequired
                     height: visible ? implicitHeight : 0
                     font.pixelSize: 13
                     hoveredLinkColor: Theme.palette.primaryColor1
