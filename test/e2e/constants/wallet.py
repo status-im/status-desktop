@@ -52,3 +52,7 @@ class WalletNetworkDefaultValues(Enum):
 class WalletEditNetworkErrorMessages(Enum):
     PINGUNSUCCESSFUL = 'RPC appears to be either offline or this is not a valid JSON RPC endpoint URL'
     PINGVERIFIED = 'RPC successfully reached'
+
+
+class WalletOrigin(Enum):
+    WATCHED_ADDRESS_ORIGIN = 'New watched address'

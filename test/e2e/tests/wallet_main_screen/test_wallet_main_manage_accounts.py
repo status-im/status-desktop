@@ -43,46 +43,6 @@ def test_edit_default_wallet_account(main_screen: MainWindow, name: str, new_nam
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026', 'Manage a watch-only account')
-@pytest.mark.case(703026)
-@pytest.mark.parametrize('address, name, color, emoji, emoji_unicode, new_name, new_color,'
-                         'new_emoji, new_emoji_unicode', [
-                             pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
-                                          'sunglasses', '1f60e', 'AccWatch1edited', '#216266', 'thumbsup', '1f44d')
-                         ])
-def test_manage_watch_only_account(main_screen: MainWindow, address: str, color: str, emoji: str, emoji_unicode: str,
-                                   name: str, new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
-    with step('Create watch-only wallet account'):
-        wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
-        account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_eth_address(address).save()
-        account_popup.wait_until_hidden()
-
-    with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
-            f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
-        assert message == f'"{name}" successfully added'
-
-    with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
-
-    with step('Delete wallet account'):
-        wallet.left_panel.delete_account_from_context_menu(name).confirm()
-
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
-
-    with step('Verify that the account is not displayed in accounts list'):
-        assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
-            f'Account with {name} is still displayed even it should not be'
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026',
                  'Manage a watch-only account from context menu option')
 @pytest.mark.case(703026)

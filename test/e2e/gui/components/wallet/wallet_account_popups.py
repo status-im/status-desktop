@@ -4,7 +4,7 @@ import typing
 import allure
 
 import configs
-import constants.wallet
+from constants.wallet import *
 import driver
 from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
@@ -30,7 +30,7 @@ class AccountPopup(BasePopup):
         self._color_radiobutton = QObject('color_StatusColorRadioButton')
         # origin
         self._origin_combobox = QObject('mainWallet_AddEditAccountPopup_SelectedOrigin')
-        self._watch_only_account_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
+        self._watched_address_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
         self._new_master_key_origin_item = QObject('mainWallet_AddEditAccountPopup_OriginOptionNewMasterKey')
         self._existing_origin_item = QObject('addAccountPopup_OriginOption_StatusListItem')
         self._use_keycard_button = QObject('mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption')
@@ -72,9 +72,10 @@ class AccountPopup(BasePopup):
         return self
 
     @allure.step('Set eth address for account added from plus button')
-    def set_origin_eth_address(self, value: str):
+    def set_origin_watched_address(self, value: str):
         self._origin_combobox.click()
-        self._watch_only_account_origin_item.click()
+        self._watched_address_origin_item.click()
+        assert self._origin_combobox.__getattr__('title') == WalletOrigin.WATCHED_ADDRESS_ORIGIN.value
         self._address_text_edit.text = value
         return self
 
@@ -110,7 +111,7 @@ class AccountPopup(BasePopup):
             del self._derivation_path_list_item.real_name['title']
             self._address_combobox_button.click()
             GeneratedAddressesList().wait_until_appears().select(index)
-            if value != constants.wallet.DerivationPath.ETHEREUM.value:
+            if value != DerivationPath.ETHEREUM.value:
                 self._scroll.vertical_scroll_to(self._non_eth_checkbox)
                 self._non_eth_checkbox.set(True)
         else:

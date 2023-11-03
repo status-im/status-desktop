@@ -25,7 +25,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_eth_address(address).save()
+        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address).save()
         account_popup.wait_until_hidden()
 
     with step('Create generated wallet account'):

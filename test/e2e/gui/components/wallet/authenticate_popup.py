@@ -23,3 +23,8 @@ class AuthenticatePopup(QObject):
                 self.authenticate(password, attempt - 1)
             else:
                 raise err
+
+    @allure.step('Check if authenticate button is present')
+    def is_authenticate_button_visible(self):
+        return self._primary_button.is_visible
+
