@@ -213,6 +213,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 title: qsTr("Stored")
                 subTitle: Utils.getKeypairLocation(root.keyPair, true)
+                visible: !!subTitle
                 statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             }
         }
