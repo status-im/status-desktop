@@ -15,7 +15,7 @@ proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
-  walletAccountService: wallet_account_service.Service,
+  walletAccountService: wallet_account_service.Service
 ): Controller =
   result = Controller()
   result.events = events
@@ -41,8 +41,8 @@ proc findTokenSymbolByAddress*(self: Controller, address: string): string =
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 
-proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.tokenService.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
+method fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
+  self.tokenService.fetchHistoricalBalanceForTokenAsJson(addresses, allAddresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
 
 proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
   return self.tokenService.getSourcesOfTokensList()

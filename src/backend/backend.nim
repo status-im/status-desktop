@@ -294,7 +294,7 @@ rpc(getName, "ens"):
 
 rpc(getBalanceHistory, "wallet"):
   chainIds: seq[int]
-  address: string
+  addresses: seq[string]
   tokenSymbol: string
   currencySymbol: string
   timeInterval: int

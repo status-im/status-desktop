@@ -183,6 +183,7 @@ proc notifyFilterChanged(self: Module) =
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.collectiblesController.setFilterAddressesAndChains(self.filter.addresses, self.filter.chainIds)
+  self.allTokensModule.filterChanged(self.filter.addresses)
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], self.filter.allAddresses)
 

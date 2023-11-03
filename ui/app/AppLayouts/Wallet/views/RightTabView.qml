@@ -171,6 +171,7 @@ Item {
 
             assetsLoading: RootStore.assetsLoading
             address: RootStore.overview.mixedcaseAddress
+            showAllAccounts: root.showAllAccounts
 
             networkConnectionStore: root.networkConnectionStore
 

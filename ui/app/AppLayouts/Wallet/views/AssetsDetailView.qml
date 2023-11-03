@@ -23,6 +23,7 @@ Item {
     property var token: ({})
     property var networkConnectionStore
     /*required*/ property string address: ""
+    property bool showAllAccounts: false
     property bool assetsLoading: true
 
     QtObject {
@@ -265,8 +266,8 @@ Item {
                 let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
 
                 let currencySymbol = RootStore.currencyStore.currentCurrency
-                if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)) {
-                    RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
+                if(!balanceStore.hasData(root.address, root.showAllAccounts, token.symbol, currencySymbol, selectedTimeRangeEnum)) {
+                    RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, root.showAllAccounts, token.symbol, currencySymbol, selectedTimeRangeEnum)
                 }
             }
 

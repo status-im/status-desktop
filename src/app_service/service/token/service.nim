@@ -398,7 +398,7 @@ QtObject:
       result: response
     ))
 
-  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
+  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string], allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
     # create an empty list of chain ids
     var chainIds: seq[int] = @[]
     let networks = self.networkService.getNetworks()
@@ -422,7 +422,8 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "tokenBalanceHistoryDataResolved",
       chainIds: chainIds,
-      address: address,
+      addresses: addresses,
+      allAddresses: allAddresses,
       tokenSymbol: tokenSymbol,
       currencySymbol: currencySymbol,
       timeInterval: timeInterval
