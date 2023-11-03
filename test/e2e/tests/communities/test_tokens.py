@@ -4,6 +4,7 @@ from allure_commons._allure import step
 
 import constants
 from constants.community_settings import TokensElements
+from constants.images_paths import TOKENS_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
 from scripts.tools import image
 
@@ -25,9 +26,8 @@ def test_tokens_screen(main_screen: MainWindow, params):
     with step('Verify all elements on tokens screen'):
         with step('Mint token button is present'):
             assert tokens_screen.is_tokens_owner_token_button_visible is True
-        with step('Tokens welcome image is correct'):
-            welcome_image = tokens_screen.tokens_welcome_image
-            image.compare(welcome_image, 'tokens_welcome_image.png')
+        with step('Tokens welcome image path is correct'):
+            assert TOKENS_WELCOME_IMAGE_PATH == tokens_screen.tokens_welcome_image_path
         with step('Tokens welcome title is correct'):
             assert tokens_screen.tokens_welcome_title == TokensElements.WELCOME_TITLE.value
         with step('Tokens welcome subtitle is correct'):

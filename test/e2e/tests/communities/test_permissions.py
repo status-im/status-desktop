@@ -5,8 +5,8 @@ from allure_commons._allure import step
 import constants
 import driver
 from constants.community_settings import PermissionsElements
+from constants.images_paths import PERMISSION_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
-from scripts.tools import image
 
 
 
@@ -24,9 +24,8 @@ def test_permissions_screen_overview(main_screen: MainWindow, params):
         permissions_settings = community_setting.left_panel.open_permissions()
 
     with step('Verify all elements on permissions screen'):
-        with step('Permission welcome image is correct'):
-            welcome_image = permissions_settings.permission_welcome_image
-            image.compare(welcome_image, 'permission_welcome_image.png')
+        with step('Permission welcome image source path is correct'):
+            assert PERMISSION_WELCOME_IMAGE_PATH == permissions_settings.permission_welcome_image_source
         with step('Permission welcome title is correct'):
             assert permissions_settings.permission_welcome_title == PermissionsElements.WELCOME_TITLE.value
         with step('Permission welcome subtitle is correct'):

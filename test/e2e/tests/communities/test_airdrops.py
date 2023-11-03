@@ -4,6 +4,7 @@ from allure_commons._allure import step
 
 import constants
 from constants.community_settings import AirdropsElements
+from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
 from scripts.tools import image
 
@@ -25,9 +26,8 @@ def test_airdrops_screen(main_screen: MainWindow, params):
     with step('Verify all elements on airdrops screen'):
         with step('New airdrop button is present'):
             assert airdrops_screen.is_airdrops_owner_token_button_visible is True
-        with step('Airdrops welcome image is correct'):
-            welcome_image = airdrops_screen.airdrops_welcome_image
-            image.compare(welcome_image, 'airdrops_welcome_image.png')
+        with step('Airdrops welcome image source path is correct'):
+            assert AIRDROPS_WELCOME_IMAGE_PATH == airdrops_screen.airdrops_welcome_image_path
         with step('Airdrops welcome title is correct'):
             assert airdrops_screen.airdrops_welcome_title == AirdropsElements.WELCOME_TITLE.value
         with step('Airdrops welcome subtitle is correct'):

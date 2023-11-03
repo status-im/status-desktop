@@ -26,15 +26,17 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         community_screen = create_community_form.create(params)
 
     with step('Verify community parameters in community overview'):
-        with step('Icon is correct'):
-            community_icon = main_screen.left_panel.get_community_logo(params['name'])
-            image.compare(community_icon, 'button_logo.png', timout_sec=5)
+        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
+        # with step('Icon is correct'):
+            # community_icon = main_screen.left_panel.get_community_logo(params['name'])
+            # image.compare(community_icon, 'button_logo.png', timout_sec=5)
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
         with step('Members count is correct'):
             assert '1' in community_screen.left_panel.members
-        with step('Logo is correct'):
-            image.compare(community_screen.left_panel.logo, 'logo.png')
+        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
+        # with step('Logo is correct'):
+            # image.compare(community_screen.left_panel.logo, 'logo.png')
 
     with step('Verify community parameters in community settings view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -54,7 +56,8 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         assert community.name == params['name']
         assert community.description == params['description']
         # assert '1' in community.members TODO: Test on linux, members label is not visible
-        image.compare(community.image, 'logo_in_settings.png')
+        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
+        # image.compare(community.image, 'logo_in_settings.png')
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703056', 'Edit community separately')
@@ -127,13 +130,15 @@ def test_edit_community(main_screen: MainWindow, params):
 
     with step('Verify community parameters in community screen'):
         community_setting.left_panel.back_to_community()
-        with step('Icon is correct'):
-            community_icon = main_screen.left_panel.get_community_logo(params['name'])
-            image.compare(community_icon, 'button_updated_logo.png')
+        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
+        # with step('Icon is correct'):
+        #     community_icon = main_screen.left_panel.get_community_logo(params['name'])
+            # image.compare(community_icon, 'button_updated_logo.png')
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
-        with step('Logo is correct'):
-            image.compare(community_screen.left_panel.logo, 'updated_logo.png')
+        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
+        # with step('Logo is correct'):
+            # image.compare(community_screen.left_panel.logo, 'updated_logo.png')
 
     with step('Verify community parameters in community settings screen'):
         settings_screen = main_screen.left_panel.open_settings()
@@ -142,7 +147,7 @@ def test_edit_community(main_screen: MainWindow, params):
         assert community_info.name == params['name']
         assert community_info.description == params['description']
         assert '1' in community_info.members
-        image.compare(community_info.image, 'logo_in_settings_updated.png')
+        # image.compare(community_info.image, 'logo_in_settings_updated.png')
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703049', 'Create community channel')

@@ -12,13 +12,15 @@ from scripts.tools import image
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
                  'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
-@pytest.mark.parametrize('address, default_name, name, color, emoji, second_name, second_color, second_emoji', [
-    pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
-                 'WatchOnly', '#2a4af5', 'sunglasses', 'Generated', '#216266', 'thumbsup')
-])
+@pytest.mark.parametrize(
+    'address, default_name, name, color, emoji, acc_emoji, second_name, second_color, second_emoji, second_acc_emoji',
+    [
+        pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
+                     'WatchOnly', '#2a4af5', 'sunglasses', '😎 ', 'Generated', '#216266', 'thumbsup', '👍 ')
+    ])
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
-                                               name: str, color: str, emoji: str, second_name: str, second_color: str,
-                                               second_emoji: str):
+                                               name: str, color: str, emoji: str, acc_emoji: str, second_name: str,
+                                               second_color: str, second_emoji: str, second_acc_emoji: str):
     with step('Create watch-only wallet account'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
@@ -38,12 +40,13 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             assert account_order.accounts[0].name == default_name
             assert account_order.accounts[1].name == name
             assert account_order.accounts[2].name == second_name
-        # TODO: get rid of screenshots comparison, too flaky
-        # with step('Eye icon is displayed on watch-only account'):
-        #    account_order.get_eye_icon(name)
-        # with step('Icons on accounts are correct'):
-        #    image.compare(account_order.accounts[1].icon, 'watch_only_account_icon.png')
-        #    image.compare(account_order.accounts[2].icon, 'generated_account_icon.png')
+        with step('Eye icon is displayed on watch-only account'):
+            account_order.get_eye_icon(name)
+        with step('Icons on accounts are correct'):
+            assert account_order.accounts[1].icon_color == color
+            assert account_order.accounts[1].icon_emoji == acc_emoji
+            assert account_order.accounts[2].icon_color == second_color
+            assert account_order.accounts[2].icon_emoji == second_acc_emoji
 
     with step('Drag first account to the end of the list'):
         account_order.drag_account(default_name, 2)

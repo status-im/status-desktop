@@ -244,9 +244,9 @@ class TokensView(QObject):
         return self._mint_token_button.is_visible
 
     @property
-    @allure.step('Get tokens welcome image')
-    def tokens_welcome_image(self) -> Image:
-        return self._welcome_image.image
+    @allure.step('Get tokens welcome image path')
+    def tokens_welcome_image_path(self) -> str:
+        return self._welcome_image.object.source.path
 
     @property
     @allure.step('Get tokens welcome title')
@@ -300,9 +300,9 @@ class AirdropsView(QObject):
         return self._new_airdrop_button.is_visible
 
     @property
-    @allure.step('Get airdrops welcome image')
-    def airdrops_welcome_image(self) -> Image:
-        return self._welcome_image.image
+    @allure.step('Get airdrops welcome image path')
+    def airdrops_welcome_image_path(self) -> str:
+        return self._welcome_image.object.source.path
 
     @property
     @allure.step('Get airdrops welcome title')
@@ -349,9 +349,9 @@ class PermissionsIntroView(QObject):
         self._welcome_checklist_3 = TextLabel('community_welcome_screen_checkList_element3')
 
     @property
-    @allure.step('Get permission welcome image')
-    def permission_welcome_image(self) -> Image:
-        return self._welcome_image.image
+    @allure.step('Get permission welcome image path')
+    def permission_welcome_image_source(self) -> str:
+        return self._welcome_image.object.source.path
 
     @property
     @allure.step('Get permission welcome title')

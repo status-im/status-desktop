@@ -425,12 +425,14 @@ class EditAccountOrderSettings(WalletSettingsView):
         for account_item in driver.findAllObjects(self._account_item.real_name):
             element = QObject(name='', real_name=driver.objectMap.realName(account_item))
             name = str(account_item.title)
-            icon = None
+            icon_color = None
+            icon_emoji = None
             for child in objects_access.walk_children(account_item):
                 if getattr(child, 'objectName', '') == 'identicon':
-                    icon = Image(driver.objectMap.realName(child))
+                    icon_color = str(child.color.name)
+                    icon_emoji = str(child.emoji)
                     break
-            _accounts.append(wallet_account_list_item(name, icon, element))
+            _accounts.append(wallet_account_list_item(name, icon_color, icon_emoji, element))
 
         return sorted(_accounts, key=lambda account: account.object.y)
 
