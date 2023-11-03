@@ -27,24 +27,12 @@ SplitView {
             walletAccountsModel: WalletAccountsModel {}
             permissionsModel: {
                 if (ctrlPermissions.checked && ctrlTokenGatedChannels.checked) {
-                    if (selectedSharedAddresses.length === 1 && ctrlEditMode.checked) {
-                        console.warn("Simulation: Losing BOTH the join and VIP read channel permissions !!!")
-                        return PermissionsModel.complexCombinedPermissionsModelNotMet
-                    }
                     return PermissionsModel.complexCombinedPermissionsModel
                 }
                 if (ctrlPermissions.checked) {
-                    if (selectedSharedAddresses.length === 1 && ctrlEditMode.checked) {
-                        console.warn("Simulation: Losing the join community permission !!!")
-                        return PermissionsModel.complexPermissionsModelNotMet
-                    }
                     return PermissionsModel.complexPermissionsModel
                 }
                 if (ctrlTokenGatedChannels.checked) {
-                    if (selectedSharedAddresses.length === 1 && ctrlEditMode.checked) {
-                        console.warn("Simulation: Losing the VIP read channel permission !!!")
-                        return PermissionsModel.channelsOnlyPermissionsModelNotMet
-                    }
                     return PermissionsModel.channelsOnlyPermissionsModel
                 }
 
@@ -56,19 +44,12 @@ SplitView {
             collectiblesModel: CollectiblesModel {}
             visible: true
 
-            Binding on selectedSharedAddresses {
-                value: ["0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240", "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881", "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"]
-                when: ctrlEditMode.checked
-            }
-
-            Binding on selectedAirdropAddress {
-                value: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"
-                when: ctrlEditMode.checked
-            }
-
             onShareSelectedAddressesClicked: logs.logEvent("::shareSelectedAddressesClicked", ["airdropAddress", "sharedAddresses"], arguments)
-            onSaveSelectedAddressesClicked: logs.logEvent("::saveSelectedAddressesClicked", ["airdropAddress", "sharedAddresses"], arguments)
             onSharedAddressesChanged: logs.logEvent("::sharedAddressesChanged", ["airdropAddress", "sharedAddresses"], arguments)
+            onPrepareForSigning: logs.logEvent("::onPrepareForSigning", ["airdropAddress", "sharedAddresses"], arguments)
+            onEditRevealedAddresses: logs.logEvent("::onEditRevealedAddresses")
+            onSignSharedAddressesForAllNonKeycardKeypairs: logs.logEvent("::onSignSharedAddressesForAllNonKeycardKeypairs")
+            onSignSharedAddressesForKeypair: logs.logEvent("::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
             onClosed: destroy()
         }
     }
