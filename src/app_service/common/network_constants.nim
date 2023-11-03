@@ -67,7 +67,7 @@ var NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest":  true,
     "layer":   2,
-    "enabled": false,
+    "enabled": true,
     "relatedChainId": 10,
   },
   {
@@ -101,7 +101,7 @@ var NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest":  true,
     "layer":   2,
-    "enabled": false,
+    "enabled": true,
     "relatedChainId": 42161,
   },
   {
@@ -135,7 +135,7 @@ var NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest":  true,
     "layer":   2,
-    "enabled": false,
+    "enabled": true,
     "relatedChainId": 42161,
   }
 ]
