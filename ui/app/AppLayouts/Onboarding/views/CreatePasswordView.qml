@@ -39,12 +39,11 @@ Item {
     ColumnLayout {
         spacing: Style.current.bigPadding
         anchors.centerIn: parent
-        width: 416
         height: 460
         z: view.zFront
         PasswordView {
             id: view
-            Layout.fillWidth: true
+            Layout.preferredWidth: root.width - 2 * Style.current.bigPadding
             Layout.fillHeight: true
             passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
             highSizeIntro: true

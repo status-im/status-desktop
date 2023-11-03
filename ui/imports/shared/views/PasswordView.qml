@@ -23,6 +23,7 @@ ColumnLayout {
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %n character(s). To strengthen your password consider including:", "", Constants.minPasswordLength)
     property bool highSizeIntro: false
+    property bool fixIntroTextWidth: false
 
     property var passwordStrengthScoreFunction: function () {}
 
@@ -78,6 +79,8 @@ ColumnLayout {
 
         readonly property var validatorRegexp: /^[!-~]{0,64}$/
         readonly property string validatorErrMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
+
+        readonly property int defaultInputWidth: 416
 
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
@@ -153,14 +156,34 @@ ColumnLayout {
         color: Theme.palette.directColor1
     }
 
-    StatusBaseText {
-        id: introTxtField
-        Layout.fillWidth: true
-        text: "%1 <font color=\"%2\">%3</font>".arg(root.introText).arg(Theme.palette.dangerColor1).arg(root.recoverText)
-        font.pixelSize: root.highSizeIntro ? 15 : 12
-        color: Theme.palette.baseColor1
-        wrapMode: Text.WordWrap
-        horizontalAlignment: TextEdit.AlignHCenter
+    ColumnLayout {
+        id: introColumn
+
+        Layout.preferredWidth: root.fixIntroTextWidth ? d.defaultInputWidth : parent.width
+        Layout.alignment: Qt.AlignHCenter
+        spacing: 4
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+
+            text: root.introText
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
+            wrapMode: Text.WordWrap
+            color: Theme.palette.baseColor1
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+
+            text: root.recoverText
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
+            wrapMode: Text.WordWrap
+            color: Theme.palette.dangerColor1
+        }
     }
 
     StatusPasswordInput {
@@ -171,7 +194,8 @@ ColumnLayout {
 
         z: root.zFront
         visible: !root.createNewPsw
-        Layout.fillWidth: true
+        Layout.preferredWidth: d.defaultInputWidth
+        Layout.alignment: Qt.AlignHCenter
         placeholderText: qsTr("Current password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
@@ -193,9 +217,9 @@ ColumnLayout {
     }
 
     ColumnLayout {
-        spacing: Style.current.padding / 2
+        spacing: 4
         z: root.zFront
-        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
 
         StatusPasswordInput {
             id: newPswInput
@@ -203,7 +227,8 @@ ColumnLayout {
 
             property bool showPassword
 
-            Layout.fillWidth: true
+            Layout.preferredWidth: d.defaultInputWidth
+            Layout.alignment: Qt.AlignHCenter
             placeholderText: qsTr("New password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
@@ -244,7 +269,6 @@ ColumnLayout {
 
         StatusPasswordStrengthIndicator {
             id: strengthInditactor
-            Layout.fillWidth: true
             value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
             from: 0
             to: Constants.minPasswordLength
@@ -258,7 +282,6 @@ ColumnLayout {
 
     StatusBaseText {
         id: strengthenTxt
-        Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
         wrapMode: Text.WordWrap
         text: root.strengthenText
@@ -307,7 +330,8 @@ ColumnLayout {
         property bool showPassword
 
         z: root.zFront
-        Layout.fillWidth: true
+        Layout.preferredWidth: d.defaultInputWidth
+        Layout.alignment: Qt.AlignHCenter
         placeholderText: qsTr("Confirm password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2

@@ -26,6 +26,7 @@ Item {
             Layout.fillHeight: true
             passwordStrengthScoreFunction: RootStore.getPasswordStrengthScore
             highSizeIntro: true
+            fixIntroTextWidth: true
 
             newPswText: root.sharedKeycardModule.getNewPassword()
             confirmationPswText: root.sharedKeycardModule.getNewPassword()
