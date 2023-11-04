@@ -48,3 +48,7 @@ add_test(RolesRenamingModelTest COMMAND RolesRenamingModelTest)
 add_executable(LeftJoinModelTest tst_LeftJoinModel.cpp)
 target_link_libraries(LeftJoinModelTest PRIVATE Qt5::Test StatusQ)
 add_test(LeftJoinModelTest COMMAND LeftJoinModelTest)
+
+add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
+target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+add_test(SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
