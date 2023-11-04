@@ -133,8 +133,7 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
 
     if (m_lastUsedRightModelIndex.isValid()
             && m_rightModel->data(m_lastUsedRightModelIndex,
-                                  m_rightModelJoinRole) == joinRoleLeftValue)
-    {
+                                  m_rightModelJoinRole) == joinRoleLeftValue) {
         return m_rightModel->data(m_lastUsedRightModelIndex,
                                   role - m_rightModelRolesOffset);
     }

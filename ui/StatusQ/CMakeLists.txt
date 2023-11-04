@@ -97,6 +97,7 @@ add_library(StatusQ SHARED
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
+        include/StatusQ/submodelproxymodel.h
         src/QClipboardProxy.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
@@ -107,6 +108,7 @@ add_library(StatusQ SHARED
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
+        src/submodelproxymodel.cpp
         )
 
 set_target_properties(StatusQ PROPERTIES
