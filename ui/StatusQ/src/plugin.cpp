@@ -12,6 +12,8 @@
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
 #include "StatusQ/stringutilsinternal.h"
+#include "StatusQ/submodelproxymodel.h"
+
 
 class StatusQPlugin : public QQmlExtensionPlugin
 {
@@ -27,8 +29,9 @@ public:
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
 
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
-        qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
+        qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
+        qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
 
         qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
 
