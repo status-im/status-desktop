@@ -14,11 +14,7 @@ QtObject:
   proc delete*(self: LinkPreviewThumbnail) =
     self.QObject.delete()
 
-  proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string) =
-    self.width = width
-    self.height = height
-    self.url = url
-    self.dataUri = dataUri
+  proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string)
 
   proc copy*(self: LinkPreviewThumbnail, other: LinkPreviewThumbnail) =
     if other != nil:
@@ -82,3 +78,17 @@ QtObject:
       "url": self.url,
       "dataUri": self.dataUri
     }
+
+  proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string) =
+    if self.width != width:
+      self.width = width
+      self.widthChanged()
+    if self.height != height:
+      self.height = height
+      self.heightChanged()
+    if self.url != url:
+      self.url = url
+      self.urlChanged()
+    if self.dataUri != dataUri:
+      self.dataUri = dataUri
+      self.dataUriChanged()

@@ -769,6 +769,10 @@ Loader {
                         gifUnfurlingEnabled: RootStore.gifUnfurlingEnabled
                         canAskToUnfurlGifs: !RootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: RootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+
+                        Component.onCompleted: {
+                            root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)
+                        }
                     }
                 }
 

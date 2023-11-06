@@ -224,3 +224,6 @@ QtObject:
 
   proc firstUnseenMentionMessageId(self: View): string {.slot.} =
     return self.model.getFirstUnseenMentionMessageId()
+
+  proc forceLinkPreviewsLocalData*(self: View, messageId: string) {.slot.} =
+    self.delegate.forceLinkPreviewsLocalData(messageId)

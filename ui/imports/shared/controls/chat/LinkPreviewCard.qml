@@ -191,7 +191,7 @@ CalloutCard {
             }
             FooterText {
                 Layout.fillHeight: true
-                Layout.fillWidth: communityData.activeMembersCount === -1 //TODO: remove magic number once we have activeMembersCount
+                Layout.fillWidth: !communityData.activeMembersCountAvailable
                 color: Theme.palette.directColor1
                 text: LocaleUtils.numberToLocaleStringInCompactForm(communityData.membersCount)
                 verticalAlignment: Text.AlignVCenter
@@ -202,7 +202,7 @@ CalloutCard {
                 color: Theme.palette.directColor1
                 width: 16
                 height: width
-                visible: communityData.activeMembersCount > -1
+                visible: communityData.activeMembersCountAvailable
             }
             FooterText {
                 Layout.fillWidth: true
@@ -210,7 +210,7 @@ CalloutCard {
                 color: Theme.palette.directColor1
                 text: LocaleUtils.numberToLocaleStringInCompactForm(communityData.activeMembersCount)
                 verticalAlignment: Text.AlignVCenter
-                visible: communityData.activeMembersCount > -1
+                visible: communityData.activeMembersCountAvailable
             }
         }
     }

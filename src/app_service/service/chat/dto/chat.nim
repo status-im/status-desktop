@@ -415,3 +415,8 @@ proc hasMoreMessagesToRequest*(chatDto: ChatDto, syncedFrom: int64): bool =
 
 proc hasMoreMessagesToRequest*(chatDto: ChatDto): bool =
   chatDto.hasMoreMessagesToRequest(chatDto.syncedFrom)
+
+proc communityChannelUuid*(self: ChatDto): string =
+  if self.communityId == "":
+    return ""
+  return self.id[self.communityId.len .. ^1]

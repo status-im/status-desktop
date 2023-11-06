@@ -366,15 +366,6 @@ Item {
                                        notificationType,
                                        "")
         }
-
-        function onCommunityInfoAlreadyRequested() {
-            Global.displayToastMessage(qsTr("Community data not loaded yet."),
-                                       qsTr("Please wait for the unfurl to show"),
-                                       "",
-                                       true,
-                                       Constants.ephemeralNotificationType.normal,
-                                       "")
-        }
     }
 
     Connections {

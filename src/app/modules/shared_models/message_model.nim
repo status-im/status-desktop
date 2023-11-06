@@ -552,6 +552,10 @@ QtObject:
       return
     self.items[index].toJsonNode()
 
+  iterator items*(self: Model): Item =
+    for i in 0 ..< self.items.len:
+      yield self.items[i]
+
   iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]

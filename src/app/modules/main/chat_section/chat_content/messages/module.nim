@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, uuids
+import NimQml, chronicles, sequtils, uuids, sets, times
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -6,6 +6,7 @@ import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
 import ../../../../shared_models/message_reaction_item
 import ../../../../shared_models/message_transaction_parameters_item
+import ../../../../shared_models/link_preview_model
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/dto/contacts
@@ -62,6 +63,8 @@ proc createChatIdentifierItem(self: Module): Item
 proc createFetchMoreMessagesItem(self: Module): Item
 proc setChatDetails(self: Module, chatDetails: ChatDto)
 proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool
+proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool)
+proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool)
 
 method delete*(self: Module) =
   self.controller.delete
@@ -319,6 +322,9 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.albumImagesCount,
         )
 
+      self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
+      self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
+
       for r in reactions:
         if(r.messageId == message.id):
           var emojiIdAsEnum: EmojiId
@@ -453,6 +459,9 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.albumImagesCount,
     )
     items.add(item)
+
+    self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
+    self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
 
   self.view.model().insertItemsBasedOnClock(items)
 
@@ -596,6 +605,8 @@ method updateContactDetails*(self: Module, contactId: string) =
       let communityChats = self.controller.getCommunityDetails().chats
       item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
+    item.linkPreviewModel.setContactInfo(updatedContact)
+
 method deleteMessage*(self: Module, messageId: string) =
   self.controller.deleteMessage(messageId)
 
@@ -728,8 +739,12 @@ method markMessagesAsRead*(self: Module, messages: seq[string]) =
   self.view.model().markAsSeen(messages)
 
 method updateCommunityDetails*(self: Module, community: CommunityDto) =
-  self.view.setAmIChatAdmin(community.isPrivilegedUser)
-  self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
+  if community.id == self.getSectionId():
+    self.view.setAmIChatAdmin(community.isPrivilegedUser)
+    self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
+
+  for item in self.view.model().items:
+    item.linkPreviewModel.setCommunityInfo(community)
 
 proc setChatDetails(self: Module, chatDetails: ChatDto) =
   self.view.setChatColor(chatDetails.color)
@@ -766,3 +781,40 @@ method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
   self.firstUnseenMessageState.initialized = true
   self.firstUnseenMessageState.fetching = false
   self.reevaluateViewLoadingState()
+
+method forceLinkPreviewsLocalData*(self: Module, messageId: string) =
+  let item = self.view.model().getItemWithMessageId(messageId)
+  debug "forceLinkPreviewsLocalData", messageId, itemFound = $(item != nil)
+  if item == nil:
+    return
+  self.updateLinkPreviewsContacts(item, requestFromMailserver = true)
+  self.updateLinkPreviewsCommunities(item, requestFromMailserver = true)
+
+proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool) =
+  for contactId in item.linkPreviewModel.getContactIds().items:
+    let contact = self.controller.getContactDetails(contactId)
+
+    if contact.dto.displayName != "":
+      item.linkPreviewModel.setContactInfo(contact)
+
+    if not requestFromMailserver:
+      continue
+    
+    debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver", contactId
+    item.linkPreviewModel.onContactDataRequested(contactId)
+    self.controller.requestContactInfo(contactId)
+  
+proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool) =
+  for communityId in item.linkPreviewModel.getCommunityIds().items:
+    let community = self.controller.getCommunityById(communityId)
+    
+    if community.id != "":
+      item.linkPreviewModel.setCommunityInfo(community)
+    
+    if not requestFromMailserver:
+      continue
+    
+    debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
+    item.linkPreviewModel.onCommunityInfoRequested(communityId)
+    self.controller.requestCommunityInfo(communityId, false, initDuration(minutes = 10))
+
