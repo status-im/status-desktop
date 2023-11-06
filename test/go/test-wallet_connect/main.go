@@ -15,6 +15,14 @@ import (
 	"github.com/status-im/status-go/signal"
 )
 
+// l is used for local logging
+var l log.Logger
+
+func init() {
+	l = log.New()
+	l.SetHandler(log.CallerFileHandler(log.StreamHandler(os.Stdout, log.TerminalFormat(false))))
+}
+
 type PairResult struct {
 	SessionProposal string `json:"sessionProposal"`
 }
@@ -39,7 +47,7 @@ func signalHandler(jsonEvent string) {
 		apiResponse := statusgo.APIResponse{}
 		err = json.Unmarshal([]byte(jsonEvent), &apiResponse)
 		if err != nil {
-			fmt.Println("@dd Error parsing the event: ", err)
+			log.Error("Error parsing the signal event: ", err)
 			return
 		}
 	}
@@ -51,7 +59,7 @@ func signalHandler(jsonEvent string) {
 		walletEvent := walletevent.Event{}
 		err := json.Unmarshal([]byte(jsonEvent), &walletEvent)
 		if err != nil {
-			fmt.Println("@dd Error parsing the wallet event: ", err)
+			log.Error("Error parsing the wallet event: ", err)
 			return
 		}
 		// TODO: continue from here
@@ -63,7 +71,7 @@ func signalHandler(jsonEvent string) {
 
 func main() {
 	// Setup status-go logger
-	log.Root().SetHandler(log.StdoutHandler)
+	log.Root().SetHandler(log.CallerFileHandler(log.StdoutHandler))
 
 	signal.SetDefaultNodeNotificationHandler(signalHandler)
 	config, nodeConfigJson, userFolder, err := processConfigArgs()
@@ -81,14 +89,14 @@ func main() {
 	w := webview.New(true)
 	defer w.Destroy()
 	w.SetTitle("WC status-go test")
-	w.SetSize(620, 480, webview.HintNone)
+	w.SetSize(1280, 1024, webview.HintNone)
 
 	w.Bind("pairSessionProposal", func(sessionProposalJson string) bool {
-		sessionReqRes := callPrivateMethod("wallet_wCPairSessionProposal", []interface{}{sessionProposalJson})
+		sessionProposalRes := callPrivateMethod("wallet_wCPairSessionProposal", []interface{}{sessionProposalJson})
 		var apiResponse wc.PairSessionResponse
-		err = getRPCAPIResponse(sessionReqRes, &apiResponse)
+		err = getRPCAPIResponse(sessionProposalRes, &apiResponse)
 		if err != nil {
-			log.Error("Error parsing the API response", "error", err)
+			l.Error("Error parsing the API response", "error", err)
 			return false
 		}
 
@@ -99,13 +107,32 @@ func main() {
 		return true
 	})
 
+	w.Bind("sessionRequest", func(sessionRequestJson, hashedPassword string) bool {
+		sessionReqRes := callPrivateMethod("wallet_wCSessionRequest", []interface{}{sessionRequestJson, hashedPassword})
+		var apiResponse wc.SessionRequestResponse
+		err = getRPCAPIResponse(sessionReqRes, &apiResponse)
+		if err != nil {
+			l.Error("Error parsing the API response", "error", err)
+			return false
+		}
+
+		go func() {
+			eventQueue <- GoEvent{Name: "sessionRequestResult", Payload: apiResponse}
+		}()
+
+		return true
+	})
+
 	w.Bind("getConfiguration", func() Configuration {
 		projectID := os.Getenv("STATUS_BUILD_WALLET_CONNECT_PROJECT_ID")
+		if projectID == "" {
+			projectID = "87815d72a81d739d2a7ce15c2cfdefb3"
+		}
 		return Configuration{ProjectId: projectID}
 	})
 
 	w.Bind("echo", func(message string) bool {
-		fmt.Println("@dd WebView:", message)
+		fmt.Println("<D> WebView:", message)
 		return true
 	})
 

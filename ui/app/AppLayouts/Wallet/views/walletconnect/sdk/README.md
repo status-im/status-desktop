@@ -4,7 +4,7 @@
 
 - [ ] test namespaces implementation https://se-sdk-dapp.vercel.app/
 
-Design questions
+### Design questions
 
 - [ ] Do we report all chains and all accounts combination or let user select?
   - Wallet Connect require to report all chainIDs that were requested
@@ -12,7 +12,7 @@ Design questions
 - [ ] Can't respond to sign messages if the wallet-connect dialog/view is closed (app is minimized)
   - Only apps that use deep links are expected to work seamlessly
 - [ ] Do we report **disabled chains**? **Update session** in case of enabled/disabled chains?
-- [ ] Allow user to **disconnect session**?
+- [ ] Allow user to **disconnect session**? Manage sessions?
 - [ ] Support update session if one account is added/removed?
 - [ ] User awareness of session expiration?
   - Support extend session?
@@ -37,7 +37,6 @@ Install dependencies steps by executing commands in this directory:
 
 Use the web demo test client https://react-app.walletconnect.com/ for wallet pairing and https://react-auth-dapp.walletconnect.com/ for authentication
 
-
 ## Log
 
 Initial setup
@@ -47,6 +46,7 @@ npm init -y
 npm install --save-dev webpack webpack-cli webpack-dev-server
 npm install --save @walletconnect/web3wallet
 npm run build
+# npm run build:dev # for development
 ```
 
 ## Dev - to be removed
@@ -69,8 +69,7 @@ StatusDialog {
 
         backgroundColor: wcHelperDialog.backgroundColor
 
-        projectId: "<Project ID>"
-        controller: WalletStores.RootStore.wcController
+        controller: WalletStores.RootStore.walletConnectController
     }
 
     clip: true

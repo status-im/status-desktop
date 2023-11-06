@@ -7,11 +7,17 @@ QtObject {
 
         PairSuccess,
         PairError,
-
         ApprovePairSuccess,
         ApprovePairError,
-
         RejectPairSuccess,
-        RejectPairError
+        RejectPairError,
+
+        AcceptSessionSuccess,
+        AcceptSessionError,
+        RejectSessionSuccess,
+        RejectSessionError,
+
+        GetPairings,
+        GetPairingsError
     }
 }

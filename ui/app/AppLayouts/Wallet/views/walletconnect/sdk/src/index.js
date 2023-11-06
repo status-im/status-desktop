@@ -5,6 +5,7 @@ import AuthClient from '@walletconnect/auth-client'
 
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
+import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
 
 // "Export" API to window
 // Workaround, tried using export via output.module: true in webpack.config.js, but it didn't work
@@ -24,7 +25,7 @@ window.wc = {
                 metadata: {
                     name: "Status",
                     description: "Status Wallet",
-                    url: "https://status.app",
+                    url: "http://localhost",
                     icons: ['https://status.im/img/status-footer-logo.svg'],
                 },
             });
@@ -58,7 +59,6 @@ window.wc = {
         let pairPromise = window.wc.web3wallet
             .pair({ uri: uri })
 
-
         return new Promise((resolve, reject) => {
             pairPromise
                 .then(() => {
@@ -70,6 +70,14 @@ window.wc = {
                     reject(error);
                 });
         });
+    },
+
+    getPairings: function () {
+        return window.wc.core.pairing.getPairings();
+    },
+
+    disconnect: function (topic) {
+        return window.wc.core.pairing.disconnect({ topic: topic});
     },
 
     registerForSessionRequest: function (callback) {
@@ -158,9 +166,19 @@ window.wc = {
         return window.wc.authClient.reject(id);
     },
 
-    respondSessionRequest: function (topic, response) {
-        window.wc.web3wallet.respondSessionRequest({ topic, response });
+    respondSessionRequest: function (topic, id, signature) {
+        const response = formatJsonRpcResult(id, signature)
+        return window.wc.web3wallet.respondSessionRequest({ topic, response });
     },
+
+    rejectSessionRequest: function (topic, id, error = false) {
+        const errorType = error ? "SESSION_SETTLEMENT_FAILED" : "USER_REJECTED";
+        return window.wc.web3wallet.respondSessionRequest({
+            topic: topic,
+            response: formatJsonRpcError(id, getSdkError(errorType)),
+        });
+    },
+
 
     disconnectAll: function () {
         const pairings = window.wc.core.pairing.getPairings();
