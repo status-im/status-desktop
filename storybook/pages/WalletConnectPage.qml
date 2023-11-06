@@ -39,7 +39,13 @@ Item {
                 pairSessionProposal: function(sessionProposalJson) {
                     proposeUserPair(sessionProposalJson, `{"eip155":{"methods":["eth_sendTransaction","personal_sign"],"chains":["eip155:5"],"events":["accountsChanged","chainChanged"],"accounts":["eip155:5:0x53780d79E83876dAA21beB8AFa87fd64CC29990b","eip155:5:0xBd54A96c0Ae19a220C8E1234f54c940DFAB34639","eip155:5:0x5D7905390b77A937Ae8c444aA8BF7Fa9a6A7DBA0"]}}`)
                 }
-                projectId: SystemUtils.getEnvVar("STATUS_BUILD_WALLET_CONNECT_PROJECT_ID")
+
+                sessionRequest: function(sessionRequestJson, password) {
+                    const signedJson = "0x1234567890"
+                    this.respondSessionRequest(sessionRequestJson, signedJson, respondError.checked)
+                }
+
+                projectId: "87815d72a81d739d2a7ce15c2cfdefb3"
             }
 
             clip: true
@@ -57,6 +63,11 @@ Item {
                     text: projectId.substring(0, 3) + "..." + projectId.substring(projectId.length - 3)
                     font.bold: true
                 }
+            }
+            CheckBox {
+                id: respondError
+                text: "Respond Error"
+                checked: false
             }
             // spacer
             ColumnLayout {}

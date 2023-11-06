@@ -11,5 +11,11 @@ Item {
     // function pairSessionProposal(/*string*/ sessionProposalJson)
     required property var pairSessionProposal
 
+    signal respondSessionRequest(string sessionRequestJson, string signedJson, bool error)
+
+    // function sessionRequest(/*string*/ sessionRequestJson, /*string*/ password)
+    required property var sessionRequest
+
+
     required property string projectId
 }

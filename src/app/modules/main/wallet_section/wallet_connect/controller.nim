@@ -5,6 +5,8 @@ import backend/wallet_connect as backend
 import app/core/eventemitter
 import app/core/signals/types
 
+import app_service/common/utils as common_utils
+
 import constants
 
 QtObject:
@@ -44,6 +46,20 @@ QtObject:
 
     if not ok:
       error "Failed to pair session"
+
+  proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
+
+  proc sessionRequest*(self: Controller, sessionRequestJson: string, password: string) {.slot.} =
+    let hashedPasssword = common_utils.hashPassword(password)
+    let ok = backend.sessionRequest(sessionRequestJson, hashedPasssword, proc (res: JsonNode) =
+      let sessionRequestJson = if res.hasKey("sessionRequest"): $res["sessionRequest"] else: ""
+      let signedJson = if res.hasKey("signed"): $res["signed"] else: ""
+
+      self.respondSessionRequest(sessionRequestJson, signedJson, false)
+    )
+
+    if not ok:
+      self.respondSessionRequest(sessionRequestJson, "", true)
 
   proc getProjectId*(self: Controller): string {.slot.} =
     return constants.WALLET_CONNECT_PROJECT_ID

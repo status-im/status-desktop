@@ -10,5 +10,8 @@
   "engines": {
     "node": ">=10",
     "npm": ">=7"
+  },
+  "dependencies": {
+    "nodemon": "3.0.1"
   }
 }

@@ -1,4 +1,4 @@
-import options
+import options, logging
 import json
 import core, response_type
 
@@ -14,6 +14,10 @@ const ErrorChainsNotSupported*: string = "chains not supported"
 rpc(wCPairSessionProposal, "wallet"):
   sessionProposalJson: string
 
+rpc(wCSessionRequest, "wallet"):
+  sessionRequestJson: string
+  hashedPassword: string
+
 # TODO #12434: async answer
 proc pair*(sessionProposalJson: string, callback: proc(response: JsonNode): void): bool =
   try:
@@ -22,5 +26,15 @@ proc pair*(sessionProposalJson: string, callback: proc(response: JsonNode): void
       callback(response.result)
     return response.error == nil
   except Exception as e:
-    echo "@dd wCPairSessionProposal response: ", e.msg
+    warn e.msg
+    return false
+
+proc sessionRequest*(sessionRequestJson: string, hashedPassword: string, callback: proc(response: JsonNode): void): bool =
+  try:
+    let response = wCSessionRequest(sessionRequestJson, hashedPassword)
+    if response.error == nil and response.result != nil:
+      callback(response.result)
+    return response.error == nil
+  except Exception as e:
+    warn e.msg
     return false

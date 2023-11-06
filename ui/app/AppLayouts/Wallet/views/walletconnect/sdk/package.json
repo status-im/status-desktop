@@ -11,7 +11,9 @@
   "license": "MPL-2.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "start": "webpack serve --mode development --open"
   },
   "dependencies": {
     "@walletconnect/auth-client": "^2.1.2",

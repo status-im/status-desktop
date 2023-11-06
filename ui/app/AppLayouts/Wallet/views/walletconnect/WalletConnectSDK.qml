@@ -23,11 +23,14 @@ WebView {
     required property color backgroundColor
 
     readonly property alias sdkReady: d.sdkReady
+    readonly property alias pairingsModel: d.pairingsModel
 
     signal sdkInit(bool success, var result)
     signal pairSessionProposal(bool success, var sessionProposal)
     signal pairAcceptedResult(bool success, var sessionType)
     signal pairRejectedResult(bool success, var result)
+    signal sessionRequestEvent(var sessionRequest)
+    signal sessionRequestUserAnswerResult(bool accept, string error)
     signal responseTimeout()
 
     // TODO: proper report
@@ -35,19 +38,31 @@ WebView {
 
     function pair(pairLink) {
         let callStr = d.generateSdkCall("pair", `"${pairLink}"`, RequestCodes.PairSuccess, RequestCodes.PairError)
-        d.requestSdk(callStr)
+        d.requestSdkAsync(callStr)
     }
 
     function approvePairSession(sessionProposal, supportedNamespaces) {
         let callStr = d.generateSdkCall("approvePairSession", `${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)}`, RequestCodes.ApprovePairSuccess, RequestCodes.ApprovePairSuccess)
 
-        d.requestSdk(callStr)
+        d.requestSdkAsync(callStr)
     }
 
     function rejectPairSession(id) {
         let callStr = d.generateSdkCall("rejectPairSession", id, RequestCodes.RejectPairSuccess, RequestCodes.RejectPairError)
 
-        d.requestSdk(callStr)
+        d.requestSdkAsync(callStr)
+    }
+
+    function acceptSessionRequest(topic, id, signature) {
+        let callStr = d.generateSdkCall("respondSessionRequest", `"${topic}", ${id}, "${signature}"`, RequestCodes.AcceptSessionSuccess, RequestCodes.AcceptSessionError)
+
+        d.requestSdkAsync(callStr)
+    }
+
+    function rejectSessionRequest(topic, id, error) {
+        let callStr = d.generateSdkCall("rejectSessionRequest", `"${topic}", ${id}, ${error}`, RequestCodes.RejectSessionSuccess, RequestCodes.RejectSessionError)
+
+        d.requestSdkAsync(callStr)
     }
 
     // TODO #12434: remove debugging WebEngineView code
@@ -66,9 +81,6 @@ WebView {
             // case WebEngineView.LoadStartedStatus:
                 root.statusChanged(`<font color="blue">Loading SDK JS code</font>`)
                 break
-            // case WebEngineView.LoadStoppedStatus:
-                // root.statusChanged(`<font color="pink">STOPPED loading SDK JS code</font>`)
-                // break
         }
     }
 
@@ -87,7 +99,7 @@ WebView {
         let htmlSrc = `<!DOCTYPE html><html><head><!--<title>TODO: Test</title>--><script type='text/javascript'>${scriptSrc}</script></head><body style='background-color: ${root.backgroundColor.toString()};'></body></html>`
 
         console.debug(`@dd WalletConnectSDK.loadHtml; htmlSrc len: ${htmlSrc.length}`)
-        root.loadHtml(htmlSrc, "http://status.im")
+        root.loadHtml(htmlSrc, "https://status.app")
     }
 
     Timer {
@@ -110,7 +122,7 @@ WebView {
 
                     let done = false
                     if (wcResult.error) {
-                        console.debug(`@dd wcResult - ${JSON.stringify(wcResult)}`)
+                        console.debug(`WC JS error response - ${JSON.stringify(wcResult)}`)
                         done = true
                         if (!d.sdkReady) {
                             root.statusChanged(`<font color="red">[${timer.errorCount++}] Failed SDK init; error: ${wcResult.error}</font>`)
@@ -124,6 +136,7 @@ WebView {
                             case RequestCodes.SdkInitSuccess:
                                 d.sdkReady = true
                                 root.sdkInit(true, "")
+                                d.startListeningForEvents()
                                 break
                             case RequestCodes.SdkInitError:
                                 d.sdkReady = false
@@ -131,21 +144,42 @@ WebView {
                                 break
                             case RequestCodes.PairSuccess:
                                 root.pairSessionProposal(true, wcResult.result)
+                                d.getPairings()
                                 break
                             case RequestCodes.PairError:
                                 root.pairSessionProposal(false, wcResult.error)
                                 break
                             case RequestCodes.ApprovePairSuccess:
                                 root.pairAcceptedResult(true, "")
+                                d.getPairings()
                                 break
                             case RequestCodes.ApprovePairError:
                                 root.pairAcceptedResult(false, wcResult.error)
+                                d.getPairings()
                                 break
                             case RequestCodes.RejectPairSuccess:
                                 root.pairRejectedResult(true, "")
                                 break
                             case RequestCodes.RejectPairError:
                                 root.pairRejectedResult(false, wcResult.error)
+                                break
+                            case RequestCodes.AcceptSessionSuccess:
+                                root.sessionRequestUserAnswerResult(true, "")
+                                break
+                            case RequestCodes.AcceptSessionError:
+                                root.sessionRequestUserAnswerResult(true, wcResult.error)
+                                break
+                            case RequestCodes.RejectSessionSuccess:
+                                root.sessionRequestUserAnswerResult(false, "")
+                                break
+                            case RequestCodes.RejectSessionError:
+                                root.sessionRequestUserAnswerResult(false, wcResult.error)
+                                break
+                            case RequestCodes.GetPairings:
+                                d.populatePairingsModel(wcResult.result)
+                                break
+                            case RequestCodes.GetPairingsError:
+                                console.error(`WalletConnectSDK - getPairings error: ${wcResult.error}`)
                                 break
                             default: {
                                 root.statusChanged(`<font color="red">[${timer.errorCount++}] Unknown state: ${wcResult.state}</font>`)
@@ -176,6 +210,29 @@ WebView {
         }
     }
 
+    Timer {
+        id: eventsTimer
+
+        interval: 100
+        repeat: true
+        running: false
+
+        onTriggered: {
+            root.runJavaScript("window.wcEventResult ? window.wcEventResult.shift() : null", function(event) {
+                if (event) {
+                    switch(event.name) {
+                        case "session_request":
+                            root.sessionRequestEvent(event.payload)
+                            break
+                        default:
+                            console.error("WC unknown event type: ", event.type)
+                            break
+                    }
+                }
+            })
+        }
+    }
+
     QtObject {
         id: d
 
@@ -183,15 +240,34 @@ WebView {
         property var sessionType: null
         property bool sdkReady: false
 
+        property ListModel pairingsModel: pairings
+
+        onSdkReadyChanged: {
+            if (sdkReady) {
+                d.getPairings()
+            }
+        }
+
+        function populatePairingsModel(pairList) {
+            pairings.clear();
+            for (let i = 0; i < pairList.length; i++) {
+                pairings.append({
+                    active: pairList[i].active,
+                    topic: pairList[i].topic,
+                    expiry: pairList[i].expiry
+                });
+            }
+        }
+
+
         function isWaitingForSdk() {
             return timer.running
         }
 
-
         function generateSdkCall(methodName, paramsStr, successState, errorState) {
-            return "wcResult = {error: null}; try { wc." + methodName  + "(" + paramsStr + ").then((callRes) => { wcResult = {state: " + successState + ", error: null, result: callRes}; }).catch((error) => { wcResult = {state: " + errorState + ", error: error}; }); } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message}; }; wcResult"
+            return "wcResult = {}; try { wc." + methodName  + "(" + paramsStr + ").then((callRes) => { wcResult = {state: " + successState + ", error: null, result: callRes}; }).catch((error) => { wcResult = {state: " + errorState + ", error: error}; }); } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message}; }; wcResult"
         }
-        function requestSdk(jsCode) {
+        function requestSdkAsync(jsCode) {
             root.runJavaScript(jsCode,
                 function(result) {
                     timer.restart()
@@ -199,9 +275,52 @@ WebView {
             )
         }
 
-        function init(projectId) {
-            console.debug(`@dd WC projectId - ${projectId}`)
-            d.requestSdk(generateSdkCall("init", `"${projectId}"`, RequestCodes.SdkInitSuccess, RequestCodes.SdkInitError))
+        function requestSdk(methodName, paramsStr, successState, errorState) {
+            const jsCode = "wcResult = {}; try { const callRes = wc." + methodName + "(" + (paramsStr ? (paramsStr) : "") + "); wcResult = {state: " + successState + ", error: null, result: callRes}; } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message};  }; wcResult"
+            root.runJavaScript(jsCode,
+                function(result) {
+                    timer.restart()
+                }
+            )
         }
+
+        function startListeningForEvents() {
+            const jsCode = "
+                try {
+                    function processWCEvents() {
+                        window.wcEventResult = [];
+                        window.wcEventError = null
+                        window.wc.registerForSessionRequest((event) => {
+                            window.wcEventResult.push({name: 'session_request', payload: event});
+                        });
+                    }
+                    processWCEvents();
+                } catch (e) {
+                    window.wcEventError = e
+                }
+                window.wcEventError"
+
+            root.runJavaScript(jsCode,
+                function(result) {
+                    if (result) {
+                        console.error("startListeningForEvents: processWCEvents error", result)
+                        return
+                    }
+                }
+            )
+            eventsTimer.start()
+        }
+
+        function init(projectId) {
+            d.requestSdkAsync(generateSdkCall("init", `"${projectId}"`, RequestCodes.SdkInitSuccess, RequestCodes.SdkInitError))
+        }
+
+        function getPairings(projectId) {
+            d.requestSdk("getPairings", `null`, RequestCodes.GetPairings, RequestCodes.GetPairingsError)
+        }
+    }
+
+    ListModel {
+        id: pairings
     }
 }
