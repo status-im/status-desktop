@@ -4,7 +4,7 @@ from allure import step
 
 import configs
 import driver
-from constants import ColorCodes
+from constants import ColorCodes, aut_options
 from constants.keycard import Keycard
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController

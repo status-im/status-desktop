@@ -31,6 +31,7 @@ class AUT:
         self.app_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}'
         if user_data is not None:
             user_data.copy_to(self.app_data / 'data')
+        self.options = ''
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
 
     def __str__(self):
@@ -76,7 +77,8 @@ class AUT:
             self.pid = None
 
     @allure.step("Start application")
-    def launch(self, attempt: int = 2) -> 'AUT':
+    def launch(self, options='', attempt: int = 2) -> 'AUT':
+        self.options = options
         try:
             self.port = local_system.find_free_port(configs.squish.AUT_PORT, 1000)
             if configs.ATTACH_MODE:
@@ -85,7 +87,8 @@ class AUT:
                     configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
                     f'--port={self.port}',
                     f'"{self.path}"',
-                    f'-d={self.app_data}'
+                    f'-d={self.app_data}',
+                    options
                 ]
                 self.pid = local_system.execute(command)
             else:
@@ -101,7 +104,7 @@ class AUT:
             _logger.debug(err)
             self.stop()
             if attempt:
-                return self.launch(attempt-1)
+                return self.launch(options, attempt - 1)
             else:
                 raise err
 

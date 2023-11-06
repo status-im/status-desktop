@@ -11,6 +11,13 @@ from scripts.utils.system_path import SystemPath
 
 
 @pytest.fixture
+def options(request):
+    if hasattr(request, 'param'):
+        return request.param
+    return ''
+
+
+@pytest.fixture
 def application_logs():
     yield
     if configs.testpath.STATUS_DATA.exists():
@@ -47,8 +54,8 @@ def multiple_instance():
 
 
 @pytest.fixture
-def main_window(aut: AUT, user_data):
-    aut.launch()
+def main_window(aut: AUT, user_data, options):
+    aut.launch(options)
     yield MainWindow().wait_until_appears().prepare()
     aut.stop()
 
