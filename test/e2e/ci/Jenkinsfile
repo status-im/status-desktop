@@ -23,7 +23,7 @@ pipeline {
     string(
       name: 'BUILD_SOURCE',
       description: 'URL to tar.gz file OR path to Jenkins build.',
-      defaultValue: ''
+      defaultValue: getDefaultBuildSource()
     )
     string(
       name: 'TEST_NAME',
@@ -168,6 +168,10 @@ pipeline {
 }
 
 def setNewBuildName() {
+  /* Skip PR builds for QA automation repo. */
+  if (JOB_BASE_NAME == 'prs') {
+    return
+  }
   /* For URLs we need to parse the filename to get attributes. */
   if (params.BUILD_SOURCE.startsWith('http')) {
     def tokens = utils.parseFilename(utils.baseName(params.BUILD_SOURCE))
@@ -207,4 +211,11 @@ def formatMap(Map data=[:]) {
   def text = ''
   data.each { key, val -> text += "<b>${key}</b>: ${val}</a><br>\n" }
   return text
+}
+
+def getDefaultBuildSource() {
+  if (JOB_NAME ==~ 'status-desktop/qa-automation/prs/.*') {
+    return 'status-desktop/nightly'
+  }
+  return ''
 }
