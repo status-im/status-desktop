@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar, marshal
+import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar, marshal, times
 
 import io_interface
 import ../io_interface as delegate_interface
@@ -14,9 +14,7 @@ import ../../shared_models/token_criteria_model
 import ../../shared_models/token_permission_chat_list_model
 
 import chat_content/module as chat_content_module
-import chat_content/users/module as users_module
 
-import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
@@ -406,13 +404,15 @@ method activeItemSet*(self: Module, itemId: string) =
 
   # update view maintained by this module
   self.view.chatsModel().setActiveItem(itemId)
+  var time = cpuTime()
   self.view.activeItemSet(chat_item)
+  echo "view update duration: ", cpuTime() - time
 
   self.updateActiveChatMembership()
 
   let activeChatId = self.controller.getActiveChatId()
 
-  # # update child modules
+  # update child modules
   for chatId, chatContentModule in self.chatContentModules:
     if chatId == activeChatId:
       chatContentModule.onMadeActive()

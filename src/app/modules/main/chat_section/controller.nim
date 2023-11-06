@@ -1,4 +1,4 @@
-import Tables, sugar, sequtils, strutils
+import Tables, sugar, sequtils, strutils, times
 
 import io_interface
 
@@ -450,7 +450,9 @@ proc setActiveItem*(self: Controller, itemId: string) =
     self.messageService.asyncLoadInitialMessagesForChat(self.activeItemId)
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
+  var time = cpuTime()
   self.delegate.activeItemSet(self.activeItemId)
+  echo "Time taken: ", cpuTime() - time
 
 proc removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)

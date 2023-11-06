@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, strutils
+import NimQml, json, sequtils, strutils, times
 import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
@@ -148,7 +148,9 @@ QtObject:
 
   proc activeItemSet*(self: View, item: Item) =
     self.activeItem.setActiveItemData(item)
-    self.activeItemChanged()
+    var time = cpuTime()
+    self.activeItemChanged() # UI block happens after emitting this signal
+    echo "activeItemSet duration: ", cpuTime() - time
 
   proc setActiveItem*(self: View, itemId: string) {.slot.} =
     self.delegate.setActiveItem(itemId)

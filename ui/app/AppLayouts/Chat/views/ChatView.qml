@@ -99,7 +99,8 @@ StatusSectionLayout {
         ignoreUnknownSignals: true
 
         function onActiveItemChanged() {
-            Global.closeCreateChatView()
+            // Connection from activeItemChanged signal of ChatSectionModule
+            Global.closeCreateChatView() // Commenting this one out doesn't have any effect
         }
     }
 

@@ -1,4 +1,4 @@
-import std/uri, uuids
+import std/uri, uuids, os
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
@@ -28,6 +28,7 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     var messagesArr: JsonNode
     var messagesCursor: JsonNode
     let msgsResponse = status_go.fetchMessages(arg.chatId, arg.msgCursor, arg.limit)
+    # sleep(3000)
     discard msgsResponse.result.getProp("cursor", messagesCursor)
     discard msgsResponse.result.getProp("messages", messagesArr)
     responseJson["messages"] = messagesArr
