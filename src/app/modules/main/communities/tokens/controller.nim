@@ -1,13 +1,13 @@
 import stint
 import ./io_interface as community_tokens_module_interface
 
-import ../../../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../../../app_service/service/transaction/service as transaction_service
-import ../../../../../app_service/service/network/service as networks_service
-import ../../../../../app_service/service/community/service as community_service
-import ../../../../../app_service/service/community/dto/community
-import ../../../../core/signals/types
-import ../../../../core/eventemitter
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/network/service as networks_service
+import app_service/service/community/service as community_service
+import app_service/common/types
+import app/core/signals/types
+import app/core/eventemitter
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 

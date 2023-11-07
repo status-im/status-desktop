@@ -582,7 +582,7 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module, communityTokens: se
         infiniteSupply,
       )
 
-      if tokenMetadata.tokenType == community_dto.TokenType.ERC20:
+      if tokenMetadata.tokenType == TokenType.ERC20:
       # Community ERC20 tokens
         tokenListItems.add(communityTokenItem)
       else:
@@ -635,12 +635,12 @@ method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMe
     infiniteSupply,
   )
 
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and
+  if tokenMetadata.tokenType == TokenType.ERC721 and
       not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
     self.view.collectiblesListModel.addItems(@[tokenListItem])
     return
 
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and
+  if tokenMetadata.tokenType == TokenType.ERC20 and
       not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
     self.view.tokenListModel.addItems(@[tokenListItem])
 

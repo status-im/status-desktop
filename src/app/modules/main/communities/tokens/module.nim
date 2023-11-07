@@ -4,7 +4,6 @@ import ../../../../../app_service/service/community_tokens/service as community_
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/network/service as networks_service
 import ../../../../../app_service/service/community/service as community_service
-import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../../app_service/common/types
 import ../../../../core/eventemitter

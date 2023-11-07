@@ -36,7 +36,7 @@ type
     decimals*: int
     # will remain empty until backend provides us this data
     image*: string
-    `type`*: common_types.NewTokenType
+    `type`*: common_types.TokenType
     communityId*: string
 
 proc `$`*(self: TokenItem): string =

@@ -25,10 +25,10 @@ Item {
         return ""
     }
     property bool onlyAssets: false
-    property int browsingHoldingType: Constants.HoldingType.Asset
+    property int browsingHoldingType: Constants.TokenType.ERC20
 
     onVisibleChanged: {
-        if(!visible)
+        if(!visible && root.collectibles)
             root.collectibles.currentCollectionUid = ""
     }
 
@@ -46,8 +46,8 @@ Item {
 
         // Internal management properties and signals:
         readonly property var holdingTypes: onlyAssets ?
-                                                [Constants.HoldingType.Asset] :
-                                                [Constants.HoldingType.Asset, Constants.HoldingType.Collectible]
+                                                [Constants.TokenType.ERC20] :
+                                                [Constants.TokenType.ERC20, Constants.TokenType.ERC721]
 
         readonly property var tabsModel: onlyAssets ?
                                              [qsTr("Assets")] :
@@ -128,9 +128,9 @@ Item {
                     width: parent.width
                     height: tokenList.contentHeight
 
-                    header: root.browsingHoldingType === Constants.HoldingType.Asset ? tokenHeader : collectibleHeader
-                    model: root.browsingHoldingType === Constants.HoldingType.Asset ? tokensModel : collectiblesModel
-                    delegate: root.browsingHoldingType === Constants.HoldingType.Asset ? tokenDelegate : collectiblesDelegate
+                    header: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenHeader : collectibleHeader
+                    model: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokensModel : collectiblesModel
+                    delegate: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenDelegate : collectiblesDelegate
                 }
             }
         }
@@ -171,19 +171,19 @@ Item {
         TokenBalancePerChainDelegate {
             width: ListView.view.width
             balancesModel: LeftJoinModel {
-                leftModel: balances
+                leftModel: model.balances
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
-            onTokenSelected: root.tokenSelected(symbol, Constants.HoldingType.Asset)
-            onTokenHovered: root.tokenHovered(symbol, Constants.HoldingType.Asset, hovered)
+            onTokenSelected: root.tokenSelected(symbol, Constants.TokenType.ERC20)
+            onTokenHovered: root.tokenHovered(symbol, Constants.TokenType.ERC20, hovered)
         }
     }
     Component {
         id: tokenHeader
         SearchBoxWithRightIcon {
             showTopBorder: !root.onlyAssets
-            width: parent.width
+            width: ListView.view.width
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateAssetSearchText, text)
         }
@@ -192,13 +192,13 @@ Item {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
             width: ListView.view.width
-            onItemHovered: root.tokenHovered(selectedItem.uid, Constants.HoldingType.Collectible, hovered)
+            onItemHovered: root.tokenHovered(selectedItem.uid, Constants.TokenType.ERC721, hovered)
             onItemSelected: {
                 if (isCollection) {
                     d.currentBrowsingCollectionName = collectionName
                     root.collectibles.currentCollectionUid = collectionUid
                 } else {
-                    root.tokenSelected(selectedItem.uid, Constants.HoldingType.Collectible)
+                    root.tokenSelected(selectedItem.uid, Constants.TokenType.ERC721)
                 }
             }
         }

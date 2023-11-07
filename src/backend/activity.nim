@@ -6,6 +6,7 @@ import stint
 import web3/ethtypes as eth
 import web3/conversions
 
+import app_service/common/types
 from gen import rpc
 import backend
 
@@ -34,10 +35,6 @@ type
   # see status-go/services/wallet/activity/filter.go Status
   ActivityStatus* {.pure.} = enum
     Failed, Pending, Complete, Finalized
-
-  # see status-go/services/wallet/activity/filter.go TokenType
-  TokenType* {.pure.} = enum
-    Native, Erc20, Erc721, Erc1155
 
   # see status-go/services/wallet/activity/filter.go TokenID
   TokenId* = distinct string
@@ -94,14 +91,18 @@ proc `%`*(tt: TokenType): JsonNode {.inline.} =
 
 proc `$`*(tt: TokenType): string {.inline.} =
   case tt:
-    of Native:
+    of TokenType.Native:
       return "ETH"
-    of Erc20:
+    of TokenType.ERC20:
       return "ERC-20"
-    of Erc721:
+    of TokenType.ERC721:
       return "ERC-721"
-    of Erc1155:
+    of TokenType.ERC1155:
       return "ERC-1155"
+    of TokenType.Unknown:
+      return "Unknown"
+    of TokenType.ENS:
+      return "ENS"
 
 proc fromJson*(jn: JsonNode, T: typedesc[TokenType]): TokenType {.inline.} =
   return cast[TokenType](jn.getInt())

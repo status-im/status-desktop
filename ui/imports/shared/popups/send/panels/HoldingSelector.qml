@@ -54,8 +54,8 @@ Item {
         id: d
         // Internal management properties and signals:
         readonly property var holdingTypes: onlyAssets ?
-         [Constants.HoldingType.Asset] :
-         [Constants.HoldingType.Asset, Constants.HoldingType.Collectible]
+         [Constants.TokenType.ERC20] :
+         [Constants.TokenType.ERC20, Constants.TokenType.ERC721]
 
         readonly property var tabsModel: onlyAssets ?
          [qsTr("Assets")] :
@@ -66,15 +66,15 @@ Item {
         })
     
         function isAsset(type) {
-            return type === Constants.HoldingType.Asset
+            return type === Constants.TokenType.ERC20
         }
 
-        property int browsingHoldingType: Constants.HoldingType.Asset
+        property int browsingHoldingType: Constants.TokenType.ERC20
         readonly property bool isCurrentBrowsingTypeAsset: isAsset(browsingHoldingType)
         readonly property bool isBrowsingCollection: !isCurrentBrowsingTypeAsset && !!collectiblesModel && collectiblesModel.currentCollectionUid !== ""
         property string currentBrowsingCollectionName
 
-        property var currentHoldingType: Constants.HoldingType.Unknown
+        property var currentHoldingType: Constants.TokenType.Unknown
 
         property string searchText
         readonly property string assetSymbolByAddress: isCurrentBrowsingTypeAsset ? "": root.searchAssetSymbolByAddressFn(searchText)
@@ -298,8 +298,8 @@ Item {
             }
             onTokenSelected: {
                 holdingItemSelector.selectedItem = selectedToken
-                d.currentHoldingType = Constants.HoldingType.Asset
-                root.itemSelected(selectedToken.symbol, Constants.HoldingType.Asset)
+                d.currentHoldingType = Constants.TokenType.ERC20
+                root.itemSelected(selectedToken.symbol, Constants.TokenType.ERC20)
                 holdingItemSelector.comboBoxControl.popup.close()
             }
         }
@@ -316,8 +316,8 @@ Item {
                     root.collectiblesModel.currentCollectionUid = collectionUid
                 } else {
                     holdingItemSelector.selectedItem = selectedItem
-                    d.currentHoldingType = Constants.HoldingType.Collectible
-                    root.itemSelected(selectedItem.uid, Constants.HoldingType.Collectible)
+                    d.currentHoldingType = Constants.TokenType.ERC721
+                    root.itemSelected(selectedItem.uid, Constants.TokenType.ERC721)
                     holdingItemSelector.comboBoxControl.popup.close()
                 }
             }

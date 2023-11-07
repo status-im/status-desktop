@@ -64,7 +64,7 @@ StatusSectionLayout {
         property Component sendTransactionModalComponent: SendModal {
             anchors.centerIn: parent
             preSelectedHoldingID: "ETH"
-            preSelectedHoldingType: Constants.HoldingType.Asset
+            preSelectedHoldingType: Constants.TokenType.ERC20
         }
 
         property Component signMessageModalComponent: SignMessageModal {}

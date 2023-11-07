@@ -40,7 +40,7 @@ SplitView {
                 text: "Update"
                 onClicked: {
                     holdingsDropdown.close()
-                    holdingsDropdown.setActiveTab(HoldingTypes.Type.Ens)
+                    holdingsDropdown.setActiveTab(Constants.TokenType.ENS)
                     holdingsDropdown.openUpdateFlow()
                 }
             }

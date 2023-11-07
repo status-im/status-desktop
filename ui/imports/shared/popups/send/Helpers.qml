@@ -22,7 +22,7 @@ QtObject {
             preSelectedAccount: null,
             preSelectedRecipientType: TabAddressSelectorView.Type.Address,
             preSelectedRecipient: null,
-            preSelectedHoldingType: 0,
+            preSelectedHoldingType: Constants.TokenType.Unknown,
             preSelectedHolding: null,
             preSelectedHoldingID: "",
             preDefinedAmountToSend: "",
@@ -56,10 +56,10 @@ QtObject {
         }
 
         if (isCollectible) {
-            req.preSelectedHoldingType = Constants.HoldingType.Collectible
+            req.preSelectedHoldingType = Constants.TokenType.ERC721
             req.preSelectedHolding = token
         } else {
-            req.preSelectedHoldingType = Constants.HoldingType.Asset
+            req.preSelectedHoldingType = Constants.TokenType.ERC20
             req.preSelectedHoldingID = token
         }
 

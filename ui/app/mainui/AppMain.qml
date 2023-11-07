@@ -1420,7 +1420,7 @@ Item {
             property var preSelectedRecipient
             property int preSelectedRecipientType
             property string preSelectedHoldingID
-            property int preSelectedHoldingType
+            property int preSelectedHoldingType: Constants.TokenType.Unknown
             property int preSelectedSendType: Constants.SendType.Unknown
             property string preDefinedAmountToSend
             property bool onlyAssets: false
@@ -1431,7 +1431,7 @@ Item {
                     sendModal.closed()
                     sendModal.preSelectedSendType = Constants.SendType.Unknown
                     sendModal.preSelectedHoldingID = ""
-                    sendModal.preSelectedHoldingType = Constants.HoldingType.Unknown
+                    sendModal.preSelectedHoldingType = Constants.TokenType.Unknown
                     sendModal.preSelectedAccount = undefined
                     sendModal.preSelectedRecipient = undefined
                     sendModal.preDefinedAmountToSend = ""
@@ -1448,7 +1448,7 @@ Item {
                 if(sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
                     item.preSelectedSendType = sendModal.preSelectedSendType
                 }
-                if(preSelectedHoldingType !== Constants.HoldingType.Unknown) {
+                if(preSelectedHoldingType !== Constants.TokenType.Unknown) {
                     item.preSelectedHoldingID = sendModal.preSelectedHoldingID
                     item.preSelectedHoldingType = sendModal.preSelectedHoldingType
                 }

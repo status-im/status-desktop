@@ -1,6 +1,8 @@
 import NimQml, Tables
+
+import app_service/common/types
+
 import token_criteria_item
-import ../../../app_service/service/community/dto/community
 
 type
   ModelRole {.pure.} = enum

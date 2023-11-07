@@ -25,10 +25,10 @@ SortFilterProxyModel {
             name: "text"
 
             function getName(type, key) {
-                if (type === HoldingTypes.Type.Ens)
+                if (type === Constants.TokenType.ENS)
                     return key
 
-                const model = type === HoldingTypes.Type.Asset
+                const model = type === Constants.TokenType.ERC20
                             ? assetsModel
                             : collectiblesModel
                 const item = PermissionsHelpers.getTokenByKey(model, key)
@@ -55,10 +55,10 @@ SortFilterProxyModel {
             name: "imageSource"
 
             function getIcon(type, key) {
-                if (type === HoldingTypes.Type.Ens)
+                if (type === Constants.TokenType.ENS)
                     return Style.png("tokens/ENS")
 
-                const model = type === HoldingTypes.Type.Asset
+                const model = type === Constants.TokenType.ERC20
                             ? assetsModel : collectiblesModel
 
                 return PermissionsHelpers.getTokenIconByKey(model, key)

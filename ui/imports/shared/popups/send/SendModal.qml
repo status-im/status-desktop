@@ -31,7 +31,7 @@ StatusDialog {
     property string preDefinedAmountToSend
     // token symbol
     property string preSelectedHoldingID
-    property int preSelectedHoldingType
+    property int preSelectedHoldingType: Constants.TokenType.Unknown
     property int preSelectedSendType
     property bool interactive: true
     property alias onlyAssets: holdingSelector.onlyAssets
@@ -89,11 +89,11 @@ StatusDialog {
         readonly property bool isBridgeTx: store.sendType === Constants.SendType.Bridge
         readonly property bool isERC721Transfer: store.sendType === Constants.SendType.ERC721Transfer
         property var selectedHolding: null
-        property var selectedHoldingType: Constants.HoldingType.Unknown
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.HoldingType.Asset
+        property var selectedHoldingType: Constants.TokenType.Unknown
+        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
         property var hoveredHolding: null
-        property var hoveredHoldingType: Constants.HoldingType.Unknown
-        readonly property bool isHoveredHoldingValidAsset: !!hoveredHolding && hoveredHoldingType === Constants.HoldingType.Asset
+        property var hoveredHoldingType: Constants.TokenType.Unknown
+        readonly property bool isHoveredHoldingValidAsset: !!hoveredHolding && hoveredHoldingType === Constants.TokenType.ERC20
 
         function setSelectedHoldingId(holdingId, holdingType) {
             let holding = store.getHolding(holdingId, holdingType)
@@ -120,11 +120,11 @@ StatusDialog {
         }
 
         onSelectedHoldingChanged: {
-            if (d.selectedHoldingType === Constants.HoldingType.Asset) {
+            if (d.selectedHoldingType === Constants.TokenType.ERC20) {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetSymbol(selectedHolding.symbol)
-            } else if (d.selectedHoldingType === Constants.HoldingType.Collectible) {
+            } else if (d.selectedHoldingType === Constants.TokenType.ERC721) {
                 store.setSendType(Constants.SendType.ERC721Transfer)
                 amountToSendInput.input.text = 1
                 store.setSelectedAssetSymbol(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
@@ -157,7 +157,8 @@ StatusDialog {
             store.setSendType(popup.preSelectedSendType)
         }
 
-        if (popup.preSelectedHoldingType !== Constants.HoldingType.Unknown) {
+        if ((popup.preSelectedHoldingType > Constants.TokenType.Native) &&
+                (popup.preSelectedHoldingType < Constants.TokenType.ERC1155)) {
             tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
             if (!!popup.preSelectedHoldingID) {
                 d.setSelectedHoldingId(popup.preSelectedHoldingID, popup.preSelectedHoldingType)
@@ -262,8 +263,8 @@ StatusDialog {
                             collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                             networksModel: popup.store.allNetworksModel
                             currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
-                            visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.HoldingType.Unknown) ||
-                                     (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.HoldingType.Unknown)
+                            visible: (!!d.selectedHolding && d.selectedHoldingType !== Constants.TokenType.Unknown) ||
+                                     (!!d.hoveredHolding && d.hoveredHoldingType !== Constants.TokenType.Unknown)
                             onItemSelected: {
                                 d.setSelectedHoldingId(holdingId, holdingType)
                             }
@@ -408,7 +409,7 @@ StatusDialog {
                             if(hovered) {
                                 d.setHoveredHoldingId(symbol, holdingType)
                             } else {
-                                d.setHoveredHoldingId("", Constants.HoldingType.Unknown)
+                                d.setHoveredHoldingId("", Constants.TokenType.Unknown)
                             }
                         }
                     }

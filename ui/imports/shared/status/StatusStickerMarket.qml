@@ -204,7 +204,7 @@ Item {
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
             preSelectedHoldingID: JSON.parse(root.store.stickersStore.getStatusToken()).symbol
-            preSelectedHoldingType: Constants.HoldingType.Asset
+            preSelectedHoldingType: Constants.TokenType.ERC20
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()

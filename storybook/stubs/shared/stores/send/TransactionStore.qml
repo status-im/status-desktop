@@ -82,9 +82,9 @@ QtObject {
     }
 
     function getHolding(holdingId, holdingType) {
-        if (holdingType === Constants.HoldingType.Asset) {
+        if (holdingType === Constants.TokenType.ERC20) {
             return getAsset(selectedSenderAccount.assets, holdingId)
-        } else if (holdingType === Constants.HoldingType.Collectible) {
+        } else if (holdingType === Constants.TokenType.ERC721) {
             return getCollectible(holdingId)
         } else {
             return {}
@@ -92,9 +92,9 @@ QtObject {
     }
 
     function getSelectorHolding(holdingId, holdingType) {
-        if (holdingType === Constants.HoldingType.Asset) {
+        if (holdingType === Constants.TokenType.ERC20) {
             return getAsset(selectedSenderAccount.assets, holdingId)
-        } else if (holdingType === Constants.HoldingType.Collectible) {
+        } else if (holdingType === Constants.TokenType.ERC721) {
             return getSelectorCollectible(holdingId)
         } else {
             return {}
@@ -118,9 +118,9 @@ QtObject {
     }
 
     function holdingToSelectorHolding(holding, holdingType) {
-        if (holdingType === Constants.HoldingType.Asset) {
+        if (holdingType === Constants.TokenType.Asset) {
             return assetToSelectorAsset(holding)
-        } else if (holdingType === Constants.HoldingType.Collectible) {
+        } else if (holdingType === Constants.TokenType.Collectible) {
             return collectibleToSelectorCollectible(holding)
         } else {
             return {}

@@ -6,6 +6,8 @@ import Models 1.0
 import StatusQ.Core.Utils 0.1
 import AppLayouts.Communities.controls 1.0
 
+import utils 1.0
+
 QtObject {
     id: root
 
@@ -584,7 +586,7 @@ QtObject {
     function createHoldingsModel1() {
         return [
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "zrx",
                         amount: 15,
                         available: false
@@ -595,7 +597,7 @@ QtObject {
     function createHoldingsModel1b() {
         return [
                     {
-                        type: HoldingTypes.Type.Ens,
+                        type: Constants.TokenType.ENS,
                         key: "*.eth",
                         amount: 1,
                         available: true
@@ -606,13 +608,13 @@ QtObject {
     function createHoldingsModel2() {
         return [
                     {
-                        type: HoldingTypes.Type.Collectible,
+                        type: Constants.TokenType.ERC721,
                         key: "Kitty6",
                         amount: 50.25,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "Dai",
                         amount: 11,
                         available: true
@@ -623,13 +625,13 @@ QtObject {
     function createHoldingsModel2b() {
         return [
                     {
-                        type: HoldingTypes.Type.Collectible,
+                        type: Constants.TokenType.ERC721,
                         key: "Anniversary2",
                         amount: 1,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "snt",
                         amount: 666,
                         available: true
@@ -640,19 +642,19 @@ QtObject {
     function createHoldingsModel3() {
         return [
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "socks",
                         amount: 15,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Collectible,
+                        type: Constants.TokenType.ERC721,
                         key: "Kitty4",
                         amount: 50.25,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Collectible,
+                        type: Constants.TokenType.ERC721,
                         key: "SuperRare",
                         amount: 11,
                         available: false
@@ -663,25 +665,25 @@ QtObject {
     function createHoldingsModel4() {
         return [
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "socks",
                         amount: 15,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "snt",
                         amount: 25000,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Ens,
+                        type: Constants.TokenType.ENS,
                         key: "foo.bar.eth",
                         amount: 1,
                         available: false
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "Amp",
                         amount: 2,
                         available: true
@@ -692,31 +694,31 @@ QtObject {
     function createHoldingsModel5() {
         return [
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "socks",
                         amount: 15,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "zrx",
                         amount: 10,
                         available: false
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "1inch",
                         amount: 25000,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "Aave",
                         amount: 100,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
+                        type: Constants.TokenType.ERC20,
                         key: "Amp",
                         amount: 2,
                         available: true

@@ -125,13 +125,13 @@ StatusScrollView {
 
             function getTokenKeysAndAmounts() {
                 return ModelUtils.modelToArray(selectedHoldingsModel, ["type", "key", "amount"])
-                    .filter(item => item.type !== HoldingTypes.Type.Ens)
+                    .filter(item => item.type !== Constants.TokenType.ENS)
                     .map(item => ({ key: item.key, amount: item.amount }))
             }
 
             function getEnsNames() {
                 return ModelUtils.modelToArray(selectedHoldingsModel, ["type", "name"])
-                    .filter(item => item.type === HoldingTypes.Type.Ens)
+                    .filter(item => item.type === Constants.TokenType.ENS)
                     .map(item => item.name)
             }
         }
@@ -271,7 +271,7 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
 
-                    addItem(HoldingTypes.Type.Asset, modelItem, amount)
+                    addItem(Constants.TokenType.ERC20, modelItem, amount)
                     dropdown.close()
                 }
 
@@ -279,13 +279,13 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
 
-                    addItem(HoldingTypes.Type.Collectible, modelItem, amount)
+                    addItem(Constants.TokenType.ERC721, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddEns: {
                     d.dirtyValues.selectedHoldingsModel.append(
-                                { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
+                                { type: Constants.TokenType.ENS, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
@@ -294,7 +294,7 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
-                                itemIndex, { type: HoldingTypes.Type.Asset, key, amount: parseFloat(amount) })
+                                itemIndex, { type: Constants.TokenType.ERC20, key, amount: parseFloat(amount) })
                     dropdown.close()
                 }
 
@@ -305,14 +305,14 @@ StatusScrollView {
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex,
-                                { type: HoldingTypes.Type.Collectible, key, amount: parseFloat(amount) })
+                                { type: Constants.TokenType.ERC721, key, amount: parseFloat(amount) })
                     dropdown.close()
                 }
 
                 onUpdateEns: {
                     d.dirtyValues.selectedHoldingsModel.set(
                                 tokensSelector.editedIndex,
-                                { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
+                                { type: Constants.TokenType.ENS, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
@@ -347,15 +347,15 @@ StatusScrollView {
                 const modelItem = tokensSelector.model.get(index)
 
                 switch(modelItem.type) {
-                    case HoldingTypes.Type.Asset:
+                    case Constants.TokenType.ERC20:
                         dropdown.assetKey = modelItem.key
                         dropdown.assetAmount = modelItem.amount
                         break
-                    case HoldingTypes.Type.Collectible:
+                    case Constants.TokenType.ERC721:
                         dropdown.collectibleKey = modelItem.key
                         dropdown.collectibleAmount = modelItem.amount
                         break
-                    case HoldingTypes.Type.Ens:
+                    case Constants.TokenType.ENS:
                         dropdown.ensDomainName = modelItem.key
                         break
                     default:
