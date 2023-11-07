@@ -9,6 +9,8 @@ import utils 1.0
 import shared.status 1.0
 import shared.stores 1.0
 
+import StatusQ.Core.Utils 0.1
+
 SplitView {
     id: root
 
@@ -95,6 +97,10 @@ SplitView {
                 property var globalUtils: globalUtilsMock.globalUtils
                 property string unformattedText: chatInput.textInput.getText(0, chatInput.textInput.length)
 
+                readonly property ModelChangeTracker urlsModelChangeTracker: ModelChangeTracker {
+                    model: fakeLinksModel
+                }
+
                 onUnformattedTextChanged: {
                     textEditConnection.enabled = false
                     d.loadLinkPreviews(unformattedText)
@@ -112,7 +118,10 @@ SplitView {
 
                 enabled: enabledCheckBox.checked
                 linkPreviewModel: fakeLinksModel
-                urlsModel: fakeLinksModel
+                urlsList: {
+                    urlsModelChangeTracker.revision
+                    ModelUtils.modelToFlatArray(fakeLinksModel, "url")
+                }
                 askToEnableLinkPreview: askToEnableLinkPreviewSwitch.checked
                 onAskToEnableLinkPreviewChanged: {
                     if(askToEnableLinkPreview) {
@@ -167,7 +176,7 @@ SplitView {
                 loadLinkPreviews(chatInputLoader.item ? chatInputLoader.item.unformattedText : "")
             }
             function loadLinkPreviews(text) {
-                var words = text.split(" ")
+                var words = text.split(/\s+/)
 
                 fakeLinksModel.clear()
                 words.forEach(function(word){
