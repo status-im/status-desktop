@@ -179,7 +179,7 @@ class SyncResultView(OnboardingView):
         return device_synced_notifications
 
     @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+    def wait_until_appears(self, timeout_msec: int = 10000):
         self._sign_in_button.wait_until_appears(timeout_msec)
         return self
 

@@ -15,12 +15,12 @@ class ColorSelectPopup(BasePopup):
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._hex_color_text_edit.wait_until_appears()
+        self._hex_color_text_edit.wait_until_appears(timeout_msec)
         return self
 
     @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._hex_color_text_edit.wait_until_hidden()
+        self._hex_color_text_edit.wait_until_hidden(timeout_msec)
 
     @allure.step('Select color {1}')
     def select_color(self, value: str):
