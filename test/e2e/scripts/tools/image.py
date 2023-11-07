@@ -57,7 +57,7 @@ class Image:
         rect = driver.object.globalBounds(driver.waitForObject(self.object_name))
         img = ImageGrab.grab(
             bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
-            xdisplay=":0" if IS_LIN else None
+            xdisplay=configs.system.DISPLAY if IS_LIN else None
         )
         self._view = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
 
