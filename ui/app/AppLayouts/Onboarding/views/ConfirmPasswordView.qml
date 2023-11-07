@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.12
 
@@ -141,7 +141,9 @@ Item {
     }
 
     Connections {
-        target: RootStore.privacyModule
+        enabled: root.startupStore.appState == Constants.appState.main
+        // Only use the privacyModule if we are in the app, otherwise we try to use modules that don't exist yet
+        target: enabled ? RootStore.privacyModule : null
         function onPasswordChanged(success: bool, errorMsg: string) {
             if (success) {
                 submitBtn.loading = false
