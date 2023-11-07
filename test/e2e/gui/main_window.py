@@ -152,7 +152,8 @@ class MainWindow(Window):
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            BetaConsentPopup().confirm()
+            if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+                BetaConsentPopup().confirm()
         return self
 
     @allure.step('Log in user')
@@ -160,7 +161,8 @@ class MainWindow(Window):
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.DEV_BUILD:
-            BetaConsentPopup().wait_until_appears().confirm()
+            if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+                BetaConsentPopup().confirm()
         return self
 
     @allure.step('Authorize user')

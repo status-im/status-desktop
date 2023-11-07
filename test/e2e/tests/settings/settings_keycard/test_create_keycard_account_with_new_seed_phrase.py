@@ -13,7 +13,8 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703624',
                  'Create a new keycard account with a new seed phrase')
 @pytest.mark.case(703624)
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/256")
+@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
 def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow):
     with step('Choose option Create a new Keycard account with a new seed phrase in settings'):
         main_screen.prepare()
