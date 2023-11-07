@@ -2,6 +2,7 @@ import NimQml
 
 import app_service/common/social_links
 import app_service/service/profile/dto/profile_showcase_preferences
+import app_service/service/community/dto/community
 
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
@@ -62,6 +63,12 @@ method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.
   raise newException(ValueError, "No implementation available")
 
 method updateProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunitiesUpdated*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

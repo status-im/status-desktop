@@ -81,11 +81,17 @@ Control {
                 visible: count
                 model: SortFilterProxyModel {
                     sourceModel: root.profileStore.profileShowcaseCommunitiesModel
-                    filters: ValueFilter {
-                        roleName: "showcaseVisibility"
-                        value: Constants.ShowcaseVisibility.NoOne
-                        inverted: true
-                    }
+                    filters: [
+                        ValueFilter {
+                            roleName: "showcaseVisibility"
+                            value: Constants.ShowcaseVisibility.NoOne
+                            inverted: true
+                        },
+                        ValueFilter {
+                            roleName: "loading"
+                            value: false
+                        }
+                    ]
                 }
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusListItem { // TODO custom delegate
@@ -94,8 +100,8 @@ Control {
                     title: model.name
                     statusListItemTitle.font.pixelSize: 17
                     statusListItemTitle.font.bold: true
-                    //subTitle: model.description // TODO: no data in showcase model
-                    //tertiaryTitle: qsTr("%n member(s)", "", model.members.count) // TODO: no data in showcase model
+                    subTitle: model.description
+                    tertiaryTitle: qsTr("%n member(s)", "", model.membersCount)
                     asset.name: model.image ?? model.name
                     asset.isImage: asset.name.startsWith(Constants.dataImagePrefix)
                     asset.isLetterIdenticon: !model.image
@@ -169,7 +175,6 @@ Control {
                     components: [
                         StatusIcon {
                             anchors.verticalCenter: parent.verticalCenter
-                            //visible: model.walletType === Constants.watchWalletType
                             icon: "show"
                             color: Theme.palette.directColor1
                         },

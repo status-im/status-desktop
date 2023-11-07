@@ -9,7 +9,7 @@ ProfileShowcasePanel {
 
     keyRole: "symbol"
     roleNames: ["symbol", "name", "enabledNetworkBalance"].concat(showcaseRoles)
-    filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.symbol)
+    filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
 

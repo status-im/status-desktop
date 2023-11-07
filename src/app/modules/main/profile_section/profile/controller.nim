@@ -53,9 +53,17 @@ proc init*(self: Controller) =
     let args = SocialLinksArgs(e)
     self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
 
-  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED) do(e: Args):
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED) do(e: Args):
     let args = ProfileShowcasePreferencesArgs(e)
     self.delegate.updateProfileShowcasePreferences(args.preferences)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onContactDetailsUpdated(args.contactId)
+
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
+    let args = CommunitiesArgs(e)
+    self.delegate.onCommunitiesUpdated(args.communities)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
@@ -75,8 +83,8 @@ proc getCommunityById*(self: Controller, id: string): CommunityDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
-proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddress(address)
+proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
+  return self.walletAccountService.getTokensByAddresses(addresses)
 
 proc getContactById*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
@@ -95,3 +103,6 @@ proc storeProfileShowcasePreferences*(self: Controller, preferences: ProfileShow
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
+
+proc requestCommunityInfo*(self: Controller, communityId: string) =
+  self.communityService.requestCommunityInfo(communityId)

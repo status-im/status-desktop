@@ -138,12 +138,15 @@ QtObject:
     self.recalcOrder()
     self.baseModelFilterConditionsMayHaveChanged()
 
-  proc reset*(self: ProfileShowcaseAccountsModel) {.slot.} =
+  proc reset*(self: ProfileShowcaseAccountsModel, items: seq[ProfileShowcaseAccountItem]) =
     self.beginResetModel()
-    self.items = @[]
+    self.items = items
     self.endResetModel()
     self.countChanged()
     self.baseModelFilterConditionsMayHaveChanged()
+
+  proc clear*(self: ProfileShowcaseAccountsModel) {.slot.} =
+    self.reset(@[])
 
   proc remove*(self: ProfileShowcaseAccountsModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:
