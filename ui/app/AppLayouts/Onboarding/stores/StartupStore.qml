@@ -11,6 +11,8 @@ QtObject {
     property var fetchingDataModel: startupModuleInst ? startupModuleInst.fetchingDataModel
                                                          : null
 
+    readonly property int appState: startupModuleInst.appState
+
     readonly property int localPairingState: startupModuleInst ? startupModuleInst.localPairingState : -1
     readonly property string localPairingError: startupModuleInst ? startupModuleInst.localPairingError : ""
     readonly property string localPairingName: startupModuleInst ? startupModuleInst.localPairingName : ""
