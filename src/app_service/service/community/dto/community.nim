@@ -73,12 +73,6 @@ type TokenPermissionState* {.pure.}= enum
   UpdatePending = 2,
   RemovalPending = 3,
 
-type TokenType* {.pure.}= enum
-  Unknown = 0,
-  ERC20 = 1,
-  ERC721 = 2,
-  ENS = 3 # ENS is also ERC721 but we want to distinguish without heuristics
-
 type TokenCriteriaDto* = object
   contractAddresses* {.serializedFieldName("contract_addresses").}: Table[int, string]
   `type`* {.serializedFieldName("type").}: TokenType

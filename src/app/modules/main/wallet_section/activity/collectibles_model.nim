@@ -4,6 +4,7 @@ import logging
 import ./collectibles_item
 import web3/ethtypes as eth
 import backend/activity as backend_activity
+import app_service/common/types
 
 type
   CollectibleRole* {.pure.} = enum
@@ -187,7 +188,7 @@ QtObject:
   proc getActivityToken*(self: CollectiblesModel, id: string): backend_activity.Token =
     for item in self.items:
       if(cmpIgnoreCase(item.getId(), id) == 0):
-        result.tokenType = backend_activity.TokenType.Erc721
+        result.tokenType = TokenType.ERC721
         result.chainId = backend_activity.ChainId(item.getChainId())
         var contract = item.getContractAddress()
         if len(contract) > 0:

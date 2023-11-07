@@ -106,7 +106,7 @@ SplitView {
 
             property var preSelectedAccount: txStore.selectedSenderAccount
             property string preSelectedHoldingID
-            property int preSelectedHoldingType
+            property int preSelectedHoldingType: Constants.TokenType.Unknown
             property int preSelectedSendType: Constants.SendType.Unknown
             property bool onlyAssets: false
             property string preDefinedAmountToSend
@@ -204,13 +204,16 @@ SplitView {
                 }
                 ComboBox {
                     id: tokenType
-                    model: ["Unknown", "Asset", "Collectible"]
-                    onCurrentIndexChanged: loader.preSelectedHoldingType = currentIndex
+                    model: ["Native", "Asset", "Collectible", "Fungible Token", "Unknown", "ENS"]
+                    currentIndex: 4
+                    onCurrentIndexChanged: {
+                        loader.preSelectedHoldingType = currentIndex
+                    }
                 }
             }
 
             StatusInput {
-                enabled: tokenType.currentIndex !== 0
+                enabled: tokenType.currentIndex > 0 && tokenType.currentIndex < 3
                 label: "preSelectedHoldingID (case sensitive)"
                 onTextChanged: loader.preSelectedHoldingID = text
             }

@@ -1057,11 +1057,14 @@ QtObject {
         Dismissed = 4
     }
 
+    // these are in sync with app_service/common/types.nim
     enum TokenType {
-        Unknown = 0,
+        Native = 0,
         ERC20 = 1, // Asset
         ERC721 = 2, // Collectible
-        ENS = 3
+        ERC1155 = 3,
+        Unknown = 4,
+        ENS = 5
     }
 
     enum TokenPrivilegesLevel {
@@ -1254,10 +1257,6 @@ QtObject {
     enum StandardLinkPreviewType {
         Link = 0,
         Image = 1
-    }
-
-    enum HoldingType {
-        Unknown, Asset, Collectible
     }
 
     enum UrlUnfurlingMode {

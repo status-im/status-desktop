@@ -34,8 +34,6 @@ import ../../../../app_service/service/community_tokens/service as community_tok
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
-import ../../../../app_service/service/community/dto/community as community_dto
-import ../../../../app_service/common/types
 
 export io_interface
 
@@ -1307,11 +1305,11 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
     let viewAmount = tokenCriteria{"amount"}.getFloat
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
-    if tokenCriteriaDto.`type` == community_dto.TokenType.ERC20:
+    if tokenCriteriaDto.`type` == TokenType.ERC20:
       tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenCriteriaDto.symbol)
 
     let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
-    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != community_dto.TokenType.ENS:
+    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)
         return

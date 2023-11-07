@@ -127,8 +127,8 @@ QtObject:
           if flatTokensList.hasKey(unique_key):
             flatTokensList[unique_key].sources.add(s.name)
           else:
-            let tokenType = if s.name == "native" : NewTokenType.Native
-                            else: NewTokenType.ERC20
+            let tokenType = if s.name == "native" : TokenType.Native
+                            else: TokenType.ERC20
             flatTokensList[unique_key] = TokenItem(
               key: unique_key,
               name: token.name,
@@ -159,8 +159,8 @@ QtObject:
             if not addedChains.contains(token.chainID):
               tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
           else:
-            let tokenType = if s.name == "native": NewTokenType.Native
-                            else: NewTokenType.ERC20
+            let tokenType = if s.name == "native": TokenType.Native
+                            else: TokenType.ERC20
             tokenBySymbolList[token_by_symbol_key] = TokenBySymbolItem(
               key: token_by_symbol_key,
               name: token.name,

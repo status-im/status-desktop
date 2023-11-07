@@ -20,9 +20,9 @@ StatusDropdown {
     property var collectiblesModel
     property bool isENSTab: true
     property string noDataText: {
-        if(d.currentHoldingType  ===  HoldingTypes.Type.Asset)
+        if(d.currentHoldingType  ===  Constants.TokenType.ERC20)
             return noDataTextForAssets
-        if(d.currentHoldingType === HoldingTypes.Type.Collectible)
+        if(d.currentHoldingType === Constants.TokenType.ERC721)
             return noDataTextForCollectibles
         return qsTr("No data found")
     }
@@ -61,7 +61,7 @@ StatusDropdown {
 
     function openUpdateFlow() {
         d.initialHoldingMode = HoldingTypes.Mode.UpdateOrRemove
-        if(d.currentHoldingType !== HoldingTypes.Type.Ens) {
+        if(d.currentHoldingType !== Constants.TokenType.ENS) {
             if(statesStack.size === 0)
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
 
@@ -75,7 +75,7 @@ StatusDropdown {
     }
 
     function reset() {
-        d.currentHoldingType = HoldingTypes.Type.Asset
+        d.currentHoldingType = Constants.TokenType.ERC20
         d.initialHoldingMode = HoldingTypes.Mode.Add
 
         root.assetKey = ""
@@ -91,7 +91,7 @@ StatusDropdown {
 
         // Internal management properties and signals:
         readonly property var holdingTypes: [
-            HoldingTypes.Type.Asset, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
+            Constants.TokenType.ERC20, Constants.TokenType.ERC721, Constants.TokenType.ENS
         ]
         readonly property var tabsModel: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
         readonly property var tabsModelNoEns: [qsTr("Assets"), qsTr("Collectibles")]
@@ -102,7 +102,7 @@ StatusDropdown {
         readonly property bool ensReady: d.ensDomainNameValid
 
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
-        property int currentHoldingType: HoldingTypes.Type.Asset
+        property int currentHoldingType: Constants.TokenType.ERC20
 
         property bool updateSelected: false
 
@@ -133,7 +133,7 @@ StatusDropdown {
 
         function setInitialFlow() {
             statesStack.clear()
-            if(d.currentHoldingType !== HoldingTypes.Type.Ens)
+            if(d.currentHoldingType !== Constants.TokenType.ENS)
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
             else
                 statesStack.push(HoldingsDropdown.FlowType.Selected)
@@ -197,17 +197,17 @@ StatusDropdown {
             state: d.currentHoldingType
             states: [
                 State {
-                    name: HoldingTypes.Type.Asset
+                    name: Constants.TokenType.ERC20
                     PropertyChanges {target: loader; sourceComponent: listLayout}
                     PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Assets}
                 },
                 State {
-                    name: HoldingTypes.Type.Collectible
+                    name: Constants.TokenType.ERC721
                     PropertyChanges {target: loader; sourceComponent: listLayout}
                     PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Collectibles}
                 },
                 State {
-                    name: HoldingTypes.Type.Ens
+                    name: Constants.TokenType.ENS
                     PropertyChanges {target: loader; sourceComponent: ensLayout}
                 }
             ]
@@ -245,9 +245,9 @@ StatusDropdown {
                 PropertyChanges {
                     target: loader
                     sourceComponent: {
-                        if (d.currentHoldingType === HoldingTypes.Type.Asset)
+                        if (d.currentHoldingType === Constants.TokenType.ERC20)
                             return assetLayout
-                        if (d.currentHoldingType === HoldingTypes.Type.Collectible)
+                        if (d.currentHoldingType === Constants.TokenType.ERC721)
                             return collectibleLayout
                         return ensLayout
                     }

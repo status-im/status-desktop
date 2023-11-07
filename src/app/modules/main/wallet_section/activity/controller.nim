@@ -16,9 +16,9 @@ import app/core/eventemitter
 import app/core/signals/types
 
 import backend/activity as backend_activity
-import backend/backend as backend
 
 import app_service/common/conversion
+import app_service/common/types
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
@@ -358,7 +358,7 @@ QtObject:
       for chainId in self.chainIds:
         let token = self.tokenService.findTokenBySymbol(chainId, tokenCode)
         if token != nil:
-          let tokenType = if token.symbol == "ETH": backend_activity.TokenType.Native else: backend_activity.TokenType.Erc20
+          let tokenType = if token.symbol == "ETH": TokenType.Native else: TokenType.ERC20
           assets.add(backend_activity.Token(
             tokenType: tokenType,
             chainId: backend_activity.ChainId(token.chainId),

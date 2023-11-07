@@ -52,7 +52,7 @@ Item {
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
             preSelectedHoldingID: JSON.parse(root.stickersStore.getStatusToken()).symbol
-            preSelectedHoldingType: Constants.HoldingType.Asset
+            preSelectedHoldingType: Constants.TokenType.ERC20
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
                     let path = bestRoutes.firstItem()

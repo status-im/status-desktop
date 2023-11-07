@@ -113,7 +113,7 @@ Item {
                     text: qsTr("Activity")
                 }
                 onCurrentIndexChanged: {
-                    RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.HoldingType.Collectible : Constants.HoldingType.Asset)
+                    RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)
                 }
             }
             StackLayout {
@@ -129,7 +129,7 @@ Item {
                     assetDetailsLaunched: stack.currentIndex === 2
                     onAssetClicked: {
                         assetDetailView.token = token
-                        RootStore.setCurrentViewedHolding(token.symbol, Constants.HoldingType.Asset)
+                        RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
                         stack.currentIndex = 2
                     }
                 }
@@ -137,7 +137,7 @@ Item {
                     collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
                     onCollectibleClicked: {
                         RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                        RootStore.setCurrentViewedHolding(uid, Constants.HoldingType.Collectible)
+                        RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
                         stack.currentIndex = 1
                     }
                 }
@@ -163,7 +163,7 @@ Item {
 
             onVisibleChanged: {
                 if (!visible)
-                    RootStore.resetCurrentViewedHolding()
+                    RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC721)
             }
         }
         AssetsDetailView {
@@ -180,7 +180,7 @@ Item {
 
             onVisibleChanged: {
                 if (!visible)
-                    RootStore.resetCurrentViewedHolding()
+                    RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC20)
             }
         }
 

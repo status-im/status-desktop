@@ -8,6 +8,8 @@ import AppLayouts.Communities.controls 1.0
 
 import Models 1.0
 
+import utils 1.0
+
 Flickable {
     id: root
 
@@ -132,7 +134,7 @@ Flickable {
                             }
 
                             Button {
-                                enabled: d.newKey && (d.newAmount || d.newType === HoldingTypes.Type.Ens)
+                                enabled: d.newKey && (d.newAmount || d.newType === Constants.TokenType.ENS)
                                 Layout.fillWidth: true
                                 text: "Add new holding"
 

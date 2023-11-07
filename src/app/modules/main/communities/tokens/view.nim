@@ -1,9 +1,9 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface as community_tokens_module_interface
-import ../../../shared_models/currency_amount
-import ../../../../../app_service/common/conversion
-import ../../../../../app_service/service/community/dto/community
+import app/modules/shared_models/currency_amount
+import app_service/common/conversion
+import app_service/common/types
 
 QtObject:
   type

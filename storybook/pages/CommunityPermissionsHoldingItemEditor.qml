@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import AppLayouts.Communities.controls 1.0
+import utils 1.0
 
 ColumnLayout {
     id: root
@@ -17,12 +18,12 @@ ColumnLayout {
     QtObject {
         id: d
 
-        readonly property bool ensLayout: root.type === HoldingTypes.Type.Ens
+        readonly property bool ensLayout: root.type === Constants.TokenType.ENS
 
         readonly property var holdingTypesModel: [
-            { value: HoldingTypes.Type.Asset, text: "Asset" },
-            { value: HoldingTypes.Type.Collectible, text: "Collectible" },
-            { value: HoldingTypes.Type.Ens, text: "ENS" }
+            { value: Constants.TokenType.ERC20, text: "Asset" },
+            { value: Constants.TokenType.ERC721, text: "Collectible" },
+            { value: Constants.TokenType.ENS, text: "ENS" }
         ]
     }
 
@@ -72,7 +73,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 visible: !d.ensLayout
-                model: root.type === HoldingTypes.Type.Asset
+                model: root.type === Constants.TokenType.ERC20
                        ? root.assetKeys : root.collectibleKeys
 
                 onActivated: root.key = currentText

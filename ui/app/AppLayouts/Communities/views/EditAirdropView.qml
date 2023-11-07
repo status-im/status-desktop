@@ -358,16 +358,16 @@ StatusScrollView {
                 const modelItem = selectedHoldingsModel.get(index)
 
                 switch(modelItem.type) {
-                    case HoldingTypes.Type.Asset:
+                    case Constants.TokenType.ERC20:
                         dropdown.assetKey = modelItem.key
                         dropdown.assetAmount = modelItem.amount
                         dropdown.assetMultiplierIndex = modelItem.multiplierIndex
-                        dropdown.setActiveTab(HoldingTypes.Type.Asset)
+                        dropdown.setActiveTab(Constants.TokenType.ERC20)
                         break
-                    case HoldingTypes.Type.Collectible:
+                    case Constants.TokenType.ERC721:
                         dropdown.collectibleKey = modelItem.key
                         dropdown.collectibleAmount = modelItem.amount
-                        dropdown.setActiveTab(HoldingTypes.Type.Collectible)
+                        dropdown.setActiveTab(Constants.TokenType.ERC721)
                         break
                     default:
                         console.warn("Unsupported token type.")

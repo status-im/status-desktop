@@ -80,9 +80,10 @@ type Shard* = ref object
   cluster*: int
   index*: int
 
-# ToDo: Will be streamlined to single TokenType under https://github.com/status-im/status-desktop/pull/12654/files
-type NewTokenType* {.pure.} = enum
+type TokenType* {.pure.} = enum
   Native = 0
   ERC20 = 1,
   ERC721 = 2,
-  ERC1155
+  ERC1155 = 3,
+  Unknown = 4,
+  ENS = 5

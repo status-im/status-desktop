@@ -124,9 +124,9 @@ QtObject {
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
 
-    function resetCurrentViewedHolding() {
+    function resetCurrentViewedHolding(type) {
         currentViewedHoldingID = ""
-        currentViewedHoldingType = Constants.HoldingType.Unknown
+        currentViewedHoldingType = type
     }
 
     function setCurrentViewedHoldingType(type) {

@@ -112,7 +112,7 @@ StatusDialog {
                     root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
                     root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
                     root.sendModalPopup.preSelectedHoldingID = token.key
-                    root.sendModalPopup.preSelectedHoldingType = Constants.HoldingType.Collectible
+                    root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC721
                     root.sendModalPopup.open()
                     close()
                 }
