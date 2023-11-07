@@ -1309,7 +1309,7 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
   else:
     self.view.emitDisplayUserProfileSignal(publicKey)
 
-method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string,
+method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
   url: string, userId: string) =
 
   if(action == StatusUrlAction.DisplayUserProfile):
@@ -1329,21 +1329,23 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       self.setActiveSection(item)
 
   elif(action == StatusUrlAction.OpenCommunityChannel):
-    var found = false
-    for cId, cModule in self.channelGroupModules.pairs:
-      if(cId == singletonInstance.userProfile.getPubKey()):
-        continue
-      if(cModule.doesCatOrChatExist(chatId)):
-        let item = self.view.model().getItemById(cId)
-        self.setActiveSection(item)
-        cModule.makeChatWithIdActive(chatId)
-        found = true
-        break
-    if not found:
+    let chatId = communityId & channelId
+    if not self.channelGroupModules.hasKey(communityId):
       let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
       # request community info and then spectate
       self.statusUrlCommunityToSpectate = communityIdToSpectate
       self.communitiesModule.requestCommunityInfo(communityIdToSpectate, importing = false)
+      return
+
+    let cModule = self.channelGroupModules[communityId]
+    let item = self.view.model().getItemById(communityId)
+    self.setActiveSection(item)
+
+    if not cModule.doesCatOrChatExist(chatId):
+      warn "community exists but not such channel found", chatId
+      return
+
+    cModule.makeChatWithIdActive(chatId)
 
   # enable after MVP
   #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
@@ -1477,14 +1479,14 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
 
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)
+  if urlData.channel.uuid != "":
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid, "", "")
+    return
   if urlData.community.communityId != "":
     self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, "", "", "")
     return
   if urlData.contact.publicKey != "":
     self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, "", "", "", urlData.contact.publicKey)
-    return
-  if urlData.channel.uuid != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, "", urlData.channel.uuid, "", "")
     return
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)

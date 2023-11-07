@@ -48,7 +48,7 @@ proc toCommunityChannelUrlDataDto*(jsonObj: JsonNode): CommunityChannelUrlDataDt
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("uuid", result.uuid)
+  discard jsonObj.getProp("channelUuid", result.uuid)
 
 proc toContactUrlDataDto*(jsonObj: JsonNode): ContactUrlDataDto =
   result = ContactUrlDataDto()
