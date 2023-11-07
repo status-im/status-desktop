@@ -13,6 +13,9 @@ type
     MemberRole
     Image
     Color
+    Description
+    MembersCount
+    Loading
 
 QtObject:
   type
@@ -56,6 +59,9 @@ QtObject:
       ModelRole.MemberRole.int: "memberRole",
       ModelRole.Image.int: "image",
       ModelRole.Color.int: "color",
+      ModelRole.Description.int: "description",
+      ModelRole.MembersCount.int: "membersCount",
+      ModelRole.Loading.int: "loading",
     }.toTable
 
   method data(self: ProfileShowcaseCommunitiesModel, index: QModelIndex, role: int): QVariant =
@@ -83,6 +89,12 @@ QtObject:
       result = newQVariant(item.image)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Description:
+      result = newQVariant(item.description)
+    of ModelRole.MembersCount:
+      result = newQVariant(item.membersCount)
+    of ModelRole.Loading:
+      result = newQVariant(item.loading)
 
   proc findIndexForCommunity(self: ProfileShowcaseCommunitiesModel, id: string): int =
     for i in 0 ..< self.items.len:
@@ -124,6 +136,9 @@ QtObject:
         ModelRole.MemberRole.int,
         ModelRole.Image.int,
         ModelRole.Color.int,
+        ModelRole.Description.int,
+        ModelRole.MembersCount.int,
+        ModelRole.Loading.int,
       ])
 
   proc upsertItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
@@ -142,12 +157,15 @@ QtObject:
     self.recalcOrder()
     self.baseModelFilterConditionsMayHaveChanged()
 
-  proc reset*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
+  proc reset*(self: ProfileShowcaseCommunitiesModel, items: seq[ProfileShowcaseCommunityItem]) =
     self.beginResetModel()
-    self.items = @[]
+    self.items = items
     self.endResetModel()
     self.countChanged()
     self.baseModelFilterConditionsMayHaveChanged()
+
+  proc clear*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
+    self.reset(@[])
 
   proc remove*(self: ProfileShowcaseCommunitiesModel, index: int) {.slot.} =
     if index < 0 or index >= self.items.len:

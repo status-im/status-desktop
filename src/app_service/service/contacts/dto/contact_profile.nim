@@ -1,4 +1,4 @@
-import json, json_serialization, sugar, std/algorithm
+import json, json_serialization, sugar
 
 include ../../../common/json_utils
 
@@ -61,9 +61,3 @@ proc toProfileShowcase*(jsonObj: JsonNode): ProfileShowcase =
     result.collectibles.add(jsonMsg.toProfileShowcaseCollectible())
   for jsonMsg in jsonObj["assets"]:
     result.assets.add(jsonMsg.toProfileShowcaseAsset())
-
-  # Sort by order as early as possible
-  result.communities.sort((a, b) => cmp(a.order, b.order))
-  result.accounts.sort((a, b) => cmp(a.order, b.order))
-  result.collectibles.sort((a, b) => cmp(a.order, b.order))
-  result.assets.sort((a, b) => cmp(a.order, b.order))

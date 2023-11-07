@@ -1,4 +1,4 @@
-import json, strformat, strutils, stint, sequtils, json_serialization, std/algorithm
+import json, strformat, strutils, stint, sequtils, json_serialization
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -115,12 +115,6 @@ proc toProfileShowcasePreferencesDto*(jsonObj: JsonNode): ProfileShowcasePrefere
     result.collectibles.add(jsonMsg.toProfileShowcaseCollectiblePreference())
   for jsonMsg in jsonObj["assets"]:
     result.assets.add(jsonMsg.toProfileShowcaseAssetPreference())
-
-  # Sort by order as early as possible
-  result.communities.sort((a, b) => cmp(a.order, b.order))
-  result.accounts.sort((a, b) => cmp(a.order, b.order))
-  result.collectibles.sort((a, b) => cmp(a.order, b.order))
-  result.assets.sort((a, b) => cmp(a.order, b.order))
 
 proc toJsonNode*(self: ProfileShowcasePreferencesDto): JsonNode =
   let communities = self.communities.map(entry => entry.toJsonNode())

@@ -33,6 +33,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    presentedPublicKey: string
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -109,6 +110,10 @@ method storeProfileShowcasePreferences(self: Module,
                                        accounts: seq[ProfileShowcaseAccountItem],
                                        collectibles: seq[ProfileShowcaseCollectibleItem],
                                        assets: seq[ProfileShowcaseAssetItem]) =
+  if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
+    error "Attempt to save preferences with wrong public key"
+    return
+
   self.controller.storeProfileShowcasePreferences(ProfileShowcasePreferencesDto(
     communities: communities.map(item => item.toShowcasePreferenceItem()),
     accounts: accounts.map(item => item.toShowcasePreferenceItem()),
@@ -117,9 +122,22 @@ method storeProfileShowcasePreferences(self: Module,
   ))
 
 method requestProfileShowcasePreferences(self: Module) =
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  if self.presentedPublicKey != myPublicKey:
+    self.view.clearModels()
+  self.presentedPublicKey = myPublicKey
+
   self.controller.requestProfileShowcasePreferences()
 
 method requestProfileShowcase*(self: Module, publicKey: string) =
+  if publicKey == singletonInstance.userProfile.getPubKey():
+    self.requestProfileShowcasePreferences()
+    return
+
+  if self.presentedPublicKey != publicKey:
+    self.view.clearModels()
+  self.presentedPublicKey = publicKey
+
   let contact = self.controller.getContactById(publicKey)
 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
@@ -128,11 +146,17 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
   for communityEntry in contact.profileShowcase.communities:
-    # TODO: what if we don't know such community?
     let community = self.controller.getCommunityById(communityEntry.communityId)
-    profileCommunityItems.add(initProfileShowcaseCommunityItem(
-      community, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
+    if community.id == "":
+      self.controller.requestCommunityInfo(communityEntry.communityId)
+      profileCommunityItems.add(initProfileShowcaseCommunityLoadingItem(
+        communityEntry.communityId, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
+    else:
+      profileCommunityItems.add(initProfileShowcaseCommunityItem(
+        community, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
+  self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
+  var addresses: seq[string] = @[]
   for account in contact.profileShowcase.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address,
@@ -142,17 +166,16 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
       ProfileShowcaseVisibility.ToEveryone,
       account.order
     ))
+    addresses.add(account.address)
 
-    for assetEntry in contact.profileShowcase.assets:
-      # TODO: need wallet api to fetch token by symbol
-      for token in self.controller.getTokensByAddress(account.address):
-        if assetEntry.symbol == token.symbol:
-          # NOTE: here can be intersections
-          profileAssetItems.add(initProfileShowcaseAssetItem(token,
-            ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
+  for assetEntry in contact.profileShowcase.assets:
+    for token in self.controller.getTokensByAddresses(addresses):
+      if assetEntry.symbol == token.symbol:
+        profileAssetItems.add(initProfileShowcaseAssetItem(token, ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
 
-    # TODO: collectibles, need wallet api to fetch collectible by uid
-  self.view.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)
+  self.view.updateProfileShowcaseAccounts(profileAccountItems)
+  self.view.updateProfileShowcaseAssets(profileAssetItems)
+  # TODO: collectibles, need wallet api to fetch collectible by uid
 
 method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
@@ -162,8 +185,16 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
 
   for communityEntry in preferences.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
-    profileCommunityItems.add(initProfileShowcaseCommunityItem(community, communityEntry.showcaseVisibility, communityEntry.order))
+    if community.id == "":
+      self.controller.requestCommunityInfo(communityEntry.communityId)
+      profileCommunityItems.add(initProfileShowcaseCommunityLoadingItem(
+        communityEntry.communityId, communityEntry.showcaseVisibility, communityEntry.order))
+    else:
+      profileCommunityItems.add(initProfileShowcaseCommunityItem(
+        community, communityEntry.showcaseVisibility, communityEntry.order))
+  self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
+  var addresses: seq[string] = @[]
   for account in preferences.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address,
@@ -173,14 +204,27 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       account.showcaseVisibility,
       account.order
     ))
+    addresses.add(account.address)
 
-    for assetEntry in preferences.assets:
-      # TODO: need wallet api to fetch token by symbol
-      for token in self.controller.getTokensByAddress(account.address):
-        if assetEntry.symbol == token.symbol:
-          # NOTE: here can be intersections
-          profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry.showcaseVisibility, assetEntry.order))
+  for assetEntry in preferences.assets:
+    for token in self.controller.getTokensByAddresses(addresses):
+      if assetEntry.symbol == token.symbol:
+        profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry.showcaseVisibility, assetEntry.order))
 
-    # TODO: collectibles, need wallet api to fetch collectible by uid
+  self.view.updateProfileShowcaseAccounts(profileAccountItems)
+  self.view.updateProfileShowcaseAssets(profileAssetItems)
+  # TODO: collectibles, need wallet api to fetch collectible by uid
 
-  self.view.updateProfileShowcasePreferences(profileCommunityItems, profileAccountItems, profileCollectibleItems, profileAssetItems)
+method onContactDetailsUpdated*(self: Module, contactId: string) =
+  if self.presentedPublicKey == contactId:
+    self.requestProfileShowcase(contactId)
+
+method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
+  var profileCommunityItems = self.view.getProfileShowcaseCommunities()
+
+  for community in communities:
+    for item in profileCommunityItems:
+      if item.id == community.id:
+        item.patchFromCommunity(community)
+
+  self.view.updateProfileShowcaseCommunities(profileCommunityItems)

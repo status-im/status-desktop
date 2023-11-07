@@ -34,7 +34,7 @@ Control {
     signal showcaseEntryChanged()
 
     function reset() {
-        showcaseModel.reset()
+        showcaseModel.clear()
         updateBaseModelFilters()
     }
 
@@ -324,7 +324,7 @@ Control {
                 onDropped: function(drop) {
                     showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
                     root.showcaseEntryChanged()
-                    root.updateModelsAfterChange()
+                    root.updateBaseModelFilters()
                 }
             }
         }
