@@ -65,7 +65,7 @@ Rectangle {
 
     property var linkPreviewModel: null
 
-    property var urlsModel: null
+    property var urlsList: null
 
     property bool askToEnableLinkPreview: false
 
@@ -122,7 +122,6 @@ Rectangle {
 
     function setText(text) {
         textInput.clear()
-        hyperlinksFormatter.undoStackManager.clear()
         textInput.append(text)
     }
 
@@ -1355,6 +1354,10 @@ Rectangle {
                                 quickTextDocument: messageInputField.textDocument
                                 codeBackgroundColor: Style.current.codeBackground
                                 codeForegroundColor: Style.current.textColor
+                                hyperlinks: control.urlsList
+                                hyperlinkColor: Theme.palette.primaryColor1
+                                highlightedHyperlink: linkPreviewArea.hoveredUrl
+                                hyperlinkHoverColor: Theme.palette.primaryColor3
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -1362,14 +1365,6 @@ Rectangle {
                                 enabled: parent.hoveredLink
                                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
                             }
-                        }
-
-                        TextEditHyperlinksFormatter {
-                            id: hyperlinksFormatter
-                            textEdit: messageInputField
-                            urlModel: control.urlsModel
-                            highlightUrl: linkPreviewArea.hoveredUrl
-                            enabled: messageInputField.enabled && messageInputField.textFormat == TextEdit.RichText
                         }
 
                         Shortcut {

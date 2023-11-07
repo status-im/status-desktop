@@ -80,6 +80,15 @@ Item {
         id: d
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
+        readonly property var urlsList: {
+            urlsModelChangeTracker.revision
+            ModelUtils.modelToFlatArray(d.activeChatContentModule.inputAreaModule.urlsModel, "url")
+        }
+
+        readonly property ModelChangeTracker urlsModelChangeTracker: ModelChangeTracker {
+            model: d.activeChatContentModule.inputAreaModule.urlsModel
+        }
+
         readonly property UsersStore activeUsersStore: UsersStore {
             usersModule: !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
         }
@@ -255,7 +264,7 @@ Item {
                     store: root.rootStore
                     usersStore: d.activeUsersStore
                     linkPreviewModel: d.activeChatContentModule.inputAreaModule.linkPreviewModel
-                    urlsModel: d.activeChatContentModule.inputAreaModule.urlsModel
+                    urlsList: d.urlsList
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
                             return false
