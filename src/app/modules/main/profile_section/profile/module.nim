@@ -11,6 +11,7 @@ import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
+import app_service/common/types
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
@@ -145,13 +146,13 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
   for communityEntry in profileShowcase.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
     if community.id == "":
-      self.controller.requestCommunityInfo(communityEntry.communityId)
+      # Fetch the community, however, we do not the shard info, so hopefully we can fetch it
+      self.controller.requestCommunityInfo(communityEntry.communityId, shard = nil)
       profileCommunityItems.add(initProfileShowcaseCommunityLoadingItem(
         communityEntry.communityId, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
     else:
@@ -186,15 +187,12 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
   for communityEntry in preferences.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
     if community.id == "":
-      self.controller.requestCommunityInfo(communityEntry.communityId)
-      profileCommunityItems.add(initProfileShowcaseCommunityLoadingItem(
-        communityEntry.communityId, communityEntry.showcaseVisibility, communityEntry.order))
+      warn "Unknown community added to our own profile showcase" , communityId = communityEntry.communityId
     else:
       profileCommunityItems.add(initProfileShowcaseCommunityItem(
         community, communityEntry.showcaseVisibility, communityEntry.order))

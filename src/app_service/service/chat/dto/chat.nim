@@ -2,6 +2,7 @@
 
 import json, strformat, strutils, tables
 import ../../community/dto/community
+import ../../shared_urls/dto/url_data
 
 include ../../../common/json_utils
 import ../../../../app_service/common/types
@@ -380,12 +381,7 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
   discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
 
-  var shardObj: JsonNode
-  if(jsonObj.getProp("shard", shardObj)):
-    var shard = initShard()
-    discard shardObj.getProp("cluster", shard.cluster)
-    discard shardObj.getProp("index", shard.index)
-    result.shard = shard
+  result.shard = jsonObj.getShard()
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
 proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =

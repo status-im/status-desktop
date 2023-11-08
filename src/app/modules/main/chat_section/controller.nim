@@ -14,6 +14,7 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import backend/collectibles as backend_collectibles
 
 import ../../../core/signals/types
@@ -40,16 +41,17 @@ type
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
     communityTokensService: community_tokens_service.Service
+    sharedUrlsService: shared_urls_service.Service
 
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service,
-  contactService: contact_service.Service, chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service): Controller =
+    settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service, chatService: chat_service.Service,
+    communityService: community_service.Service, messageService: message_service.Service,
+    gifService: gif_service.Service, mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service, tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: shared_urls_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -67,6 +69,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
   result.communityTokensService = communityTokensService
+  result.sharedUrlsService = sharedUrlsService
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -158,14 +161,14 @@ proc init*(self: Controller) =
       let belongsToCommunity = chat.communityId.len > 0
       discard self.delegate.addOrUpdateChat(chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
-        self.mailserversService, setChatAsActive = false)
+        self.mailserversService, self.sharedUrlsService, setChatAsActive = false)
 
   self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
     var args = CreatedChatArgs(e)
     let belongsToCommunity = args.chat.communityId.len > 0
     discard self.delegate.addOrUpdateChat(args.chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
-      self.mailserversService, setChatAsActive = true)
+      self.mailserversService, self.sharedUrlsService, setChatAsActive = true)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
@@ -173,7 +176,7 @@ proc init*(self: Controller) =
       let belongsToCommunity = args.chat.communityId.len > 0
       discard self.delegate.addOrUpdateChat(args.chat, belongsToCommunity, self.events, self.settingsService,
         self.nodeConfigurationService, self.contactService, self.chatService, self.communityService,
-        self.messageService, self.gifService, self.mailserversService, setChatAsActive = true)
+        self.messageService, self.gifService, self.mailserversService, self.sharedUrlsService, setChatAsActive = true)
 
     self.events.on(SIGNAL_COMMUNITY_METRICS_UPDATED) do(e: Args):
       let args = CommunityMetricsArgs(e)
@@ -420,6 +423,7 @@ proc getChatsAndBuildUI*(self: Controller) =
         self.messageService,
         self.gifService,
         self.mailserversService,
+        self.sharedUrlsService,
       )
 
 proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
@@ -464,7 +468,7 @@ proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, 
   if(response.success):
     discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
-      self.gifService, self.mailserversService)
+      self.gifService, self.mailserversService, self.sharedUrlsService)
 
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, ensName)
@@ -534,14 +538,14 @@ proc createGroupChat*(self: Controller, communityID: string, groupName: string, 
   if(response.success):
     discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
-      self.gifService, self.mailserversService)
+      self.gifService, self.mailserversService, self.sharedUrlsService)
 
 proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
     discard self.delegate.addOrUpdateChat(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
-      self.gifService, self.mailserversService)
+      self.gifService, self.mailserversService, self.sharedUrlsService)
 
 proc acceptRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
   self.communityService.asyncAcceptRequestToJoinCommunity(communityId, requestId)

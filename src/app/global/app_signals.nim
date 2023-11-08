@@ -39,4 +39,4 @@ type
     url*: string
     userId*: string # can be public key or ens name
 
-const SIGNAL_STATUS_URL_REQUESTED* = "statusUrlRequested"
+const SIGNAL_STATUS_URL_ACTIVATED* = "statusUrlActivated"

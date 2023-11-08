@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, uuids, sets, times
+import NimQml, chronicles, sequtils, uuids, sets, times, tables
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -15,6 +15,7 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../../../app_service/common/types
 
 export io_interface
@@ -45,15 +46,16 @@ type
     getMessageRequestId: UUID
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service):
+    belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
+    chatService: chat_service.Service, messageService: message_service.Service,
+    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService,
-  communityService, chatService, messageService, mailserversService)
+    communityService, chatService, messageService, mailserversService, sharedUrlsService)
   result.moduleLoaded = false
   result.initialMessagesLoaded = false
   result.firstUnseenMessageState = (false, false, false)
@@ -805,7 +807,7 @@ proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver:
     self.controller.requestContactInfo(contactId)
   
 proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool) =
-  for communityId in item.linkPreviewModel.getCommunityIds().items:
+  for communityId, url in item.linkPreviewModel.getCommunityLinks().pairs:
     let community = self.controller.getCommunityById(communityId)
     
     if community.id != "":
@@ -815,6 +817,7 @@ proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserv
       continue
     
     debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
+    let urlData = self.controller.parseSharedUrl(url)
     item.linkPreviewModel.onCommunityInfoRequested(communityId)
-    self.controller.requestCommunityInfo(communityId, false, initDuration(minutes = 10))
+    self.controller.requestCommunityInfo(communityId, urlData.community.shard, useDatabase = false, initDuration(minutes = 10))
 

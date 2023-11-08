@@ -433,12 +433,24 @@ proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: 
       "intervals": intervals
     }])
 
-proc requestCommunityInfo*(communityId: string, tryDatabase: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("fetchCommunity".prefix, %*[{
-    "communityKey": communityId,
-    "tryDatabase": tryDatabase,
-    "waitForResponse": true
-  }])
+proc requestCommunityInfo*(communityId: string, tryDatabase: bool, shardCluster: int, shardIndex: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  if shardCluster != -1 and shardIndex != -1:
+    result = callPrivateRPC("fetchCommunity".prefix,%*[{
+      "communityKey": communityId,
+      "tryDatabase": tryDatabase,
+      "shard": {
+        "shardCluster": shardCluster,
+        "shardIndex": shardIndex,
+      },
+      "waitForResponse": true
+    }])
+  else:
+    result = callPrivateRPC("fetchCommunity".prefix, %*[{
+      "communityKey": communityId,
+      "tryDatabase": tryDatabase,
+      "shard": nil,
+      "waitForResponse": true
+    }])
 
 proc importCommunity*(communityKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("importCommunity".prefix, %*[communityKey])

@@ -8,6 +8,7 @@ include ../../../common/json_utils
 import ../../../common/conversion
 
 import ../../chat/dto/chat
+import ../../shared_urls/dto/url_data
 import ../../../../app_service/common/types
 
 type RequestToJoinType* {.pure.}= enum
@@ -461,12 +462,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("pubsubTopic", result.pubsubTopic)
   discard jsonObj.getProp("pubsubTopicKey", result.pubsubTopicKey)
 
-  var shardObj: JsonNode
-  if(jsonObj.getProp("shard", shardObj)):
-    var shard = initShard()
-    discard shardObj.getProp("cluster", shard.cluster)
-    discard shardObj.getProp("index", shard.index)
-    result.shard = shard
+  result.shard = jsonObj.getShard()
 
 proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:

@@ -54,11 +54,13 @@ type
     communityId: string
     importing: bool
     tryDatabase: bool
+    shardCluster: int
+    shardIndex: int
 
 const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestCommunityInfoTaskArg](argEncoded)
   try:
-    let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase)
+    let response = status_go.requestCommunityInfo(arg.communityId, arg.tryDatabase, arg.shardCluster, arg.shardIndex)
     arg.finish(%* {
       "communityId": arg.communityId,
       "importing": arg.importing,

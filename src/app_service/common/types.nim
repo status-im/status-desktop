@@ -76,13 +76,9 @@ type
     InProgress,
     Completed
 
-type Shard* = object
+type Shard* = ref object
   cluster*: int
   index*: int
-
-proc initShard*(cluster: int = -1, index: int = -1): Shard =
-  result.cluster = cluster
-  result.index = index
 
 # ToDo: Will be streamlined to single TokenType under https://github.com/status-im/status-desktop/pull/12654/files
 type NewTokenType* {.pure.} = enum
