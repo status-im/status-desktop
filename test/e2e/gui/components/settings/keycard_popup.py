@@ -7,11 +7,12 @@ import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
+from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
 from scripts.tools.image import Image
 
 
-class CreateNewKeycardAccountSeedPhrasePopup(BasePopup):
+class KeycardPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
@@ -24,6 +25,10 @@ class CreateNewKeycardAccountSeedPhrasePopup(BasePopup):
         self._seed_phrase_first_word_component = QObject('word0_StatusInput')
         self._seed_phrase_second_word_component = QObject('word1_StatusInput')
         self._seed_phrase_third_word_component = QObject('word2_StatusInput')
+        self._seed_phrase_word_text_edit = TextEdit('statusSeedPhraseInputField_TextEdit')
+        self._seed_phrase_12_words_button = Button('switchTabBar_12_words_StatusSwitchTabButton')
+        self._seed_phrase_18_words_button = Button('switchTabBar_18_words_StatusSwitchTabButton')
+        self._seed_phrase_24_words_button = Button('switchTabBar_24_words_StatusSwitchTabButton')
         self._field_object = QObject('edit_TextEdit')
         self._keypair_item = QObject('o_KeyPairItem')
         self._keypair_tag = QObject('o_StatusListItemTag')
@@ -125,6 +130,26 @@ class CreateNewKeycardAccountSeedPhrasePopup(BasePopup):
         seed_phrases = self.get_seed_phrases
         self.click_next()
         self.confirm_first_word(seed_phrases).confirm_second_word(seed_phrases).confirm_third_word(seed_phrases)
+        self.click_next().name_keycard(keycard_name)
+        self.click_next().name_account(account_name)
+        self.click_next()
+
+    @allure.step('Import keycard via seed phrase')
+    def import_keycard_via_seed_phrase(self, seed_phrase_words: list, pin: str, keycard_name: str, account_name: str):
+        if len(seed_phrase_words) == 12:
+            self._seed_phrase_12_words_button.click()
+        elif len(seed_phrase_words) == 18:
+            self._seed_phrase_18_words_button.click()
+        elif len(seed_phrase_words) == 24:
+            self._seed_phrase_24_words_button.click()
+        else:
+            raise RuntimeError("Wrong amount of seed words", len(seed_phrase_words))
+        for count, word in enumerate(seed_phrase_words, start=1):
+            self._seed_phrase_word_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{count}'
+            self._seed_phrase_word_text_edit.text = word
+        self.click_next()
+        self.input_pin(pin)
+        self.input_pin(pin)
         self.click_next().name_keycard(keycard_name)
         self.click_next().name_account(account_name)
         self.click_next()

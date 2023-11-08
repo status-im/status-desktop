@@ -2,7 +2,7 @@ import allure
 
 import configs.timeouts
 import driver
-from gui.components.settings.keycard_popup import CreateNewKeycardAccountSeedPhrasePopup
+from gui.components.settings.keycard_popup import KeycardPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
@@ -27,7 +27,12 @@ class KeycardSettingsView(QObject):
     @allure.step('Choose create new keycard account with new seed phrase')
     def click_create_new_account_with_new_seed_phrase(self):
         self._create_new_keycard_account_button.click()
-        return CreateNewKeycardAccountSeedPhrasePopup().wait_until_appears()
+        return KeycardPopup().wait_until_appears()
+
+    @allure.step('Choose import or restore keycard via seed phrase')
+    def click_import_restore_via_seed_phrase(self):
+        self._import_restore_via_seed_phrase_button.click()
+        return KeycardPopup().wait_until_appears()
 
     @allure.step('Check that all keycard options displayed')
     def all_keycard_options_available(self):
