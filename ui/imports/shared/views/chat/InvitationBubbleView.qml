@@ -45,7 +45,8 @@ Control {
                 const communityJson = root.store.getSectionByIdJson(communityId)
 
                 if (!communityJson) {
-                    root.store.requestCommunityInfo(communityId)
+                    // we don't have the shard info, so we will try to fetch it on waku
+                    root.store.requestCommunityInfo(communityId, -1, -1)
                     return null
                 }
 

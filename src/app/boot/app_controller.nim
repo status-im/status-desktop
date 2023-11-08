@@ -114,6 +114,7 @@ proc applyNecessaryActionsAfterLoggingIn(self: AppController)
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
 proc userLoggedIn*(self: AppController): string
+proc appReady*(self: AppController)
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
@@ -458,12 +459,14 @@ proc load(self: AppController) =
 proc userLoggedIn*(self: AppController): string =
   try:
     self.generalService.startMessenger()
-    self.statusFoundation.userLoggedIn()
     return ""
   except Exception as e:
     let errDescription = e.msg
     error "error: ", errDescription
     return errDescription
+
+proc appReady*(self: AppController) =
+  self.statusFoundation.appReady()
 
 proc finishAppLoading*(self: AppController) =
   self.load()

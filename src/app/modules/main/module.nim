@@ -75,10 +75,8 @@ import ../../core/custom_urls/urls_manager
 
 export io_interface
 
-const COMMUNITY_PERMISSION_ACCESS_ON_REQUEST = 3
 const TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS = 5000 # 5 seconds
 const STATUS_URL_ENS_RESOLVE_REASON = "StatusUrl"
-const MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN = 19
 
 type
   SpectateRequest = object
@@ -118,10 +116,12 @@ type
     chatsLoaded: bool
     communityDataLoaded: bool
     pendingSpectateRequest: SpectateRequest
+    statusDeepLinkToActivate: string
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
+method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 
 proc newModule*[T](
   delegate: T,
@@ -183,6 +183,7 @@ proc newModule*[T](
     walletAccountService,
     tokenService,
     networkService,
+    sharedUrlsService,
   )
   result.moduleLoaded = false
   result.chatsLoaded = false
@@ -650,7 +651,8 @@ method onChannelGroupsLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service
+  communityTokensService: community_tokens_service.Service,
+  sharedUrlsService: urls_service.Service,
 ) =
   self.chatsLoaded = true
   if not self.communityDataLoaded:
@@ -676,15 +678,15 @@ method onChannelGroupsLoaded*[T](
       mailserversService,
       walletAccountService,
       tokenService,
-      communityTokensService
+      communityTokensService,
+      sharedUrlsService,
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
     self.view.model().addItem(channelGroupItem)
     if activeSectionId == channelGroupItem.id:
       activeSection = channelGroupItem
 
-    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService, nodeConfigurationService,
-      contactsService, chatService, communityService, messageService, gifService, mailserversService)
+    self.channelGroupModules[channelGroup.id].load()
 
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():
@@ -694,6 +696,8 @@ method onChannelGroupsLoaded*[T](
   self.view.model().removeItem(LOADING_SECTION_ID)
 
   self.view.sectionsLoaded()
+  if self.statusDeepLinkToActivate != "":
+    self.activateStatusDeepLink(self.statusDeepLinkToActivate)
 
 method onCommunityDataLoaded*[T](
   self: Module[T],
@@ -708,7 +712,8 @@ method onCommunityDataLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service
+  communityTokensService: community_tokens_service.Service,
+  sharedUrlsService: urls_service.Service,
 ) =
   self.communityDataLoaded = true
   if not self.chatsLoaded:
@@ -727,7 +732,8 @@ method onCommunityDataLoaded*[T](
     mailserversService,
     walletAccountService,
     tokenService,
-    communityTokensService
+    communityTokensService,
+    sharedUrlsService,
   )
 
 method onChatsLoadingFailed*[T](self: Module[T]) =
@@ -977,7 +983,8 @@ method communityJoined*[T](
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
-  setActive: bool = false
+  sharedUrlsService: urls_service.Service,
+  setActive: bool = false,
 ) =
   if self.channelGroupModules.contains(community.id):
     # The community is already spectated
@@ -1000,11 +1007,11 @@ method communityJoined*[T](
       mailserversService,
       walletAccountService,
       tokenService,
-      communityTokensService
+      communityTokensService,
+      sharedUrlsService,
     )
   let channelGroup = community.toChannelGroupDto()
-  self.channelGroupModules[community.id].load(channelGroup, events, settingsService, nodeConfigurationService, contactsService,
-    chatService, communityService, messageService, gifService, mailserversService)
+  self.channelGroupModules[community.id].load()
 
   let communitySectionItem = self.createChannelGroupItem(channelGroup)
   if (firstCommunityJoined):
@@ -1332,9 +1339,6 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
 method onMyRequestAdded*[T](self: Module[T]) =
     self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
 
-proc getCommunityIdFromFullChatId(fullChatId: string): string =
-  const communityIdLength = 68
-  return fullChatId.substr(0, communityIdLength-1)
 
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) =
   let contact = self.controller.getContact(publicKey)
@@ -1344,7 +1348,7 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
     self.view.emitDisplayUserProfileSignal(publicKey)
 
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
-  url: string, userId: string) =
+    url: string, userId: string, shard: Shard) =
 
   case action:
     of StatusUrlAction.DisplayUserProfile:
@@ -1360,7 +1364,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
         # request community info and then spectate
         self.pendingSpectateRequest.communityId = communityId
         self.pendingSpectateRequest.channelUuid = ""
-        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
+        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
         return
       
       self.controller.switchTo(communityId, "", "")
@@ -1372,7 +1376,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       if item.isEmpty():
         self.pendingSpectateRequest.communityId = communityId
         self.pendingSpectateRequest.channelUuid = channelId
-        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
+        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
         return
 
       self.controller.switchTo(communityId, chatId, "")
@@ -1511,18 +1515,21 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
 
 
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
+  if not self.chatsLoaded:
+    self.statusDeepLinkToActivate = statusDeepLink
+    return
   let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)
   if urlData.channel.uuid != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid, "", "")
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid,
+      url="", userId="", urlData.community.shard)
     return
   if urlData.community.communityId != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, "", "", "")
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, channelId="", url="", userId="", urlData.community.shard)
     return
   if urlData.contact.publicKey != "":
-    self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, "", "", "", urlData.contact.publicKey)
+    self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, communityId="", channelId="", url="",
+      urlData.contact.publicKey, urlData.community.shard)
     return
-  let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
-  self.urlsManager.onUrlActivated(linkToActivate)
 
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
   if (sectionId.len > 0 and self.channelGroupModules.contains(sectionId)):

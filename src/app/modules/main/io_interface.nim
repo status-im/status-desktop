@@ -13,7 +13,8 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/community_tokens/community_collectible_owner
-from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState
+import app_service/service/shared_urls/service as urls_service
+from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard
 
 import app/global/app_signals
 import app/core/eventemitter
@@ -75,38 +76,40 @@ method communitySectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChannelGroupsLoaded*(
-  self: AccessInterface,
-  channelGroups: seq[ChannelGroupDto],
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service)
-  {.base.} =
+    self: AccessInterface,
+    channelGroups: seq[ChannelGroupDto],
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+  ) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityDataLoaded*(
-  self: AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service)
-  {.base.} =
+    self: AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+  ){.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatsLoadingFailed*(self: AccessInterface) {.base.} =
@@ -145,18 +148,20 @@ method communitySpectated*(self: AccessInterface, communityId: string) {.base.} 
   raise newException(ValueError, "No implementation available")
 
 method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  setActive: bool = false) {.base.} =
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    setActive: bool = false,
+  ) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
@@ -260,7 +265,7 @@ method isConnected*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string,
-  url: string, userId: string) {.base.} =
+  url: string, userId: string, shard: Shard) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =

@@ -9,8 +9,9 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
+import ../../../../../../app_service/common/types
 import ../../../../../global/app_signals
-import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
 
@@ -31,11 +32,12 @@ type
     chatService: chat_service.Service
     messageService: message_service.Service
     mailserversService: mailservers_service.Service
+    sharedUrlsService: shared_urls_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-  chatService: chat_service.Service, messageService: message_service.Service, mailserversService: mailservers_service.Service):
-  Controller =
+    belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
+    chatService: chat_service.Service, messageService: message_service.Service,
+    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = initUniqueUUIDEventEmitter(events)
@@ -48,6 +50,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.chatService = chatService
   result.messageService = messageService
   result.mailserversService = mailserversService
+  result.sharedUrlsService = sharedUrlsService
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -240,8 +243,10 @@ proc getCommunityDetails*(self: Controller): CommunityDto =
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
-proc requestCommunityInfo*(self: Controller, communityId: string, useDataabse: bool, requiredTimeSinceLastRequest: Duration) =
-  self.communityService.requestCommunityInfo(communityId, false, useDataabse, requiredTimeSinceLastRequest)
+proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, useDatabase: bool,
+    requiredTimeSinceLastRequest: Duration) =
+  self.communityService.requestCommunityInfo(communityId, shard, importing = false,
+    useDatabase, requiredTimeSinceLastRequest)
 
 proc getOneToOneChatNameAndImage*(self: Controller):
     tuple[name: string, image: string, largeImage: string] =
@@ -325,3 +330,6 @@ proc resendChatMessage*(self: Controller, messageId: string): string =
 
 proc asyncGetMessageById*(self: Controller, messageId: string): UUID =
   return self.messageService.asyncGetMessageById(messageId)
+
+proc parseSharedUrl*(self: Controller, url: string): UrlDataDto =
+  return self.sharedUrlsService.parseSharedUrl(url)

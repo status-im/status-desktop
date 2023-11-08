@@ -35,9 +35,10 @@ type
 proc getChatDetails*(self: Controller): ChatDto
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service, chatService: chat_service.Service,
-  communityService: community_service.Service, messageService: message_service.Service): Controller =
+    belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service,
+    chatService: chat_service.Service, communityService: community_service.Service,
+    messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = initUniqueUUIDEventEmitter(events)

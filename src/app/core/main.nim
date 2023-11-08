@@ -34,5 +34,5 @@ proc initUrlSchemeManager*(self: StatusFoundation, urlSchemeEvent: StatusEvent,
   self.urlsManager = newUrlsManager(self.events, urlSchemeEvent, singleInstance,
     protocolUriOnStart)
 
-proc userLoggedIn*(self: StatusFoundation) =
-  self.urlsManager.userLoggedIn()
+proc appReady*(self: StatusFoundation) =
+  self.urlsManager.appReady()

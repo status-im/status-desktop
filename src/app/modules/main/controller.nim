@@ -22,6 +22,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 import app_service/service/network/service as networks_service
 import app_service/service/visual_identity/service as procs_from_visual_identity_service
+import app_service/service/shared_urls/service as urls_service
 
 import app_service/service/community_tokens/community_collectible_owner
 
@@ -58,6 +59,7 @@ type
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
     networksService: networks_service.Service
+    sharedUrlsService: urls_service.Service
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
@@ -80,7 +82,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   communityTokensService: community_tokens_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  networksService: networks_service.Service
+  networksService: networks_service.Service,
+  sharedUrlsService: urls_service.Service
 ):
   Controller =
   result = Controller()
@@ -101,6 +104,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
   result.networksService = networksService
+  result.sharedUrlsService = sharedUrlsService
 
 proc delete*(self: Controller) =
   discard
@@ -121,7 +125,8 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.communityTokensService
+      self.communityTokensService,
+      self.sharedUrlsService,
     )
 
   self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
@@ -137,7 +142,8 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.communityTokensService
+      self.communityTokensService,
+      self.sharedUrlsService,
     )
 
   self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
@@ -173,6 +179,7 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.communityTokensService,
+      self.sharedUrlsService,
       setActive = args.fromUserAction
     )
 
@@ -192,6 +199,7 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.communityTokensService,
+      self.sharedUrlsService,
       setActive = args.fromUserAction
     )
     self.delegate.onFinaliseOwnershipStatusChanged(args.isPendingOwnershipRequest, args.community.id)
@@ -217,6 +225,7 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.communityTokensService,
+      self.sharedUrlsService,
       setActive = true
     )
 
@@ -238,6 +247,7 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.communityTokensService,
+      self.sharedUrlsService,
       setActive = false
     )
 
@@ -277,9 +287,9 @@ proc init*(self: Controller) =
     var args = ActiveSectionChatArgs(e)
     self.setActiveSection(args.sectionId)
 
-  self.events.on(SIGNAL_STATUS_URL_REQUESTED) do(e: Args):
+  self.events.on(SIGNAL_STATUS_URL_ACTIVATED) do(e: Args):
     var args = StatusUrlArgs(e)
-    self.delegate.onStatusUrlRequested(args.action, args.communityId, args.chatId, args.url, args.userId)
+    self.delegate.activateStatusDeepLink(args.url)
 
   self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
     var args = ClickedNotificationArgs(e)

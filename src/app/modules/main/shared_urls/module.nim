@@ -1,4 +1,4 @@
-import NimQml, sequtils, stint
+import NimQml, sequtils, stint, json
 
 import io_interface, view, controller
 import ../io_interface as delegate_interface

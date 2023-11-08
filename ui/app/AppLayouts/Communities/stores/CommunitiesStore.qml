@@ -102,13 +102,13 @@ QtObject {
         return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }
 
-    function requestCommunityInfo(communityKey, importing = false) {
+    function requestCommunityInfo(communityKey, shardCluster, shardIndex, importing = false) {
         const publicKey = Utils.isCompressedPubKey(communityKey)
                             ? Utils.changeCommunityKeyCompression(communityKey)
                             : communityKey
         if (importing)
             root.mainModuleInst.setCommunityIdToSpectate(publicKey)
-        root.communitiesModuleInst.requestCommunityInfo(publicKey, importing)
+        root.communitiesModuleInst.requestCommunityInfo(publicKey, shardCluster, shardIndex, importing)
     }
 
     property var communitiesList: communitiesModuleInst.model
