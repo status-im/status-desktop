@@ -91,6 +91,7 @@ pipeline {
       when { expression { params.BUILD_SOURCE.startsWith('http') } }
       steps { timeout(5) { script {
         sh 'mkdir -p ./tmp/pkg/'
+        setBuildDescFromFile(params.BUILD_SOURCE)
         fileOperations([
           fileDownloadOperation(
             url:            params.BUILD_SOURCE,
@@ -112,6 +113,7 @@ pipeline {
           selector:    lastWithArtifacts(),
           target:      './tmp'
         )
+        setBuildDescFromFile(utils.findFile('tmp/pkg/*tar.gz'))
       } } }
     }
 
@@ -168,32 +170,23 @@ pipeline {
 }
 
 def setNewBuildName() {
-  /* Skip PR builds for QA automation repo. */
-  if (JOB_BASE_NAME == 'prs') {
-    return
-  }
-  /* For URLs we need to parse the filename to get attributes. */
-  if (params.BUILD_SOURCE.startsWith('http')) {
-    def tokens = utils.parseFilename(utils.baseName(params.BUILD_SOURCE))
-    currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
-    currentBuild.description = formatMap([
-      Node: NODE_NAME,
-      Build: tokens.build,
-      Commit: tokens.commit,
-      Version: (tokens.tstamp ?: tokens.version),
-    ])
-  } else {
+  if (currentBuild.upstreamBuilds) {
     def parent = utils.parentOrCurrentBuild()
-    if (!(parent.getFullDisplayName() ==~ /prs/)) {
-      currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
-    } else {
-      currentBuild.displayName = utils.baseName(params.BUILD_SOURCE)
-    }
-    currentBuild.description = formatMap([
-      Node: NODE_NAME,
-      Build: params.BUILD_SOURCE.minus('status-desktop/'),
-    ])
+    currentBuild.displayName = parent.getFullDisplayName().minus('status-desktop » ')
   }
+}
+
+def setBuildDescFromFile(fileNameOrPath) {
+  def tokens = utils.parseFilename(utils.baseName(fileNameOrPath))
+  if (tokens.build.startsWith('pr')) {
+    currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
+  }
+  currentBuild.description = formatMap([
+    Node: NODE_NAME,
+    Build: tokens.build,
+    Commit: tokens.commit,
+    Version: (tokens.tstamp ?: tokens.version),
+  ])
 }
 
 def updateGitHubStatus() {
