@@ -7,7 +7,7 @@ include  app_service/common/json_utils
 export balance_dto
 
 type
-  TokenMarketValuesDto* = object
+  TokenMarketValuesDto* = ref object
     marketCap*: float64
     highDay*: float64
     lowDay*: float64
@@ -19,7 +19,7 @@ type
     hasError*: bool
 
 type
-  WalletTokenDto* = object
+  WalletTokenDto* = ref object
     name*: string
     symbol*: string
     decimals*: int
