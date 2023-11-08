@@ -241,6 +241,7 @@ var NODE_CONFIG* = %* {
     "EnableFilterFullNode": true,
     "UseShardAsDefaultTopic": true,
   },
+  # Don't add properties to the login node config that can be changed from within the app
   "WalletConfig": {
     "Enabled": true,
     "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
