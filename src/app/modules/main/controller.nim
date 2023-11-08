@@ -195,6 +195,7 @@ proc init*(self: Controller) =
       setActive = args.fromUserAction
     )
     self.delegate.onFinaliseOwnershipStatusChanged(args.isPendingOwnershipRequest, args.community.id)
+    self.delegate.communitySpectated(args.community.id)
 
   self.events.on(TOGGLE_SECTION) do(e:Args):
     let args = ToggleSectionArgs(e)

@@ -81,6 +81,10 @@ const STATUS_URL_ENS_RESOLVE_REASON = "StatusUrl"
 const MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN = 19
 
 type
+  SpectateRequest = object
+    communityId*: string
+    channelUuid*: string
+
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     view: View
@@ -113,7 +117,7 @@ type
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
-    statusUrlCommunityToSpectate: string
+    pendingSpectateRequest: SpectateRequest
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
@@ -812,7 +816,8 @@ method emitMailserverNotWorking*[T](self: Module[T]) =
   self.view.emitMailserverNotWorking()
 
 method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
-  self.statusUrlCommunityToSpectate = communityId
+  self.pendingSpectateRequest.communityId = communityId
+  self.pendingSpectateRequest.channelUuid = ""
 
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
@@ -942,6 +947,16 @@ method isConnected[T](self: Module[T]): bool =
 
 method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()
+
+method communitySpectated*[T](self: Module[T], communityId: string) =
+  if self.pendingSpectateRequest.communityId != communityId:
+    return
+  self.pendingSpectateRequest.communityId = ""
+  if self.pendingSpectateRequest.channelUuid == "":
+    return
+  let chatId = communityId & self.pendingSpectateRequest.channelUuid
+  self.pendingSpectateRequest.channelUuid = ""
+  self.controller.switchTo(communityId, chatId, "")
 
 method communityJoined*[T](
   self: Module[T],
@@ -1101,8 +1116,7 @@ method isEnsVerified*[T](self: Module[T], publicKey: string): bool =
   return self.controller.getContact(publicKey).ensVerified
 
 method communityDataImported*[T](self: Module[T], community: CommunityDto) =
-  if community.id == self.statusUrlCommunityToSpectate:
-    self.statusUrlCommunityToSpectate = ""
+  if community.id == self.pendingSpectateRequest.communityId:
     discard self.communitiesModule.spectateCommunity(community.id)
 
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
@@ -1309,41 +1323,42 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
   else:
     self.view.emitDisplayUserProfileSignal(publicKey)
 
-method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string,
+method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
   url: string, userId: string) =
 
-  if(action == StatusUrlAction.DisplayUserProfile):
-    if singletonInstance.utils().isCompressedPubKey(userId):
-      let contactPk = singletonInstance.utils().getDecompressedPk(userId)
-      self.switchToContactOrDisplayUserProfile(contactPk)
-    else:
-      self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
+  case action:
+    of StatusUrlAction.DisplayUserProfile:
+      if singletonInstance.utils().isCompressedPubKey(userId):
+        let contactPk = singletonInstance.utils().getDecompressedPk(userId)
+        self.switchToContactOrDisplayUserProfile(contactPk)
+      else:
+        self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
 
-  elif(action == StatusUrlAction.OpenCommunity):
-    let item = self.view.model().getItemById(communityId)
-    if item.isEmpty():
-      # request community info and then spectate
-      self.statusUrlCommunityToSpectate = communityId
-      self.communitiesModule.requestCommunityInfo(communityId, importing = false)
-    else:
-      self.setActiveSection(item)
+    of StatusUrlAction.OpenCommunity:
+      let item = self.view.model().getItemById(communityId)
+      if item.isEmpty():
+        # request community info and then spectate
+        self.pendingSpectateRequest.communityId = communityId
+        self.pendingSpectateRequest.channelUuid = ""
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
+        return
+      
+      self.controller.switchTo(communityId, "", "")
 
-  elif(action == StatusUrlAction.OpenCommunityChannel):
-    var found = false
-    for cId, cModule in self.channelGroupModules.pairs:
-      if(cId == singletonInstance.userProfile.getPubKey()):
-        continue
-      if(cModule.doesCatOrChatExist(chatId)):
-        let item = self.view.model().getItemById(cId)
-        self.setActiveSection(item)
-        cModule.makeChatWithIdActive(chatId)
-        found = true
-        break
-    if not found:
-      let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
-      # request community info and then spectate
-      self.statusUrlCommunityToSpectate = communityIdToSpectate
-      self.communitiesModule.requestCommunityInfo(communityIdToSpectate, importing = false)
+    of StatusUrlAction.OpenCommunityChannel:
+      let chatId = communityId & channelId
+      let item = self.view.model().getItemById(communityId)
+
+      if item.isEmpty():
+        self.pendingSpectateRequest.communityId = communityId
+        self.pendingSpectateRequest.channelUuid = channelId
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
+        return
+
+      self.controller.switchTo(communityId, chatId, "")
+
+    else:
+      return
 
   # enable after MVP
   #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
@@ -1477,14 +1492,14 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
 
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)
+  if urlData.channel.uuid != "":
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid, "", "")
+    return
   if urlData.community.communityId != "":
     self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, "", "", "")
     return
   if urlData.contact.publicKey != "":
     self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, "", "", "", urlData.contact.publicKey)
-    return
-  if urlData.channel.uuid != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, "", urlData.channel.uuid, "", "")
     return
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)
