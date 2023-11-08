@@ -1312,40 +1312,45 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
   url: string, userId: string) =
 
-  if(action == StatusUrlAction.DisplayUserProfile):
-    if singletonInstance.utils().isCompressedPubKey(userId):
-      let contactPk = singletonInstance.utils().getDecompressedPk(userId)
-      self.switchToContactOrDisplayUserProfile(contactPk)
-    else:
-      self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
+  case action:
+    of StatusUrlAction.DisplayUserProfile:
+      if singletonInstance.utils().isCompressedPubKey(userId):
+        let contactPk = singletonInstance.utils().getDecompressedPk(userId)
+        self.switchToContactOrDisplayUserProfile(contactPk)
+      else:
+        self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
 
-  elif(action == StatusUrlAction.OpenCommunity):
-    let item = self.view.model().getItemById(communityId)
-    if item.isEmpty():
-      # request community info and then spectate
-      self.statusUrlCommunityToSpectate = communityId
-      self.communitiesModule.requestCommunityInfo(communityId, importing = false)
-    else:
+    of StatusUrlAction.OpenCommunity:
+      let item = self.view.model().getItemById(communityId)
+      if item.isEmpty():
+        # request community info and then spectate
+        self.statusUrlCommunityToSpectate = communityId
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
+      else:
+        self.setActiveSection(item)
+
+    of StatusUrlAction.OpenCommunityChannel:
+      let chatId = communityId & channelId
+      let item = self.view.model().getItemById(communityId)
+
+      if item.isEmpty() or not self.channelGroupModules.hasKey(communityId):
+        let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
+        # request community info and then spectate
+        self.statusUrlCommunityToSpectate = communityIdToSpectate
+        self.communitiesModule.requestCommunityInfo(communityIdToSpectate, importing = false)
+        return
+
+      let cModule = self.channelGroupModules[communityId]
       self.setActiveSection(item)
 
-  elif(action == StatusUrlAction.OpenCommunityChannel):
-    let chatId = communityId & channelId
-    if not self.channelGroupModules.hasKey(communityId):
-      let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
-      # request community info and then spectate
-      self.statusUrlCommunityToSpectate = communityIdToSpectate
-      self.communitiesModule.requestCommunityInfo(communityIdToSpectate, importing = false)
+      if not cModule.doesCatOrChatExist(chatId):
+        warn "community exists but not such channel found", chatId
+        return
+
+      cModule.makeChatWithIdActive(chatId)
+
+    else:
       return
-
-    let cModule = self.channelGroupModules[communityId]
-    let item = self.view.model().getItemById(communityId)
-    self.setActiveSection(item)
-
-    if not cModule.doesCatOrChatExist(chatId):
-      warn "community exists but not such channel found", chatId
-      return
-
-    cModule.makeChatWithIdActive(chatId)
 
   # enable after MVP
   #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
