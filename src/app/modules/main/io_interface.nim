@@ -141,6 +141,9 @@ method activeSectionSet*(self: AccessInterface, sectionId: string) {.base.} =
 method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communitySpectated*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,

@@ -81,6 +81,10 @@ const STATUS_URL_ENS_RESOLVE_REASON = "StatusUrl"
 const MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN = 19
 
 type
+  SpectateRequest = object
+    communityId*: string
+    channelUuid*: string
+
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
     view: View
@@ -113,7 +117,7 @@ type
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
-    statusUrlCommunityToSpectate: string
+    pendingSpectateRequest: SpectateRequest
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
@@ -812,7 +816,8 @@ method emitMailserverNotWorking*[T](self: Module[T]) =
   self.view.emitMailserverNotWorking()
 
 method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
-  self.statusUrlCommunityToSpectate = communityId
+  self.pendingSpectateRequest.communityId = communityId
+  self.pendingSpectateRequest.channelUuid = ""
 
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
@@ -942,6 +947,16 @@ method isConnected[T](self: Module[T]): bool =
 
 method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()
+
+method communitySpectated*[T](self: Module[T], communityId: string) =
+  if self.pendingSpectateRequest.communityId != communityId:
+    return
+  self.pendingSpectateRequest.communityId = ""
+  if self.pendingSpectateRequest.channelUuid == "":
+    return
+  let chatId = communityId & self.pendingSpectateRequest.channelUuid
+  self.pendingSpectateRequest.channelUuid = ""
+  self.controller.switchTo(communityId, chatId, "")
 
 method communityJoined*[T](
   self: Module[T],
@@ -1101,8 +1116,7 @@ method isEnsVerified*[T](self: Module[T], publicKey: string): bool =
   return self.controller.getContact(publicKey).ensVerified
 
 method communityDataImported*[T](self: Module[T], community: CommunityDto) =
-  if community.id == self.statusUrlCommunityToSpectate:
-    self.statusUrlCommunityToSpectate = ""
+  if community.id == self.pendingSpectateRequest.communityId:
     discard self.communitiesModule.spectateCommunity(community.id)
 
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
@@ -1324,30 +1338,24 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       let item = self.view.model().getItemById(communityId)
       if item.isEmpty():
         # request community info and then spectate
-        self.statusUrlCommunityToSpectate = communityId
+        self.pendingSpectateRequest.communityId = communityId
+        self.pendingSpectateRequest.channelUuid = ""
         self.communitiesModule.requestCommunityInfo(communityId, importing = false)
-      else:
-        self.setActiveSection(item)
+        return
+      
+      self.controller.switchTo(communityId, "", "")
 
     of StatusUrlAction.OpenCommunityChannel:
       let chatId = communityId & channelId
       let item = self.view.model().getItemById(communityId)
 
-      if item.isEmpty() or not self.channelGroupModules.hasKey(communityId):
-        let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
-        # request community info and then spectate
-        self.statusUrlCommunityToSpectate = communityIdToSpectate
-        self.communitiesModule.requestCommunityInfo(communityIdToSpectate, importing = false)
+      if item.isEmpty():
+        self.pendingSpectateRequest.communityId = communityId
+        self.pendingSpectateRequest.channelUuid = channelId
+        self.communitiesModule.requestCommunityInfo(communityId, importing = false)
         return
 
-      let cModule = self.channelGroupModules[communityId]
-      self.setActiveSection(item)
-
-      if not cModule.doesCatOrChatExist(chatId):
-        warn "community exists but not such channel found", chatId
-        return
-
-      cModule.makeChatWithIdActive(chatId)
+      self.controller.switchTo(communityId, chatId, "")
 
     else:
       return

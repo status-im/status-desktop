@@ -1834,7 +1834,6 @@ QtObject:
     if self.communityInfoRequests.hasKey(communityId):
       let lastRequestTime = self.communityInfoRequests[communityId]
       let actualTimeSincLastRequest = now - lastRequestTime
-      debug "requestCommunityInfo: TIME", communityId, now, lastRequestTime, requiredTimeSinceLastRequest, actualTimeSincLastRequest
       if actualTimeSincLastRequest < requiredTimeSinceLastRequest:
         debug "requestCommunityInfo: skipping as required time has not passed yet since last request", communityId, actualTimeSincLastRequest, requiredTimeSinceLastRequest
         return
