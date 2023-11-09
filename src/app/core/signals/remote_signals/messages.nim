@@ -13,6 +13,7 @@ import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
 import ../../../../app_service/service/wallet_account/dto/[keypair_dto]
+import ../../../../app_service/service/profile/dto/[profile_showcase]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -38,6 +39,7 @@ type MessageSignal* = ref object of Signal
   keypairs*: seq[KeypairDto]
   watchOnlyAccounts*: seq[WalletAccountDto]
   accountsPositions*: seq[WalletAccountDto]
+  updatedProfileShowcases*: seq[ProfileShowcaseDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -155,6 +157,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("accountsPositions"):
     for jsonAcc in e["accountsPositions"]:
       signal.accountsPositions.add(jsonAcc.toWalletAccountDto())
+
+  if e.contains("updatedProfileShowcases"):
+    for jsonProfileShowcase in e["updatedProfileShowcases"]:
+      signal.updatedProfileShowcases.add(jsonProfileShowcase.toProfileShowcaseDto())
 
   result = signal
 

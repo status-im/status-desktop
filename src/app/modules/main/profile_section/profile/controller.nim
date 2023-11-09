@@ -7,7 +7,6 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/contacts/service as contacts_service
 import app_service/common/social_links
 
 import app_service/service/profile/dto/profile_showcase_preferences
@@ -20,7 +19,6 @@ type
     settingsService: settings_service.Service
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
-    contactsService: contacts_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -28,8 +26,7 @@ proc newController*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service,
-    contactsService: contacts_service.Service): Controller =
+    walletAccountService: wallet_account_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -37,7 +34,6 @@ proc newController*(
   result.settingsService = settingsService
   result.communityService = communityService
   result.walletAccountService = walletAccountService
-  result.contactsService = contactsService
 
 proc delete*(self: Controller) =
   discard
@@ -57,9 +53,9 @@ proc init*(self: Controller) =
     let args = ProfileShowcasePreferencesArgs(e)
     self.delegate.updateProfileShowcasePreferences(args.preferences)
 
-  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.onContactDetailsUpdated(args.contactId)
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED) do(e: Args):
+    let args = ProfileShowcaseForContactArgs(e)
+    self.delegate.updateProfileShowcase(args.profileShowcase)
 
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
     let args = CommunitiesArgs(e)
@@ -86,9 +82,6 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
 
-proc getContactById*(self: Controller, id: string): ContactsDto =
-  return self.contactsService.getContactById(id)
-
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
 
@@ -103,6 +96,9 @@ proc storeProfileShowcasePreferences*(self: Controller, preferences: ProfileShow
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()
+
+proc requestProfileShowcaseForContact*(self: Controller, contactId: string) =
+  self.profileService.requestProfileShowcaseForContact(contactId)
 
 proc requestCommunityInfo*(self: Controller, communityId: string) =
   self.communityService.requestCommunityInfo(communityId)

@@ -1,6 +1,7 @@
 import NimQml
 
 import app_service/common/social_links
+import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
 import app_service/service/community/dto/community
 
@@ -60,6 +61,9 @@ method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =

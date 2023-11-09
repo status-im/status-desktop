@@ -9,7 +9,7 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/contacts/service as contacts_service
+import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
 import app_service/common/social_links
 
@@ -41,13 +41,12 @@ proc newModule*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service,
-    contactsService: contacts_service.Service): Module =
+    walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, contactsService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -138,14 +137,18 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
     self.view.clearModels()
   self.presentedPublicKey = publicKey
 
-  let contact = self.controller.getContactById(publicKey)
+  self.controller.requestProfileShowcaseForContact(publicKey)
+
+method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
+  if self.presentedPublicKey != profileShowcase.contactId:
+    return
 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
 
-  for communityEntry in contact.profileShowcase.communities:
+  for communityEntry in profileShowcase.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
     if community.id == "":
       self.controller.requestCommunityInfo(communityEntry.communityId)
@@ -157,7 +160,7 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
   var addresses: seq[string] = @[]
-  for account in contact.profileShowcase.accounts:
+  for account in profileShowcase.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address,
       account.name,
@@ -168,7 +171,7 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
     ))
     addresses.add(account.address)
 
-  for assetEntry in contact.profileShowcase.assets:
+  for assetEntry in profileShowcase.assets:
     for token in self.controller.getTokensByAddresses(addresses):
       if assetEntry.symbol == token.symbol:
         profileAssetItems.add(initProfileShowcaseAssetItem(token, ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
@@ -178,6 +181,9 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   # TODO: collectibles, need wallet api to fetch collectible by uid
 
 method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
+  if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
+    return
+
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
@@ -214,10 +220,6 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
   self.view.updateProfileShowcaseAssets(profileAssetItems)
   # TODO: collectibles, need wallet api to fetch collectible by uid
-
-method onContactDetailsUpdated*(self: Module, contactId: string) =
-  if self.presentedPublicKey == contactId:
-    self.requestProfileShowcase(contactId)
 
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
   var profileCommunityItems = self.view.getProfileShowcaseCommunities()
