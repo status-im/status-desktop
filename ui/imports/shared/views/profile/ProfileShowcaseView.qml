@@ -217,11 +217,6 @@ Control {
                             }
                         }
                     ]
-                    onClicked: {
-                        if (root.readOnly)
-                            return
-                        root.walletStore.setFilterAddress(model.address)
-                    }
                 }
             }
         }

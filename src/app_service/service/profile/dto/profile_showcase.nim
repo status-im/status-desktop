@@ -21,7 +21,8 @@ type ProfileShowcaseAsset* = ref object of RootObj
   symbol*: string
   order*: int
 
-type ProfileShowcase* = ref object of RootObj
+type ProfileShowcaseDto* = ref object of RootObj
+  contactId*: string
   communities*: seq[ProfileShowcaseCommunity]
   accounts*: seq[ProfileShowcaseAccount]
   collectibles*: seq[ProfileShowcaseCollectible]
@@ -50,8 +51,10 @@ proc toProfileShowcaseAsset*(jsonObj: JsonNode): ProfileShowcaseAsset =
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("order", result.order)
 
-proc toProfileShowcase*(jsonObj: JsonNode): ProfileShowcase =
-  result = ProfileShowcase()
+proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
+  result = ProfileShowcaseDto()
+
+  discard jsonObj.getProp("contactId", result.contactId)
 
   for jsonMsg in jsonObj["communities"]:
     result.communities.add(jsonMsg.toProfileShowcaseCommunity())

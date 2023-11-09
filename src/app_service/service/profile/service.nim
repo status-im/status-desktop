@@ -10,6 +10,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_accounts
 
 import ../accounts/dto/accounts
+import dto/profile_showcase
 import dto/profile_showcase_preferences
 
 include async_tasks
@@ -21,8 +22,12 @@ type
   ProfileShowcasePreferencesArgs* = ref object of Args
     preferences*: ProfileShowcasePreferencesDto
 
+  ProfileShowcaseForContactArgs* = ref object of Args
+    profileShowcase*: ProfileShowcaseDto
+
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED* = "profileShowcasePreferencesUpdated"
+const SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED* = "profileShowcaseForContactUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -44,6 +49,13 @@ QtObject:
     self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
+
+    self.events.on(SignalType.Message.event) do(e: Args):
+      let receivedData = MessageSignal(e)
+      if receivedData.updatedProfileShowcases.len > 0:
+        for profileShowcase in receivedData.updatedProfileShowcases:
+          self.events.emit(SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED,
+            ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
 
   proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
     try:
@@ -93,15 +105,38 @@ QtObject:
     except Exception as e:
       error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
 
+  proc requestProfileShowcaseForContact*(self: Service, contactId: string) =
+    let arg = AsyncGetProfileShowcaseForContactTaskArg(
+      pubkey: contactId,
+      tptr: cast[ByteAddress](asyncGetProfileShowcaseForContactTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncProfileShowcaseForContactLoaded",
+    )
+    self.threadpool.start(arg)
+
+  proc asyncProfileShowcaseForContactLoaded*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
+        return
+
+      let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
+
+      self.events.emit(SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED,
+        ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
+    except Exception as e:
+      error "Error requesting profile showcase for a contact", msg = e.msg
+
   proc requestProfileShowcasePreferences*(self: Service) =
     let arg = QObjectTaskArg(
       tptr: cast[ByteAddress](asyncGetProfileShowcasePreferencesTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "asyncProfileShowcaseLoaded",
+      slot: "asyncProfileShowcasePreferencesLoaded",
     )
     self.threadpool.start(arg)
 
-  proc asyncProfileShowcaseLoaded*(self: Service, rpcResponse: string) {.slot.} =
+  proc asyncProfileShowcasePreferencesLoaded*(self: Service, rpcResponse: string) {.slot.} =
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
