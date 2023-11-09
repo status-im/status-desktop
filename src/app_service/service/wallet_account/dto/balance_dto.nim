@@ -2,7 +2,7 @@ import json, strformat, stint, strutils
 
 include  app_service/common/json_utils
 
-type BalanceDto* = ref object
+type BalanceDto* = object
   rawBalance*: Uint256
   balance*: float64
   address*: string
