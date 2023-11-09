@@ -65,6 +65,12 @@ StatusDialog {
 
     QtObject {
         id: d
+
+        property bool ensOrStickersPurpose: popup.preSelectedSendType === Constants.SendType.ENSRegister ||
+                                            popup.preSelectedSendType === Constants.SendType.ENSRelease ||
+                                            popup.preSelectedSendType === Constants.SendType.ENSSetPubKey ||
+                                            popup.preSelectedSendType === Constants.SendType.StickersBuy
+
         readonly property var currencyStore: store.currencyStore
         readonly property int errorType: !amountToSendInput.input.valid && !isERC721Transfer ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
@@ -115,7 +121,7 @@ StatusDialog {
 
         onSelectedHoldingChanged: {
             if (d.selectedHoldingType === Constants.HoldingType.Asset) {
-                if(store.sendType !== Constants.SendType.Bridge)
+                if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetSymbol(selectedHolding.symbol)
             } else if (d.selectedHoldingType === Constants.HoldingType.Collectible) {
