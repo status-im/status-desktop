@@ -63,6 +63,7 @@ QtObject {
         readonly property string custom: Style.png("collectibles/SNT")
         readonly property string doodles: Style.png("collectibles/Doodles")
         readonly property string mana: Style.png("collectibles/MANA-token-icon")
+        readonly property string cryptoPunks: Style.png("collectibles/CryptoPunks")
     }
 
     readonly property QtObject networks: QtObject {

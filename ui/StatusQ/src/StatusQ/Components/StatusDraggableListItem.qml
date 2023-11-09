@@ -295,7 +295,6 @@ ItemDelegate {
         }
 
         Loader {
-            asynchronous: true
             active: !!root.icon.name || !!root.icon.source
             visible: active
             sourceComponent: root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
@@ -375,6 +374,7 @@ ItemDelegate {
             width: root.icon.width
             height: root.icon.height
             image.source: root.icon.source
+            image.sourceSize: Qt.size(width, height)
             showLoadingIndicator: true
             image.fillMode: Image.PreserveAspectCrop
         }

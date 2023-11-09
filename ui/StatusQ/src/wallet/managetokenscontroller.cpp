@@ -51,6 +51,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
             reloadCommunityIds();
             m_communityTokensModel->setCommunityIds(m_communityIds);
             m_communityTokensModel->saveCustomSortOrder();
+            m_communityTokensModel->applySort();
         });
         m_modelConnectionsInitialized = true;
     });
@@ -115,6 +116,9 @@ void ManageTokensController::saveSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
+    if (m_arrangeByCommunity)
+        m_communityTokensModel->applySort();
+
     // gather the data to save
     SerializedTokenData result;
     for (auto model: {m_regularTokensModel, m_communityTokensModel})
@@ -127,11 +131,11 @@ void ManageTokensController::saveSettings()
     SerializedTokenData::const_key_value_iterator it = result.constKeyValueBegin();
     for (auto i = 0; it != result.constKeyValueEnd() && i < result.size(); it++, i++) {
         m_settings.setArrayIndex(i);
-        const auto tuple = it->second;
+        const auto& [pos, visible, groupId] = it->second;
         m_settings.setValue(QStringLiteral("symbol"), it->first);
-        m_settings.setValue(QStringLiteral("pos"), std::get<0>(tuple));
-        m_settings.setValue(QStringLiteral("visible"), std::get<1>(tuple));
-        m_settings.setValue(QStringLiteral("groupId"), std::get<2>(tuple));
+        m_settings.setValue(QStringLiteral("pos"), pos);
+        m_settings.setValue(QStringLiteral("visible"), visible);
+        m_settings.setValue(QStringLiteral("groupId"), groupId);
     }
     m_settings.endArray();
     m_settings.endGroup();
@@ -169,7 +173,7 @@ void ManageTokensController::loadSettings()
             qCWarning(manageTokens) << Q_FUNC_INFO << "Missing symbol while reading tokens settings";
             continue;
         }
-        const auto pos = m_settings.value(QStringLiteral("pos"), -1).toInt();
+        const auto pos = m_settings.value(QStringLiteral("pos"), INT_MAX).toInt();
         const auto visible = m_settings.value(QStringLiteral("visible"), true).toBool();
         const auto groupId = m_settings.value(QStringLiteral("groupId")).toString();
         m_settingsData.insert(symbol, {pos, visible, groupId});
@@ -180,7 +184,6 @@ void ManageTokensController::loadSettings()
 
 void ManageTokensController::revert()
 {
-    loadSettings();
     parseSourceModel();
 }
 
@@ -203,6 +206,7 @@ void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
         // clear all the models
         for (auto model: m_allModels)
             model->clear();
+        m_settingsData.clear();
         m_communityIds.clear();
         m_sourceModel = newSourceModel;
         emit sourceModelChanged();
@@ -239,9 +243,12 @@ void ManageTokensController::parseSourceModel()
         model->clear();
     m_communityIds.clear();
 
+    // load settings
+    loadSettings();
+
     // read and transform the original data
     const auto newSize = m_sourceModel->rowCount();
-    qCInfo(manageTokens) << "!!! PARSING" << newSize << "TOKENS";
+    qCDebug(manageTokens) << "!!! PARSING" << newSize << "TOKENS";
     for (auto i = 0; i < newSize; i++) {
         addItem(i);
     }
@@ -259,7 +266,7 @@ void ManageTokensController::parseSourceModel()
     }
 
 #ifdef QT_DEBUG
-    qCInfo(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
+    qCDebug(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
 #endif
 
     emit sourceModelChanged();
@@ -281,16 +288,21 @@ void ManageTokensController::addItem(int index)
     const auto communityId = dataForIndex(srcIndex, kCommunityIdRoleName).toString();
     const auto communityName = dataForIndex(srcIndex, kCommunityNameRoleName).toString();
     const auto visible = m_settingsData.contains(symbol) ? std::get<1>(m_settingsData.value(symbol)) : true;
+    const auto bgColor = dataForIndex(srcIndex, kBackgroundColorRoleName).value<QColor>();
+    const auto collectionUid = dataForIndex(srcIndex, kCollectionUidRoleName).toString();
+    const auto collectionName = dataForIndex(srcIndex, kCollectionNameRoleName).toString();
 
     TokenData token;
     token.symbol = symbol;
     token.name = dataForIndex(srcIndex, kNameRoleName).toString();
     token.image = dataForIndex(srcIndex, kTokenImageRoleName).toString();
+    if (bgColor.isValid())
+        token.backgroundColor = bgColor;
     token.communityId = communityId;
     token.communityName = !communityName.isEmpty() ? communityName : communityId;
     token.communityImage = dataForIndex(srcIndex, kCommunityImageRoleName).toString();
-    token.collectionUid = dataForIndex(srcIndex, kCollectionUidRoleName).toString();
-    token.collectionName = dataForIndex(srcIndex, kCollectionNameRoleName).toString();
+    token.collectionUid = collectionUid;
+    token.collectionName = !collectionName.isEmpty() ? collectionName : collectionUid;
     token.balance = dataForIndex(srcIndex, kEnabledNetworkBalanceRoleName);
     token.currencyBalance = dataForIndex(srcIndex, kEnabledNetworkCurrencyBalanceRoleName);
 
