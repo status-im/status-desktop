@@ -6,3 +6,6 @@ StatusDateRangePicker 1.0 StatusDateRangePicker.qml
 ActivityFilterTagItem 1.0 ActivityFilterTagItem.qml
 SortOrderComboBox 1.0 SortOrderComboBox.qml
 ManageTokenMenuButton 1.0 ManageTokenMenuButton.qml
+ManageTokensCommunityTag 1.0 ManageTokensCommunityTag.qml
+ManageTokensDelegate 1.0 ManageTokensDelegate.qml
+ManageTokensGroupDelegate 1.0 ManageTokensGroupDelegate.qml

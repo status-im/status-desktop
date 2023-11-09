@@ -117,6 +117,7 @@ QHash<int, QByteArray> ManageTokensModel::roleNames() const
         {CurrencyBalanceRole, kEnabledNetworkCurrencyBalanceRoleName},
         {CustomSortOrderNoRole, kCustomSortOrderNoRoleName},
         {TokenImageRole, kTokenImageRoleName},
+        {TokenBackgroundColorRole, kBackgroundColorRoleName},
     };
 
     return roles;
@@ -142,6 +143,7 @@ QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
     case CurrencyBalanceRole: return token.currencyBalance;
     case CustomSortOrderNoRole: return token.customSortOrderNo;
     case TokenImageRole: return token.image;
+    case TokenBackgroundColorRole: return token.backgroundColor;
     }
 
     return {};

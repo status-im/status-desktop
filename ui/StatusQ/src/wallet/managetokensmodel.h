@@ -1,9 +1,11 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QColor>
 #include <QLoggingCategory>
 
 #include <optional>
+#include <tuple>
 
 Q_DECLARE_LOGGING_CATEGORY(manageTokens)
 
@@ -16,16 +18,18 @@ const auto kCommunityNameRoleName = QByteArrayLiteral("communityName");
 const auto kCommunityImageRoleName = QByteArrayLiteral("communityImage");
 const auto kCollectionUidRoleName = QByteArrayLiteral("collectionUid");
 const auto kCollectionNameRoleName = QByteArrayLiteral("collectionName");
-const auto kEnabledNetworkBalanceRoleName = QByteArrayLiteral("enabledNetworkBalance");
+const auto kEnabledNetworkBalanceRoleName = QByteArrayLiteral("enabledNetworkBalance"); // TODO add an extra (separate role) for group->childCount
 const auto kEnabledNetworkCurrencyBalanceRoleName = QByteArrayLiteral("enabledNetworkCurrencyBalance");
 const auto kCustomSortOrderNoRoleName = QByteArrayLiteral("customSortOrderNo");
 const auto kTokenImageRoleName = QByteArrayLiteral("imageUrl");
+const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
 } // namespace
 
 struct TokenData {
     QString symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, image;
+    QColor backgroundColor{Qt::transparent};
     QVariant balance, currencyBalance;
-    int customSortOrderNo{-1};
+    int customSortOrderNo{INT_MAX};
 };
 
 // symbol -> {sortOrder, visible, groupId}
@@ -50,6 +54,7 @@ public:
         CurrencyBalanceRole,
         CustomSortOrderNoRole,
         TokenImageRole,
+        TokenBackgroundColorRole,
     };
     Q_ENUM(TokenDataRoles)
 

@@ -17,6 +17,7 @@ StatusFlatButton {
     property bool isGroup
     property string groupId
     property bool isCommunityAsset
+    property bool isCollectible
 
     readonly property bool hideEnabled: model.symbol !== "ETH"
     readonly property bool menuVisible: menuLoader.active
@@ -38,29 +39,34 @@ StatusFlatButton {
 
     Loader {
         id: menuLoader
+        objectName: "manageTokensContextMenuLoader"
         active: false
         sourceComponent: StatusMenu {
             onClosed: menuLoader.active = false
 
             StatusAction {
+                objectName: "miMoveToTop"
                 enabled: !root.inHidden && root.currentIndex !== 0
                 icon.name: "arrow-top"
                 text: qsTr("Move to top")
                 onTriggered: root.moveRequested(root.currentIndex, 0)
             }
             StatusAction {
+                objectName: "miMoveUp"
                 enabled: !root.inHidden && root.currentIndex !== 0
                 icon.name: "arrow-up"
                 text: qsTr("Move up")
                 onTriggered: root.moveRequested(root.currentIndex, root.currentIndex - 1)
             }
             StatusAction {
+                objectName: "miMoveDown"
                 enabled: !root.inHidden && root.currentIndex < root.count - 1
                 icon.name: "arrow-down"
                 text: qsTr("Move down")
                 onTriggered: root.moveRequested(root.currentIndex, root.currentIndex + 1)
             }
             StatusAction {
+                objectName: "miMoveToBottom"
                 enabled: !root.inHidden && root.currentIndex < root.count - 1
                 icon.name: "arrow-bottom"
                 text: qsTr("Move to bottom")
@@ -71,16 +77,18 @@ StatusFlatButton {
 
             // any token
             StatusAction {
+                objectName: "miHideToken"
                 enabled: !root.inHidden && root.hideEnabled && !root.isGroup && !root.isCommunityAsset
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
-                text: qsTr("Hide asset")
+                text: root.isCollectible ? qsTr("Hide collectible") : qsTr("Hide asset")
                 onTriggered: root.showHideRequested(root.currentIndex, false)
             }
             StatusAction {
+                objectName: "miShowToken"
                 enabled: root.inHidden
                 icon.name: "show"
-                text: qsTr("Show asset")
+                text: root.isCollectible ? qsTr("Show collectible") : qsTr("Show asset")
                 onTriggered: root.showHideRequested(root.currentIndex, true)
             }
 
@@ -93,14 +101,16 @@ StatusFlatButton {
                 type: StatusAction.Type.Danger
 
                 StatusAction {
-                    text: qsTr("This asset")
+                    objectName: "miHideCommunityToken"
+                    text: root.isCollectible ? qsTr("This collectible") : qsTr("This asset")
                     onTriggered: {
                         root.showHideRequested(root.currentIndex, false)
                         communitySubmenu.dismiss()
                     }
                 }
                 StatusAction {
-                    text: qsTr("All assets from this community")
+                    objectName: "miHideAllCommunityTokens"
+                    text: root.isCollectible ? qsTr("All collectibles from this community") : qsTr("All assets from this community")
                     onTriggered: {
                         root.showHideGroupRequested(root.groupId, false)
                         communitySubmenu.dismiss()
@@ -110,16 +120,18 @@ StatusFlatButton {
 
             // token group
             StatusAction {
+                objectName: "miHideTokenGroup"
                 enabled: !root.inHidden && root.isGroup
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
-                text: qsTr("Hide all assets from this community")
+                text: root.isCollectible ? qsTr("Hide all collectibles from this community") : qsTr("Hide all assets from this community")
                 onTriggered: root.showHideGroupRequested(root.groupId, false)
             }
             StatusAction {
+                objectName: "miShowTokenGroup"
                 enabled: root.inHidden && root.groupId
                 icon.name: "show"
-                text: qsTr("Show all assets from this community")
+                text: root.isCollectible ? qsTr("Show all collectibles from this community") : qsTr("Show all assets from this community")
                 onTriggered: root.showHideGroupRequested(root.groupId, true)
             }
         }

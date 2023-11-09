@@ -9,6 +9,7 @@ FlatTokensModel 1.0 FlatTokensModel.qml
 IconModel 1.0 IconModel.qml
 LinkPreviewModel 1.0 LinkPreviewModel.qml
 MintedTokensModel 1.0 MintedTokensModel.qml
+ManageCollectiblesModel 1.0 ManageCollectiblesModel.qml
 ManageTokensModel 1.0 ManageTokensModel.qml
 RecipientModel 1.0 RecipientModel.qml
 SourceOfTokensModel 1.0 SourceOfTokensModel.qml
