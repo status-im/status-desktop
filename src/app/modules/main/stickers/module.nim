@@ -120,7 +120,8 @@ method onUserAuthenticated*(self: Module, password: string) =
       self.tmpBuyStickersTransactionDetails.eip1559Enabled
     )
     if response.error.isEmptyOrWhitespace():
-      self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
+      self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, installed = false,
+        pending = true)
     self.view.transactionWasSent(chainId = response.chainId, txHash = response.txHash, error = response.error)
 
 method obtainMarketStickerPacks*(self: Module) =
@@ -250,10 +251,10 @@ method getChainIdForStickers*(self: Module): int =
   return self.controller.getChainIdForStickers()
 
 method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
-  self.view.stickerPacks.updateStickerPackInList(packID, true, false)
+  self.view.stickerPacks.updateStickerPackInList(packID, installed = true, pending = false)
   self.controller.installStickerPack(packID)
   self.view.emitTransactionCompletedSignal(true, transactionHash, packID, trxType)
 
 method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string) =
-  self.view.stickerPacks.updateStickerPackInList(packID, false, false)
+  self.view.stickerPacks.updateStickerPackInList(packID, installed = false, pending = false)
   self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType)
