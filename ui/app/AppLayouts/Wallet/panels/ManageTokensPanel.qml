@@ -13,7 +13,7 @@ import utils 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
-Control {
+StatusLazyScrollView {
     id: root
 
     required property var baseModel
@@ -34,6 +34,9 @@ Control {
         d.controller.clearSettings();
     }
 
+    contentWidth: layout.width
+    contentHeight: layout.height
+
     QtObject {
         id: d
 
@@ -46,14 +49,21 @@ Control {
         }
     }
 
-    contentItem: ColumnLayout {
+
+    ColumnLayout {
+        id: layout
         spacing: Style.current.padding
 
         StatusListView {
-            Layout.fillWidth: true
+            id: regularTokens
+            objectName: "regularTokens"
+
+            NestedListViewAnchor {
+                target: regularTokens
+                anchorIn: root.flickable
+            }
+
             model: d.controller.regularTokensModel
-            implicitHeight: contentHeight
-            interactive: false
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
@@ -140,9 +150,14 @@ Control {
     Component {
         id: cmpCommunityTokens
         StatusListView {
+            id: communityTokens
+
+            NestedListViewAnchor {
+                target: communityTokens
+                anchorIn: root.flickable
+            }
+
             model: d.controller.communityTokensModel
-            implicitHeight: contentHeight
-            interactive: false
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
@@ -161,9 +176,15 @@ Control {
     Component {
         id: cmpCommunityTokenGroups
         StatusListView {
+            id: communityTokensGroups
+
+            NestedListViewAnchor {
+                target: communityTokensGroups
+                anchorIn: root.flickable
+            }
+
             model: d.controller.communityTokenGroupsModel
-            implicitHeight: contentHeight
-            interactive: false
+
             spacing: Style.current.halfPadding
 
             displaced: Transition {
