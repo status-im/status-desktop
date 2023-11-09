@@ -229,6 +229,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Include in total balance")
+        objectName: "includeTotalBalanceListItem"
         visible: d.watchOnlyAccount
         color: Theme.palette.transparent
         components: [
