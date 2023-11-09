@@ -133,6 +133,14 @@ StatusDialog {
             }
             recalculateRoutesAndFees()
         }
+
+        function prepareForMaxSend(value, symbol) {
+            if(symbol !== "ETH") {
+                return value
+            }
+            
+            return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
+        }
     }
 
     width: 556
@@ -268,12 +276,19 @@ StatusDialog {
                             visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer
                             title: {
                                 if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
-                                    const balance = d.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount) , d.hoveredHolding.symbol)
+                                    const input = amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount
+                                    const max = d.prepareForMaxSend(input, d.hoveredHolding.symbol)
+                                    if (max <= 0)
+                                        return qsTr("No balances active")
+
+                                    const balance = d.currencyStore.formatCurrencyAmount(max , d.hoveredHolding.symbol)
                                     return qsTr("Max: %1").arg(balance)
                                 }
-                                if (d.maxInputBalance <= 0)
+                                const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
+                                if (max <= 0)
                                     return qsTr("No balances active")
-                                const balance = d.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol)
+
+                                const balance = d.currencyStore.formatCurrencyAmount(max, d.inputSymbol)
                                 return qsTr("Max: %1").arg(balance)
                             }
                             tagClickable: true
@@ -282,7 +297,8 @@ StatusDialog {
                             bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
                             titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                             onTagClicked: {
-                                amountToSendInput.input.text = d.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
+                                const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
+                                amountToSendInput.input.text = d.currencyStore.formatCurrencyAmount(max, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
                             }
                         }
                     }
