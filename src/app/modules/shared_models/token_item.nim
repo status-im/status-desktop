@@ -9,12 +9,6 @@ type
   Item* = object
     name: string
     symbol: string
-    totalRawBalance: string
-    totalBalance: CurrencyAmount
-    totalCurrencyBalance: CurrencyAmount
-    enabledNetworkCurrencyBalance: CurrencyAmount
-    enabledNetworkBalance: CurrencyAmount
-    balances: balance_model.BalanceModel
     description: string
     assetWebsiteUrl: string
     builtOn: string
@@ -29,6 +23,13 @@ type
     currencyPrice: CurrencyAmount
     decimals: int
     loading: bool
+
+    totalRawBalance: string
+    totalBalance: CurrencyAmount
+    totalCurrencyBalance: CurrencyAmount
+    enabledNetworkCurrencyBalance: CurrencyAmount
+    enabledNetworkBalance: CurrencyAmount
+    balances: balance_model.BalanceModel
 
 proc initItem*(
   name, symbol, totalRawBalance: string,

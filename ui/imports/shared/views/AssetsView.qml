@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,21 +20,24 @@ Item {
     property var assets
     property var networkConnectionStore
     property bool assetDetailsLaunched: false
+    // we can check if model is empty to know if the assets were loaded
+    // however , it would be more reliable to depend on the flag based on
+    // the whenactual get assets api is called and returned.
+    property bool areAssetsLoading
 
     signal assetClicked(var token)
 
     QtObject {
         id: d
         property int selectedAssetIndex: -1
+        readonly property int loadingItemsCount: 25
     }
-
-    height: assetListView.height
 
     StatusListView {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        model: !!assets ? assets : null
+        model: areAssetsLoading ? d.loadingItemsCount : !!assets ? assets : null
         reuseItems: true
         delegate: delegateLoader
     }
@@ -44,7 +48,7 @@ Item {
             property var modelData: model
             property int index: index
             width: ListView.view.width
-            sourceComponent: loading ? loadingTokenDelegate: tokenDelegate
+            sourceComponent: areAssetsLoading ? loadingTokenDelegate: tokenDelegate
         }
     }
 

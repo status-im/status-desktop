@@ -18,6 +18,8 @@ type
     price*: float64
     hasError*: bool
 
+
+# Get address from goside needed for community use case
 type
   WalletTokenDto* = object
     name*: string
@@ -29,6 +31,7 @@ type
     assetWebsiteUrl*: string
     builtOn*: string
     marketValuesPerCurrency*: Table[string, TokenMarketValuesDto]
+    communityId: string
 
 proc newTokenMarketValuesDto*(
   marketCap: float64,

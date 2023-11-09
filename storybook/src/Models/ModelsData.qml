@@ -81,4 +81,12 @@ QtObject {
         readonly property string ownerTokenInfo: "In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community."
         readonly property string airdropInfo: "You can Airdrop tokens to deserving Community members or to give individuals token-based permissions."
     }
+
+    readonly property QtObject walletAccounts: QtObject {
+        readonly property string account1Address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+        readonly property string account2Address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+        readonly property string account3Address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882"
+        readonly property string account4Address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8883"
+        readonly property string account5Address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"
+    }
 }
