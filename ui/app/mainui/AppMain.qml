@@ -120,6 +120,17 @@ Item {
             )
         }
 
+        function onShowToastAccountRemoved(name: string) {
+            Global.displayToastMessage(
+                        qsTr("\"%1\" successfully removed").arg(name),
+                        "",
+                        "checkmark-circle",
+                        false,
+                        Constants.ephemeralNotificationType.success,
+                        ""
+                        )
+        }
+
         function onShowToastKeypairRenamed(oldName: string, newName: string) {
             Global.displayToastMessage(
                 qsTr("You successfully renamed your keypair\nfrom \"%1\" to \"%2\"").arg(oldName).arg(newName),
