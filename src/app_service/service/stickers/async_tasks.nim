@@ -7,12 +7,13 @@ type
     packId*: string
     fromAddress*: string
     uuid*: string
+  
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
     packId*: string
     chainId*: int
-    hasKey*: bool
+  
   AsyncGetRecentStickersTaskArg* = ref object of QObjectTaskArg
   AsyncGetInstalledStickerPacksTaskArg* = ref object of QObjectTaskArg
 
@@ -68,9 +69,7 @@ const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, ni
 
 const installStickerPackTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[InstallStickerPackTaskArg](argEncoded)
-  if not arg.hasKey:
-    arg.finish(false)
-    return
+
   var installed = false
   try:
     let installResponse = status_stickers.install(arg.chainId, arg.packId)

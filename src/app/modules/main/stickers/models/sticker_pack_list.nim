@@ -122,8 +122,11 @@ QtObject:
     self.packs.apply(proc(it: var StickerPackView) =
       if it.pack.id == packId:
         it.installed = installed
+        if installed:
+          it.bought = true
         it.pending = pending)
-    self.dataChanged(index, index, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
+    self.dataChanged(index, index, @[StickerPackRoles.Installed.int, StickerPackRoles.Bought.int,
+      StickerPackRoles.Pending.int])
 
   proc getStickers*(self: StickerPackList): QVariant {.slot.} =
     let packInfo = self.packs[self.packIdToRetrieve]

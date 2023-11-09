@@ -174,10 +174,6 @@ QtObject:
       error "Error reverting sticker transaction", message = getCurrentExceptionMsg()
 
   proc init*(self: Service) =
-    # TODO redo the connect check when the network is refactored
-    # if self.status.network.isConnected:
-    self.obtainMarketStickerPacks() # TODO: rename this to obtain sticker market items
-
     self.events.on(PendingTransactionTypeDto.BuyStickerPack.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
       if receivedData.success:
@@ -258,16 +254,16 @@ QtObject:
 
     for stickerPack in availableStickers:
       if self.marketStickerPacks.contains(stickerPack.id): continue
-      let isBought = stickerPack.status == StickerPackStatus.Purchased
+
       self.marketStickerPacks[stickerPack.id] = stickerPack
       self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
         stickerPack: stickerPack,
         isInstalled: false,
-        isBought: isBought,
+        isBought: stickerPack.status == StickerPackStatus.Purchased,
         isPending: false
       ))
 
-    let chainId = self.networkService.getNetworkForStickers().chainId
+    # TODO move this to be async
     let pendingStickerPacksResponse = status_stickers.pending() 
     for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
         if self.marketStickerPacks.contains(packID): continue
@@ -379,7 +375,6 @@ QtObject:
         error "error loading installed sticker packs", msg = error.message
         return
 
-      var stickerPacks: Table[string, StickerPackDto] = initTable[string, StickerPackDto]()
       for (packID, stickerPackJson) in rpcResponseObj{"result"}.pairs():
         self.installedStickerPacks[packID] = stickerPackJson.toStickerPackDto()
       self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE, StickerPacksArgs(packs: self.installedStickerPacks))
@@ -403,20 +398,23 @@ QtObject:
       slot: "onStickerPackInstalled",
       chainId: self.networkService.getNetworkForStickers().chainId,
       packId: packId,
-      hasKey: self.marketStickerPacks.hasKey(packId)
     )
     self.threadpool.start(arg)
 
   proc onStickerPackInstalled*(self: Service, installedPackJson: string) {.slot.} =
     let installedPack = Json.decode(installedPackJson, tuple[packId: string, installed: bool])
     if installedPack.installed:
+      if self.marketStickerPacks.hasKey(installedPack.packId):
+        self.marketStickerPacks[installedPack.packId].status = StickerPackStatus.Installed
       self.events.emit(SIGNAL_STICKER_PACK_INSTALLED, StickerPackInstalledArgs(
         packId: installedPack.packId
       ))
+    else:
+      error "Sticker pack did not get installed", packId = installedPack.packId
     
   proc uninstallStickerPack*(self: Service, packId: string) =
     try:
-      let installedResponse = status_stickers.uninstall(packId)
+      discard status_stickers.uninstall(packId)
     except RpcException:
       error "Error removing installed sticker", message = getCurrentExceptionMsg()
 
