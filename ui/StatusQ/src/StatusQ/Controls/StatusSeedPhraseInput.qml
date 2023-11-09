@@ -164,9 +164,11 @@ Item {
             }
             if (input.edit.keyEvent === Qt.Key_Down) {
                 seedSuggestionsList.incrementCurrentIndex()
+                input.edit.keyEvent = null
             }
             if (input.edit.keyEvent === Qt.Key_Up) {
                 seedSuggestionsList.decrementCurrentIndex()
+                input.edit.keyEvent = null
             }
             root.keyPressed(event);
         }
