@@ -30,6 +30,7 @@ SplitView {
 
     ListModel {
         id: accountsModel
+
         ListElement {
             name: "My Status Account"
             address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
@@ -60,6 +61,41 @@ SplitView {
         }
     }
 
+    ListModel {
+        id: inShowcaseAccountsModel
+
+        signal baseModelFilterConditionsMayHaveChanged()
+
+        function setVisibilityByIndex(index, visibility) {
+            if (visibility === Constants.ShowcaseVisibility.NoOne) {
+                remove(index)
+            } else {
+                 get(index).showcaseVisibility = visibility
+            }
+        }
+
+        function setVisibility(address, visibility) {
+            for (let i = 0; i < count; ++i) {
+                if (get(i).address === address) {
+                    setVisibilityByIndex(i, visibility)
+                }
+            }
+        }
+
+        function hasItemInShowcase(address) {
+            for (let i = 0; i < count; ++i) {
+                if (get(i).address === address) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        function upsertItemJson(item) {
+            append(JSON.parse(item))
+        }
+    }
+
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
@@ -67,6 +103,7 @@ SplitView {
             id: showcasePanel
             width: 500
             baseModel: accountsModel
+            showcaseModel: inShowcaseAccountsModel
             currentWallet: root.currentWallet
         }
     }

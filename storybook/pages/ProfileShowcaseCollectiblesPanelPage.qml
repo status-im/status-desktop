@@ -28,6 +28,7 @@ SplitView {
 
     ListModel {
         id: collectiblesModel
+
         readonly property var data: [
             {
                 uid: "123",
@@ -82,6 +83,41 @@ SplitView {
         Component.onCompleted: append(data)
     }
 
+    ListModel {
+        id: inShowcaseCollectiblesModel
+
+        signal baseModelFilterConditionsMayHaveChanged()
+
+        function setVisibilityByIndex(index, visibility) {
+            if (visibility === Constants.ShowcaseVisibility.NoOne) {
+                remove(index)
+            } else {
+                 get(index).showcaseVisibility = visibility
+            }
+        }
+
+        function setVisibility(uid, visibility) {
+            for (let i = 0; i < count; ++i) {
+                if (get(i).uid === uid) {
+                    setVisibilityByIndex(i, visibility)
+                }
+            }
+        }
+
+        function hasItemInShowcase(uid) {
+            for (let i = 0; i < count; ++i) {
+                if (get(i).uid === uid) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        function upsertItemJson(item) {
+            append(JSON.parse(item))
+        }
+    }
+
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
@@ -89,6 +125,7 @@ SplitView {
             id: showcasePanel
             width: 500
             baseModel: collectiblesModel
+            showcaseModel: inShowcaseCollectiblesModel
         }
     }
 
