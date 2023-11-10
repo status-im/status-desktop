@@ -182,7 +182,7 @@ def setBuildDescFromFile(fileNameOrPath) {
     currentBuild.description = utils.baseName(fileNameOrPath)
     return
   }
-  if (tokens.build.startsWith('pr')) {
+  if (tokens.build && tokens.build.startsWith('pr')) {
     currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
   }
   currentBuild.description = formatMap([
