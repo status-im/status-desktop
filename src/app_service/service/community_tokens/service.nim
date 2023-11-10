@@ -279,13 +279,18 @@ QtObject:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityCollectiblesReceivedPayload)
       for coll in tokenDataPayload.collectibles:
-        let privilegesLevel = coll.communityHeader.privilegesLevel
-        let communityId = coll.communityHeader.communityId
+        if not coll.communityData.isSome():
+          continue
+        let id = coll.id
+        let communityData = coll.communityData.get()
+
+        let privilegesLevel = communityData.privilegesLevel
+        let communityId = communityData.id
         let community = self.communityService.getCommunityById(communityId)
         if privilegesLevel == PrivilegesLevel.Owner and not community.isOwner():
-          let communityName = coll.communityHeader.communityName
-          let chainId = coll.id.contractID.chainID
-          let contractAddress = coll.id.contractID.address
+          let communityName = communityData.name
+          let chainId = id.contractID.chainID
+          let contractAddress = id.contractID.address
           debug "received owner token", contractAddress=contractAddress, chainId=chainId
           let tokenReceivedArgs = OwnerTokenReceivedArgs(communityId: communityId, communityName: communityName, chainId: chainId, contractAddress: contractAddress)
           self.events.emit(SIGNAL_OWNER_TOKEN_RECEIVED, tokenReceivedArgs)

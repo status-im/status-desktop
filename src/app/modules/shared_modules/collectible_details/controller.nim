@@ -21,6 +21,8 @@ QtObject:
 
       requestId: int32
 
+      dataType: backend_collectibles.CollectibleDataType
+
   proc setup(self: Controller) =
     self.QObject.setup
 
@@ -62,7 +64,7 @@ QtObject:
   proc processGetCollectiblesDetailsResponse(self: Controller, response: JsonNode) =
     defer: self.setIsDetailedEntryLoading(false)
 
-    let res = fromJson(response, backend_collectibles.GetCollectiblesDetailsResponse)
+    let res = fromJson(response, backend_collectibles.GetCollectiblesByUniqueIDResponse)
 
     if res.errorCode != ErrorCodeSuccess:
       error "error fetching collectible details: ", res.errorCode
@@ -93,7 +95,7 @@ QtObject:
     self.detailedEntry = newCollectibleDetailsBasicEntry(id, extradata)
     self.detailedEntryChanged()
 
-    let response = backend_collectibles.getCollectiblesDetailsAsync(self.requestId, @[id])
+    let response = backend_collectibles.getCollectiblesByUniqueIDAsync(self.requestId, @[id], self.dataType)
     if response.error != nil:
       self.setIsDetailedEntryLoading(false)
       error "error fetching collectible details: ", response.error
@@ -106,11 +108,14 @@ QtObject:
 
   proc newController*(requestId: int32,
     networkService: network_service.Service,
-    events: EventEmitter
+    events: EventEmitter,
+    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Details
   ): Controller =
     new(result, delete)
 
     result.requestId = requestId
+
+    result.dataType = dataType
 
     result.networkService = networkService
 
