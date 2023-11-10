@@ -475,8 +475,12 @@ method discordImportProgressUpdated*(
   if stopped or progress.int >= 1:
     self.view.setDiscordImportInProgress(false)
 
-method discordImportChannelFinished*(self: Module, channelId: string) =
-  if self.view.getDiscordImportChannelId() == channelId:
+method removeCommunityChat*(self: Module, communityId: string, channelId: string) =
+  self.controller.removeCommunityChat(communityId, channelId)
+
+method discordImportChannelFinished*(self: Module, communityId: string, channelId: string) =
+    self.view.setDiscordImportedChannelCommunityId(communityId)
+    self.view.setDiscordImportedChannelId(channelId)
     self.view.setDiscordImportProgress(100)
     self.view.setDiscordImportProgressStopped(true)
     self.view.setDiscordImportInProgress(false)

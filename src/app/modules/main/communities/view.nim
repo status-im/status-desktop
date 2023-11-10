@@ -50,6 +50,8 @@ QtObject:
       discordImportChannelId: string
       discordImportChannelName: string
       discordImportCommunityImage: string
+      discordImportedChannelId: string
+      discordImportedChannelCommunityId: string
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
       checkingPermissionsInProgress: bool
@@ -191,6 +193,20 @@ QtObject:
   QtProperty[int] discordImportWarningsCount:
     read = getDiscordImportWarningsCount
     notify = discordImportWarningsCountChanged
+
+  proc discordImportedChannelIdChanged*(self: View) {.signal.}
+
+  proc setDiscordImportedChannelId*(self: View, id: string) =
+    if (self.discordImportedChannelId == id): return
+    self.discordImportedChannelId = id
+    self.discordImportedChannelIdChanged()
+
+  proc getDiscordImportedChannelId*(self: View): string {.slot.} =
+    return self.discordImportedChannelId
+
+  QtProperty[int] discordImportedChannelId:
+    read = getDiscordImportedChannelIdCount
+    notify = discordImportedChannelIdChanged
 
   proc setDiscordImportErrorsCount*(self: View, count: int) =
     if (self.discordImportErrorsCount == count): return
@@ -499,6 +515,8 @@ QtObject:
     self.setDiscordImportCommunityName("")
     self.discordImportChannelId = ""
     self.discordImportChannelName = ""
+    self.discordImportedChannelId = ""
+    self.discordImportedChannelCommunityId = ""
     self.setDiscordImportCommunityImage("")
     self.setDiscordImportHasCommunityImage(false)
     self.setDiscordImportInProgress(false)
@@ -634,6 +652,10 @@ QtObject:
     self.delegate.requestCancelDiscordChannelImport(discordChannelId)
     self.resetDiscordImport(true)
 
+  proc removeImportedDiscordChannel*(self: View) {.slot.} =
+    self.delegate.removeCommunityChat(self.discordImportedChannelCommunityId, self.discordImportedChannelId)
+    self.resetDiscordImport(true)
+
   proc toggleDiscordCategory*(self: View, id: string, selected: bool) {.slot.} =
     if selected:
       self.discordCategoriesModel.selectItem(id)
@@ -662,6 +684,10 @@ QtObject:
     self.discordImportChannelId = id
     self.discordImportChannelName = item.getName()
     self.discordImportChannelChanged()
+
+  proc setDiscordImportedChannelCommunityId*(self: View, id: string) =
+    if (self.discordImportedChannelCommunityId == id): return
+    self.discordImportedChannelCommunityId = id
   
   proc setDiscordImportChannelId*(self: View, id: string) {.slot.} =
     if (self.discordImportChannelId == id): return
