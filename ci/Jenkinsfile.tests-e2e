@@ -6,7 +6,8 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-5.15.2'
+    /* Temporary desktop-e2e-old label to debug delays. */
+    label 'linux && x86_64 && qt-5.15.2 && desktop-e2e-old'
   }
 
   parameters {
