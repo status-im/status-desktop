@@ -199,6 +199,8 @@ proc canAskToEnableLinkPreview(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
+  debug "<<< setText"
+
   if text == "":
     self.resetLinkPreviews()
     self.delegate.setUrls(@[])
@@ -211,6 +213,8 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   self.delegate.setLinkPreviewUrls(supportedUrls)
   let newUrls = self.linkPreviewCache.unknownUrls(supportedUrls)
 
+  debug "<<< newUrls", newUrls
+
   let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()
   self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
 
@@ -219,6 +223,7 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
   if self.getLinkPreviewEnabled() and len(newUrls) > 0:
     self.messageService.asyncUnfurlUrls(newUrls)
+    self.linkPreviewCache.markAsRequested(newUrls)
     
 proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
   return self.linkPreviewCache.linkPreviews(urls)
