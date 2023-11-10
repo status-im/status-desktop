@@ -25,7 +25,7 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_ac
 
     with (step('Verify displayed keycard popup instructions are correct')):
         with step('Verify header is correct'):
-            assert keycard_popup.keycard_header == Keycard.KEYCARD_POPUP_HEADER_IMPORT.value, "The header is incorrect"
+            assert keycard_popup.keycard_header == Keycard.KEYCARD_POPUP_HEADER_IMPORT_SEED.value, "The header is incorrect"
         with step('Verify instructions are correct'):
             assert Keycard.KEYCARD_INSTRUCTIONS_PLUG_IN.value in keycard_popup.keycard_instructions, \
                 "There is no correct keycard instruction"
@@ -62,8 +62,8 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_ac
         assert driver.waitFor(lambda: Keycard.KEYCARD_READY.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 
-        assert keycard_popup.keycard_preview_name == keycard_name, "Keycard name in preview is incorrect"
-        assert keycard_popup.account_preview_name == account_name, "Account name in preview is incorrect"
-        assert keycard_popup.preview_color == ColorCodes.BLUE.value, "Color in preview is incorrect"
+        assert keycard_popup.keypair_name == keycard_name, "Keycard name in preview is incorrect"
+        assert keycard_popup.keypair_account_name == account_name, "Account name in preview is incorrect"
+        assert keycard_popup.keypair_account_color == ColorCodes.BLUE.value, "Color in preview is incorrect"
 
         keycard_popup.click_next()

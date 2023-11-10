@@ -34,6 +34,11 @@ class KeycardSettingsView(QObject):
         self._import_restore_via_seed_phrase_button.click()
         return KeycardPopup().wait_until_appears()
 
+    @allure.step('Choose setup keycard with an existing account')
+    def click_setup_keycard_with_existing_account(self):
+        self._setup_keycard_with_existing_account_button.click()
+        return KeycardPopup().wait_until_appears()
+
     @allure.step('Check that all keycard options displayed')
     def all_keycard_options_available(self):
         assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'

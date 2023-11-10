@@ -21,9 +21,9 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
         keycard_settings = main_screen.left_panel.open_settings().left_panel.open_keycard_settings()
         keycard_popup = keycard_settings.click_create_new_account_with_new_seed_phrase()
 
-    with (step('Verify displayed keycard popup instructions are correct')):
+    with step('Verify displayed keycard popup instructions are correct'):
         with step('Verify header is correct'):
-            assert keycard_popup.keycard_header == Keycard.KEYCARD_POPUP_HEADER.value, "The header is incorrect"
+            assert keycard_popup.keycard_header == Keycard.KEYCARD_POPUP_HEADER_CREATE_SEED.value, "The header is incorrect"
         with step('Verify instructions are correct'):
             assert Keycard.KEYCARD_INSTRUCTIONS_PLUG_IN.value in keycard_popup.keycard_instructions, \
                 "There is no correct keycard instruction"
@@ -52,7 +52,7 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
         with step('Verify that asked to choose PIN'):
             assert driver.waitFor(lambda: Keycard.KEYCARD_CHOOSE_PIN.value in keycard_popup.keycard_instructions,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
-            assert Keycard.KEYCARD_NOTE.value in keycard_popup.keycard_instructions
+            assert Keycard.KEYCARD_PIN_NOTE.value in keycard_popup.keycard_instructions
 
     with step('Insert PIN and repeat PIN and verify keycard popup instructions are correct'):
         pin = Keycard.KEYCARD_PIN.value
@@ -72,8 +72,8 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
         assert driver.waitFor(lambda: Keycard.KEYCARD_NEW_ACCOUNT_CREATED.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 
-        assert keycard_popup.keycard_preview_name == keycard_name, "Keycard name in preview is incorrect"
-        assert keycard_popup.account_preview_name == account_name, "Account name in preview is incorrect"
-        assert keycard_popup.preview_color == ColorCodes.BLUE.value, "Color in preview is incorrect"
+        assert keycard_popup.keypair_name == keycard_name, "Keycard name in preview is incorrect"
+        assert keycard_popup.keypair_account_name == account_name, "Account name in preview is incorrect"
+        assert keycard_popup.keypair_account_color == ColorCodes.BLUE.value, "Color in preview is incorrect"
 
         keycard_popup.click_next()

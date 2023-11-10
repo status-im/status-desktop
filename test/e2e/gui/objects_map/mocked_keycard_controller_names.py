@@ -18,8 +18,11 @@ max_PIN_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocke
 max_PUK_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPUKRetriesReachedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
 keycard_With_Mnemonic_Only_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicOnlyAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
 keycard_With_Mnemonic_Metadata_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicAndMedatadaAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-custom_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "customKeycardAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+custom_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "customKeycardAction", "type": "StatusMenuItem", "visible": True}
 
 reader_Unplugged_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateReaderUnpluggedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
 keycard_Not_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardNotInsertedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
 keycard_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardInsertedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+
+keycard_edit_TextEdit = {"container": keycardSettingsTab, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+keycardFlickable = {"container": keycardSettingsTab, "type": "Flickable", "unnamed": 1, "visible": True}

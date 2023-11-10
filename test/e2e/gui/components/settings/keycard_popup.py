@@ -3,6 +3,7 @@ import typing
 
 import allure
 
+import configs
 import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
@@ -32,6 +33,8 @@ class KeycardPopup(BasePopup):
         self._field_object = QObject('edit_TextEdit')
         self._keypair_item = QObject('o_KeyPairItem')
         self._keypair_tag = QObject('o_StatusListItemTag')
+        self._selection_box = QObject('radioButton_StatusRadioButton')
+        self._keycard_init = QObject('o_KeycardInit')
 
     @property
     @allure.step('Get keycard image')
@@ -65,19 +68,44 @@ class KeycardPopup(BasePopup):
         return phrases
 
     @property
-    @allure.step('Get keycard name in preview')
-    def keycard_preview_name(self) -> str:
+    @allure.step('Get keycard name in keypair')
+    def keypair_name(self) -> str:
         return self._keypair_item.object.title
 
     @property
-    @allure.step('Get account name in preview')
-    def account_preview_name(self) -> str:
+    @allure.step('Get info title in keypair')
+    def keypair_info_title(self) -> str:
+        return self._keypair_item.object.beneathTagsTitle
+
+    @property
+    @allure.step('Get account name in keypair')
+    def keypair_account_name(self) -> str:
         return self._keypair_tag.object.title
 
     @property
-    @allure.step('Get color in preview')
-    def preview_color(self) -> str:
-        return str(self._keypair_item.object.beneathTagsIconColor.name)
+    @allure.step('Get account color in keypair')
+    def keypair_account_color(self) -> str:
+        return str(self._keypair_tag.object.bgColor.name)
+
+    @property
+    @allure.step('Get keycard init state')
+    def keycard_init_state(self) -> str:
+        return self._keycard_init.object.state
+
+    @property
+    @allure.step('Get selection box "checked" state')
+    def is_keypair_selection_box_checked(self) -> bool:
+        return self._selection_box.object.checked
+
+    @property
+    @allure.step('Get next button "enabled" state')
+    def is_next_button_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._next_button.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
+    @allure.step('Click selection box on profile keypair')
+    def click_selection_box_on_keypair(self):
+        self._selection_box.click()
+        return self
 
     @allure.step('Set pin')
     def input_pin(self, pin):
@@ -118,24 +146,42 @@ class KeycardPopup(BasePopup):
     @allure.step('Name keycard')
     def name_keycard(self, name: str):
         driver.type(self.get_text_fields[0], name)
+        return self
 
     @allure.step('Name account')
     def name_account(self, name: str):
         driver.type(self.get_text_fields[0], name)
+        return self
 
     @allure.step('Create keycard account with seed phrase')
     def create_keycard_account_with_seed_phrase(self, keycard_name: str, account_name: str):
+        self.reveal_seed_phrase_and_confirm_words()
+        self.name_keycard_and_account(keycard_name, account_name)
+
+    @allure.step('Reveal seed phrase and confirm words')
+    def reveal_seed_phrase_and_confirm_words(self):
         time.sleep(1)
         self.click_next().reveal_seed_phrase()
         seed_phrases = self.get_seed_phrases
         self.click_next()
         self.confirm_first_word(seed_phrases).confirm_second_word(seed_phrases).confirm_third_word(seed_phrases)
-        self.click_next().name_keycard(keycard_name)
-        self.click_next().name_account(account_name)
         self.click_next()
+
+    @allure.step('Name keycard and account')
+    def name_keycard_and_account(self, keycard_name, account_name):
+        self.name_keycard(keycard_name).click_next()
+        self.name_account(account_name).click_next()
 
     @allure.step('Import keycard via seed phrase')
     def import_keycard_via_seed_phrase(self, seed_phrase_words: list, pin: str, keycard_name: str, account_name: str):
+        self.input_seed_phrase(seed_phrase_words)
+        self.name_keycard_and_account(keycard_name, account_name)
+        self.input_pin(pin)
+        self.input_pin(pin)
+        self.click_next()
+
+    def input_seed_phrase(self, seed_phrase_words: list):
+        self.click_next()
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
         elif len(seed_phrase_words) == 18:
@@ -147,9 +193,4 @@ class KeycardPopup(BasePopup):
         for count, word in enumerate(seed_phrase_words, start=1):
             self._seed_phrase_word_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
-        self.click_next()
-        self.input_pin(pin)
-        self.input_pin(pin)
-        self.click_next().name_keycard(keycard_name)
-        self.click_next().name_account(account_name)
         self.click_next()

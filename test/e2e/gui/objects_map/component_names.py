@@ -191,8 +191,7 @@ delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow
 # Authenticate Popup
 keycardSharedPopupContent_KeycardPopupContent = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardSharedPopupContent", "type": "KeycardPopupContent", "visible": True}
 password_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "type": "PlaceholderText", "unnamed": 1, "visible": True}
-authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "PrimaryButton", "type": "StatusButton", "visible": True}
-
+authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "PrimaryButton", "text": "Authenticate", "type": "StatusButton", "visible": True}
 
 # Shared Popup
 sharedPopup_Popup_Content = {"container": statusDesktop_mainWindow, "objectName": "KeycardSharedPopupContent", "type": "Item"}
@@ -335,6 +334,7 @@ word1_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "word1
 word2_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "word2", "type": "StatusInput", "unnamed": 1, "visible": True}
 o_KeyPairItem = {"container": statusDesktop_mainWindow_overlay, "type": "KeyPairItem", "unnamed": 1, "visible": True}
 o_StatusListItemTag = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
+radioButton_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "radioButton", "type": "StatusRadioButton", "unnamed": 1, "visible": True}
 statusSeedPhraseInputField_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusSeedPhraseInputField", "type": "TextEdit", "visible": True}
 switchTabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
 switchTabBar_12_words_StatusSwitchTabButton = {"checkable": True, "container": switchTabBar_StatusSwitchTabBar, "objectName": "12SeedButton", "text": "12 words", "type": "StatusSwitchTabButton", "visible": True}
