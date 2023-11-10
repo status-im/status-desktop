@@ -122,9 +122,12 @@ QtObject:
   proc jumpToMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.scrollToMessage(messageId)
 
+  proc isEditAllowed(messageImage: string, sticker: string): bool =
+    return messageImage == "" and sticker == ""
+
   proc setEditModeOnAndScrollToLastMessage*(self: View, pubkey: string) {.slot.} =
     let lastMessage = self.model.getLastItemFrom(pubKey)
-    if lastMessage != nil and lastMessage.id != "":
+    if lastMessage != nil and lastMessage.id != "" and isEditAllowed(lastMessage.messageImage, lastMessage.sticker):
       self.model.setEditModeOn(lastMessage.id)
       self.jumpToMessage(lastMessage.id)
 
