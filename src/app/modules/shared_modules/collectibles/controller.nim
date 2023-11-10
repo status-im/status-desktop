@@ -29,6 +29,9 @@ QtObject:
       requestId: int32
       autofetch: bool
 
+      dataType: backend_collectibles.CollectibleDataType
+      fetchCriteria: backend_collectibles.FetchCriteria
+
   proc setup(self: Controller) =
     self.QObject.setup
 
@@ -112,17 +115,17 @@ QtObject:
       offset = self.model.getCollectiblesCount()
     self.fetchFromStart = false
 
-    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
     if response.error != nil:
       self.model.setIsFetching(false)
       self.model.setIsError(true)
       self.fetchFromStart = true
       error "error fetching collectibles entries: ", response.error
 
-  proc processFilterOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
+  proc processGetOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
     defer: self.model.setIsFetching(false)
 
-    let res = fromJson(response, backend_collectibles.FilterOwnedCollectiblesResponse)
+    let res = fromJson(response, backend_collectibles.GetOwnedCollectiblesResponse)
 
     let isError = res.errorCode != backend_collectibles.ErrorCodeSuccess
 
@@ -150,7 +153,7 @@ QtObject:
 
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
-      self.processFilterOwnedCollectiblesResponse(jsonObj)
+      self.processGetOwnedCollectiblesResponse(jsonObj)
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc (address: string, chainID: int) =
@@ -170,12 +173,20 @@ QtObject:
     self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(proc (address: string, chainID: int) =
       self.setOwnershipState(address, chainID, OwnershipStateError)
     )
-
-  proc newController*(requestId: int32, autofetch: bool, events: EventEmitter): Controller =
+  proc newController*(
+    requestId: int32,
+    events: EventEmitter,
+    autofetch: bool = true,
+    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
+    fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
+      fetchType: backend_collectibles.FetchType.NeverFetch,
+    )): Controller =
     new(result, delete)
 
     result.requestId = requestId
     result.autofetch = autofetch
+    result.dataType = dataType
+    result.fetchCriteria = fetchCriteria
 
     result.model = newModel()
     result.fetchFromStart = true

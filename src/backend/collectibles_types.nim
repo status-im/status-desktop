@@ -1,9 +1,6 @@
-import json, strformat
+import json, strformat, json_serialization
 import stint, Tables, options
 import community_tokens_types
-
-const communityHeaderField = "community_header"
-const communityInfoField = "community_info"
 
 type
   # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
@@ -16,6 +13,10 @@ type
     contractID*: ContractID
     tokenID*: UInt256
 
+  # see status-go/services/wallet/collectibles/service.go CollectibleDataType
+  CollectibleDataType* {.pure.} = enum
+    UniqueID, Header, Details, CommunityHeader
+
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleTrait
   CollectibleTrait* = ref object of RootObj
     trait_type*: string
@@ -23,82 +24,33 @@ type
     display_type*: string
     max_value*: string
 
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectionTrait
-  CollectionTrait* = ref object of RootObj
-    min*: float
-    max*: float
+  CollectibleData* = ref object of RootObj
+    name*: string
+    description*: Option[string]
+    imageUrl*: Option[string]
+    animationUrl*: Option[string]
+    animationMediaType*: Option[string]
+    traits*: Option[seq[CollectibleTrait]]
+    backgroundColor*: Option[string]
 
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectionData
   CollectionData* = ref object of RootObj
     name*: string
     slug*: string
     imageUrl*: string
-    traits*: Table[string, CollectionTrait]
 
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleData
-  CollectibleData* = ref object of RootObj
-    id* : CollectibleUniqueID
-    communityId*: string
+  CommunityData* = ref object of RootObj
+    id*: string
     name*: string
-    description*: string
-    permalink*: string
-    imageUrl*: string
-    animationUrl*: string
-    animationMediaType*: string
-    traits*: seq[CollectibleTrait]
-    backgroundColor*: string
-    tokenUri*: string
-    collectionData*: CollectionData
-
-  # Mirrors services/wallet/collectibles/types.go CommunityHeader
-  CollectibleCommunityHeader* = ref object of RootObj
-    communityId*: string
-    communityName*: string
-    communityColor*: string
+    color*: string
     privilegesLevel*: PrivilegesLevel
+    imageUrl*: Option[string]
 
-  # Mirrors services/wallet/collectibles/types.go CollectibleHeader
-  CollectibleHeader* = ref object of RootObj
+  Collectible* = ref object of RootObj
+    dataType*: CollectibleDataType
     id* : CollectibleUniqueID
-    name*: string
-    imageUrl*: string
-    animationUrl*: string
-    animationMediaType*: string
-    backgroundColor*: string
-    collectionName*: string
-    collectionSlug*: string
-    collectionImageUrl*: string
-    communityHeader*: Option[CollectibleCommunityHeader]
-
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectiblesCommunityInfo
-  CollectibleCommunityInfo* = ref object of RootObj
-    communityId*: string
-    communityName*: string
-    communityColor*: string
-    communityImage*: string
-    privilegesLevel*: PrivilegesLevel
-
-  # Mirrors services/wallet/collectibles/types.go CollectibleDetails
-  CollectibleDetails* = ref object of RootObj
-    id* : CollectibleUniqueID
-    name*: string
-    description*: string
-    imageUrl*: string
-    animationUrl*: string
-    animationMediaType*: string
-    traits*: seq[CollectibleTrait]
-    backgroundColor*: string
-    tokenUri*: string
-    collectionName*: string
-    collectionSlug*: string
-    collectionImageUrl*: string
-    communityInfo*: Option[CollectibleCommunityInfo]
-
-  # Mirrors services/wallet/collectibles/types.go CommunityCollectibleHeader
-  CommunityCollectibleHeader* = ref object of RootObj
-    id* : CollectibleUniqueID
-    name*: string
-    communityHeader*: CollectibleCommunityHeader
+    collectibleData*: Option[CollectibleData]
+    collectionData*: Option[CollectionData]
+    communityData*: Option[CommunityData]
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -191,209 +143,140 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleTrait]): ref CollectibleT
   result = new(CollectibleTrait)
   result[] = fromJson(t, CollectibleTrait)
 
-# CollectionTrait
-proc `$`*(self: CollectionTrait): string =
-  return fmt"""CollectionTrait(
-    min:{self.min},
-    max:{self.max}
-  )"""
-
-proc fromJson*(t: JsonNode, T: typedesc[CollectionTrait]): CollectionTrait {.inline.} =
-  result = CollectionTrait()
-  result.min = t["min"].getFloat()
-  result.max = t["max"].getFloat()
-
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectionTrait]): ref CollectionTrait {.inline.} =
-  result = new(CollectionTrait)
-  result[] = fromJson(t, CollectionTrait)
-
 # CollectionData
 proc `$`*(self: CollectionData): string =
   return fmt"""CollectionData(
     name:{self.name},
     slug:{self.slug},
-    imageUrl:{self.imageUrl},
-    traits:{self.traits}
+    imageUrl:{self.imageUrl}
   )"""
 
-proc getCollectionTraits*(t: JsonNode): Table[string, CollectionTrait] =
-  var traitList: Table[string, CollectionTrait] = initTable[string, CollectionTrait]()
-  for key, value in t{"traits"}.getFields():
-    traitList[key] = fromJson(value, CollectionTrait)
-  return traitList
-
-proc fromJson*(t: JsonNode, T: typedesc[CollectionData]): CollectionData {.inline.} =
+proc fromJson*(t: JsonNode, T: typedesc[CollectionData]): CollectionData =
   result = CollectionData()
   result.name = t["name"].getStr()
   result.slug = t["slug"].getStr()
   result.imageUrl = t["image_url"].getStr()
-  result.traits = getCollectionTraits(t["traits"])
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectionData]): ref CollectionData {.inline.} =
+proc fromJson*(t: JsonNode, T: typedesc[ref CollectionData]): ref CollectionData =
   result = new(CollectionData)
   result[] = fromJson(t, CollectionData)
 
 # CollectibleData
 proc `$`*(self: CollectibleData): string =
   return fmt"""CollectibleData(
-    id:{self.id},
-    communityId:{self.communityId},
     name:{self.name},
     description:{self.description},
-    permalink:{self.permalink},
     imageUrl:{self.imageUrl},
     animationUrl:{self.animationUrl},
     animationMediaType:{self.animationMediaType},
     traits:{self.traits},
-    backgroundColor:{self.backgroundColor},
-    tokenUri:{self.tokenUri},
+    backgroundColor:{self.backgroundColor}
   )"""
 
-proc getCollectibleTraits*(t: JsonNode): seq[CollectibleTrait] =
+proc getCollectibleTraits*(t: JsonNode): Option[seq[CollectibleTrait]] =
   var traitList: seq[CollectibleTrait] = @[]
   for item in t.getElems():
     traitList.add(fromJson(item, CollectibleTrait))
-  return traitList
+  if traitList.len == 0:
+    return none(seq[CollectibleTrait])
+  else:
+    return some(traitList)
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData {.inline.} =
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData =
   result = CollectibleData()
-  result.id = fromJson(t["id"], CollectibleUniqueID)
-  result.communityId = t["community_id"].getStr()
+
   result.name = t["name"].getStr()
-  result.description = t["description"].getStr()
-  result.permalink = t["permalink"].getStr()
-  result.imageUrl = t["image_url"].getStr()
-  result.animationUrl = t["animation_url"].getStr()
-  result.animationMediaType = t["animation_media_type"].getStr()
-  result.traits = getCollectibleTraits(t["traits"])
-  result.backgroundColor = t["background_color"].getStr()
-  result.tokenUri = t["token_uri"].getStr()
+  let descriptionNode = t{"description"}
+  if descriptionNode != nil and descriptionNode.kind != JNull:
+    result.description = some(descriptionNode.getStr())
+  else:
+    result.description = none(string)
+  let imageUrlNode = t{"image_url"}
+  if imageUrlNode != nil and imageUrlNode.kind != JNull:
+    result.imageUrl = some(imageUrlNode.getStr())
+  else:
+    result.imageUrl = none(string)
+  let animationUrlNode = t{"animation_url"}
+  if animationUrlNode != nil and animationUrlNode.kind != JNull:
+    result.animationUrl = some(animationUrlNode.getStr())
+  else:
+    result.animationUrl = none(string)
+  let animationMediaTypeNode = t{"animation_media_type"}
+  if animationMediaTypeNode != nil and animationMediaTypeNode.kind != JNull:
+    result.animationMediaType = some(animationMediaTypeNode.getStr())
+  else:
+    result.animationMediaType = none(string)
+  result.traits = getCollectibleTraits(t{"traits"})
+  let backgroundColorNode = t{"background_color"}
+  if backgroundColorNode != nil and backgroundColorNode.kind != JNull:
+    result.backgroundColor = some(backgroundColorNode.getStr())
+  else:
+    result.backgroundColor = none(string)
 
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleData]): ref CollectibleData {.inline.} =
   result = new(CollectibleData)
   result[] = fromJson(t, CollectibleData)
 
-# CollectibleCommunityHeader
-proc `$`*(self: CollectibleCommunityHeader): string =
-  return fmt"""CollectibleCommunityHeader(
-    communityId:{self.communityId},
-    communityName:{self.communityName},
-    communityColor:{self.communityColor},
-    privilegesLevel:{self.privilegesLevel}
+# CommunityData
+proc `$`*(self: CommunityData): string =
+  return fmt"""CommunityData(
+    id:{self.id},
+    name:{self.name},
+    color:{self.color},
+    privilegesLevel:{self.privilegesLevel},
+    imageUrl:{self.imageUrl}
   )"""
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleCommunityHeader]): CollectibleCommunityHeader {.inline.} =
-  result = CollectibleCommunityHeader()
-  result.communityId = t["community_id"].getStr
-  result.communityName = t["community_name"].getStr
-  result.communityColor = t["community_color"].getStr
+proc fromJson*(t: JsonNode, T: typedesc[CommunityData]): CommunityData =
+  result = CommunityData()
+  result.id = t["id"].getStr
+  result.name = t["name"].getStr
+  result.color = t["color"].getStr
   result.privilegesLevel = PrivilegesLevel(t["privileges_level"].getInt)
+  let imageUrlNode = t{"image_url"}
+  if imageUrlNode != nil and imageUrlNode.kind != JNull:
+    result.imageUrl = some(imageUrlNode.getStr())
+  else:
+    result.imageUrl = none(string)
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleCommunityHeader]): ref CollectibleCommunityHeader {.inline.} =
-  result = new(CollectibleCommunityHeader)
-  result[] = fromJson(t, CollectibleCommunityHeader)
+proc fromJson*(t: JsonNode, T: typedesc[ref CommunityData]): ref CommunityData {.inline.} =
+  result = new(CommunityData)
+  result[] = fromJson(t, CommunityData)
 
-# CollectibleHeader
-proc `$`*(self: CollectibleHeader): string =
-  return fmt"""CollectibleHeader(
+# Collectible
+proc `$`*(self: Collectible): string =
+  return fmt"""Collectible(
+    dataType:{self.dataType},
     id:{self.id},
-    name:{self.name},
-    imageUrl:{self.imageUrl},
-    animationUrl:{self.animationUrl},
-    animationMediaType:{self.animationMediaType},
-    backgroundColor:{self.backgroundColor},
-    collectionName:{self.collectionName},
-    collectionSlug:{self.collectionSlug},
-    collectionImageUrl:{self.collectionImageUrl},
-    communityHeader:{self.communityHeader}
+    collectibleData:{self.collectibleData},
+    collectionData:{self.collectionData},
+    communityData:{self.communityData}
   )"""
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
-  result = CollectibleHeader()
+proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
+  result = Collectible()
+  result.dataType = t["data_type"].getInt().CollectibleDataType
   result.id = fromJson(t["id"], CollectibleUniqueID)
-  result.name = t["name"].getStr()
-  result.imageUrl = t["image_url"].getStr()
-  result.animationUrl = t["animation_url"].getStr()
-  result.animationMediaType = t["animation_media_type"].getStr()
-  result.backgroundColor = t["background_color"].getStr()
-  result.collectionName = t["collection_name"].getStr()
-  result.collectionSlug = t["collection_slug"].getStr()
-  result.collectionImageUrl = t["collection_image_url"].getStr()
-  if t.contains(communityHeaderField) and t[communityHeaderField].kind != JNull:
-    result.communityHeader = some(fromJson(t[communityHeaderField], CollectibleCommunityHeader))
+  let collectibleDataNode = t{"collectible_data"}
+  if collectibleDataNode != nil and collectibleDataNode.kind != JNull:
+    result.collectibleData = some(fromJson(collectibleDataNode, CollectibleData))
+  else:
+    result.collectibleData = none(CollectibleData)
+  let collectionDataNode = t{"collection_data"}
+  if collectionDataNode != nil and collectionDataNode.kind != JNull:
+    result.collectionData = some(fromJson(collectionDataNode, CollectionData))
+  else:
+    result.collectionData = none(CollectionData)
+  let communityDataNode = t{"community_data"}
+  if communityDataNode != nil and communityDataNode.kind != JNull:
+    result.communityData = some(fromJson(communityDataNode, CommunityData))
+  else:
+    result.communityData = none(CommunityData)
 
-# CollectibleCommunityInfo
-proc `$`*(self: CollectibleCommunityInfo): string =
-  return fmt"""CollectibleCommunityInfo(
-    communityId:{self.communityId},
-    communityName:{self.communityName},
-    communityColor:{self.communityColor},
-    communityImage:{self.communityImage},
-    privilegesLevel:{self.privilegesLevel}
-  )"""
-
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleCommunityInfo]): CollectibleCommunityInfo {.inline.} =
-  result = CollectibleCommunityInfo()
-  result.communityId = t["community_id"].getStr
-  result.communityName = t["community_name"].getStr
-  result.communityColor = t["community_color"].getStr
-  result.communityImage = t["community_image"].getStr
-  result.privilegesLevel = PrivilegesLevel(t["privileges_level"].getInt)
-
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleCommunityInfo]): ref CollectibleCommunityInfo {.inline.} =
-  result = new(CollectibleCommunityInfo)
-  result[] = fromJson(t, CollectibleCommunityInfo)
-
-# CollectibleDetails
-proc `$`*(self: CollectibleDetails): string =
-  return fmt"""CollectibleDetails(
-    id:{self.id},
-    name:{self.name},
-    description:{self.description},
-    imageUrl:{self.imageUrl},
-    animationUrl:{self.animationUrl},
-    animationMediaType:{self.animationMediaType},
-    traits:{self.traits},
-    backgroundColor:{self.backgroundColor},
-    collectionName:{self.collectionName},
-    collectionSlug:{self.collectionSlug},
-    collectionImageUrl:{self.collectionImageUrl},
-    communityInfo:{self.communityInfo}
-  )"""
-
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails {.inline.} =
-  result = CollectibleDetails()
-  result.id = fromJson(t["id"], CollectibleUniqueID)
-  result.name = t["name"].getStr()
-  result.description = t["description"].getStr()
-  result.imageUrl = t["image_url"].getStr()
-  result.animationUrl = t["animation_url"].getStr()
-  result.animationMediaType = t["animation_media_type"].getStr()
-  result.traits = getCollectibleTraits(t["traits"])
-  result.backgroundColor = t["background_color"].getStr()
-  result.collectionName = t["collection_name"].getStr()
-  result.collectionSlug = t["collection_slug"].getStr()
-  result.collectionImageUrl = t["collection_image_url"].getStr()
-  if t.contains(communityInfoField) and t[communityInfoField].kind != JNull:
-    result.communityInfo = some(fromJson(t[communityInfoField], CollectibleCommunityInfo))
-
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleDetails]): ref CollectibleDetails {.inline.} =
-  result = new(CollectibleDetails)
-  result[] = fromJson(t, CollectibleDetails)
-
-# CommunityCollectibleHeader
-proc `$`*(self: CommunityCollectibleHeader): string =
-  return fmt"""CommunityCollectibleHeader(
-    id:{self.id},
-    name:{self.name},
-    communityHeader:{self.communityHeader}
-  )"""
-
-proc fromJson*(t: JsonNode, T: typedesc[CommunityCollectibleHeader]): CommunityCollectibleHeader {.inline.} =
-  result = CommunityCollectibleHeader()
-  result.id = fromJson(t["id"], CollectibleUniqueID)
-  result.name = t["name"].getStr()
-  result.communityHeader = fromJson(t[communityHeaderField], CollectibleCommunityHeader)
+proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
+  result = @[]
+  for c in self:
+    result.add(c.id)
 
 # CollectibleBalance
 proc `$`*(self: CollectibleBalance): string =

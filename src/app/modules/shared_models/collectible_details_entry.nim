@@ -19,7 +19,7 @@ QtObject:
   type
     CollectibleDetailsEntry* = ref object of QObject
       id: backend.CollectibleUniqueID
-      data: backend.CollectibleDetails
+      data: backend.Collectible
       extradata: ExtraData
       traits: TraitModel
 
@@ -29,13 +29,15 @@ QtObject:
   proc delete*(self: CollectibleDetailsEntry) =
     self.QObject.delete
 
-  proc newCollectibleDetailsFullEntry*(data: backend.CollectibleDetails, extradata: ExtraData): CollectibleDetailsEntry =
+  proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectibleDetailsEntry =
     new(result, delete)
     result.id = data.id
     result.data = data
     result.extradata = extradata
     result.traits = newTraitModel()
-    result.traits.setItems(data.traits)
+    if isSome(data.collectibleData) and isSome(data.collectibleData.get().traits):
+      let traits = data.collectibleData.get().traits.get()
+      result.traits.setItems(traits)
     result.setup()
 
   proc newCollectibleDetailsBasicEntry*(id: backend.CollectibleUniqueID, extradata: ExtraData): CollectibleDetailsEntry =
@@ -64,6 +66,24 @@ QtObject:
       traits:{self.traits}
     )"""
 
+  proc hasCollectibleData(self: CollectibleDetailsEntry): bool =
+    return self.data != nil and isSome(self.data.collectibleData)
+
+  proc getCollectibleData(self: CollectibleDetailsEntry): backend.CollectibleData =
+    return self.data.collectibleData.get()
+
+  proc hasCollectionData(self: CollectibleDetailsEntry): bool =
+    return self.data != nil and isSome(self.data.collectionData)
+
+  proc getCollectionData(self: CollectibleDetailsEntry): backend.CollectionData =
+    return self.data.collectionData.get()
+
+  proc hasCommunityData(self: CollectibleDetailsEntry): bool =
+    return self.data != nil and isSome(self.data.communityData)
+
+  proc getCommunityData(self: CollectibleDetailsEntry): backend.CommunityData =
+    return self.data.communityData.get()
+
   proc getChainID*(self: CollectibleDetailsEntry): int {.slot.} =
     return self.id.contractID.chainID
 
@@ -83,66 +103,68 @@ QtObject:
     read = getTokenID
 
   proc getName*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+    if not self.hasCollectibleData():
       return ""
-    return self.data.name
+    return self.data.collectibleData.get().name
 
   QtProperty[string] name:
     read = getName
 
   proc getImageURL*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+    if not self.hasCollectibleData() or isNone(self.getCollectibleData().imageUrl):
       return ""
-    return self.data.imageUrl
+    return self.getCollectibleData().imageUrl.get()
 
   QtProperty[string] imageUrl:
     read = getImageURL
 
   proc getMediaURL*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+    if not self.hasCollectibleData() or isNone(self.getCollectibleData().animationUrl):
       return ""
-    return self.data.animationUrl
+    return self.getCollectibleData().animationUrl.get()
 
   QtProperty[string] mediaUrl:
     read = getMediaURL
 
   proc getMediaType*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+    if not self.hasCollectibleData() or isNone(self.getCollectibleData().animationMediaType):
       return ""
-    return self.data.animationMediaType
+    return self.getCollectibleData().animationMediaType.get()
 
   QtProperty[string] mediaType:
     read = getMediaType
 
   proc getBackgroundColor*(self: CollectibleDetailsEntry): string {.slot.} =
     var color = "transparent"
-    if self.data != nil and self.data.backgroundColor != "":
-      color = "#" & self.data.backgroundColor
+    if self.hasCollectibleData() and isSome(self.getCollectibleData().backgroundColor):
+      let backgroundColor = self.getCollectibleData().backgroundColor.get()
+      if backgroundColor != "":
+        color = "#" & backgroundColor
     return color
 
   QtProperty[string] backgroundColor:
     read = getBackgroundColor
 
-  proc getCollectionName*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
-      return ""
-    return self.data.collectionName
-
-  QtProperty[string] collectionName:
-    read = getCollectionName
-
   proc getDescription*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+    if not self.hasCollectibleData() or isNone(self.getCollectibleData().description):
       return ""
-    return self.data.description
+    return self.getCollectibleData().description.get()
 
   QtProperty[string] description:
     read = getDescription
 
-  proc getCollectionImageURL*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil:
+  proc getCollectionName*(self: CollectibleDetailsEntry): string {.slot.} =
+    if not self.hasCollectionData():
       return ""
-    return self.data.collectionImageUrl
+    return self.getCollectionData().name
+
+  QtProperty[string] collectionName:
+    read = getCollectionName
+
+  proc getCollectionImageURL*(self: CollectibleDetailsEntry): string {.slot.} =
+    if not self.hasCollectionData():
+      return ""
+    return self.getCollectionData().imageUrl
 
   QtProperty[string] collectionImageUrl:
     read = getCollectionImageURL
@@ -160,44 +182,44 @@ QtObject:
     read = getNetworkShortName
 
   proc getCommunityId*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil or isNone(self.data.communityInfo):
+    if not self.hasCommunityData():
       return ""
-    return self.data.communityInfo.get().communityId
+    return self.getCommunityData().id
 
   QtProperty[string] communityId:
     read = getCommunityId
 
   proc getCommunityName*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil or isNone(self.data.communityInfo):
+    if not self.hasCommunityData():
       return ""
-    return self.data.communityInfo.get().communityName
+    return self.getCommunityData().name
 
   QtProperty[string] communityName:
     read = getCommunityName
 
   proc getCommunityColor*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil or isNone(self.data.communityInfo):
+    if not self.hasCommunityData():
       return ""
-    return self.data.communityInfo.get().communityColor
+    return self.getCommunityData().color
 
   QtProperty[string] communityColor:
     read = getCommunityColor
 
-  proc getCommunityImage*(self: CollectibleDetailsEntry): string {.slot.} =
-    if self.data == nil or isNone(self.data.communityInfo):
-      return ""
-    return self.data.communityInfo.get().communityImage
-
-  QtProperty[string] communityImage:
-    read = getCommunityImage
-
   proc getCommunityPrivilegesLevel*(self: CollectibleDetailsEntry): int {.slot.} =
-    if self.data == nil or isNone(self.data.communityInfo):
+    if not self.hasCommunityData():
       return PrivilegesLevel.Community.int
-    return int(self.data.communityInfo.get().privilegesLevel)
+    return int(self.getCommunityData().privilegesLevel)
 
   QtProperty[int] communityPrivilegesLevel:
     read = getCommunityPrivilegesLevel
+
+  proc getCommunityImage*(self: CollectibleDetailsEntry): string {.slot.} =
+    if not self.hasCommunityData() or isNone(self.getCommunityData().imageUrl):
+      return ""
+    return self.getCommunityData().imageUrl.get()
+
+  QtProperty[string] communityImage:
+    read = getCommunityImage
 
   proc getNetworkColor*(self: CollectibleDetailsEntry): string {.slot.} =
     return self.extradata.networkColor

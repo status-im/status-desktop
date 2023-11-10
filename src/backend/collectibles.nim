@@ -45,21 +45,21 @@ type
     state*: OwnershipState
     timestamp*: int
 
-  # Mirrors services/wallet/collectibles/service.go FilterOwnedCollectiblesResponse
-  FilterOwnedCollectiblesResponse* = object
-    collectibles*: seq[CollectibleHeader]
+  # Mirrors services/wallet/collectibles/service.go GetOwnedCollectiblesResponse
+  GetOwnedCollectiblesResponse* = object
+    collectibles*: seq[Collectible]
     offset*: int
     hasMore*: bool
     ownershipStatus*: Table[string, Table[int, OwnershipStatus]]
     errorCode*: ErrorCode
 
-  # Mirrors services/wallet/collectibles/service.go GetCollectiblesDetailsResponse
-  GetCollectiblesDetailsResponse* = object
-    collectibles*: seq[CollectibleDetails]
+  # Mirrors services/wallet/collectibles/service.go GetCollectiblesByUniqueIDResponse
+  GetCollectiblesByUniqueIDResponse* = object
+    collectibles*: seq[Collectible]
     errorCode*: ErrorCode
 
   CommunityCollectiblesReceivedPayload* = object
-    collectibles*: seq[CommunityCollectibleHeader]
+    collectibles*: seq[Collectible]
 
   # see status-go/services/wallet/collectibles/filter.go FilterCommunityType
   FilterCommunityType* {.pure.} = enum
@@ -71,6 +71,15 @@ type
     communityIds*: seq[string]
     communityPrivilegesLevels*: seq[int]
     filterCommunity*: FilterCommunityType
+
+  # see status-go/services/wallet/collectibles/service.go FetchType
+  FetchType* {.pure.} = enum
+    NeverFetch, AlwaysFetch, FetchIfNotCached, FetchIfCacheOld
+
+  # see status-go/services/wallet/collectibles/service.go FetchCriteria
+  FetchCriteria* = object
+    fetchType*: FetchType
+    maxCacheAgeSeconds*: int
 
 # CollectibleOwnershipState
 proc `$`*(self: OwnershipStatus): string =
@@ -115,14 +124,36 @@ proc `%`*(t: CollectibleFilter): JsonNode {.inline.} =
 proc `%`*(t: ref CollectibleFilter): JsonNode {.inline.} =
   return %(t[])
 
+# CollectibleDataType
+proc `%`*(t: CollectibleDataType): JsonNode {.inline.} =
+  result = %(t.int)
+
+proc `%`*(t: ref CollectibleDataType): JsonNode {.inline.} =
+  return %(t[])
+
+# FetchCriteria
+proc `$`*(self: FetchCriteria): string =
+  return fmt"""FetchCriteria(
+    fetchType:{self.fetchType}, 
+    maxCacheAgeSeconds:{self.maxCacheAgeSeconds}
+    """
+
+proc `%`*(t: FetchCriteria): JsonNode {.inline.} =
+  result = newJObject()
+  result["fetch_type"] = %(t.fetchType.int)
+  result["max_cache_age_seconds"] = %(t.maxCacheAgeSeconds)
+
+proc `%`*(t: ref FetchCriteria): JsonNode {.inline.} =
+  return %(t[])
+
 # Responses
-proc fromJson*(e: JsonNode, T: typedesc[FilterOwnedCollectiblesResponse]): FilterOwnedCollectiblesResponse {.inline.} =
-  var collectibles: seq[CollectibleHeader]
+proc fromJson*(e: JsonNode, T: typedesc[GetOwnedCollectiblesResponse]): GetOwnedCollectiblesResponse {.inline.} =
+  var collectibles: seq[Collectible]
   if e.hasKey("collectibles"):
     let jsonCollectibles = e["collectibles"]
-    collectibles = newSeq[CollectibleHeader](jsonCollectibles.len)
-    for i in 0 ..< jsonCollectibles.len:
-      collectibles[i] = fromJson(jsonCollectibles[i], CollectibleHeader)
+    for jsonCollectible in jsonCollectibles.getElems():
+      let collectible = fromJson(jsonCollectible, Collectible)
+      collectibles.add(collectible)
 
   var ownershipStatus = initTable[string, Table[int, OwnershipStatus]]()
   if e.hasKey("ownershipStatus"):
@@ -142,12 +173,10 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterOwnedCollectiblesResponse]): Filte
     errorCode: ErrorCode(e["errorCode"].getInt())
   )
 
-proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesDetailsResponse]): GetCollectiblesDetailsResponse {.inline.} =
-  var collectibles: seq[CollectibleDetails] = @[]
-  if e.hasKey("collectibles"):
-    let jsonCollectibles = e["collectibles"]
-    for item in jsonCollectibles.getElems():
-      collectibles.add(fromJson(item, CollectibleDetails))
+proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesByUniqueIDResponse]): GetCollectiblesByUniqueIDResponse {.inline.} =
+  var collectibles: seq[Collectible] = @[]
+  for item in e["collectibles"].getElems():
+    collectibles.add(fromJson(item, Collectible))
 
   result = T(
     collectibles: collectibles,
@@ -155,9 +184,9 @@ proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesDetailsResponse]): GetCol
   )
 
 proc fromJson*(e: JsonNode, T: typedesc[CommunityCollectiblesReceivedPayload]): CommunityCollectiblesReceivedPayload {.inline.} =
-  var collectibles: seq[CommunityCollectibleHeader] = @[]
+  var collectibles: seq[Collectible] = @[]
   for item in e.getElems():
-    collectibles.add(fromJson(item, CommunityCollectibleHeader))
+    collectibles.add(fromJson(item, Collectible))
 
   result = T(
     collectibles: collectibles
@@ -183,17 +212,20 @@ rpc(getCollectibleOwnersByContractAddress, "wallet"):
   chainId: int
   contractAddress: string
 
-rpc(filterOwnedCollectiblesAsync, "wallet"):
+rpc(getOwnedCollectiblesAsync, "wallet"):
   requestId: int32
   chainIDs: seq[int]
   addresses: seq[string]
   filter: CollectibleFilter
   offset: int
   limit: int
+  dataType: CollectibleDataType
+  fetchCriteria: FetchCriteria
 
-rpc(getCollectiblesDetailsAsync, "wallet"):
+rpc(getCollectiblesByUniqueIDAsync, "wallet"):
   requestId: int32
   uniqueIds: seq[CollectibleUniqueID]
+  dataType: CollectibleDataType
 
 rpc(refetchOwnedCollectibles, "wallet"):
   discard
