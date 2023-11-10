@@ -199,8 +199,6 @@ proc canAskToEnableLinkPreview(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
-  debug "<<< setText"
-
   if text == "":
     self.resetLinkPreviews()
     self.delegate.setUrls(@[])
@@ -212,8 +210,6 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   let supportedUrls = urls.filter(x => not x.endsWith(".gif")) # GIFs are currently unfurled by receiver
   self.delegate.setLinkPreviewUrls(supportedUrls)
   let newUrls = self.linkPreviewCache.unknownUrls(supportedUrls)
-
-  debug "<<< newUrls", newUrls
 
   let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()
   self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
