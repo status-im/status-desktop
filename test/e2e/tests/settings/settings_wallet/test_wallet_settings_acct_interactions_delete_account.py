@@ -60,7 +60,10 @@ def test_delete_generated_account_from_wallet_settings(
         delete_confirmation_popup = acc_view.click_remove_account_button()
         delete_confirmation_popup.click_remove_account_button()
 
-        # TODO: verification for account removal toast (after https://github.com/status-im/status-desktop/issues/12541)
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{account_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify the removed account is not displayed in accounts list on main wallet screen'):
         wallet = main_screen.left_panel.open_wallet()
@@ -68,4 +71,3 @@ def test_delete_generated_account_from_wallet_settings(
         assert driver.waitFor(
             lambda: account_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
             f'Account with {account_name} is still displayed even it should not be'
-        

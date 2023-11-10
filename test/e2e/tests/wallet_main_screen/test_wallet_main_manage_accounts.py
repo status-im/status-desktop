@@ -129,7 +129,10 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{new_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -175,7 +178,10 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(name).agree_and_confirm()
 
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -240,7 +246,10 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
     with step('Delete wallet account'):
         wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
 
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{new_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -306,7 +315,10 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{new_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -362,7 +374,10 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
-    # TODO: add toast check for deletion when https://github.com/status-im/status-desktop/issues/12541 fixed
+    with step('Verify toast message notification when removing account'):
+        messages = WalletToastMessage().get_toast_messages
+        assert f'"{new_name}" successfully removed' in messages, \
+            f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
