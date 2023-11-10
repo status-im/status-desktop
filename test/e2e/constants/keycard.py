@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Keycard(Enum):
-    KEYCARD_PIN = '000000'
+    KEYCARD_PIN = '111111'
     KEYCARD_NAME = 'Test Keycard'
     ACCOUNT_NAME = 'Test Account'
     KEYCARD_POPUP_HEADER_CREATE_SEED = 'Create a new Keycard account with a new seed phrase'
@@ -12,9 +12,11 @@ class Keycard(Enum):
     KEYCARD_INSTRUCTIONS_INSERT_KEYCARD = 'Insert Keycard...'
     KEYCARD_RECOGNIZED = 'Keycard recognized'
     KEYCARD_CHOOSE_PIN = 'Choose a Keycard PIN'
+    KEYCARD_ENTER_PIN = "Enter this Keycard’s PIN"
     KEYCARD_PIN_NOTE = 'It is very important that you do not lose this PIN'
     KEYCARD_REPEAT_PIN = 'Repeat Keycard PIN'
     KEYCARD_PIN_SET = 'Keycard PIN set'
+    KEYCARD_PIN_VERIFIED = 'Keycard PIN verified!'
     KEYCARD_NAME_KEYCARD = 'Name this Keycard'
     KEYCARD_NAME_ACCOUNTS = 'Name accounts'
     KEYCARD_NEW_ACCOUNT_CREATED = 'New account successfully created'
@@ -25,3 +27,10 @@ class Keycard(Enum):
     KEYCARD_MIGRATING = 'Migrating key pair to Keycard'
     KEYCARD_KEYPAIR_MIGRATED = 'Keypair successfully migrated'
     KEYCARD_COMPLETE_MIGRATION = 'To complete migration close Status and log in with your new Keycard'
+    KEYCARD_EMPTY = 'Keycard is empty'
+    KEYCARD_NO_KEYPAIR = 'There is no key pair on this Keycard'
+    KEYCARD_NOT = 'This is not a Keycard'
+    KEYCARD_NOT_RECOGNIZED_NOTE = 'The card inserted is not a recognised Keycard,\nplease remove and try and again'
+    KEYCARD_LOCKED = 'Keycard locked'
+    KEYCARD_LOCKED_NOTE = 'You will need to unlock it before proceeding'
+    KEYCARD_ACCOUNTS = 'Accounts on this Keycard'

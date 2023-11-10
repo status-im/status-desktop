@@ -26,6 +26,10 @@ class MockedKeycardController(Window):
         self._keycard_not_inserted_item = QObject('keycard_Not_Inserted_StatusMenuItem')
         self._keycard_inserted_item = QObject('keycard_Inserted_StatusMenuItem')
         self._custom_keycard_item = QObject('custom_Keycard_StatusMenuItem')
+        self._not_status_keycard_item = QObject('not_Status_Keycard_StatusMenuItem')
+        self._empty_keycard_item = QObject('empty_Keycard_StatusMenuItem')
+        self._max_slots_reached_item = QObject('max_Pairing_Slots_Reached_StatusMenuItem')
+        self._mnemonic_metadata_item = QObject('keycard_With_Mnemonic_Metadata_StatusMenuItem')
         self._field_object = QObject('keycard_edit_TextEdit')
         self._scroll = Scroll('keycardFlickable')
 
@@ -50,6 +54,15 @@ class MockedKeycardController(Window):
         time.sleep(1)
         return self
 
+    @allure.step('Click Remove keycard')
+    def remove_keycard(self):
+        time.sleep(1)
+        if not self._remove_keycard_button.is_visible:
+            self._scroll.vertical_down_to(self._remove_keycard_button)
+        self._remove_keycard_button.click()
+        time.sleep(1)
+        return self
+
     @allure.step('Click Insert Keycard 1')
     def insert_keycard_1(self):
         self._insert_keycard_1_button.click()
@@ -71,3 +84,39 @@ class MockedKeycardController(Window):
         self._scroll.vertical_scroll_to(QObject(name='', real_name=driver.objectMap.realName(fields[index])))
         driver.type(fields[index], details)
         time.sleep(1)
+
+    @allure.step('Choose not Status keycard from initial keycard state dropdown')
+    def choose_not_status_keycard(self):
+        if not self._keycard_state_button.is_visible:
+            self._scroll.vertical_scroll_to(self._keycard_state_button)
+        self._keycard_state_button.click()
+        self._not_status_keycard_item.click()
+        time.sleep(1)
+        return self
+
+    @allure.step('Choose empty keycard from initial keycard state dropdown')
+    def choose_empty_keycard(self):
+        if not self._keycard_state_button.is_visible:
+            self._scroll.vertical_scroll_to(self._keycard_state_button)
+        self._keycard_state_button.click()
+        self._empty_keycard_item.click()
+        time.sleep(1)
+        return self
+
+    @allure.step('Choose keycard with MAX pairing slots reached from initial keycard state dropdown')
+    def choose_max_slots_reached_keycard(self):
+        if not self._keycard_state_button.is_visible:
+            self._scroll.vertical_scroll_to(self._keycard_state_button)
+        self._keycard_state_button.click()
+        self._max_slots_reached_item.click()
+        time.sleep(1)
+        return self
+
+    @allure.step('Choose keycard with mnemonic and metadata from initial keycard state dropdown')
+    def choose_mnemonic_metadata_keycard(self):
+        if not self._keycard_state_button.is_visible:
+            self._scroll.vertical_scroll_to(self._keycard_state_button)
+        self._keycard_state_button.click()
+        self._mnemonic_metadata_item.click()
+        time.sleep(1)
+        return self

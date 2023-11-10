@@ -11,18 +11,18 @@ keycardSettingsTab = {"container": QQuickApplicationWindow, "type": "KeycardSett
 set_initial_keycard_state_StatusButton = {"checkable": False, "container": keycardSettingsTab, "id": "selectKeycardsStateButton", "type": "StatusButton", "visible": True}
 register_Keycard_StatusButton = {"checkable": False, "container": keycardSettingsTab, "objectName": "registerKeycardButton", "type": "StatusButton", "visible": True}
 
-not_Status_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "notStatusKeycardAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-empty_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "emptyKeycardAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-max_Pairing_Slots_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPairingSlotsReachedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-max_PIN_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPINRetriesReachedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-max_PUK_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPUKRetriesReachedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-keycard_With_Mnemonic_Only_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicOnlyAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-keycard_With_Mnemonic_Metadata_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicAndMedatadaAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+not_Status_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "notStatusKeycardAction", "type": "StatusMenuItem", "visible": True}
+empty_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "emptyKeycardAction", "text": "Empty Keycard", "type": "StatusMenuItem", "visible": True}
+max_Pairing_Slots_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPairingSlotsReachedAction", "type": "StatusMenuItem", "visible": True}
+max_PIN_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPINRetriesReachedAction", "type": "StatusMenuItem", "visible": True}
+max_PUK_Retries_Reached_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "maxPUKRetriesReachedAction", "type": "StatusMenuItem", "visible": True}
+keycard_With_Mnemonic_Only_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicOnlyAction", "type": "StatusMenuItem", "visible": True}
+keycard_With_Mnemonic_Metadata_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "keycardWithMnemonicAndMedatadaAction", "type": "StatusMenuItem", "visible": True}
 custom_Keycard_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "customKeycardAction", "type": "StatusMenuItem", "visible": True}
 
-reader_Unplugged_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateReaderUnpluggedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-keycard_Not_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardNotInsertedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
-keycard_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardInsertedAction", "type": "StatusMenuItem", "unnamed": 1, "visible": True}
+reader_Unplugged_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateReaderUnpluggedAction", "type": "StatusMenuItem", "visible": True}
+keycard_Not_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardNotInsertedAction", "type": "StatusMenuItem", "visible": True}
+keycard_Inserted_StatusMenuItem = {"checkable": False, "container": mocked_Keycard_Lib_Controller_Overlay, "enabled": True, "objectName": "readerStateKeycardInsertedAction", "type": "StatusMenuItem", "visible": True}
 
 keycard_edit_TextEdit = {"container": keycardSettingsTab, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 keycardFlickable = {"container": keycardSettingsTab, "type": "Flickable", "unnamed": 1, "visible": True}

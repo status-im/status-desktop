@@ -334,6 +334,7 @@ word0_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "word0
 word1_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "word1", "type": "StatusInput", "unnamed": 1, "visible": True}
 word2_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "word2", "type": "StatusInput", "unnamed": 1, "visible": True}
 o_KeyPairItem = {"container": statusDesktop_mainWindow_overlay, "type": "KeyPairItem", "unnamed": 1, "visible": True}
+o_KeyPairUnknownItem = {"container": statusDesktop_mainWindow_overlay, "type": "KeyPairUnknownItem", "unnamed": 1, "visible": True}
 o_StatusListItemTag = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
 radioButton_StatusRadioButton = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "radioButton", "type": "StatusRadioButton", "unnamed": 1, "visible": True}
 statusSeedPhraseInputField_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusSeedPhraseInputField", "type": "TextEdit", "visible": True}

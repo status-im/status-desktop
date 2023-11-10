@@ -32,9 +32,11 @@ class KeycardPopup(BasePopup):
         self._seed_phrase_24_words_button = Button('switchTabBar_24_words_StatusSwitchTabButton')
         self._field_object = QObject('edit_TextEdit')
         self._keypair_item = QObject('o_KeyPairItem')
+        self._keypair_on_keycard_item = QObject('o_KeyPairUnknownItem')
         self._keypair_tag = QObject('o_StatusListItemTag')
         self._selection_box = QObject('radioButton_StatusRadioButton')
         self._keycard_init = QObject('o_KeycardInit')
+        self._cancel_button = Button('cancel_StatusButton')
 
     @property
     @allure.step('Get keycard image')
@@ -96,6 +98,11 @@ class KeycardPopup(BasePopup):
     @allure.step('Get selection box "checked" state')
     def is_keypair_selection_box_checked(self) -> bool:
         return self._selection_box.object.checked
+
+    @property
+    @allure.step('Get keycard name in accounts on keycard section')
+    def keypair_on_keycard_name(self) -> str:
+        return str(self._keypair_on_keycard_item.object.keyPairName)
 
     @property
     @allure.step('Get next button "enabled" state')
@@ -180,6 +187,7 @@ class KeycardPopup(BasePopup):
         self.input_pin(pin)
         self.click_next()
 
+    @allure.step('Input seed phrase')
     def input_seed_phrase(self, seed_phrase_words: list):
         self.click_next()
         if len(seed_phrase_words) == 12:
@@ -194,3 +202,7 @@ class KeycardPopup(BasePopup):
             self._seed_phrase_word_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
         self.click_next()
+
+    @allure.step('Click cancel button')
+    def cancel(self):
+        self._cancel_button.click()

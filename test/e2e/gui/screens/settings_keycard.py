@@ -39,6 +39,11 @@ class KeycardSettingsView(QObject):
         self._setup_keycard_with_existing_account_button.click()
         return KeycardPopup().wait_until_appears()
 
+    @allure.step('Choose check whats on keycard')
+    def click_check_whats_on_keycard(self):
+        self._check_whats_on_keycard_button.click()
+        return KeycardPopup().wait_until_appears()
+
     @allure.step('Check that all keycard options displayed')
     def all_keycard_options_available(self):
         assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'
