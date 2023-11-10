@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.0'
+library 'status-jenkins-lib@v1.8.1'
 
 pipeline {
 
@@ -178,6 +178,10 @@ def setNewBuildName() {
 
 def setBuildDescFromFile(fileNameOrPath) {
   def tokens = utils.parseFilename(utils.baseName(fileNameOrPath))
+  if (tokens == null) { /* Fallback for regex fail. */
+    currentBuild.description = utils.baseName(fileNameOrPath)
+    return
+  }
   if (tokens.build.startsWith('pr')) {
     currentBuild.displayName = tokens.build.replace(/^pr/, 'PR-')
   }
