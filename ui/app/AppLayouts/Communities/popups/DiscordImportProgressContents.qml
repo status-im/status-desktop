@@ -40,8 +40,12 @@ StatusScrollView {
             type: StatusButton.Danger
             text: root.importingSingleChannel ? qsTr("Delete channel & restart import") : qsTr("Delete community & restart import")
             onClicked: {
-                // TODO display a confirmation and restart the whole flow
-                root.close()
+                if (root.importingSingleChannel) {
+                    Global.openPopup(deleteAndRestartConfirmationPopupCmp)
+                } else {
+                    // TODO do similar for community import
+                    root.close()
+                }
             }
         },
         StatusButton {
@@ -358,6 +362,30 @@ StatusScrollView {
             }
             onCancelButtonClicked: {
                 cancelConfirmationPopup.close()
+            }
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: deleteAndRestartConfirmationPopupCmp
+        ConfirmationDialog {
+            id: deleteAndRestartConfirmationPopup
+            headerSettings.title: qsTr("Are you sure you want to delete the channel?")
+            confirmationText: qsTr("Your new Status channel will be deleted and all information entered will be lost.")
+            showCancelButton: true
+            cancelBtnType: "default"
+            confirmButtonLabel: qsTr("Delete channel & cancel import")
+            cancelButtonLabel: qsTr("Cancel")
+            onConfirmButtonClicked: {
+                root.store.removeImportedDiscordChannel()
+                deleteAndRestartConfirmationPopup.close()
+                root.close()
+            }
+            onCancelButtonClicked: {
+                deleteAndRestartConfirmationPopup.close()
             }
             onClosed: {
                 destroy()

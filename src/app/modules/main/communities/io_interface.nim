@@ -160,7 +160,7 @@ method discordImportChannelProgressUpdated*(
   ) {.base.} =
     raise newException(ValueError, "No implementation available")
 
-method discordImportChannelFinished*(self: AccessInterface, channelId: string) {.base.} =
+method discordImportChannelFinished*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method discordImportChannelCanceled*(self: AccessInterface, channelId: string) {.base.} =
@@ -254,4 +254,7 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
   raise newException(ValueError, "No implementation available")
 
 method onAllCommunityTokensLoaded*(self: AccessInterface, communityTokens: seq[CommunityTokenDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

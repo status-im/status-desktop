@@ -142,7 +142,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED) do(e:Args):
     let args = CommunityChatIdArgs(e)
-    self.delegate.discordImportChannelFinished(args.chatId)
+    self.delegate.discordImportChannelFinished(args.communityId, args.chatId)
 
   self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED) do(e:Args):
     let args = ChannelIdArgs(e)
@@ -481,3 +481,6 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
   self.silentSigningPath = path
   self.silentSigningPin = pin
   self.runSignFlow(pin, path, finalDataToSign)
+
+proc removeCommunityChat*(self: Controller, communityId: string, channelId: string) =
+  self.communityService.deleteCommunityChat(communityId, channelId)

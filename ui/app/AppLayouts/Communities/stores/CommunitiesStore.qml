@@ -195,6 +195,10 @@ QtObject {
         root.communitiesModuleInst.requestCancelDiscordChannelImport(id)
     }
 
+    function removeImportedDiscordChannel() {
+        root.communitiesModuleInst.removeImportedDiscordChannel()
+    }
+
     function resetDiscordImport() {
         root.communitiesModuleInst.resetDiscordImport(false)
     }
