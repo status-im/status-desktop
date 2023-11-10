@@ -32,6 +32,9 @@ class WalletSettingsView(QObject):
         self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
         self._status_account_in_keypair = QObject('settingsWalletAccountDelegate_Status_account')
         self._wallet_account_from_keypair = QObject('settingsWalletAccountDelegate')
+        self._wallet_settings_keypair_item = QObject('settingsWalletKeyPairDelegate')
+        self._wallet_settings_total_balance_item = QObject('settingsWalletAccountTotalBalance')
+        self._wallet_settings_total_balance_toggle = CheckBox('settingsWalletAccountTotalBalanceToggle')
 
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self):
@@ -59,11 +62,24 @@ class WalletSettingsView(QObject):
         self._status_account_in_keypair.click()
         return AccountDetailsView().wait_until_appears()
 
+    @allure.step('Get keypair names')
+    def get_keypairs_names(self):
+        return [str(getattr(item, 'title', '')) for item in
+                driver.findAllObjects(self._wallet_settings_keypair_item.real_name)]
+
     @allure.step('Open account view in wallet settings by name')
     def open_account_in_settings(self, name):
         self._wallet_account_from_keypair.real_name['objectName'] = name
         self._wallet_account_from_keypair.click()
         return AccountDetailsView().wait_until_appears()
+
+    @allure.step('Check Include in total balance item is visible')
+    def is_include_in_total_balance_visible(self):
+        return self._wallet_settings_total_balance_item.is_visible
+
+    @allure.step('Interact with the total balance toggle')
+    def toggle_total_balance(self, value: bool):
+        self._wallet_settings_total_balance_toggle.set(value)
 
 
 class AccountDetailsView(WalletSettingsView):
@@ -101,6 +117,11 @@ class AccountDetailsView(WalletSettingsView):
     def get_account_name_value(self):
         return self._wallet_account_title.text
 
+    @allure.step('Get account balance value')
+    def get_account_balance_value(self):
+        balance = str(getattr(self._wallet_account_balance, 'subTitle'))[:-4]
+        return balance
+
     @allure.step("Get account address value")
     def get_account_address_value(self):
         raw_value = str(getattr(self._wallet_account_address, 'subTitle'))
@@ -125,11 +146,19 @@ class AccountDetailsView(WalletSettingsView):
     def get_account_derivation_path_value(self):
         return str(getattr(self._wallet_account_derivation_path, 'subTitle'))
 
+    @allure.step('Get derivation path visibility')
+    def is_derivation_path_visible(self):
+        return self._wallet_account_derivation_path.is_visible
+
     @allure.step('Get account storage value')
     def get_account_storage_value(self):
         raw_value = str(getattr(self._wallet_account_stored, 'subTitle'))
         storage = raw_value.split(">")[-1]
         return storage
+
+    @allure.step('Get account storage visibility')
+    def is_account_storage_visible(self):
+        return self._wallet_account_stored.is_visible
 
 
 class NetworkWalletSettings(WalletSettingsView):

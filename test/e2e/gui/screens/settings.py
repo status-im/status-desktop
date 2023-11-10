@@ -42,7 +42,7 @@ class LeftPanel(QObject):
     @allure.step('Open wallet settings')
     def open_wallet_settings(self):
         self._open_settings('4-AppMenuItem')
-        return WalletSettingsView()
+        return WalletSettingsView().wait_until_appears()
 
     @allure.step('Open profile settings')
     def open_profile_settings(self):

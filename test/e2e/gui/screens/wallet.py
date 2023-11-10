@@ -33,6 +33,7 @@ class LeftPanel(QObject):
         self._wallet_account_item = QObject('walletAccount_StatusListItem')
         self._add_account_button = Button('mainWallet_Add_Account_Button')
         self._all_accounts_button = Button('mainWallet_All_Accounts_Button')
+        self._all_accounts_balance = TextLabel('mainWallet_All_Accounts_Balance')
 
     @property
     @allure.step('Get all accounts from list')
@@ -55,6 +56,10 @@ class LeftPanel(QObject):
                 continue
 
         return accounts
+
+    @allure.step('Get total balance value from All accounts')
+    def get_total_balance_value(self):
+        return self._all_accounts_balance.text[:-4]
 
     @allure.step('Choose saved addresses on left wallet panel')
     @close_exists(BasePopup())
@@ -81,6 +86,10 @@ class LeftPanel(QObject):
         self._wallet_account_item.real_name['title'] = account_name
         self._wallet_account_item.wait_until_appears().open_context_menu()
         return ContextMenu().wait_until_appears()
+
+    @allure.step("Select Hide/Include in total balance from context menu for account")
+    def hide_include_in_total_balance_from_context_menu(self, account_name: str):
+        self._open_context_menu_for_account(account_name).select_hide_include_total_balance_from_context_menu()
 
     @allure.step('Open account popup for editing from context menu')
     def open_edit_account_popup_from_context_menu(self, account_name: str, attempt: int = 2) -> AccountPopup:

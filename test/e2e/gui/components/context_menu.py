@@ -11,6 +11,7 @@ class ContextMenu(QObject):
         self._context_add_watched_address_option = QObject('contextMenuItem_AddWatchOnly')
         self._context_delete_account_option = QObject('contextMenuItem_Delete')
         self._context_edit_account_option = QObject('contextMenuItem_Edit')
+        self._context_hide_include_in_total_balance = QObject('contextMenuItem_HideInclude')
 
     @allure.step('Select in context menu')
     def select(self, value: str):
@@ -24,6 +25,10 @@ class ContextMenu(QObject):
     @allure.step('Select delete account option from context menu')
     def select_delete_account_from_context_menu(self):
         self._context_delete_account_option.click()
+
+    @allure.step('Select Hide/Include in total balance option from context menu')
+    def select_hide_include_total_balance_from_context_menu(self):
+        self._context_hide_include_in_total_balance.click()
 
     @allure.step('Select edit account option from context menu')
     def select_edit_account_from_context_menu(self):
