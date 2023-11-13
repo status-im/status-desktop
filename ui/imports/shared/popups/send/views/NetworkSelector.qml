@@ -22,7 +22,7 @@ Item {
     property var selectedAccount
     property string ensAddressOrEmpty: ""
     property var selectedAsset
-    property var amountToSend
+    property double amountToSend
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
@@ -39,7 +39,7 @@ Item {
     QtObject {
         id: d
         readonly property int backgroundRectRadius: 13
-        readonly property string backgroundRectColor: Theme.palette.indirectColor1
+        readonly property color backgroundRectColor: Theme.palette.indirectColor1
     }
 
     StatusSwitchTabBar {
