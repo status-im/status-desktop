@@ -287,6 +287,13 @@ Rectangle {
             bottomPadding: 0
             leftPadding: 8
             rightPadding: 5
+            input.edit.color: { // crash workaround, https://bugreports.qt.io/browse/QTBUG-107795
+                if (root.state === "error")
+                    return Theme.palette.dangerColor1
+                if (root.locked)
+                    return Theme.palette.directColor5
+                return Theme.palette.directColor1
+            }
             input.edit.font.pixelSize: 13
             input.edit.readOnly: disabled
             input.background.radius: 4
@@ -319,7 +326,7 @@ Rectangle {
                 }
             ]
             text: root.preCalculatedAdvancedText
-            onTextChanged: waitTimer.restart()           
+            onTextChanged: waitTimer.restart()
             Timer {
                 id: waitTimer
                 interval: lockTimeout
@@ -393,7 +400,7 @@ Rectangle {
             PropertyChanges {
                 target: secondaryLabel
                 text: disabled ? sensor.containsMouse ? root.enableText : disabledText : secondaryText
-            } 
+            }
             PropertyChanges {
                 target: secondaryLabel
                 font.weight: disabled && sensor.containsMouse ? Font.Medium : Font.Normal
@@ -421,11 +428,6 @@ Rectangle {
             PropertyChanges {
                 target: advancedInput
                 visible: advancedMode
-            }
-            PropertyChanges {
-                target: advancedInput
-                input.edit.color: input.edit.activeFocus || !root.locked ?
-                                      Theme.palette.directColor1 : Theme.palette.directColor5
             }
             PropertyChanges {
                 target: basicInput
@@ -497,10 +499,6 @@ Rectangle {
                 visible: advancedMode
             }
             PropertyChanges {
-                target: advancedInput
-                input.edit.color: Theme.palette.dangerColor1
-            }
-            PropertyChanges {
                 target: basicInput
                 visible: !advancedMode && !(root.loading && !disabled)
             }
@@ -570,10 +568,6 @@ Rectangle {
                 visible: advancedMode
             }
             PropertyChanges {
-                target: advancedInput
-                input.edit.color: root.locked ? Theme.palette.directColor5 : Theme.palette.directColor1
-            }
-            PropertyChanges {
                 target: basicInput
                 visible: !advancedMode && !(root.loading && !disabled)
             }
@@ -641,10 +635,6 @@ Rectangle {
                 visible: false
             }
             PropertyChanges {
-                target: advancedInput
-                input.edit.color: Theme.palette.directColor1
-            }
-            PropertyChanges {
                 target: basicInput
                 visible: true
             }
@@ -653,4 +643,5 @@ Rectangle {
                 active: false
             }
         }
-    ]}
+    ]
+}
