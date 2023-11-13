@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import allure
@@ -8,6 +9,8 @@ import configs
 import constants
 import driver
 from constants import ColorCodes, aut_options
+from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, CHOOSE_KEYCARD_PIN_IMAGE_PATH, \
+    KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
 from gui.components.community.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
@@ -61,6 +64,9 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
         assert Keycard.KEYCARD_INSTRUCTIONS_PLUG_IN.value in keycard_popup.keycard_instructions, \
             "There is no correct keycard instruction"
 
+    with step('Keycard welcome image source path is correct'):
+        assert PLUG_IN_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
+
     with step('Verify input seed phrase button is disabled'):
         assert not keycard_popup.is_next_button_enabled
 
@@ -95,6 +101,7 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
             assert driver.waitFor(lambda: Keycard.KEYCARD_CHOOSE_PIN.value in keycard_popup.keycard_instructions,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
             assert Keycard.KEYCARD_PIN_NOTE.value in keycard_popup.keycard_instructions
+            assert CHOOSE_KEYCARD_PIN_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Insert PIN and repeat PIN and verify keycard popup instructions are correct'):
         pin = Keycard.KEYCARD_PIN.value
@@ -122,4 +129,8 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_COMPLETE_MIGRATION.value in keycard_popup.keycard_instructions,
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
+        with step('Keycard image source path is correct'):
+            time.sleep(2)
+            assert KEYCARD_SUCCESS_IMAGE_PATH == keycard_popup.keycard_image_source_path
+
         keycard_popup.click_next()

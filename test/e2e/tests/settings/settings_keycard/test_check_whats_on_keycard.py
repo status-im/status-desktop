@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 from allure import step
@@ -6,6 +8,8 @@ import configs
 import constants
 import driver
 from constants import aut_options
+from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, EMPTY_KEYCARD_IMAGE_PATH, \
+    KEYCARD_SUCCESS_IMAGE_PATH, KEYCARD_INSERTED_IMAGE_PATH
 from constants.keycard import Keycard
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
@@ -27,6 +31,9 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
         assert Keycard.KEYCARD_INSTRUCTIONS_PLUG_IN.value in keycard_popup.keycard_instructions, \
             "There is no correct keycard instruction"
 
+    with step('Keycard welcome image source path is correct'):
+        assert PLUG_IN_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
+
     with step('Plug in reader'):
         main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
@@ -37,6 +44,9 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_INSTRUCTIONS_INSERT_KEYCARD.value in keycard_popup.keycard_instructions,
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
+
+    with step('Keycard image source path is correct'):
+        assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert not status keycard'):
         main_screen.hide()
@@ -69,6 +79,9 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         assert driver.waitFor(lambda: Keycard.KEYCARD_NO_KEYPAIR.value in keycard_popup.keycard_instructions,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
+
+    with step('Keycard image source path is correct'):
+        assert EMPTY_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Close keycard popup'):
         keycard_popup.click_next()
@@ -113,8 +126,15 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
         assert driver.waitFor(lambda: Keycard.KEYCARD_PIN_VERIFIED.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 
+    with step('Keycard image source path is correct'):
+        time.sleep(2)
+        assert KEYCARD_SUCCESS_IMAGE_PATH == keycard_popup.keycard_image_source_path
+
     with step('Close keycard popup'):
         keycard_popup.click_next()
+
+    with step('Keycard image source path is correct'):
+        assert KEYCARD_INSERTED_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Verify that preview shows correct keycard and instructions are correct'):
         assert driver.waitFor(lambda: Keycard.KEYCARD_ACCOUNTS.value in keycard_popup.keycard_instructions), \

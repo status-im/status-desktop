@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 from allure import step
@@ -5,6 +7,8 @@ from allure import step
 import configs
 import driver
 from constants import ColorCodes, aut_options
+from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, KEYCARD_SUCCESS_IMAGE_PATH, \
+    CHOOSE_KEYCARD_PIN_IMAGE_PATH
 from constants.keycard import Keycard
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
@@ -28,6 +32,9 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
             assert Keycard.KEYCARD_INSTRUCTIONS_PLUG_IN.value in keycard_popup.keycard_instructions, \
                 "There is no correct keycard instruction"
 
+    with step('Keycard welcome image source path is correct'):
+        assert PLUG_IN_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
+
     with step('Plug in reader'):
         main_screen.hide()
         keycard_controller = MockedKeycardController().wait_until_appears()
@@ -38,6 +45,9 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_INSTRUCTIONS_INSERT_KEYCARD.value in keycard_popup.keycard_instructions,
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
+
+    with step('Keycard image source path is correct'):
+        assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert keycard'):
         main_screen.hide()
@@ -53,6 +63,7 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
             assert driver.waitFor(lambda: Keycard.KEYCARD_CHOOSE_PIN.value in keycard_popup.keycard_instructions,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
             assert Keycard.KEYCARD_PIN_NOTE.value in keycard_popup.keycard_instructions
+            assert CHOOSE_KEYCARD_PIN_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Insert PIN and repeat PIN and verify keycard popup instructions are correct'):
         pin = Keycard.KEYCARD_PIN.value
@@ -75,5 +86,9 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
         assert keycard_popup.keypair_name == keycard_name, "Keycard name in preview is incorrect"
         assert keycard_popup.keypair_account_name == account_name, "Account name in preview is incorrect"
         assert keycard_popup.keypair_account_color == ColorCodes.BLUE.value, "Color in preview is incorrect"
+
+    with step('Keycard image source path is correct'):
+        time.sleep(2)
+        assert KEYCARD_SUCCESS_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
         keycard_popup.click_next()

@@ -322,6 +322,7 @@ leave_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_
 # Create Keycard account with new seed phrase popup
 cancel_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "cancelButton", "type": "StatusButton", "visible": True}
 image_KeycardImage = {"container": statusDesktop_mainWindow_overlay, "id": "image", "type": "KeycardImage", "unnamed": 1, "visible": True}
+img_Image = {"container": statusDesktop_mainWindow_overlay, "id": "img", "type": "Image", "unnamed": 1, "visible": True}
 headerTitle = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
 o_KeycardInit = {"container": statusDesktop_mainWindow_overlay, "type": "KeycardInit", "unnamed": 1, "visible": True}
 keycard_reader_instruction_text = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "visible": True}

@@ -17,7 +17,7 @@ class KeycardPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._keycard_image = QObject('image_KeycardImage')
+        self._keycard_image = QObject('img_Image')
         self._keycard_popup_header = TextLabel('headerTitle')
         self._keycard_instruction_text = TextLabel('keycard_reader_instruction_text')
         self._next_button = Button('nextStatusButton')
@@ -39,9 +39,9 @@ class KeycardPopup(BasePopup):
         self._cancel_button = Button('cancel_StatusButton')
 
     @property
-    @allure.step('Get keycard image')
-    def keycard_image(self) -> Image:
-        return self._keycard_image.image
+    @allure.step('Get keycard image source path')
+    def keycard_image_source_path(self) -> str:
+        return str(self._keycard_image.object.source.path)
 
     @property
     @allure.step('Get keycard popup header')
@@ -182,14 +182,13 @@ class KeycardPopup(BasePopup):
     @allure.step('Import keycard via seed phrase')
     def import_keycard_via_seed_phrase(self, seed_phrase_words: list, pin: str, keycard_name: str, account_name: str):
         self.input_seed_phrase(seed_phrase_words)
-        self.name_keycard_and_account(keycard_name, account_name)
         self.input_pin(pin)
         self.input_pin(pin)
         self.click_next()
+        self.name_keycard_and_account(keycard_name, account_name)
 
     @allure.step('Input seed phrase')
     def input_seed_phrase(self, seed_phrase_words: list):
-        self.click_next()
         if len(seed_phrase_words) == 12:
             self._seed_phrase_12_words_button.click()
         elif len(seed_phrase_words) == 18:
