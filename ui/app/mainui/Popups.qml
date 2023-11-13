@@ -893,7 +893,7 @@ QtObject {
                     target: root
                     onOwnershipDeclined: {
                         finalisePopup.close()
-                        root.communityTokensStore.ownershipDeclined(communityId)
+                        root.rootStore.communityTokensStore.ownershipDeclined(communityId, communityName)
                     }
                 }
             }
@@ -904,10 +904,7 @@ QtObject {
             FinaliseOwnershipDeclinePopup {
                 destroyOnClose: true
 
-                onDeclineClicked: {
-                    close()
-                    root.rootStore.communityTokensStore.ownershipDeclined(communityId, communityName)
-                }
+                onDeclineClicked: root.ownershipDeclined()
             }
         }
         // End of components related to transfer community ownership flow.
