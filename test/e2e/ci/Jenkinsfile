@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.8.1'
 pipeline {
 
   agent {
-    label "${params.AGENT} && x86_64 && qt-5.15.2"
+    label "${params.AGENT} && x86_64 && qt-5.15.2 && !desktop-e2e-old"
   }
 
   parameters {
