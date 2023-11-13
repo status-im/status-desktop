@@ -49,7 +49,7 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
     with step('Verify details view for the watched address'):
         assert driver.waitFor(
             lambda: acc_view.get_account_balance_value() != '0,00', configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
-                f"Watched address {watched_address} should have positive balance in account view"
+            f"Watched address {watched_address} should have positive balance in account view"
 
         assert acc_view.get_account_name_value() == name, \
             f"Watched address name is incorrect, current name is {acc_view.get_account_name_value()}, expected {name}"
@@ -74,17 +74,18 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
 
     with step('Open wallet main screen and make sure total balance is not 0 anymore'):
         main_screen.left_panel.open_wallet()
-        total_balance_after = float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
-                                    .replace(",", ""))
-        assert total_balance_after > 0, \
-            f"Balance after adding watched address can't less than 0, when current balance is {total_balance_after}"
+
+        assert driver.waitFor(
+            lambda: float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
+                          .replace(",", "")) > 0, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
+            f"Balance after adding watched address can't be 0"
 
     with step('Right click the watched address and select Exclude from total balance option'):
         main_screen.left_panel.open_wallet().left_panel.hide_include_in_total_balance_from_context_menu(name)
 
     with step('Check the balance is back to 0 again'):
         main_screen.left_panel.open_wallet()
-        total_balance_excluded = float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
-                                       .replace(",", ""))
-        assert total_balance_excluded == 0.0, \
-            f"Balance after adding watched address should be back to 0, when current balance is {total_balance_after}"
+        assert driver.waitFor(
+            lambda: float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
+                          .replace(",", "")) == 0, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
+            f"Balance after removing watched address should be back to 0"
