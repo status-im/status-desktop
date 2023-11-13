@@ -176,7 +176,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
   result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
   result.tokenService = token_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
   )
   result.currencyService = currency_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.tokenService, result.settingsService
@@ -228,7 +228,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.transactionService, result.tokenService, result.settingsService, result.walletAccountService, result.activityCenterService, result.communityService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
-  result.networkConnectionService = network_connection_service.newService(statusFoundation.events, result.walletAccountService, result.networkService, result.nodeService)
+  result.networkConnectionService = network_connection_service.newService(statusFoundation.events,
+    result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
   # Modules
   result.startupModule = startup_module.newModule[AppController](

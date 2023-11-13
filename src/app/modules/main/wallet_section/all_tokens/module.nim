@@ -3,11 +3,13 @@ import NimQml
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/token/service as token_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/token/dto
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/token/service as token_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/dto
+import app_service/service/currency/service
+import app_service/service/settings/service
 
 export io_interface
 
@@ -39,11 +41,25 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", newQVariant(self.view))
 
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+    self.controller.rebuildMarketData()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.controller.rebuildMarketData()
+
   # Passing on the events for changes in model to abstract model
   self.events.on(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED) do(e: Args):
     self.view.modelsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.view.modelsUpdated()
+  self.events.on(SIGNAL_TOKENS_DETAILS_UPDATED) do(e: Args):
+    self.view.tokensDetailsUpdated()
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
+    self.view.tokensMarketValuesUpdated()
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
+    self.view.tokensMarketValuesUpdated()
+
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    self.view.currencyFormatsUpdated()
 
   self.controller.init()
   self.view.load()
@@ -74,28 +90,32 @@ method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, toke
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
 
-proc getFlatTokensList*(self: Module): var seq[TokenItem]  =
-  return self.controller.getFlatTokensList()
-
-proc getTokenBySymbolList*(self: Module): var seq[TokenBySymbolItem] =
-  return self.controller.getTokenBySymbolList()
-
-proc getSourcesOfTokensList*(self: Module): var seq[SupportedSourcesItem] =
-  return self.controller.getSourcesOfTokensList()
-
 # Interfaces for getting lists from the service files into the abstract models
 
 method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
   return (
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.getSourcesOfTokensList()
+    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
   )
 
 method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.getFlatTokensList()
+    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
+    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )
 
 method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
   return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.getTokenBySymbolList()
+    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
+    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+  )
+
+method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSource =
+  return (
+    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem = self.controller.getMarketValuesBySymbol(symbol),
+    getPriceBySymbol: proc(symbol: string): float64 = self.controller.getPriceBySymbol(symbol),
+    getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat()
   )

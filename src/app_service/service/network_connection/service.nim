@@ -4,10 +4,11 @@ import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 
-import ../wallet_account/service as wallet_service
-import ../network/service as network_service
-import ../node/service as node_service
+import app_service/service/wallet_account/service as wallet_service
+import app_service/service/network/service as network_service
+import app_service/service/node/service as node_service
 import backend/connection_status as connection_status_backend
+import app_service/service/token/service as token_service
 import backend/collectibles as collectibles_backend
 
 logScope:
@@ -54,6 +55,7 @@ QtObject:
     walletService: wallet_service.Service
     networkService: network_service.Service
     nodeService: node_service.Service
+    tokenService: token_service.Service
     connectionStatus: Table[string, ConnectionStatus]
 
   # Forward declaration
@@ -72,6 +74,7 @@ QtObject:
     walletService: wallet_service.Service,
     networkService: network_service.Service,
     nodeService: node_service.Service,
+    tokenService: token_service.Service
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -80,6 +83,7 @@ QtObject:
     result.walletService = walletService
     result.networkService = networkService
     result.nodeService = nodeService
+    result.tokenService = tokenService
     result.connectionStatus = {BLOCKCHAINS: newConnectionStatus(),
                                 MARKET: newConnectionStatus(),
                                 COLLECTIBLES: newConnectionStatus()}.toTable
@@ -225,7 +229,9 @@ QtObject:
     if(self.connectionStatus.hasKey(MARKET)):
       self.connectionStatus[MARKET].connectionState = ConnectionState.Retrying
       self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(MARKET, self.connectionStatus[MARKET]))
+      # TODO: remove once market values are removed from tokenService
       self.walletService.reloadAccountTokens()
+      self.tokenService.rebuildMarketData()
 
   proc collectiblesRetry*(self: Service) {.slot.} =
     if(self.connectionStatus.hasKey(COLLECTIBLES)):
@@ -236,6 +242,7 @@ QtObject:
   proc networkConnected*(self: Service, connected: bool) =
     if connected:
       self.walletService.reloadAccountTokens()
+      self.tokenService.rebuildMarketData()
       discard collectibles_backend.refetchOwnedCollectibles()
     else:
       if(self.connectionStatus.hasKey(BLOCKCHAINS)):
@@ -249,4 +256,3 @@ QtObject:
     if self.connectionStatus.hasKey(website) and self.connectionStatus[website].completelyDown:
       return false
     return true
-

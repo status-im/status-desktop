@@ -5,10 +5,12 @@ from web3/conversions import `$`
 import backend/backend as backend
 
 import app_service/service/network/service as network_service
+import app_service/service/settings/service as settings_service
 import app_service/service/wallet_account/dto/account_dto
 
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
+import app/core/signals/types
 import app_service/common/cache
 import ../../../constants as main_constants
 import ./dto, ./service_items
@@ -33,6 +35,9 @@ const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
 const SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED* = "tokensListAboutToBeUpdated"
+const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
+const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
+const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
 
 type
   TokenHistoricalDataArgs* = ref object of Args
@@ -52,6 +57,7 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     networkService: network_service.Service
+    settingsService: settings_service.Service
 
     # TODO: remove these once community usage of this service is removed etc...
     tokens: Table[int, seq[TokenDto]]
@@ -63,13 +69,17 @@ QtObject:
     sourcesOfTokensList: seq[SupportedSourcesItem]
     flatTokenList: seq[TokenItem]
     tokenBySymbolList: seq[TokenBySymbolItem]
-    # TODO: Table[symbol, TokenDetails] fetched from cryptocompare
-    # will be done under https://github.com/status-im/status-desktop/issues/12668
-    tokenDetailsList: Table[string, TokenDetails]
+    tokenDetailsTable: Table[string, TokenDetailsItem]
+    tokenMarketValuesTable: Table[string, TokenMarketValuesItem]
+    tokenPriceTable: Table[string, float64]
+    tokensDetailsLoading: bool
+    tokensPricesLoading: bool
+    tokensMarketDetailsLoading: bool
 
-
+  proc getCurrency*(self: Service): string
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
   proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]]
+  proc rebuildMarketData*(self: Service)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -78,12 +88,14 @@ QtObject:
     events: EventEmitter,
     threadpool: ThreadPool,
     networkService: network_service.Service,
+    settingsService: settings_service.Service
   ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.networkService = networkService
+    result.settingsService = settingsService
     result.tokens = initTable[int, seq[TokenDto]]()
     result.priceCache = newTimedCache[float64]()
     result.tokenList = @[]
@@ -92,95 +104,223 @@ QtObject:
     result.sourcesOfTokensList = @[]
     result.flatTokenList = @[]
     result.tokenBySymbolList = @[]
-    result.tokenDetailsList = initTable[string, TokenDetails]()
+    result.tokenDetailsTable = initTable[string, TokenDetailsItem]()
+    result.tokenMarketValuesTable = initTable[string, TokenMarketValuesItem]()
+    result.tokenPriceTable = initTable[string, float64]()
+    result.tokensDetailsLoading = true
+    result.tokensPricesLoading = true
+    result.tokensMarketDetailsLoading = true
+
+  proc fetchTokensMarketValues(self: Service, symbols: seq[string]) =
+    self.tokensMarketDetailsLoading = true
+    let arg = FetchTokensMarketValuesTaskArg(
+      tptr: cast[ByteAddress](fetchTokensMarketValuesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokensMarketValuesRetrieved",
+      symbols: symbols,
+      currency: self.getCurrency()
+    )
+    self.threadpool.start(arg)
+
+  proc tokensMarketValuesRetrieved(self: Service, response: string) {.slot.} =
+    # this is emited so that the models can notify about market values being available
+    self.tokensMarketDetailsLoading = false
+    defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
+    try:
+      let parsedJson = response.parseJson
+      var errorString: string
+      var tokenMarketValues, tokensResult: JsonNode
+      discard parsedJson.getProp("tokenMarketValues", tokenMarketValues)
+      discard parsedJson.getProp("error", errorString)
+      discard tokenMarketValues.getProp("result", tokensResult)
+
+      if not errorString.isEmptyOrWhitespace:
+        raise newException(Exception, "Error getting tokens market values: " & errorString)
+      if tokensResult.isNil or tokensResult.kind == JNull:
+        return
+
+      for (symbol, marketValuesObj) in tokensResult.pairs:
+        let marketValuesDto = Json.decode($marketValuesObj, dto.TokenMarketValuesDto, allowUnknownFields = true)
+        self.tokenMarketValuesTable[symbol] = TokenMarketValuesItem(
+          marketCap: marketValuesDto.marketCap,
+          highDay: marketValuesDto.highDay,
+          lowDay: marketValuesDto.lowDay,
+          changePctHour: marketValuesDto.changePctHour,
+          changePctDay: marketValuesDto.changePctDay,
+          changePct24hour: marketValuesDto.changePct24hour,
+          change24hour: marketValuesDto.change24hour)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+
+  proc fetchTokensDetails(self: Service, symbols: seq[string]) =
+    self.tokensDetailsLoading = true
+    let arg = FetchTokensDetailsTaskArg(
+      tptr: cast[ByteAddress](fetchTokensDetailsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokensDetailsRetrieved",
+      symbols: symbols
+    )
+    self.threadpool.start(arg)
+
+  proc tokensDetailsRetrieved(self: Service, response: string) {.slot.} =
+    self.tokensDetailsLoading = false
+    # this is emited so that the models can notify about details being available
+    defer: self.events.emit(SIGNAL_TOKENS_DETAILS_UPDATED, Args())
+    try:
+      let parsedJson = response.parseJson
+      var errorString: string
+      var tokensDetails, tokensResult: JsonNode
+      discard parsedJson.getProp("tokensDetails", tokensDetails)
+      discard parsedJson.getProp("error", errorString)
+      discard tokensDetails.getProp("result", tokensResult)
+
+      if not errorString.isEmptyOrWhitespace:
+        raise newException(Exception, "Error getting tokens details: " & errorString)
+      if tokensResult.isNil or tokensResult.kind == JNull:
+        return
+
+      for (symbol, tokenDetailsObj) in tokensResult.pairs:
+        let tokenDetailsDto = Json.decode($tokenDetailsObj, dto.TokenDetailsDto, allowUnknownFields = true)
+        self.tokenDetailsTable[symbol] = TokenDetailsItem(
+          description: tokenDetailsDto.description,
+          assetWebsiteUrl: tokenDetailsDto.assetWebsiteUrl)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+
+  proc fetchTokensPrices(self: Service, symbols: seq[string]) =
+    self.tokensPricesLoading = true
+    let arg = FetchTokensPricesTaskArg(
+      tptr: cast[ByteAddress](fetchTokensPricesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokensPricesRetrieved",
+      symbols: symbols,
+      currencies: @[self.getCurrency()]
+    )
+    self.threadpool.start(arg)
+
+  proc tokensPricesRetrieved(self: Service, response: string) {.slot.} =
+    self.tokensPricesLoading = false
+    # this is emited so that the models can notify about prices being available
+    defer: self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
+    try:
+      let parsedJson = response.parseJson
+      var errorString: string
+      var tokensPrices, tokensResult: JsonNode
+      discard parsedJson.getProp("tokensPrices", tokensPrices)
+      discard parsedJson.getProp("error", errorString)
+      discard tokensPrices.getProp("result", tokensResult)
+
+      if not errorString.isEmptyOrWhitespace:
+        raise newException(Exception, "Error getting tokens details: " & errorString)
+      if tokensResult.isNil or tokensResult.kind == JNull:
+        return
+
+      for (symbol, prices) in tokensResult.pairs:
+        for (currency, price) in prices.pairs:
+          if cmpIgnoreCase(self.getCurrency(), currency) == 0:
+            self.tokenPriceTable[symbol] = price.getFloat
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
 
   # Callback to process the response of getSupportedTokensList call
   proc supportedTokensListRetrieved(self: Service, response: string) {.slot.} =
     # this is emited so that the models can know that the seq it depends on has been updated
     defer: self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+    try:
+      let parsedJson = response.parseJson
+      var errorString: string
+      var supportedTokensJson, tokensResult: JsonNode
+      discard parsedJson.getProp("supportedTokensJson", supportedTokensJson)
+      discard parsedJson.getProp("error", errorString)
+      discard supportedTokensJson.getProp("result", tokensResult)
 
-    let parsedJson = response.parseJson
-    var errorString: string
-    var supportedTokensJson, tokensResult: JsonNode
-    discard parsedJson.getProp("supportedTokensJson", supportedTokensJson)
-    discard parsedJson.getProp("supportedTokensJson", errorString)
-    discard supportedTokensJson.getProp("result", tokensResult)
+      if not errorString.isEmptyOrWhitespace:
+        raise newException(Exception, "Error getting supported tokens list: " & errorString)
+      let sourcesList = if tokensResult.isNil or tokensResult.kind == JNull: @[]
+                else: Json.decode($tokensResult, seq[TokenSourceDto], allowUnknownFields = true)
 
-    if not errorString.isEmptyOrWhitespace:
-      raise newException(Exception, "Error getting supported tokens list: " & errorString)
-    let sourcesList = if tokensResult.isNil or tokensResult.kind == JNull: @[]
-              else: Json.decode($tokensResult, seq[TokenSourceDto], allowUnknownFields = true)
+      let supportedNetworkChains = self.networkService.getAllNetworkChainIds()
+      var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
+      var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
+      var tokenSymbols: seq[string] = @[]
 
-    let supportedNetworkChains = self.networkService.getAllNetworkChainIds()
-    var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
-    var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
+      for s in sourcesList:
+        let newSource = SupportedSourcesItem(name: s.name, updatedAt: s.updatedAt, source: s.source, version: s.version, tokensCount: s.tokens.len)
+        self.sourcesOfTokensList.add(newSource)
 
-    for s in sourcesList:
-      let newSource = SupportedSourcesItem(name: s.name, updatedAt: s.updatedAt, source: s.source, version: s.version, tokensCount: s.tokens.len)
-      self.sourcesOfTokensList.add(newSource)
+        for token in s.tokens:
+          # Remove tokens that are not on list of supported status networks
+          if supportedNetworkChains.contains(token.chainID):
+            # logic for building flat tokens list
+            let unique_key = $token.chainID & token.address
+            if flatTokensList.hasKey(unique_key):
+              flatTokensList[unique_key].sources.add(s.name)
+            else:
+              let tokenType = if s.name == "native" : TokenType.Native
+                              else: TokenType.ERC20
+              flatTokensList[unique_key] = TokenItem(
+                key: unique_key,
+                name: token.name,
+                symbol: token.symbol,
+                sources: @[s.name],
+                chainID: token.chainID,
+                address: token.address,
+                decimals: token.decimals,
+                image: "",
+                `type`: tokenType,
+                communityId: token.communityID)
 
-      for token in s.tokens:
-        # Remove tokens that are not on list of supported status networks
-        if supportedNetworkChains.contains(token.chainID):
-          # logic for building flat tokens list
-          let unique_key = $token.chainID & token.address
-          if flatTokensList.hasKey(unique_key):
-            flatTokensList[unique_key].sources.add(s.name)
-          else:
-            let tokenType = if s.name == "native" : TokenType.Native
-                            else: TokenType.ERC20
-            flatTokensList[unique_key] = TokenItem(
-              key: unique_key,
-              name: token.name,
-              symbol: token.symbol,
-              sources: @[s.name],
-              chainID: token.chainID,
-              address: token.address,
-              decimals: token.decimals,
-              image: "",
-              `type`: tokenType,
-              communityId: token.communityID)
+            # logic for building tokens by symbol list
+            # In case the token is not a community token the unique key is symbol
+            # In case this is a community token the only param reliably unique is its address
+            # as there is always a rare case that a user can create two or more community token
+            # with same symbol and cannot be avoided
+            let token_by_symbol_key = if token.communityID.isEmptyOrWhitespace: token.symbol
+                                      else: token.address
+            if tokenBySymbolList.hasKey(token_by_symbol_key):
+              if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
+                tokenBySymbolList[token_by_symbol_key].sources.add(s.name)
+              # this logic is to check if an entry for same chainId as been made already,
+              # in that case we simply add it to address per chain
+              var addedChains: seq[int] = @[]
+              for addressPerChain in tokenBySymbolList[token_by_symbol_key].addressPerChainId:
+                addedChains.add(addressPerChain.chainId)
+              if not addedChains.contains(token.chainID):
+                tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
+            else:
+              let tokenType = if s.name == "native": TokenType.Native
+                              else: TokenType.ERC20
+              tokenBySymbolList[token_by_symbol_key] = TokenBySymbolItem(
+                key: token_by_symbol_key,
+                name: token.name,
+                symbol: token.symbol,
+                sources: @[s.name],
+                addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
+                decimals: token.decimals,
+                image: "",
+                `type`: tokenType,
+                communityId: token.communityID)
+              if token.communityID.isEmptyOrWhitespace:
+                tokenSymbols.add(token.symbol)
 
-          # logic for building tokens by symbol list
-          # In case the token is not a community token the unique key is symbol
-          # In case this is a community token the only param reliably unique is its address
-          # as there is always a rare case that a user can create two or more community token
-          # with same symbol and cannot be avoided
-          let token_by_symbol_key = if token.communityID.isEmptyOrWhitespace: token.symbol
-                                    else: token.address
-          if tokenBySymbolList.hasKey(token_by_symbol_key):
-            if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
-              tokenBySymbolList[token_by_symbol_key].sources.add(s.name)
-            # this logic is to check if an entry for same chainId as been made already,
-            # in that case we simply add it to address per chain
-            var addedChains: seq[int] = @[]
-            for addressPerChain in tokenBySymbolList[token_by_symbol_key].addressPerChainId:
-              addedChains.add(addressPerChain.chainId)
-            if not addedChains.contains(token.chainID):
-              tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
-          else:
-            let tokenType = if s.name == "native": TokenType.Native
-                            else: TokenType.ERC20
-            tokenBySymbolList[token_by_symbol_key] = TokenBySymbolItem(
-              key: token_by_symbol_key,
-              name: token.name,
-              symbol: token.symbol,
-              sources: @[s.name],
-              addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
-              decimals: token.decimals,
-              image: "",
-              `type`: tokenType,
-              communityId: token.communityID)
-
-    self.flatTokenList = toSeq(flatTokensList.values)
-    self.flatTokenList.sort(cmpTokenItem)
-    self.tokenBySymbolList = toSeq(tokenBySymbolList.values)
-    self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
+      self.fetchTokensMarketValues(tokenSymbols)
+      self.fetchTokensDetails(tokenSymbols)
+      self.fetchTokensPrices(tokenSymbols)
+      self.flatTokenList = toSeq(flatTokensList.values)
+      self.flatTokenList.sort(cmpTokenItem)
+      self.tokenBySymbolList = toSeq(tokenBySymbolList.values)
+      self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
 
   proc getSupportedTokensList(self: Service) =
     # this is emited so that the models can know that an update is about to happen
     self.events.emit(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED, Args())
-    let arg = GetTokenListTaskArg(
+    let arg = QObjectTaskArg(
       tptr: cast[ByteAddress](getSupportedTokenList),
       vptr: cast[ByteAddress](self.vptr),
       slot: "supportedTokensListRetrieved",
@@ -246,8 +386,16 @@ QtObject:
       return
     self.loadData()
     self.getSupportedTokensList()
-    # ToDo: on self.events.on(SignalType.Message.event) do(e: Args):
-    # update and populate internal list and then emit signal
+
+    self.events.on(SignalType.Wallet.event) do(e:Args):
+      var data = WalletSignal(e)
+      case data.eventType:
+        of "wallet-tick-reload":
+          self.rebuildMarketData()
+    # update and populate internal list and then emit signal when new custom token detected?
+
+  proc getCurrency*(self: Service): string =
+    return self.settingsService.getCurrency()
 
   proc getSourcesOfTokensList*(self: Service): var seq[SupportedSourcesItem] =
     return self.sourcesOfTokensList
@@ -257,6 +405,32 @@ QtObject:
 
   proc getTokenBySymbolList*(self: Service): var seq[TokenBySymbolItem] =
     return self.tokenBySymbolList
+
+  proc getTokenDetails*(self: Service, symbol: string): TokenDetailsItem =
+    if not self.tokenDetailsTable.hasKey(symbol):
+      return TokenDetailsItem()
+    return self.tokenDetailsTable[symbol]
+
+  proc getMarketValuesBySymbol*(self: Service, symbol: string): TokenMarketValuesItem =
+    if not self.tokenMarketValuesTable.hasKey(symbol):
+      return TokenMarketValuesItem()
+    return self.tokenMarketValuesTable[symbol]
+
+  proc getPriceBySymbol*(self: Service, symbol: string): float64 =
+    if not self.tokenPriceTable.hasKey(symbol):
+      return 0.0
+    return self.tokenPriceTable[symbol]
+
+  proc getTokensDetailsLoading*(self: Service): bool =
+    return self.tokensDetailsLoading
+
+  proc getTokensMarketValuesLoading*(self: Service): bool =
+    return self.tokensPricesLoading and self.tokensMarketDetailsLoading
+
+  proc rebuildMarketData*(self: Service) =
+    let symbols = self.tokenDetailsTable.keys.toSeq()
+    self.fetchTokensMarketValues(symbols)
+    self.fetchTokensPrices(symbols)
 
   # TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
   proc getTokenList*(self: Service): seq[TokenDto] =

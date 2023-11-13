@@ -138,6 +138,10 @@ rpc(getTransfersForIdentities, "wallet"):
 rpc(getWalletToken, "wallet"):
   accounts: seq[string]
 
+rpc(fetchMarketValues, "wallet"):
+  symbols: seq[string]
+  currency: string
+
 rpc(startWallet, "wallet"):
   discard
 

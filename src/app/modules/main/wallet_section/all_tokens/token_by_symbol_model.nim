@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils
 
-import ./io_interface, ./address_per_chain_model
+import ./io_interface, ./address_per_chain_model, ./market_details_item
 
 const SOURCES_DELIMITER = ";"
 
@@ -27,24 +27,31 @@ type
     # properties below this are optional and may not exist in case of community minted assets
     # built from chainId and address using networks service
     WebsiteUrl
-    MarketValues
+    MarketDetails
 
 QtObject:
   type TokensBySymbolModel* = ref object of QAbstractListModel
     delegate: io_interface.TokenBySymbolModelDataSource
+    marketValuesDelegate: io_interface.TokenMarketValuesDataSource
     addressPerChainModel: seq[AddressPerChainModel]
+    tokenMarketDetails: seq[MarketDetailsItem]
 
   proc setup(self: TokensBySymbolModel) =
     self.QAbstractListModel.setup
     self.addressPerChainModel = @[]
+    self.tokenMarketDetails = @[]
 
   proc delete(self: TokensBySymbolModel) =
     self.QAbstractListModel.delete
 
-  proc newTokensBySymbolModel*(delegate: io_interface.TokenBySymbolModelDataSource): TokensBySymbolModel =
+  proc newTokensBySymbolModel*(
+    delegate: io_interface.TokenBySymbolModelDataSource,
+    marketValuesDelegate: io_interface.TokenMarketValuesDataSource
+    ): TokensBySymbolModel =
     new(result, delete)
     result.setup
     result.delegate = delegate
+    result.marketValuesDelegate = marketValuesDelegate
 
   method rowCount(self: TokensBySymbolModel, index: QModelIndex = nil): int =
     return self.delegate.getTokenBySymbolList().len
@@ -69,7 +76,7 @@ QtObject:
       ModelRole.CommunityId.int:"communityId",
       ModelRole.Description.int:"description",
       ModelRole.WebsiteUrl.int:"websiteUrl",
-      ModelRole.MarketValues.int:"marketValues",
+      ModelRole.MarketDetails.int:"marketDetails",
     }.toTable
 
   method data(self: TokensBySymbolModel, index: QModelIndex, role: int): QVariant =
@@ -99,13 +106,16 @@ QtObject:
         result = newQVariant(ord(item.`type`))
       of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
-      # ToDo fetching of market values not done yet
       of ModelRole.Description:
-        result = newQVariant("")
+        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
+        result = if not tokenDetails.isNil: newQVariant(tokenDetails.description)
+          else: newQVariant("")
       of ModelRole.WebsiteUrl:
-        result = newQVariant("")
-      of ModelRole.MarketValues:
-        result = newQVariant("")
+        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
+        result = if not tokenDetails.isNil: newQVariant(tokenDetails.assetWebsiteUrl)
+                 else: newQVariant("")
+      of ModelRole.MarketDetails:
+        result = newQVariant(self.tokenMarketDetails[index.row])
 
   proc modelsAboutToUpdate*(self: TokensBySymbolModel) =
       self.beginResetModel()
@@ -113,5 +123,27 @@ QtObject:
   proc modelsUpdated*(self: TokensBySymbolModel) =
       self.addressPerChainModel = @[]
       for index in countup(0, self.delegate.getTokenBySymbolList().len):
-        self.addressPerChainModel.add(newAddressPerChainModel(self.delegate,index))
+        self.addressPerChainModel.add(newAddressPerChainModel(self.delegate, index))
+
+      self.tokenMarketDetails = @[]
+      for token in self.delegate.getTokenBySymbolList():
+        if token.communityId.isEmptyOrWhitespace:
+          self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, token.symbol))
+
       self.endResetModel()
+
+  proc tokensMarketValuesUpdated*(self: TokensBySymbolModel) =
+    for i in countup(0, self.rowCount()):
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.MarketDetails.int])
+
+  proc tokensDetailsUpdated*(self: TokensBySymbolModel) =
+    for i in countup(0, self.rowCount()):
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int])
+
+  proc currencyFormatsUpdated*(self: TokensBySymbolModel) =
+    for mD in self.tokenMarketDetails:
+      mD.updateCurrencyFormat()
