@@ -1,14 +1,15 @@
-import chronicles, json
+import Tables, os, uuids, chronicles, json
 import io_interface
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/ens/service as ens_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/token/service as token_service
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/settings/service as settings_service
+import app_service/service/ens/service as ens_service
+import app_service/service/network/service as network_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/keycard/service as keycard_service
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
@@ -24,12 +25,15 @@ type
     networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
+    keycardService: keycard_service.Service
+    connectionKeycardResponse: UUID
 
 proc newController*(
   delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service, ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service, networkService: network_service.Service,
-  tokenService: token_service.Service
+  tokenService: token_service.Service,
+  keycardService: keycard_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -39,6 +43,7 @@ proc newController*(
   result.walletAccountService = walletAccountService
   result.networkService = networkService
   result.tokenService = tokenService
+  result.keycardService = keycardService
 
 proc delete*(self: Controller) =
   discard
@@ -64,7 +69,7 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER:
       return
-    self.delegate.onUserAuthenticated(args.password)
+    self.delegate.onKeypairAuthenticated(args.password,  args.pin)
 
 proc getChainId*(self: Controller): int =
   return self.networkService.getChainIdForEns()
@@ -87,9 +92,6 @@ proc fetchDetailsForEnsUsername*(self: Controller, chainId: int, ensUsername: st
 proc setPubKeyGasEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
   return self.ensService.setPubKeyGasEstimate(chainId, ensUsername, address)
 
-proc setPubKey*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): EnsTxResultArgs =
-  return self.ensService.setPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
@@ -106,10 +108,6 @@ proc getPreferredEnsUsername*(self: Controller): string =
 proc releaseEnsEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
   return self.ensService.releaseEnsEstimate(chainId, ensUsername, address)
 
-proc release*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool):
-  EnsTxResultArgs =
-  return self.ensService.release(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc setPreferredName*(self: Controller, preferredName: string) =
   if(self.settingsService.savePreferredName(preferredName)):
@@ -136,15 +134,15 @@ proc getEnsRegisteredAddress*(self: Controller): string =
 proc registerEnsGasEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
   return self.ensService.registerEnsGasEstimate(chainId, ensUsername, address)
 
-proc registerEns*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): EnsTxResultArgs =
-  return self.ensService.registerEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSNTBalance*(self: Controller): string =
   return self.ensService.getSNTBalance()
 
 proc getWalletDefaultAddress*(self: Controller): string =
   return self.walletAccountService.getWalletAccount(0).address
+
+proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
+  return self.walletAccountService.getKeypairByAccountAddress(address)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
@@ -165,7 +163,43 @@ proc getStatusToken*(self: Controller): string =
   }
   return $jsonObj
 
-proc authenticateUser*(self: Controller, keyUid = "") =
+proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER,
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+
+proc prepareEnsTxForSigning*(self: Controller, action: EnsAction, chainId: int, ensUsername: string,  address: string,
+  gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool): string =
+  return self.ensService.prepareEnsTxForSigning(action, chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas,
+    maxFeePerGas, eip1559Enabled)
+
+proc signEnsTxLocally*(self: Controller, password: string): string =
+  return self.ensService.signEnsTxLocally(password)
+
+proc sendEnsTxWithSignatureAndWatch*(self: Controller, action: EnsAction, chainId: int, ensUsername: string,
+  fromAddress: string, signature: string): EnsTxResultArgs =
+  return self.ensService.sendEnsTxWithSignatureAndWatch(action, chainId, ensUsername, fromAddress, signature)
+
+proc disconnectKeycardReponseSignal(self: Controller) =
+  self.events.disconnect(self.connectionKeycardResponse)
+
+proc connectKeycardReponseSignal(self: Controller) =
+  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+    let args = KeycardLibArgs(e)
+    self.disconnectKeycardReponseSignal()
+    let currentFlow = self.keycardService.getCurrentFlow()
+    if currentFlow != KCSFlowType.Sign:
+      self.delegate.onTransactionSigned("", KeycardEvent())
+      return
+    self.delegate.onTransactionSigned(args.flowType, args.flowEvent)
+
+proc cancelCurrentFlow*(self: Controller) =
+  self.keycardService.cancelCurrentFlow()
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
+  sleep(200)
+
+proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
+  self.cancelCurrentFlow()
+  self.connectKeycardReponseSignal()
+  self.keycardService.startSignFlow(bip44Path, txHash, pin)

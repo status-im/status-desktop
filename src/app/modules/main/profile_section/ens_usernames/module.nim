@@ -1,25 +1,28 @@
-import NimQml, json, stint, strutils, strformat, parseutils, chronicles
+import NimQml, json, stint, sequtils, strutils, sugar, strformat, parseutils, chronicles
 
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/common/conversion as service_conversion
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/ens/service as ens_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/ens/utils as ens_utils
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/token/service as token_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/common/conversion as service_conversion
+import app_service/common/utils as common_utils
+import app_service/service/settings/service as settings_service
+import app_service/service/ens/service as ens_service
+import app_service/service/network/service as network_service
+import app_service/service/ens/utils as ens_utils
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/keycard/constants as keycard_constants
 
 export io_interface
 
 logScope:
   topics = "profile-section-ens-usernames-module"
 
-include ../../../../../app_service/common/json_utils
+include app_service/common/json_utils
 
 const cancelledRequest* = "cancelled"
 
@@ -28,14 +31,13 @@ type TmpSendEnsTransactionDetails = object
   chainId: int
   ensUsername: string
   address: string
+  addressPath: string
   gas: string
   gasPrice: string
   maxPriorityFeePerGas: string
   maxFeePerGas: string
   eip1559Enabled: bool
-  isRegistration: bool
-  isRelease: bool
-  isSetPubKey: bool
+  action: EnsAction
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -53,12 +55,14 @@ proc newModule*(
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
   tokenService: token_service.Service,
+  keycardService: keycard_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService, networkService, tokenService)
+  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService,
+    networkService, tokenService, keycardService)
   result.moduleLoaded = false
   result.events = events
 
@@ -66,6 +70,13 @@ method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+
+proc clear(self: Module) =
+  self.tmpSendEnsTransactionDetails = TmpSendEnsTransactionDetails()
+
+proc finish(self: Module, chainId: int, txHash: string, error: string) =
+  self.clear()
+  self.view.emitTransactionWasSentSignal(chainId, txHash, error)
 
 method load*(self: Module) =
   self.controller.init()
@@ -122,6 +133,23 @@ method onDetailsForEnsUsername*(self: Module, chainId: int, ensUsername: string,
 method setPubKeyGasEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
   return self.controller.setPubKeyGasEstimate(chainId, ensUsername, address)
 
+# At this moment we're somehow assume that we're sending from the default wallet address. Need to change that!
+# This function provides a possibility to authenticate sending from any address, not only from the wallet default one.
+proc authenticateKeypairThatContainsObservedAddress*(self: Module) =
+  if self.tmpSendEnsTransactionDetails.address.len == 0:
+    error "tehre is no set address"
+    return
+  let kp = self.controller.getKeypairByAccountAddress(self.tmpSendEnsTransactionDetails.address)
+  if kp.migratedToKeycard():
+    let accounts = kp.accounts.filter(acc => cmpIgnoreCase(acc.address, self.tmpSendEnsTransactionDetails.address) == 0)
+    if accounts.len != 1:
+      error "cannot resolve selected account to send from among known keypair accounts"
+      return
+    self.tmpSendEnsTransactionDetails.addressPath = accounts[0].path
+    self.controller.authenticate(kp.keyUid)
+  else:
+    self.controller.authenticate()
+
 method authenticateAndSetPubKey*(self: Module, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
 
@@ -133,38 +161,9 @@ method authenticateAndSetPubKey*(self: Module, chainId: int, ensUsername: string
   self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
   self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
   self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
-  self.tmpSendEnsTransactionDetails.isRegistration = false
-  self.tmpSendEnsTransactionDetails.isRelease = false
-  self.tmpSendEnsTransactionDetails.isSetPubKey = true
+  self.tmpSendEnsTransactionDetails.action = EnsAction.SetPublicKey
 
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
-  else:
-    self.controller.authenticateUser()
-
-proc setPubKey*(self: Module, password: string) =
-  let response = self.controller.setPubKey(
-    self.tmpSendEnsTransactionDetails.chainId,
-    self.tmpSendEnsTransactionDetails.ensUsername,
-    self.tmpSendEnsTransactionDetails.address,
-    self.tmpSendEnsTransactionDetails.gas,
-    self.tmpSendEnsTransactionDetails.gasPrice,
-    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
-    self.tmpSendEnsTransactionDetails.maxFeePerGas,
-    password,
-    self.tmpSendEnsTransactionDetails.eip1559Enabled
-  )
-
-  if(not response.error.isEmptyOrWhitespace()):
-    info "remote call is not executed with success", methodName="setPubKey"
-    return
-
-  let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId,
-                  ensUsername: self.tmpSendEnsTransactionDetails.ensUsername,
-                  isPending: true)
-  self.view.model().addItem(item)
-  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
+  self.authenticateKeypairThatContainsObservedAddress()
 
 method releaseEnsEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
   return self.controller.releaseEnsEstimate(chainId, ensUsername, address)
@@ -180,15 +179,9 @@ method authenticateAndReleaseEns*(self: Module, chainId: int, ensUsername: strin
   self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
   self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
   self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
-  self.tmpSendEnsTransactionDetails.isRegistration = false
-  self.tmpSendEnsTransactionDetails.isRelease = true
-  self.tmpSendEnsTransactionDetails.isSetPubKey = false
+  self.tmpSendEnsTransactionDetails.action = EnsAction.ReleaseEns
 
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
-  else:
-    self.controller.authenticateUser()
+  self.authenticateKeypairThatContainsObservedAddress()
 
 proc onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
   if (self.controller.getPreferredEnsUsername() == ensUsername):
@@ -201,26 +194,6 @@ method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool
     return false
   self.onEnsUsernameRemoved(chainId, ensUsername)
   return true
-
-proc releaseEns*(self: Module, password: string) =
-  let response = self.controller.release(
-    self.tmpSendEnsTransactionDetails.chainId,
-    self.tmpSendEnsTransactionDetails.ensUsername,
-    self.tmpSendEnsTransactionDetails.address,
-    self.tmpSendEnsTransactionDetails.gas,
-    self.tmpSendEnsTransactionDetails.gasPrice,
-    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
-    self.tmpSendEnsTransactionDetails.maxFeePerGas,
-    password,
-    self.tmpSendEnsTransactionDetails.eip1559Enabled
-  )
-
-  if(not response.error.isEmptyOrWhitespace()):
-    info "remote call is not executed with success", methodName="release"
-    return
-
-  self.onEnsUsernameRemoved(self.tmpSendEnsTransactionDetails.chainId, self.tmpSendEnsTransactionDetails.ensUsername)
-  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
   result = ensUsername
@@ -268,59 +241,9 @@ method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: stri
   self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
   self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
   self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
-  self.tmpSendEnsTransactionDetails.isRegistration = true
-  self.tmpSendEnsTransactionDetails.isRelease = false
-  self.tmpSendEnsTransactionDetails.isSetPubKey = false
+  self.tmpSendEnsTransactionDetails.action = EnsAction.RegisterEns
 
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
-  else:
-    self.controller.authenticateUser()
-
-  ##################################
-  ## Do Not Delete
-  ##
-  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
-  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
-  ## address (key pair) is migrated to and sign the transaction using it.
-  ##
-  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
-  ##
-  ## let acc = self.controller.getAccountByAddress(from_addr)
-  ## if acc.isNil:
-  ##   echo "error: selected account to send a transaction from is not known"
-  ##   return
-  ## let keyPair = self.controller.getKeycardsWithSameKeyUid(acc.keyUid)
-  ## if keyPair.len == 0:
-  ##   self.controller.authenticateUser()
-  ## else:
-  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
-  ##
-  ##################################
-
-proc registerEns(self: Module, password: string) =
-  let response = self.controller.registerEns(
-    self.tmpSendEnsTransactionDetails.chainId,
-    self.tmpSendEnsTransactionDetails.ensUsername,
-    self.tmpSendEnsTransactionDetails.address,
-    self.tmpSendEnsTransactionDetails.gas,
-    self.tmpSendEnsTransactionDetails.gasPrice,
-    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
-    self.tmpSendEnsTransactionDetails.maxFeePerGas,
-    password,
-    self.tmpSendEnsTransactionDetails.eip1559Enabled
-  )
-
-  if(not response.error.isEmptyOrWhitespace()):
-    info "remote call is not executed with success", methodName="registerEns"
-    return
-
-  let ensUsername = self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true)
-  let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, ensUsername: ensUsername, isPending: true)
-  self.controller.fixPreferredName()
-  self.view.model().addItem(item)
-  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
+  self.authenticateKeypairThatContainsObservedAddress()
 
 method getSNTBalance*(self: Module): string =
   return self.controller.getSNTBalance()
@@ -389,14 +312,86 @@ method getChainIdForEns*(self: Module): int =
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)
 
-method onUserAuthenticated*(self: Module, password: string) =
-  if password.len == 0:
-    self.view.emitTransactionWasSentSignal(chainId = 0, txHash =  "", error = cancelledRequest)
-  else:
-    if self.tmpSendEnsTransactionDetails.isRegistration:
-      self.registerEns(password)
-    elif self.tmpSendEnsTransactionDetails.isRelease:
-      self.releaseEns(password)
-    elif self.tmpSendEnsTransactionDetails.isSetPubKey:
-     self.setPubKey(password)
+proc sendEnsTxWithSignatureAndWatch(self: Module, signature: string) =
+  let response = self.controller.sendEnsTxWithSignatureAndWatch(
+    self.tmpSendEnsTransactionDetails.action,
+    self.tmpSendEnsTransactionDetails.chainId,
+    self.tmpSendEnsTransactionDetails.ensUsername,
+    self.tmpSendEnsTransactionDetails.address,
+    signature
+  )
 
+  if not response.error.isEmptyOrWhitespace():
+    error "sending ens tx failed", errMsg=response.error, methodName="sendEnsTxWithSignatureAndWatch"
+    self.finish(chainId = 0, txHash =  "", error = response.error)
+    return
+
+  if self.tmpSendEnsTransactionDetails.action == EnsAction.SetPublicKey:
+    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId,
+                    ensUsername: self.tmpSendEnsTransactionDetails.ensUsername,
+                    isPending: true)
+    self.view.model().addItem(item)
+  elif self.tmpSendEnsTransactionDetails.action == EnsAction.ReleaseEns:
+    self.onEnsUsernameRemoved(self.tmpSendEnsTransactionDetails.chainId, self.tmpSendEnsTransactionDetails.ensUsername)
+  elif self.tmpSendEnsTransactionDetails.action == EnsAction.RegisterEns:
+    let ensUsername = self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true)
+    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, ensUsername: ensUsername, isPending: true)
+    self.controller.fixPreferredName()
+    self.view.model().addItem(item)
+  else:
+    error "unknown ens action", methodName="sendEnsTxWithSignatureAndWatch"
+    self.finish(chainId = 0, txHash =  "", error = "unknown ens action")
+    return
+
+  self.finish(response.chainId, response.txHash, response.error)
+
+method onKeypairAuthenticated*(self: Module, password: string, pin: string) =
+  if password.len == 0:
+    self.finish(chainId = 0, txHash =  "", error = cancelledRequest)
+    return
+
+  let txToBeSigned = self.controller.prepareEnsTxForSigning(
+    self.tmpSendEnsTransactionDetails.action,
+    self.tmpSendEnsTransactionDetails.chainId,
+    self.tmpSendEnsTransactionDetails.ensUsername,
+    self.tmpSendEnsTransactionDetails.address,
+    self.tmpSendEnsTransactionDetails.gas,
+    self.tmpSendEnsTransactionDetails.gasPrice,
+    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
+    self.tmpSendEnsTransactionDetails.maxFeePerGas,
+    self.tmpSendEnsTransactionDetails.eip1559Enabled,
+  )
+
+  if txToBeSigned.len == 0:
+    let errMsg = "cannot determine tx hash for signing"
+    error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+
+  if pin.len > 0:
+    var txForKcFlow = txToBeSigned
+    if txForKcFlow.startsWith("0x"):
+      txForKcFlow = txForKcFlow[2..^1]
+    self.controller.runSignFlow(pin, self.tmpSendEnsTransactionDetails.addressPath, txForKcFlow)
+    return
+
+  var finalPassword = password
+  if pin.len == 0:
+    finalPassword = common_utils.hashPassword(password)
+
+  let signature = self.controller.signEnsTxLocally(finalPassword)
+  if signature.len == 0:
+    let errMsg = "couldn't sign tx locally"
+    error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+  self.sendEnsTxWithSignatureAndWatch(signature)
+
+method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if keycardFlowType != keycard_constants.ResponseTypeValueKeycardFlowResult:
+    let errMsg = "unexpected error while keycard signing transaction"
+    error "error", msg=errMsg, methodName="onTransactionSigned"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+  let signature = "0x" & keycardEvent.txSignature.r & keycardEvent.txSignature.s & keycardEvent.txSignature.v
+  self.sendEnsTxWithSignatureAndWatch(signature)
