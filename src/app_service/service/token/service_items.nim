@@ -81,10 +81,36 @@ proc `$`*(self: TokenBySymbolItem): string =
     ]"""
 
 # In case of community tokens only the description will be available
-type TokenDetails* = ref object of RootObj
+type TokenDetailsItem* = ref object of RootObj
     description*: string
-    websiteUrl*: string
-    marketValues*: TokenMarketValuesDto
+    assetWebsiteUrl*: string
+
+proc `$`*(self: TokenDetailsItem): string =
+  result = fmt"""TokenDetailsItem[
+    description: {self.description},
+    assetWebsiteUrl: {self.assetWebsiteUrl}
+    ]"""
+
+type
+  TokenMarketValuesItem* = object
+    marketCap*: float64
+    highDay*: float64
+    lowDay*: float64
+    changePctHour*: float64
+    changePctDay*: float64
+    changePct24hour*: float64
+    change24hour*: float64
+
+proc `$`*(self: TokenMarketValuesItem): string =
+  result = fmt"""TokenBySymbolItem[
+    marketCap: {self.marketCap},
+    highDay: {self.highDay},
+    lowDay: {self.lowDay},
+    changePctHour: {self.changePctHour},
+    changePctDay: {self.changePctDay},
+    changePct24hour: {self.changePct24hour},
+    change24hour: {self.change24hour}
+    ]"""
 
 proc cmpTokenItem*(x, y: TokenItem): int =
     cmp(x.name, y.name)

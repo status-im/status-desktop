@@ -1,4 +1,5 @@
 import app_service/service/token/service_items
+import app_service/service/currency/dto
 
 type
   SourcesOfTokensModelDataSource* = tuple[
@@ -6,11 +7,23 @@ type
   ]
 type
   FlatTokenModelDataSource* = tuple[
-    getFlatTokensList: proc(): var seq[TokenItem]
+    getFlatTokensList: proc(): var seq[TokenItem],
+    getTokenDetails: proc(symbol: string): TokenDetailsItem,
+    getTokensDetailsLoading: proc(): bool,
+    getTokensMarketValuesLoading: proc(): bool,
   ]
 type
   TokenBySymbolModelDataSource* = tuple[
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem]
+    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem],
+    getTokenDetails: proc(symbol: string): TokenDetailsItem,
+    getTokensDetailsLoading: proc(): bool,
+    getTokensMarketValuesLoading: proc(): bool,
+  ]
+type
+  TokenMarketValuesDataSource* = tuple[
+    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem,
+    getPriceBySymbol: proc(symbol: string): float64,
+    getCurrentCurrencyFormat: proc(): CurrencyFormatDto,
   ]
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -47,6 +60,9 @@ method getFlatTokenModelDataSource*(self: AccessInterface): FlatTokenModelDataSo
   raise newException(ValueError, "No implementation available")
 
 method getTokenBySymbolModelDataSource*(self: AccessInterface): TokenBySymbolModelDataSource {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTokenMarketValuesDataSource*(self: AccessInterface): TokenMarketValuesDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

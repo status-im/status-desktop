@@ -65,3 +65,18 @@ proc `$`*(self: TokenSourceDto): string =
     source: {self.source},
     version: {self.version}
     ]"""
+
+type
+  TokenMarketValuesDto* = object
+    marketCap* {.serializedFieldName("MKTCAP").}: float64
+    highDay* {.serializedFieldName("HIGHDAY").}: float64
+    lowDay* {.serializedFieldName("LOWDAY").}: float64
+    changePctHour* {.serializedFieldName("CHANGEPCTHOUR").}: float64
+    changePctDay* {.serializedFieldName("CHANGEPCTDAY").}: float64
+    changePct24hour* {.serializedFieldName("CHANGEPCT24HOUR").}: float64
+    change24hour* {.serializedFieldName("CHANGE24HOUR").}: float64
+
+type
+  TokenDetailsDto* = object
+    description* {.serializedFieldName("Description").}: string
+    assetWebsiteUrl* {.serializedFieldName("AssetWebsiteUrl").}: string

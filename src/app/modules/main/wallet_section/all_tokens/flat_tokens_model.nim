@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils
 
-import ./io_interface
+import ./io_interface, ./market_details_item
 
 const SOURCES_DELIMITER = ";"
 
@@ -28,22 +28,31 @@ type
     # properties below this are optional and may not exist in case of community minted assets
     # built from chainId and address using networks service
     WebsiteUrl
-    MarketValues
+    MarketDetails
+    DetailsLoading
+    MarketDetailsLoading
 
 QtObject:
   type FlatTokensModel* = ref object of QAbstractListModel
     delegate: io_interface.FlatTokenModelDataSource
+    marketValuesDelegate: io_interface.TokenMarketValuesDataSource
+    tokenMarketDetails: seq[MarketDetailsItem]
 
   proc setup(self: FlatTokensModel) =
     self.QAbstractListModel.setup
+    self.tokenMarketDetails = @[]
 
   proc delete(self: FlatTokensModel) =
     self.QAbstractListModel.delete
 
-  proc newFlatTokensModel*(delegate: io_interface.FlatTokenModelDataSource): FlatTokensModel =
+  proc newFlatTokensModel*(
+    delegate: io_interface.FlatTokenModelDataSource,
+    marketValuesDelegate: io_interface.TokenMarketValuesDataSource
+    ): FlatTokensModel =
     new(result, delete)
     result.setup
     result.delegate = delegate
+    result.marketValuesDelegate = marketValuesDelegate
 
   method rowCount(self: FlatTokensModel, index: QModelIndex = nil): int =
     return self.delegate.getFlatTokensList().len
@@ -69,7 +78,9 @@ QtObject:
       ModelRole.CommunityId.int:"communityId",
       ModelRole.Description.int:"description",
       ModelRole.WebsiteUrl.int:"websiteUrl",
-      ModelRole.MarketValues.int:"marketValues",
+      ModelRole.MarketDetails.int:"marketDetails",
+      ModelRole.DetailsLoading.int:"detailsLoading",
+      ModelRole.MarketDetailsLoading.int:"marketDetailsLoading",
     }.toTable
 
   method data(self: FlatTokensModel, index: QModelIndex, role: int): QVariant =
@@ -101,16 +112,43 @@ QtObject:
         result = newQVariant(ord(item.`type`))
       of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
-      # ToDo fetching of market values not done yet
       of ModelRole.Description:
-        result = newQVariant("")
+        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
+        result = if not tokenDetails.isNil: newQVariant(tokenDetails.description)
+          else: newQVariant("")
       of ModelRole.WebsiteUrl:
-        result = newQVariant("")
-      of ModelRole.MarketValues:
-        result = newQVariant("")
+        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
+        result = if not tokenDetails.isNil: newQVariant(tokenDetails.assetWebsiteUrl)
+                 else: newQVariant("")
+      of ModelRole.MarketDetails:
+        result = newQVariant(self.tokenMarketDetails[index.row])
+      of ModelRole.DetailsLoading:
+        result = newQVariant(self.delegate.getTokensDetailsLoading())
+      of ModelRole.MarketDetailsLoading:
+        result = newQVariant(self.delegate.getTokensMarketValuesLoading())
+
 
   proc modelsAboutToUpdate*(self: FlatTokensModel) =
-      self.beginResetModel()
+    self.beginResetModel()
 
   proc modelsUpdated*(self: FlatTokensModel) =
-      self.endResetModel()
+    self.tokenMarketDetails =  @[]
+    for token in self.delegate.getFlatTokensList():
+      self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, token.symbol))
+    self.endResetModel()
+
+  proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
+    for i in countup(0, self.rowCount()):
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+
+  proc tokensDetailsUpdated*(self: FlatTokensModel) =
+    for i in countup(0, self.rowCount()):
+      let index = self.createIndex(i, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
+
+  proc currencyFormatsUpdated*(self: FlatTokensModel) =
+    for mD in self.tokenMarketDetails:
+      mD.updateCurrencyFormat()

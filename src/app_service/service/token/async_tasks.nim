@@ -1,4 +1,4 @@
-import times
+import times, strformat
 import backend/backend as backend
 
 include app_service/common/json_utils
@@ -9,25 +9,71 @@ include app_service/common/json_utils
 const DAYS_IN_WEEK = 7
 const HOURS_IN_DAY = 24
 
-type
-  GetTokenListTaskArg = ref object of QObjectTaskArg
-
 const getSupportedTokenList*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetTokenListTaskArg](argEncoded)
-  var response: RpcResponse[JsonNode]
+  let arg = decode[QObjectTaskArg](argEncoded)
+  var output = %*{
+    "supportedTokensJson": "",
+    "error": ""
+  }
   try:
-    response = backend.getTokenList()
-    let output = %* {
-        "supportedTokensJson": response,
-        "error": ""
-    }
-    arg.finish(output)
+    let response = backend.getTokenList()
+    output["supportedTokensJson"] = %*response
   except Exception as e:
-    let output = %* {
-        "supportedTokensJson": response,
-        "error": e.msg
-    }
-    arg.finish(output)
+    output["error"] = %* fmt"Error fetching supported tokens: {e.msg}"
+  arg.finish(output)
+
+type
+  FetchTokensMarketValuesTaskArg = ref object of QObjectTaskArg
+    symbols: seq[string]
+    currency: string
+
+const fetchTokensMarketValuesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchTokensMarketValuesTaskArg](argEncoded)
+  var output = %*{
+    "tokenMarketValues": "",
+    "error": ""
+  }
+  try:
+    let response = backend.fetchMarketValues(arg.symbols, arg.currency)
+    output["tokenMarketValues"] = %*response
+  except Exception as e:
+    output["error"] = %* fmt"Error fetching market values: {e.msg}"
+  arg.finish(output)
+
+type
+  FetchTokensDetailsTaskArg = ref object of QObjectTaskArg
+    symbols: seq[string]
+
+const fetchTokensDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchTokensDetailsTaskArg](argEncoded)
+  var output = %*{
+    "tokensDetails": "",
+    "error": ""
+  }
+  try:
+    let response = backend.fetchTokenDetails(arg.symbols)
+    output["tokensDetails"] = %*response
+  except Exception as e:
+    output["error"] = %* fmt"Error fetching token details: {e.msg}"
+  arg.finish(output)
+
+type
+  FetchTokensPricesTaskArg = ref object of QObjectTaskArg
+    symbols: seq[string]
+    currencies: seq[string]
+
+const fetchTokensPricesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchTokensPricesTaskArg](argEncoded)
+  var output = %*{
+    "tokensPrices": "",
+    "error": ""
+  }
+  try:
+    let response = backend.fetchPrices(arg.symbols, arg.currencies)
+    output["tokensPrices"] = %*response
+  except Exception as e:
+    output["error"] = %* fmt"Error fetching prices: {e.msg}"
+  arg.finish(output)
 
 type
   GetTokenHistoricalDataTaskArg = ref object of QObjectTaskArg

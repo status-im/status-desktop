@@ -1,8 +1,9 @@
 import ./io_interface
 
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/token/service as token_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import app/core/eventemitter
+import app_service/service/token/service as token_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/currency/dto
 
 type
   Controller* = ref object of RootObj
@@ -52,3 +53,24 @@ proc getFlatTokensList*(self: Controller): var seq[TokenItem] =
 
 proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
   return self.tokenService.getTokenBySymbolList()
+
+proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =
+  return self.tokenService.getTokenDetails(symbol)
+
+proc getMarketValuesBySymbol*(self: Controller, symbol: string): TokenMarketValuesItem =
+  return self.tokenService.getMarketValuesBySymbol(symbol)
+
+proc getPriceBySymbol*(self: Controller, symbol: string): float64 =
+  return self.tokenService.getPriceBySymbol(symbol)
+
+proc getCurrentCurrencyFormat*(self: Controller): CurrencyFormatDto =
+  return self.walletAccountService.getCurrencyFormat(self.tokenService.getCurrency())
+
+proc rebuildMarketData*(self: Controller) =
+  self.tokenService.rebuildMarketData()
+
+proc getTokensDetailsLoading*(self: Controller): bool =
+  self.tokenService.getTokensDetailsLoading()
+
+proc getTokensMarketValuesLoading*(self: Controller): bool =
+  self.tokenService.getTokensMarketValuesLoading()

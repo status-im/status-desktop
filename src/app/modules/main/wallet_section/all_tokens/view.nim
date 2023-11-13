@@ -29,8 +29,12 @@ QtObject:
     result.marketHistoryIsLoading = false
     result.balanceHistoryIsLoading = false
     result.sourcesOfTokensModel = newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
-    result.flatTokensModel = newFlatTokensModel(delegate.getFlatTokenModelDataSource())
-    result.tokensBySymbolModel = newTokensBySymbolModel(delegate.getTokenBySymbolModelDataSource())
+    result.flatTokensModel = newFlatTokensModel(
+      delegate.getFlatTokenModelDataSource(),
+      delegate.getTokenMarketValuesDataSource())
+    result.tokensBySymbolModel = newTokensBySymbolModel(
+      delegate.getTokenBySymbolModelDataSource(),
+      delegate.getTokenMarketValuesDataSource())
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -112,3 +116,15 @@ QtObject:
     self.sourcesOfTokensModel.modelsUpdated()
     self.flatTokensModel.modelsUpdated()
     self.tokensBySymbolModel.modelsUpdated()
+
+  proc tokensMarketValuesUpdated*(self: View) =
+    self.flatTokensModel.tokensMarketValuesUpdated()
+    self.tokensBySymbolModel.tokensMarketValuesUpdated()
+
+  proc tokensDetailsUpdated*(self: View) =
+    self.flatTokensModel.tokensDetailsUpdated()
+    self.tokensBySymbolModel.tokensDetailsUpdated()
+
+  proc currencyFormatsUpdated*(self: View) =
+    self.flatTokensModel.currencyFormatsUpdated()
+    self.tokensBySymbolModel.currencyFormatsUpdated()
