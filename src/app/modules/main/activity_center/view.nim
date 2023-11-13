@@ -62,7 +62,7 @@ QtObject:
     read = hasUnseenActivityCenterNotifications
     notify = hasUnseenActivityCenterNotificationsChanged
 
-  proc loadMoreNotifications(self: View) {.slot.} =
+  proc fetchActivityCenterNotifications(self: View) {.slot.} =
     self.delegate.fetchActivityCenterNotifications()
 
   proc markAllActivityCenterNotificationsRead(self: View): string {.slot.} =
@@ -136,7 +136,7 @@ QtObject:
     self.model.removeNotifications(notificationIds)
 
   proc addActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
-    self.model.addActivityNotificationItemsToList(activityCenterNotifications)
+    self.model.upsertActivityCenterNotifications(activityCenterNotifications)
 
   proc resetActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
     self.model.setNewData(activityCenterNotifications)

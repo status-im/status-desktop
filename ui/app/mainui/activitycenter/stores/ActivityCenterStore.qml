@@ -105,4 +105,8 @@ QtObject {
     function setActivityCenterReadType(readType) {
         root.activityCenterModuleInst.setActivityCenterReadType(readType)
     }
+
+    function fetchActivityCenterNotifications() {
+        root.activityCenterModuleInst.fetchActivityCenterNotifications()
+    }
 }

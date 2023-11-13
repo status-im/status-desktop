@@ -191,8 +191,7 @@ method convertToItems*(
     )
 
 method fetchActivityCenterNotifications*(self: Module) =
-  let activityCenterNotifications = self.controller.getActivityCenterNotifications()
-  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+  self.controller.asyncActivityNotificationLoad()
 
 method markAllActivityCenterNotificationsRead*(self: Module): string =
   self.controller.markAllActivityCenterNotificationsRead()

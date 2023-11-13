@@ -12,7 +12,7 @@ import utils 1.0
 ActivityNotificationBase {
     id: root
 
-    readonly property bool isOutgoingMessage: notification && notification.message && notification.message.amISender
+    readonly property bool isOutgoingMessage: notification && notification.message && notification.message.amISender || false
     readonly property string contactId: notification ? isOutgoingMessage ? notification.chatId : notification.author : ""
     readonly property string contactName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
                                                                       contactDetails.displayName, contactDetails.alias) : ""
