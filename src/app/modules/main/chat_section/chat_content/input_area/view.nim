@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles, sets
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
@@ -230,12 +230,13 @@ QtObject:
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
 
-  proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
-    self.linkPreviewModel.setUrls(urls)
-    if(self.delegate.getLinkPreviewEnabled()):
-      self.updateLinkPreviewsFromCache(urls)
-    else:
-      self.linkPreviewModel.removeAllPreviewData()
+  proc setLinkPreviewUrls*(self: View, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) =
+    debug "<<< view.setLinkPreviewUrls", urls, pendingUnfurlPermissionUrls, enabled = $self.delegate.getLinkPreviewEnabled()
+    self.linkPreviewModel.setUrls(urls, pendingUnfurlPermissionUrls)
+    # if self.delegate.getLinkPreviewEnabled():
+    self.updateLinkPreviewsFromCache(urls)
+    # else:
+      # self.linkPreviewModel.removeAllPreviewData()
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
@@ -253,11 +254,25 @@ QtObject:
     self.delegate.setLinkPreviewEnabled(false)
   
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
+    debug "<<< view.setLinkPreviewEnabledForCurrentMessage", enabled
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
-    let links = self.linkPreviewModel.getLinks()
-    self.linkPreviewModel.clearItems()
-    self.setLinkPreviewUrls(links)
-    self.loadLinkPreviews(links)
+    
+    # NOTE: Here we need to start unfurling of the URLs
+    # that were probably not unfurled because of `AlwaysAsk` property.
+
+    if enabled:
+      let urls = self.linkPreviewModel.getPendingUfnurlPermissionUrls()
+      let allUrls = self.linkPreviewModel.getLinks()
+      self.loadLinkPreviews(urls)
+      self.setLinkPreviewUrls(allUrls, initHashSet[string]())
+    
+    # Re-request unfulring plan for current text
+    # self.delegate.reloadUnfurlingPlan()
+    
+    # let links = self.linkPreviewModel.getLinks()
+    # self.linkPreviewModel.clearItems()
+    # self.loadLinkPreviews(links)
+    # self.setLinkPreviewUrls(links)
 
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)

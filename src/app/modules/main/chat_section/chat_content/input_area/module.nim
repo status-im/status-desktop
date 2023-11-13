@@ -1,4 +1,4 @@
-import NimQml, tables
+import NimQml, tables, sets
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -166,11 +166,14 @@ method clearLinkPreviewCache*(self: Module) {.slot.} =
 method updateLinkPreviewsFromCache*(self: Module, urls: seq[string]) =
   self.view.updateLinkPreviewsFromCache(urls)
 
-method setLinkPreviewUrls*(self: Module, urls: seq[string]) =
-  self.view.setLinkPreviewUrls(urls)
+method setLinkPreviewUrls*(self: Module, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) =
+  self.view.setLinkPreviewUrls(urls, pendingUnfurlPermissionUrls)
 
 method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
   return self.controller.linkPreviewsFromCache(urls)
+
+method reloadUnfurlingPlan*(self: Module) =
+  self.controller.reloadUnfurlingPlan()
 
 method loadLinkPreviews*(self: Module, urls: seq[string]) =
   self.controller.loadLinkPreviews(urls)

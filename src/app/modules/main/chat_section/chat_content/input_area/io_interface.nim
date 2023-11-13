@@ -1,4 +1,4 @@
-import NimQml, tables
+import NimQml, tables, sets
 
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
@@ -102,7 +102,7 @@ method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} 
 method getPlainText*(self: AccessInterface): string =
   raise newException(ValueError, "No implementation available")
 
-method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
+method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateLinkPreviewsFromCache*(self: AccessInterface, urls: seq[string]) {.base.} =
@@ -112,6 +112,9 @@ method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method reloadUnfurlingPlan*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
 method loadLinkPreviews*(self: AccessInterface, urls: seq[string]) {.base.} =

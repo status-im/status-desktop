@@ -1,4 +1,4 @@
-import NimQml, strformat, tables, sequtils, sets
+import NimQml, strformat, tables, sequtils, sets, chronicles
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
@@ -16,6 +16,7 @@ type
     Immutable
     IsLocalData
     LoadingLocalData
+    PendingUnfurlPermission
     Empty
     PreviewType
     # Standard unfurled link (oembed, opengraph, image)
@@ -89,6 +90,7 @@ QtObject:
       ModelRole.Immutable.int:"immutable",
       ModelRole.IsLocalData.int:"isLocalData",
       ModelRole.LoadingLocalData.int:"loadingLocalData",
+      ModelRole.PendingUnfurlPermission.int:"pendingUnfurlPermission",
       ModelRole.Empty.int:"empty",
       ModelRole.PreviewType.int:"previewType",
       # Standard
@@ -129,6 +131,8 @@ QtObject:
       result = newQVariant(item.isLocalData)
     of ModelRole.LoadingLocalData:
       result = newQVariant(item.loadingLocalData)
+    of ModelRole.PendingUnfurlPermission:
+      result = newQVariant(item.pendingUnfurlPermission)
     of ModelRole.Empty:
       result = newQVariant(item.linkPreview.empty()) 
     of ModelRole.PreviewType:
@@ -211,7 +215,9 @@ QtObject:
     self.endMoveRows()
 
   proc updateLinkPreviews*(self: Model, linkPreviews: Table[string, LinkPreview]) =
+    debug "<<< model.updateLinkPreviews start"
     for row, item in self.items:
+      debug "<<< model.updateLinkPreviews", row, url = item.linkPreview.url, immutable = $item.immutable
       if not linkPreviews.hasKey(item.linkPreview.url) or item.immutable:
         continue
       item.unfurled = true
@@ -219,8 +225,11 @@ QtObject:
       let modelIndex = self.createIndex(row, 0, nil)
       defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)
+    debug "<<< model.updateLinkPreviews end"
 
-  proc setUrls*(self: Model, urls: seq[string]) =
+  proc setUrls*(self: Model, urls: seq[string], pendingApproveUrls: HashSet[string]) =
+    debug "<<< model.setUrls", urls, pendingApproveUrls
+
     var itemsToInsert: seq[Item]
     var indexesToRemove: seq[int]
 
@@ -235,18 +244,28 @@ QtObject:
 
     # Move or insert
     for i in 0 ..< urls.len:
+      let url = urls[i]
       let index = self.findUrlIndex(urls[i])
       if index >= 0:
+        let isPending = pendingApproveUrls.contains(url)
+        if self.items[index].pendingUnfurlPermission != isPending:
+          self.items[index].pendingUnfurlPermission = isPending
+          let modelIndex = self.createIndex(index, 0, nil)
+          defer: modelIndex.delete
+          self.dataChanged(modelIndex, modelIndex, @[ModelRole.PendingUnfurlPermission.int])
         self.moveRow(index, i)
         continue
 
-      let linkPreview = initLinkPreview(urls[i])
+      let linkPreview = initLinkPreview(url)
       var item = Item()
       item.unfurled = false
       item.immutable = false
       item.isLocalData = false
       item.loadingLocalData = false
+      item.pendingUnfurlPermission = pendingApproveUrls.contains(url)
       item.linkPreview = linkPreview
+
+      debug "<<< model.setUrls: inserting item", url = linkPreview.url, pendingUnfurlPermission = $item.pendingUnfurlPermission
 
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
@@ -263,20 +282,26 @@ QtObject:
     self.countChanged()
 
   proc removePreviewData*(self: Model, index: int) {.slot.} =
+    debug "<<< model.removePreviewData", index
     if index < 0 or index >= self.items.len:
       return
 
-    self.items[index].linkPreview = initLinkPreview(self.items[index].linkPreview.url)
-    self.items[index].unfurled = false
-    self.items[index].immutable = true
+    self.items[index].markAsImmutable()
 
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
+    debug "<<< model.removeAllPreviewData"
     for i in 0 ..< self.items.len:
-      self.removePreviewData(i)
+      self.items[i].markAsImmutable()
+  
+    let indexStart = self.createIndex(0, 0, nil)
+    let indexEnd = self.createIndex(self.items.len, 0, nil)
+    defer: indexStart.delete
+    defer: indexEnd.delete
+    self.dataChanged(indexStart, indexEnd)
       
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]
@@ -341,3 +366,8 @@ QtObject:
     for row, item in self.items:
       if item.linkPreview.getCommunityId() == communityId:
         self.setItemLoadingLocalData(row, item, true)
+
+  proc getPendingUfnurlPermissionUrls*(self: Model): seq[string] =
+    for row, item in self.items:
+      if item.pendingUnfurlPermission:
+        result.add(item.linkPreview.url)

@@ -204,6 +204,7 @@ const asyncGetFirstUnseenMessageIdForTaskArg: Task = proc(argEncoded: string) {.
 type
   AsyncUnfurlUrlsTaskArg = ref object of QObjectTaskArg
     urls*: seq[string]
+    requestUuid*: string
 
 const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncUnfurlUrlsTaskArg](argEncoded)
@@ -212,7 +213,8 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     let output = %*{
       "error": (if response.error != nil: response.error.message else: ""),
       "response": response.result,
-      "requestedUrls": %*arg.urls
+      "requestedUrls": %*arg.urls,
+      "requestUuid": arg.requestUuid
     }
     arg.finish(output)
   except Exception as e:
@@ -220,7 +222,8 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     let output = %*{
       "error": e.msg,
       "response": "",
-      "requestedUrls": %*arg.urls
+      "requestedUrls": %*arg.urls,
+      "requestUuid": arg.requestUuid
     }
     arg.finish(output)
 
