@@ -39,9 +39,17 @@ proc buyEstimate*(chainId: int, fromAccount: Address, packId: string): RpcRespon
   let payload = %* [chainId, $fromAccount, packId]
   return core.callPrivateRPC("stickers_buyEstimate", payload)
 
-proc buy*(chainId: int, txData: JsonNode, packId: string, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, txData, packID, hashedPassword]
-  return core.callPrivateRPC("stickers_buy", payload)
+proc prepareTxForBuyingStickers*(chainId: int, txData: JsonNode, packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, txData, packID]
+  return core.callPrivateRPC("stickers_prepareTxForBuyingStickers", payload)
+
+proc singPreparedTx*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password]
+  return core.callPrivateRPC("stickers_singPreparedTx", payload)
+
+proc sendPreparedTxWithSignature*(signature: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [signature]
+  return core.callPrivateRPC("stickers_sendPreparedTxWithSignature", payload)
 
 proc clearRecentStickers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
