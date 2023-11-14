@@ -102,7 +102,7 @@ method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} 
 method getPlainText*(self: AccessInterface): string =
   raise newException(ValueError, "No implementation available")
 
-method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) {.base.} =
+method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateLinkPreviewsFromCache*(self: AccessInterface, urls: seq[string]) {.base.} =

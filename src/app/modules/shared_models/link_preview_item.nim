@@ -9,7 +9,6 @@ type
     immutable*: bool
     isLocalData*: bool
     loadingLocalData*: bool
-    pendingUnfurlPermission*: bool
     linkPreview*: LinkPreview
 
 proc delete*(self: Item) =
@@ -26,7 +25,6 @@ proc `$`*(self: Item): string =
     unfurled: {self.unfurled},
     immutable: {self.immutable},
     linkPreview: {self.linkPreview},
-    pendingUnfurlPermission: {self.pendingUnfurlPermission},
   )"""
 
 proc markAsImmutable*(self: Item) =

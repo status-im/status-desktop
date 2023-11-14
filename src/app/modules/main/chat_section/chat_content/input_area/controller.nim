@@ -127,7 +127,7 @@ proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
 
 proc resetLinkPreviews(self: Controller) =
   debug "<<< controller.resetLinkPreviews"
-  self.delegate.setLinkPreviewUrls(@[], initHashSet[string]())
+  self.delegate.setLinkPreviewUrls(@[])
   self.linkPreviewCache.clear()
   self.linkPreviewCurrentMessageSetting = self.linkPreviewPersistentSetting
   self.delegate.setAskToEnableLinkPreview(false)
@@ -233,7 +233,6 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
   var statusAllowedUrls = newSeq[string]()
   var otherAllowedUrls = newSeq[string]()
-  var pendingApproveUrls = initHashSet[string]()
   var askToEnableLinkPreview = false
 
   for url, metadata in self.unfurlingPlan.urls:
@@ -245,7 +244,6 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
 
     if metadata.permit == UrlUnfurlingAskUser:
       if self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk:
-        # pendingApproveUrls.incl(url)
         askToEnableLinkPreview = true
       else:
         otherAllowedUrls.add(url)
@@ -263,7 +261,7 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   # Update UI
   let allAllowedUrls = statusAllowedUrls & otherAllowedUrls
   self.delegate.setUrls(allUrls)
-  self.delegate.setLinkPreviewUrls(allAllowedUrls, pendingApproveUrls)
+  self.delegate.setLinkPreviewUrls(allAllowedUrls)
 
   # let askToEnableLinkPreview = len(urlsToAsk) > 0 and 
   #                              self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk

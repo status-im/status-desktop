@@ -166,8 +166,8 @@ method clearLinkPreviewCache*(self: Module) {.slot.} =
 method updateLinkPreviewsFromCache*(self: Module, urls: seq[string]) =
   self.view.updateLinkPreviewsFromCache(urls)
 
-method setLinkPreviewUrls*(self: Module, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) =
-  self.view.setLinkPreviewUrls(urls, pendingUnfurlPermissionUrls)
+method setLinkPreviewUrls*(self: Module, urls: seq[string]) =
+  self.view.setLinkPreviewUrls(urls)
 
 method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
   return self.controller.linkPreviewsFromCache(urls)

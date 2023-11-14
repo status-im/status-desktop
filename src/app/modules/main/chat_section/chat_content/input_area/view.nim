@@ -232,9 +232,9 @@ QtObject:
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
 
-  proc setLinkPreviewUrls*(self: View, urls: seq[string], pendingUnfurlPermissionUrls: HashSet[string]) =
-    debug "<<< view.setLinkPreviewUrls", urls, pendingUnfurlPermissionUrls, enabled = $self.delegate.getLinkPreviewEnabled()
-    self.linkPreviewModel.setUrls(urls, pendingUnfurlPermissionUrls)
+  proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
+    debug "<<< view.setLinkPreviewUrls", urls, enabled = $self.delegate.getLinkPreviewEnabled()
+    self.linkPreviewModel.setUrls(urls)
     # if self.delegate.getLinkPreviewEnabled():
     self.updateLinkPreviewsFromCache(urls)
     # else:
