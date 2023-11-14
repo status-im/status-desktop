@@ -22,11 +22,11 @@ SplitView {
             color: Theme.palette.statusChatInput.secondaryBackgroundColor
         }
 
-         LinkPreviewMiniCard {
-             id: previewMiniCard
-             anchors.centerIn: parent
-             type: previewTypeInput.currentIndex
-             previewState: stateInput.currentIndex
+        LinkPreviewMiniCard {
+            id: previewMiniCard
+            anchors.centerIn: parent
+            type: previewTypeInput.currentIndex
+            previewState: stateInput.currentIndex
             linkData {
                 title: titleInput.text
                 description: ""
