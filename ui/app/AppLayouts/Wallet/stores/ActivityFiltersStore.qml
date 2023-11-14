@@ -12,7 +12,7 @@ QtObject {
 
     property bool autoUpdateFilter: true
     property var activityController: walletSection.activityController
-    property bool filtersSet: selectedTime !== Constants.TransactionTimePeriod.All ||
+    readonly property bool filtersSet: selectedTime !== Constants.TransactionTimePeriod.All ||
                                 typeFilters.length !== 0 ||
                                 statusFilters.length !== 0 ||
                                 tokensFilter.length !== 0 ||
@@ -146,7 +146,7 @@ QtObject {
         applyTimeRange()
     }
 
-    function applyTimeRange() {
+    function applyTimeRange(callUpdate = true) {
         const startTimestamp = d.fromTimestampNoLimit
                             ? activityController.noLimitTimestamp
                             : fromTimestamp/1000
@@ -154,7 +154,7 @@ QtObject {
                             ? activityController.noLimitTimestamp
                             : toTimestamp/1000
         activityController.setFilterTime(startTimestamp, endTimestamp)
-        if (autoUpdateFilter)
+        if (autoUpdateFilter && callUpdate)
             activityController.updateFilter()
     }
 
@@ -259,7 +259,7 @@ QtObject {
     }
 
     function applyAllFilters() {
-        applyTimeRange()
+        applyTimeRange(false)
         activityController.setFilterType(JSON.stringify(typeFilters))
         activityController.setFilterStatus(JSON.stringify(statusFilters))
         activityController.setFilterAssets(JSON.stringify(tokensFilter), false)

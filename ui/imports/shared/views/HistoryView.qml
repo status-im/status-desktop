@@ -112,6 +112,7 @@ ColumnLayout {
             visible: d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet
             activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
             store: WalletStores.RootStore
+            hideNoResults: newTransactions.visible
             isLoading: d.isInitialLoading
         }
     }
@@ -277,6 +278,12 @@ ColumnLayout {
 
             function onNewDataAvailableChanged() {
                 if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
+                    // Show `New transactions` button only when filter is applied
+                    if (!WalletStores.RootStore.currentActivityFiltersStore.filtersSet) {
+                        d.refreshData()
+                        return
+                    }
+
                     newTransactions.visible = RootStore.newDataAvailable
                     return
                 }
