@@ -19,6 +19,7 @@ Pane {
     contentItem: Item {
             SplashScreen {
                 id: splashScreen
+                objectName: "didYouKnowSplashScreen"
                 anchors.centerIn: parent
                 width: 128
                 height: 128

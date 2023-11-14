@@ -372,6 +372,7 @@ StatusWindow {
 
     Loader {
         id: appLoadingAnimation
+        objectName: "loadingAnimationLoader"
         property bool runningProgressAnimation: false
         anchors.fill: parent
         active: false
