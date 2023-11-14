@@ -388,10 +388,11 @@ endif
 DOTHERSIDE_SOURCE_PATH := vendor/DOtherSide
 DOTHERSIDE_BUILD_PATH := vendor/DOtherSide/build
 DOTHERSIDE_CMAKE_CACHE := $(DOTHERSIDE_BUILD_PATH)/CMakeCache.txt
+DOTHERSIDE_MAKEFILE := $(DOTHERSIDE_BUILD_PATH)/Makefile
 DOTHERSIDE_LIBDIR := $(shell pwd)/$(shell dirname "$(DOTHERSIDE_LIBFILE)")
 export DOTHERSIDE_LIBDIR
 
-$(DOTHERSIDE_CMAKE_CACHE): | deps
+$(DOTHERSIDE_CMAKE_CACHE) $(DOTHERSIDE_MAKEFILE): | deps
 	echo -e "\033[92mConfiguring:\033[39m DOtherSide"
 	cmake \
 		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
@@ -404,7 +405,7 @@ $(DOTHERSIDE_CMAKE_CACHE): | deps
 		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
-dotherside-configure: | $(DOTHERSIDE_CMAKE_CACHE)
+dotherside-configure: | $(DOTHERSIDE_CMAKE_CACHE) $(DOTHERSIDE_MAKEFILE)
 
 dotherside-build: | dotherside-configure
 	echo -e "\033[92mBuilding:\033[39m DOtherSide"
