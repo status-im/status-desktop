@@ -58,10 +58,12 @@ QtObject:
       msg: string,
       replyTo: string,
       contentType: int) {.slot.} =
+    # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+    # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
 
@@ -260,15 +262,21 @@ QtObject:
     # NOTE: Here we need to start unfurling of the URLs
     # that were probably not unfurled because of `AlwaysAsk` property.
 
-    if enabled:
-      let urls = self.linkPreviewModel.getPendingUfnurlPermissionUrls()
-      let allUrls = self.linkPreviewModel.getLinks()
-      self.loadLinkPreviews(urls)
-      self.setLinkPreviewUrls(allUrls, initHashSet[string]())
+    ### Attempt 3
+    self.delegate.reloadUnfurlingPlan()
+
+    ### Attempt 2
+    # if enabled:
+    #   let urls = self.linkPreviewModel.getPendingUfnurlPermissionUrls()
+    #   let allUrls = self.linkPreviewModel.getLinks()
+    #   self.loadLinkPreviews(urls)
+    #   self.setLinkPreviewUrls(allUrls, initHashSet[string]())
     
+    ### Attempt 1
     # Re-request unfulring plan for current text
     # self.delegate.reloadUnfurlingPlan()
     
+    ### OLD
     # let links = self.linkPreviewModel.getLinks()
     # self.linkPreviewModel.clearItems()
     # self.loadLinkPreviews(links)

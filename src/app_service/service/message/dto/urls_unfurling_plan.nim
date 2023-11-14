@@ -15,6 +15,10 @@ type
   UrlsUnfurlingPlan* = ref object
     urls*: Table[string, UrlUnfurlingMetadata]
 
+proc initUrlsUnfurlingPlan*(): UrlsUnfurlingPlan =
+  result = UrlsUnfurlingPlan()
+  result.urls = initTable[string, UrlUnfurlingMetadata]()
+
 proc toUrlUnfurlingPermit*(value: int): UrlUnfurlingPermit =
   try:
     return UrlUnfurlingPermit(value)
@@ -48,7 +52,9 @@ proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
     result.urls[url] = toUrlUnfurlingMetadata(metadata)
 
 proc `$`*(self: UrlUnfurlingMetadata): string =
-  result = fmt"""UrlUnfurlingMetadata( permit: {self.permit}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
+  if self == nil:
+    return "nil"
+  return fmt"""UrlUnfurlingMetadata( permit: {self.permit}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
 
 proc `$`*(self: UrlsUnfurlingPlan): string =
   var rows = ""

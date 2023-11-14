@@ -247,12 +247,12 @@ QtObject:
       let url = urls[i]
       let index = self.findUrlIndex(urls[i])
       if index >= 0:
-        let isPending = pendingApproveUrls.contains(url)
-        if self.items[index].pendingUnfurlPermission != isPending:
-          self.items[index].pendingUnfurlPermission = isPending
-          let modelIndex = self.createIndex(index, 0, nil)
-          defer: modelIndex.delete
-          self.dataChanged(modelIndex, modelIndex, @[ModelRole.PendingUnfurlPermission.int])
+        # let isPending = pendingApproveUrls.contains(url)
+        # if self.items[index].pendingUnfurlPermission != isPending:
+        #   self.items[index].pendingUnfurlPermission = isPending
+        #   let modelIndex = self.createIndex(index, 0, nil)
+        #   defer: modelIndex.delete
+        #   self.dataChanged(modelIndex, modelIndex, @[ModelRole.PendingUnfurlPermission.int])
         self.moveRow(index, i)
         continue
 
@@ -262,7 +262,7 @@ QtObject:
       item.immutable = false
       item.isLocalData = false
       item.loadingLocalData = false
-      item.pendingUnfurlPermission = pendingApproveUrls.contains(url)
+      # item.pendingUnfurlPermission = pendingApproveUrls.contains(url)
       item.linkPreview = linkPreview
 
       debug "<<< model.setUrls: inserting item", url = linkPreview.url, pendingUnfurlPermission = $item.pendingUnfurlPermission

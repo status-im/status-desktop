@@ -30,6 +30,7 @@ type
     linkPreviewPersistentSetting: UrlUnfurlingMode
     linkPreviewCurrentMessageSetting: UrlUnfurlingMode
     unfurlRequests: HashSet[string]
+    unfurlingPlan: UrlsUnfurlingPlan
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -58,12 +59,14 @@ proc newController*(
   result.linkPreviewPersistentSetting = settingsService.urlUnfurlingMode()
   result.linkPreviewCurrentMessageSetting = result.linkPreviewPersistentSetting
   result.unfurlRequests = initHashSet[string]()
+  result.unfurlingPlan = initUrlsUnfurlingPlan()
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode)
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewDataArgs)
 proc clearLinkPreviewCache*(self: Controller)
 proc asyncUnfurlUrls(self: Controller, urls: seq[string])
 proc asyncUnfurlUnknownUrls(self: Controller, urls: seq[string])
+proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool)
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -219,20 +222,21 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
     self.delegate.setUrls(@[])
     return
 
+  self.unfurlingPlan = self.messageService.getTextURLsToUnfurl(text)
+  debug "<<< unfurlingPlan: ", unfurlingPlan = $self.unfurlingPlan
 
-  let unfurlingPlan = self.messageService.getTextURLsToUnfurl(text)
-  if unfurlingPlan != nil:
-    echo "<<< unfurlingPlan: " & $unfurlingPlan
-  else:
-    echo "<<< unfurlingPlan: nil"
+  self.handleUnfurlingPlan(unfurlNewUrls)
 
-  var allUrls = newSeq[string]()
+proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
+  debug "<<< controller.handleUnfurlingPlan", unfurlNewUrls
+
+  var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
   var statusAllowedUrls = newSeq[string]()
   var otherAllowedUrls = newSeq[string]()
   var pendingApproveUrls = initHashSet[string]()
   var askToEnableLinkPreview = false
 
-  for url, metadata in unfurlingPlan.urls:
+  for url, metadata in self.unfurlingPlan.urls:
     allUrls.add(url)
 
     if metadata.permit == UrlUnfurlingForbiddenBySettings or
@@ -241,7 +245,7 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
     if metadata.permit == UrlUnfurlingAskUser:
       if self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk:
-        pendingApproveUrls.incl(url)
+        # pendingApproveUrls.incl(url)
         askToEnableLinkPreview = true
       else:
         otherAllowedUrls.add(url)
@@ -257,9 +261,9 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
       otherAllowedUrls.add(url)
 
   # Update UI
-  # let allAllowedUrls = statusAllowedUrls & otherAllowedUrls
+  let allAllowedUrls = statusAllowedUrls & otherAllowedUrls
   self.delegate.setUrls(allUrls)
-  self.delegate.setLinkPreviewUrls(allUrls, pendingApproveUrls)
+  self.delegate.setLinkPreviewUrls(allAllowedUrls, pendingApproveUrls)
 
   # let askToEnableLinkPreview = len(urlsToAsk) > 0 and 
   #                              self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
@@ -270,6 +274,9 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
   self.asyncUnfurlUnknownUrls(statusAllowedUrls)
   self.asyncUnfurlUnknownUrls(otherAllowedUrls)
+
+proc reloadUnfurlingPlan*(self: Controller) =
+  self.setText(self.delegate.getPlainText(), true)
 
 proc asyncUnfurlUrls(self: Controller, urls: seq[string]) =
   let requestUuid = self.messageService.asyncUnfurlUrls(urls)
@@ -291,20 +298,13 @@ proc onUrlsUnfurled(self: Controller, args: LinkPreviewDataArgs) =
   let urls = self.linkPreviewCache.add(args.linkPreviews)
   self.delegate.updateLinkPreviewsFromCache(urls)
 
-proc reloadUnfurlingPlan*(self: Controller) =
-  debug "<<< controller.reloadUnfurlingPlan"
-  self.resetLinkPreviews()
-  self.setText(self.delegate.getPlainText(), self.getLinkPreviewEnabled())
-
 proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
   if self.getLinkPreviewEnabled():
     self.asyncUnfurlUrls(urls)
 
 proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
-  if enabled:
-    discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Enabled)
-    return
-  discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Disabled)
+  let mode = if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
+  discard self.settingsService.saveUrlUnfurlingMode(mode)
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
   self.linkPreviewPersistentSetting = value
