@@ -241,11 +241,13 @@ ApplicationWindow {
                         if (!mockedKeycard.input.valid || !mockedKeycardHelper.input.valid) {
                             return
                         }
+
+                        keycardSettingsTabRoot.registerKeycard(keycardState.selectedState,
+                                                               mockedKeycard.text,
+                                                               mockedKeycardHelper.text)
                     }
 
-                    keycardSettingsTabRoot.registerKeycard(keycardState.selectedState,
-                                                           mockedKeycard.text,
-                                                           mockedKeycardHelper.text)
+                    keycardSettingsTabRoot.registerKeycard(keycardState.selectedState, "", "")
                 }
             }
         }
