@@ -228,7 +228,7 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   self.handleUnfurlingPlan(unfurlNewUrls)
 
 proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
-  debug "<<< controller.handleUnfurlingPlan", unfurlNewUrls
+  debug "<<< controller.handleUnfurlingPlan", unfurlNewUrls = $unfurlNewUrls, linkPreviewCurrentMessageSetting = $self.linkPreviewCurrentMessageSetting
 
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
   var statusAllowedUrls = newSeq[string]()
@@ -257,6 +257,8 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
       statusAllowedUrls.add(url)
     else:
       otherAllowedUrls.add(url)
+
+  debug "<<< controller.handleUnfurlingPlan "
 
   # Update UI
   let allAllowedUrls = statusAllowedUrls & otherAllowedUrls
@@ -306,4 +308,5 @@ proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
   self.linkPreviewPersistentSetting = value
+  debug "<<< controller.onUnfurlingModeChanged", persistent = $self.linkPreviewPersistentSetting, current = $self.linkPreviewCurrentMessageSetting
   self.reloadUnfurlingPlan()
