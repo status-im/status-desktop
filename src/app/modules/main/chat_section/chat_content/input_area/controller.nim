@@ -231,22 +231,24 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   debug "<<< controller.handleUnfurlingPlan", unfurlNewUrls = $unfurlNewUrls, linkPreviewCurrentMessageSetting = $self.linkPreviewCurrentMessageSetting
 
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
+  var allAllowedUrls = newSeq[string]() # Used for LinkPreviewsModel to keep the urls order
   var statusAllowedUrls = newSeq[string]()
   var otherAllowedUrls = newSeq[string]()
   var askToEnableLinkPreview = false
 
-  for url, metadata in self.unfurlingPlan.urls:
-    allUrls.add(url)
+  for metadata in self.unfurlingPlan.urls:
+    allUrls.add(metadata.url)
 
-    if metadata.permit == UrlUnfurlingForbiddenBySettings or
-       metadata.permit == UrlUnfurlingNotSupported:
+    if metadata.permission == UrlUnfurlingForbiddenBySettings or
+       metadata.permission == UrlUnfurlingNotSupported:
         continue
 
-    if metadata.permit == UrlUnfurlingAskUser:
+    if metadata.permission == UrlUnfurlingAskUser:
       if self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk:
         askToEnableLinkPreview = true
       else:
-        otherAllowedUrls.add(url)
+        otherAllowedUrls.add(metadata.url)
+        allAllowedUrls.add(metadata.url)
       continue
 
     # Split unfurling into 2 packs, which will be different RPCs.
@@ -254,19 +256,17 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
     # In future we could unfurl each link in a separate RPC,
     # this would give better UX, but might result in worse performance.
     if metadata.isStatusSharedUrl:
-      statusAllowedUrls.add(url)
+      statusAllowedUrls.add(metadata.url)
     else:
-      otherAllowedUrls.add(url)
+      otherAllowedUrls.add(metadata.url)
+
+    allAllowedUrls.add(metadata.url)
 
   debug "<<< controller.handleUnfurlingPlan "
 
   # Update UI
-  let allAllowedUrls = statusAllowedUrls & otherAllowedUrls
   self.delegate.setUrls(allUrls)
   self.delegate.setLinkPreviewUrls(allAllowedUrls)
-
-  # let askToEnableLinkPreview = len(urlsToAsk) > 0 and 
-  #                              self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
   self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
 
   if not unfurlNewUrls:

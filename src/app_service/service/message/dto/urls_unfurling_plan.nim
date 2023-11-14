@@ -2,28 +2,29 @@ import json, strformat, chronicles, Tables
 include ../../../common/json_utils
 
 type 
-  UrlUnfurlingPermit* {.pure.} = enum
+  UrlUnfurlingPermission* {.pure.} = enum
     UrlUnfurlingAllowed = 0
     UrlUnfurlingAskUser
     UrlUnfurlingForbiddenBySettings
     UrlUnfurlingNotSupported
 
   UrlUnfurlingMetadata* = ref object
-    permit*: UrlUnfurlingPermit
+    url*: string
+    permission*: UrlUnfurlingPermission
     isStatusSharedUrl*: bool
 
   UrlsUnfurlingPlan* = ref object
-    urls*: Table[string, UrlUnfurlingMetadata]
+    urls*: seq[UrlUnfurlingMetadata]
 
 proc initUrlsUnfurlingPlan*(): UrlsUnfurlingPlan =
   result = UrlsUnfurlingPlan()
-  result.urls = initTable[string, UrlUnfurlingMetadata]()
+  result.urls = newSeq[UrlUnfurlingMetadata]()
 
-proc toUrlUnfurlingPermit*(value: int): UrlUnfurlingPermit =
+proc toUrlUnfurlingPermission*(value: int): UrlUnfurlingPermission =
   try:
-    return UrlUnfurlingPermit(value)
+    return UrlUnfurlingPermission(value)
   except RangeDefect:
-    return UrlUnfurlingPermit.UrlUnfurlingForbiddenBySettings
+    return UrlUnfurlingPermission.UrlUnfurlingForbiddenBySettings
 
 proc toUrlUnfurlingMetadata*(jsonObj: JsonNode): UrlUnfurlingMetadata =
   result = UrlUnfurlingMetadata()
@@ -32,7 +33,8 @@ proc toUrlUnfurlingMetadata*(jsonObj: JsonNode): UrlUnfurlingMetadata =
     warn "node is not an object", source = "toUrlUnfurlingMetadata"
     return
 
-  result.permit = toUrlUnfurlingPermit(jsonObj["permission"].getInt)
+  result.url = jsonObj["url"].getStr()
+  result.permission = toUrlUnfurlingPermission(jsonObj["permission"].getInt)
   result.isStatusSharedUrl = jsonObj["isStatusSharedURL"].getBool()
 
 proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
@@ -42,23 +44,25 @@ proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
     warn "node is not an object", source = "toUrlUnfurlingPlan"
     return
 
-  let urlsMap = jsonObj["urls"]
+  let urlsSeq = jsonObj["urls"]
 
-  if urlsMap.kind != JObject:
-    warn "urls is not an object", source = "toUrlUnfurlingPlan"
+  if urlsSeq.kind != JArray:
+    warn "urls is not an array", source = "toUrlUnfurlingPlan"
     return
 
-  for url, metadata in urlsMap.pairs:
-    result.urls[url] = toUrlUnfurlingMetadata(metadata)
+  for metadata in urlsSeq:
+    result.urls.add(toUrlUnfurlingMetadata(metadata))
 
 proc `$`*(self: UrlUnfurlingMetadata): string =
   if self == nil:
     return "nil"
-  return fmt"""UrlUnfurlingMetadata( permit: {self.permit}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
+  return fmt"""UrlUnfurlingMetadata( permission: {self.permission}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
 
 proc `$`*(self: UrlsUnfurlingPlan): string =
-  var rows = ""
+  if self == nil:
+    return ""
 
+  var rows = ""
   for url, metadata in self.urls:
     rows = fmt"""{rows}
     url: {url}, metadata: {metadata}"""

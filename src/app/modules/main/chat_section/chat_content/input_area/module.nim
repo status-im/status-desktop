@@ -154,8 +154,8 @@ method addToRecentsGif*(self: Module, item: GifDto) =
 method isFavorite*(self: Module, item: GifDto): bool =
   return self.controller.isFavorite(item)
 
-method setText*(self: Module, text: string, unfurlUrls: bool) =
-  self.controller.setText(text, unfurlUrls)
+method setText*(self: Module, text: string, unfurlNewUrls: bool) =
+  self.controller.setText(text, unfurlNewUrls)
 
 method getPlainText*(self: Module): string =
   return self.view.getPlainText()
