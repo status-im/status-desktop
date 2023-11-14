@@ -1,4 +1,4 @@
-import tables, sets, chronicles
+import tables, sets
 import ../../../../../../app_service/service/message/dto/link_preview
 
 type
@@ -30,13 +30,10 @@ proc linkPreviewsSeq*(self: LinkPreviewCache, urls: seq[string]): seq[LinkPrevie
 # Returns list of urls, for which link preview was updated.
 # If a url is already found in cache, correcponding link preview is updated.
 proc add*(self: LinkPreviewCache, linkPreviews: Table[string, LinkPreview]): seq[string] =
-  debug "<<< cache.add start"
   for key, value in pairs(linkPreviews):
-    debug "<<< cache.add", key, value
     result.add(key)
     self.cache[key] = value
     self.requests.excl(key)
-  debug "<<< cache.add end"
 
 # Marks the URL as requested.
 # This should be used to avoid duplicating unfurl requests.

@@ -1,4 +1,4 @@
-import NimQml, chronicles, sets
+import NimQml
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
@@ -233,12 +233,8 @@ QtObject:
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
 
   proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
-    debug "<<< view.setLinkPreviewUrls", urls, enabled = $self.delegate.getLinkPreviewEnabled()
     self.linkPreviewModel.setUrls(urls)
-    # if self.delegate.getLinkPreviewEnabled():
     self.updateLinkPreviewsFromCache(urls)
-    # else:
-      # self.linkPreviewModel.removeAllPreviewData()
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
@@ -256,31 +252,8 @@ QtObject:
     self.delegate.setLinkPreviewEnabled(false)
   
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
-    debug "<<< view.setLinkPreviewEnabledForCurrentMessage", enabled
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
-    
-    # NOTE: Here we need to start unfurling of the URLs
-    # that were probably not unfurled because of `AlwaysAsk` property.
-
-    ### Attempt 3
     self.delegate.reloadUnfurlingPlan()
-
-    ### Attempt 2
-    # if enabled:
-    #   let urls = self.linkPreviewModel.getPendingUfnurlPermissionUrls()
-    #   let allUrls = self.linkPreviewModel.getLinks()
-    #   self.loadLinkPreviews(urls)
-    #   self.setLinkPreviewUrls(allUrls, initHashSet[string]())
-    
-    ### Attempt 1
-    # Re-request unfulring plan for current text
-    # self.delegate.reloadUnfurlingPlan()
-    
-    ### OLD
-    # let links = self.linkPreviewModel.getLinks()
-    # self.linkPreviewModel.clearItems()
-    # self.loadLinkPreviews(links)
-    # self.setLinkPreviewUrls(links)
 
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)

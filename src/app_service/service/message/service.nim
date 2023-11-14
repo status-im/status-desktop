@@ -831,8 +831,6 @@ QtObject:
       error "getTextURLsToUnfurl failed", errName = e.name, errDesription = e.msg
 
   proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
-    debug "<<< service.onAsyncUnfurlUrlsFinished start"
-
     let responseObj = response.parseJson
     if responseObj.kind != JObject:
       warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
@@ -872,7 +870,6 @@ QtObject:
       linkPreviews: linkPreviews,
       requestUuid: responseObj["requestUuid"].getStr
     )
-    debug "<<< service.onAsyncUnfurlUrlsFinished end"
     self.events.emit(SIGNAL_URLS_UNFURLED, args)
 
   proc asyncUnfurlUrls*(self: Service, urls: seq[string]): string =

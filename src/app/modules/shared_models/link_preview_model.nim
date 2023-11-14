@@ -1,4 +1,4 @@
-import NimQml, strformat, tables, sequtils, sets, chronicles
+import NimQml, strformat, tables, sequtils, sets
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
@@ -211,9 +211,7 @@ QtObject:
     self.endMoveRows()
 
   proc updateLinkPreviews*(self: Model, linkPreviews: Table[string, LinkPreview]) =
-    debug "<<< model.updateLinkPreviews start"
     for row, item in self.items:
-      debug "<<< model.updateLinkPreviews", row, url = item.linkPreview.url, immutable = $item.immutable
       if not linkPreviews.hasKey(item.linkPreview.url) or item.immutable:
         continue
       item.unfurled = true
@@ -221,11 +219,8 @@ QtObject:
       let modelIndex = self.createIndex(row, 0, nil)
       defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)
-    debug "<<< model.updateLinkPreviews end"
 
   proc setUrls*(self: Model, urls: seq[string]) =
-    debug "<<< model.setUrls", urls
-
     var itemsToInsert: seq[Item]
     var indexesToRemove: seq[int]
 
@@ -254,8 +249,6 @@ QtObject:
       item.loadingLocalData = false
       item.linkPreview = linkPreview
 
-      debug "<<< model.setUrls: inserting item", url = linkPreview.url
-
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, i, i)
@@ -271,7 +264,6 @@ QtObject:
     self.countChanged()
 
   proc removePreviewData*(self: Model, index: int) {.slot.} =
-    debug "<<< model.removePreviewData", index
     if index < 0 or index >= self.items.len:
       return
 
@@ -282,7 +274,6 @@ QtObject:
     self.dataChanged(modelIndex, modelIndex)
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
-    debug "<<< model.removeAllPreviewData"
     for i in 0 ..< self.items.len:
       self.items[i].markAsImmutable()
   
