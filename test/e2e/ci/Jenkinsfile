@@ -37,7 +37,7 @@ pipeline {
     )
     string(
       name: 'TESTRAIL_RUN_NAME',
-      description: 'Test run ID in Test Rail.',
+      description: 'Test run name in Test Rail.',
       defaultValue: ''
     )
     /* FIXME: This is temporary and should be removed. */
