@@ -40,6 +40,7 @@ import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Wallet.views.walletconnect 1.0
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -1672,6 +1673,22 @@ Item {
         sourceComponent: UserAgreementPopup {
             visible: appMain.visible
             onClosed: userAgreementLoader.active = false
+        }
+    }
+
+    WalletConnect {
+        id: walletConnect
+        anchors.top: parent.bottom
+        width: 100
+        height: 100
+
+        controller: WalletStore.RootStore.walletConnectController
+
+        Connections {
+            target: Global
+            function onPopupWalletConnect() {
+                walletConnect.modal.open()
+            }
         }
     }
 }

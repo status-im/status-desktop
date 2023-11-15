@@ -6,7 +6,7 @@ from gen import rpc
 import backend
 
 # Declared in services/wallet/walletconnect/walletconnect.go
-#const eventWCTODO*: string = "wallet-wc-todo"
+const eventWCProposeUserPair*: string = "WalletConnectProposeUserPair"
 
 # Declared in services/wallet/walletconnect/walletconnect.go
 const ErrorChainsNotSupported*: string = "chains not supported"
@@ -28,11 +28,23 @@ rpc(wCSendTransactionWithSignature, "wallet"):
 rpc(wCPairSessionProposal, "wallet"):
   sessionProposalJson: string
 
+rpc(wCRecordSuccessfulPairing, "wallet"):
+  sessionProposalJson: string
+
+rpc(wCHasActivePairings, "wallet"):
+  discard
+
 rpc(wCSessionRequest, "wallet"):
   sessionRequestJson: string
 
-proc prepareResponse(res: var JsonNode, rpcResponse: RpcResponse[JsonNode]): string =
+
+proc isErrorResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   if not rpcResponse.error.isNil:
+    return true
+  return false
+
+proc prepareResponse(res: var JsonNode, rpcResponse: RpcResponse[JsonNode]): string =
+  if isErrorResponse(rpcResponse):
     return rpcResponse.error.message
   if rpcResponse.result.isNil:
     return "no result"
@@ -78,6 +90,24 @@ proc pair*(res: var JsonNode, sessionProposalJson: string): string =
   except Exception as e:
     warn e.msg
     return e.msg
+
+proc recordSuccessfulPairing*(sessionProposalJson: string): bool =
+  try:
+    let response = wCRecordSuccessfulPairing(sessionProposalJson)
+    return not isErrorResponse(response)
+  except Exception as e:
+    warn e.msg
+    return false
+
+proc hasActivePairings*(): bool =
+  try:
+    let response = wCHasActivePairings()
+    if isErrorResponse(response):
+      return false
+    return response.result.getBool()
+  except Exception as e:
+    warn e.msg
+    return false
 
 proc sessionRequest*(res: var JsonNode, sessionRequestJson: string): string =
   try:

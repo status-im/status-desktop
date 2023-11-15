@@ -1,4 +1,4 @@
-import NimQml, strutils, logging, json
+import NimQml, strutils, logging, json, options
 
 import backend/wallet_connect as backend
 
@@ -20,6 +20,7 @@ QtObject:
     Controller* = ref object of QObject
       events: EventEmitter
       sessionRequestJson: JsonNode
+      hasActivePairings: Option[bool]
 
   ## Forward declarations
   proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string)
@@ -67,6 +68,19 @@ QtObject:
     let sessionProposalJson = if res.hasKey("sessionProposal"): $res["sessionProposal"] else: ""
     let supportedNamespacesJson = if res.hasKey("supportedNamespaces"): $res["supportedNamespaces"] else: ""
     self.proposeUserPair(sessionProposalJson, supportedNamespacesJson)
+
+  proc recordSuccessfulPairing(self: Controller, sessionProposalJson: string) {.slot.} =
+    if backend.recordSuccessfulPairing(sessionProposalJson):
+      if not self.hasActivePairings.get(false):
+        self.hasActivePairings = some(true)
+
+  proc getHasActivePairings*(self: Controller): bool {.slot.} =
+    if self.hasActivePairings.isNone:
+      self.hasActivePairings = some(backend.hasActivePairings())
+    return self.hasActivePairings.get(false)
+
+  QtProperty[bool] hasActivePairings:
+    read = getHasActivePairings
 
   proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
 

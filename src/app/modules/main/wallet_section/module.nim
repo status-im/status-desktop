@@ -312,6 +312,7 @@ proc checkIfModuleDidLoad(self: Module) =
   self.notifyFilterChanged()
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
+  self.view.setWalletReady()
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()

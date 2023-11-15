@@ -1,10 +1,12 @@
 import QtQuick 2.15
-import QtWebEngine 1.10
-import QtWebChannel 1.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import QtWebEngine 1.10
+import QtWebChannel 1.15
+
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Components 0.1
 
 Item {
     id: root
@@ -12,6 +14,10 @@ Item {
     required property string projectId
     readonly property alias sdkReady: d.sdkReady
     readonly property alias pairingsModel: d.pairingsModel
+    readonly property alias webEngineLoader: loader
+
+    property alias active: loader.active
+    property alias url: loader.url
 
     implicitWidth: 1
     implicitHeight: 1
@@ -20,7 +26,7 @@ Item {
     signal sdkInit(bool success, var result)
     signal pairSessionProposal(bool success, var sessionProposal)
     signal pairSessionProposalExpired()
-    signal pairAcceptedResult(bool success, var sessionType)
+    signal pairAcceptedResult(var sessionProposal, bool success, var sessionType)
     signal pairRejectedResult(bool success, var result)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
@@ -54,6 +60,8 @@ Item {
         property bool sdkReady: false
         property ListModel pairingsModel: pairings
 
+        property WebEngineView engine: loader.instance
+
         onSdkReadyChanged: {
             if (sdkReady)
             {
@@ -61,19 +69,22 @@ Item {
             }
         }
 
-        function resetPairingsModel()
+        function resetPairingsModel(entryCallback)
         {
             pairings.clear();
 
             wcCalls.getPairings((pairList) => {
-                                    for (let i = 0; i < pairList.length; i++) {
-                                        pairings.append({
-                                                            active: pairList[i].active,
-                                                            topic: pairList[i].topic,
-                                                            expiry: pairList[i].expiry
-                                                        });
-                                    }
-                                })
+                for (let i = 0; i < pairList.length; i++) {
+                    pairings.append({
+                        active: pairList[i].active,
+                        topic: pairList[i].topic,
+                        expiry: pairList[i].expiry
+                    });
+                    if (entryCallback) {
+                        entryCallback(pairList[i])
+                    }
+                }
+            })
         }
 
         function getPairingTopicFromPairingUrl(url)
@@ -95,11 +106,11 @@ Item {
         id: wcCalls
 
         function init() {
-            console.debug(`@dd WalletConnectSDK.wcCall.init; root.projectId: ${root.projectId}`)
+            console.debug(`WC WalletConnectSDK.wcCall.init; root.projectId: ${root.projectId}`)
 
-            webEngineView.runJavaScript(`wc.init("${root.projectId}")`, function(result) {
+            d.engine.runJavaScript(`wc.init("${root.projectId}")`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result, null, 2)}`)
 
                 if (result && !!result.error)
                 {
@@ -109,11 +120,11 @@ Item {
         }
 
         function getPairings(callback) {
-            console.debug(`@dd WalletConnectSDK.wcCall.getPairings;`)
+            console.debug(`WC WalletConnectSDK.wcCall.getPairings;`)
 
-            webEngineView.runJavaScript(`wc.getPairings()`, function(result) {
+            d.engine.runJavaScript(`wc.getPairings()`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.getPairings; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.getPairings; response: ${JSON.stringify(result, null, 2)}`)
 
                 if (result)
                 {
@@ -129,11 +140,11 @@ Item {
         }
 
         function pair(pairLink) {
-            console.debug(`@dd WalletConnectSDK.wcCall.pair; pairLink: ${pairLink}`)
+            console.debug(`WC WalletConnectSDK.wcCall.pair; pairLink: ${pairLink}`)
 
             wcCalls.getPairings((allPairings) => {
 
-                                    console.debug(`@dd WalletConnectSDK.wcCall.pair; response: ${JSON.stringify(allPairings, null, 2)}`)
+                                    console.debug(`WC WalletConnectSDK.wcCall.pair; response: ${JSON.stringify(allPairings, null, 2)}`)
 
                                     let pairingTopic = d.getPairingTopicFromPairingUrl(pairLink);
 
@@ -147,7 +158,7 @@ Item {
                                         }
                                     }
 
-                                    webEngineView.runJavaScript(`wc.pair("${pairLink}")`, function(result) {
+                                    d.engine.runJavaScript(`wc.pair("${pairLink}")`, function(result) {
                                         if (result && !!result.error)
                                         {
                                             console.error("pair: ", result.error)
@@ -158,32 +169,38 @@ Item {
         }
 
         function approvePairSession(sessionProposal, supportedNamespaces) {
-            console.debug(`@dd WalletConnectSDK.wcCall.approvePairSession; sessionProposal: ${JSON.stringify(sessionProposal)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
+            console.debug(`WC WalletConnectSDK.wcCall.approvePairSession; sessionProposal: ${JSON.stringify(sessionProposal)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
 
-            webEngineView.runJavaScript(`wc.approvePairSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})`, function(result) {
+            d.engine.runJavaScript(`wc.approvePairSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.approvePairSession; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.approvePairSession; response: ${JSON.stringify(result, null, 2)}`)
 
                 if (result) {
                     if (!!result.error)
                     {
                         console.error("approvePairSession: ", result.error)
-                        root.pairAcceptedResult(false, result.error)
+                        root.pairAcceptedResult(sessionProposal, false, result.error)
                         return
                     }
-                    root.pairAcceptedResult(true, result.error)
+                    // Update the temporary expiry with the one from the pairing
+                    d.resetPairingsModel((pairing) => {
+                        if (pairing.topic === sessionProposal.params.pairingTopic) {
+                            sessionProposal.params.expiry = pairing.expiry
+                            root.pairAcceptedResult(sessionProposal, true, result.error)
+                        }
+                    })
                 }
-                d.resetPairingsModel()
             })
         }
 
         function rejectPairSession(id) {
-            console.debug(`@dd WalletConnectSDK.wcCall.rejectPairSession; id: ${id}`)
+            console.debug(`WC WalletConnectSDK.wcCall.rejectPairSession; id: ${id}`)
 
-            webEngineView.runJavaScript(`wc.rejectPairSession(${id})`, function(result) {
+            d.engine.runJavaScript(`wc.rejectPairSession(${id})`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.rejectPairSession; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.rejectPairSession; response: ${JSON.stringify(result, null, 2)}`)
 
+                d.resetPairingsModel()
                 if (result) {
                     if (!!result.error)
                     {
@@ -193,16 +210,15 @@ Item {
                     }
                     root.pairRejectedResult(true, result.error)
                 }
-                d.resetPairingsModel()
             })
         }
 
         function acceptSessionRequest(topic, id, signature) {
-            console.debug(`@dd WalletConnectSDK.wcCall.acceptSessionRequest; topic: "${topic}", id: ${id}, signature: "${signature}"`)
+            console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; topic: "${topic}", id: ${id}, signature: "${signature}"`)
 
-            webEngineView.runJavaScript(`wc.respondSessionRequest("${topic}", ${id}, "${signature}")`, function(result) {
+            d.engine.runJavaScript(`wc.respondSessionRequest("${topic}", ${id}, "${signature}")`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(allPairings, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(allPairings, null, 2)}`)
 
                 if (result) {
                     if (!!result.error)
@@ -218,11 +234,11 @@ Item {
         }
 
         function rejectSessionRequest(topic, id, error) {
-            console.debug(`@dd WalletConnectSDK.wcCall.rejectSessionRequest; topic: "${topic}", id: ${id}, error: "${error}"`)
+            console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; topic: "${topic}", id: ${id}, error: "${error}"`)
 
-            webEngineView.runJavaScript(`wc.rejectSessionRequest("${topic}", ${id}, "${error}")`, function(result) {
+            d.engine.runJavaScript(`wc.rejectSessionRequest("${topic}", ${id}, "${error}")`, function(result) {
 
-                console.debug(`@dd WalletConnectSDK.wcCall.rejectSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
 
                 if (result) {
                     if (!!result.error)
@@ -263,54 +279,54 @@ Item {
 
         function onSessionProposal(details)
         {
-            console.debug(`@dd WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
             root.pairSessionProposal(true, details)
         }
 
         function onSessionUpdate(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionExtend(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionPing(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionDelete(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionExpire(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionRequest(details)
         {
-            console.debug(`@dd WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details, null, 2)}`)
             root.sessionRequestEvent(details)
         }
 
         function onSessionRequestSent(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onSessionEvent(details)
         {
-            console.debug(`@dd TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details, null, 2)}`)
         }
 
         function onProposalExpire(details)
         {
-            console.debug(`@dd WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
             root.pairSessionProposalExpired()
         }
     }
@@ -319,36 +335,19 @@ Item {
         id: pairings
     }
 
-    WebChannel {
-        id: statusChannel
-        registeredObjects: [statusObject]
-    }
-
-    WebEngineView {
-        id: webEngineView
+    WebEngineLoader {
+        id: loader
 
         anchors.fill: parent
 
-        Component.onCompleted: {
-            console.debug(`@dd WalletConnectSDK.WebEngineView.onCompleted; url: ${url}; debug? ${SQUtils.isDebug()};`)
-        }
-
         url: "qrc:/app/AppLayouts/Wallet/views/walletconnect/sdk/src/index.html"
-        webChannel: statusChannel
+        webChannelObjects: [ statusObject ]
 
-        onLoadingChanged: function(loadRequest) {
-            console.debug(`@dd WalletConnectSDK.onLoadingChanged; status: ${loadRequest.status}; error: ${loadRequest.errorString}`)
-            switch(loadRequest.status) {
-            case WebEngineView.LoadSucceededStatus:
-                wcCalls.init()
-                break
-            case WebEngineView.LoadFailedStatus:
-                root.statusChanged(`<font color="red">Failed loading SDK JS code; error: "${loadRequest.errorString}"</font>`)
-                break
-            case WebEngineView.LoadStartedStatus:
-                root.statusChanged(`<font color="blue">Loading SDK JS code</font>`)
-                break
-            }
+        onPageLoaded: function() {
+            wcCalls.init()
+        }
+        onPageLoadingError: function(error) {
+            console.error("WebEngineLoader.onPageLoadingError: ", error)
         }
     }
 }
