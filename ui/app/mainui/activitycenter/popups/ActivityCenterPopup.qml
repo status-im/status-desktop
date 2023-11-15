@@ -35,6 +35,16 @@ Popup {
     modal: true
     parent: Overlay.overlay
 
+    QtObject {
+        id: d
+
+        readonly property var loadMoreNotificationsIfScrollBelowThreshold: Backpressure.oneInTimeQueued(root, 100, function() {
+            if (listView.contentY >= listView.contentHeight - listView.height - 1) {
+                root.activityCenterStore.fetchActivityCenterNotifications()
+            }
+        })
+    }
+
     Overlay.modal: MouseArea { // eat every event behind the popup
         hoverEnabled: true
         onPressed: (event) => {
@@ -79,6 +89,7 @@ Popup {
 
     StatusListView {
         id: listView
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: activityCenterTopBar.bottom
@@ -87,6 +98,8 @@ Popup {
         spacing: 1
 
         model: root.activityCenterStore.activityCenterNotifications
+
+        onContentYChanged: d.loadMoreNotificationsIfScrollBelowThreshold()
 
         delegate: Loader {
             width: listView.availableWidth

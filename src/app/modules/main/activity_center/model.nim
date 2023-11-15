@@ -156,27 +156,40 @@ QtObject:
     self.activityCenterNotifications = activityCenterNotifications
     self.endResetModel()
 
-  proc addActivityNotificationItemToList*(self: Model, activityCenterNotification: Item, addToCount: bool = true) =
-    let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
-    self.beginInsertRows(modelIndex, 0, 0)
-    self.activityCenterNotifications.insert(activityCenterNotification, 0)
+  proc updateActivityCenterNotification*(self: Model, ind: int, newNotification: Item) =
+    self.activityCenterNotifications[ind] = newNotification
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index)
+
+  proc upsertActivityCenterNotification*(self: Model, newNotification: Item) =
+    for i, notification in self.activityCenterNotifications:
+      if newNotification.id == notification.id:
+        self.updateActivityCenterNotification(i, newNotification)
+        return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    var indexToInsert = self.activityCenterNotifications.len
+    for i, notification in self.activityCenterNotifications:
+      if newNotification.timestamp > notification.timestamp:
+        indexToInsert = i
+        break
+
+    self.beginInsertRows(parentModelIndex, indexToInsert, indexToInsert)
+    self.activityCenterNotifications.insert(newNotification, indexToInsert)
     self.endInsertRows()
 
-    if self.activityCenterNotifications.len > 1:
-      let topLeft = self.createIndex(0, 0, nil)
-      let bottomRight = self.createIndex(1, 0, nil)
-      defer: topLeft.delete
-      defer: bottomRight.delete
-      self.dataChanged(topLeft, bottomRight, @[NotifRoles.Timestamp.int, NotifRoles.PreviousTimestamp.int])
+    let indexToUpdate = indexToInsert - 2
+    if indexToUpdate >= 0 and indexToUpdate < self.activityCenterNotifications.len:
+      let index = self.createIndex(indexToUpdate, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, @[NotifRoles.PreviousTimestamp.int])
 
-  proc addActivityNotificationItemsToList*(self: Model, activityCenterNotifications: seq[Item]) =
+  proc upsertActivityCenterNotifications*(self: Model, activityCenterNotifications: seq[Item]) =
     if self.activityCenterNotifications.len == 0:
       self.setNewData(activityCenterNotifications)
     else:
       for activityCenterNotification in activityCenterNotifications:
-        for notif in self.activityCenterNotifications:
-          if activityCenterNotification.id == notif.id:
-            self.removeNotifications(@[notif.id])
-            break
-        self.addActivityNotificationItemToList(activityCenterNotification, false)
+        self.upsertActivityCenterNotification(activityCenterNotification)

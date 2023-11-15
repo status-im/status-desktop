@@ -43,7 +43,7 @@ ActivityNotificationMessage {
     }
 
     ctaComponent: MembershipCta {
-        membershipStatus: notification && notification.membershipStatus ? notification.membershipStatus : ActivityNotification.MembershipStatus.None
+        membershipStatus: notification && notification.membershipStatus ? notification.membershipStatus : ActivityCenterStore.ActivityCenterMembershipStatus.None
         onAcceptRequestToJoinCommunity: root.store.acceptRequestToJoinCommunity(notification.id, notification.communityId)
         onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
         //TODO: Get backend value. If the membersip is in acceptedPending or declinedPending state, another user can't accept or decline the request
