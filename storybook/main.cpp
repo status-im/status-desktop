@@ -1,8 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQmlComponent>
+#include <QDirIterator>
 
 #include <QtWebView>
+
 
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
@@ -12,10 +15,14 @@
 #include "testsrunner.h"
 #include "systemutils.h"
 
+#include <memory>
+
 struct PagesModelInitialized : public PagesModel {
     explicit PagesModelInitialized(QObject *parent = nullptr)
         : PagesModel(QML_IMPORT_ROOT + QStringLiteral("/pages"), parent) {}
 };
+
+void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine);
 
 int main(int argc, char *argv[])
 {
@@ -90,6 +97,7 @@ int main(int argc, char *argv[])
                     return new SystemUtils;
                 });
 
+    loadContextPropertiesMocks(QML_IMPORT_ROOT, engine);
 #ifdef Q_OS_WIN
     const QUrl url(QUrl::fromLocalFile(QML_IMPORT_ROOT + QStringLiteral("/main.qml")));
 #else
@@ -103,4 +111,35 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     return QGuiApplication::exec();
+}
+
+void loadContextPropertiesMocks(const char* storybookRoot, QQmlApplicationEngine& engine) {
+    QDirIterator it(QML_IMPORT_ROOT + QStringLiteral("/stubs/nim/sectionmocks"), QDirIterator::Subdirectories);
+
+    while (it.hasNext()) {
+        it.next();
+        if (it.fileInfo().isFile() && it.fileInfo().suffix() == QStringLiteral("qml")) {
+            auto component = std::make_unique<QQmlComponent>(&engine, QUrl::fromLocalFile(it.filePath()));
+            if (component->status() != QQmlComponent::Ready) {
+                qWarning() << "Failed to load mock for" << it.filePath() << component->errorString();
+                continue;
+            }
+
+            auto objPtr = std::unique_ptr<QObject>(component->create());
+            if(!objPtr) {
+                qWarning() << "Failed to create mock for" << it.filePath();
+                continue;
+            }
+
+            if(!objPtr->property("contextPropertyName").isValid()) {
+                qInfo() << "Not a mock, missing property name \"contextPropertyName\"";
+                continue;
+            }
+
+            auto contextPropertyName = objPtr->property("contextPropertyName").toString();
+            auto obj = objPtr.release();
+            obj->setParent(&engine);
+            engine.rootContext()->setContextProperty(contextPropertyName, obj);
+        }
+    }
 }

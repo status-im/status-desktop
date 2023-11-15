@@ -3,8 +3,6 @@ import { Web3Wallet } from "@walletconnect/web3wallet";
 
 import AuthClient from '@walletconnect/auth-client'
 
-import { QWebChannel } from './qwebchannel';
-
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
 import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
@@ -17,11 +15,20 @@ window.wc = {
 
     init: function (projectId) {
         (async () => {
-            try {
-                await createWebChannel();
-            } catch (error) {
-                wc.statusObject.sdkInitialized(error);
-                return
+            if (!window.statusq) {
+                console.error('missing window.statusq! Forgot to execute "ui/StatusQ/src/StatusQ/Components/private/qwebchannel/helpers.js" first?');
+                return;
+            }
+
+            if (window.statusq.error) {
+                console.error("Failed initializing WebChannel: " + window.statusq.error);
+                return;
+            }
+
+            wc.statusObject = window.statusq.channel.objects.statusObject;
+            if (!wc.statusObject) {
+                console.error("Failed initializing WebChannel or initialization not run");
+                return;
             }
 
             window.wc.core = new Core({
@@ -208,18 +215,3 @@ window.wc = {
         };
     },
 };
-
-function createWebChannel(projectId) {
-    return new Promise((resolve, reject) => {
-        window.wc.channel = new QWebChannel(qt.webChannelTransport, function (channel) {
-            let statusObject = channel.objects.statusObject;
-
-            if (!statusObject) {
-                reject(new Error("Unable to resolve statusObject"));
-            } else {
-                window.wc.statusObject = statusObject;
-                resolve();
-            }
-        });
-    });
-}

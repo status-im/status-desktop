@@ -6,8 +6,8 @@ enable_testing()
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick WebChannel WebEngine REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick WebChannel WebEngine REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -31,6 +31,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::QuickTest
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::WebChannel
+    Qt${QT_VERSION_MAJOR}::WebEngine
     StatusQ
 )
 

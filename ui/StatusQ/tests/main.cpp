@@ -1,7 +1,19 @@
 #include <QtQuickTest/quicktest.h>
 #include <QQmlEngine>
 
+#include <QtWebEngine>
+
 #include "TestHelpers/MonitorQtOutput.h"
+
+class RunBeforeQApplicationIsInitialized {
+public:
+    RunBeforeQApplicationIsInitialized()
+    {
+        QtWebEngine::initialize();
+    }
+};
+
+static RunBeforeQApplicationIsInitialized runBeforeQApplicationIsInitialized;
 
 class TestSetup : public QObject
 {

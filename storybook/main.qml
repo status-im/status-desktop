@@ -323,12 +323,12 @@ ApplicationWindow {
         modal: true
 
         contentItem: Label {
-            text: `
-Tips:
-    •   For inline components use naming convention of adding
-        "Custom" at the begining (like Custom${root.currentPage})
-    •   For popups set closePolicy to "Popup.NoAutoClose""
-`
+            text: '
+Tips:\n\
+    •   For inline components use naming convention of adding\n\
+        "Custom" at the begining (like Custom'+root.currentPage+')\n\
+    •   For popups set closePolicy to "Popup.NoAutoClose"\n\
+'
         }
     }
 

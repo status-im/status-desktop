@@ -79,6 +79,8 @@ QtObject {
 
     signal openTestnetPopup()
 
+    signal popupWalletConnect()
+
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)
     }

@@ -23,6 +23,7 @@ QtObject:
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
       wcController: wcc.Controller
+      walletReady: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -212,3 +213,17 @@ QtObject:
     return newQVariant(self.wcController)
   QtProperty[QVariant] walletConnectController:
     read = getWalletConnectController
+
+  proc walletReadyChanged*(self: View) {.signal.}
+
+  proc getWalletReady*(self: View): bool {.slot.} =
+    return self.walletReady
+
+  proc setWalletReady*(self: View) =
+    if not self.walletReady:
+      self.walletReady = true
+      self.walletReadyChanged()
+
+  QtProperty[bool] walletReady:
+    read = getWalletReady
+    notify = walletReadyChanged

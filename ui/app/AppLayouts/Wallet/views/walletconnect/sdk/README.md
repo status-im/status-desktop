@@ -28,33 +28,6 @@ Install dependencies steps by executing commands in this directory:
 
 Use the web demo test client https://react-app.walletconnect.com/ for wallet pairing and https://react-auth-dapp.walletconnect.com/ for authentication
 
-## Dev - to be removed
-
-To test SDK loading add the following to `ui/app/mainui/AppMain.qml`
-
-```qml
-import AppLayouts.Wallet.stores 1.0 as WalletStores
-import AppLayouts.Wallet.views.walletconnect 1.0
-
-// ...
-
-StatusDialog {
-    id: wcHelperDialog
-    visible: true
-
-    WalletConnect {
-        SplitView.preferredWidth: 400
-        SplitView.preferredHeight: 600
-
-        backgroundColor: wcHelperDialog.backgroundColor
-
-        controller: WalletStores.RootStore.walletConnectController
-    }
-
-    clip: true
-}
-```
-
 ## Log
 
 Initial setup

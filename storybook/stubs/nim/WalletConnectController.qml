@@ -17,5 +17,6 @@ Item {
     required property var sessionRequest
 
 
+    required property bool hasActivePairings
     required property string projectId
 }
