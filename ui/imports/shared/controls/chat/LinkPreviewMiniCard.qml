@@ -7,7 +7,6 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import shared 1.0
-
 import utils 1.0
 
 import "./private" 1.0
@@ -42,7 +41,7 @@ CalloutCard {
     verticalPadding: 15
     horizontalPadding: 12
     borderColor: Theme.palette.directColor7
-    backgroundColor: root.containsMouse ? Theme.palette.directColor7 : Theme.palette.baseColor4
+    backgroundColor: root.containsMouse ? Theme.palette.directColor7 : Style.current.background
 
     // behavior
     states: [
@@ -79,7 +78,6 @@ CalloutCard {
                   root.linkData.type === Constants.StandardLinkPreviewType.Link
             PropertyChanges { 
                 target: root; visible: true; dashedBorder: false; borderWidth: 0;
-                backgroundColor: root.containsMouse ? Theme.palette.directColor8 : Theme.palette.indirectColor1; 
                 borderColor: backgroundColor;
             }
             PropertyChanges { target: loadingAnimation; visible: false; }
