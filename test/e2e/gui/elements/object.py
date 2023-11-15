@@ -22,10 +22,6 @@ class QObject:
             self.real_name = getattr(objects_map, name)
         self._image = Image(self.real_name)
 
-    def __getattr__(self, attr: str):
-        value = getattr(self.object, attr)
-        return value
-
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
 
@@ -75,17 +71,17 @@ class QObject:
     @property
     @allure.step('Get enabled {0}')
     def is_enabled(self) -> bool:
-        return getattr(self, 'enabled')
+        return getattr(self.object, 'enabled')
 
     @property
     @allure.step('Get selected {0}')
     def is_selected(self) -> bool:
-        return getattr(self, 'selected')
+        return getattr(self.object, 'selected')
 
     @property
     @allure.step('Get checked {0}')
     def is_checked(self) -> bool:
-        return getattr(self, 'checked')
+        return getattr(self.object, 'checked')
 
     @property
     @allure.step('Get visible {0}')
