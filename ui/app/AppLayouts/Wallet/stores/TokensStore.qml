@@ -9,13 +9,13 @@ QtObject {
     id: root
 
     /* PRIVATE: Modules used to get data from backend */
-    readonly property var _allTokensModule: walletSectionAllTokens
-    readonly property var _networksModule: networksModule
+    readonly property var _allTokensModule: !!walletSectionAllTokens ? walletSectionAllTokens : null
+    readonly property var _networksModule: !!networksModule ? networksModule : null
 
     /* This contains the different sources for the tokens list
        ex. uniswap list, status tokens list */
     readonly property var sourcesOfTokensModel: SortFilterProxyModel {
-        sourceModel: root._allTokensModule.sourcesOfTokensModel
+        sourceModel: !!root._allTokensModule ? root._allTokensModule.sourcesOfTokensModel : null
         proxyRoles: ExpressionRole {
             function sourceImage(sourceKey) {
                 return Constants.getSupportedTokenSourceImage(sourceKey)
@@ -37,7 +37,7 @@ QtObject {
 
     /* This list contains the complete list of tokens with separate
        entry per token which has a unique [address + network] pair */
-    readonly property var flatTokensModel: root._allTokensModule.flatTokensModel
+    readonly property var flatTokensModel: !!root._allTokensModule ? root._allTokensModule.flatTokensModel : null
 
     /* PRIVATE: This model just combines tokens and network information in one */
     readonly property LeftJoinModel _joinFlatTokensModel : LeftJoinModel {
@@ -74,7 +74,7 @@ QtObject {
        there will be one entry per address + network pair */
     // TODO in #12513
     readonly property var tokensBySymbolModel: SortFilterProxyModel {
-        sourceModel: root._allTokensModule.tokensBySymbolModel
+        sourceModel: !!root._allTokensModule ? root._allTokensModule.tokensBySymbolModel : null
         proxyRoles: [
             ExpressionRole {
                 function tokenIcon(symbol) {
