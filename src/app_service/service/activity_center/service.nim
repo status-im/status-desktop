@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strutils, stint
+import NimQml, json, sequtils, chronicles, strutils, strutils, stint, sugar
 
 import ../../../app/core/eventemitter
 import ../../../app/core/[main]
@@ -22,35 +22,15 @@ type
   ActivityCenterNotificationsArgs* = ref object of Args
     activityCenterNotifications*: seq[ActivityCenterNotificationDto]
 
-  MarkAsAcceptedNotificationProperties* = ref object of Args
+  ActivityCenterNotificationIdsArgs* = ref object of Args
     notificationIds*: seq[string]
-
-  RemoveActivityCenterNotificationsArgs* = ref object of Args
-    notificationIds*: seq[string]
-
-  MarkAsDismissedNotificationProperties* = ref object of Args
-    notificationIds*: seq[string]
-
-  MarkAsReadNotificationProperties* = ref object of Args
-    isAll*: bool
-    notificationIds*: seq[string]
-    communityId*: string
-    channelId*: string
-    notificationTypes*: seq[ActivityCenterNotificationType]
-
-  MarkAsUnreadNotificationProperties* = ref object of Args
-    notificationIds*: seq[string]
-    communityId*: string
-    channelId*: string
-    notificationTypes*: seq[ActivityCenterNotificationType]
 
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED* = "activityCenterNotificationsCountMayChanged"
-const SIGNAL_MARK_NOTIFICATIONS_AS_READ* = "markNotificationsAsRead"
-const SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD* = "markNotificationsAsUnread"
-const SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED* = "markNotificationsAsAccepted"
-const SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED* = "markNotificationsAsDismissed"
+const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ* = "activityCenterMarkNotificationsAsRead"
+const SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD* = "activityCenterMarkNotificationsAsUnread"
+const SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ* = "activityCenterMarkAllNotificationsAsRead"
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED* = "activityCenterNotificationsRemoved"
 
 const DEFAULT_LIMIT = 20
@@ -106,15 +86,10 @@ QtObject:
         SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
       )
-    
-    if (removedNotifications.len > 0):
-      var notificationIds: seq[string]
-      for notification in removedNotifications:
-        notificationIds.add(notification.id)
 
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, RemoveActivityCenterNotificationsArgs(
-          notificationIds: notificationIds
-          ))
+    if (removedNotifications.len > 0):
+      var notificationIds: seq[string] = removedNotifications.map(notification => notification.id)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
     # NOTE: this signal must fire even we have no new notifications to show
     self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
@@ -228,47 +203,28 @@ QtObject:
     except Exception as e:
       error "Error getting unseen activity center notifications", msg = e.msg
 
-  proc markActivityCenterNotificationRead*(
-      self: Service,
-      notificationId: string,
-      markAsReadProps: MarkAsReadNotificationProperties
-      ): string =
+  proc markActivityCenterNotificationRead*(self: Service, notificationId: string) =
     try:
-      discard backend.markActivityCenterNotificationsRead(@[notificationId])
-      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ, markAsReadProps)
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+      let notificationIds = @[notificationId]
+      discard backend.markActivityCenterNotificationsRead(notificationIds)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
     except Exception as e:
       error "Error marking as read", msg = e.msg
-      result = e.msg
 
-  proc markActivityCenterNotificationUnread*(
-      self: Service,
-      notificationId: string,
-      markAsUnreadProps: MarkAsUnreadNotificationProperties
-      ): string =
+  proc markActivityCenterNotificationUnread*(self: Service, notificationId: string) =
     try:
-      discard backend.markActivityCenterNotificationsUnread(@[notificationId])
-      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD, markAsUnreadProps)
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+      let notificationIds = @[notificationId]
+      discard backend.markActivityCenterNotificationsUnread(notificationIds)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
     except Exception as e:
       error "Error marking as unread", msg = e.msg
-      result = e.msg
 
-  proc markAllActivityCenterNotificationsRead*(self: Service, initialLoad: bool = true):string  =
+  proc markAllActivityCenterNotificationsRead*(self: Service) =
     try:
       discard backend.markAllActivityCenterNotificationsRead()
-
-      # Accroding specs: Clicking the "Mark all as read" MUST mark mentions and replies items as read in the selected category
-      var types : seq[ActivityCenterNotificationType]
-      types.add(ActivityCenterNotificationType.Mention)
-      types.add(ActivityCenterNotificationType.Reply)
-
-      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ,
-        MarkAsReadNotificationProperties(notificationTypes: types, isAll: true))
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ, Args())
     except Exception as e:
       error "Error marking all as read", msg = e.msg
-      result = e.msg
 
   proc markAsSeenActivityCenterNotifications*(self: Service) =
     try:
@@ -287,32 +243,10 @@ QtObject:
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
-  proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
-    try:
-      discard backend.acceptActivityCenterNotifications(notificationIds)
-      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED,
-        MarkAsDismissedNotificationProperties(notificationIds: notificationIds))
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
-    except Exception as e:
-      error "Error marking as accepted", msg = e.msg
-      result = e.msg
-
-  proc dismissActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
-    try:
-      discard backend.dismissActivityCenterNotifications(notificationIds)
-      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED,
-        MarkAsDismissedNotificationProperties(notificationIds: notificationIds))
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
-    except Exception as e:
-      error "Error marking as dismissed", msg = e.msg
-      result = e.msg
-
   proc deleteActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
       discard backend.deleteActivityCenterNotifications(notificationIds)
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, RemoveActivityCenterNotificationsArgs(
-          notificationIds: notificationIds
-          ))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error deleting notifications", msg = e.msg
