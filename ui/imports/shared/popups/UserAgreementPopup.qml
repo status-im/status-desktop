@@ -15,6 +15,7 @@ StatusModal {
     id: root
     width: 640
     title: qsTr("Welcome to Status Desktop Beta")
+    objectName: "desktopBetaStatusModal"
     hasCloseButton: false
     verticalPadding: 20
 
@@ -76,6 +77,7 @@ StatusModal {
 
             StatusCheckBox {
                 id: agreeToUse
+                objectName: "desktopBetaAgreeCheckBox"
                 Layout.fillWidth: true
                 Layout.topMargin: -8 //reduced margin by design
                 text: qsTr("I’ve read the above and understand that Status Desktop is Beta software")
@@ -83,6 +85,7 @@ StatusModal {
 
             StatusCheckBox {
                 id: readyToUse
+                objectName: "desktopBetaReadyCheckBox"
                 Layout.fillWidth: true
                 Layout.topMargin: -16 //reduced margin by design
                 text: qsTr("I’m ready to use Status Desktop Beta")
@@ -95,6 +98,7 @@ StatusModal {
             text: qsTr("I’m ready to use Status Desktop Beta")
             enabled: agreeToUse.checked && readyToUse.checked
             onClicked: root.close()
+            objectName: "desktopBetaStatusButton"
         }
     ]
 }
