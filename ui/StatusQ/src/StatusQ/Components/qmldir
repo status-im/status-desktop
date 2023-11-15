@@ -66,3 +66,4 @@ StatusToastMessage 0.1 StatusToastMessage.qml
 StatusToolBar 0.1 StatusToolBar.qml
 StatusVideo 0.1 StatusVideo.qml
 StatusWizardStepper 0.1 StatusWizardStepper.qml
+StatusWebView 0.1 StatusWebView.qml

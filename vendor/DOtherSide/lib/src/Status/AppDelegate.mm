@@ -22,8 +22,7 @@ continueUserActivity:(NSUserActivity *)userActivity
         if (!url)
            return FALSE;
         QUrl deeplink = QUrl::fromNSURL(url);
-        // TODO #12434: Check if  WalletConnect link and redirect the workflow
-        qDebug() << "@dd deeplink " << deeplink;
+        // TODO #12434: Check if WalletConnect link and redirect the workflow
 
         // TODO #12245: set it to nim
         return TRUE;

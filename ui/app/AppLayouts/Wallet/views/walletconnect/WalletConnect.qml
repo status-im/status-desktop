@@ -148,46 +148,6 @@ Item {
             ColumnLayout { /* spacer */ }
         }
 
-        // TODO: DEBUG JS Loading in DMG
-        // RowLayout {
-        //     TextField {
-        //         id: urlInput
-
-        //         Layout.fillWidth: true
-
-        //         placeholderText: "Insert URL here"
-        //     }
-        //     Button {
-        //         text: "Set URL"
-        //         onClicked: {
-        //             d.sdkView.url = urlInput.text
-        //         }
-        //     }
-        // }
-
-        // Button {
-        //     text: "Set HTML"
-        //     onClicked: {
-        //         d.sdkView.loadHtml(htmlContent.text, "http://status.im")
-        //     }
-        // }
-
-        // StatusInput {
-        //     id: htmlContent
-
-        //     Layout.fillWidth: true
-        //     Layout.minimumHeight: 200
-        //     Layout.maximumHeight: 300
-
-        //     text: `<!DOCTYPE html><html><head><title>TODO: Test</title>\n<!--<script src="http://127.0.0.1:8080/bundle.js" defer></script>-->\n<script type='text/javascript'>\n  console.log("@dd loaded dummy script!")\n</script>\n</head><body style='background-color: ${root.backgroundColor.toString()};'></body></html>`
-
-        //     multiline: true
-        //     minimumHeight: Layout.minimumHeight
-        //     maximumHeight: Layout.maximumHeight
-
-        // }
-        // END DEBUGGING
-
         // Separator
         ColumnLayout {}
 
@@ -332,7 +292,6 @@ Item {
         target: root.controller
 
         function onRespondSessionRequest(sessionRequestJson, signedJson, error) {
-            console.log("@dd respondSessionRequest", sessionRequestJson, signedJson, error)
             if (error) {
                 d.setStatusText("Session Request error", "red")
                 d.sdkView.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, true)

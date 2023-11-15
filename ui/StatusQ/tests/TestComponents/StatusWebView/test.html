@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+    <script>
+        window.asyncFunction = function (param) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(param), 10);
+            });
+        }
+
+        window.asyncRejectFunction = function(param) {
+            return new Promise((_, reject) => {
+                setTimeout(() => reject(param), 1);
+            });
+        }
+
+        window.syncFunction = function(param) {
+            return param;
+        }
+
+        window.syncFunction = function(param) {
+            return param;
+        }
+
+        window.syncFunctionThrows = function(param) {
+            throw new Error("Test exception");
+            return param;
+        }
+
+        window.sendEvent = function(param) {
+            document.dispatchEvent(new CustomEvent("testEvent", { detail: param }));
+        }
+    </script>
+</head>
+<body>
+    <h1>Test Page</h1>
+</body>
+</html>

@@ -6,16 +6,7 @@
 
 ### Design questions
 
-- [ ] Do we report all chains and all accounts combination or let user select?
-  - Wallet Connect require to report all chainIDs that were requested
-    - Show error to user workflow.
-- [ ] Can't respond to sign messages if the wallet-connect dialog/view is closed (app is minimized)
-  - Only apps that use deep links are expected to work seamlessly
 - [ ] Do we report **disabled chains**? **Update session** in case of enabled/disabled chains?
-- [ ] Allow user to **disconnect session**? Manage sessions?
-- [ ] Support update session if one account is added/removed?
-- [ ] User awareness of session expiration?
-  - Support extend session?
 - [ ] User error workflow: retry?
 - [ ] Check the `Auth` request for verifyContext <https://docs.walletconnect.com/web3wallet/verify>
 - [ ] What `description` and `icons` to use for the app? See `metadata` parameter in `Web3Wallet.init` call
@@ -36,18 +27,6 @@ Install dependencies steps by executing commands in this directory:
 ## Testing
 
 Use the web demo test client https://react-app.walletconnect.com/ for wallet pairing and https://react-auth-dapp.walletconnect.com/ for authentication
-
-## Log
-
-Initial setup
-
-```sh
-npm init -y
-npm install --save-dev webpack webpack-cli webpack-dev-server
-npm install --save @walletconnect/web3wallet
-npm run build
-# npm run build:dev # for development
-```
 
 ## Dev - to be removed
 
@@ -75,3 +54,29 @@ StatusDialog {
     clip: true
 }
 ```
+
+## Log
+
+Initial setup
+
+```sh
+npm init -y
+npm install --save-dev webpack webpack-cli webpack-dev-server
+npm install --save @walletconnect/web3wallet
+npm run build
+# npm run build:dev # for development
+```
+
+- [x] Do we report all chains and all accounts combination or let user select?
+  - Wallet Connect require to report all chainIDs that were requested
+  - Answer: We only report the available chains for the current account. We will look into adding others to he same session instead of requiring a new link
+- [x] Can't respond to sign messages if the wallet-connect dialog/view is closed (app is minimized)
+  - Only apps that use deep links are expected to work seamlessly
+  - Also the main workflow will be driven by user
+- [x] Allow user to **disconnect session**? Manage sessions?
+  - Yes, in settings
+- [x] Support update session if one account is added/removed?
+  - Not at first
+- [X] User awareness of session expiration?
+  - Support extend session?
+    - Yes

@@ -3,6 +3,18 @@
 
 #include "TestHelpers/MonitorQtOutput.h"
 
+#include <QtWebView>
+
+class RunBeforeQApplicationIsInitialized {
+public:
+    RunBeforeQApplicationIsInitialized()
+    {
+        QtWebView::initialize();
+    }
+};
+
+static RunBeforeQApplicationIsInitialized runBeforeQApplicationIsInitialized;
+
 class TestSetup : public QObject
 {
     Q_OBJECT

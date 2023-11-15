@@ -60,6 +60,7 @@
         <file>StatusQ/Components/StatusVideo.qml</file>
         <file>StatusQ/Components/StatusWizardStepper.qml</file>
         <file>StatusQ/Components/StatusSortableColumnHeader.qml</file>
+        <file>StatusQ/Components/StatusWebView.qml</file>
         <file>StatusQ/Controls/Validators/qmldir</file>
         <file>StatusQ/Controls/Validators/StatusAddressOrEnsValidator.qml</file>
         <file>StatusQ/Controls/Validators/StatusAddressValidator.qml</file>

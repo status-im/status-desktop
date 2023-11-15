@@ -6,8 +6,8 @@ enable_testing()
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick WebView REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick WebView REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -34,6 +34,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::QuickTest
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::WebView
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
