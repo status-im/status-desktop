@@ -7,6 +7,7 @@ import configs
 import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
@@ -37,6 +38,8 @@ class KeycardPopup(BasePopup):
         self._selection_box = QObject('radioButton_StatusRadioButton')
         self._keycard_init = QObject('o_KeycardInit')
         self._cancel_button = Button('cancel_StatusButton')
+        self._understand_keypair_deleted_checkbox = CheckBox(
+            'i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox')
 
     @property
     @allure.step('Get keycard image source path')
@@ -205,3 +208,7 @@ class KeycardPopup(BasePopup):
     @allure.step('Click cancel button')
     def cancel(self):
         self._cancel_button.click()
+
+    @allure.step('Confirm that understand that keypair will be deleted in checkbox')
+    def confirm_keypair_will_be_deleted(self, value: bool):
+        self._understand_keypair_deleted_checkbox.set(value)

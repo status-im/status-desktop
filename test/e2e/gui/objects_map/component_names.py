@@ -343,3 +343,4 @@ switchTabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow_overlay
 switchTabBar_12_words_StatusSwitchTabButton = {"checkable": True, "container": switchTabBar_StatusSwitchTabBar, "objectName": "12SeedButton", "text": "12 words", "type": "StatusSwitchTabButton", "visible": True}
 switchTabBar_18_words_StatusSwitchTabButton = {"checkable": True, "container": switchTabBar_StatusSwitchTabBar, "objectName": "18SeedButton", "text": "18 words", "type": "StatusSwitchTabButton", "visible": True}
 switchTabBar_24_words_StatusSwitchTabButton = {"checkable": True, "container": switchTabBar_StatusSwitchTabBar, "objectName": "24SeedButton", "text": "24 words", "type": "StatusSwitchTabButton", "visible": True}
+i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "confirmation", "type": "StatusCheckBox", "visible": True}

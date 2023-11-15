@@ -3,6 +3,7 @@ from enum import Enum
 
 class Keycard(Enum):
     KEYCARD_PIN = '111111'
+    KEYCARD_INCORRECT_PIN = '222222'
     KEYCARD_NAME = 'Test Keycard'
     ACCOUNT_NAME = 'Test Account'
     KEYCARD_POPUP_HEADER_CREATE_SEED = 'Create a new Keycard account with a new seed phrase'
@@ -13,6 +14,7 @@ class Keycard(Enum):
     KEYCARD_RECOGNIZED = 'Keycard recognized'
     KEYCARD_CHOOSE_PIN = 'Choose a Keycard PIN'
     KEYCARD_ENTER_PIN = "Enter this Keycard’s PIN"
+    KEYCARD_ENTER_PIN_2 = "Enter Keycard PIN"
     KEYCARD_PIN_NOTE = 'It is very important that you do not lose this PIN'
     KEYCARD_REPEAT_PIN = 'Repeat Keycard PIN'
     KEYCARD_PIN_SET = 'Keycard PIN set'
@@ -34,3 +36,10 @@ class Keycard(Enum):
     KEYCARD_LOCKED = 'Keycard locked'
     KEYCARD_LOCKED_NOTE = 'You will need to unlock it before proceeding'
     KEYCARD_ACCOUNTS = 'Accounts on this Keycard'
+    KEYCARD_FACTORY_RESET_TITLE = 'A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?'
+    KEYCARD_FACTORY_RESET_SUCCESSFUL = 'Keycard successfully factory reset'
+    KEYCARD_YOU_CAN_USE_AS_EMPTY = 'You can now use this Keycard as if it\nwas a brand new empty Keycard'
+    KEYCARD_INCORRECT_PIN_MESSAGE = 'PIN incorrect'
+    KEYCARD_2_ATTEMPTS_REMAINING = '2 attempts remaining'
+    KEYCARD_1_ATTEMPT_REMAINING = '1 attempt remaining'
+    KEYCARD_LOCKED_INCORRECT_PIN = 'Pin entered incorrectly too many times'

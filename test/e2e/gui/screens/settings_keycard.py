@@ -44,6 +44,11 @@ class KeycardSettingsView(QObject):
         self._check_whats_on_keycard_button.click()
         return KeycardPopup().wait_until_appears()
 
+    @allure.step('Choose factory reset a keycard')
+    def click_factory_reset_keycard(self):
+        self._factory_reset_keycard_button.click()
+        return KeycardPopup().wait_until_appears()
+
     @allure.step('Check that all keycard options displayed')
     def all_keycard_options_available(self):
         assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'
