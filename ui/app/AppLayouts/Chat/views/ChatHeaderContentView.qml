@@ -235,9 +235,6 @@ Item {
                 onRequestMoreMessages: {
                     messageStore.requestMoreMessages();
                 }
-                onLeaveGroup: {
-                    chatContentModule.leaveChat();
-                }
                 onUpdateGroupChatDetails: {
                     root.rootStore.chatCommunitySectionModule.updateGroupChatDetails(
                                 chatId,

@@ -205,9 +205,6 @@ Item {
                     onDisplayProfilePopup: {
                         Global.openProfilePopup(publicKey)
                     }
-                    onLeaveGroup: {
-                        chatSectionModule.leaveChat("", chatId, true);
-                    }
                     onUpdateGroupChatDetails: {
                         chatSectionModule.updateGroupChatDetails(
                                     chatId,
