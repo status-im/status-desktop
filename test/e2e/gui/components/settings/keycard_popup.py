@@ -5,13 +5,14 @@ import allure
 
 import configs
 import driver
+from constants import wallet_account_list_item
 from gui.components.base_popup import BasePopup
+from gui.components.emoji_popup import EmojiPopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from scripts.tools.image import Image
 
 
 class KeycardPopup(BasePopup):
@@ -40,6 +41,9 @@ class KeycardPopup(BasePopup):
         self._cancel_button = Button('cancel_StatusButton')
         self._understand_keypair_deleted_checkbox = CheckBox(
             'i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox')
+        self._emoji_button = QObject('statusSmartIdenticonLetter_StatusLetterIdenticon')
+        self._add_another_account_button = Button('add_another_account_StatusButton')
+        self._color_radiobutton = QObject('color_StatusColorRadioButton')
 
     @property
     @allure.step('Get keycard image source path')
@@ -78,6 +82,18 @@ class KeycardPopup(BasePopup):
         return self._keypair_item.object.title
 
     @property
+    @allure.step('Get accounts on keycard')
+    def account_tags(self) -> typing.List[wallet_account_list_item]:
+        _account_tags = []
+        for account_tag_item in driver.findAllObjects(self._keypair_tag.real_name):
+            element = QObject(name='', real_name=driver.objectMap.realName(account_tag_item))
+            name = str(account_tag_item.title)
+            icon_emoji = str(account_tag_item.asset.emoji)
+            icon_color = str(account_tag_item.bgColor.name)
+            _account_tags.append(wallet_account_list_item(name, icon_color, icon_emoji, element))
+        return sorted(_account_tags, key=lambda account: account.object.x)
+
+    @property
     @allure.step('Get info title in keypair')
     def keypair_info_title(self) -> str:
         return self._keypair_item.object.beneathTagsTitle
@@ -93,9 +109,9 @@ class KeycardPopup(BasePopup):
         return str(self._keypair_tag.object.bgColor.name)
 
     @property
-    @allure.step('Get keycard init state')
-    def keycard_init_state(self) -> str:
-        return self._keycard_init.object.state
+    @allure.step('Get account emoji in keypair')
+    def keypair_account_emoji(self) -> str:
+        return str(self._keypair_tag.object.asset.emoji)
 
     @property
     @allure.step('Get selection box "checked" state')
@@ -156,6 +172,12 @@ class KeycardPopup(BasePopup):
     @allure.step('Name keycard')
     def name_keycard(self, name: str):
         driver.type(self.get_text_fields[0], name)
+        self.click_next()
+        return self
+
+    @allure.step('Add another account')
+    def add_account(self):
+        self._add_another_account_button.click()
         return self
 
     @allure.step('Name account')
@@ -163,19 +185,37 @@ class KeycardPopup(BasePopup):
         driver.type(self.get_text_fields[0], name)
         return self
 
+    @allure.step('Set emoji for account')
+    def set_emoji(self, value: str):
+        self._emoji_button.click()
+        EmojiPopup().wait_until_appears().select(value)
+        return self
+
+    @allure.step('Set color for account')
+    def set_color(self, value: str):
+        if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
+            del self._color_radiobutton.real_name['radioButtonColor']
+        colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
+        assert value in colors, f'Color {value} not found in {colors}'
+        self._color_radiobutton.real_name['radioButtonColor'] = value
+        self._color_radiobutton.click()
+        return self
+
     @allure.step('Create keycard account with seed phrase')
     def create_keycard_account_with_seed_phrase(self, keycard_name: str, account_name: str):
-        self.reveal_seed_phrase_and_confirm_words()
-        self.name_keycard_and_account(keycard_name, account_name)
+        self.confirm_seed_phrase()
+        self.name_keycard(keycard_name)
+        self.name_account(account_name).click_next()
 
-    @allure.step('Reveal seed phrase and confirm words')
-    def reveal_seed_phrase_and_confirm_words(self):
+    @allure.step('Confirm seed phrase')
+    def confirm_seed_phrase(self):
         time.sleep(1)
         self.click_next().reveal_seed_phrase()
         seed_phrases = self.get_seed_phrases
         self.click_next()
         self.confirm_first_word(seed_phrases).confirm_second_word(seed_phrases).confirm_third_word(seed_phrases)
         self.click_next()
+        return self
 
     @allure.step('Name keycard and account')
     def name_keycard_and_account(self, keycard_name, account_name):
