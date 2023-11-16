@@ -90,7 +90,6 @@ type PinnedMailserver* = object
   goWakuTest*: string
   statusTest*: string
   statusProd*: string
-  shardsTest*: string
 
 type CurrentUserStatus* = object
   statusType*: StatusType
@@ -164,7 +163,6 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("go-waku.test", result.goWakuTest)
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
-  discard jsonObj.getProp("shards.test", result.shardsTest)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   var statusTypeInt: int

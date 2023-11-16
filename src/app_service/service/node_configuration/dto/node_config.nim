@@ -104,7 +104,6 @@ type
     StoreCapacity*: int
     StoreSeconds*: int
     EnableFilterFullNode*: bool
-    UseShardAsDefaultTopic*: bool
 
   ShhextConfig* = object
     PFSEnabled*: bool
@@ -331,7 +330,6 @@ proc toWaku2Config*(jsonObj: JsonNode): Waku2Config =
   discard jsonObj.getProp("StoreCapacity", result.StoreCapacity)
   discard jsonObj.getProp("StoreSeconds", result.StoreSeconds)
   discard jsonObj.getProp("EnableFilterFullNode", result.EnableFilterFullNode)
-  discard jsonObj.getProp("UseShardAsDefaultTopic", result.UseShardAsDefaultTopic)
 
 proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
