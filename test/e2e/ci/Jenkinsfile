@@ -71,6 +71,8 @@ pipeline {
 
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 17
+
+    STATUS_RUNTIME_TEST_MODE = '1'
   }
 
   stages {
