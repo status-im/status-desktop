@@ -236,7 +236,7 @@ QtObject:
     # Move or insert
     for i in 0 ..< urls.len:
       let url = urls[i]
-      let index = self.findUrlIndex(urls[i])
+      let index = self.findUrlIndex(url)
       if index >= 0:
         self.moveRow(index, i)
         continue
