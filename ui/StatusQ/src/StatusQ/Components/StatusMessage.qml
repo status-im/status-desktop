@@ -370,6 +370,7 @@ Control {
                     }
                     Loader {
                         id: invitationBubbleLoader
+                        // TODO remove this component in #12570
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Invitation && !editMode
                         visible: active
                     }

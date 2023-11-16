@@ -1823,7 +1823,8 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc requestCommunityInfo*(self: Service, communityId: string, importing = false, tryDatabase = true, requiredTimeSinceLastRequest = initDuration(0, 0)) =
+  proc requestCommunityInfo*(self: Service, communityId: string, shard: Shard, importing = false, tryDatabase = true,
+      requiredTimeSinceLastRequest = initDuration(0, 0)) =
 
     if communityId in self.requestedCommunityIds:
       info "requestCommunityInfo: skipping as already requested", communityId
@@ -1847,7 +1848,9 @@ QtObject:
       slot: "asyncCommunityInfoLoaded",
       communityId: communityId,
       importing: importing,
-      tryDatabase: tryDatabase
+      tryDatabase: tryDatabase,
+      shardCluster: if shard == nil: -1 else: shard.cluster,
+      shardIndex: if shard == nil: -1 else: shard.index,
     )
     self.threadpool.start(arg)
 

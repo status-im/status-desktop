@@ -33,6 +33,7 @@ import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../app_service/service/community/dto/community as community_dto
@@ -54,7 +55,8 @@ type
     chatsLoaded: bool
 
 # Forward declaration
-proc buildChatSectionUI(self: Module,
+proc buildChatSectionUI(
+  self: Module,
   channelGroup: ChannelGroupDto,
   events: UniqueUUIDEventEmitter,
   settingsService: settings_service.Service,
@@ -64,7 +66,9 @@ proc buildChatSectionUI(self: Module,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service)
+  mailserversService: mailservers_service.Service,
+  sharedUrlsService: shared_urls_service.Service,
+)
 
 proc reevaluateRequiresTokenPermissionToJoin(self: Module)
 
@@ -81,6 +85,7 @@ proc addOrUpdateChat(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): Item
@@ -101,11 +106,13 @@ proc newModule*(
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
     communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, communityTokensService)
+  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService,
+    nodeConfigurationService, contactService, chatService, communityService, messageService, gifService,
+    mailserversService, walletAccountService, tokenService, communityTokensService, sharedUrlsService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -133,18 +140,25 @@ proc getUserMemberRole(self: Module, members: seq[ChatMember]): MemberRole =
       return m.role
   return MemberRole.None
 
-proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+proc addSubmodule(
+    self: Module,
+    chatId: string,
+    belongToCommunity: bool,
+    isUsersListAvailable: bool,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+  ) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService)
+    messageService, gifService, mailserversService, sharedUrlsService)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -187,7 +201,9 @@ proc buildChatSectionUI(
     communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service) =
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+  ) =
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
@@ -226,6 +242,7 @@ proc buildChatSectionUI(
       messageService,
       gifService,
       mailserversService,
+      sharedUrlsService,
       setChatAsActive = false,
       insertIntoModel = false
     ))
@@ -301,18 +318,7 @@ method clearListOfMyContacts*(self: Module) =
   self.view.listOfMyContacts().clear()
 
 
-method load*(
-    self: Module,
-    channelGroup: ChannelGroupDto,
-    events: EventEmitter,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    contactService: contact_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service,
-    gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service) =
+method load*(self: Module) =
   self.controller.init()
   self.view.load()
 
@@ -328,10 +334,11 @@ method onChatsLoaded*(
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
   ) =
   self.chatsLoaded = true
   self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, gifService, mailserversService)
+    contactService, chatService, communityService, messageService, gifService, mailserversService, sharedUrlsService)
 
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
@@ -471,17 +478,15 @@ proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bo
   let chatId = chat.id
 
   if self.chatsLoaded:
-    # update model of this module (appropriate chat from the chats list (chats model))
     self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
-    # update child module
+
     if (self.chatContentModules.contains(chatId)):
       self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
-    # Update category
+
     if chat.categoryId != "":
       let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
       self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
 
-  # update parent module
   self.updateParentBadgeNotifications()
 
 method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
@@ -527,6 +532,7 @@ method addNewChat*(
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): Item =
@@ -626,6 +632,7 @@ method addNewChat*(
     messageService,
     gifService,
     mailserversService,
+    sharedUrlsService,
   )
 
   self.chatContentModules[chatDto.id].load(result)
@@ -1188,6 +1195,7 @@ proc addOrUpdateChat(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): Item =
@@ -1233,6 +1241,7 @@ proc addOrUpdateChat(self: Module,
       messageService,
       gifService,
       mailserversService,
+      sharedUrlsService,
       setChatAsActive,
       insertIntoModel,
     )
@@ -1249,6 +1258,7 @@ method addOrUpdateChat*(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): Item =
@@ -1265,6 +1275,7 @@ method addOrUpdateChat*(self: Module,
     messageService,
     gifService,
     mailserversService,
+    sharedUrlsService,
     setChatAsActive,
     insertIntoModel,
   )

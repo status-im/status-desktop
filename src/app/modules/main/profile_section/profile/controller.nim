@@ -8,6 +8,7 @@ import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/common/social_links
+import app_service/common/types
 
 import app_service/service/profile/dto/profile_showcase_preferences
 
@@ -100,5 +101,5 @@ proc requestProfileShowcasePreferences*(self: Controller) =
 proc requestProfileShowcaseForContact*(self: Controller, contactId: string) =
   self.profileService.requestProfileShowcaseForContact(contactId)
 
-proc requestCommunityInfo*(self: Controller, communityId: string) =
-  self.communityService.requestCommunityInfo(communityId)
+proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
+  self.communityService.requestCommunityInfo(communityId, shard)

@@ -11,6 +11,7 @@ type CommunityUrlDataDto* = object
   color*: string
   tagIndices*: seq[int]
   communityId*: string
+  shard*: Shard
 
 type CommunityChannelUrlDataDto* = object
   emoji*: string
@@ -29,6 +30,15 @@ type UrlDataDto* = object
   channel*: CommunityChannelUrlDataDto
   contact*: ContactUrlDataDto
 
+proc getShard*(jsonObj: JsonNode): Shard =
+  var shardObj: JsonNode
+  if (jsonObj.getProp("shard", shardObj)):
+    result = Shard()
+    discard shardObj.getProp("cluster", result.cluster)
+    discard shardObj.getProp("index", result.index)
+  else:
+    result = nil
+
 proc toCommunityUrlDataDto*(jsonObj: JsonNode): CommunityUrlDataDto =
   result = CommunityUrlDataDto()
   discard jsonObj.getProp("displayName", result.displayName)
@@ -41,6 +51,8 @@ proc toCommunityUrlDataDto*(jsonObj: JsonNode): CommunityUrlDataDto =
       result.tagIndices.add(tagIndex.getInt)
 
   discard jsonObj.getProp("communityId", result.communityId)
+
+  result.shard = jsonObj.getShard()
 
 proc toCommunityChannelUrlDataDto*(jsonObj: JsonNode): CommunityChannelUrlDataDto =
   result = CommunityChannelUrlDataDto()
@@ -62,7 +74,7 @@ proc toUrlDataDto*(jsonObj: JsonNode): UrlDataDto =
   var communityObj: JsonNode
   if (jsonObj.getProp("community", communityObj)):
     result.community = communityObj.toCommunityUrlDataDto()
-  
+
   var communityChannelObj: JsonNode
   if (jsonObj.getProp("channel", communityChannelObj)):
     result.channel = communityChannelObj.toCommunityChannelUrlDataDto()
@@ -71,14 +83,19 @@ proc toUrlDataDto*(jsonObj: JsonNode): UrlDataDto =
   if (jsonObj.getProp("contact", contactObj)):
     result.contact = contactObj.toContactUrlDataDto()
 
-proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =
+proc toJsonNode*(communityUrlDataDto: CommunityUrlDataDto): JsonNode =
   var jsonObj = newJObject()
   jsonObj["displayName"] = %* communityUrlDataDto.displayName
   jsonObj["description"] = %* communityUrlDataDto.description
   jsonObj["membersCount"] = %* communityUrlDataDto.membersCount
   jsonObj["color"] = %* communityUrlDataDto.color
   jsonObj["communityId"] = %* communityUrlDataDto.communityId
-  return $jsonObj
+  jsonObj["shardCluster"] = %* communityUrlDataDto.shard.cluster
+  jsonObj["shardIndex"] = %* communityUrlDataDto.shard.index
+  return jsonObj
+
+proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =
+  return $(communityUrlDataDto.toJsonNode())
 
 proc `$`*(communityChannelUrlDataDto: CommunityChannelUrlDataDto): string =
   var jsonObj = newJObject()
