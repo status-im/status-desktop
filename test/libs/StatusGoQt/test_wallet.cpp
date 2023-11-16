@@ -356,7 +356,6 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
     ASSERT_GT(addressBalance.at(sntMain.address), 0);
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestCheckRecentHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());
@@ -399,7 +398,6 @@ TEST(WalletApi, TestCheckRecentHistory)
     ASSERT_TRUE(historyReady);
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestGetBalanceHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());
@@ -538,7 +536,6 @@ TEST(WalletApi, TestGetBalanceHistory)
     }
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestStartWallet)
 {
     ScopedTestAccount testAccount(test_info_->name());
@@ -589,7 +586,6 @@ TEST(WalletApi, TestStartWallet)
     ASSERT_EQ(bhEndedReceivedCount, 2);
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestStopBalanceHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());

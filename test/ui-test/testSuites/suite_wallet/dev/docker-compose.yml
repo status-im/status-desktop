@@ -1,9 +1,0 @@
-version: '2.1'
-services:
-  uitestganache:
-    image: trufflesuite/ganache:v7.4.1
-    ports:
-      - 127.0.0.1:${GANACHE_RPC_PORT}:8545
-    volumes:
-      - ${GANACHE_DB_FOLDER}:/test_data/goerli-db
-    command: ["-m='${GANACHE_MNEMONIC}'", "-e=10", "--chain.chainId=5", "--database.dbPath=/test_data/goerli-db"]

@@ -37,7 +37,6 @@ let
   # runtime variables
   TEST_MODE_ENABLED* = desktopConfig.testMode
   WALLET_ENABLED* = desktopConfig.enableWallet
-  GANACHE_NETWORK_RPC_URL* = desktopConfig.genacheNetworkRpcUrl
   TORRENT_CONFIG_PORT* = desktopConfig.defaultTorentConfigPort
   WAKU_V2_PORT* = desktopConfig.defaultWakuV2Port
   STATUS_PORT* = desktopConfig.statusPort

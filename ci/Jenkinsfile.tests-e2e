@@ -75,9 +75,6 @@ pipeline {
     /* Container ports */
     RPC_PORT = "${8545 + env.EXECUTOR_NUMBER.toInteger()}"
     P2P_PORT = "${6010 + env.EXECUTOR_NUMBER.toInteger()}"
-    /* Ganache config */
-    GANACHE_RPC_PORT = "${9545 + env.EXECUTOR_NUMBER.toInteger()}"
-    GANACHE_MNEMONIC = 'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial'
     /* Runtime flag to make testing of the app easier. */
     STATUS_RUNTIME_TEST_MODE = '1'
   }
@@ -97,44 +94,27 @@ pipeline {
     }
 
     stage('Client') {
-      environment {
-        STATUS_RUNTIME_GANACHE_NETWORK_RPC_URL = "http://localhost:${env.GANACHE_RPC_PORT}"
-      }
       steps { script {
         linux.bundle('nim_status_client')
       } }
     }
 
-    stage('Containers') {
-      parallel {
-        stage('Ganache') { steps { script {
-          ganache = docker.image(
-            'trufflesuite/ganache:v7.4.1'
-          ).run(
-            ["-p 127.0.0.1:${env.GANACHE_RPC_PORT}:8545",
-             "-v ${env.WORKSPACE}/test/ui-test/fixtures/ganache-dbs/goerli:/goerli-db"].join(' '),
-            ["-m='${GANACHE_MNEMONIC}'", "-e=10",
-             '--chain.chainId=5',
-             '--database.dbPath=/goerli-db'].join(' ')
-          )
-        } } }
-
-        stage('Nim-Waku') { steps { script {
-          nimwaku = docker.image(
-            'statusteam/nim-waku:v0.13.0'
-          ).run(
-            ["-p 127.0.0.1:${env.RPC_PORT}:8545",
-             "-p 127.0.0.1:${env.P2P_PORT}:30303/tcp",
-             "-p 127.0.0.1:${env.P2P_PORT}:30303/udp",
-             "-v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json"].join(' '),
-            ['--store=true',
-             '--keep-alive=true',
-             '--rpc-address=0.0.0.0',
-             '--nat=none'].join(' ')
-          )
-          env.TEST_PEER_ENR = getPeerAddress()
-        } } }
-      }
+    stage('Nim-Waku') {
+      steps { script {
+        nimwaku = docker.image(
+          'statusteam/nim-waku:v0.13.0'
+        ).run(
+          ["-p 127.0.0.1:${env.RPC_PORT}:8545",
+           "-p 127.0.0.1:${env.P2P_PORT}:30303/tcp",
+           "-p 127.0.0.1:${env.P2P_PORT}:30303/udp",
+           "-v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json"].join(' '),
+          ['--store=true',
+           '--keep-alive=true',
+           '--rpc-address=0.0.0.0',
+           '--nat=none'].join(' ')
+        )
+        env.TEST_PEER_ENR = getPeerAddress()
+      } }
     }
 
     stage('Tests') {
@@ -169,10 +149,7 @@ pipeline {
         } }
       } }
       post {
-        failure { script {
-          sh("docker logs ${nimwaku.id}")
-          sh("docker logs ${ganache.id}")
-        } }
+        failure { script { sh("docker logs ${nimwaku.id}") } }
       }
     }
   }
@@ -189,7 +166,6 @@ pipeline {
     } }
     cleanup { script {
       sh './scripts/clean-git.sh'
-      if (binding.hasVariable('ganache')) { ganache.stop() }
       if (binding.hasVariable('nimwaku')) { nimwaku.stop() }
     } }
   }

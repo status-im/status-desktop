@@ -143,11 +143,6 @@ type StatusDesktopConfig = object
     desc: "Determines if the wallet section is enabled"
     name: "ENABLE_WALLET"
     abbr: "enable-wallet" .}: bool
-  genacheNetworkRpcUrl* {.
-    defaultValue: ""
-    desc: "Sets ganache network rpc url"
-    name: "GANACHE_NETWORK_RPC_URL"
-    abbr: "ganache-network-rpc-url" .}: string
   defaultTorentConfigPort* {.
     defaultValue: 0
     desc: "Sets default torrent config port"
