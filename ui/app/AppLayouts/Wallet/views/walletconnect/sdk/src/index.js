@@ -3,19 +3,27 @@ import { Web3Wallet } from "@walletconnect/web3wallet";
 
 import AuthClient from '@walletconnect/auth-client'
 
+import { QWebChannel } from './qwebchannel';
+
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
 import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
 
-// "Export" API to window
-// Workaround, tried using export via output.module: true in webpack.config.js, but it didn't work
 window.wc = {
     core: null,
     web3wallet: null,
     authClient: null,
+    statusObject: null,
 
     init: function (projectId) {
-        return new Promise(async (resolve) => {
+        (async () => {
+            try {
+                await createWebChannel();
+            } catch (error) {
+                wc.statusObject.sdkInitialized(error);
+                return
+            }
+
             window.wc.core = new Core({
                 projectId: projectId,
             });
@@ -33,59 +41,75 @@ window.wc = {
             window.wc.authClient = await AuthClient.init({
                 projectId: projectId,
                 metadata: window.wc.web3wallet.metadata,
-            })
+            });
 
-            resolve()
-        })
+            // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
+            window.wc.web3wallet.on("session_proposal", async (details) => {
+                wc.statusObject.onSessionProposal(details)
+            });
+
+            window.wc.web3wallet.on("session_update", async (details) => {
+                wc.statusObject.onSessionUpdate(details)
+            });
+
+            window.wc.web3wallet.on("session_extend", async (details) => {
+                wc.statusObject.onSessionExtend(details)
+            });
+
+            window.wc.web3wallet.on("session_ping", async (details) => {
+                wc.statusObject.onSessionPing(details)
+            });
+
+            window.wc.web3wallet.on("session_delete", async (details) => {
+                wc.statusObject.onSessionDelete(details)
+            });
+
+            window.wc.web3wallet.on("session_expire", async (details) => {
+                wc.statusObject.onSessionExpire(details)
+            });
+
+            window.wc.web3wallet.on("session_request", async (details) => {
+                wc.statusObject.onSessionRequest(details)
+            });
+
+            window.wc.web3wallet.on("session_request_sent", async (details) => {
+                wc.statusObject.onSessionRequestSent(details)
+            });
+
+            window.wc.web3wallet.on("session_event", async (details) => {
+                wc.statusObject.onSessionEvent(details)
+            });
+
+            window.wc.web3wallet.on("proposal_expire", async (details) => {
+                wc.statusObject.onProposalExpire(details)
+            });
+
+            wc.statusObject.sdkInitialized("");
+        })();
+
+        return { result: "ok", error: "" };
     },
 
-    alreadyPaired: new Error("Already paired"),
-    waitingForApproval: new Error("Waiting for approval"),
     // TODO: there is a corner case when attempting to pair with a link that is already paired or was rejected won't trigger any event back
     pair: function (uri) {
-        let pairingTopic = getPairingTopicFromPairingUrl(uri);
-
-        const pairings = window.wc.core.pairing.getPairings();
-        // Find pairing by topic
-        const pairing = pairings.find((p) => p.topic === pairingTopic);
-        if (pairing) {
-            if (pairing.active) {
-                return new Promise((_, reject) => {
-                    reject(window.wc.alreadyPaired);
-                });
-            }
-        }
-
-        let pairPromise = window.wc.web3wallet
-            .pair({ uri: uri })
-
-        return new Promise((resolve, reject) => {
-            pairPromise
-                .then(() => {
-                    window.wc.web3wallet.on("session_proposal", async (sessionProposal) => {
-                        resolve(sessionProposal);
-                    });
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
+        return {
+            result: window.wc.web3wallet.pair({ uri }),
+            error: ""
+        };
     },
 
     getPairings: function () {
-        return window.wc.core.pairing.getPairings();
+        return {
+            result: window.wc.core.pairing.getPairings(),
+            error: ""
+        };
     },
 
     disconnect: function (topic) {
-        return window.wc.core.pairing.disconnect({ topic: topic});
-    },
-
-    registerForSessionRequest: function (callback) {
-        window.wc.web3wallet.on("session_request", callback);
-    },
-
-    registerForSessionDelete: function (callback) {
-        window.wc.web3wallet.on("session_delete", callback);
+        return {
+            result: window.wc.core.pairing.disconnect({ topic: topic }),
+            error: ""
+        };
     },
 
     approvePairSession: function (sessionProposal, supportedNamespaces) {
@@ -96,47 +120,29 @@ window.wc = {
             supportedNamespaces: supportedNamespaces,
         });
 
-        return window.wc.web3wallet.approveSession({
-            id,
-            namespaces: approvedNamespaces,
-        });
+        return {
+            result: window.wc.web3wallet.approveSession({
+                id,
+                namespaces: approvedNamespaces,
+            }),
+            error: ""
+        };
     },
     rejectPairSession: function (id) {
-        return window.wc.web3wallet.rejectSession({
-            id: id,
-            reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
-        });
+        return {
+            result: window.wc.web3wallet.rejectSession({
+                id: id,
+                reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
+            }),
+            error: ""
+        };
     },
 
     auth: function (uri) {
-        let pairingTopic = getPairingTopicFromPairingUrl(uri);
-
-        const pairings = window.wc.core.pairing.getPairings();
-        // Find pairing by topic
-        const pairing = pairings.find((p) => p.topic === pairingTopic);
-        if (pairing) {
-            if (pairing.active) {
-                return new Promise((_, reject) => {
-                    reject(window.wc.alreadyPaired);
-                });
-            }
-        }
-
-        let pairPromise = window.wc.authClient.core.pairing
-            .pair({ uri })
-
-        return new Promise((resolve, reject) => {
-            pairPromise
-                .then(() => {
-                    // TODO: check if we can separate using the URI info
-                    window.wc.authClient.on("auth_request", async (authProposal) => {
-                        resolve(authProposal);
-                    });
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
+        return {
+            result: window.wc.authClient.core.pairing.pair({ uri }),
+            error: ""
+        };
     },
 
     approveAuth: function (authProposal) {
@@ -151,7 +157,8 @@ window.wc = {
         // TODO: signature
         const signature = "0x123456789"
 
-        return window.wc.authClient.respond(
+        return {
+            result: window.wc.authClient.respond(
             {
                 id: id,
                 signature: {
@@ -159,43 +166,49 @@ window.wc = {
                     t: "eip191",
                 },
             },
-            iss
-        );
+            iss),
+            error: ""
+        };
     },
+
     rejectAuth: function (id) {
-        return window.wc.authClient.reject(id);
+        return {
+            result: window.wc.authClient.reject(id),
+            error: ""
+        };
     },
 
     respondSessionRequest: function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)
-        return window.wc.web3wallet.respondSessionRequest({ topic, response });
+        return {
+            result: window.wc.web3wallet.respondSessionRequest({ topic, response }),
+            error: ""
+        };
     },
 
     rejectSessionRequest: function (topic, id, error = false) {
         const errorType = error ? "SESSION_SETTLEMENT_FAILED" : "USER_REJECTED";
-        return window.wc.web3wallet.respondSessionRequest({
-            topic: topic,
-            response: formatJsonRpcError(id, getSdkError(errorType)),
-        });
-    },
-
-
-    disconnectAll: function () {
-        const pairings = window.wc.core.pairing.getPairings();
-        pairings.forEach((p) => {
-            window.wc.core.pairing.disconnect({ topic: p.topic });
-        });
+        return {
+            result: window.wc.web3wallet.respondSessionRequest({
+                topic: topic,
+                response: formatJsonRpcError(id, getSdkError(errorType)),
+            }),
+            error: ""
+        };
     },
 };
 
-// Returns null if not a pairing url
-function getPairingTopicFromPairingUrl(url) {
-    if (!url.startsWith("wc:")) {
-        return null;
-    }
-    const atIndex = url.indexOf("@");
-    if (atIndex < 0) {
-        return null;
-    }
-    return url.slice(3, atIndex);
+function createWebChannel(projectId) {
+    return new Promise((resolve, reject) => {
+        window.wc.channel = new QWebChannel(qt.webChannelTransport, function (channel) {
+            let statusObject = channel.objects.statusObject;
+
+            if (!statusObject) {
+                reject(new Error("Unable to resolve statusObject"));
+            } else {
+                window.wc.statusObject = statusObject;
+                resolve();
+            }
+        });
+    });
 }

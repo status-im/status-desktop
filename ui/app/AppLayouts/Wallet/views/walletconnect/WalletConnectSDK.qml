@@ -1,326 +1,338 @@
 import QtQuick 2.15
-import QtWebView 1.15
-// TODO #12434: remove debugging WebEngineView code
-// import QtWebEngine 1.10
+import QtWebEngine 1.10
+import QtWebChannel 1.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
-// Control used to instantiate and run the the WalletConnect web SDK
-// The view is not used to draw anything, but has to be visible to be able to run JS code
-// Use the \c backgroundColor property to blend in with the background
-// \warning A too smaller height might cause rendering errors
-// TODO #12434: remove debugging WebEngineView code
-WebView {
-//WebEngineView {
+Item {
     id: root
+
+    required property string projectId
+    readonly property alias sdkReady: d.sdkReady
+    readonly property alias pairingsModel: d.pairingsModel
 
     implicitWidth: 1
     implicitHeight: 1
 
-    required property string projectId
-    required property color backgroundColor
-
-    readonly property alias sdkReady: d.sdkReady
-    readonly property alias pairingsModel: d.pairingsModel
-
+    signal statusChanged(string message)
     signal sdkInit(bool success, var result)
     signal pairSessionProposal(bool success, var sessionProposal)
+    signal pairSessionProposalExpired()
     signal pairAcceptedResult(bool success, var sessionType)
     signal pairRejectedResult(bool success, var result)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
-    signal responseTimeout()
 
-    // TODO: proper report
-    signal statusChanged(string message)
-
-    function pair(pairLink) {
-        let callStr = d.generateSdkCall("pair", `"${pairLink}"`, RequestCodes.PairSuccess, RequestCodes.PairError)
-        d.requestSdkAsync(callStr)
+    function pair(pairLink)
+    {
+        wcCalls.pair(pairLink)
     }
 
-    function approvePairSession(sessionProposal, supportedNamespaces) {
-        let callStr = d.generateSdkCall("approvePairSession", `${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)}`, RequestCodes.ApprovePairSuccess, RequestCodes.ApprovePairSuccess)
-
-        d.requestSdkAsync(callStr)
+    function approvePairSession(sessionProposal, supportedNamespaces)
+    {
+        wcCalls.approvePairSession(sessionProposal, supportedNamespaces)
     }
 
-    function rejectPairSession(id) {
-        let callStr = d.generateSdkCall("rejectPairSession", id, RequestCodes.RejectPairSuccess, RequestCodes.RejectPairError)
-
-        d.requestSdkAsync(callStr)
+    function rejectPairSession(id)
+    {
+        wcCalls.rejectPairSession(id)
     }
 
     function acceptSessionRequest(topic, id, signature) {
-        let callStr = d.generateSdkCall("respondSessionRequest", `"${topic}", ${id}, "${signature}"`, RequestCodes.AcceptSessionSuccess, RequestCodes.AcceptSessionError)
-
-        d.requestSdkAsync(callStr)
+        wcCalls.acceptSessionRequest(topic, id, signature)
     }
 
     function rejectSessionRequest(topic, id, error) {
-        let callStr = d.generateSdkCall("rejectSessionRequest", `"${topic}", ${id}, ${error}`, RequestCodes.RejectSessionSuccess, RequestCodes.RejectSessionError)
-
-        d.requestSdkAsync(callStr)
-    }
-
-    // TODO #12434: remove debugging WebEngineView code
-    onLoadingChanged: function(loadRequest) {
-        console.debug(`@dd WalletConnectSDK.onLoadingChanged; status: ${loadRequest.status}; error: ${loadRequest.errorString}`)
-        switch(loadRequest.status) {
-            case WebView.LoadSucceededStatus:
-            // case WebEngineView.LoadSucceededStatus:
-                d.init(root.projectId)
-                break
-            case WebView.LoadFailedStatus:
-            // case WebEngineView.LoadFailedStatus:
-                root.statusChanged(`<font color="red">Failed loading SDK JS code; error: "${loadRequest.errorString}"</font>`)
-                break
-            case WebView.LoadStartedStatus:
-            // case WebEngineView.LoadStartedStatus:
-                root.statusChanged(`<font color="blue">Loading SDK JS code</font>`)
-                break
-        }
-    }
-
-    Component.onCompleted: {
-        console.debug(`@dd WalletConnectSDK onCompleted`)
-        var scriptSrc = SQUtils.StringUtils.readTextFile(":/app/AppLayouts/Wallet/views/walletconnect/sdk/generated/bundle.js")
-        // Load bundle from disk if not found in resources (Storybook)
-        if (scriptSrc === "") {
-            scriptSrc = SQUtils.StringUtils.readTextFile("./AppLayouts/Wallet/views/walletconnect/sdk/generated/bundle.js")
-            if (scriptSrc === "") {
-                console.error("Failed to read WalletConnect SDK bundle")
-                return
-            }
-        }
-
-        let htmlSrc = `<!DOCTYPE html><html><head><!--<title>TODO: Test</title>--><script type='text/javascript'>${scriptSrc}</script></head><body style='background-color: ${root.backgroundColor.toString()};'></body></html>`
-
-        console.debug(`@dd WalletConnectSDK.loadHtml; htmlSrc len: ${htmlSrc.length}`)
-        root.loadHtml(htmlSrc, "https://status.app")
-    }
-
-    Timer {
-        id: timer
-
-        interval: 100
-        repeat: true
-        running: false
-        triggeredOnStart: true
-
-        property int errorCount: 0
-
-        onTriggered: {
-            root.runJavaScript(
-                "wcResult",
-                function(wcResult) {
-                    if (!wcResult) {
-                        return
-                    }
-
-                    let done = false
-                    if (wcResult.error) {
-                        console.debug(`WC JS error response - ${JSON.stringify(wcResult)}`)
-                        done = true
-                        if (!d.sdkReady) {
-                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Failed SDK init; error: ${wcResult.error}</font>`)
-                        } else {
-                            root.statusChanged(`<font color="red">[${timer.errorCount++}] Operation error: ${wcResult.error}</font>`)
-                        }
-                    }
-
-                    if (wcResult.state !== undefined) {
-                        switch (wcResult.state) {
-                            case RequestCodes.SdkInitSuccess:
-                                d.sdkReady = true
-                                root.sdkInit(true, "")
-                                d.startListeningForEvents()
-                                break
-                            case RequestCodes.SdkInitError:
-                                d.sdkReady = false
-                                root.sdkInit(false, wcResult.error)
-                                break
-                            case RequestCodes.PairSuccess:
-                                root.pairSessionProposal(true, wcResult.result)
-                                d.getPairings()
-                                break
-                            case RequestCodes.PairError:
-                                root.pairSessionProposal(false, wcResult.error)
-                                break
-                            case RequestCodes.ApprovePairSuccess:
-                                root.pairAcceptedResult(true, "")
-                                d.getPairings()
-                                break
-                            case RequestCodes.ApprovePairError:
-                                root.pairAcceptedResult(false, wcResult.error)
-                                d.getPairings()
-                                break
-                            case RequestCodes.RejectPairSuccess:
-                                root.pairRejectedResult(true, "")
-                                break
-                            case RequestCodes.RejectPairError:
-                                root.pairRejectedResult(false, wcResult.error)
-                                break
-                            case RequestCodes.AcceptSessionSuccess:
-                                root.sessionRequestUserAnswerResult(true, "")
-                                break
-                            case RequestCodes.AcceptSessionError:
-                                root.sessionRequestUserAnswerResult(true, wcResult.error)
-                                break
-                            case RequestCodes.RejectSessionSuccess:
-                                root.sessionRequestUserAnswerResult(false, "")
-                                break
-                            case RequestCodes.RejectSessionError:
-                                root.sessionRequestUserAnswerResult(false, wcResult.error)
-                                break
-                            case RequestCodes.GetPairings:
-                                d.populatePairingsModel(wcResult.result)
-                                break
-                            case RequestCodes.GetPairingsError:
-                                console.error(`WalletConnectSDK - getPairings error: ${wcResult.error}`)
-                                break
-                            default: {
-                                root.statusChanged(`<font color="red">[${timer.errorCount++}] Unknown state: ${wcResult.state}</font>`)
-                            }
-                        }
-
-                        done = true
-                    }
-
-                    if (done) {
-                        timer.stop()
-                    }
-                }
-            )
-        }
-    }
-
-    Timer {
-        id: responseTimeoutTimer
-
-        interval: 10000
-        repeat: false
-        running: timer.running
-
-        onTriggered: {
-            timer.stop()
-            root.responseTimeout()
-        }
-    }
-
-    Timer {
-        id: eventsTimer
-
-        interval: 100
-        repeat: true
-        running: false
-
-        onTriggered: {
-            root.runJavaScript("window.wcEventResult ? window.wcEventResult.shift() : null", function(event) {
-                if (event) {
-                    switch(event.name) {
-                        case "session_request":
-                            root.sessionRequestEvent(event.payload)
-                            break
-                        default:
-                            console.error("WC unknown event type: ", event.type)
-                            break
-                    }
-                }
-            })
-        }
+        wcCalls.rejectSessionRequest(topic, id, error)
     }
 
     QtObject {
         id: d
 
-        property var sessionProposal: null
-        property var sessionType: null
         property bool sdkReady: false
-
         property ListModel pairingsModel: pairings
 
         onSdkReadyChanged: {
-            if (sdkReady) {
-                d.getPairings()
+            if (sdkReady)
+            {
+                d.resetPairingsModel()
             }
         }
 
-        function populatePairingsModel(pairList) {
+        function resetPairingsModel()
+        {
             pairings.clear();
-            for (let i = 0; i < pairList.length; i++) {
-                pairings.append({
-                    active: pairList[i].active,
-                    topic: pairList[i].topic,
-                    expiry: pairList[i].expiry
-                });
+
+            wcCalls.getPairings((pairList) => {
+                                    for (let i = 0; i < pairList.length; i++) {
+                                        pairings.append({
+                                                            active: pairList[i].active,
+                                                            topic: pairList[i].topic,
+                                                            expiry: pairList[i].expiry
+                                                        });
+                                    }
+                                })
+        }
+
+        function getPairingTopicFromPairingUrl(url)
+        {
+            if (!url.startsWith("wc:"))
+            {
+                return null;
             }
+            const atIndex = url.indexOf("@");
+            if (atIndex < 0)
+            {
+                return null;
+            }
+            return url.slice(3, atIndex);
         }
+    }
 
+    QtObject {
+        id: wcCalls
 
-        function isWaitingForSdk() {
-            return timer.running
-        }
+        function init() {
+            console.debug(`@dd WalletConnectSDK.wcCall.init; root.projectId: ${root.projectId}`)
 
-        function generateSdkCall(methodName, paramsStr, successState, errorState) {
-            return "wcResult = {}; try { wc." + methodName  + "(" + paramsStr + ").then((callRes) => { wcResult = {state: " + successState + ", error: null, result: callRes}; }).catch((error) => { wcResult = {state: " + errorState + ", error: error}; }); } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message}; }; wcResult"
-        }
-        function requestSdkAsync(jsCode) {
-            root.runJavaScript(jsCode,
-                function(result) {
-                    timer.restart()
+            webEngineView.runJavaScript(`wc.init("${root.projectId}")`, function(result) {
+
+                console.debug(`@dd WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result && !!result.error)
+                {
+                    console.error("init: ", result.error)
                 }
-            )
+            })
         }
 
-        function requestSdk(methodName, paramsStr, successState, errorState) {
-            const jsCode = "wcResult = {}; try { const callRes = wc." + methodName + "(" + (paramsStr ? (paramsStr) : "") + "); wcResult = {state: " + successState + ", error: null, result: callRes}; } catch (e) { wcResult = {state: " + errorState + ", error: \"Exception: \" + e.message};  }; wcResult"
-            root.runJavaScript(jsCode,
-                function(result) {
-                    timer.restart()
-                }
-            )
-        }
+        function getPairings(callback) {
+            console.debug(`@dd WalletConnectSDK.wcCall.getPairings;`)
 
-        function startListeningForEvents() {
-            const jsCode = "
-                try {
-                    function processWCEvents() {
-                        window.wcEventResult = [];
-                        window.wcEventError = null
-                        window.wc.registerForSessionRequest((event) => {
-                            window.wcEventResult.push({name: 'session_request', payload: event});
-                        });
-                    }
-                    processWCEvents();
-                } catch (e) {
-                    window.wcEventError = e
-                }
-                window.wcEventError"
+            webEngineView.runJavaScript(`wc.getPairings()`, function(result) {
 
-            root.runJavaScript(jsCode,
-                function(result) {
-                    if (result) {
-                        console.error("startListeningForEvents: processWCEvents error", result)
+                console.debug(`@dd WalletConnectSDK.wcCall.getPairings; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result)
+                {
+                    if (!!result.error) {
+                        console.error("getPairings: ", result.error)
                         return
                     }
+
+                    callback(result.result)
+                    return
                 }
-            )
-            eventsTimer.start()
+            })
         }
 
-        function init(projectId) {
-            d.requestSdkAsync(generateSdkCall("init", `"${projectId}"`, RequestCodes.SdkInitSuccess, RequestCodes.SdkInitError))
+        function pair(pairLink) {
+            console.debug(`@dd WalletConnectSDK.wcCall.pair; pairLink: ${pairLink}`)
+
+            wcCalls.getPairings((allPairings) => {
+
+                                    console.debug(`@dd WalletConnectSDK.wcCall.pair; response: ${JSON.stringify(allPairings, null, 2)}`)
+
+                                    let pairingTopic = d.getPairingTopicFromPairingUrl(pairLink);
+
+                                    // Find pairing by topic
+                                    const pairing = allPairings.find((p) => p.topic === pairingTopic);
+                                    if (pairing)
+                                    {
+                                        if (pairing.active) {
+                                            console.warn("pair: already paired")
+                                            return
+                                        }
+                                    }
+
+                                    webEngineView.runJavaScript(`wc.pair("${pairLink}")`, function(result) {
+                                        if (result && !!result.error)
+                                        {
+                                            console.error("pair: ", result.error)
+                                        }
+                                    })
+                                }
+                                )
         }
 
-        function getPairings(projectId) {
-            d.requestSdk("getPairings", `null`, RequestCodes.GetPairings, RequestCodes.GetPairingsError)
+        function approvePairSession(sessionProposal, supportedNamespaces) {
+            console.debug(`@dd WalletConnectSDK.wcCall.approvePairSession; sessionProposal: ${JSON.stringify(sessionProposal)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
+
+            webEngineView.runJavaScript(`wc.approvePairSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})`, function(result) {
+
+                console.debug(`@dd WalletConnectSDK.wcCall.approvePairSession; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("approvePairSession: ", result.error)
+                        root.pairAcceptedResult(false, result.error)
+                        return
+                    }
+                    root.pairAcceptedResult(true, result.error)
+                }
+                d.resetPairingsModel()
+            })
+        }
+
+        function rejectPairSession(id) {
+            console.debug(`@dd WalletConnectSDK.wcCall.rejectPairSession; id: ${id}`)
+
+            webEngineView.runJavaScript(`wc.rejectPairSession(${id})`, function(result) {
+
+                console.debug(`@dd WalletConnectSDK.wcCall.rejectPairSession; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("rejectPairSession: ", result.error)
+                        root.pairRejectedResult(false, result.error)
+                        return
+                    }
+                    root.pairRejectedResult(true, result.error)
+                }
+                d.resetPairingsModel()
+            })
+        }
+
+        function acceptSessionRequest(topic, id, signature) {
+            console.debug(`@dd WalletConnectSDK.wcCall.acceptSessionRequest; topic: "${topic}", id: ${id}, signature: "${signature}"`)
+
+            webEngineView.runJavaScript(`wc.respondSessionRequest("${topic}", ${id}, "${signature}")`, function(result) {
+
+                console.debug(`@dd WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(allPairings, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("respondSessionRequest: ", result.error)
+                        root.sessionRequestUserAnswerResult(true, result.error)
+                        return
+                    }
+                    root.sessionRequestUserAnswerResult(true, result.error)
+                }
+                d.resetPairingsModel()
+            })
+        }
+
+        function rejectSessionRequest(topic, id, error) {
+            console.debug(`@dd WalletConnectSDK.wcCall.rejectSessionRequest; topic: "${topic}", id: ${id}, error: "${error}"`)
+
+            webEngineView.runJavaScript(`wc.rejectSessionRequest("${topic}", ${id}, "${error}")`, function(result) {
+
+                console.debug(`@dd WalletConnectSDK.wcCall.rejectSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("rejectSessionRequest: ", result.error)
+                        root.sessionRequestUserAnswerResult(false, result.error)
+                        return
+                    }
+                    root.sessionRequestUserAnswerResult(false, result.error)
+                }
+                d.resetPairingsModel()
+            })
+        }
+    }
+
+    QtObject {
+        id: statusObject
+
+        WebChannel.id: "statusObject"
+
+        function sdkInitialized(error)
+        {
+            d.sdkReady = !error
+            root.sdkInit(d.sdkReady, error)
+        }
+
+        function onSessionProposal(details)
+        {
+            console.debug(`@dd WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
+            root.pairSessionProposal(true, details)
+        }
+
+        function onSessionUpdate(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionExtend(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionPing(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionDelete(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionExpire(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionRequest(details)
+        {
+            console.debug(`@dd WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details, null, 2)}`)
+            root.sessionRequestEvent(details)
+        }
+
+        function onSessionRequestSent(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onSessionEvent(details)
+        {
+            console.debug(`@dd TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details, null, 2)}`)
+        }
+
+        function onProposalExpire(details)
+        {
+            console.debug(`@dd WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
+            root.pairSessionProposalExpired()
         }
     }
 
     ListModel {
         id: pairings
+    }
+
+    WebChannel {
+        id: statusChannel
+        registeredObjects: [statusObject]
+    }
+
+    WebEngineView {
+        id: webEngineView
+
+        anchors.fill: parent
+
+        url: "qrc:/app/AppLayouts/Wallet/views/walletconnect/sdk/src/index.html"
+        webChannel: statusChannel
+
+        onLoadingChanged: function(loadRequest) {
+            console.debug(`@dd WalletConnectSDK.onLoadingChanged; status: ${loadRequest.status}; error: ${loadRequest.errorString}`)
+            switch(loadRequest.status) {
+            case WebEngineView.LoadSucceededStatus:
+                wcCalls.init()
+                break
+            case WebEngineView.LoadFailedStatus:
+                root.statusChanged(`<font color="red">Failed loading SDK JS code; error: "${loadRequest.errorString}"</font>`)
+                break
+            case WebEngineView.LoadStartedStatus:
+                root.statusChanged(`<font color="blue">Loading SDK JS code</font>`)
+                break
+            }
+        }
     }
 }
