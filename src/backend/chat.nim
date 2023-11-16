@@ -51,8 +51,8 @@ proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[Json
 proc leaveGroupChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])
 
-proc deactivateChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chatId }])
+proc deactivateChat*(chatId: string, preserveHistory: bool = false): RpcResponse[JsonNode] {.raises: [Exception].} =
+  callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chatId, "preserveHistory": preserveHistory }])
 
 proc clearChatHistory*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   callPrivateRPC("clearHistory".prefix, %* [{ "id": chatId }])

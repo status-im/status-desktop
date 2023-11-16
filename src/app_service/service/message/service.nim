@@ -190,12 +190,6 @@ QtObject:
     result.msgCursor = initTable[string, MessageCursor]()
     result.pinnedMsgCursor = initTable[string, MessageCursor]()
 
-  proc removeMessageWithId(messages: var seq[MessageDto], msgId: string) =
-    for i in 0..<messages.len:
-      if (messages[i].id == msgId):
-        messages.delete(i)
-        return
-
   proc isChatCursorInitialized(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
 
@@ -441,6 +435,10 @@ QtObject:
       var receivedData = DiscordChannelImportFinishedSignal(e)
       self.resetMessageCursor(receivedData.channelId)
       self.asyncLoadMoreMessagesForChat(receivedData.channelId)
+    
+    self.events.on(SIGNAL_CHAT_LEFT) do(e: Args):
+      var chatArg = ChatArgs(e)
+      self.resetMessageCursor(chatArg.chatId)
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let networksDto = self.networkService.getNetworks()

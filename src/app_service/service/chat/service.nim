@@ -489,7 +489,7 @@ QtObject:
         let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
         self.emitUpdate(leaveGroupResponse)
 
-      discard status_chat.deactivateChat(chatId)
+      discard status_chat.deactivateChat(chatId, preserveHistory = chat.chatType == chat_dto.ChatType.OneToOne)
 
       var channelGroupId = chat.communityId
       if (channelGroupId == ""):
@@ -497,7 +497,6 @@ QtObject:
 
       self.channelGroups[channelGroupId].chats.delete(self.getChatIndex(channelGroupId, chatId))
       self.chats.del(chatId)
-      discard status_chat.deleteMessagesByChatId(chatId)
       self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatId))
     except Exception as e:
       error "Error deleting channel", chatId, msg = e.msg
