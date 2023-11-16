@@ -207,7 +207,7 @@ StatusMenu {
                 return qsTr("Leave group")
             }
             return root.chatType === Constants.chatType.oneToOne ?
-                        qsTr("Delete Chat") :
+                        qsTr("Close Chat") :
                         qsTr("Leave Chat")
         }
         icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-left"
@@ -290,12 +290,12 @@ StatusMenu {
             confirmButtonObjectName: "deleteChatConfirmationDialogDeleteButton"
             headerSettings.title: root.isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
                                             root.chatType === Constants.chatType.oneToOne ?
-                                            qsTr("Delete chat") :
+                                            qsTr("Close chat") :
                                             qsTr("Leave chat")
             confirmButtonLabel: root.isCommunityChat ? qsTr("Delete") : headerSettings.title
             confirmationText: root.isCommunityChat ? qsTr("Are you sure you want to delete #%1 channel?").arg(root.chatName) :
                                                 root.chatType === Constants.chatType.oneToOne ?
-                                                qsTr("Are you sure you want to delete this chat?"):
+                                                qsTr("Are you sure you want to close this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
             showCancelButton: true
             cancelBtnType: "normal"
