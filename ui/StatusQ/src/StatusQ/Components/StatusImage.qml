@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Window 2.15
 
 /*!
     \qmltype StatusImage
@@ -45,15 +46,5 @@ Image {
     readonly property bool isError: status === Image.Error
 
     fillMode: Image.PreserveAspectFit
-
-    onSourceChanged: {
-        // SVGs must have sourceSize, PNGs not; otherwise blurry
-        if (source.toString().endsWith(".svg"))
-            sourceSize = Qt.binding(() => Qt.size(width, height))
-        else if (sourceSize.width < width || sourceSize.height < height) {
-            sourceSize = Qt.binding(() => Qt.size(width * 2, height * 2))
-        } else {
-            sourceSize = undefined
-        }
-    }
+    sourceSize: source.toString().endsWith(".svg") ? Qt.size(width, 0) : Qt.size(width * Screen.devicePixelRatio, 0)
 }
