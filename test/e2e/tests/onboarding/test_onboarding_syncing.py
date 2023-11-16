@@ -1,3 +1,5 @@
+import os
+
 import allure
 import pyperclip
 import pytest
@@ -75,9 +77,8 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
         with step('Sign in to synced account'):
             sync_result.sign_in()
             SplashScreen().wait_until_hidden()
-            if not configs.DEV_BUILD:
-                if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-                    BetaConsentPopup().confirm()
+            if not configs.system.TEST_MODE:
+                BetaConsentPopup().confirm()
 
         with step('Verify user details are the same with user in first instance'):
             user_canvas = main_window.left_panel.open_user_canvas()

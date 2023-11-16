@@ -1,3 +1,4 @@
+import os
 import time
 
 import allure
@@ -45,7 +46,7 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
+        if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
     with step('Verify that the user logged in correctly'):

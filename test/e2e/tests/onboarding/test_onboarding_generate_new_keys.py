@@ -1,4 +1,5 @@
 import logging
+import os
 
 import allure
 import pytest
@@ -73,7 +74,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
+        if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
     with step('Open User Canvas and verify user info'):

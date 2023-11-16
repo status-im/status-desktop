@@ -1,3 +1,5 @@
+import os
+
 import allure
 import pytest
 from allure_commons._allure import step
@@ -43,7 +45,7 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
+        if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
     with (step('Verify that restored account reveals correct status wallet address')):

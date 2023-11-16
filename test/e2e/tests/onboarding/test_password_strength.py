@@ -1,3 +1,5 @@
+import os
+
 import allure
 import pytest
 from allure_commons._allure import step
@@ -57,7 +59,7 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
+        if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
     with step('Verify that the user logged in correctly'):

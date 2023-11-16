@@ -1,4 +1,5 @@
 import logging
+import os
 import typing
 
 import allure
@@ -151,18 +152,16 @@ class MainWindow(Window):
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
-            if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-                BetaConsentPopup().confirm()
+        if not configs.system.TEST_MODE:
+            BetaConsentPopup().confirm()
         return self
 
     @allure.step('Log in user')
     def log_in(self, user_account: UserAccount):
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.DEV_BUILD:
-            if driver.waitFor(lambda: BetaConsentPopup().exists, configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-                BetaConsentPopup().confirm()
+        if not configs.system.TEST_MODE:
+            BetaConsentPopup().confirm()
         return self
 
     @allure.step('Authorize user')
