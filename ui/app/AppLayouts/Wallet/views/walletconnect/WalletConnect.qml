@@ -17,11 +17,6 @@ Item {
 
     property bool sdkReady: state === d.sdkReadyState
 
-    function setUriAndPair(wcUri) {
-        pairLinkInput.text = wcUri
-        d.sdkView.pair(wcUri)
-    }
-
     // wallet_connect.Controller \see wallet_section/wallet_connect/controller.nim
     required property var controller
 
@@ -205,7 +200,6 @@ Item {
 
     component SdkViewComponent: WalletConnectSDK {
         projectId: controller.projectId
-        backgroundColor: root.backgroundColor
 
         onSdkInit: function(success, info) {
             d.setDetailsText(info)
@@ -270,14 +264,13 @@ Item {
             root.state = d.waitingUserResponseToSessionRequest
         }
 
-        onResponseTimeout: {
+        onPairSessionProposalExpired: {
             d.setStatusText(`Timeout waiting for response. Reusing URI?`, "red")
         }
 
         onStatusChanged: function(message) {
             statusText.text = message
         }
-
     }
 
     QtObject {
@@ -326,10 +319,6 @@ Item {
 
             root.state = d.waitingPairState
         }
-    }
-
-    Connections {
-        target: root.controller
 
         function onRespondSessionRequest(sessionRequestJson, signedJson, error) {
             console.log("@dd respondSessionRequest", sessionRequestJson, signedJson, error)

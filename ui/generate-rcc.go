@@ -26,6 +26,7 @@ var qrcExtensions = map[string]bool{
 	".gif":  true,
 	".json": true,
 	".mdwn": true,
+	".html": true,
 }
 
 func main() {
