@@ -11,7 +11,7 @@ pipeline {
     timestamps()
     disableConcurrentBuilds()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 90, unit: 'MINUTES')
+    timeout(time: 120, unit: 'MINUTES')
     /* Limit builds retained */
     buildDiscarder(logRotator(
       numToKeepStr: '30',
@@ -129,6 +129,8 @@ def Boolean getPublishDefault(Boolean previousValue) {
 def getArtifacts(key, childBuild) {
   /* Copy artifacts from child build to parent. */
   jenkins.copyArts(childBuild)
+  /* Archive right away to make artifacts available. */
+  archiveArtifacts('pkg/*')
   /* Add new URL from child build and update description. */
   urls[key] = utils.pkgUrl(childBuild)
   jenkins.setBuildDesc(urls)
