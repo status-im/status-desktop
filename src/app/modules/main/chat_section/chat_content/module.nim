@@ -23,6 +23,7 @@ import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../../app_service/common/types
 
 export io_interface
@@ -42,23 +43,25 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service, chatService: chat_service.Service,
-  communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service):
+    belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service,
+    chatService: chat_service.Service, communityService: community_service.Service,
+    messageService: message_service.Service, gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity,
-    isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService)
+    isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
+    messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
     chatService, communityService, gifService, messageService, settingsService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
-    contactService, communityService, chatService, messageService, mailserversService)
+    contactService, communityService, chatService, messageService, mailserversService, sharedUrlsService)
   result.usersModule = users_module.newModule(events, sectionId, chatId, belongsToCommunity,
     isUsersListAvailable, contactService, chat_service, communityService, messageService)
 

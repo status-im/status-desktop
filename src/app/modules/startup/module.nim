@@ -326,10 +326,11 @@ method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
 
 method finishAppLoading*[T](self: Module[T]) =
   self.delegate.finishAppLoading()
+  self.delegate.appReady()
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
-    self.delegate.finishAppLoading()
+    self.finishAppLoading()
     return
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
@@ -431,7 +432,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
       if currStateObj.flowType() != FlowType.AppLogin:
         let images = self.controller.storeIdentityImage()
         self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
-      self.delegate.finishAppLoading()
+      self.finishAppLoading()
   else:
     self.moveToStartupState()
     if currStateObj.flowType() == state.FlowType.AppLogin:

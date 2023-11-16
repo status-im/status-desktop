@@ -550,7 +550,8 @@ QtObject:
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
   proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
-    self.delegate.requestCommunityInfo(communityId, importing)
+    # TODO update the slot to accept the shard arguments when it's available from the QML
+    self.delegate.requestCommunityInfo(communityId, shardCluster = -1, shardIndex = -1, importing)
 
   proc getCommunityDetails*(self: View, communityId: string): string {.slot.} =
     let communityItem = self.model.getItemById(communityId)

@@ -76,10 +76,6 @@ type
     InProgress,
     Completed
 
-type Shard* = object
+type Shard* = ref object
   cluster*: int
   index*: int
-
-proc initShard*(cluster: int = -1, index: int = -1): Shard =
-  result.cluster = cluster
-  result.index = index

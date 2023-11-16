@@ -218,6 +218,7 @@ type
     c.startupDidLoad()
     c.userLoggedIn()
     c.finishAppLoading()
+    c.appReady()
     c.storeDefaultKeyPairForNewKeycardUser()
     c.syncKeycardBasedOnAppWalletStateAfterLogin()
     c.applyKeycardReplacementAfterLogin()

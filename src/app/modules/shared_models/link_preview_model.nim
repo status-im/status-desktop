@@ -296,11 +296,11 @@ QtObject:
       if contactId != "":
         result.incl(contactId)
 
-  proc getCommunityIds*(self: Model): HashSet[string] =
+  proc getCommunityLinks*(self: Model): Table[string, string] =
     for item in self.items:
       let communityId = item.linkPreview.getCommunityId()
       if communityId != "":
-        result.incl(communityId)
+        result[communityId] = item.linkPreview.url
 
   proc setItemLoadingLocalData(self: Model, row: int, item: Item, value: bool) = 
     if item.loadingLocalData == value:

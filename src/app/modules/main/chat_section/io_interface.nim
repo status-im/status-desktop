@@ -8,6 +8,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../app_service/service/shared_urls/service as shared_urls_service
 
 import model as chats_model
 import item as chat_item
@@ -21,30 +22,22 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface,
-  channelGroup: ChannelGroupDto,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) {.base.} =
+method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatsLoaded*(self: AccessInterface,
-  channelGroup: ChannelGroupDto,
-  events: UniqueUUIDEventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) {.base.} =
+    channelGroup: ChannelGroupDto,
+    events: UniqueUUIDEventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+  ) {.base.} =
   raise newException(ValueError, "No implementation available rip")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
@@ -72,10 +65,11 @@ method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.Service, contactService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service, setChatAsActive: bool = true, insertIntoModel: bool = true): Item {.base.} =
+    settingsService: settings_service.Service, contactService: contact_service.Service,
+    chatService: chat_service.Service, communityService: community_service.Service,
+    messageService: message_service.Service, gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service,
+    setChatAsActive: bool = true, insertIntoModel: bool = true): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
@@ -96,6 +90,7 @@ method addOrUpdateChat*(self: AccessInterface,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true
   ): Item {.base.} =
