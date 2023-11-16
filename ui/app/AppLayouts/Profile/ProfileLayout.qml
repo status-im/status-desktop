@@ -24,6 +24,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 StatusSectionLayout {
     id: root
 
+    objectName: "profileStatusSectionLayout"
+
     property ProfileSectionStore store
     property var globalStore
     property var systemPalette
