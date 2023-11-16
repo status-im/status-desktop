@@ -37,7 +37,6 @@ StatusMenu {
     signal downloadMessages(string file)
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
-    signal leaveGroup(string chatId)
     signal updateGroupChatDetails(string chatId, string groupName, string groupColor, string groupImage)
 
     signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
