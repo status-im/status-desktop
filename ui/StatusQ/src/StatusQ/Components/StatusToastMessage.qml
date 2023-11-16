@@ -310,7 +310,7 @@ Control {
                     height: visible ? implicitHeight : 0
                     font.pixelSize: 13
                     hoveredLinkColor: Theme.palette.primaryColor1
-                    text: "<p><a style=\"text-decoration:none\" href=\'" + root.linkUrl + " \'>" + root.secondaryText + "</a></p>"
+                    text: "<p><a style='text-decoration:none' href='%1'>%2</a></p>".arg(root.linkUrl).arg(root.secondaryText)
                     onLinkActivated: {
                         root.linkActivated(link);
                     }
