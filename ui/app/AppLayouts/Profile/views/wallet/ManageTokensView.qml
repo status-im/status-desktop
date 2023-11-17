@@ -4,14 +4,68 @@ import QtQuick.Layouts 1.15
 import StatusQ.Controls 0.1
 
 import shared.controls 1.0
+import utils 1.0
 
 import AppLayouts.Profile.panels 1.0
+import AppLayouts.Wallet.panels 1.0
 
 ColumnLayout {
     id: root
 
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
+
+    required property var baseWalletAssetsModel
+    required property var baseWalletCollectiblesModel
+
+    readonly property bool dirty: {
+        if (!loader.item)
+            return false
+        if (tabBar.currentIndex > d.collectiblesTabIndex)
+            return false
+        if (tabBar.currentIndex === d.collectiblesTabIndex && baseCollectiblesModel.isFetching)
+            return false
+        return loader.item && loader.item.dirty
+    }
+
+    function saveChanges() {
+        if (tabBar.currentIndex > d.collectiblesTabIndex)
+            return
+        loader.item.saveSettings()
+    }
+
+    function resetChanges() {
+        if (tabBar.currentIndex > d.collectiblesTabIndex)
+            return
+        loader.item.revert()
+    }
+
+    QtObject {
+        id: d
+
+        readonly property int assetsTabIndex: 0
+        readonly property int collectiblesTabIndex: 1
+        readonly property int tokenSourcesTabIndex: 2
+
+        function checkLoadMoreCollectibles() {
+            if (tabBar.currentIndex !== collectiblesTabIndex)
+                return
+            // If there is no more items to load or we're already fetching, return
+            if (!root.baseCollectiblesModel.hasMore || root.baseCollectiblesModel.isFetching)
+                return
+            root.baseCollectiblesModel.loadMore()
+        }
+    }
+
+    Connections {
+        target: root.baseCollectiblesModel
+        function onHasMoreChanged() {
+            d.checkLoadMoreCollectibles()
+        }
+        function onIsFetchingChanged() {
+            d.checkLoadMoreCollectibles()
+        }
+    }
 
     StatusTabBar {
         id: tabBar
@@ -20,49 +74,60 @@ ColumnLayout {
         Layout.topMargin: 5
 
         StatusTabButton {
-            id: assetsTab
+            leftPadding: 0
             width: implicitWidth
             text: qsTr("Assets")
         }
 
         StatusTabButton {
-            id: collectiblesTab
             width: implicitWidth
-            text: qsTr("Collectibles ")
+            text: qsTr("Collectibles")
         }
 
         StatusTabButton {
-            id: tokensListTab
             width: implicitWidth
             text: qsTr("Token lists")
         }
     }
 
-    StackLayout {
-        id: stackLayout
-
+    // NB: we want to discard any pending unsaved changes when switching tabs or navigating away
+    Loader {
+        id: loader
         Layout.fillWidth: true
         Layout.fillHeight: true
-        currentIndex: tabBar.currentIndex
+        active: visible
 
-        ShapeRectangle {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: parent.width - 4 // The rectangular path is rendered outside
-            Layout.maximumHeight: 44
-            text: qsTr("You’ll be able to manage the display of your assets here")
+        sourceComponent: {
+            switch (tabBar.currentIndex) {
+            case d.assetsTabIndex:
+                return tokensPanel
+            case d.collectiblesTabIndex:
+                return collectiblesPanel
+            case d.tokenSourcesTabIndex:
+                return supportedTokensListPanel
+            }
         }
+    }
 
-        ShapeRectangle {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: parent.width - 4 // The rectangular path is rendered outside
-            Layout.maximumHeight: 44
-            text: qsTr("You’ll be able to manage the display of your collectibles here")
+    Component {
+        id: tokensPanel
+        ManageAssetsPanel {
+            baseModel: root.baseWalletAssetsModel
         }
+        // TODO #12611 add Advanced section
+    }
 
+    Component {
+        id: collectiblesPanel
+        ManageCollectiblesPanel {
+            baseModel: root.baseWalletCollectiblesModel
+            Component.onCompleted: d.checkLoadMoreCollectibles()
+        }
+    }
+
+    Component {
+        id: supportedTokensListPanel
         SupportedTokenListsPanel {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
             sourcesOfTokensModel: root.sourcesOfTokensModel
             tokensListModel: root.tokensListModel
         }

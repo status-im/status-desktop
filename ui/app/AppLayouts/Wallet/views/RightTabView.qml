@@ -49,13 +49,13 @@ Item {
         id: d
         function getBackButtonText(index) {
             switch(index) {
-                case 1:
+            case 1:
                 return qsTr("Collectibles")
-                case 2:
+            case 2:
                 return qsTr("Assets")
-                case 3:
+            case 3:
                 return qsTr("Activity")
-                default:
+            default:
                 return ""
             }
         }
@@ -156,8 +156,6 @@ Item {
             }
         }
         CollectibleDetailView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
 
@@ -169,8 +167,6 @@ Item {
         AssetsDetailView {
             id: assetDetailView
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
             visible: (stack.currentIndex === 2)
 
             assetsLoading: RootStore.assetsLoading
@@ -186,8 +182,6 @@ Item {
 
         TransactionDetailView {
             id: transactionDetailView
-            Layout.fillWidth: true
-            Layout.fillHeight: true
             onVisibleChanged: {
                 if (!visible)
                     transaction = null

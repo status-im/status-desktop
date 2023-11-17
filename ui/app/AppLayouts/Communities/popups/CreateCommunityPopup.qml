@@ -123,8 +123,8 @@ StatusStackModal {
                 }
                 IssuePill {
                     id: issuePill
-                    type: root.communitiesStore.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
-                    count: root.communitiesStore.discordImportErrorsCount || root.communitiesStore.discordImportWarningsCount || 0
+                    type: root.store.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
+                    count: root.store.discordImportErrorsCount || root.store.discordImportWarningsCount || 0
                     visible: !!count && !fileListView.fileListModelEmpty
                 }
                 StatusButton {

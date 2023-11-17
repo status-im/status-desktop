@@ -40,7 +40,6 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Style.current.secondaryText
                 text: qsTr("Collectibles will appear here")
-                font.pixelSize: 15
             }
         }
     }
@@ -65,7 +64,7 @@ Item {
                 isLoading: !!model.isLoading
                 privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
                 ornamentColor: model.communityColor ?? "transparent"
-                communityId: model.communityId
+                communityId: model.communityId ?? ""
 
                 onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.uid)
             }

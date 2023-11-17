@@ -126,7 +126,7 @@ void ManageTokensController::saveSettings()
     result.insert(m_hiddenTokensModel->save(false));
 
     // save to QSettings
-    m_settings.beginGroup(QStringLiteral("ManageTokens-%1").arg(m_settingsKey));
+    m_settings.beginGroup(settingsGroupName());
     m_settings.beginWriteArray(m_settingsKey);
     SerializedTokenData::const_key_value_iterator it = result.constKeyValueBegin();
     for (auto i = 0; it != result.constKeyValueEnd() && i < result.size(); it++, i++) {
@@ -151,7 +151,7 @@ void ManageTokensController::clearSettings()
     Q_ASSERT(!m_settingsKey.isEmpty());
 
     // clear the relevant QSettings group
-    m_settings.beginGroup(QStringLiteral("ManageTokens-%1").arg(m_settingsKey));
+    m_settings.beginGroup(settingsGroupName());
     m_settings.remove(QString());
     m_settings.endGroup();
     m_settings.sync();
@@ -164,7 +164,7 @@ void ManageTokensController::loadSettings()
     m_settingsData.clear();
 
     // load from QSettings
-    m_settings.beginGroup(QStringLiteral("ManageTokens-%1").arg(m_settingsKey));
+    m_settings.beginGroup(settingsGroupName());
     const auto size = m_settings.beginReadArray(m_settingsKey);
     for (auto i = 0; i < size; i++) {
         m_settings.setArrayIndex(i);
@@ -185,6 +185,36 @@ void ManageTokensController::loadSettings()
 void ManageTokensController::revert()
 {
     parseSourceModel();
+}
+
+QString ManageTokensController::settingsGroupName() const
+{
+    return QStringLiteral("ManageTokens-%1").arg(m_settingsKey);
+}
+
+bool ManageTokensController::hasSettings() const
+{
+    Q_ASSERT(!m_settingsKey.isEmpty());
+    const auto groups = m_settings.childGroups();
+    return !groups.isEmpty() && groups.contains(settingsGroupName());
+}
+
+bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const
+{
+    auto [leftPos, leftVisible, leftGroup] = m_settingsData.value(lhsSymbol, {INT_MAX, false, QString()});
+    auto [rightPos, rightVisible, rightGroup] = m_settingsData.value(rhsSymbol, {INT_MAX, false, QString()});
+
+    // check if visible
+    leftPos = leftVisible ? leftPos : INT_MAX;
+    rightPos = rightVisible ? rightPos : INT_MAX;
+
+    return leftPos <= rightPos;
+}
+
+bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
+{
+    const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, false, QString()});
+    return visible;
 }
 
 void ManageTokensController::classBegin()

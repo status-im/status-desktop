@@ -13,6 +13,7 @@ DropArea {
     objectName: "manageTokensDelegate-%1".arg(index)
 
     // expected roles: symbol, name, communityId, communityName, communityImage, collectionName, imageUrl
+    // + enabledNetworkBalance, enabledNetworkCurrencyBalance -> TODO might get dropped/renamed in the future!!!
 
     property var controller
     property int visualIndex: index
@@ -71,7 +72,7 @@ DropArea {
                                                                             : LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
         bgRadius: priv.bgRadius
         hasImage: true
-        icon.source: root.isCollectible ? model.imageUrl : Constants.tokenIcon(model.symbol) // TODO unify via backend model for both assets and collectibles
+        icon.source: root.isCollectible ? model.imageUrl : Constants.tokenIcon(model.symbol) // TODO unify via backend model for both assets and collectibles; handle communityPrivilegesLevel
         icon.width: priv.iconSize
         icon.height: priv.iconSize
         spacing: 12

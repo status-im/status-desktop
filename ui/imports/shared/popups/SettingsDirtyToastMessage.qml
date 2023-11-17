@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import utils 1.0
 
@@ -12,14 +12,24 @@ Rectangle {
     id: root
 
     property bool active: false
+    property bool cancelButtonVisible: true
     property bool saveChangesButtonEnabled: false
+    property bool saveForLaterButtonVisible
     property alias saveChangesText: saveChangesButton.text
+    property alias saveForLaterText: saveForLaterButton.text
     property alias cancelChangesText: cancelChangesButton.text
     property alias changesDetectedText: changesDetectedTextItem.text
 
     property Flickable flickable: null
 
+    enum Type {
+        Danger,
+        Info
+    }
+    property int type: SettingsDirtyToastMessage.Type.Danger
+
     signal saveChangesClicked
+    signal saveForLaterClicked
     signal resetChangesClicked
 
     function notifyDirty() {
@@ -33,8 +43,9 @@ Rectangle {
     opacity: active ? 1 : 0
     color: Theme.palette.statusToastMessage.backgroundColor
     radius: 8
-    border.color: Theme.palette.dangerColor2
+    border.color: type === SettingsDirtyToastMessage.Type.Danger ? Theme.palette.dangerColor2 : Theme.palette.primaryColor2
     border.width: 2
+
     layer.enabled: true
     layer.effect: DropShadow {
         verticalOffset: 3
@@ -42,7 +53,7 @@ Rectangle {
         samples: 15
         fast: true
         cached: true
-        color: Theme.palette.dangerColor2
+        color: root.border.color
         spread: 0.1
     }
 
@@ -104,7 +115,6 @@ Rectangle {
 
         StatusBaseText {
             id: changesDetectedTextItem
-            Layout.columnSpan: 2
             Layout.fillWidth: true
             padding: 8
             horizontalAlignment: Text.AlignHCenter
@@ -116,8 +126,17 @@ Rectangle {
             id: cancelChangesButton
             text: qsTr("Cancel")
             enabled: root.active
+            visible: root.cancelButtonVisible
             type: StatusBaseButton.Type.Danger
             onClicked: root.resetChangesClicked()
+        }
+
+        StatusFlatButton {
+            id: saveForLaterButton
+            text: qsTr("Save for later")
+            enabled: root.active && root.saveChangesButtonEnabled
+            visible: root.saveForLaterButtonVisible
+            onClicked: root.saveForLaterClicked()
         }
 
         StatusButton {

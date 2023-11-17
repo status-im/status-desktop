@@ -26,6 +26,9 @@ SplitView {
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+
+        Component.onCompleted: forceActiveFocus()
+
         ManageCollectiblesPanel {
             id: showcasePanel
             width: 500
