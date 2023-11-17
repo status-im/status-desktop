@@ -11,6 +11,7 @@ import ../../../app/core/eventemitter
 import ../../../backend/backend as status_go
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/[main]
+import ../../../constants as main_constants
 import ./dto
 
 include ./async_tasks
@@ -19,15 +20,6 @@ logScope:
   topics = "gif-service"
 
 const MAX_RECENT = 50
-# set via `nim c` param `-d:TENOR_API_KEY:[api_key]`; should be set in CI/release builds
-const TENOR_API_KEY {.strdefine.} = ""
-let TENOR_API_KEY_ENV = $getEnv("TENOR_API_KEY")
-
-let TENOR_API_KEY_RESOLVED =
-  if TENOR_API_KEY_ENV != "":
-    TENOR_API_KEY_ENV
-  else:
-    TENOR_API_KEY
 
 const SIGNAL_LOAD_RECENT_GIFS_STARTED* = "loadRecentGifsStarted"
 const SIGNAL_LOAD_RECENT_GIFS_DONE* = "loadRecentGifsDone"
