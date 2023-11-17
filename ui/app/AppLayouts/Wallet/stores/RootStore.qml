@@ -38,7 +38,8 @@ QtObject {
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
-    property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
 
     property var savedAddresses: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model

@@ -80,7 +80,7 @@ StatusSectionLayout {
         store: root.store
         anchors.fill: parent
         onMenuItemClicked: {
-            if (profileContainer.currentItem.dirty) {
+            if (profileContainer.currentItem.dirty && !profileContainer.currentItem.ignoreDirty) {
                 event.accepted = true;
                 profileContainer.currentItem.notifyDirty();
             }

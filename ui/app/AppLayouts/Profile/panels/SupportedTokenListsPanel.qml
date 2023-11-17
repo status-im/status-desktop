@@ -21,11 +21,12 @@ StatusListView {
 
     signal itemClicked(string key)
 
+    implicitHeight: contentHeight
     model: root.sourcesOfTokensModel
     spacing: 8
     delegate: StatusListItem {
         height: 76
-        width: parent.width
+        width: ListView.view.width
         title: model.name
         subTitle: qsTr("%n token(s) · Last updated %1 @%2",
                        "",

@@ -181,6 +181,43 @@ T.ScrollView {
         applyFlickableFix()
     }
 
+    Keys.onPressed: {
+        switch (event.key) {
+        case Qt.Key_Home:
+            scrollHome()
+            event.accepted = true
+            break
+        case Qt.Key_End:
+            scrollEnd()
+            event.accepted = true
+            break
+        case Qt.Key_PageUp:
+            scrollPageUp()
+            event.accepted = true
+            break
+        case Qt.Key_PageDown:
+            scrollPageDown()
+            event.accepted = true
+            break
+        }
+    }
+
+    function scrollHome() {
+        flickable.contentY = 0
+    }
+
+    function scrollEnd() {
+        flickable.contentY = flickable.contentHeight - flickable.height
+    }
+
+    function scrollPageUp() {
+        root.ScrollBar.vertical.decrease()
+    }
+
+    function scrollPageDown() {
+        root.ScrollBar.vertical.increase()
+    }
+
     ScrollBar.vertical: StatusScrollBar {
         parent: root
         x: root.mirrored ? 1 : root.width - width - 1

@@ -29,11 +29,11 @@ SettingsContentBase {
     property var walletStore
     required property TokensStore tokensStore
 
-    readonly property int mainViewIndex: 0;
-    readonly property int networksViewIndex: 1;
-    readonly property int editNetworksViewIndex: 2;
-    readonly property int accountOrderViewIndex: 3;
-    readonly property int accountViewIndex: 4;
+    readonly property int mainViewIndex: 0
+    readonly property int networksViewIndex: 1
+    readonly property int editNetworksViewIndex: 2
+    readonly property int accountOrderViewIndex: 3
+    readonly property int accountViewIndex: 4
     readonly property int manageTokensViewIndex: 5
 
     readonly property string walletSectionTitle: qsTr("Wallet")
@@ -48,6 +48,34 @@ SettingsContentBase {
         }
     }
 
+    dirty: manageTokensView.dirty
+    ignoreDirty: stackContainer.currentIndex === manageTokensViewIndex
+    saveChangesButtonEnabled: dirty
+    toast.type: SettingsDirtyToastMessage.Type.Info
+    toast.cancelButtonVisible: false
+    toast.saveForLaterButtonVisible: dirty
+    toast.saveChangesText: qsTr("Apply to my Wallet")
+    toast.changesDetectedText: qsTr("New custom sort order created")
+
+    onSaveForLaterClicked: {
+        manageTokensView.saveChanges()
+    }
+    onSaveChangesClicked: {
+        manageTokensView.saveChanges()
+        Global.displayToastMessage(
+            qsTr("Your new custom asset order has been applied to your %1", "Go to Wallet")
+                    .arg(`<a style="text-decoration:none" href="#${Constants.appSection.wallet}">` + qsTr("Wallet", "Go to Wallet") + "</a>"),
+            "",
+            "checkmark-circle",
+            false,
+            Constants.ephemeralNotificationType.success,
+            ""
+        )
+    }
+    onResetChangesClicked: {
+        manageTokensView.resetChanges()
+    }
+
     StackLayout {
         id: stackContainer
 
@@ -55,7 +83,9 @@ SettingsContentBase {
         height: stackContainer.currentIndex === root.mainViewIndex ? main.height:
                 stackContainer.currentIndex === root.networksViewIndex ? networksView.height:
                 stackContainer.currentIndex === root.editNetworksViewIndex ? editNetwork.height:
-                stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height: accountView.height
+                stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height:
+                stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
+                                                                             accountView.height
         currentIndex: mainViewIndex
 
         onCurrentIndexChanged: {
@@ -218,12 +248,15 @@ SettingsContentBase {
         }
 
         ManageTokensView {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-
+            id: manageTokensView
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
+            baseWalletAssetsModel: RootStore.assets // TODO include community assets (#12369)
+            baseWalletCollectiblesModel: {
+                RootStore.setFillterAllAddresses() // FIXME no other way to get _all_ collectibles?
+                // TODO concat proxy model to include community collectibles (#12519)
+                return RootStore.collectiblesStore.ownedCollectibles
+            }
         }
 
         DappPermissionsView {

@@ -9,7 +9,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-Item {
+FocusScope {
     id: root
 
     property string sectionTitle
@@ -24,10 +24,13 @@ Item {
     property alias titleLayout: titleLayout
 
     property bool dirty: false
+    property bool ignoreDirty // ignore dirty state and do not notifyDirty()
     property bool saveChangesButtonEnabled: false
+    readonly property alias toast: settingsDirtyToastMessage
 
     signal baseAreaClicked()
     signal saveChangesClicked()
+    signal saveForLaterClicked()
     signal resetChangesClicked()
 
     function notifyDirty() {
@@ -112,15 +115,17 @@ Item {
 
                 Column {
                     id: contentWrapper
+                    onVisibleChanged: if (visible) forceActiveFocus()
                 }
             }
 
             Item {
                 // This is a settingsDirtyToastMessage placeholder
                 width: settingsDirtyToastMessage.implicitWidth
-                height: settingsDirtyToastMessage.active ? settingsDirtyToastMessage.implicitHeight : 0
+                height: settingsDirtyToastMessage.active && !root.ignoreDirty ? settingsDirtyToastMessage.implicitHeight : 0
 
                 Behavior on implicitHeight {
+                    enabled: !root.ignoreDirty
                     NumberAnimation {
                         duration: 150
                         easing.type: Easing.InOutQuad
@@ -133,11 +138,13 @@ Item {
     SettingsDirtyToastMessage {
         id: settingsDirtyToastMessage
         anchors.bottom: scrollView.bottom
+        anchors.bottomMargin: root.ignoreDirty ? 40 : 0
         anchors.horizontalCenter: scrollView.horizontalCenter
         active: root.dirty
-        flickable: scrollView.flickable
+        flickable: root.ignoreDirty ? null : scrollView.flickable
         saveChangesButtonEnabled: root.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()
+        onSaveForLaterClicked: root.saveForLaterClicked()
     }
 }

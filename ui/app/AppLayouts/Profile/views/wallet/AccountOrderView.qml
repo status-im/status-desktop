@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import SortFilterProxyModel 0.2
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
@@ -38,7 +37,6 @@ ColumnLayout {
         text: accountsList.count > 1? qsTr("Move your most frequently used accounts to the top of your wallet list") :
                                       qsTr("This account looks a little lonely. Add another account to enable re-ordering.")
         color: Theme.palette.baseColor1
-        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     StatusListView {
@@ -102,7 +100,6 @@ ColumnLayout {
                 icon.height: 40
                 icon.name: model.emoji
                 icon.color: Utils.getColorForId(model.colorId)
-                actions: []
             }
         }
     }

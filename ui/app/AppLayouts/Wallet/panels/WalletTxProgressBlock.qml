@@ -18,8 +18,8 @@ ColumnLayout {
     property int outNetworkLayer: 0
     property int inNetworkLayer: 0
 
-    property int outNetworkTimestamp: 0
-    property int inNetworkTimestamp: 0
+    property double outNetworkTimestamp: 0
+    property double inNetworkTimestamp: 0
 
     property string outChainName
     property string inChainName

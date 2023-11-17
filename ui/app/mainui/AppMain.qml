@@ -1612,6 +1612,7 @@ Item {
                 this.open = false
             }
             onLinkActivated: {
+                this.open = false
                 if(actionRequired) {
                     toastsManager.doAction(model.actionType, model.actionData)
                     return

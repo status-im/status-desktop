@@ -23,6 +23,7 @@ const auto kEnabledNetworkCurrencyBalanceRoleName = QByteArrayLiteral("enabledNe
 const auto kCustomSortOrderNoRoleName = QByteArrayLiteral("customSortOrderNo");
 const auto kTokenImageRoleName = QByteArrayLiteral("imageUrl");
 const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
+// TODO add communityPrivilegesLevel for collectibles
 } // namespace
 
 struct TokenData {

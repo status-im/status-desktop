@@ -36,10 +36,10 @@ public:
     Q_INVOKABLE void saveSettings();
     Q_INVOKABLE void clearSettings();
     Q_INVOKABLE void revert();
+    Q_INVOKABLE bool hasSettings() const;
 
-    // TODO: to be used by SFPM on the main wallet page as an "expressionRole"
-    // bool lessThan(lhsSymbol, rhsSymbol) const;
-    // bool filterAcceptsRow(index or symbol?) const;
+    Q_INVOKABLE bool lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const;
+    Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
 
 protected:
     void classBegin() override;
@@ -85,6 +85,7 @@ private:
 
     QString m_settingsKey;
     QString settingsKey() const;
+    QString settingsGroupName() const;
     void setSettingsKey(const QString& newSettingsKey);
     QSettings m_settings;
     void loadSettings();
