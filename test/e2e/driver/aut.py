@@ -107,6 +107,7 @@ class AUT:
                     f'--port={self.port}',
                     f'"{self.path}"',
                     f'-d={self.app_data}',
+                    f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
                     options
                 ]
                 self.pid = local_system.execute(command)

@@ -75,7 +75,7 @@ class AccountPopup(BasePopup):
     def set_origin_watched_address(self, value: str):
         self._origin_combobox.click()
         self._watched_address_origin_item.click()
-        assert self._origin_combobox.__getattr__('title') == WalletOrigin.WATCHED_ADDRESS_ORIGIN.value
+        assert getattr(self._origin_combobox.object, 'title') == WalletOrigin.WATCHED_ADDRESS_ORIGIN.value
         self._address_text_edit.text = value
         return self
 

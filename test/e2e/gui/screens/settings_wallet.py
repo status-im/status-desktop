@@ -249,10 +249,16 @@ class EditNetworkSettings(WalletSettingsView):
         self._test_network_tab.click()
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
-    def click_revert_to_default_and_go_to_networks_main_screen(self):
+    def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int=2):
         self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
         self._network_revert_to_default.click()
-        return NetworkWalletSettings().wait_until_appears()
+        try:
+            return NetworkWalletSettings().wait_until_appears()
+        except AssertionError:
+            if attempts:
+                return self.click_revert_to_default_and_go_to_networks_main_screen(attempts - 1)
+            else:
+                raise f"Networks screen was not opened"
 
     @allure.step('Check toast message')
     def check_toast_message(self, network_tab):

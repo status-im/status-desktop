@@ -25,3 +25,7 @@ SQUISH_DIR = SystemPath(os.getenv('SQUISH_DIR'))
 
 # Status Application
 STATUS_DATA: SystemPath = RUN / 'status'
+
+# Sets log level, can be one of: "ERROR", "WARN", "INFO", "DEBUG", "TRACE". "INFO"
+LOG_LEVEL = 'DEBUG'
+

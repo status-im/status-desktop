@@ -65,7 +65,7 @@ class LeftPanel(QObject):
     @close_exists(BasePopup())
     def open_saved_addresses(self) -> 'SavedAddressesView':
         self._saved_addresses_button.click()
-        return SavedAdressesView().wait_until_appears()
+        return SavedAddressesView().wait_until_appears()
 
     @allure.step('Select account from list')
     @close_exists(BasePopup())
@@ -130,10 +130,10 @@ class LeftPanel(QObject):
                 raise
 
 
-class SavedAdressesView(QObject):
+class SavedAddressesView(QObject):
 
     def __init__(self):
-        super(SavedAdressesView, self).__init__('mainWindow_SavedAddressesView')
+        super(SavedAddressesView, self).__init__('mainWindow_SavedAddressesView')
         self._add_new_address_button = Button('mainWallet_Saved_Addreses_Add_Buttton')
         self._address_list_item = QObject('savedAddressView_Delegate')
         self._send_button = Button('send_StatusRoundButton')
