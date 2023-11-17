@@ -75,10 +75,10 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, na
 
     with step('Enter and repeat PIN and verify keycard popup instructions are correct'):
         pin = Keycard.KEYCARD_PIN.value
-        keycard_popup.input_pin(pin)
+        keycard_popup.input_pin_or_puk(pin)
         assert driver.waitFor(lambda: Keycard.KEYCARD_REPEAT_PIN.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
-        keycard_popup.input_pin(pin)
+        keycard_popup.input_pin_or_puk(pin)
         assert driver.waitFor(lambda: Keycard.KEYCARD_PIN_SET.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 

@@ -39,7 +39,7 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account):
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         pin = Keycard.KEYCARD_PIN.value
         keycard_name = 'Card-1 Name'
-        keycard_popup.input_pin(pin)
+        keycard_popup.input_pin_or_puk(pin)
         assert driver.waitFor(lambda: Keycard.KEYCARD_PIN_VERIFIED.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 
@@ -96,7 +96,7 @@ def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_accou
         assert driver.waitFor(lambda: Keycard.KEYCARD_ENTER_PIN.value in keycard_popup.keycard_instructions,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         incorrect_pin = Keycard.KEYCARD_INCORRECT_PIN.value
-        keycard_popup.input_pin(incorrect_pin)
+        keycard_popup.input_pin_or_puk(incorrect_pin)
 
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_INCORRECT_PIN_MESSAGE.value in keycard_popup.keycard_instructions), \
@@ -110,7 +110,7 @@ def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_accou
         assert driver.waitFor(lambda: Keycard.KEYCARD_ENTER_PIN_2.value in keycard_popup.keycard_instructions,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         incorrect_pin = Keycard.KEYCARD_INCORRECT_PIN.value
-        keycard_popup.input_pin(incorrect_pin)
+        keycard_popup.input_pin_or_puk(incorrect_pin)
 
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_INCORRECT_PIN_MESSAGE.value in keycard_popup.keycard_instructions), \
@@ -124,7 +124,7 @@ def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_accou
         assert driver.waitFor(lambda: Keycard.KEYCARD_ENTER_PIN_2.value in keycard_popup.keycard_instructions,
                               configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         incorrect_pin = Keycard.KEYCARD_INCORRECT_PIN.value
-        keycard_popup.input_pin(incorrect_pin)
+        keycard_popup.input_pin_or_puk(incorrect_pin)
 
         assert driver.waitFor(
             lambda: Keycard.KEYCARD_LOCKED.value in keycard_popup.keycard_instructions), \

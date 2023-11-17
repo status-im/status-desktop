@@ -122,7 +122,7 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
         pin = Keycard.KEYCARD_PIN.value
         keycard_name = 'Card-1 Name'
-        keycard_popup.input_pin(pin)
+        keycard_popup.input_pin_or_puk(pin)
         assert driver.waitFor(lambda: Keycard.KEYCARD_PIN_VERIFIED.value in keycard_popup.keycard_instructions), \
             "There is no correct keycard instruction"
 
