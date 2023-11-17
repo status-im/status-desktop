@@ -320,6 +320,8 @@ Rectangle {
 
                     leftInset: Style.current.padding
                     bottomInset: Style.current.padding
+                    leftPadding: Style.current.xlPadding
+                    bottomPadding: Style.current.bigPadding
 
                     background: Rectangle {
                         MouseArea {
@@ -333,37 +335,48 @@ Rectangle {
                         radius: Style.current.radius
                         color: header.highlighted || mouseArea.containsMouse ? Style.current.backgroundHover : root.color
                         implicitWidth: parent.ListView.view.width - Style.current.padding * 2
-                        implicitHeight: parent.ListView.view.firstItem.height + Style.current.padding
                     }
 
-                    contentItem: Item {
+                    contentItem: ColumnLayout {
+                        spacing: 0
                         StatusBaseText {
                             id: allAccounts
-                            leftPadding: Style.current.padding
                             color: Theme.palette.baseColor1
                             text: qsTr("All accounts")
                             font.weight: Font.Medium
                             font.pixelSize: 15
+                            lineHeightMode: Text.FixedHeight
+                            lineHeight: 22
                         }
-
-                        StatusTextWithLoadingState {
-                            id: walletAmountValue
-                            objectName: "walletLeftListAmountValue"
-                            customColor: Style.current.textColor
-                            text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
-                            font.pixelSize: 22
-                            loading: RootStore.assetsLoading
+                        RowLayout {
+                            spacing: 4
+                            StatusTextWithLoadingState {
+                                id: walletAmountValue
+                                objectName: "walletLeftListAmountValue"
+                                customColor: Style.current.textColor
+                                text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, {noSymbol: true})
+                                font.pixelSize: 22
+                                loading: RootStore.assetsLoading
+                                lineHeightMode: Text.FixedHeight
+                                lineHeight: 36
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            StatusTextWithLoadingState {
+                                customColor: Style.current.textColor
+                                text: RootStore.totalCurrencyBalance.symbol
+                                font.pixelSize: 13
+                                loading: RootStore.assetsLoading
+                                font.weight: Font.Medium
+                                lineHeightMode: Text.FixedHeight
+                                lineHeight: 22
+                                verticalAlignment: Text.AlignBottom
+                            }
                             visible: !networkConnectionStore.accountBalanceNotAvailable
-                            anchors.top: allAccounts.bottom
-                            anchors.topMargin: 4
-                            anchors.bottomMargin: Style.current.padding
-                            leftPadding: Style.current.padding
                         }
-
                         StatusFlatRoundButton {
                             id: errorIcon
-                            width: 14
-                            height: visible ? 14 : 0
+                            Layout.preferredWidth: 14
+                            Layout.preferredHeight: 14
                             icon.width: 14
                             icon.height: 14
                             icon.name: "tiny/warning"
