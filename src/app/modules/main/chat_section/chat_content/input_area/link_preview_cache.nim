@@ -1,13 +1,15 @@
-import tables
+import tables, sets
 import ../../../../../../app_service/service/message/dto/link_preview
 
 type
   LinkPreviewCache* = ref object
     cache: Table[string, LinkPreview]
+    requests: HashSet[string]
 
 proc newLinkPreiewCache*(): LinkPreviewCache =
   result = LinkPreviewCache()
   result.cache = initTable[string, LinkPreview]()
+  result.requests = initHashSet[string]()
 
 # Returns a table of link previews for given `urls`.
 # If url is not found in cache, it's skipped
@@ -31,14 +33,22 @@ proc add*(self: LinkPreviewCache, linkPreviews: Table[string, LinkPreview]): seq
   for key, value in pairs(linkPreviews):
     result.add(key)
     self.cache[key] = value
+    self.requests.excl(key)
+
+# Marks the URL as requested.
+# This should be used to avoid duplicating unfurl requests.
+proc markAsRequested*(self: LinkPreviewCache, urls: seq[string]) =
+  for url in urls:
+    self.requests.incl(url)
 
 # Goes though given `urls` and returns a list 
 # of urls not found in cache.
 proc unknownUrls*(self: LinkPreviewCache, urls: seq[string]): seq[string] =
   for url in urls:
-    if not self.cache.hasKey(url):
+    if not self.cache.hasKey(url) and not self.requests.contains(url):
       result.add(url)
       
 # Clears link preview cache
 proc clear*(self: LinkPreviewCache) =
   self.cache.clear()
+  self.requests.clear()

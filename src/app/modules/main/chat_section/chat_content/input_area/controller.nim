@@ -219,6 +219,7 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
   if self.getLinkPreviewEnabled() and len(newUrls) > 0:
     self.messageService.asyncUnfurlUrls(newUrls)
+    self.linkPreviewCache.markAsRequested(newUrls)
     
 proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
   return self.linkPreviewCache.linkPreviews(urls)
