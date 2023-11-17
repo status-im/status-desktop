@@ -35,7 +35,7 @@ class MockedKeycardController(Window):
         self._scroll = Scroll('keycardFlickable')
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._plugin_reader_button.wait_until_appears()
+        driver.waitFor(lambda: self._plugin_reader_button.exists, timeout_msec)
         return self
 
     @property

@@ -173,7 +173,6 @@ class MainWindow(Window):
 
     @allure.step('Authorize user')
     def authorize_user(self, user_account) -> 'MainWindow':
-        self.prepare()
         assert isinstance(user_account, UserAccount)
         if LoginView().is_visible:
             return self.log_in(user_account)

@@ -1,8 +1,10 @@
 import logging
+import time
 import typing
 
 import allure
 
+import configs.timeouts
 import driver
 from constants import UserCommunityInfo
 from driver import objects_access
@@ -56,11 +58,16 @@ class CommunitiesSettingsView(QObject):
         raise LookupError(f'Community item: {name} not found')
 
     @allure.step('Open community info')
-    def get_community_info(self, name: str) -> UserCommunityInfo:
-        for community in self.communities:
-            if community.name == name:
-                return community
-        raise LookupError(f'Community item: {name} not found')
+    def get_community_info(
+            self, name: str, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> UserCommunityInfo:
+        started_at = time.monotonic()
+        while True:
+            communities = self.communities
+            for community in communities:
+                if community.name == name:
+                    return community
+            if time.monotonic() - started_at > timeout_msec:
+                raise LookupError(f'Community item: {name} not found in {communities}')
 
     @allure.step('Open community overview settings')
     def open_community_overview_settings(self, name: str):
