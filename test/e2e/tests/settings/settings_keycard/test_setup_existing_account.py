@@ -22,9 +22,8 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @pytest.mark.case(703623)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('account_name', [pytest.param('Status account')])
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_account, account_name, options):
+def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_account, account_name):
     main_screen.prepare()
 
     with step('Choose option Setup keycard with existing account in settings'):
@@ -113,7 +112,7 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
             "There is no correct keycard instruction"
 
     with step('Create keycard account using new seed phrase'):
-        keycard_popup.reveal_seed_phrase_and_confirm_words()
+        keycard_popup.confirm_seed_phrase()
         authenticate_popup = AuthenticatePopup().wait_until_appears()
         authenticate_popup.authenticate(user_account.password)
 

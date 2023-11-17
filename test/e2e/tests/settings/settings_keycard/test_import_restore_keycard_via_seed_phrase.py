@@ -18,9 +18,8 @@ from gui.mocked_keycard_controller import MockedKeycardController
                  'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_account, options):
+def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_account):
     with step('Choose option Import or restore account via seed phrase in settings'):
         main_screen.prepare()
         keycard_settings = main_screen.left_panel.open_settings().left_panel.open_keycard_settings()
@@ -47,6 +46,7 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_ac
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
 
     with step('Keycard image source path is correct'):
+        time.sleep(2)
         assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert keycard'):

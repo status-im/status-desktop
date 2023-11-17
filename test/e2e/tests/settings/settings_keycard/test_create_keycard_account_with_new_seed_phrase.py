@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 from allure import step
@@ -14,7 +16,6 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703624',
                  'Create a new keycard account with a new seed phrase')
 @pytest.mark.case(703624)
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.parametrize(
     'name, color, emoji_name, emoji, name1, color1, emoji1_name, emoji1, name2, color2, emoji2_name, emoji2',
     [
@@ -22,7 +23,7 @@ from gui.mocked_keycard_controller import MockedKeycardController
                      'thumbsup', '👍 ', 'Test Account3', '#ff7d46', 'cool', '🆒 ')
     ])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, options, name, color, emoji_name, emoji,
+def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, name, color, emoji_name, emoji,
                                                      name1, color1, emoji1_name, emoji1, name2, color2, emoji2_name,
                                                      emoji2):
     with step('Choose option Create a new Keycard account with a new seed phrase in settings'):
@@ -52,6 +53,7 @@ def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, op
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
 
     with step('Keycard image source path is correct'):
+        time.sleep(2)
         assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert keycard'):

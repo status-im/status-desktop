@@ -18,9 +18,8 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703627', 'Check whats on a Keycard')
 @pytest.mark.case(703627)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
+def test_check_whats_on_keycard(main_screen: MainWindow, user_account):
     main_screen.prepare()
 
     with step('Choose option Check whats on keycard in settings'):
@@ -46,6 +45,7 @@ def test_check_whats_on_keycard(main_screen: MainWindow, user_account, options):
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), "There is no correct keycard instruction"
 
     with step('Keycard image source path is correct'):
+        time.sleep(2)
         assert INSERT_KEYCARD_IMAGE_PATH == keycard_popup.keycard_image_source_path
 
     with step('Register and insert not status keycard'):

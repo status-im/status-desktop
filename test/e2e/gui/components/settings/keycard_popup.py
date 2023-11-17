@@ -219,7 +219,7 @@ class KeycardPopup(BasePopup):
 
     @allure.step('Name keycard and account')
     def name_keycard_and_account(self, keycard_name, account_name):
-        self.name_keycard(keycard_name).click_next()
+        self.name_keycard(keycard_name)
         self.name_account(account_name).click_next()
 
     @allure.step('Import keycard via seed phrase')

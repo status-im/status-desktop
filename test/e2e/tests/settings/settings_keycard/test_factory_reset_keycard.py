@@ -15,9 +15,8 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703628', 'Factory reset a Keycard')
 @pytest.mark.case(703628)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_factory_reset_keycard(main_screen: MainWindow, user_account, options):
+def test_factory_reset_keycard(main_screen: MainWindow, user_account):
     main_screen.prepare()
 
     with step('Open keycard settings'):
@@ -74,9 +73,8 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account, options):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704606', 'Factory reset a Keycard: incorrect PIN')
 @pytest.mark.case(704606)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('options', [aut_options.MOCK_KEYCARD])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/274")
-def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_account, options):
+def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_account):
     main_screen.prepare()
 
     with step('Open keycard settings'):
