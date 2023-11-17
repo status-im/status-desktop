@@ -94,7 +94,6 @@ ColumnLayout {
                 draggable: accountsList.count > 1
                 Drag.keys: [d.walletAccountDnDKey]
                 title: model.name
-                bgColor: Theme.palette.baseColor1
                 secondaryTitle: model.address
                 secondaryTitleIcon: model.walletType === Constants.watchWalletType? "show" :
                                                                                     model.keycardAccount ? "keycard" : ""
