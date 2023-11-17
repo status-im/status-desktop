@@ -33,9 +33,9 @@ proc toUrlUnfurlingMetadata*(jsonObj: JsonNode): UrlUnfurlingMetadata =
     warn "node is not an object", source = "toUrlUnfurlingMetadata"
     return
 
-  result.url = jsonObj["url"].getStr()
-  result.permission = toUrlUnfurlingPermission(jsonObj["permission"].getInt)
-  result.isStatusSharedUrl = jsonObj["isStatusSharedURL"].getBool()
+  result.url = jsonObj{"url"}.getStr()
+  result.permission = toUrlUnfurlingPermission(jsonObj{"permission"}.getInt)
+  result.isStatusSharedUrl = jsonObj{"isStatusSharedURL"}.getBool()
 
 proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
   result = UrlsUnfurlingPlan()

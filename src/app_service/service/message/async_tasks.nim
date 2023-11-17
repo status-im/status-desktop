@@ -196,6 +196,32 @@ const asyncGetFirstUnseenMessageIdForTaskArg: Task = proc(argEncoded: string) {.
 
   arg.finish(responseJson)
 
+#################################################
+# Async get text URLs to unfurl
+#################################################
+
+type
+  AsyncGetTextURLsToUnfurlTaskArg = ref object of QObjectTaskArg
+    text*: string
+    requestUuid*: string
+
+const asyncGetTextURLsToUnfurlTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetTextURLsToUnfurlTaskArg](argEncoded)
+  var output = %*{
+    "error": "",
+    "response": "",
+    "requestUuid": arg.requestUuid
+  }
+  try:
+    let response = status_go.getTextURLsToUnfurl(arg.text)
+    if response.error != nil:
+      output["error"] = %*response.error.message
+    output["response"] = %*response.result
+  except Exception as e:
+    error "asyncGetTextURLsToUnfurlTask failed:", msg = e.msg
+    output["error"] = %*e.msg
+  arg.finish(output)
+
 
 #################################################
 # Async unfurl urls

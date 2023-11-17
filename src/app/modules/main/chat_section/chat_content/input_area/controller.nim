@@ -30,6 +30,8 @@ type
     linkPreviewPersistentSetting: UrlUnfurlingMode
     linkPreviewCurrentMessageSetting: UrlUnfurlingMode
     unfurlRequests: HashSet[string]
+    unfurlingPlanActiveRequest: string
+    unfurlingPlanActiveRequestUnfurlAfter: bool
     unfurlingPlan: UrlsUnfurlingPlan
 
 proc newController*(
@@ -59,6 +61,7 @@ proc newController*(
   result.linkPreviewPersistentSetting = settingsService.urlUnfurlingMode()
   result.linkPreviewCurrentMessageSetting = result.linkPreviewPersistentSetting
   result.unfurlRequests = initHashSet[string]()
+  result.unfurlingPlanActiveRequest = ""
   result.unfurlingPlan = initUrlsUnfurlingPlan()
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode)
@@ -110,6 +113,14 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e:Args):
     let args = UrlUnfurlingModeArgs(e)
     self.onUnfurlingModeChanged(args.value)
+
+  self.events.on(SIGNAL_URLS_UNFURLING_PLAN_READY) do(e: Args):
+    let args = UrlsUnfurlingPlanDataArgs(e)
+    if self.unfurlingPlanActiveRequest != args.requestUuid:
+      return
+    self.unfurlingPlan = args.plan
+    self.unfurlingPlanActiveRequest = ""
+    self.handleUnfurlingPlan(self.unfurlingPlanActiveRequestUnfurlAfter)
 
 proc getChatId*(self: Controller): string =
   return self.chatId
@@ -215,8 +226,8 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
     self.delegate.setUrls(@[])
     return
 
-  self.unfurlingPlan = self.messageService.getTextURLsToUnfurl(text)
-  self.handleUnfurlingPlan(unfurlNewUrls)
+  self.unfurlingPlanActiveRequestUnfurlAfter = unfurlNewUrls
+  self.unfurlingPlanActiveRequest = self.messageService.asyncGetTextURLsToUnfurl(text)
 
 proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only

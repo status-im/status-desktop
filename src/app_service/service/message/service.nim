@@ -62,6 +62,7 @@ const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
 const SIGNAL_GET_MESSAGE_FINISHED* = "getMessageFinished"
+const SIGNAL_URLS_UNFURLING_PLAN_READY* = "urlsUnfurlingPlanReady"
 
 include async_tasks
 
@@ -120,6 +121,10 @@ type
   MessageEditedArgs* = ref object of Args
     chatId*: string
     message*: MessageDto
+
+  UrlsUnfurlingPlanDataArgs* = ref object of Args
+    plan*: UrlsUnfurlingPlan
+    requestUuid*: string
 
   LinkPreviewDataArgs* = ref object of Args
     linkPreviews*: Table[string, LinkPreview]
@@ -829,6 +834,34 @@ QtObject:
       return toUrlUnfurlingPlan(response.result)
     except Exception as e:
       error "getTextURLsToUnfurl failed", errName = e.name, errDesription = e.msg
+
+  proc onAsyncGetTextURLsToUnfurl*(self: Service, responseString: string) {.slot.} =
+    let response = responseString.parseJson()
+    if response.kind != JObject:
+      warn "expected response is not a json object", methodName = "onAsyncGetTextURLsToUnfurl"
+      return
+    let errMessage = response{"error"}.getStr()
+    if errMessage != "":
+      error "asyncGetTextURLsToUnfurl failed", errMessage
+      return
+
+    let args = UrlsUnfurlingPlanDataArgs(
+      plan: toUrlUnfurlingPlan(response{"response"}),
+      requestUuid: response{"requestUuid"}.getStr
+    )
+    self.events.emit(SIGNAL_URLS_UNFURLING_PLAN_READY, args)
+
+  proc asyncGetTextURLsToUnfurl*(self: Service, text: string): string =
+    let uuid = $genUUID()
+    let arg = AsyncGetTextURLsToUnfurlTaskArg(
+      tptr: cast[ByteAddress](asyncGetTextURLsToUnfurlTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetTextURLsToUnfurl",
+      text: text,
+      requestUuid: uuid,
+    )
+    self.threadpool.start(arg)
+    return uuid
 
   proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
     let responseObj = response.parseJson
