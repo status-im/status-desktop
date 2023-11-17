@@ -74,8 +74,9 @@ method unreadActivityCenterNotificationsCount*(self: Module): int =
 method hasUnseenActivityCenterNotifications*(self: Module): bool =
   self.controller.hasUnseenActivityCenterNotifications()
 
-method unreadActivityCenterNotificationsCountChanged*(self: Module) =
+method onNotificationsCountMayHaveChanged*(self: Module) =
   self.view.unreadActivityCenterNotificationsCountChanged()
+  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
   self.view.hasUnseenActivityCenterNotificationsChanged()
@@ -198,6 +199,7 @@ method markAllActivityCenterNotificationsRead*(self: Module): string =
 
 method markAllActivityCenterNotificationsReadDone*(self: Module) =
   self.view.markAllActivityCenterNotificationsReadDone()
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method markActivityCenterNotificationRead*(self: Module, notificationId: string) =
   self.controller.markActivityCenterNotificationRead(notificationId)
@@ -205,12 +207,14 @@ method markActivityCenterNotificationRead*(self: Module, notificationId: string)
 method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
 
 method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
   self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 method resetActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
   self.view.resetActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
@@ -221,6 +225,7 @@ method markActivityCenterNotificationUnread*(self: Module, notificationId: strin
 method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method removeActivityCenterNotifications*(self: Module, notificationIds: seq[string]) =
   self.view.removeActivityCenterNotifications(notificationIds)

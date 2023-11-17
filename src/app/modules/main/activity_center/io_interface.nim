@@ -27,7 +27,7 @@ method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.bas
 method hasUnseenActivityCenterNotifications*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method unreadActivityCenterNotificationsCountChanged*(self: AccessInterface) {.base.} =
+method onNotificationsCountMayHaveChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasUnseenActivityCenterNotificationsChanged*(self: AccessInterface) {.base.} =

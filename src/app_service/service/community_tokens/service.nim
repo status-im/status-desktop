@@ -316,7 +316,6 @@ QtObject:
       self.acService.parseActivityCenterResponse(response)
       let notificationToSetRead = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, contractDetails.communityId)
       if notificationToSetRead != nil:
-        # NOTE: can this be implemented on the status-go side?
         self.acService.markActivityCenterNotificationRead(notificationToSetRead.id)
     except Exception as e:
       error "Error processing set signer transaction", msg=e.msg

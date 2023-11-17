@@ -54,28 +54,23 @@ proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
     self.delegate.addActivityCenterNotifications(args.activityCenterNotifications)
-    self.delegate.hasUnseenActivityCenterNotificationsChanged()
     self.updateActivityGroupCounters()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ) do(e: Args):
     var evArgs = ActivityCenterNotificationIdsArgs(e)
     if (evArgs.notificationIds.len > 0):
       self.delegate.markActivityCenterNotificationReadDone(evArgs.notificationIds)
-      self.delegate.unreadActivityCenterNotificationsCountChanged()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_UNREAD) do(e: Args):
     var evArgs = ActivityCenterNotificationIdsArgs(e)
     if (evArgs.notificationIds.len > 0):
       self.delegate.markActivityCenterNotificationUnreadDone(evArgs.notificationIds)
-      self.delegate.unreadActivityCenterNotificationsCountChanged()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ) do(e: Args):
     self.delegate.markAllActivityCenterNotificationsReadDone()
-    self.delegate.unreadActivityCenterNotificationsCountChanged()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
-    self.delegate.unreadActivityCenterNotificationsCountChanged()
-    self.delegate.hasUnseenActivityCenterNotificationsChanged()
+    self.delegate.onNotificationsCountMayHaveChanged()
     self.updateActivityGroupCounters()
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED) do(e: Args):
