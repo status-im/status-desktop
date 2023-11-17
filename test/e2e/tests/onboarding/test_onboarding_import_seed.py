@@ -10,6 +10,8 @@ from driver.aut import AUT
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
+from gui.main_window import LeftPanel
+from gui.mocked_keycard_controller import MockedKeycardController
 from gui.screens.onboarding import BiometricsView, AllowNotificationsView, WelcomeToStatusView, KeysView
 
 
@@ -47,10 +49,11 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
+        MockedKeycardController().wait_until_appears().hide()
 
     with (step('Verify that restored account reveals correct status wallet address')):
         status_acc_view = (
-            main_window.left_panel.open_settings().left_panel.open_wallet_settings().open_status_account_in_settings())
+            LeftPanel().open_settings().left_panel.open_wallet_settings().open_status_account_in_settings())
         address = status_acc_view.get_account_address_value()
         assert address == user_account.status_address, \
             f"Recovered account should have address {user_account.status_address}, but has {address}"

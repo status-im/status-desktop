@@ -7,6 +7,7 @@ from allure_commons._allure import step
 
 from constants.wallet import WalletNetworkSettings, DerivationPath, WalletAccountSettings
 from gui.main_window import MainWindow
+from gui.screens.settings import SettingsScreen
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
@@ -26,7 +27,7 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
              when display name is {profile_display_name}"
 
     status_acc_view = (
-        main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_status_account_in_settings())
+        SettingsScreen().left_panel.open_wallet_settings().open_status_account_in_settings())
 
     with step('Check the default values on the account details view for Status account'):
         assert status_acc_view.get_account_name_value() == WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value, \

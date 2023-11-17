@@ -3,6 +3,7 @@ import typing
 
 import allure
 
+import configs
 import driver
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -32,6 +33,10 @@ class MockedKeycardController(Window):
         self._mnemonic_metadata_item = QObject('keycard_With_Mnemonic_Metadata_StatusMenuItem')
         self._field_object = QObject('keycard_edit_TextEdit')
         self._scroll = Scroll('keycardFlickable')
+
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        self._plugin_reader_button.wait_until_appears()
+        return self
 
     @property
     @allure.step('Get text fields')
