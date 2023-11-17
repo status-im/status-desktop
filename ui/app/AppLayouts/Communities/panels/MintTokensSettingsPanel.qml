@@ -316,8 +316,7 @@ StackView {
             property string referenceName: ""
             property string referenceSymbol: ""
 
-            title: optionsTab.currentItem === assetsTab
-                   ? qsTr("Mint asset") : qsTr("Mint collectible")
+            title: qsTr("Mint token")
 
             contentItem: ColumnLayout {
                 width: root.viewWidth
