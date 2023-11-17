@@ -160,7 +160,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Debug Wallet Connect")
-                visible: root.advancedStore.isDebugEnabled
+                visible: true //root.advancedStore.isDebugEnabled
 
                 onClicked: {
                     wcLoader.active = true
