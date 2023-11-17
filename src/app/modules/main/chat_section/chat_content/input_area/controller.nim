@@ -1,4 +1,4 @@
-import io_interface, chronicles, tables, sequtils, strutils, sugar
+import io_interface, tables, sequtils, strutils, sugar, sets
 
 
 import ../../../../../../app_service/service/settings/service as settings_service
@@ -8,6 +8,7 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/gif/service as gif_service
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/message/dto/urls_unfurling_plan
 import ../../../../../../app_service/service/settings/dto/settings
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
@@ -28,6 +29,8 @@ type
     linkPreviewCache: LinkPreviewCache
     linkPreviewPersistentSetting: UrlUnfurlingMode
     linkPreviewCurrentMessageSetting: UrlUnfurlingMode
+    unfurlRequests: HashSet[string]
+    unfurlingPlan: UrlsUnfurlingPlan
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -55,10 +58,15 @@ proc newController*(
   result.linkPreviewCache = newLinkPreiewCache()
   result.linkPreviewPersistentSetting = settingsService.urlUnfurlingMode()
   result.linkPreviewCurrentMessageSetting = result.linkPreviewPersistentSetting
+  result.unfurlRequests = initHashSet[string]()
+  result.unfurlingPlan = initUrlsUnfurlingPlan()
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode)
-proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs)
+proc onUrlsUnfurled(self: Controller, args: LinkPreviewDataArgs)
 proc clearLinkPreviewCache*(self: Controller)
+proc asyncUnfurlUrls(self: Controller, urls: seq[string])
+proc asyncUnfurlUnknownUrls(self: Controller, urls: seq[string])
+proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool)
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -93,7 +101,10 @@ proc init*(self: Controller) =
     self.delegate.searchGifsError()
 
   self.events.on(SIGNAL_URLS_UNFURLED) do(e:Args):
-    let args = LinkPreviewV2DataArgs(e)
+    let args = LinkPreviewDataArgs(e)
+    if not self.unfurlRequests.contains(args.requestUuid):
+      return
+    self.unfurlRequests.excl(args.requestUuid)
     self.onUrlsUnfurled(args)
 
   self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e:Args):
@@ -195,7 +206,7 @@ proc isFavorite*(self: Controller, item: GifDto): bool =
 proc getLinkPreviewEnabled*(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.Enabled or self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.Enabled
 
-proc canAskToEnableLinkPreview(self: Controller): bool =
+proc shouldAskToEnableLinkPreview(self: Controller): bool =
   return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
@@ -204,22 +215,64 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
     self.delegate.setUrls(@[])
     return
 
-  let urls = self.messageService.getTextUrls(text)
-  self.delegate.setUrls(urls)
+  self.unfurlingPlan = self.messageService.getTextURLsToUnfurl(text)
+  self.handleUnfurlingPlan(unfurlNewUrls)
 
-  let supportedUrls = urls.filter(x => not x.endsWith(".gif")) # GIFs are currently unfurled by receiver
-  self.delegate.setLinkPreviewUrls(supportedUrls)
-  let newUrls = self.linkPreviewCache.unknownUrls(supportedUrls)
+proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
+  var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
+  var allAllowedUrls = newSeq[string]() # Used for LinkPreviewsModel to keep the urls order
+  var statusAllowedUrls = newSeq[string]()
+  var otherAllowedUrls = newSeq[string]()
+  var askToEnableLinkPreview = false
 
-  let askToEnableLinkPreview = len(newUrls) > 0 and self.canAskToEnableLinkPreview()
+  for metadata in self.unfurlingPlan.urls:
+    allUrls.add(metadata.url)
+
+    if metadata.permission == UrlUnfurlingForbiddenBySettings or
+       metadata.permission == UrlUnfurlingNotSupported:
+        continue
+
+    if metadata.permission == UrlUnfurlingAskUser:
+      if self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk:
+        askToEnableLinkPreview = true
+      else:
+        otherAllowedUrls.add(metadata.url)
+        allAllowedUrls.add(metadata.url)
+      continue
+
+    # Split unfurling into 2 packs, which will be different RPCs.
+    # In most cases we expect status links to ufurl immediately.
+    # In future we could unfurl each link in a separate RPC,
+    # this would give better UX, but might result in worse performance.
+    if metadata.isStatusSharedUrl:
+      statusAllowedUrls.add(metadata.url)
+    else:
+      otherAllowedUrls.add(metadata.url)
+
+    allAllowedUrls.add(metadata.url)
+
+  # Update UI
+  self.delegate.setUrls(allUrls)
+  self.delegate.setLinkPreviewUrls(allAllowedUrls)
   self.delegate.setAskToEnableLinkPreview(askToEnableLinkPreview)
 
   if not unfurlNewUrls:
     return
 
-  if self.getLinkPreviewEnabled() and len(newUrls) > 0:
-    self.messageService.asyncUnfurlUrls(newUrls)
-    self.linkPreviewCache.markAsRequested(newUrls)
+  self.asyncUnfurlUnknownUrls(statusAllowedUrls)
+  self.asyncUnfurlUnknownUrls(otherAllowedUrls)
+
+proc reloadUnfurlingPlan*(self: Controller) =
+  self.setText(self.delegate.getPlainText(), true)
+
+proc asyncUnfurlUrls(self: Controller, urls: seq[string]) =
+  let requestUuid = self.messageService.asyncUnfurlUrls(urls)
+  self.unfurlRequests.incl(requestUuid)
+  self.linkPreviewCache.markAsRequested(urls)
+
+proc asyncUnfurlUnknownUrls(self: Controller, urls: seq[string]) =
+  let newUrls = self.linkPreviewCache.unknownUrls(urls)
+  self.asyncUnfurlUrls(newUrls)
     
 proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
   return self.linkPreviewCache.linkPreviews(urls)
@@ -227,24 +280,18 @@ proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, 
 proc clearLinkPreviewCache*(self: Controller) =
   self.linkPreviewCache.clear()
 
-proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs) =
-  if not self.getLinkPreviewEnabled():
-    return
-    
+proc onUrlsUnfurled(self: Controller, args: LinkPreviewDataArgs) =
   let urls = self.linkPreviewCache.add(args.linkPreviews)
   self.delegate.updateLinkPreviewsFromCache(urls)
 
 proc loadLinkPreviews*(self: Controller, urls: seq[string]) =
   if self.getLinkPreviewEnabled():
-    self.messageService.asyncUnfurlUrls(urls)
+    self.asyncUnfurlUrls(urls)
 
 proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
-  if enabled:
-    discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Enabled)
-    return
-  discard self.settingsService.saveUrlUnfurlingMode(UrlUnfurlingMode.Disabled)
+  let mode = if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
+  discard self.settingsService.saveUrlUnfurlingMode(mode)
 
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
   self.linkPreviewPersistentSetting = value
-  self.resetLinkPreviews()
-  self.setText(self.delegate.getPlainText(), self.getLinkPreviewEnabled())
+  self.reloadUnfurlingPlan()

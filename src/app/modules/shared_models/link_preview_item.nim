@@ -26,3 +26,8 @@ proc `$`*(self: Item): string =
     immutable: {self.immutable},
     linkPreview: {self.linkPreview},
   )"""
+
+proc markAsImmutable*(self: Item) =
+  self.linkPreview = initLinkPreview(self.linkPreview.url)
+  self.unfurled = false
+  self.immutable = true

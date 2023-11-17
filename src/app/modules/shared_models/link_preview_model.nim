@@ -235,12 +235,13 @@ QtObject:
 
     # Move or insert
     for i in 0 ..< urls.len:
-      let index = self.findUrlIndex(urls[i])
+      let url = urls[i]
+      let index = self.findUrlIndex(url)
       if index >= 0:
         self.moveRow(index, i)
         continue
 
-      let linkPreview = initLinkPreview(urls[i])
+      let linkPreview = initLinkPreview(url)
       var item = Item()
       item.unfurled = false
       item.immutable = false
@@ -266,9 +267,7 @@ QtObject:
     if index < 0 or index >= self.items.len:
       return
 
-    self.items[index].linkPreview = initLinkPreview(self.items[index].linkPreview.url)
-    self.items[index].unfurled = false
-    self.items[index].immutable = true
+    self.items[index].markAsImmutable()
 
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
@@ -276,7 +275,13 @@ QtObject:
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
     for i in 0 ..< self.items.len:
-      self.removePreviewData(i)
+      self.items[i].markAsImmutable()
+  
+    let indexStart = self.createIndex(0, 0, nil)
+    let indexEnd = self.createIndex(self.items.len, 0, nil)
+    defer: indexStart.delete
+    defer: indexEnd.delete
+    self.dataChanged(indexStart, indexEnd)
       
   proc getUnfuledLinkPreviews*(self: Model): seq[LinkPreview] =
     result = @[]

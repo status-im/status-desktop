@@ -19,6 +19,7 @@ import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
 import ./dto/link_preview
 import ./dto/status_link_preview
+import ./dto/urls_unfurling_plan
 import ./message_cursor
 
 import ../../common/message as message_common
@@ -120,8 +121,9 @@ type
     chatId*: string
     message*: MessageDto
 
-  LinkPreviewV2DataArgs* = ref object of Args
+  LinkPreviewDataArgs* = ref object of Args
     linkPreviews*: Table[string, LinkPreview]
+    requestUuid*: string
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
@@ -821,8 +823,14 @@ QtObject:
     except Exception as e:
       error "getTextUrls failed", errName = e.name, errDesription = e.msg
 
-  proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
+  proc getTextURLsToUnfurl*(self: Service, text: string): UrlsUnfurlingPlan =
+    try:
+      let response = status_go.getTextURLsToUnfurl(text)
+      return toUrlUnfurlingPlan(response.result)
+    except Exception as e:
+      error "getTextURLsToUnfurl failed", errName = e.name, errDesription = e.msg
 
+  proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
     let responseObj = response.parseJson
     if responseObj.kind != JObject:
       warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
@@ -858,22 +866,25 @@ QtObject:
       if not linkPreviews.hasKey(url):
         linkPreviews[url] = initLinkPreview(url)
 
-    let args = LinkPreviewV2DataArgs(
-      linkPreviews: linkPreviews
+    let args = LinkPreviewDataArgs(
+      linkPreviews: linkPreviews,
+      requestUuid: responseObj["requestUuid"].getStr
     )
     self.events.emit(SIGNAL_URLS_UNFURLED, args)
 
-
-  proc asyncUnfurlUrls*(self: Service, urls: seq[string]) =
+  proc asyncUnfurlUrls*(self: Service, urls: seq[string]): string =
     if len(urls) == 0:
-      return
+      return ""
+    let uuid = $genUUID()
     let arg = AsyncUnfurlUrlsTaskArg(
       tptr: cast[ByteAddress](asyncUnfurlUrlsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncUnfurlUrlsFinished",
-      urls: urls
+      urls: urls,
+      requestUuid: uuid,
     )
     self.threadpool.start(arg)
+    return uuid
 
 # See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: Service, parsedText: ParsedText, communityChats: seq[ChatDto]): string =

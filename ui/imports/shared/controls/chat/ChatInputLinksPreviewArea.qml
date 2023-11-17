@@ -159,7 +159,7 @@ Control {
             sourceModel: root.linkPreviewModel
             filters: [
                 ExpressionFilter {
-                    expression: { return !model.immutable || model.unfurled } // Filter out immutable links that haven't been unfurled yet
+                    expression: !model.immutable || model.unfurled // Filter out immutable links that haven't been unfurled yet
                 }
             ]
         }

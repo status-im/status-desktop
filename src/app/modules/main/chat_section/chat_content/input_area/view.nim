@@ -58,10 +58,12 @@ QtObject:
       msg: string,
       replyTo: string,
       contentType: int) {.slot.} =
+    # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+    # FIXME: Update this when `setText` is async.
     self.delegate.setText(msg, false)
     self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
 
@@ -232,10 +234,7 @@ QtObject:
 
   proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
     self.linkPreviewModel.setUrls(urls)
-    if(self.delegate.getLinkPreviewEnabled()):
-      self.updateLinkPreviewsFromCache(urls)
-    else:
-      self.linkPreviewModel.removeAllPreviewData()
+    self.updateLinkPreviewsFromCache(urls)
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()
@@ -254,10 +253,7 @@ QtObject:
   
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
-    let links = self.linkPreviewModel.getLinks()
-    self.linkPreviewModel.clearItems()
-    self.setLinkPreviewUrls(links)
-    self.loadLinkPreviews(links)
+    self.delegate.reloadUnfurlingPlan()
 
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)

@@ -76,6 +76,10 @@ proc getTextUrls*(text: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[text]
   result = callPrivateRPC("getTextURLs".prefix, payload)
 
+proc getTextURLsToUnfurl*(text: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[text]
+  result = callPrivateRPC("getTextURLsToUnfurl".prefix, payload)
+
 proc unfurlUrls*(urls: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[urls]
   result = callPrivateRPC("unfurlURLs".prefix, payload)
