@@ -4,7 +4,7 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 import location_menu_model, location_menu_item
-import location_menu_sub_model, location_menu_sub_item
+import location_menu_sub_item
 import result_model, result_item
 import ../../shared_models/message_item
 

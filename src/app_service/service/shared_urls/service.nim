@@ -1,9 +1,8 @@
-import NimQml, os, json, chronicles
+import NimQml, json, chronicles
 
 import ../../../backend/general as status_general
-import ../../../constants as app_constants
 import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/tasks/threadpool
 
 import ./dto/url_data as url_data_dto
 

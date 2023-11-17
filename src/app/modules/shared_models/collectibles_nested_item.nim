@@ -1,4 +1,4 @@
-import strformat, stint
+import strformat
 
 type
   Item* = object

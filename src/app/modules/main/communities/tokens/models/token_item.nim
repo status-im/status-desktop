@@ -3,7 +3,6 @@ import ../../../../../../app_service/service/community_tokens/dto/community_toke
 import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/service/network/dto
 import ../../../../../../app_service/common/types
-from backend/collectibles_types import CollectibleOwner
 
 import token_owners_model
 import token_owners_item

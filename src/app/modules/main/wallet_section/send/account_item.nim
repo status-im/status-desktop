@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml
 import ../../../shared_models/wallet_account_item
 import ../../../shared_models/token_model
 import ../../../shared_models/currency_amount

@@ -1,4 +1,4 @@
-import Tables, sugar, sequtils, strutils
+import Tables
 
 import io_interface
 

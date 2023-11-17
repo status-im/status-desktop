@@ -1,4 +1,4 @@
-import Tables, NimQml, sequtils, sugar
+import NimQml, sequtils, sugar
 
 import app_service/service/network/[dto, types]
 import ./io_interface

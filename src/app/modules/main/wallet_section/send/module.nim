@@ -1,4 +1,4 @@
-import tables, NimQml, sequtils, sugar, json, stint, strutils, chronicles
+import tables, NimQml, sequtils, sugar, stint, strutils, chronicles
 
 import ./io_interface, ./view, ./controller, ./network_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_model
 import ../io_interface as delegate_interface
@@ -8,7 +8,6 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
-import app_service/service/network_connection/service
 import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
 import app/modules/shared/wallet_utils

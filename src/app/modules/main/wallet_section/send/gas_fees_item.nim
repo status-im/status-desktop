@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml
 
 QtObject:
   type GasFeesItem* = ref object of QObject

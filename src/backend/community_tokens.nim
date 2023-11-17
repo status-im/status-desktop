@@ -2,7 +2,6 @@ import json, stint
 import std/sequtils
 import std/sugar
 import ./eth
-import ../app_service/common/utils
 import ./core, ./response_type
 import ../app_service/service/community_tokens/dto/community_token
 import interpret/cropped_image

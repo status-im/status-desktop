@@ -5,7 +5,6 @@ import app/modules/shared_models/currency_amount
 
 import app/global/global_singleton
 
-import app_service/service/currency/dto as currency
 import app_service/service/currency/service
 
 import web3/ethtypes as eth

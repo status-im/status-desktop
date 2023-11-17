@@ -1,11 +1,9 @@
-import sugar, sequtils, tables
+import sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/currency/dto as currency_dto
-
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 type
   Controller* = ref object of RootObj

@@ -1,4 +1,3 @@
-import stint
 import ./io_interface
 
 import ../../../core/signals/types

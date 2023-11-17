@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, chronicles
+import NimQml, Tables, sequtils
 import item
 import ../../../../../app_service/service/devices/dto/[installation]
 

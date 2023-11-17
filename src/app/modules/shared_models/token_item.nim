@@ -1,6 +1,5 @@
 import strformat
 
-import ../../../app_service/service/wallet_account/dto/account_dto
 import ./balance_item as balance_item
 import ./balance_model as balance_model
 import ./currency_amount

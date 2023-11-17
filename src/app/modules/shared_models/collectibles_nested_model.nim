@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils, logging
+import NimQml, Tables, strutils, strformat, sequtils
 
 import ./collectibles_model as flat_model
 import ./collectibles_item as flat_item

@@ -1,6 +1,5 @@
 import chronicles, uuids, times
 import io_interface
-import json
 
 import ../../../../../../app/global/global_singleton
 import ../../../../../../app_service/service/contacts/service as contact_service

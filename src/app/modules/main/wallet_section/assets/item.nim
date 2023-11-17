@@ -1,5 +1,4 @@
 import strformat
-import ../../../shared_models/currency_amount
 
 type
   Item* = object

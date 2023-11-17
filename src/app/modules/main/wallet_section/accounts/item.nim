@@ -1,4 +1,3 @@
-import strformat
 import ../../../shared_models/wallet_account_item
 import ../../../shared_models/currency_amount
 

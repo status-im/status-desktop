@@ -13,7 +13,6 @@ import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/keycard/service as keycard_service
 import app_service/common/types
-import backend/collectibles as backend_collectibles
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"

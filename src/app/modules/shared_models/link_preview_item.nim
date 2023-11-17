@@ -1,7 +1,5 @@
 import strformat
 import ../../../app_service/service/message/dto/link_preview
-import ../../../app_service/service/message/dto/status_community_link_preview
-import ../../../app_service/service/message/dto/status_community_channel_link_preview
 
 type
   Item* = ref object

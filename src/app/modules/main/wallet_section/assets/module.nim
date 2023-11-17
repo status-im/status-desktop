@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, sugar
+import NimQml, sequtils, sugar
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -9,10 +9,8 @@ import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/network_connection/service as network_connection
 import ../../../../../app_service/service/node/service as node_service
 import ../../../shared/wallet_utils
-import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
-import ./item as account_item
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface

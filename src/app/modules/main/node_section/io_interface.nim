@@ -1,4 +1,3 @@
-import json
 import ../../../core/signals/types
 
 type

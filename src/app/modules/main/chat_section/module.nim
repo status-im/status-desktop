@@ -14,9 +14,7 @@ import ../../shared_models/token_criteria_model
 import ../../shared_models/token_permission_chat_list_model
 
 import chat_content/module as chat_content_module
-import chat_content/users/module as users_module
 
-import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter

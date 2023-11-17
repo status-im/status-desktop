@@ -1,4 +1,4 @@
-import std/uri, uuids
+import uuids
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 

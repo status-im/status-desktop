@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface

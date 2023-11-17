@@ -23,7 +23,6 @@ import ./dto as transaction_dto
 import ./cryptoRampDto
 import ../eth/utils as eth_utils
 import ../../common/conversion
-import ../../../constants as main_constants
 
 
 export transaction_dto

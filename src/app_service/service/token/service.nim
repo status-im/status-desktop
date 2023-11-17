@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, strformat, algorithm
+import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm
 
 import web3/ethtypes
 from web3/conversions import `$`

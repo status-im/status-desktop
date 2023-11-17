@@ -1,4 +1,3 @@
-import json
 from backend/collectibles_types import CollectibleOwner
 
 type

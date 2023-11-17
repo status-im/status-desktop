@@ -1,16 +1,13 @@
-import tables, NimQml, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar
 
-import ./io_interface, ./view, ./item, ./controller
+import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
-import ../../../../../app_service/common/account_constants
-import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../shared/wallet_utils
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 export io_interface
 

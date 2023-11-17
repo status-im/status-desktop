@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, sugar, options, strutils, locks
+import NimQml, logging, std/json, sequtils, sugar, options, strutils
 import tables, stint, sets
 
 import model

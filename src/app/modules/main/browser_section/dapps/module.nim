@@ -9,7 +9,7 @@ import controller
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import options
+
 export io_interface
 
 type

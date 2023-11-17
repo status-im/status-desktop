@@ -1,11 +1,9 @@
 import NimQml, Tables, strutils, strformat, sequtils, stint, json
 import logging
 
-import ./collectibles_item, ./collectible_trait_model
+import ./collectibles_item
 import web3/ethtypes as eth
 import backend/activity as backend_activity
-import backend/community_tokens_types
-import ../../../app_service/common/utils as common_utils
 
 type
   CollectibleRole* {.pure.} = enum

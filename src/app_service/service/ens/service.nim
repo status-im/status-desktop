@@ -1,7 +1,5 @@
 import NimQml, Tables, sets, json, sequtils, strutils, chronicles
-import web3/conversions
-import web3/[conversions, ethtypes], stint
-import web3/ethtypes
+import web3/ethtypes, stint
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]

@@ -1,4 +1,4 @@
-import NimQml, Tables, json, stint, sugar, sequtils
+import NimQml, Tables, json, stint, sequtils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -13,8 +13,6 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
-
-import ../../../global/app_sections_config as conf
 
 export io_interface
 

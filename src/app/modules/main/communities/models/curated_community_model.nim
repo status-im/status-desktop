@@ -1,6 +1,6 @@
 import NimQml, Tables
 import curated_community_item
-import ../../../shared_models/[token_permissions_model, token_permission_item]
+import ../../../shared_models/token_permission_item
 
 type
   ModelRole {.pure.} = enum

@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strformat, strutils
+import NimQml, Tables, json, sequtils, strutils
 import ./item
 
 type

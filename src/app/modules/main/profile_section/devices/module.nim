@@ -2,7 +2,6 @@ import NimQml, tables, strutils, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
-import logging
 
 import app/global/global_singleton
 import app/core/eventemitter

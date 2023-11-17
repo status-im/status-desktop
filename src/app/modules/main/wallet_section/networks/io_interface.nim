@@ -1,5 +1,3 @@
-import NimQml
-
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.

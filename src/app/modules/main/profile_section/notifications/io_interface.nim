@@ -1,5 +1,4 @@
 import NimQml
-import ../../../../global/app_signals
 from ../../../../../app_service/service/community/dto/community import CommunityDto
 from ../../../../../app_service/service/chat/dto/chat import ChatDto
 

@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, marshal, sequtils, sugar, strutils
+import NimQml, chronicles, sequtils, sugar, strutils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
