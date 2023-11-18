@@ -317,6 +317,10 @@ Item {
 
         anchors.fill: parent
 
+        Component.onCompleted: {
+            console.debug(`@dd WalletConnectSDK.WebEngineView.onCompleted; url: ${url}; debug? ${SQUtils.isDebug()};`)
+        }
+
         url: "qrc:/app/AppLayouts/Wallet/views/walletconnect/sdk/src/index.html"
         webChannel: statusChannel
 
