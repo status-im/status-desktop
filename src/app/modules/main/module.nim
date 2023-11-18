@@ -118,6 +118,8 @@ type
     pendingSpectateRequest: SpectateRequest
     statusDeepLinkToActivate: string
 
+{.push warning[Deprecated]: off.}
+
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
@@ -1567,3 +1569,5 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
+
+{.pop.}

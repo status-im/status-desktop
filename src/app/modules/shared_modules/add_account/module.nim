@@ -70,6 +70,8 @@ proc newModule*[T](delegate: T,
   result.authenticationReason = AuthenticationReason.AddingAccount
   result.fetchingAddressesIsInProgress = false
 
+{.push warning[Deprecated]: off.}
+
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -741,3 +743,5 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*[T](self: Module[T]) =
     pairType = KeyPairType.SeedImport,
     derivedFrom = genAcc.address)
   self.setItemForSelectedOrigin(item)
+
+{.pop.}
