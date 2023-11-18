@@ -11,7 +11,6 @@ import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
-import app_service/common/types
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model

@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables, sugar
+import NimQml, json, chronicles, tables
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton

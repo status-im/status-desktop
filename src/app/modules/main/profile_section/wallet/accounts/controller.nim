@@ -1,7 +1,6 @@
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/currency/dto
-import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 type
   Controller* = ref object of RootObj

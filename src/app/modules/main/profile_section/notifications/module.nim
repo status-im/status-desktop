@@ -1,9 +1,8 @@
-import NimQml, algorithm, json, chronicles
+import NimQml, algorithm, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
 
-import ../../../../global/app_signals
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service

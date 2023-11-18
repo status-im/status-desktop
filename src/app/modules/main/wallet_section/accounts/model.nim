@@ -1,8 +1,7 @@
-import NimQml, Tables, strutils, strformat, macros
+import NimQml, Tables, strutils, strformat
 
 import ./item
 import ../../../shared_models/currency_amount
-import ../../../shared_models/token_model
 
 type
   ModelRole {.pure.} = enum

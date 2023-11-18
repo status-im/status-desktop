@@ -1,4 +1,4 @@
-import Tables, chronicles
+import chronicles
 import io_interface
 
 import app/core/eventemitter

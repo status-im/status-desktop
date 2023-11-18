@@ -18,7 +18,6 @@ import ../../../backend/communities as status_go
 import ../../../backend/community_tokens as tokens_backend
 
 import ../../../app_service/common/types
-import ../../../app_service/common/utils
 
 include ./async_tasks
 

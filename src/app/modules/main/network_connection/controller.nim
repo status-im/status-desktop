@@ -1,5 +1,3 @@
-import NimQml
-
 import ./io_interface
 import ../../../core/eventemitter
 import ../../../../app_service/service/network_connection/service as network_connection_service

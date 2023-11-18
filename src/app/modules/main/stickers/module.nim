@@ -1,4 +1,4 @@
-import NimQml, Tables, stint, sugar, sequtils, json, strutils, strformat, parseutils, chronicles
+import NimQml, Tables, stint, sugar, sequtils, json, strutils, strformat, parseutils
 import ./io_interface, ./view, ./controller, ./item, ./models/sticker_pack_list
 import ../io_interface as delegate_interface
 import ../../../global/global_singleton

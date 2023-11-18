@@ -1,4 +1,3 @@
-import sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/currency/service as currency_service

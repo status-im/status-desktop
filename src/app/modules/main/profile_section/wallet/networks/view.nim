@@ -1,4 +1,4 @@
-import Tables, NimQml, sequtils, sugar
+import NimQml, sequtils
 
 import ./io_interface
 import ./item

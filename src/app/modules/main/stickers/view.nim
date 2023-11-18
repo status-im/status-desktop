@@ -1,8 +1,7 @@
-import NimQml, json, strutils, json_serialization
+import NimQml, json, strutils
 
 import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item
-import ../../../../app_service/service/eth/utils as eth_utils
 
 QtObject:
   type

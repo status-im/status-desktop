@@ -1,4 +1,4 @@
-import strformat, chronicles
+import strformat
   
 type Item* = object
   name: string

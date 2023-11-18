@@ -1,8 +1,7 @@
-import Tables, chronicles
+import chronicles
 import io_interface
 
 import ../../../../core/eventemitter
-import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 

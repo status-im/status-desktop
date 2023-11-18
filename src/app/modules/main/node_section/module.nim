@@ -1,4 +1,4 @@
-import NimQml, Tables, json
+import NimQml
 
 import io_interface
 import ../io_interface as delegate_interface

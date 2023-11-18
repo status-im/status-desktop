@@ -1,5 +1,3 @@
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.

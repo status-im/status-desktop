@@ -1,4 +1,4 @@
-import strformat, Tables
+import strformat
 
 import app_service/common/types as common_types
 #TODO: remove dependency

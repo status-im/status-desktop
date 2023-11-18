@@ -1,5 +1,3 @@
-import NimQml, stint
-
 import ../../../../app_service/service/shared_urls/service as urls_service
 
 type

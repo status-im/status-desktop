@@ -1,7 +1,6 @@
 import io_interface
 
 import ../../../../../app_service/service/transaction/service as transaction_service
-import ../../../../../app_service/service/transaction/cryptoRampDto
 import ../../../../core/eventemitter
 
 type

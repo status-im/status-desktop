@@ -1,4 +1,4 @@
-import Tables, stint
+import stint
 import ./io_interface
 
 import ../../../global/app_signals
@@ -7,7 +7,6 @@ import ../../../../app_service/service/activity_center/service as activity_cente
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/chat/service as chat_service
 
 type

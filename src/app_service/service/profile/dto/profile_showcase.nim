@@ -1,4 +1,4 @@
-import json, json_serialization, sugar
+import json, json_serialization
 
 include ../../../common/json_utils
 

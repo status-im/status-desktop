@@ -1,5 +1,4 @@
-import json, strformat, NimQml, chronicles
-import link_preview_thumbnail
+import json, chronicles
 import status_contact_link_preview
 import status_community_link_preview
 import status_community_channel_link_preview

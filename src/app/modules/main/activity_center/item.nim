@@ -1,4 +1,4 @@
-import strformat, stint
+import strformat
 import ../../shared_models/message_item_qobject
 import ../../../../app_service/service/activity_center/dto/notification
 import ../../../../app_service/service/chat/dto/chat

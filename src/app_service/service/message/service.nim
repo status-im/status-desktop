@@ -17,9 +17,8 @@ import ./dto/reaction as reaction_dto
 import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
-import ./dto/link_preview
-import ./dto/status_link_preview
 import ./dto/urls_unfurling_plan
+import ./dto/link_preview
 import ./message_cursor
 
 import ../../common/message as message_common

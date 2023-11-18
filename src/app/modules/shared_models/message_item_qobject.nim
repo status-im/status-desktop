@@ -1,4 +1,4 @@
-import NimQml, std/wrapnils, strutils, strformat, sugar
+import NimQml, std/wrapnils, strutils
 import ./message_item
 
 QtObject:

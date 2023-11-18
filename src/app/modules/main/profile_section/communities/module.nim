@@ -1,9 +1,8 @@
-import NimQml, chronicles
+import NimQml
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
-import ../../../../core/eventemitter
 import ../../../../../app_service/service/community/service as community_service
 
 export io_interface

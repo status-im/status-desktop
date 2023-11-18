@@ -5,7 +5,6 @@
 import stint
 import ../../../backend/backend as backend
 import ../../common/conversion as service_conversion
-import ../../common/wallet_constants
 
 proc sortAsc[T](t1, t2: T): int =
   if (t1.fromNetwork.chainId > t2.fromNetwork.chainId): return 1

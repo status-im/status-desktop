@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, sugar
+import NimQml, sequtils, strutils
 
 import ./io_interface
 import ./model

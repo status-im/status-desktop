@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, strutils
+import NimQml, sequtils, strutils
 
 import ./io_interface, ./sources_of_tokens_model, ./flat_tokens_model, ./token_by_symbol_model
 

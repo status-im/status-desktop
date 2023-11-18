@@ -2,7 +2,6 @@ import Tables, json, stint, json_serialization, strformat
 
 import ../app_service/service/eth/dto/transaction
 import ./core as core
-import ../app_service/common/utils
 
 type
   TransactionsSignatures* = Table[string, tuple[r: string, s: string, v: string]]

@@ -1,4 +1,4 @@
-import Tables, NimQml
+import NimQml
 
 import app/modules/shared_models/[keypair_item]
 import app_service/service/wallet_account/dto/derived_address_dto

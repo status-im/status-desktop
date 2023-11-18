@@ -1,4 +1,4 @@
-import strutils, sequtils, sugar, chronicles
+import chronicles
 
 import ../shared_models/[keypair_item, currency_amount]
 import ../../global/global_singleton

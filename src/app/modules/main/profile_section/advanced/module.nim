@@ -1,11 +1,10 @@
-import NimQml, chronicles, uuids
+import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 
 import ../../../../../constants
 import ../../../../core/eventemitter
-import ../../../../global/global_singleton
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service

@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles, tables
+import NimQml, sequtils, sugar, tables
 
 import ./io_interface, ./view
 import ./controller as accountsc
@@ -9,7 +9,6 @@ import app/modules/shared_models/[keypair_model, currency_amount]
 import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/global/global_singleton
 import app/core/eventemitter
-import app_service/service/keycard/service as keycard_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/settings/service

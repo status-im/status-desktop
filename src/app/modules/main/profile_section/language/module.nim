@@ -1,8 +1,7 @@
-import NimQml, tables, sequtils, sugar, chronicles
+import NimQml, tables, chronicles
 
 import io_interface, view, controller, item, model, locale_table
 import ../io_interface as delegate_interface
-import ../../../../global/global_singleton
 import ../../../../../app/core/eventemitter
 
 import ../../../../../app_service/service/language/service as language_service

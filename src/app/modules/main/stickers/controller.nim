@@ -3,7 +3,6 @@ import Tables, stint, json
 import ./io_interface
 
 import ../../../core/eventemitter
-import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/stickers/service as stickers_service
 import ../../../../app_service/service/token/service
 import ../../../../app_service/service/settings/service as settings_service

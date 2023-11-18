@@ -1,4 +1,4 @@
-import chronicles, stint, tables
+import chronicles, stint
 import app/global/app_sections_config as conf
 import app/global/global_singleton
 import app/global/app_signals

@@ -1,4 +1,4 @@
-import Tables, NimQml
+import NimQml
 import ../io_interface as delegate_interface
 import io_interface, view, controller, combined_item, item
 import ../../../../../core/eventemitter

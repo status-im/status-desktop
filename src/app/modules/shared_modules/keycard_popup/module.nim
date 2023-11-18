@@ -1,4 +1,4 @@
-import NimQml, tables, random, strutils, sequtils, sugar, chronicles
+import NimQml, tables, strutils, sequtils, sugar, chronicles
 
 import io_interface
 import view, controller

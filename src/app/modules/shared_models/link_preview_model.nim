@@ -2,7 +2,6 @@ import NimQml, strformat, tables, sequtils, sets
 import ./link_preview_item
 import ../../../app_service/service/message/dto/link_preview
 import ../../../app_service/service/message/dto/standard_link_preview
-import ../../../app_service/service/message/dto/status_link_preview
 import ../../../app_service/service/message/dto/status_contact_link_preview
 import ../../../app_service/service/message/dto/status_community_link_preview
 import ../../../app_service/service/message/dto/status_community_channel_link_preview
