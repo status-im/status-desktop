@@ -19,11 +19,11 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  method shareCommunityToUsers*(self: View, communityID: string, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
+  proc shareCommunityToUsers*(self: View, communityID: string, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
     result = self.delegate.shareCommunityToUsers(communityID, pubKeysJSON, inviteMessage)
 
-  method leaveCommunity*(self: View, communityID: string) {.slot.} =
+  proc leaveCommunity*(self: View, communityID: string) {.slot.} =
     self.delegate.leaveCommunity(communityID)
 
-  method setCommunityMuted*(self: View, communityID: string, mutedType: int) {.slot.} =
+  proc setCommunityMuted*(self: View, communityID: string, mutedType: int) {.slot.} =
     self.delegate.setCommunityMuted(communityID, mutedType)

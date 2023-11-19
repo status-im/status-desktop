@@ -304,7 +304,7 @@ method onLoggedInUserImageChanged*(self: Module) =
     return
   self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon())
 
-method resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
+proc resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:
     error "cannot rebuild keycards for a keypair with empty keyUid"
     return

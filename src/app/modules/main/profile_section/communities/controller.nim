@@ -23,6 +23,6 @@ proc shareCommunityToUsers*(self: Controller, communityID: string, pubKeys: stri
 proc leaveCommunity*(self: Controller, communityID: string) =
   self.communityService.leaveCommunity(communityID)
 
-method setCommunityMuted*(self: Controller, communityID: string, mutedType: int) =
+proc setCommunityMuted*(self: Controller, communityID: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityID, mutedType)
 

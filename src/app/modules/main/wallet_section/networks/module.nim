@@ -50,7 +50,7 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method areTestNetworksEnabled*(self: Module): bool =
+proc areTestNetworksEnabled*(self: Module): bool =
   return self.controller.areTestNetworksEnabled()
 
 proc checkIfModuleDidLoad(self: Module) =

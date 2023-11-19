@@ -93,7 +93,7 @@ proc checkIfModuleDidLoad(self: Module) =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method areTestNetworksEnabled*(self: Module): bool = 
+proc areTestNetworksEnabled*(self: Module): bool = 
   return self.controller.areTestNetworksEnabled()
 
 method toggleTestNetworksEnabled*(self: Module) = 

@@ -90,7 +90,7 @@ method delete*(self: Module) =
   self.nestedCollectiblesModel.delete
   self.collectiblesController.delete
 
-method convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkItem =
+proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkItem =
   result = initNetworkItem(
       network.chainId,
       network.chainName,
@@ -110,7 +110,7 @@ method convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): 
       amountIn = "",
       $network.amountOut)
 
-method convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkItem =
+proc convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkItem =
   result = initNetworkItem(
       network.chainId,
       network.chainName,
@@ -127,7 +127,7 @@ method convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): Networ
       self.getTokenBalanceOnChain(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetSymbol())
       )
 
-method convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
+proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
   result = newGasFeesItem(
     gasPrice = gasFees.gasPrice,
     baseFee = gasFees.baseFee,
@@ -138,14 +138,14 @@ method convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFees
     eip1559Enabled = gasFees.eip1559Enabled
     )
 
-method convertFeesDtoToGasEstimateItem(self: Module, fees: FeesDto): GasEstimateItem =
+proc convertFeesDtoToGasEstimateItem(self: Module, fees: FeesDto): GasEstimateItem =
   result = newGasEstimateItem(
     totalFeesInEth = fees.totalFeesInEth,
     totalTokenFees = fees.totalTokenFees,
     totalTime = fees.totalTime
     )
 
-method convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: TransactionPathDto): SuggestedRouteItem =
+proc convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: TransactionPathDto): SuggestedRouteItem =
   result = newSuggestedRouteItem(
     bridgeName = path.bridgeName,
     fromNetwork = path.fromNetwork.chainId,
@@ -196,7 +196,7 @@ method refreshWalletAccounts*(self: Module) =
   self.view.switchSenderAccount(self.senderCurrentAccountIndex)
   self.view.switchReceiveAccount(self.receiveCurrentAccountIndex)
 
-method refreshNetworks*(self: Module) =
+proc refreshNetworks*(self: Module) =
   let networks = self.controller.getNetworks()
   let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
   let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
@@ -289,7 +289,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
       self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing
     )
 
-method signOnKeycard*(self: Module) =
+proc signOnKeycard(self: Module) =
   self.tmpTxHashBeingProcessed = ""
   for h, (r, s, v) in self.tmpSendTransactionDetails.resolvedSignatures.pairs:
     if r.len != 0 and s.len != 0 and v.len != 0:

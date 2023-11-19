@@ -421,7 +421,7 @@ method importCommunity*(self: Module, communityId: string) =
 method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
 
-method onImportCommunityCanceled*(self: Module, communityId: string) =
+method onImportCommunityCancelled*(self: Module, communityId: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingCanceled.int, errorMsg = "")
 
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
@@ -656,7 +656,7 @@ method shareCommunityChannelUrlWithChatKey*(self: Module, communityId: string, c
 method shareCommunityChannelUrlWithData*(self: Module, communityId: string, chatId: string): string =
   return self.controller.shareCommunityChannelUrlWithData(communityId, chatId)
 
-method signRevealedAddressesThatBelongToRegularKeypairs(self: Module): bool =
+proc signRevealedAddressesThatBelongToRegularKeypairs(self: Module): bool =
   var signingParams: seq[SignParamsDto]
   for address, details in self.joiningCommunityDetails.addressesToShare.pairs:
     if details.signature.len > 0:

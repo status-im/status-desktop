@@ -96,12 +96,12 @@ QtObject:
     of ModelRole.PreferredSharingChainIds:
       result = newQVariant(item.preferredSharingChainIds())
 
-  method getItemByIndex*(self: AccountsModel, index: int): AccountItem =
+  proc getItemByIndex*(self: AccountsModel, index: int): AccountItem =
     if index < 0 or index >= self.items.len:
       return
     return self.items[index]
 
-method getItemByAddress*(self: AccountsModel, address: string): tuple[account: AccountItem, index: int] =
+proc getItemByAddress*(self: AccountsModel, address: string): tuple[account: AccountItem, index: int] =
   for i in 0 ..< self.items.len:
     if self.items[i].address() == address:
       return (self.items[i], i)

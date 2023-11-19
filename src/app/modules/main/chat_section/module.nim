@@ -516,7 +516,7 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
 
-method addNewChat*(
+proc addNewChat*(
     self: Module,
     chatDto: ChatDto,
     channelGroup: ChannelGroupDto,
