@@ -43,7 +43,7 @@ QtObject:
       if (notification.chatId == chatId and not notification.read):
         result.add(notification.id)
 
-  proc markAllAsRead*(self: Model)  =
+  proc markAllAsRead*(self: Model) =
     for activityCenterNotification in self.activityCenterNotifications:
       activityCenterNotification.read = true
 

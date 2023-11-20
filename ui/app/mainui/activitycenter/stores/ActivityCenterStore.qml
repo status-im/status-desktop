@@ -79,15 +79,11 @@ QtObject {
     }
 
     function markActivityCenterNotificationRead(notification) {
-        root.activityCenterModuleInst.markActivityCenterNotificationRead(
-            notification.id, notification.message.communityId,
-            notification.message.chatId, notification.notificationType)
+        root.activityCenterModuleInst.markActivityCenterNotificationRead(notification.id)
     }
 
     function markActivityCenterNotificationUnread(notification) {
-        root.activityCenterModuleInst.markActivityCenterNotificationUnread(
-            notification.id, notification.message.communityId,
-            notification.message.chatId, notification.notificationType)
+        root.activityCenterModuleInst.markActivityCenterNotificationUnread(notification.id)
     }
 
     function markAsSeenActivityCenterNotifications() {

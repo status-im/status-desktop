@@ -27,7 +27,7 @@ method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.bas
 method hasUnseenActivityCenterNotifications*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method unreadActivityCenterNotificationsCountChanged*(self: AccessInterface) {.base.} =
+method onNotificationsCountMayHaveChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasUnseenActivityCenterNotificationsChanged*(self: AccessInterface) {.base.} =
@@ -45,9 +45,6 @@ method markAllActivityCenterNotificationsRead*(self: AccessInterface): string {.
 method markAllActivityCenterNotificationsReadDone*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissActivityCenterNotificationsDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method markActivityCenterNotificationReadDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -57,13 +54,10 @@ method markActivityCenterNotificationUnreadDone*(self: AccessInterface, notifica
 method removeActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptActivityCenterNotificationsDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
+method markActivityCenterNotificationRead*(self: AccessInterface, notificationId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markActivityCenterNotificationRead*(self: AccessInterface, notificationId: string, communityId: string, channelId: string, nType: int): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method markActivityCenterNotificationUnread*(self: AccessInterface, notificationId: string, communityId: string, channelId: string, nType: int): string {.base.} =
+method markActivityCenterNotificationUnread*(self: AccessInterface, notificationId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markAsSeenActivityCenterNotifications*(self: AccessInterface) {.base.} =
@@ -73,12 +67,6 @@ method addActivityCenterNotifications*(self: AccessInterface, activityCenterNoti
   raise newException(ValueError, "No implementation available")
 
 method resetActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method acceptActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method dismissActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =

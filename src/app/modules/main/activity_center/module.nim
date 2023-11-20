@@ -72,8 +72,9 @@ method unreadActivityCenterNotificationsCount*(self: Module): int =
 method hasUnseenActivityCenterNotifications*(self: Module): bool =
   self.controller.hasUnseenActivityCenterNotifications()
 
-method unreadActivityCenterNotificationsCountChanged*(self: Module) =
+method onNotificationsCountMayHaveChanged*(self: Module) =
   self.view.unreadActivityCenterNotificationsCountChanged()
+  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
   self.view.hasUnseenActivityCenterNotificationsChanged()
@@ -196,71 +197,36 @@ method markAllActivityCenterNotificationsRead*(self: Module): string =
 
 method markAllActivityCenterNotificationsReadDone*(self: Module) =
   self.view.markAllActivityCenterNotificationsReadDone()
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
-method markActivityCenterNotificationRead*(
-    self: Module,
-    notificationId: string,
-    communityId: string,
-    channelId: string,
-    nType: int
-    ): string =
-  let notificationType = ActivityCenterNotificationType(nType)
-  let markAsReadProps = MarkAsReadNotificationProperties(
-    notificationIds: @[notificationId],
-    communityId: communityId,
-    channelId: channelId,
-    notificationTypes: @[notificationType]
-  )
-  result = self.controller.markActivityCenterNotificationRead(notificationId, markAsReadProps)
+method markActivityCenterNotificationRead*(self: Module, notificationId: string) =
+  self.controller.markActivityCenterNotificationRead(notificationId)
 
 method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
 
 method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
   self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 method resetActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
   self.view.resetActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
-method markActivityCenterNotificationUnread*(
-    self: Module,
-    notificationId: string,
-    communityId: string,
-    channelId: string,
-    nType: int
-    ): string =
-  let notificationType = ActivityCenterNotificationType(nType)
-  let markAsUnreadProps = MarkAsUnreadNotificationProperties(
-    notificationIds: @[notificationId],
-    communityId: communityId,
-    channelId: channelId,
-    notificationTypes: @[notificationType]
-  )
-
-  result = self.controller.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
+method markActivityCenterNotificationUnread*(self: Module, notificationId: string) =
+  self.controller.markActivityCenterNotificationUnread(notificationId)
 
 method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
+  self.view.unreadActivityCenterNotificationsCountChanged()
 
 method removeActivityCenterNotifications*(self: Module, notificationIds: seq[string]) =
   self.view.removeActivityCenterNotifications(notificationIds)
-
-method acceptActivityCenterNotificationsDone*(self: Module, notificationIds: seq[string]) =
-  self.view.acceptActivityCenterNotificationsDone(notificationIds)
-
-method acceptActivityCenterNotifications*(self: Module, notificationIds: seq[string]): string =
-  self.controller.acceptActivityCenterNotifications(notificationIds)
-
-method dismissActivityCenterNotificationsDone*(self: Module, notificationIds: seq[string]) =
-  self.view.dismissActivityCenterNotificationsDone(notificationIds)
-
-method dismissActivityCenterNotifications*(self: Module, notificationIds: seq[string]): string =
-  self.controller.dismissActivityCenterNotifications(notificationIds)
 
 method switchTo*(self: Module, sectionId, chatId, messageId: string) =
   self.controller.switchTo(sectionId, chatId, messageId)
