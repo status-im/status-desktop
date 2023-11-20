@@ -167,3 +167,8 @@ QtObject:
   # Changes publicKey compression between 33-bytes and multiformat zQ..
   proc changeCommunityKeyCompression*(self: Utils, publicKey: string): string {.slot.} =
     changeCommunityKeyCompression(publicKey)
+
+  proc removeHexPrefix*(self: Utils, value: string): string =
+    if value.startsWith("0x"):
+      return value[2..^1]
+    return value
