@@ -29,6 +29,11 @@ macro(add_target name type)
 
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
+        target_compile_options(${name} PRIVATE /wd4996)
+    endif()
+
+    if (UNIX)
+        target_compile_options(${name} PRIVATE -Wno-deprecated)
     endif()
 
     set_target_properties(${name} PROPERTIES CXX_STANDARD 17 AUTOMOC ON)
