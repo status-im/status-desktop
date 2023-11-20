@@ -74,13 +74,13 @@ method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, toke
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
 
-method getFlatTokensList*(self: Module): var seq[TokenItem]  =
+proc getFlatTokensList*(self: Module): var seq[TokenItem]  =
   return self.controller.getFlatTokensList()
 
-method getTokenBySymbolList*(self: Module): var seq[TokenBySymbolItem] =
+proc getTokenBySymbolList*(self: Module): var seq[TokenBySymbolItem] =
   return self.controller.getTokenBySymbolList()
 
-method getSourcesOfTokensList*(self: Module): var seq[SupportedSourcesItem] =
+proc getSourcesOfTokensList*(self: Module): var seq[SupportedSourcesItem] =
   return self.controller.getSourcesOfTokensList()
 
 # Interfaces for getting lists from the service files into the abstract models

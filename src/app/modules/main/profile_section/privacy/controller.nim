@@ -95,10 +95,10 @@ proc getMessagesFromContactsOnly*(self: Controller): bool =
 proc setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
   return self.settingsService.saveMessagesFromContactsOnly(value)
 
-method urlUnfurlingMode*(self: Controller): int {.base.} =
+proc urlUnfurlingMode*(self: Controller): int =
   return int(self.settingsService.urlUnfurlingMode())
 
-method setUrlUnfurlingMode*(self: Controller, value: int) {.base.} =
+proc setUrlUnfurlingMode*(self: Controller, value: int) =
   let mode = toUrlUnfurlingMode(value)
   if not self.settingsService.saveUrlUnfurlingMode(mode):
     error "failed to save url unfurling mode setting", value
@@ -106,7 +106,7 @@ method setUrlUnfurlingMode*(self: Controller, value: int) {.base.} =
 proc validatePassword*(self: Controller, password: string): bool =
   return self.privacyService.validatePassword(password)
 
-method getPasswordStrengthScore*(self: Controller, password, userName: string): int =
+proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
 
 proc storeToKeychain*(self: Controller, data: string) =

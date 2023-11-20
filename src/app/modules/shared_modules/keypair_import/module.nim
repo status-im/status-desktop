@@ -38,6 +38,8 @@ proc newModule*[T](delegate: T,
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, accountsService, walletAccountService, devicesService)
 
+{.push warning[Deprecated]: off.}
+
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -270,3 +272,5 @@ method onUserAuthenticated*[T](self: Module[T], pin: string, password: string, k
       error "ki_unable to make a keypair operable", errDesription=res
       return
   self.closeKeypairImportPopup()
+
+{.pop.}

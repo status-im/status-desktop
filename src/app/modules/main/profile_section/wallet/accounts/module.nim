@@ -63,7 +63,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 method getCollectiblesModel*(self: Module): QVariant =
   return self.collectiblesController.getModelAsVariant()
 
-method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAccountDto): KeyPairAccountItem =
+proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAccountDto): KeyPairAccountItem =
   result = newKeyPairAccountItem(
     name = account.name,
     path = account.path,
@@ -81,7 +81,7 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     testPreferredChainIds = account.testPreferredChainIds,
     hideFromTotalBalance = account.hideFromTotalBalance)
 
-method setBalance(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+proc setBalance(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
@@ -89,7 +89,7 @@ method setBalance(self: Module, accountsTokens: OrderedTable[string, seq[WalletT
     let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)
     self.view.setBalanceForKeyPairs(address, balance)
 
-method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
+proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
   excludePrivateKeyKeypairs = false, self.controller.areTestNetworksEnabled())
 

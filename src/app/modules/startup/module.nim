@@ -81,6 +81,8 @@ proc newModule*[T](delegate: T,
   result.controller = controller.newController(result, events, generalService, accountsService, keychainService,
   profileService, keycardService, devicesService)
 
+{.push warning[Deprecated]: off.}
+
 method delete*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", newQVariant())
   self.view.delete
@@ -571,3 +573,5 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
+
+{.pop.}

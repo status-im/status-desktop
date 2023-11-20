@@ -176,7 +176,7 @@ method setTotalCurrencyBalance*(self: Module) =
   var addresses = walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(addresses))
 
-method notifyFilterChanged(self: Module) =
+proc notifyFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allAddresses)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)

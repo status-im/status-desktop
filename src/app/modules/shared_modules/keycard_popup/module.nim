@@ -56,6 +56,8 @@ proc newModule*[T](delegate: T,
   result.authenticationPopupIsAlreadyRunning = false
   result.runningFlow = FlowType.General
 
+{.push warning[Deprecated]: off.}
+
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -739,3 +741,5 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
       self.controller.enterKeycardPin(data)
     else:
       self.view.setCurrentState(newBiometricsPinInvalidState(self.runningFlow, nil))
+
+{.pop.}

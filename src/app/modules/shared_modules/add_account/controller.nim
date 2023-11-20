@@ -131,7 +131,7 @@ proc authenticateOrigin*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-method fetchDerivedAddresses*(self: Controller, derivedFrom: string, paths: seq[string])=
+proc fetchDerivedAddresses*(self: Controller, derivedFrom: string, paths: seq[string])=
   var hashPassword = true
   if self.getPin().len > 0:
     hashPassword = false

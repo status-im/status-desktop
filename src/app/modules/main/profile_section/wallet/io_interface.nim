@@ -15,6 +15,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.

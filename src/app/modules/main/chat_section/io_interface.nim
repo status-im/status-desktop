@@ -13,7 +13,6 @@ import ../../../../app_service/service/shared_urls/service as shared_urls_servic
 import model as chats_model
 import item as chat_item
 
-import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 
 type
@@ -62,14 +61,6 @@ method activeItemSet*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
-    settingsService: settings_service.Service, contactService: contact_service.Service,
-    chatService: chat_service.Service, communityService: community_service.Service,
-    messageService: message_service.Service, gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service,
-    setChatAsActive: bool = true, insertIntoModel: bool = true): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.} =

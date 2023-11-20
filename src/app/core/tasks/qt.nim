@@ -10,7 +10,7 @@ type
     slot*: string
 
 proc finish*[T](arg: QObjectTaskArg, payload: T) =
-  signal_handler(cast[pointer](arg.vptr), Json.encode(payload), arg.slot)
+  signal_handler(cast[pointer](arg.vptr), cstring(Json.encode(payload)), cstring(arg.slot))
 
 proc finish*(arg: QObjectTaskArg, payload: string) =
-  signal_handler(cast[pointer](arg.vptr), payload, arg.slot)
+  signal_handler(cast[pointer](arg.vptr), cstring(payload), cstring(arg.slot))

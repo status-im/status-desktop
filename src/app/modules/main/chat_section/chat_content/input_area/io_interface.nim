@@ -1,4 +1,4 @@
-import NimQml, tables, sets
+import NimQml, tables
 
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
@@ -99,7 +99,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method setText*(self: AccessInterface, text: string, unfurlUrls: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPlainText*(self: AccessInterface): string =
+method getPlainText*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setLinkPreviewUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
@@ -114,22 +114,22 @@ method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
 method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reloadUnfurlingPlan*(self: AccessInterface) =
+method reloadUnfurlingPlan*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method loadLinkPreviews*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLinkPreviewEnabled*(self: AccessInterface): bool =
+method getLinkPreviewEnabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setLinkPreviewEnabled*(self: AccessInterface, enabled: bool) =
+method setLinkPreviewEnabled*(self: AccessInterface, enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setAskToEnableLinkPreview*(self: AccessInterface, value: bool) =
+method setAskToEnableLinkPreview*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool) =
+method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
