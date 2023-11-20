@@ -13,7 +13,6 @@ import ../../../../app_service/service/shared_urls/service as shared_urls_servic
 import model as chats_model
 import item as chat_item
 
-import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 
 type

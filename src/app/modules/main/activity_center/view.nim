@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sequtils, strformat, std/tables
+import NimQml, json, strutils, sequtils, std/tables
 import ../../../../app_service/service/activity_center/service as activity_center_service
 
 import ./model

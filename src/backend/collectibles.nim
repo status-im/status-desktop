@@ -1,4 +1,4 @@
-import json, json_serialization, strformat
+import json, strformat
 import stint, Tables, strutils
 import core
 import response_type, collectibles_types
