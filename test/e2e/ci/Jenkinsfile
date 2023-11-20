@@ -62,8 +62,6 @@ pipeline {
 
   environment {
     QT_QPA_PLATFORMTHEME = 'qt5ct'
-    QT_LOGGING_DEBUG = 1
-    QT_DEBUG_PLUGINS = 1
 
     SQUISH_DIR = '/opt/squish-runner-7.1-20230222-1555'
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
@@ -72,6 +70,7 @@ pipeline {
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 17
 
+    /* Runtime flag to make testing of the app easier. */
     STATUS_RUNTIME_TEST_MODE = '1'
   }
 
