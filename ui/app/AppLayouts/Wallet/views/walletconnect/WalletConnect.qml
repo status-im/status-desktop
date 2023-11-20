@@ -275,8 +275,8 @@ Item {
             root.state = d.waitingPairState
         }
 
-        function onRespondSessionRequest(sessionRequestJson, signedJson, error) {
-            console.log("@dd respondSessionRequest", sessionRequestJson, signedJson, error)
+        function onRespondSessionRequest(sessionRequestJson, signedData, error) {
+            console.log("@dd respondSessionRequest", sessionRequestJson, "  signedData", signedData, "  error: ", error)
             if (error) {
                 d.setStatusText("Session Request error", "red")
                 sdkView.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, true)
@@ -284,7 +284,7 @@ Item {
             }
 
             d.sessionRequest = JSON.parse(sessionRequestJson)
-            d.signedData = JSON.parse(signedJson)
+            d.signedData = signedData
 
             sdkView.acceptSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, d.signedData)
 

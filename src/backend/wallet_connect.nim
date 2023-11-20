@@ -11,30 +11,56 @@ import backend
 # Declared in services/wallet/walletconnect/walletconnect.go
 const ErrorChainsNotSupported*: string = "chains not supported"
 
+rpc(wCSignMessage, "wallet"):
+  message: string
+  address: string
+  password: string
+
+rpc(wCSendTransaction, "wallet"):
+  signature: string
+
 rpc(wCPairSessionProposal, "wallet"):
   sessionProposalJson: string
 
 rpc(wCSessionRequest, "wallet"):
   sessionRequestJson: string
-  hashedPassword: string
+
+proc prepareResponse(res: var JsonNode, rpcResponse: RpcResponse[JsonNode]): string =
+  if not rpcResponse.error.isNil:
+    return rpcResponse.error.message
+  if rpcResponse.result.isNil:
+    return "no result"
+  res = rpcResponse.result
+
+proc signMessage*(res: var JsonNode, message: string, address: string, password: string): string =
+  try:
+    let response = wCSignMessage(message, address, password)
+    return prepareResponse(res, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc sendTransaction*(res: var JsonNode, signature: string): string =
+  try:
+    let response = wCSendTransaction(signature)
+    return prepareResponse(res, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
 
 # TODO #12434: async answer
-proc pair*(sessionProposalJson: string, callback: proc(response: JsonNode): void): bool =
+proc pair*(res: var JsonNode, sessionProposalJson: string): string =
   try:
     let response = wCPairSessionProposal(sessionProposalJson)
-    if response.error == nil and response.result != nil:
-      callback(response.result)
-    return response.error == nil
+    return prepareResponse(res, response)
   except Exception as e:
     warn e.msg
-    return false
+    return e.msg
 
-proc sessionRequest*(sessionRequestJson: string, hashedPassword: string, callback: proc(response: JsonNode): void): bool =
+proc sessionRequest*(res: var JsonNode, sessionRequestJson: string): string =
   try:
-    let response = wCSessionRequest(sessionRequestJson, hashedPassword)
-    if response.error == nil and response.result != nil:
-      callback(response.result)
-    return response.error == nil
+    let response = wCSessionRequest(sessionRequestJson)
+    return prepareResponse(res, response)
   except Exception as e:
     warn e.msg
-    return false
+    return e.msg
