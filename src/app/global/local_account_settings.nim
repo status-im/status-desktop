@@ -46,6 +46,7 @@ QtObject:
       self.storeToKeychainValueChanged()
 
   proc getStoreToKeychainValue*(self: LocalAccountSettings): string {.slot.} =
+    return DEFAULT_STORE_TO_KEYCHAIN
     if self.settings.isNil or TEST_MODE_ENABLED:
       return DEFAULT_STORE_TO_KEYCHAIN
 
