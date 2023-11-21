@@ -461,20 +461,11 @@ QtObject:
         var item = self.items[i]
         item.quotedMessageText = ""
         item.quotedMessageParsedText = ""
-        item.quotedMessageFrom = ""
         item.quotedMessageDeleted = true
-        item.quotedMessageAuthorDetails = ContactDetails()
         self.dataChanged(ind, ind, @[
-          ModelRole.QuotedMessageFrom.int,
+          ModelRole.QuotedMessageText.int,
           ModelRole.QuotedMessageParsedText.int,
-          ModelRole.QuotedMessageContentType.int,
           ModelRole.QuotedMessageDeleted.int,
-          ModelRole.QuotedMessageAuthorName.int,
-          ModelRole.QuotedMessageAuthorDisplayName.int,
-          ModelRole.QuotedMessageAuthorThumbnailImage.int,
-          ModelRole.QuotedMessageAuthorEnsVerified.int,
-          ModelRole.QuotedMessageAuthorIsContact.int,
-          ModelRole.QuotedMessageAuthorColorHash.int
         ])
 
   proc removeItem*(self: Model, messageId: string) =
