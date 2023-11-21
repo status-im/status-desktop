@@ -323,3 +323,6 @@ QtObject:
 
   proc removeMockedKeycardAction*(self: View) {.slot.} =
     self.delegate.removeMockedKeycardAction()
+
+  proc fakeLoadingScreenFinished*(self: View) {.slot.} =
+    self.delegate.fakeLoadingScreenFinished()
