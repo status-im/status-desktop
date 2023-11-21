@@ -19,15 +19,9 @@ const SIGNAL_DISPLAY_APP_NOTIFICATION* = "displayAppNotification"
 const SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION* = "displayWindowsOsNotification"
 const SIGNAL_OS_NOTIFICATION_CLICKED* = "osNotificationClicked"
 
-# Notification preferences
-const NOTIFY_ABOUT_ALL_MESSAGES = 0
-const NOTIFY_JUST_ABOUT_MENTIONS = 1
-const NOTIFY_NOTHING_ABOUT = 2
-
 # Anonymous preferences
 const PREVIEW_ANONYMOUS = 0
 const PREVIEW_NAME_ONLY = 1
-const PREVIEW_NAME_AND_MESSAGE = 2
 
 type
   NotificationArgs* = ref object of Args
@@ -64,7 +58,7 @@ QtObject:
     new(result, delete)
     result.setup(events, settingsService)
 
-  proc init*(self: NotificationsManager) =
+  proc onAppReady(self: NotificationsManager) =
     self.osNotification = newStatusOSNotification()
     self.soundManager = newStatusSoundManager()
 
@@ -96,6 +90,10 @@ QtObject:
 
     self.notificationSetUp = true
 
+  proc init*(self: NotificationsManager) =
+    self.events.once(FAKE_LOADING_SCREEN_FINISHED) do(e:Args):
+      self.onAppReady()
+  
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
     if defined(windows):
       let data = NotificationArgs(title: title, message: message)
@@ -208,10 +206,10 @@ QtObject:
     self.osNotification.showIconBadgeNotification(allMentions)
 
   proc notificationCheck(self: NotificationsManager, title: string, message: string, details: NotificationDetails,
-    notificationWay: string) =
+      notificationWay: string) =
     var data = NotificationArgs(title: title, message: message, details: details)
     # All but the NewMessage notifications go to Activity Center
-    if(details.notificationType != NotificationType.NewMessage):
+    if details.notificationType != NotificationType.NewMessage:
       debug "Add AC notification", title=title, message=message
       self.events.emit(SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER, data)
 
@@ -220,28 +218,28 @@ QtObject:
 
     let appIsActive = app_isActive(singletonInstance.engine)
 
-    if(details.notificationType == NotificationType.NewMessage or 
-      details.notificationType == NotificationType.NewMessageWithPersonalMention or
-      details.notificationType == NotificationType.NewMessageWithGlobalMention or
-      details.notificationType == NotificationType.NewContactRequest or 
-      details.notificationType == NotificationType.ContactRemoved or
-      details.notificationType == NotificationType.IdentityVerificationRequest):
-
-      if(notificationWay == VALUE_NOTIF_DELIVER_QUIETLY):
-        return
-
-      if((details.notificationType == NotificationType.NewMessage or 
+    if details.notificationType == NotificationType.NewMessage or 
         details.notificationType == NotificationType.NewMessageWithPersonalMention or
-        details.notificationType == NotificationType.NewMessageWithGlobalMention) and
-        details.sectionActive and 
-        details.chatActive and appIsActive):
+        details.notificationType == NotificationType.NewMessageWithGlobalMention or
+        details.notificationType == NotificationType.NewContactRequest or 
+        details.notificationType == NotificationType.ContactRemoved or
+        details.notificationType == NotificationType.IdentityVerificationRequest:
+
+      if notificationWay == VALUE_NOTIF_DELIVER_QUIETLY:
         return
 
-    if(appIsActive):
+      if (details.notificationType == NotificationType.NewMessage or 
+          details.notificationType == NotificationType.NewMessageWithPersonalMention or
+          details.notificationType == NotificationType.NewMessageWithGlobalMention) and
+          details.sectionActive and 
+          details.chatActive and appIsActive:
+        return
+
+    if appIsActive:
       debug "Add APP notification", title=title, message=message
       self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
     
-    if(not appIsActive or details.notificationType == NotificationType.TestNotification):
+    if not appIsActive or details.notificationType == NotificationType.TestNotification:
       # Check anonymity level
       if(self.settingsService.getNotificationMessagePreview() == PREVIEW_ANONYMOUS):
         data.title = "Status"
@@ -253,7 +251,7 @@ QtObject:
       debug "Add OS notification", title=data.title, message=data.message, identifier=identifier
       self.showOSNotification(data.title, data.message, identifier)  
       
-    if(self.settingsService.getNotificationSoundsEnabled()):
+    if self.settingsService.getNotificationSoundsEnabled():
       self.soundManager.setPlayerVolume(self.settingsService.getNotificationVolume())
       self.soundManager.playSound(NOTIFICATION_SOUND)
 

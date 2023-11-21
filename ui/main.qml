@@ -196,6 +196,9 @@ StatusWindow {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                if (!appLoadingAnimation.runningProgressAnimation) {
+                    mainModule.fakeLoadingScreenFinished()
+                }
                 Global.userProfile = userProfile
                 Global.appIsReady = true
 
@@ -382,6 +385,7 @@ StatusWindow {
             onProgressChanged: {
                 if (progress === 1) {
                     appLoadingAnimation.active = false
+                    mainModule.fakeLoadingScreenFinished()
                 }
             }
         }
