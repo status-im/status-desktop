@@ -11,6 +11,8 @@ import ../../../backend/backend
 import ../../../backend/response_type
 import ./dto/notification
 
+import ../../common/activity_center
+
 export notification
 
 include async_tasks
@@ -99,15 +101,13 @@ QtObject:
       if (receivedData.activityCenterNotifications.len > 0):
         self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
-  proc parseActivityCenterNotifications*(self: Service, notificationsJson: JsonNode) =
-    var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
-    for notificationJson in notificationsJson:
-      activityCenterNotifications.add(notificationJson.toActivityCenterNotificationDto)
-    self.handleNewNotificationsLoaded(activityCenterNotifications)
-
-  proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
-    if response.result{"activityCenterNotifications"} != nil:
-      self.parseActivityCenterNotifications(response.result["activityCenterNotifications"])
+    self.events.on(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS) do(e: Args):
+      let raw = RawActivityCenterNotificationsArgs(e)
+      if raw.activityCenterNotifications.kind != JNull:
+        var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
+        for notificationJson in raw.activityCenterNotifications:
+          activityCenterNotifications.add(notificationJson.toActivityCenterNotificationDto)
+        self.handleNewNotificationsLoaded(activityCenterNotifications)
 
   proc setActiveNotificationGroup*(self: Service, group: ActivityCenterGroup) =
     self.activeGroup = group
