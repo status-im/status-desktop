@@ -219,6 +219,8 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
     quotedMessageAuthorDetails,
+    message.quotedMessage.albumImages,
+    message.quotedMessage.albumImagesCount,
     message.albumId,
     if (len(message.albumId) == 0): @[] else: @[message.image],
     if (len(message.albumId) == 0): @[] else: @[message.id],

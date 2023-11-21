@@ -58,6 +58,14 @@ QtObject:
   QtProperty[string] quotedMessageAuthorAvatar:
     read = quotedMessageAuthorAvatar
 
+  proc quotedMessageAlbumMessageImages*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageAlbumMessageImages.join(" ")
+  QtProperty[string] quotedMessageAlbumMessageImages:
+    read = quotedMessageAlbumMessageImages
+
+  proc quotedMessageAlbumImagesCount*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.quotedMessageAlbumImagesCount
+  QtProperty[int] quotedMessageAlbumImagesCount:
+    read = quotedMessageAlbumImagesCount
+
   proc senderId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderId
   QtProperty[string] senderId:
     read = senderId

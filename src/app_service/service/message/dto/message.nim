@@ -64,6 +64,8 @@ type QuotedMessage* = object
   contentType*: ContentType
   deleted*: bool
   discordMessage*: DiscordMessage
+  albumImages*: seq[string]
+  albumImagesCount*: int
 
 type Sticker* = object
   hash*: string
