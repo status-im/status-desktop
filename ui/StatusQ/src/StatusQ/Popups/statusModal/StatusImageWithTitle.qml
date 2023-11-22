@@ -116,6 +116,7 @@ Row {
         id: textLayout
         width: !iconOrImage.active ? parent.width :
                                      parent.width - iconOrImage.width - parent.spacing
+        anchors.verticalCenter: parent.verticalCenter
         Row {
             id: headerTitleRow
             width: parent.width

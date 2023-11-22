@@ -27,6 +27,11 @@ public:
     Q_INVOKABLE QVariant get(QAbstractItemModel *model, int row,
                              const QString &roleName) const;
 
+    Q_INVOKABLE QVariantList getAll(QAbstractItemModel* model,
+                                    const QString& roleName,
+                                    const QString& filterRoleName,
+                                    const QVariant& filterValue) const;
+
     Q_INVOKABLE bool contains(QAbstractItemModel *model, const QString &roleName, const QVariant &value, int mode = Qt::CaseSensitive) const;
 
     ///< performs a strict check whether @lhs and @rhs arrays (QList<T>) contain the same elements;

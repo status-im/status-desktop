@@ -63,7 +63,7 @@ SettingsContentBase {
     onSaveChangesClicked: {
         manageTokensView.saveChanges()
         Global.displayToastMessage(
-            qsTr("Your new custom asset order has been applied to your %1", "Go to Wallet")
+            qsTr("Your new custom token order has been applied to your %1", "Go to Wallet")
                     .arg(`<a style="text-decoration:none" href="#${Constants.appSection.wallet}">` + qsTr("Wallet", "Go to Wallet") + "</a>"),
             "",
             "checkmark-circle",

@@ -60,6 +60,32 @@ QVariant ModelUtilsInternal::get(QAbstractItemModel *model,
     return {};
 }
 
+QVariantList ModelUtilsInternal::getAll(QAbstractItemModel* model,
+                                        const QString& roleName,
+                                        const QString& filterRoleName,
+                                        const QVariant& filterValue) const
+{
+    if (!model || filterValue.isNull())
+        return {};
+
+    const auto role = roleByName(model, roleName);
+    if (role == -1)
+        return {};
+
+    const auto filterRole = roleByName(model, filterRoleName);
+    if (filterRole == -1)
+        return {};
+
+    QVariantList result;
+    const auto size = model->rowCount();
+    for (auto i = 0; i < size; i++) {
+        const auto srcIndex = model->index(i, 0);
+        if (srcIndex.data(filterRole) == filterValue)
+            result.append(srcIndex.data(role));
+    }
+    return result;
+}
+
 bool ModelUtilsInternal::contains(QAbstractItemModel* model,
                                   const QString& roleName,
                                   const QVariant& value,

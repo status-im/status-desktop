@@ -23,7 +23,7 @@ ColumnLayout {
             return false
         if (tabBar.currentIndex > d.collectiblesTabIndex)
             return false
-        if (tabBar.currentIndex === d.collectiblesTabIndex && baseCollectiblesModel.isFetching)
+        if (tabBar.currentIndex === d.collectiblesTabIndex && baseWalletCollectiblesModel.isFetching)
             return false
         return loader.item && loader.item.dirty
     }
@@ -51,14 +51,14 @@ ColumnLayout {
             if (tabBar.currentIndex !== collectiblesTabIndex)
                 return
             // If there is no more items to load or we're already fetching, return
-            if (!root.baseCollectiblesModel.hasMore || root.baseCollectiblesModel.isFetching)
+            if (!root.baseWalletCollectiblesModel.hasMore || root.baseWalletCollectiblesModel.isFetching)
                 return
-            root.baseCollectiblesModel.loadMore()
+            root.baseWalletCollectiblesModel.loadMore()
         }
     }
 
     Connections {
-        target: root.baseCollectiblesModel
+        target: root.baseWalletCollectiblesModel
         function onHasMoreChanged() {
             d.checkLoadMoreCollectibles()
         }

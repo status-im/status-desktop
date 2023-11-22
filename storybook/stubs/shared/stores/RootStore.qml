@@ -11,7 +11,7 @@ QtObject {
     property var currentCurrency
     property bool neverAskAboutUnfurlingAgain: false
 
-    property var currencyStore
+    property var currencyStore: CurrenciesStore {}
     property var history
 
     property var getNetworkIcon
@@ -36,5 +36,9 @@ QtObject {
     function setNeverAskAboutUnfurlingAgain(value) {
         console.log("STUB: setNeverAskAboutUnfurlingAgain:", value)
         neverAskAboutUnfurlingAgain = value
+    }
+
+    function getHistoricalDataForToken(symbol, currency) {
+        console.log("STUB: getHistoricalDataForToken:", symbol, currency)
     }
 }
