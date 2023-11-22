@@ -311,6 +311,8 @@ Item {
             quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
             quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
             quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
+            quotedMessageAlbumMessageImages: model.quotedMessageAlbumMessageImages.split(" ")
+            quotedMessageAlbumImagesCount: model.quotedMessageAlbumImagesCount
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

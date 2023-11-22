@@ -137,6 +137,8 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
+    quotedMessageAlbumMessageImages = @[],
+    quotedMessageAlbumImagesCount = 0,
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
@@ -197,6 +199,8 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
+    quotedMessageAlbumMessageImages = @[],
+    quotedMessageAlbumImagesCount = 0,
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
@@ -232,8 +236,40 @@ method reevaluateViewLoadingState*(self: Module) =
                        self.firstUnseenMessageState.fetching or
                        self.view.getMessageSearchOngoing())
 
+# TODO: Fetch the message from status-go. The generated albumIdToImagesMap is built on the messages received and does not account for
+#       older messages for which the images would not be found. Ticket https://github.com/status-im/status-desktop/issues/12821
+proc generateAlbumIdToImageMap(self: Module, messages: seq[MessageDto]): Table[string, seq[string]] =
+  var albumIdToImagesMap = initTable[string, seq[string]]()
+
+  for message in messages:
+    if message.albumId in albumIdToImagesMap:
+      albumIdToImagesMap[message.albumId].add(message.image)
+    else:
+      albumIdToImagesMap[message.albumId] = @[message.image]
+  
+  return albumIdToImagesMap
+
+
+proc setQuotedMessageImages(self: Module, message: MessageDto, items: var seq[Item], albumIdToImagesMap: Table[string, seq[string]]) =
+  for i in 0 ..< items.len:
+    let item = items[i]
+    
+    var quotedMessageAlbumMessageImages = item.quotedMessageAlbumMessageImages
+
+    if message.id != item.responseToMessageWithId:
+      continue
+    if message.albumId notin albumIdToImagesMap:
+      continue
+
+    quotedMessageAlbumMessageImages = albumIdToImagesMap[message.albumId]
+    item.quotedMessageAlbumMessageImages = quotedMessageAlbumMessageImages
+    item.quotedMessageAlbumImagesCount = quotedMessageAlbumMessageImages.len
+    items[i] = item
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[Item]
+
+  var albumIdToImagesMap = self.generateAlbumIdToImageMap(messages)
 
   if(messages.len > 0):
     for message in messages:
@@ -259,6 +295,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if (message.contentType == ContentType.Image and len(message.albumId) != 0):
         if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
           continue
+
+        self.setQuotedMessageImages(message, viewItems, albumIdToImagesMap)
 
         if (self.updateItemsByAlbum(viewItems, message)):
           continue
@@ -318,6 +356,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.quotedMessage.deleted,
         message.quotedMessage.discordMessage,
         quotedMessageAuthorDetails,
+        message.quotedMessage.albumImages,
+        message.quotedMessage.albumImagesCount,
         message.albumId,
         if (len(message.albumId) == 0): @[] else: @[message.image],
         if (len(message.albumId) == 0): @[] else: @[message.id],
@@ -455,6 +495,8 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.quotedMessage.deleted,
       message.quotedMessage.discordMessage,
       quotedMessageAuthorDetails,
+      message.quotedMessage.albumImages,
+      message.quotedMessage.albumImagesCount,
       message.albumId,
       if (len(message.albumId) == 0): @[] else: @[message.image],
       if (len(message.albumId) == 0): @[] else: @[message.id],

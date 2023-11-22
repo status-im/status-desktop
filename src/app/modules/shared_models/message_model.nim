@@ -62,6 +62,8 @@ type
     QuotedMessageAuthorEnsVerified
     QuotedMessageAuthorIsContact
     QuotedMessageAuthorColorHash
+    QuotedMessageAlbumMessageImages
+    QuotedMessageAlbumImagesCount
     AlbumMessageImages
     AlbumImagesCount
 
@@ -158,6 +160,8 @@ QtObject:
       ModelRole.QuotedMessageAuthorEnsVerified.int: "quotedMessageAuthorEnsVerified",
       ModelRole.QuotedMessageAuthorIsContact.int: "quotedMessageAuthorIsContact",
       ModelRole.QuotedMessageAuthorColorHash.int: "quotedMessageAuthorColorHash",
+      ModelRole.QuotedMessageAlbumMessageImages.int: "quotedMessageAlbumMessageImages",
+      ModelRole.QuotedMessageAlbumImagesCount.int: "quotedMessageAlbumImagesCount",
       ModelRole.AlbumMessageImages.int: "albumMessageImages",
       ModelRole.AlbumImagesCount.int: "albumImagesCount",
     }.toTable
@@ -253,6 +257,10 @@ QtObject:
       result = newQVariant(item.quotedMessageAuthorDetails.dto.isContact())
     of ModelRole.QuotedMessageAuthorColorHash:
       result = newQVariant(item.quotedMessageAuthorDetails.colorHash)
+    of ModelRole.QuotedMessageAlbumMessageImages:
+      result = newQVariant(item.quotedMessageAlbumMessageImages.join(" "))
+    of ModelRole.QuotedMessageAlbumImagesCount:
+      result = newQVariant(item.quotedMessageAlbumImagesCount)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.UnparsedText:

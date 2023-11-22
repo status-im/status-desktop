@@ -138,6 +138,8 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
     quotedMessageAuthorDetails,
+    message.quotedMessage.albumImages,
+    message.quotedMessage.albumImagesCount,
     message.albumId,
     imagesAlbum,
     albumMessageIds,

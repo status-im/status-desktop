@@ -59,6 +59,8 @@ type
     quotedMessageAuthorDisplayName: string
     quotedMessageAuthorAvatar: string
     quotedMessageAuthorDetails: ContactDetails
+    quotedMessageAlbumMessageImages: seq[string]
+    quotedMessageAlbumImagesCount: int
     albumId: string
     albumMessageImages: seq[string]
     albumMessageIds: seq[string]
@@ -105,6 +107,8 @@ proc initItem*(
     quotedMessageDeleted: bool,
     quotedMessageDiscordMessage: DiscordMessage,
     quotedMessageAuthorDetails: ContactDetails,
+    quotedMessageAlbumMessageImages: seq[string],
+    quotedMessageAlbumImagesCount: int,
     albumId: string,
     albumMessageImages: seq[string],
     albumMessageIds: seq[string],
@@ -156,6 +160,8 @@ proc initItem*(
   result.quotedMessageContentType = quotedMessageContentType
   result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageAuthorDetails = quotedMessageAuthorDetails
+  result.quotedMessageAlbumMessageImages = quotedMessageAlbumMessageImages
+  result.quotedMessageAlbumImagesCount = quotedMessageAlbumImagesCount
   result.albumId = albumId
   result.albumMessageImages = albumMessageImages
   result.albumMessageIds = albumMessageIds
@@ -232,6 +238,8 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
+    quotedMessageAlbumMessageImages = @[],
+    quotedMessageAlbumImagesCount = 0,
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
@@ -504,6 +512,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "quotedMessageDeleted": self.quotedMessageDeleted,
     "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
     "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
+    "quotedMessageAlbumMessageImages": self.quotedMessageAlbumMessageImages,
+    "quotedMessageAlbumImagesCount": self.quotedMessageAlbumImagesCount,
     "albumId": self.albumId,
     "albumMessageImages": self.albumMessageImages,
     "albumMessageIds": self.albumMessageIds,
@@ -581,3 +591,15 @@ proc quotedMessageAuthorDetails*(self: Item): ContactDetails {.inline.} =
   self.quotedMessageAuthorDetails
 proc `quotedMessageAuthorDetails=`*(self: Item, value: ContactDetails) {.inline.} =
   self.quotedMessageAuthorDetails = value
+
+proc quotedMessageAlbumMessageImages*(self: Item): seq[string] {.inline.} =
+  self.quotedMessageAlbumMessageImages
+
+proc `quotedMessageAlbumMessageImages=`*(self: Item, value: seq[string]) {.inline.} =
+  self.quotedMessageAlbumMessageImages = value
+
+proc quotedMessageAlbumImagesCount*(self: Item): int {.inline.} = 
+  self.quotedMessageAlbumImagesCount
+
+proc `quotedMessageAlbumImagesCount=`*(self: Item, value: int) {.inline.} = 
+  self.quotedMessageAlbumImagesCount = value

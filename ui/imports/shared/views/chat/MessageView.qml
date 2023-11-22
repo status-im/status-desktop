@@ -90,6 +90,9 @@ Loader {
     property var album: []
     property int albumCount: 0
 
+    property var quotedMessageAlbumMessageImages: []
+    property var quotedMessageAlbumImagesCount: 0
+
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
     property bool disableHover: false // Used to force the HoverHandler to be active (useful for messages in popups)
@@ -695,6 +698,8 @@ Loader {
                             return qsTr("Unknown message. Try fetching more messages")
                         return root.quotedMessageText
                     }
+                    album: root.quotedMessageAlbumMessageImages
+                    albumCount: root.quotedMessageAlbumImagesCount
                     messageDeleted: root.quotedMessageDeleted
                     contentType: d.convertContentType(root.quotedMessageContentType)
                     amISender: root.quotedMessageFrom === userProfile.pubKey
