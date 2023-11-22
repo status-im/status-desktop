@@ -30,7 +30,8 @@ Item {
     function resetView() {
         stack.currentIndex = 0
         root.currentTabIndex = 0
-        historyView.resetView()
+        if (walletTabBar.currentIndex === 2)
+            mainViewLoader.item.resetView()
     }
 
     function resetStack() {
@@ -94,7 +95,6 @@ Item {
             StatusTabBar {
                 id: walletTabBar
                 objectName: "rightSideWalletTabBar"
-                horizontalPadding: Style.current.padding
                 Layout.fillWidth: true
                 Layout.topMargin: Style.current.padding
 
@@ -116,41 +116,67 @@ Item {
                     RootStore.setCurrentViewedHoldingType(walletTabBar.currentIndex === 1 ? Constants.TokenType.ERC721 : Constants.TokenType.ERC20)
                 }
             }
-            StackLayout {
+            Loader {
+                id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.topMargin: Style.current.padding
                 Layout.bottomMargin: Style.current.padding
-                currentIndex: walletTabBar.currentIndex
+                sourceComponent: {
+                    switch (walletTabBar.currentIndex) {
+                    case 0: return assetsView
+                    case 1: return collectiblesView
+                    case 2: return historyView
+                    }
+                }
+                active: visible
 
-                AssetsView {
-                    assets: RootStore.assets
-                    networkConnectionStore: root.networkConnectionStore
-                    assetDetailsLaunched: stack.currentIndex === 2
-                    onAssetClicked: {
-                        assetDetailView.token = token
-                        RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
-                        stack.currentIndex = 2
+                Component {
+                    id: assetsView
+                    AssetsView {
+                        assets: RootStore.assets
+                        overview: RootStore.overview
+                        networkConnectionStore: root.networkConnectionStore
+                        assetDetailsLaunched: stack.currentIndex === 2
+                        onAssetClicked: {
+                            assetDetailView.token = token
+                            RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
+                            stack.currentIndex = 2
+                        }
+                        onSendRequested: (symbol) => {
+                                             root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                                             root.sendModal.preSelectedHoldingID = symbol
+                                             root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+                                             root.sendModal.onlyAssets = true
+                                             root.sendModal.open()
+                                         }
+                        onReceiveRequested: (symbol) => root.launchShareAddressModal()
+                        onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
+                        onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet)
                     }
                 }
-                CollectiblesView {
-                    collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
-                    onCollectibleClicked: {
-                        RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                        RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
-                        stack.currentIndex = 1
+                Component {
+                    id: collectiblesView
+                    CollectiblesView {
+                        collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
+                        onCollectibleClicked: {
+                            RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
+                            RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
+                            stack.currentIndex = 1
+                        }
                     }
                 }
-                HistoryView {
+                Component {
                     id: historyView
-                    overview: RootStore.overview
-                    showAllAccounts: root.showAllAccounts
-                    sendModal: root.sendModal
-                    onLaunchTransactionDetail: function (entry, entryIndex) {
-                        transactionDetailView.transactionIndex = entryIndex
-                        transactionDetailView.transaction = entry
-
-                        stack.currentIndex = 3
+                    HistoryView {
+                        overview: RootStore.overview
+                        showAllAccounts: root.showAllAccounts
+                        sendModal: root.sendModal
+                        onLaunchTransactionDetail: function (entry, entryIndex) {
+                            transactionDetailView.transactionIndex = entryIndex
+                            transactionDetailView.transaction = entry
+                            stack.currentIndex = 3
+                        }
                     }
                 }
             }

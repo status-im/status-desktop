@@ -44,6 +44,11 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {
+                amount: 10.37,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
             communityId: "ddls",
             communityName: "Doodles",
             communityImage: ModelsData.collectibles.doodles // FIXME backend
@@ -166,6 +171,11 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {
+                amount: 1480.113406237,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
             changePct24hour: -3.51,
             communityId: "",
             communityName: "",
@@ -185,15 +195,21 @@ ListModel {
             enabledNetworkBalance: ({
                                         displayDecimals: true,
                                         stripTrailingZeroes: true,
-                                        amount: 324343.3,
+                                        amount: 0,
                                         symbol: "SNT"
                                     }),
             enabledNetworkCurrencyBalance: ({
                                                 displayDecimals: 4,
                                                 stripTrailingZeroes: true,
-                                                amount: 2.333321323400,
+                                                amount: 0,
                                                 symbol: "EUR"
                                             }),
+            currencyPrice: {
+                amount: 1.40627,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
+            changePct24hour: 1.3,
             symbol: "SNT",
             name: "Status",
             communityId: "",

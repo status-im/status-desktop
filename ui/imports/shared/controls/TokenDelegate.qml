@@ -1,20 +1,23 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+
+import AppLayouts.Wallet.controls 1.0
 
 import utils 1.0
 
 StatusListItem {
     id: root
 
-    property alias localeCurrencyBalance: localeCurrencyBalance
-    property alias change24Hour: change24HourText
+    // expected roles: name, symbol, enabledNetworkBalance, enabledNetworkCurrencyBalance, currencyPrice, changePct24hour, communityId, communityName, communityImage
+
+    property alias currencyBalance: currencyBalance
     property alias change24HourPercentage: change24HourPercentageText
+    property alias currencyPrice: currencyPrice
 
     property string currentCurrencySymbol
     property string textColor: {
@@ -33,12 +36,26 @@ StatusListItem {
     property string errorTooltipText_1
     property string errorTooltipText_2
 
+    readonly property bool isCommunityToken: !!modelData && !!modelData.communityId
     readonly property string symbolUrl: !!modelData && modelData.symbol ? Constants.tokenIcon(modelData.symbol, false) : ""
+    readonly property string upDownTriangle: {
+        if (!modelData)
+            return ""
+        if (modelData.changePct24hour < 0)
+            return "▾"
+        if (modelData.changePct24hour > 0)
+            return "▴"
+        return ""
+    }
+
+    signal switchToCommunityRequested(string communityId)
 
     title: modelData ? modelData.name : ""
     subTitle: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
     asset.name: symbolUrl
     asset.isImage: true
+    asset.width: 32
+    asset.height: 32
     errorIcon.tooltip.maxWidth: 300
 
     statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
@@ -55,7 +72,7 @@ StatusListItem {
 
     components: [
         Column {
-            id: valueColumn
+            anchors.verticalCenter: parent.verticalCenter
             StatusFlatRoundButton {
                 id: errorIcon
                 width: 14
@@ -69,32 +86,49 @@ StatusListItem {
                 visible: !!tooltip.text
             }
             StatusTextWithLoadingState   {
-                id: localeCurrencyBalance
+                id: currencyBalance
                 anchors.right: parent.right
-                font.pixelSize: 15
                 text: modelData ? LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkCurrencyBalance) : ""
-                visible: !errorIcon.visible
+                visible: !errorIcon.visible && !root.isCommunityToken
             }
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
-                visible: !errorIcon.visible
+                anchors.right: parent.right
+                spacing: 6
+                visible: !errorIcon.visible && !root.isCommunityToken
                 StatusTextWithLoadingState {
-                    id: change24HourText
-                    font.pixelSize: 15
+                    id: change24HourPercentageText
+                    anchors.verticalCenter: parent.verticalCenter
                     customColor: root.textColor
-                    text: modelData ? LocaleUtils.currencyAmountToLocaleString(modelData.currencyPrice) : ""
+                    font.pixelSize: 13
+                    text: modelData && modelData.changePct24hour !== undefined ? "%1 %2%".arg(root.upDownTriangle).arg(LocaleUtils.numberToLocaleString(modelData.changePct24hour, 2))
+                                                                               : "---"
                 }
                 Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
                     width: 1
-                    height: change24HourText.implicitHeight
+                    height: 12
                     color: Theme.palette.directColor9
                 }
                 StatusTextWithLoadingState {
-                    id: change24HourPercentageText
-                    font.pixelSize: 15
+                    id: currencyPrice
+                    anchors.verticalCenter: parent.verticalCenter
                     customColor: root.textColor
-                    text: modelData && modelData.changePct24hour !== "" ? "%1%".arg(LocaleUtils.numberToLocaleString(modelData.changePct24hour, 2)) : "---"
+                    font.pixelSize: 13
+                    text: modelData ? LocaleUtils.currencyAmountToLocaleString(modelData.currencyPrice) : ""
+                }
+            }
+            ManageTokensCommunityTag {
+                anchors.right: parent.right
+                text: modelData.communityName
+                imageSrc: modelData.communityImage
+                visible: root.isCommunityToken
+                StatusToolTip {
+                    text: qsTr("This token was minted by the %1 community").arg(modelData.communityName)
+                    visible: parent.hovered
+                }
+                TapHandler {
+                    acceptedButtons: Qt.LeftButton
+                    onSingleTapped: root.switchToCommunityRequested(modelData.communityId)
                 }
             }
         }
@@ -102,7 +136,7 @@ StatusListItem {
 
     states: [
         State {
-            name: "unkownToken"
+            name: "unknownToken"
             when: !root.symbolUrl
             PropertyChanges {
                 target: root.asset
@@ -111,6 +145,5 @@ StatusListItem {
                 name: !!modelData && modelData.symbol ? modelData.symbol : ""
             }
         }
-
     ]
 }

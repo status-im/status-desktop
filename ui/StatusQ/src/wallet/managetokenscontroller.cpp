@@ -1,6 +1,7 @@
 #include "managetokenscontroller.h"
 
 #include <QElapsedTimer>
+#include <QMutableHashIterator>
 
 ManageTokensController::ManageTokensController(QObject* parent)
     : QObject(parent)
@@ -112,18 +113,24 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     rebuildCommunityTokenGroupsModel();
 }
 
-void ManageTokensController::saveSettings()
+void ManageTokensController::saveSettings(bool reuseCurrent)
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
+
+    setSettingsDirty(true);
 
     if (m_arrangeByCommunity)
         m_communityTokensModel->applySort();
 
     // gather the data to save
     SerializedTokenData result;
-    for (auto model: {m_regularTokensModel, m_communityTokensModel})
-        result.insert(model->save());
-    result.insert(m_hiddenTokensModel->save(false));
+    if (reuseCurrent) {
+        result = m_settingsData;
+    } else {
+        for(auto model : {m_regularTokensModel, m_communityTokensModel})
+            result.insert(model->save());
+        result.insert(m_hiddenTokensModel->save(false));
+    }
 
     // save to QSettings
     m_settings.beginGroup(settingsGroupName());
@@ -144,6 +151,8 @@ void ManageTokensController::saveSettings()
     // unset dirty
     for (auto model: m_allModels)
         model->setDirty(false);
+
+    setSettingsDirty(false);
 }
 
 void ManageTokensController::clearSettings()
@@ -182,6 +191,13 @@ void ManageTokensController::loadSettings()
     m_settings.endGroup();
 }
 
+void ManageTokensController::setSettingsDirty(bool dirty)
+{
+    if (m_settingsDirty == dirty) return;
+    m_settingsDirty = dirty;
+    emit settingsDirtyChanged(m_settingsDirty);
+}
+
 void ManageTokensController::revert()
 {
     parseSourceModel();
@@ -197,6 +213,40 @@ bool ManageTokensController::hasSettings() const
     Q_ASSERT(!m_settingsKey.isEmpty());
     const auto groups = m_settings.childGroups();
     return !groups.isEmpty() && groups.contains(settingsGroupName());
+}
+
+void ManageTokensController::settingsHideToken(const QString& symbol)
+{
+    if (m_settingsData.contains(symbol)) { // find or create the settings entry
+        auto [pos, visible, group] = m_settingsData.value(symbol);
+        m_settingsData.remove(symbol); // remove all
+        m_settingsData.insert(symbol, {pos, false, group});
+    } else {
+        m_settingsData.insert(symbol, {0, false, QString()});
+    }
+
+    saveSettings(true);
+}
+
+void ManageTokensController::settingsHideCommunityTokens(const QString& communityId, const QStringList& symbols)
+{
+    QMutableHashIterator<QString, std::tuple<int, bool, QString>> i(m_settingsData);
+    bool found = false;
+    while (i.hasNext()) {
+        i.next();
+        const auto groupID = std::get<2>(i.value());
+        if (groupID == communityId) {
+            found = true;
+            i.setValue({0, false, communityId});
+        }
+    }
+
+    if (!found) {
+        for (const auto& symbol: symbols)
+            m_settingsData.insert(symbol, {0, false, communityId});
+    }
+
+    saveSettings(true);
 }
 
 bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const
@@ -216,7 +266,7 @@ bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& r
 
 bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
 {
-    const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, false, QString()});
+    const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, true, QString()});
     return visible;
 }
 

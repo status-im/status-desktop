@@ -15,7 +15,7 @@ QtObject {
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
 
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
-    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
+    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < networksModule.all.count
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
@@ -30,17 +30,17 @@ QtObject {
                                                         networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
                                                         qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"): ""
 
-    readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionAssets.hasBalanceCache && !walletSectionAssets.hasMarketValuesCache
+    readonly property bool notOnlineWithNoCache: !isOnline && !balanceCache && !marketValuesCache
     readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
 
-    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !walletSectionAssets.hasBalanceCache
+    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !balanceCache
     readonly property string noBlockchainConnectionAndNoCacheText: qsTr("Token balances are fetched from Pocket Network (POKT) and Infura which are both curently unavailable")
 
-    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !walletSectionAssets.hasMarketValuesCache
+    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !marketValuesCache
     readonly property string noMarketConnectionAndNoCacheText: qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable")
 
     readonly property bool noBlockchainAndMarketConnectionAndNoCache: noBlockchainConnectionAndNoCache && noMarketConnectionAndNoCache
-    readonly property string noBlockchainAndMarketConnectionAndNoCacheText:  qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
+    readonly property string noBlockchainAndMarketConnectionAndNoCacheText: qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
 
     readonly property bool accountBalanceNotAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache || noMarketConnectionAndNoCache
     readonly property string accountBalanceNotAvailableText: !isOnline ? notOnlineWithNoCacheText :
@@ -48,15 +48,15 @@ QtObject {
                                                              networkConnectionModule.blockchainNetworkConnection.completelyDown ? noBlockchainConnectionAndNoCacheText :
                                                              networkConnectionModule.marketValuesNetworkConnection.completelyDown ? noBlockchainAndMarketConnectionAndNoCacheText : ""
 
-    readonly property bool noTokenBalanceAvailable: networkConnectionStore.notOnlineWithNoCache || networkConnectionStore.noBlockchainConnectionAndNoCache
+    readonly property bool noTokenBalanceAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache
 
     readonly property bool ensNetworkAvailable: !blockchainNetworksDown.includes(profileSectionModule.ensUsernamesModule.chainId.toString())
-    readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(profileSectionModule.ensUsernamesModule.chainId))
+    readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(networksModule.all.getNetworkFullName(profileSectionModule.ensUsernamesModule.chainId))
     readonly property bool stickersNetworkAvailable: !blockchainNetworksDown.includes(stickersModule.getChainIdForStickers().toString())
-    readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(stickersModule.getChainIdForStickers()))
+    readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(networksModule.all.getNetworkFullName(stickersModule.getChainIdForStickers()))
 
     function getBlockchainNetworkDownTextForToken(balances) {
-        if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !networkConnectionStore.notOnlineWithNoCache) {
+        if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
             let chainIdsDown = []
             for (var i =0; i<balances.count; i++) {
                 let chainId = balances.rowData(i, "chainId")
@@ -73,8 +73,8 @@ QtObject {
     }
 
     function getMarketNetworkDownText() {
-        if(networkConnectionStore.notOnlineWithNoCache)
-            return networkConnectionStore.notOnlineWithNoCacheText
+        if(notOnlineWithNoCache)
+            return notOnlineWithNoCacheText
         else if(noBlockchainAndMarketConnectionAndNoCache)
             return noBlockchainAndMarketConnectionAndNoCacheText
         else if(noMarketConnectionAndNoCache)
@@ -87,7 +87,7 @@ QtObject {
         let jointChainIdString = ""
         for (const chain of chainIdsDown) {
             jointChainIdString = (!!jointChainIdString) ? jointChainIdString + " & " : jointChainIdString
-            jointChainIdString +=  networksModule.all.getNetworkFullName(parseInt(chain))
+            jointChainIdString += networksModule.all.getNetworkFullName(parseInt(chain))
         }
         return jointChainIdString
     }

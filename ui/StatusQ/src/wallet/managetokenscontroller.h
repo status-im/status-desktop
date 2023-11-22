@@ -14,9 +14,9 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
     // input properties
-    Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged FINAL REQUIRED)
+    Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged FINAL)
     Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey NOTIFY settingsKeyChanged FINAL REQUIRED)
-    Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL)
+    Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL) // TODO persist in settings
 
     // output properties
     Q_PROPERTY(QAbstractItemModel* regularTokensModel READ regularTokensModel CONSTANT FINAL)
@@ -25,6 +25,7 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_PROPERTY(QAbstractItemModel* communityTokenGroupsModel READ communityTokenGroupsModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* hiddenTokensModel READ hiddenTokensModel CONSTANT FINAL)
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged FINAL)
+    Q_PROPERTY(bool settingsDirty READ settingsDirty NOTIFY settingsDirtyChanged FINAL)
 
 public:
     explicit ManageTokensController(QObject* parent = nullptr);
@@ -33,10 +34,14 @@ public:
     Q_INVOKABLE void showHideCommunityToken(int row, bool flag);
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
 
-    Q_INVOKABLE void saveSettings();
+    Q_INVOKABLE void loadSettings();
+    Q_INVOKABLE void saveSettings(bool reuseCurrent = false);
     Q_INVOKABLE void clearSettings();
     Q_INVOKABLE void revert();
     Q_INVOKABLE bool hasSettings() const;
+
+    Q_INVOKABLE void settingsHideToken(const QString& symbol);
+    Q_INVOKABLE void settingsHideCommunityTokens(const QString& communityId, const QStringList& symbols);
 
     Q_INVOKABLE bool lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
@@ -50,6 +55,7 @@ signals:
     void dirtyChanged();
     void arrangeByCommunityChanged();
     void settingsKeyChanged();
+    void settingsDirtyChanged(bool dirty);
 
 private:
     QAbstractItemModel* m_sourceModel{nullptr};
@@ -60,16 +66,16 @@ private:
     void addItem(int index);
 
     ManageTokensModel* m_regularTokensModel{nullptr};
-    QAbstractItemModel* regularTokensModel() const { return m_regularTokensModel; };
+    QAbstractItemModel* regularTokensModel() const { return m_regularTokensModel; }
 
     ManageTokensModel* m_communityTokensModel{nullptr};
-    QAbstractItemModel* communityTokensModel() const { return m_communityTokensModel; };
+    QAbstractItemModel* communityTokensModel() const { return m_communityTokensModel; }
 
     ManageTokensModel* m_communityTokenGroupsModel{nullptr};
-    QAbstractItemModel* communityTokenGroupsModel() const { return m_communityTokenGroupsModel; };
+    QAbstractItemModel* communityTokenGroupsModel() const { return m_communityTokenGroupsModel; }
 
     ManageTokensModel* m_hiddenTokensModel{nullptr};
-    QAbstractItemModel* hiddenTokensModel() const { return m_hiddenTokensModel; };
+    QAbstractItemModel* hiddenTokensModel() const { return m_hiddenTokensModel; }
 
     bool dirty() const;
 
@@ -88,8 +94,11 @@ private:
     QString settingsGroupName() const;
     void setSettingsKey(const QString& newSettingsKey);
     QSettings m_settings;
-    void loadSettings();
     SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId}
+
+    bool m_settingsDirty{false};
+    bool settingsDirty() const { return m_settingsDirty; }
+    void setSettingsDirty(bool dirty);
 
     bool m_modelConnectionsInitialized{false};
 };
