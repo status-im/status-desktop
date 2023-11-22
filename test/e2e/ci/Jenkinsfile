@@ -70,8 +70,8 @@ pipeline {
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 17
 
-    /* Runtime flag to make testing of the app easier. */
-    STATUS_RUNTIME_TEST_MODE = '1'
+    /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
+    /* STATUS_RUNTIME_TEST_MODE = '1' */
   }
 
   stages {

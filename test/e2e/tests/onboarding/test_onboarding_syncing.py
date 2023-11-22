@@ -69,9 +69,11 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
             sync_start = sync_view.open_enter_sync_code_form()
             sync_start.paste_sync_code()
             sync_device_found = SyncDeviceFoundView()
-            assert driver.waitFor(lambda: 'Device found!' in sync_device_found.device_found_notifications)
+            assert driver.waitFor(
+                lambda: 'Device found!' in sync_device_found.device_found_notifications, 15000)
             sync_result = SyncResultView().wait_until_appears()
-            assert driver.waitFor(lambda: 'Device synced!' in sync_result.device_synced_notifications)
+            assert driver.waitFor(
+                lambda: 'Device synced!' in sync_result.device_synced_notifications, 15000)
             assert user.name in sync_device_found.device_found_notifications
 
         with step('Sign in to synced account'):

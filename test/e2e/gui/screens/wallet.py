@@ -59,7 +59,7 @@ class LeftPanel(QObject):
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):
-        return self._all_accounts_balance.text[:-4]
+        return self._all_accounts_balance.text
 
     @allure.step('Choose saved addresses on left wallet panel')
     @close_exists(BasePopup())

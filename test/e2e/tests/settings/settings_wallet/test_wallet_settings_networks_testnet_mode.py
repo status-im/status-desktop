@@ -56,7 +56,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         assert message == WalletNetworkSettings.TESTNET_DISABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
         if not configs.system.TEST_MODE:
-            TestnetModeBanner().wait_until_appears()
+            TestnetModeBanner().wait_until_hidden()
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
 

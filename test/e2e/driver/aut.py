@@ -128,7 +128,6 @@ class AUT:
             else:
                 raise err
 
-
     @allure.step('Restart application')
     def restart(self):
         self.stop()

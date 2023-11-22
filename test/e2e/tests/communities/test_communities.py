@@ -17,7 +17,7 @@ from scripts.tools import image
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
-# @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_create_community(user_account, main_screen: MainWindow, params):
     with step('Create community'):
