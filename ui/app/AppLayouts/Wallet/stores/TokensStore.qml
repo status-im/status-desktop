@@ -73,7 +73,7 @@ QtObject {
        of symbol clash when minting community tokens, so in case of community tokens
        there will be one entry per address + network pair */
     // TODO in #12513
-    readonly property var tokensBySymbolModel: SortFilterProxyModel {
+    readonly property var assetsBySymbolModel: SortFilterProxyModel {
         sourceModel: !!root._allTokensModule ? root._allTokensModule.tokensBySymbolModel : null
         proxyRoles: [
             ExpressionRole {

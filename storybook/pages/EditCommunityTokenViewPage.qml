@@ -32,9 +32,18 @@ SplitView {
                 layer2Networks: NetworksModel.layer2Networks
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
-                tokensModelWallet: ListModel {
+                referenceAssetsBySymbolModel: ListModel {
                     ListElement {
-                        symbol: "MAI"
+                        name: "eth"
+                        symbol: "ETH"
+                    }
+                    ListElement {
+                        name: "dai"
+                        symbol: "DAI"
+                    }
+                    ListElement {
+                        name: "snt"
+                        symbol: "SNT"
                     }
                 }
                 onPreviewClicked: logs.logEvent("EditCommunityTokenView::previewClicked")
