@@ -45,6 +45,8 @@ StackLayout {
     // Community transfer ownership related props/signals:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
 
+    onIsPrivilegedUserChanged: if (root.currentIndex === 1) root.currentIndex = 0
+
     onCurrentIndexChanged: {
         Global.closeCreateChatView()
     }
