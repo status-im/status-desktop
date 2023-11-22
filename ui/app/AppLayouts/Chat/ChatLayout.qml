@@ -228,7 +228,7 @@ StackLayout {
             collectiblesModel: root.rootStore.collectiblesModel
 
             onPrepareForSigning: {
-                root.rootStore.prepareKeypairsForSigning(sharedAddresses)
+                root.rootStore.prepareKeypairsForSigning(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress)
 
                 communityIntroDialog.keypairSigningModel = root.rootStore.communitiesModuleInst.keypairsSigningModel
             }
