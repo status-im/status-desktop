@@ -12,6 +12,7 @@ type
     PrevMsgIndex
     PrevMsgSenderId
     PrevMsgContentType
+    PrevMsgDeleted
     NextMsgIndex
     NextMsgTimestamp
     CommunityId
@@ -42,6 +43,11 @@ type
     Reactions
     EditMode
     IsEdited
+    Deleted
+    DeletedBy
+    DeletedByContactDisplayName
+    DeletedByContactIcon
+    DeletedByContactColorHash
     Links
     LinkPreviewModel
     TransactionParameters
@@ -111,6 +117,7 @@ QtObject:
       ModelRole.PrevMsgIndex.int:"prevMsgIndex",
       ModelRole.PrevMsgSenderId.int:"prevMsgSenderId",
       ModelRole.PrevMsgContentType.int:"prevMsgContentType",
+      ModelRole.PrevMsgDeleted.int:"prevMsgDeleted",
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.NextMsgTimestamp.int:"nextMsgTimestamp",
       ModelRole.CommunityId.int:"communityId",
@@ -142,6 +149,11 @@ QtObject:
       ModelRole.Reactions.int:"reactions",
       ModelRole.EditMode.int: "editMode",
       ModelRole.IsEdited.int: "isEdited",
+      ModelRole.Deleted.int: "deleted",
+      ModelRole.DeletedBy.int: "deletedBy",
+      ModelRole.DeletedByContactDisplayName.int: "deletedByContactDisplayName",
+      ModelRole.DeletedByContactIcon.int: "deletedByContactIcon",
+      ModelRole.DeletedByContactColorHash.int: "deletedByContactColorHash",
       ModelRole.Links.int: "links",
       ModelRole.LinkPreviewModel.int: "linkPreviewModel",
       ModelRole.TransactionParameters.int: "transactionParameters",
@@ -197,6 +209,12 @@ QtObject:
         result = newQVariant(prevItem.contentType.int)
       else:
         result = newQVariant(ContentType.Unknown.int)
+    of ModelRole.PrevMsgDeleted:
+      if (index.row + 1 < self.items.len):
+        let prevItem = self.items[index.row + 1]
+        result = newQVariant(prevItem.deleted)
+      else:
+        result = newQVariant(false)
     of ModelRole.PrevMsgIndex:
       result = newQVariant(index.row + 1)
     of ModelRole.NextMsgIndex:
@@ -293,6 +311,16 @@ QtObject:
       result = newQVariant(item.editMode)
     of ModelRole.IsEdited:
       result = newQVariant(item.isEdited)
+    of ModelRole.Deleted:
+      result = newQVariant(item.deleted)
+    of ModelRole.DeletedBy:
+      result = newQVariant(item.deletedBy)
+    of ModelRole.DeletedByContactDisplayName:
+      result = newQVariant(item.deletedByContactDetails.dto.userDefaultDisplayName())
+    of ModelRole.DeletedByContactIcon:
+      result = newQVariant(item.deletedByContactDetails.dto.image.thumbnail)
+    of ModelRole.DeletedByContactColorHash:
+      result = newQVariant(item.deletedByContactDetails.colorHash)
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
     of ModelRole.LinkPreviewModel:
@@ -425,7 +453,7 @@ QtObject:
     self.insertItemsBasedOnClock(@[item])
 
   # Replied message was deleted
-  proc updateMessagesWithResponseTo(self: Model, messageId: string) =
+  proc updateMessagesWhenQuotedMessageDeleted(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
         let ind = self.createIndex(i, 0, nil)
@@ -469,7 +497,33 @@ QtObject:
       self.updateItemAtIndex(ind + 1)
 
     self.countChanged()
-    self.updateMessagesWithResponseTo(messageId)
+    self.updateMessagesWhenQuotedMessageDeleted(messageId)
+
+  proc messageDeleted*(self: Model, messageId: string, deletedBy: string, deletedByContactDetails: ContactDetails) =
+    let i = self.findIndexForMessageId(messageId)
+    if(i == -1):
+      return
+
+    let ind = self.createIndex(i, 0, nil)
+    defer: ind.delete
+
+    var item = self.items[i]
+    item.messageText = ""
+    item.unparsedText = ""
+    item.deleted = true
+    item.deletedBy = deletedBy
+    item.deletedByContactDetails = deletedByContactDetails
+    self.dataChanged(ind, ind, @[
+      ModelRole.MessageText.int,
+      ModelRole.UnparsedText.int,
+      ModelRole.Deleted.int,
+      ModelRole.DeletedBy.int,
+      ModelRole.DeletedByContactDisplayName.int,
+      ModelRole.DeletedByContactIcon.int,
+      ModelRole.DeletedByContactColorHash.int,
+    ])
+
+    self.updateMessagesWhenQuotedMessageDeleted(messageId)
 
   proc getLastItemFrom*(self: Model, pubkey: string): Item =
     # last item == first time since we process messages in reverse order

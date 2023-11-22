@@ -118,6 +118,7 @@ type MessageDto* = object
   linkPreviews*: seq[LinkPreview]
   editedAt*: int
   deleted*: bool
+  deletedBy*: string
   deletedForMe*: bool
   transactionParameters*: TransactionParameters
   mentioned*: bool
@@ -237,6 +238,10 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("albumImagesCount", result.albumImagesCount)
   discard jsonObj.getProp("editedAt", result.editedAt)
   discard jsonObj.getProp("deleted", result.deleted)
+  discard jsonObj.getProp("deletedBy", result.deletedBy)
+  if result.deleted and result.deletedBy == "":
+    # The message was deleted by the sender itself
+    result.deletedBy = result.`from`
   discard jsonObj.getProp("deletedForMe", result.deletedForMe)
   discard jsonObj.getProp("mentioned", result.mentioned)
   discard jsonObj.getProp("replied", result.replied)
