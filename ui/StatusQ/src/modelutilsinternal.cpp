@@ -95,7 +95,13 @@ bool ModelUtilsInternal::contains(QAbstractItemModel* model,
 
     Qt::MatchFlags flags = Qt::MatchFixedString; // Qt::CaseInsensitive by default
     if(mode == Qt::CaseSensitive) flags |= Qt::MatchCaseSensitive;
-    const auto indexes = model->match(model->index(0, 0), roleByName(model, roleName), value, 1, flags);
+
+    auto role = roleByName(model, roleName);
+
+    if (role == -1)
+        return false;
+
+    const auto indexes = model->match(model->index(0, 0), role, value, 1, flags);
     return !indexes.isEmpty();
 }
 
