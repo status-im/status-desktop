@@ -62,6 +62,7 @@ StatusSortableColumnHeader 0.1 StatusSortableColumnHeader.qml
 StatusStepper 0.1 StatusStepper.qml
 StatusSyncDeviceDelegate 0.1 StatusSyncDeviceDelegate.qml
 StatusTagSelector 0.1 StatusTagSelector.qml
+StatusTimeStampLabel 0.1 StatusTimeStampLabel.qml
 StatusToastMessage 0.1 StatusToastMessage.qml
 StatusToolBar 0.1 StatusToolBar.qml
 StatusVideo 0.1 StatusVideo.qml

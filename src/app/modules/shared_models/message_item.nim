@@ -42,6 +42,9 @@ type
     pinnedBy: string
     editMode: bool
     isEdited: bool
+    deleted: bool
+    deletedBy: string
+    deletedByContactDetails: ContactDetails
     links: seq[string]
     linkPreviewModel: link_preview_model.Model
     transactionParameters: TransactionParametersItem
@@ -99,6 +102,9 @@ proc initItem*(
     senderEnsVerified: bool,
     discordMessage: DiscordMessage,
     resendError: string,
+    deleted: bool,
+    deletedBy: string,
+    deletedByContactDetails: ContactDetails,
     mentioned: bool,
     quotedMessageFrom: string,
     quotedMessageText: string,
@@ -143,6 +149,9 @@ proc initItem*(
   result.stickerPack = stickerPack
   result.editMode = false
   result.isEdited = false
+  result.deleted = deleted
+  result.deletedBy = deletedBy
+  result.deletedByContactDetails = deletedByContactDetails
   result.links = links
   result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
   result.transactionParameters = transactionParameters
@@ -230,6 +239,9 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
     resendError = "",
+    deleted = false,
+    deletedBy = "",
+    deletedByContactDetails = ContactDetails(),
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",
@@ -272,6 +284,8 @@ proc `$`*(self: Item): string =
     messageReactions: [{$self.reactionsModel}],
     editMode:{$self.editMode},
     isEdited:{$self.isEdited},
+    deleted:{self.deleted},
+    deletedBy:{$self.deletedBy},
     links:{$self.links},
     transactionParameters:{$self.transactionParameters},
     mentionedUsersPks:{$self.mentionedUsersPks},
@@ -500,6 +514,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "pinnedBy": self.pinnedBy,
     "editMode": self.editMode,
     "isEdited": self.isEdited,
+    "deleted": self.deleted,
+    "deletedBy": self.deletedBy,
     "links": self.links,
     "mentionedUsersPks": self.mentionedUsersPks,
     "senderEnsVerified": self.senderEnsVerified,
@@ -531,6 +547,23 @@ proc isEdited*(self: Item): bool {.inline.} =
 
 proc `isEdited=`*(self: Item, value: bool) {.inline.} =
   self.isEdited = value
+
+proc deleted*(self: Item): bool {.inline.} =
+  self.deleted
+
+proc `deleted=`*(self: Item, value: bool) {.inline.} =
+  self.deleted = value
+
+proc deletedBy*(self: Item): string {.inline.} =
+  self.deletedBy
+
+proc deletedByContactDetails*(self: Item): ContactDetails {.inline.} =
+  self.deletedByContactDetails
+proc `deletedByContactDetails=`*(self: Item, value: ContactDetails) {.inline.} =
+  self.deletedByContactDetails = value
+
+proc `deletedBy=`*(self: Item, value: string) {.inline.} =
+  self.deletedBy = value
 
 proc gapFrom*(self: Item): int64 {.inline.} =
   self.gapFrom
@@ -586,7 +619,7 @@ proc quotedMessageAuthorAvatar*(self: Item): string {.inline.} =
 
 proc `quotedMessageAuthorAvatar=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageAuthorAvatar = value
-  
+
 proc quotedMessageAuthorDetails*(self: Item): ContactDetails {.inline.} =
   self.quotedMessageAuthorDetails
 proc `quotedMessageAuthorDetails=`*(self: Item, value: ContactDetails) {.inline.} =

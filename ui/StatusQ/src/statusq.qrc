@@ -9,7 +9,7 @@
         <file>StatusQ/Components/private/statusMessage/StatusPinMessageDetails.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusSticker.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusTextMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusTimeStampLabel.qml</file>
+        <file>StatusQ/Components/StatusTimeStampLabel.qml</file>
         <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Components/private/qmldir</file>
         <file>StatusQ/Components/StatusAddress.qml</file>

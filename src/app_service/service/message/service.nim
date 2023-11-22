@@ -106,6 +106,7 @@ type
   MessageDeletedArgs* =  ref object of Args
     chatId*: string
     messageId*: string
+    deletedBy*: string
 
   MessageDeliveredArgs* = ref object of Args
     chatId*: string
@@ -347,7 +348,7 @@ QtObject:
 
   proc handleDeletedMessagesUpdate(self: Service, deletedMessages: seq[RemovedMessageDto]) =
     for dm in deletedMessages:
-      let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId)
+      let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId, deletedBy: dm.deletedBy)
       self.events.emit(SIGNAL_MESSAGE_DELETION, data)
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
@@ -505,9 +506,11 @@ QtObject:
     if(responseObj.getProp("reactions", reactionsArr)):
       reactions = map(reactionsArr.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
 
-    let data = MessagesLoadedArgs(chatId: chatId,
-    messages: messages,
-    reactions: reactions)
+    let data = MessagesLoadedArgs(
+      chatId: chatId,
+      messages: messages,
+      reactions: reactions,
+    )
 
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
 
@@ -998,7 +1001,11 @@ proc deleteMessage*(self: Service, messageId: string) =
       error "error: ", procName="deleteMessage", errDesription = "there is no set chat id or message id in response"
       return
 
-    let data = MessageDeletedArgs(chatId: chat_Id, messageId: message_Id)
+    let data = MessageDeletedArgs(
+      chatId: chat_Id,
+      messageId: message_Id,
+      deletedBy: singletonInstance.userProfile.getPubKey(),
+    )
     self.events.emit(SIGNAL_MESSAGE_DELETION, data)
 
   except Exception as e:

@@ -180,7 +180,7 @@ proc init*(self: Controller) =
     let args = MessageDeletedArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onMessageDeleted(args.messageId)
+    self.delegate.onMessageDeleted(args.messageId, args.deletedBy)
 
   self.events.on(SIGNAL_MESSAGE_EDITED) do(e: Args):
     let args = MessageEditedArgs(e)

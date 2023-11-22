@@ -103,6 +103,7 @@ Loader {
 
     property int prevMessageIndex: -1
     property int prevMessageContentType: prevMessageAsJsonObj ? prevMessageAsJsonObj.contentType : Constants.messageContentType.unknownContentType
+    property bool prevMessageDeleted: false
     property double prevMessageTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
     property string prevMessageSenderId: prevMessageAsJsonObj ? prevMessageAsJsonObj.senderId : ""
     property var prevMessageAsJsonObj
@@ -112,6 +113,12 @@ Loader {
 
     property bool editModeOn: false
     property bool isEdited: false
+
+    property bool deleted: false
+    property string deletedBy: ""
+    property string deletedByContactDisplayName: ""
+    property string deletedByContactIcon: ""
+    property string deletedByContactColorHash: ""
 
     property bool shouldRepeatHeader: d.getShouldRepeatHeader(messageTimestamp, prevMessageTimestamp, messageOutgoingStatus)
 
@@ -202,6 +209,9 @@ Loader {
     asynchronous: true
 
     sourceComponent: {
+        if (root.deleted) {
+            return deletedMessageComponent
+        }
         switch(messageContentType) {
         case Constants.messageContentType.chatIdentifier:
             return channelIdentifierComponent
@@ -449,6 +459,87 @@ Loader {
     }
 
     Component {
+        id: deletedMessageComponent
+
+        ColumnLayout {
+
+            RowLayout {
+                id: deletedMessage
+                height: 40
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+                Layout.bottomMargin: 8
+                Layout.leftMargin: 16
+                spacing: 8
+
+                readonly property int smartIconSize: 20
+                readonly property int colorId: Utils.colorIdForPubkey(root.deletedBy)
+                readonly property var messageDetails: StatusMessageDetails {
+                    sender.profileImage {
+                        width: deletedMessage.smartIconSize
+                        height: deletedMessage.smartIconSize
+                        assetSettings: StatusAssetSettings {
+                            width: deletedMessage.smartIconSize
+                            height: deletedMessage.smartIconSize
+                            name: root.deletedByContactIcon || ""
+                            isLetterIdenticon: name === ""
+                            imgIsIdenticon: false
+                            charactersLen: 1
+                            color: Theme.palette.userCustomizationColors[deletedMessage.colorId]
+                            letterSize: 14
+                        }
+
+                        name: root.deletedByContactIcon || ""
+                        pubkey: root.deletedBy
+                        colorId: deletedMessage.colorId
+                        colorHash: root.deletedByContactColorHash
+                        showRing: true
+                    }
+                }
+
+                Rectangle {
+                    Layout.preferredWidth: deletedMessage.height
+                    Layout.preferredHeight: deletedMessage.height
+
+                    radius: width / 2
+                    color: Theme.palette.dangerColor3
+                    Layout.alignment: Qt.AlignVCenter
+
+                    StatusIcon {
+                        anchors.centerIn: parent
+                        width: 24
+                        height: 24
+                        icon: "delete"
+                        color: Theme.palette.dangerColor1
+                    }
+                }
+
+                StatusSmartIdenticon {
+                    id: profileImage
+                    Layout.preferredWidth: deletedMessage.smartIconSize
+                    Layout.preferredHeight: deletedMessage.smartIconSize
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: true
+                    name: root.deletedByContactDisplayName
+                    asset: deletedMessage.messageDetails.sender.profileImage.assetSettings
+                    ringSettings: deletedMessage.messageDetails.sender.profileImage.ringSettings
+                }
+
+                StatusBaseText {
+                    text: qsTr("<b>%1</b> deleted this message").arg(root.deletedByContactDisplayName)
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                StatusTimeStampLabel {
+                    Layout.alignment: Qt.AlignVCenter
+                    timestamp: root.messageTimestamp
+                    showFullTimestamp: false
+                }
+            }
+        }
+    }
+
+    Component {
         id: messageComponent
 
         ColumnLayout {
@@ -539,7 +630,7 @@ Loader {
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventSent ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventAccepted ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventRemoved ||
-                            root.senderId !== root.prevMessageSenderId
+                            root.senderId !== root.prevMessageSenderId || root.prevMessageDeleted
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
                 bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2

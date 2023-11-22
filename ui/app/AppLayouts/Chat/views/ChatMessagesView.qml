@@ -296,6 +296,11 @@ Item {
             editModeOn: model.editMode
             onEditModeOnChanged: root.editModeChanged(editModeOn)
             isEdited: model.isEdited
+            deleted: model.deleted
+            deletedBy: model.deletedBy
+            deletedByContactDisplayName: model.deletedByContactDisplayName
+            deletedByContactIcon: model.deletedByContactIcon
+            deletedByContactColorHash: model.deletedByContactColorHash
             linkPreviewModel: model.linkPreviewModel
             links: model.links
             messageAttachments: model.messageAttachments
@@ -322,12 +327,13 @@ Item {
              // Also one important thing here is that messages are set in descending order
              // in terms of `timestamp` of a message, that means a message with the most
              // recent time is added at index 0.
-            prevMessageIndex: prevMsgIndex
-            prevMessageTimestamp: prevMsgTimestamp
-            prevMessageSenderId: prevMsgSenderId
-            prevMessageContentType: prevMsgContentType
-            nextMessageIndex: nextMsgIndex
-            nextMessageTimestamp: nextMsgTimestamp
+            prevMessageIndex: model.prevMsgIndex
+            prevMessageTimestamp: model.prevMsgTimestamp
+            prevMessageSenderId: model.prevMsgSenderId
+            prevMessageContentType: model.prevMsgContentType
+            prevMessageDeleted: model.prevMsgDeleted
+            nextMessageIndex: model.nextMsgIndex
+            nextMessageTimestamp: model.nextMsgTimestamp
 
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
