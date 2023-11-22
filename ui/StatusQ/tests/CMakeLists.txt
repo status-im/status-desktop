@@ -64,3 +64,7 @@ add_test(NAME SingleRoleAggregatorTest COMMAND SingleRoleAggregatorTest)
 add_executable(SumAggregatorTest tst_SumAggregator.cpp)
 target_link_libraries(SumAggregatorTest PRIVATE Qt5::Test StatusQ)
 add_test(NAME SumAggregatorTest COMMAND SumAggregatorTest)
+
+add_executable(ConcatModelTest tst_ConcatModel.cpp)
+target_link_libraries(ConcatModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+add_test(NAME ConcatModelTest COMMAND ConcatModelTest)
