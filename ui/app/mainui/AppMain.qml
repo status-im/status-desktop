@@ -1168,6 +1168,7 @@ Item {
                                     networkConnectionStore: appMain.networkConnectionStore
                                 }
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
+                                tokensStore: appMain.tokensStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -1336,6 +1337,7 @@ Item {
                                         return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
                                     }
                                 }
+                                tokensStore: appMain.tokensStore
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

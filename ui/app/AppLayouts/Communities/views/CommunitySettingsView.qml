@@ -23,6 +23,8 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
 
+import AppLayouts.Wallet.stores 1.0
+
 StatusSectionLayout {
     id: root
 
@@ -32,6 +34,7 @@ StatusSectionLayout {
 
     property var rootStore
     property var chatCommunitySectionModule
+    required property TokensStore tokensStore
     property var community
     property var transactionStore: TransactionStore {}
     property bool communitySettingsDisabled
@@ -346,12 +349,12 @@ StatusSectionLayout {
 
             // Models
             tokensModel: root.community.communityTokens
-            tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks
             layer2Networks: communityTokensStore.layer2Networks
             enabledNetworks: communityTokensStore.enabledNetworks
             allNetworks: communityTokensStore.allNetworks
             accounts: root.walletAccountsModel
+            referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
 
             onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
 

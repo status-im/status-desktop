@@ -26,10 +26,12 @@ StatusScrollView {
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
 
     property var tokensModel
-    property var tokensModelWallet
     property TokenObject token: TokenObject {
         type: root.isAssetView ? Constants.TokenType.ERC20 : Constants.TokenType.ERC721
     }
+
+    // Used for reference validation
+    required property var referenceAssetsBySymbolModel
     
     // Used for reference validation when editing a failed deployment
     property string referenceName: ""
@@ -65,6 +67,24 @@ StatusScrollView {
                                               && deployFeeSubscriber.feeText !== "" && deployFeeSubscriber.feeErrorText === ""
 
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
+
+        readonly property bool containsAssetReferenceName: root.isAssetView ? checkNameProxy.count > 0 : false
+        readonly property SortFilterProxyModel checkNameProxy : SortFilterProxyModel {
+          sourceModel: root.referenceAssetsBySymbolModel
+          filters: ValueFilter {
+            roleName: "name"
+            value: nameInput.text
+          }
+        }
+
+        readonly property bool containsAssetReferenceSymbol: root.isAssetView ? checkSymbolProxy.count > 0 : false
+        readonly property SortFilterProxyModel checkSymbolProxy: SortFilterProxyModel {
+          sourceModel: root.referenceAssetsBySymbolModel
+          filters: ValueFilter {
+            roleName: "symbol"
+            value: symbolInput.text
+          }
+        }
 
         function hasEmoji(text) {
             return SQUtils.Emoji.hasEmoji(SQUtils.Emoji.parse(text));
@@ -126,9 +146,10 @@ StatusScrollView {
                         return true
 
                 // Otherwise, no repeated names allowed:
-                return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text, Qt.CaseInsensitive)
+                return (!SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text, Qt.CaseInsensitive) && !d.containsAssetReferenceName)
             }
-            extraValidator.errorMessage: qsTr("You have used this token name before")
+            extraValidator.errorMessage: d.containsAssetReferenceName ? qsTr("Asset name already exists") :
+                                                                        qsTr("You have used this token name before")
 
             onTextChanged: root.token.name = text
         }
@@ -173,12 +194,9 @@ StatusScrollView {
                         return true
 
                 // Otherwise, no repeated names allowed:
-                return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) &&
-                        !SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text))
+                return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) && !d.containsAssetReferenceSymbol)
             }
-            extraValidator.errorMessage: SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text) ?
-                                             qsTr("This token symbol is already in use") :
-                                             qsTr("You have used this token symbol before")
+            extraValidator.errorMessage: d.containsAssetReferenceSymbol ? qsTr("Symbol already exists") : qsTr("You have used this token symbol before")
 
             onTextChanged: {
                 const cursorPos = input.edit.cursorPosition

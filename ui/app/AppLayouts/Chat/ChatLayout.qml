@@ -25,6 +25,7 @@ StackLayout {
     readonly property var contactsStore: rootStore.contactsStore
     readonly property var permissionsStore: rootStore.permissionsStore
     property var communitiesStore
+    required property WalletStore.TokensStore tokensStore
 
     property var sectionItemModel
     property var sendModalPopup
@@ -188,6 +189,7 @@ StackLayout {
             id: communitySettingsView
             rootStore: root.rootStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            tokensStore: root.tokensStore
             sendModalPopup: root.sendModalPopup
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest

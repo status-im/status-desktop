@@ -50,8 +50,9 @@ StackView {
 
     // Models:
     property var tokensModel
-    property var tokensModelWallet
     property var accounts // Expected roles: address, name, color, emoji, walletType
+    required property var referenceAssetsBySymbolModel
+
 
     // Network related properties:
     property var layer1Networks
@@ -375,7 +376,7 @@ StackView {
                         layer2Networks: root.layer2Networks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
-                        tokensModelWallet: root.tokensModelWallet
+                        referenceAssetsBySymbolModel: root.referenceAssetsBySymbolModel
 
                         referenceName: newTokenPage.referenceName
                         referenceSymbol: newTokenPage.referenceSymbol

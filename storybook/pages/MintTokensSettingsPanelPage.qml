@@ -114,9 +114,18 @@ SplitView {
             enabledNetworks: NetworksModel.enabledNetworks
             allNetworks: enabledNetworks
             accounts: WalletAccountsModel {}
-            tokensModelWallet: ListModel {
+            referenceAssetsBySymbolModel: ListModel {
                 ListElement {
-                    symbol: "MAI"
+                    name: "eth"
+                    symbol: "ETH"
+                }
+                ListElement {
+                    name: "dai"
+                    symbol: "DAI"
+                }
+                ListElement {
+                    name: "snt"
+                    symbol: "SNT"
                 }
             }
 
