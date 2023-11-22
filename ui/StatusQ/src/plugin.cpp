@@ -4,6 +4,7 @@
 #include <qqmlsortfilterproxymodeltypes.h>
 
 #include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/concatmodel.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/permissionutilsinternal.h"
@@ -34,6 +35,8 @@ public:
         qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
         qmlRegisterType<ManageTokensModel>("StatusQ.Models", 0, 1, "ManageTokensModel");
 
+        qmlRegisterType<SourceModel>("StatusQ", 0, 1, "SourceModel");
+        qmlRegisterType<ConcatModel>("StatusQ", 0, 1, "ConcatModel");
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");

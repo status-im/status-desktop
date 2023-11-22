@@ -89,6 +89,7 @@ endif()
 add_library(StatusQ SHARED
         ${STATUSQ_QRC_COMPILED}
         include/StatusQ/QClipboardProxy.h
+        include/StatusQ/concatmodel.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/permissionutilsinternal.h
@@ -99,6 +100,7 @@ add_library(StatusQ SHARED
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
         src/QClipboardProxy.cpp
+        src/concatmodel.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
         src/permissionutilsinternal.cpp

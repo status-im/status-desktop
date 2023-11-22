@@ -52,3 +52,7 @@ add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
 target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
+
+add_executable(ConcatModelTest tst_ConcatModel.cpp)
+target_link_libraries(ConcatModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+add_test(NAME ConcatModelTest COMMAND ConcatModelTest)
