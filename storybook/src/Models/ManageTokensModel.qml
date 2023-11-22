@@ -8,9 +8,8 @@ ListModel {
         var data = []
         for (let i = 0; i < 100; i++) {
             const communityId = i % 2 == 0 ? "" : "communityId%1".arg(Math.round(i))
-            const enabledNetworkBalance = !!communityId ? Math.round(i)
-                                                        : {
-                                                              amount: 1,
+            const enabledNetworkBalance =  {
+                                                              amount: Math.round(i),
                                                               symbol: "ZRX"
                                                           }
             var obj = {

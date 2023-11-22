@@ -1,5 +1,5 @@
 module StatusQ.Core
-
+NestedListViewAnchor 0.1 NestedListViewAnchor.qml
 StatusAnimatedStack 0.1 StatusAnimatedStack.qml
 StatusAssetSettings 0.1 StatusAssetSettings.qml
 StatusBaseText 0.1 StatusBaseText.qml
@@ -8,6 +8,7 @@ StatusFontSettings 0.1 StatusFontSettings.qml
 StatusGridView 0.1 StatusGridView.qml
 StatusIcon 0.1 StatusIcon.qml
 StatusIdenticonRingSettings 0.1 StatusIdenticonRingSettings.qml
+StatusLazyScrollView 0.1 StatusLazyScrollView.qml
 StatusListView 0.1 StatusListView.qml
 StatusModalHeaderSettings 0.1 StatusModalHeaderSettings.qml
 StatusProfileImageSettings 0.1 StatusProfileImageSettings.qml

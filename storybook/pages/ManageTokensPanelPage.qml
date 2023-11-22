@@ -28,6 +28,8 @@ SplitView {
         ManageTokensPanel {
             id: showcasePanel
             width: 500
+            //Removing the height property will break the initial height due to Layout internal handling
+            height: root.height
             baseModel: ctrlEmptyModel.checked ? null : assetsModel
         }
     }
