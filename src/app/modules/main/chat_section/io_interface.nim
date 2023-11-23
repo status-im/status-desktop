@@ -60,9 +60,6 @@ method chatContentDidLoad*(self: AccessInterface) {.base.} =
 method activeItemSet*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

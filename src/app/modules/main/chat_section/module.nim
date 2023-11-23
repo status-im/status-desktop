@@ -382,10 +382,6 @@ method chatContentDidLoad*(self: Module) =
 method setActiveItem*(self: Module, itemId: string) =
   self.controller.setActiveItem(itemId)
 
-method makeChatWithIdActive*(self: Module, chatId: string) =
-  self.setActiveItem(chatId)
-  singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(self.controller.getMySectionId(), chatId)
-
 proc updateActiveChatMembership*(self: Module) =
   let activeChatId = self.controller.getActiveChatId()
   let chat = self.controller.getChatDetails(activeChatId)
