@@ -321,13 +321,11 @@ statusq-tests:
 	echo -e "\033[92mBuilding:\033[39m StatusQ Unit Tests"
 	cmake \
 		--build $(STATUSQ_BUILD_PATH) \
-                --target TestStatusQ \
 		$(HANDLE_OUTPUT)
 
 run-statusq-tests: statusq-tests
 	echo -e "\033[92mRunning:\033[39m StatusQ Unit Tests"
-	$(STATUSQ_BUILD_PATH)/bin/TestStatusQ
-
+	ctest -V --test-dir $(STATUSQ_BUILD_PATH) ${ARGS}
 
 ##
 ##	Storybook
