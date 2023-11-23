@@ -64,5 +64,11 @@ ModalPopup {
             fleetName: Constants.status_prod
             buttonGroup: fleetSettings
         }
+
+        FleetRadioSelector {
+            advancedStore: popup.advancedStore
+            fleetName: Constants.shards_test
+            buttonGroup: fleetSettings
+        }
     }
 }
