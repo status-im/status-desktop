@@ -225,6 +225,8 @@ var NODE_CONFIG* = %* {
   "WalletConfig": {
     "Enabled": true,
     "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
+    "RaribleMainnetAPIKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
+    "RaribleTestnetAPIKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
     "AlchemyAPIKeys": %* {
       "1": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
       "5": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,

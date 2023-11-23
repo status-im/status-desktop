@@ -75,6 +75,8 @@
   "WalletConfig": {
     "Enabled": true,
     "OpenseaAPIKey": "",
+    "RaribleMainnetAPIKey": "",
+    "RaribleTestnetAPIKey": "",
     "AlchemyAPIKeys": {},
     "InfuraAPIKey": "",
     "InfuraAPIKeySecret": ""

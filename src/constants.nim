@@ -56,5 +56,7 @@ let
   ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismGoerliToken
   ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismSepoliaToken
   OPENSEA_API_KEY_RESOLVED* = desktopConfig.openseaApiKey
+  RARIBLE_MAINNET_API_KEY_RESOLVED* = desktopConfig.raribleMainnetApiKey
+  RARIBLE_TESTNET_API_KEY_RESOLVED* = desktopConfig.raribleTestnetApiKey
   TENOR_API_KEY_RESOLVED* = desktopConfig.tenorApiKey
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
