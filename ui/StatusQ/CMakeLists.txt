@@ -183,5 +183,6 @@ if (${STATUSQ_BUILD_SANITY_CHECKER})
 endif ()
 
 if (${STATUSQ_BUILD_TESTS})
+    enable_testing()
     add_subdirectory(tests)
 endif ()

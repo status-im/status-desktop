@@ -15,13 +15,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(${PROJECT_NAME} main.cpp)
-add_dependencies(${PROJECT_NAME} StatusQ)
 
 add_test(NAME ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} -input "${CMAKE_CURRENT_SOURCE_DIR}")
-
-add_custom_target("Run_${PROJECT_NAME}" COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${CMAKE_CURRENT_BINARY_DIR}")
-add_dependencies("Run_${PROJECT_NAME}" ${PROJECT_NAME})
+    COMMAND ${PROJECT_NAME} -input "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # TODO: move this to a test helpers library
 target_include_directories(${PROJECT_NAME}
@@ -35,6 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::QuickTest
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
+    StatusQ
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -44,12 +41,12 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 add_executable(RolesRenamingModelTest tst_RolesRenamingModel.cpp)
 target_link_libraries(RolesRenamingModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
-add_test(RolesRenamingModelTest COMMAND RolesRenamingModelTest)
+add_test(NAME RolesRenamingModelTest COMMAND RolesRenamingModelTest)
 
 add_executable(LeftJoinModelTest tst_LeftJoinModel.cpp)
 target_link_libraries(LeftJoinModelTest PRIVATE Qt5::Test StatusQ)
-add_test(LeftJoinModelTest COMMAND LeftJoinModelTest)
+add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 
 add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
 target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
-add_test(SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
+add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
