@@ -384,6 +384,8 @@ QtObject:
     result["WalletConfig"] = %* {
       "LoadAllTransfers": true,
       "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
+      "RaribleMainnetAPIKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
+      "RaribleTestnetAPIKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
       "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
       "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
       "AlchemyAPIKeys": %* {
