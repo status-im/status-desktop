@@ -90,8 +90,8 @@ proc toJsonNode*(communityUrlDataDto: CommunityUrlDataDto): JsonNode =
   jsonObj["membersCount"] = %* communityUrlDataDto.membersCount
   jsonObj["color"] = %* communityUrlDataDto.color
   jsonObj["communityId"] = %* communityUrlDataDto.communityId
-  jsonObj["shardCluster"] = %* communityUrlDataDto.shard.cluster
-  jsonObj["shardIndex"] = %* communityUrlDataDto.shard.index
+  jsonObj["shardCluster"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.cluster else: -1)
+  jsonObj["shardIndex"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.index else: -1)
   return jsonObj
 
 proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =
