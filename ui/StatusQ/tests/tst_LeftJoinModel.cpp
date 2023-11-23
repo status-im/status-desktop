@@ -22,6 +22,8 @@ public:
 
     int rowCount(const QModelIndex& parent) const override
     {
+        if(parent.isValid()) return 0; //no children
+
         assert(m_data.size());
         return m_data.first().second.size();
     }
