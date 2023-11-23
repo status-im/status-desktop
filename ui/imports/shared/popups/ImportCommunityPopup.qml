@@ -46,8 +46,10 @@ StatusDialog {
                 if (!linkData) {
                     return ""
                 }
-                d.shardCluster = linkData.shardCluster
-                d.shardIndex = linkData.shardIndex
+                if (linkData.shardCluster != undefined && linkData.shardIndex != undefined) {
+                    d.shardCluster = linkData.shardCluster
+                    d.shardIndex = linkData.shardIndex
+                }
                 return linkData.communityId
             }
             if (!Utils.isCommunityPublicKey(inputKey))
