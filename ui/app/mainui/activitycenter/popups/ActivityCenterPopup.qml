@@ -135,6 +135,8 @@ Popup {
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipFailed:
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipDeclined:
                     return ownerTokenReceivedNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.ShareAccounts:
+                    return shareAccountsNotificationComponent
                 default:
                     return null
                 }
@@ -273,6 +275,29 @@ Popup {
 
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(notification.communityId)
             onNavigateToCommunityClicked: root.store.setActiveCommunity(notification.communityId)
+        }
+    }
+
+    Component {
+        id: shareAccountsNotificationComponent
+
+        ActivityNotificationCommunityShareAddresses {
+
+            readonly property var community : notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            communityName: community ? community.name : ""
+            communityColor: community ? community.color : "black"
+            communityImage: community ? community.image : ""
+
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+
+            onOpenShareAccountsClicked: {
+                Global.communityShareAddressesPopupRequested(notification.communityId, communityName, communityImage)
+            }
         }
     }
 }
