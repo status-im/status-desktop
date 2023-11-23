@@ -5,13 +5,10 @@ let
   #nixpkgsSrc = (import <nixpkgs> { }).lib.cleanSource "/home/jakubgs/work/nixpkgs";
 
   # We follow the master branch of official nixpkgs.
-  nixpkgs = builtins.fetchTarball {
+  nixpkgsSrc = builtins.fetchTarball {
     url = "https://github.com/NixOS/nixpkgs/archive/e7603eba51f2c7820c0a182c6bbb351181caa8e7.tar.gz";
     sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
   };
-
-  #nixpkgsSrc = (import <nixpkgs> { }).lib.cleanSource "/home/jakubgs/work/nixpkgs";
-
 
   # glibc 2.24
   #nixpkgs-old = import "nixpkgs/release-16.09";
@@ -23,16 +20,15 @@ let
   # Glibc 2.31
   #nixpkgsSrcOld = import "nixpkgs/nixos-20.09"
   # TODO: maybe -small ?
-  nixpkgs-old = builtins.fetchTarball {
+  nixpkgsOldSrc = builtins.fetchTarball {
     url = "https://github.com/NixOS/nixpkgs/archive/1c1f5649bb9c1b0d98637c8c365228f57126f361.tar.gz";
     # TODO: find sha
     #sha256 = "sha256:0mwck8jyr74wh1b7g6nac1mxy6a0rkppz8n12andsffybsipz5jw";
   };
 
   # Override some packages and utilities
-  pkgsOverlay = import ./overlay.nix { inherit nixpkgs; inherit nixpkgs-old; };
-
+  pkgsOverlay = import ./overlay.nix { inherit nixpkgsSrc; inherit nixpkgsOldSrc; };
 in
-  (import nixpkgs) {
+  (import nixpkgsSrc) {
     overlays = [ pkgsOverlay ];
   }

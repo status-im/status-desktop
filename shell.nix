@@ -2,16 +2,6 @@
   pkgs ? import ./pkgs.nix
 }:
 
-#pkgs.mkShell {
-#  name = "debug-shell";
-#
-#  buildInputs = with pkgs; [
-#  bash hello
-#  ];
-#
-#
-#}
-
 let
   qtCustom = with pkgs.qt515; /* 5.15.8 */
     env "qt-custom-${qtbase.version}" ([
@@ -29,12 +19,23 @@ let
       qtwebchannel
       qtlocation
     ]);
+
+  lddWrapped = pkgs.writeShellScriptBin "ldd" ''
+    "${pkgs.bash}/bin/sh" "${pkgs.glibc.bin}/bin/ldd" "$@"
+  '';
 in pkgs.mkShell {
   name = "status-desktop-build-shell";
 
+  shellHook = ''
+    export PATH="${lddWrapped}/bin:$PATH"
+    '';
+    #export PATH=${pkgs.bashInteractive}/bin:$PATH
+    #export SHELL=${pkgs.bashInteractive}/bin
+
   buildInputs = with pkgs; [
+    linuxdeployqt
 # TODO: to check
-    bash curl wget git file unzip jq lsb-release
+    curl wget git file unzip jq lsb-release
     cmake gnumake pkg-config gnugrep qtCustom
     pcre nss pcsclite extra-cmake-modules
     xorg.libxcb xorg.libX11 libxkbcommon
@@ -81,5 +82,8 @@ in pkgs.mkShell {
     xorg.xcbutilrenderutil
     xorg.xcbutilwm
     zlib
-  ];
+# TODO why not glibc? nix build shell issue?
+#glibc
+#stdenv.cc.cc.lib
+ ];
 }

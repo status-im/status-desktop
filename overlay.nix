@@ -1,9 +1,12 @@
 {
-  nixpkgs,
-  nixpkgs-old,
-}: self: super: let
+  nixpkgsSrc,
+  nixpkgsOldSrc,
+}:
+
+self: super: let
   # TODO: helper function, move
   removeMany = itemsToRemove: list: super.lib.foldr super.lib.remove list itemsToRemove;
+  inherit (super) callPackage;
 
   # takes in a *string* name of a glibc package e.g. "glibcInfo"
   #
@@ -18,10 +21,10 @@
   glibcAdapter = glibcPkg:
     super.${glibcPkg}.overrideAttrs (
       attrs: let
-        oldGlibcPkg = (import nixpkgs-old {inherit (super) system;}).${glibcPkg};
+        oldGlibcPkg = (import nixpkgsOldSrc {inherit (super) system;}).${glibcPkg};
         glibcDir = "pkgs/development/libraries/glibc";
-        oldGlibcDir = "${nixpkgs-old}/${glibcDir}";
-        newGlibcDir = "${nixpkgs}/${glibcDir}";
+        oldGlibcDir = "${nixpkgsOldSrc}/${glibcDir}";
+        newGlibcDir = "${nixpkgsSrc}/${glibcDir}";
 
       in {
         inherit (oldGlibcPkg) name src;
@@ -44,6 +47,7 @@
           # TODO: apply patch from super?
             # has to do with new gcc not new glibc
             #"${newGlibcDir}/fix-x64-abi.patch"
+            #"${newGlibcDir}/0001-Revert-Remove-all-usage-of-BASH-or-BASH-in-installed.patch"
           ];
 
         # TODO: anything from super?
@@ -98,8 +102,10 @@ in rec {
   glibcLocales = glibcAdapter "glibcLocales";
   glibcInfo = glibcAdapter "glibcInfo";
 
+  linuxdeployqt = callPackage ./linuxdeployqt.nix { inherit (super.qt515) qmake; };
+
   # for debug
-  old = import nixpkgs-old {};
+  old = import nixpkgsOldSrc {};
   glibcSuper = super.glibc;
 
   # Disable flacky test

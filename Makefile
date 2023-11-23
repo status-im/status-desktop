@@ -609,7 +609,7 @@ $(FCITX5_QT): | check-qt-dir deps
 PRODUCTION_PARAMETERS := -d:production
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
-$(STATUS_CLIENT_APPIMAGE): nim_status_client $(LINUXDEPLOYQT_TOOL) nim-status.desktop $(FCITX5_QT)
+$(STATUS_CLIENT_APPIMAGE): nim_status_client nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
 	rm -rf tmp/linux/dist
 	mkdir -p tmp/linux/dist/usr/bin
@@ -643,7 +643,9 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(LINUXDEPLOYQT_TOOL) nim-status.de
 
 	echo -e $(BUILD_MSG) "AppImage"
 	# TODO: temporary disable glibc check
-	$(LINUXDEPLOYQT_TOOL) tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
+	# TODO cleanup non-nix linuxdeployqt
+	#$(LINUXDEPLOYQT_TOOL) tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
