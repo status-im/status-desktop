@@ -470,7 +470,7 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
       self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
 
@@ -491,7 +491,7 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
       self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
 
@@ -512,7 +512,7 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
     except Exception as e:
@@ -561,7 +561,7 @@ QtObject:
 
     self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
     self.parseContactsResponse(response)
-    self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+    self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
       RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
@@ -620,7 +620,7 @@ QtObject:
       if not response.error.isNil:
         let msg = response.error.message
         raise newException(RpcException, msg)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
       if self.contacts.hasKey(publicKey):
@@ -646,7 +646,7 @@ QtObject:
       if not response.error.isNil:
         let msg = response.error.message
         raise newException(RpcException, msg)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
       if self.contacts.hasKey(publicKey):
@@ -720,7 +720,7 @@ QtObject:
       self.saveContact(contact)
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
     except Exception as e:
       error "Error sending verification request", msg = e.msg
@@ -744,7 +744,7 @@ QtObject:
       self.saveContact(contact)
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
     except Exception as e:
       error "Error canceling verification request", msg = e.msg
@@ -767,7 +767,7 @@ QtObject:
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_ACCEPTED,
         VerificationRequestArgs(verificationRequest: request))
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
     except Exception as e:
       error "error accepting contact verification request", msg=e.msg
@@ -787,7 +787,7 @@ QtObject:
       self.receivedIdentityRequests[publicKey] = request
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_DECLINED, ContactArgs(contactId: publicKey))
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
     except Exception as e:
       error "error declining contact verification request", msg=e.msg

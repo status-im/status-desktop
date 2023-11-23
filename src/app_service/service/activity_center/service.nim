@@ -101,7 +101,7 @@ QtObject:
       if (receivedData.activityCenterNotifications.len > 0):
         self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
-    self.events.on(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS) do(e: Args):
+    self.events.on(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS) do(e: Args):
       let raw = RawActivityCenterNotificationsArgs(e)
       if raw.activityCenterNotifications.kind != JNull:
         var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]

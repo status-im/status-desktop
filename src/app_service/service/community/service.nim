@@ -558,7 +558,7 @@ QtObject:
       if prev_community.isOwner and not community.isOwner:
         self.events.emit(SIGNAL_COMMUNITY_LOST_OWNERSHIP, CommunityIdArgs(communityId: community.id))
         let response = tokens_backend.registerLostOwnershipNotification(community.id)
-        self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+        self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
           RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
       # If there's settings without `id` it means the original
@@ -1037,7 +1037,7 @@ QtObject:
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
       if response.error != nil:
@@ -1668,7 +1668,7 @@ QtObject:
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: rpcResponse.result{"activityCenterNotifications"}))
 
       if not self.processRequestsToJoinCommunity(rpcResponse.result):
@@ -1760,7 +1760,7 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED,
         CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications:
         rpcResponseObj["response"]["result"]{"activityCenterNotifications"}))
 
@@ -2007,7 +2007,7 @@ QtObject:
             error "error while cancel membership request ", msg
             return
           self.myCommunityRequests.delete(i)
-          self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+          self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
             RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
           self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
           return
@@ -2020,7 +2020,7 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.declineRequestToJoinCommunity(requestId)
-      self.events.emit(SIGNAL_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
         RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
 
       let requestToJoin = response.result["requestsToJoinCommunity"][0].toCommunityMembershipRequestDto

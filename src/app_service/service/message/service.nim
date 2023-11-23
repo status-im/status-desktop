@@ -21,6 +21,7 @@ import ./dto/urls_unfurling_plan
 import ./dto/link_preview
 import ./message_cursor
 
+import ../../common/activity_center
 import ../../common/message as message_common
 import ../../common/conversion as service_conversion
 
@@ -722,6 +723,8 @@ QtObject:
 
     let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+    self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      RawActivityCenterNotificationsArgs(activityCenterNotifications: responseObj{"activityCenterNotifications"}))
 
   proc markAllMessagesRead*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -771,6 +774,8 @@ QtObject:
       messagesCount: count,
       messagesWithMentionsCount: countWithMentions)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+    self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+      RawActivityCenterNotificationsArgs(activityCenterNotifications: responseObj{"activityCenterNotifications"}))
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
     if (chatId.len == 0):
