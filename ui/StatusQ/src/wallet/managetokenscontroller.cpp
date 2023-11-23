@@ -201,8 +201,11 @@ bool ManageTokensController::hasSettings() const
 
 bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const
 {
-    auto [leftPos, leftVisible, leftGroup] = m_settingsData.value(lhsSymbol, {INT_MAX, false, QString()});
-    auto [rightPos, rightVisible, rightGroup] = m_settingsData.value(rhsSymbol, {INT_MAX, false, QString()});
+    int leftPos, rightPos;
+    bool leftVisible, rightVisible;
+
+    std::tie(leftPos, leftVisible, std::ignore) = m_settingsData.value(lhsSymbol, {INT_MAX, false, QString()});
+    std::tie(rightPos, rightVisible, std::ignore) = m_settingsData.value(rhsSymbol, {INT_MAX, false, QString()});
 
     // check if visible
     leftPos = leftVisible ? leftPos : INT_MAX;
