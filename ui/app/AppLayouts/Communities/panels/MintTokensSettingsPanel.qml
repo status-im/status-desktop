@@ -758,7 +758,8 @@ StackView {
 
             onRemotelyDestructClicked: remotelyDestructPopup.open()
             onBurnClicked: burnTokensPopup.open()
-            onSendOwnershipClicked: Global.openTransferOwnershipPopup(root.communityName,
+            onSendOwnershipClicked: Global.openTransferOwnershipPopup(root.communityId,
+                                                                      root.communityName,
                                                                       root.communityLogo,
                                                                       tokenViewPage.token,
                                                                       root.accounts,
@@ -966,6 +967,7 @@ StackView {
                     token.remotelyDestructState: model.remotelyDestructState
                     token.accountAddress: model.accountAddress
                     token.multiplierIndex: model.multiplierIndex
+                    token.tokenAddress: model.tokenAddress
                 }
 
                 onCountChanged: {

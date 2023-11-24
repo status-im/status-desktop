@@ -34,6 +34,7 @@ QtObject {
     property int chainId
     property string chainName
     property string chainIcon
+    property string tokenAddress
 
     // Account related properties (from where they will be / have been deployed):
     property string accountAddress

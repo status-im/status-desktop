@@ -8,6 +8,7 @@ import ../../../backend/eth
 import ../ens/utils as ens_utils
 import ../../common/conversion as common_conversion
 import ../../common/utils as common_utils
+import ../../common/types as common_types
 
 import ../../../app/core/[main]
 import ../../../app/core/signals/types
@@ -44,10 +45,26 @@ const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
+const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 
 const SIMPLE_TX_BRIDGE_NAME = "Transfer"
 const HOP_TX_BRIDGE_NAME = "Hop"
 const ERC721_TRANSFER_NAME = "ERC721Transfer"
+
+type TokenTransferMetadata* = object
+  tokenName*: string
+  isOwnerToken*: bool
+
+proc `%`*(self: TokenTransferMetadata): JsonNode =
+  result = %* {
+    "tokenName": self.tokenName,
+    "isOwnerToken": self.isOwnerToken,
+  }
+
+proc toTokenTransferMetadata*(jsonObj: JsonNode): TokenTransferMetadata =
+  result = TokenTransferMetadata()
+  discard jsonObj.getProp("tokenName", result.tokenName)
+  discard jsonObj.getProp("isOwnerToken", result.isOwnerToken)
 
 type
   EstimatedTime* {.pure.} = enum
@@ -78,6 +95,14 @@ type
     txHash*: string
     uuid*: string
     error*: string
+
+type
+  OwnerTokenSentArgs* = ref object of Args
+    chainId*: int
+    txHash*: string
+    tokenName*: string
+    uuid*: string
+    status*: ContractTransactionStatus
 
 type
   SuggestedRoutesArgs* = ref object of Args
@@ -125,6 +150,16 @@ QtObject:
           self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
         of transactions.EventFetchingHistoryError:
           self.events.emit(SIGNAL_HISTORY_ERROR, Args())
+
+    self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
+      try:
+        var receivedData = TransactionMinedArgs(e)
+        let tokenMetadata = receivedData.data.parseJson().toTokenTransferMetadata()
+        if tokenMetadata.isOwnerToken:
+          let status = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+          self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: receivedData.chainId, txHash: receivedData.transactionHash, tokenName: tokenMetadata.tokenName, status: status))
+      except Exception as e:
+        debug "Not the owner token transfer", msg=e.msg
 
   proc getPendingTransactions*(self: Service): seq[TransactionDto] =
     try:
@@ -251,14 +286,20 @@ QtObject:
     return path
 
   proc sendTransactionSentSignal(self: Service, fromAddr: string, toAddr: string, uuid: string,
-    routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "") =
+    routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "", tokenName = "", isOwnerToken=false) =
     if err.len > 0:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err))
     elif response.result{"hashes"} != nil:
       for route in routes:
         for hash in response.result["hashes"][$route.fromNetwork.chainID]:
-          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
-          self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+          if isOwnerToken:
+            self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid, tokenName: tokenName, status: ContractTransactionStatus.InProgress))
+          else:
+            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
+
+          let metadata = TokenTransferMetadata(tokenName: tokenName, isOwnerToken: isOwnerToken)
+          self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID, track = false)
+
 
   proc transferEth(
     self: Service,
@@ -318,7 +359,9 @@ QtObject:
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
-    sendType: SendType
+    sendType: SendType,
+    tokenName: string,
+    isOwnerToken: bool
   ) =
     try:
       let isERC721Transfer = sendType == ERC721Transfer
@@ -379,7 +422,7 @@ QtObject:
       )
 
       if password != "":
-        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response)
+        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response, err="", tokenName, isOwnerToken)
 
     except Exception as e:
       self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
@@ -395,7 +438,9 @@ QtObject:
     password: string,
     sendType: SendType,
     usePassword: bool,
-    doHashing: bool
+    doHashing: bool,
+    tokenName: string,
+    isOwnerToken: bool
   ) =
     var finalPassword = ""
     if usePassword:
@@ -416,7 +461,7 @@ QtObject:
       if(isEthTx):
         self.transferEth(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword)
       else:
-        self.transferToken(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword, sendType)
+        self.transferToken(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))

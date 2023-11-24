@@ -95,6 +95,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_OWNER_TOKEN_OWNER_ADDRESS) do(e: Args):
     let args = OwnerTokenOwnerAddressArgs(e)
     self.communityTokensModule.onOwnerTokenOwnerAddress(args.chainId, args.contractAddress, args.address, args.addressName)
+  self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e: Args):
+    let args = OwnerTokenSentArgs(e)
+    self.communityTokensModule.onSendOwnerTokenStateChanged(args.chainId, args.txHash, args.tokenName, args.status)
 
 proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
   self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)

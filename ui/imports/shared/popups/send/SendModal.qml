@@ -124,13 +124,17 @@ StatusDialog {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetSymbol(selectedHolding.symbol)
+                store.setSelectedTokenIsOwnerToken(false)
             } else if (d.selectedHoldingType === Constants.TokenType.ERC721) {
                 store.setSendType(Constants.SendType.ERC721Transfer)
                 amountToSendInput.input.text = 1
                 store.setSelectedAssetSymbol(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
                 store.setRouteEnabledFromChains(selectedHolding.chainId)
                 store.updateRoutePreferredChains(selectedHolding.chainId)
+                store.setSelectedTokenIsOwnerToken(selectedHolding.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner)
             }
+            store.setSelectedTokenName(selectedHolding.name)
+
             recalculateRoutesAndFees()
         }
 
@@ -156,7 +160,6 @@ StatusDialog {
         if(popup.preSelectedSendType !== Constants.SendType.Unknown) {
             store.setSendType(popup.preSelectedSendType)
         }
-
         if ((popup.preSelectedHoldingType > Constants.TokenType.Native) &&
                 (popup.preSelectedHoldingType < Constants.TokenType.ERC1155)) {
             tokenListRect.browsingHoldingType = popup.preSelectedHoldingType

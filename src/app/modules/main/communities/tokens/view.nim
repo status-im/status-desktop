@@ -57,6 +57,7 @@ QtObject:
   proc ownerTokenReceived*(self: View, communityId: string, communityName: string, chainId: int, contractAddress: string) {.signal.}
   proc setSignerStateChanged*(self: View, communityId: string, communityName: string, status: int, url: string) {.signal.}
   proc ownershipNodeLost*(self: View, communityId: string, communityName: string) {.signal.}
+  proc sendOwnerTokenStateChanged*(self: View, tokenName: string, status: int, url: string) {.signal.}
 
   proc computeDeployFee*(self: View, communityId: string, chainId: int, accountAddress: string, tokenType: int, isOwnerDeployment: bool, requestId: string) {.slot.} =
     self.communityTokensModule.computeDeployFee(communityId, chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown), isOwnerDeployment, requestId)
@@ -120,6 +121,9 @@ QtObject:
 
   proc emitOwnershipLost*(self: View, communityId: string, communityName: string) =
     self.ownershipNodeLost(communityId, communityName)
+
+  proc emitSendOwnerTokenStateChanged*(self: View, tokenName: string, status: int, url: string) =
+    self.sendOwnerTokenStateChanged(tokenName, status, url)
 
   proc asyncGetOwnerTokenDetails*(self: View, communityId: string) {.slot.} =
     self.communityTokensModule.asyncGetOwnerTokenDetails(communityId)
