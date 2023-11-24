@@ -299,8 +299,8 @@ QtObject {
         openPopup(importControlNodePopup, { community })
     }
 
-    function openTransferOwnershipPopup(communityName, communityLogo, token, accounts, sendModalPopup) {
-        openPopup(transferOwnershipPopup, { communityName, communityLogo, token, accounts, sendModalPopup })
+    function openTransferOwnershipPopup(communityId, communityName, communityLogo, token, accounts, sendModalPopup) {
+        openPopup(transferOwnershipPopup, { communityId, communityName, communityLogo, token, accounts, sendModalPopup })
     }
 
     function openConfirmExternalLinkPopup(link, domain) {

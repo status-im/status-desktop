@@ -59,6 +59,10 @@ proc init*(self: Controller) =
     let args = TransactionSentArgs(e)
     self.delegate.transactionWasSent(args.chainId, args.txHash, args.uuid, args.error)
 
+  self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e:Args):
+    let args = OwnerTokenSentArgs(e)
+    self.delegate.transactionWasSent(args.chainId, args.txHash, args.uuid, "")
+
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER:
@@ -114,9 +118,9 @@ proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, 
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
-    usePassword: bool, doHashing: bool) =
+    usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool) =
   self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType,
-    usePassword, doHashing)
+    usePassword, doHashing, tokenName, isOwnerToken)
 
 proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
     signatures: TransactionsSignatures, selectedRoutes: seq[TransactionPathDto]) =

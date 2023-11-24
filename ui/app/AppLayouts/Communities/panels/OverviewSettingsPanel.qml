@@ -44,9 +44,8 @@ StackLayout {
     property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
-    property var tokensModel
     property var accounts // Wallet accounts model. Expected roles: address, name, color, emoji, walletType
-    readonly property var ownerToken: SQUtils.ModelUtils.getByKey(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner)
+    property var ownerToken: null
 
     property string overviewChartData: ""
 
@@ -129,7 +128,8 @@ StackLayout {
 
                     onClicked: {
                         if(!!root.ownerToken && root.ownerToken.deployState === Constants.ContractTransactionStatus.Completed) {
-                            Global.openTransferOwnershipPopup(root.name,
+                            Global.openTransferOwnershipPopup(root.communityId,
+                                                              root.name,
                                                               root.logoImageData,
                                                               root.ownerToken,
                                                               root.accounts,

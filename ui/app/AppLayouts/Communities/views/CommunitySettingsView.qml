@@ -194,7 +194,7 @@ StatusSectionLayout {
             pubsubTopicKey: root.community.pubsubTopicKey
 
             sendModalPopup: root.sendModalPopup
-            tokensModel: root.community.communityTokens
+            ownerToken: tokensModelChangesTracker.ownerToken
             accounts: root.walletAccountsModel
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
@@ -576,6 +576,7 @@ StatusSectionLayout {
         property bool isTMasterTokenDeployed: false
         property bool isOwnerTokenFailed: false
         property bool isTMasterTokenFailed: false
+        property var ownerToken: null
 
         // It will monitorize if Owner and/or TMaster token items are included in the `model` despite the deployment state
         property bool ownerOrTMasterTokenItemsExist: false
@@ -590,7 +591,6 @@ StatusSectionLayout {
             ownerOrTMasterTokenItemsExist = checkIfPrivilegedTokenItemsExist()
             if(!ownerOrTMasterTokenItemsExist)
                 return
-
             // It monitors the deployment:
             if(!isOwnerTokenDeployed) {
                 isOwnerTokenDeployed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Completed)
@@ -603,8 +603,10 @@ StatusSectionLayout {
             }
 
             // Not necessary to track more changes since privileged tokens have been correctly deployed.
-            if(isOwnerTokenDeployed && isTMasterTokenDeployed)
+            if(isOwnerTokenDeployed && isTMasterTokenDeployed) {
+                tokensModelChangesTracker.ownerToken = StatusQUtils.ModelUtils.getByKey(model, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner)
                 tokensModelChangesTracker.enabled = false
+            }
         }
 
         function reviewTokenDeployState(isOwner, deployState) {

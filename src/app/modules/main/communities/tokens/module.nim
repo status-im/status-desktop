@@ -340,6 +340,10 @@ method onSetSignerStateChanged*(self: Module, communityId: string, chainId: int,
   let url = self.createUrl(chainId, transactionHash)
   self.view.emitSetSignerStateChanged(communityId, communityName, status.int, url)
 
+method onSendOwnerTokenStateChanged*(self: Module, chainId: int, transactionHash: string, tokenName: string, status: ContractTransactionStatus) =
+  let url = self.createUrl(chainId, transactionHash)
+  self.view.emitSendOwnerTokenStateChanged(tokenName, status.int, url)
+
 method onLostOwnership*(self: Module, communityId: string) =
   let communityDto = self.controller.getCommunityById(communityId)
   let communityName = communityDto.name

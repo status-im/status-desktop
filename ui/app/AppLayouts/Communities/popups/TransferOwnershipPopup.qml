@@ -20,6 +20,7 @@ StatusDialog {
     id: root
 
     // Community related props:
+    property string communityId
     property string communityName
     property string communityLogo
 
@@ -109,9 +110,10 @@ StatusDialog {
 
                 onClicked: {
                     // Pre-populated dialog with the relevant Owner token info:
-                    root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
+                    root.sendModalPopup.preSelectedSendType = Constants.SendType.ERC721Transfer
                     root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
-                    root.sendModalPopup.preSelectedHoldingID = token.key
+                    const uid = token.chainId+"+"+token.tokenAddress.toLowerCase()+"+"+"0" // TODO use getUidForData
+                    root.sendModalPopup.preSelectedHoldingID = uid
                     root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC721
                     root.sendModalPopup.open()
                     close()

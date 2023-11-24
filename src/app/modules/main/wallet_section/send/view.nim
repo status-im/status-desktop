@@ -24,6 +24,8 @@ QtObject:
       selectedAssetSymbol: string
       showUnPreferredChains: bool
       sendType: transaction_dto.SendType
+      selectedTokenIsOwnerToken: bool
+      selectedTokenName: string
       selectedRecipient: string
       # for receive modal
       selectedReceiveAccount: AccountItem
@@ -170,6 +172,12 @@ QtObject:
     write = setSelectedRecipient
     notify = selectedRecipientChanged
 
+  proc setSelectedTokenIsOwnerToken(self: View, isOwnerToken: bool) {.slot.} =
+    self.selectedTokenIsOwnerToken = isOwnerToken
+
+  proc setSelectedTokenName(self: View, tokenName: string) {.slot.} =
+    self.selectedTokenName = tokenName
+
   proc updateNetworksDisabledChains(self: View) =
     # if the setting to show unpreferred chains is toggled, add all unpreferred chains to disabled chains list
     if not self.showUnPreferredChains:
@@ -199,7 +207,7 @@ QtObject:
     self.transactionSent(chainId, txHash, uuid, error)
 
   proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetSymbol, value, uuid, self.sendType)
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetSymbol, value, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =

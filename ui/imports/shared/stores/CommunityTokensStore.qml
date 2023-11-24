@@ -139,10 +139,8 @@ QtObject {
             root.ownershipLost(communityId, communityName)
         }
 
-        // TODO: BACKEND!!!
         function onSendOwnerTokenStateChanged(tokenName, status, url) {
-            console.warn("TODO: Backend missing! On Send owner token!")
-            root.onSendOwnerTokenStateChanged(tokenName, status, url)
+            root.sendOwnerTokenStateChanged(tokenName, status, url)
         }
     }
 

@@ -37,6 +37,8 @@ type TmpSendTransactionDetails = object
   uuid: string
   sendType: SendType
   resolvedSignatures: TransactionsSignatures
+  tokenName: string
+  isOwnerToken: bool
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -255,7 +257,7 @@ method viewDidLoad*(self: Module) =
 method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
   return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
 
-method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType) =
+method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
   self.tmpSendTransactionDetails.fromAddr = fromAddr
   self.tmpSendTransactionDetails.toAddr = toAddr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
@@ -264,6 +266,8 @@ method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, 
   self.tmpSendTransactionDetails.sendType = sendType
   self.tmpSendTransactionDetails.fromAddrPath = ""
   self.tmpSendTransactionDetails.resolvedSignatures.clear()
+  self.tmpSendTransactionDetails.tokenName = selectedTokenName
+  self.tmpSendTransactionDetails.isOwnerToken = selectedTokenIsOwnerToken
 
   let kp = self.controller.getKeypairByAccountAddress(fromAddr)
   if kp.migratedToKeycard():
@@ -286,7 +290,8 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
       self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-      self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing
+      self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing,
+      self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken
     )
 
 proc signOnKeycard(self: Module) =

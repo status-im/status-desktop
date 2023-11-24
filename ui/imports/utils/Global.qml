@@ -48,7 +48,8 @@ QtObject {
     signal openExportControlNodePopup(var community)
     signal openImportControlNodePopup(var community)
     signal contactRenamed(string publicKey)
-    signal openTransferOwnershipPopup(string communityName,
+    signal openTransferOwnershipPopup(string communityId,
+                                      string communityName,
                                       string communityLogo,
                                       var token,
                                       var accounts,

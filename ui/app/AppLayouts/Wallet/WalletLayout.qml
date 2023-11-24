@@ -161,16 +161,17 @@ Item {
             onLaunchSendModal: {
                 if(isCommunityOwnershipTransfer) {
                     let tokenItem = walletStore.currentViewedCollectible
-                    Global.openTransferOwnershipPopup(tokenItem.communityName,
+                    Global.openTransferOwnershipPopup(walletStore.currentViewedCollectible.communityId,
+                                                      tokenItem.communityName,
                                                       tokenItem.communityImage,
                                                       {
                                                           "key": walletStore.currentViewedHoldingID,
                                                           "privilegesLevel": tokenItem.communityPrivilegesLevel,
-                                                          "chainId": tokenItem.communityPrivilegesLevel,
-                                                          "privilegesLevel": tokenItem.chainId,
+                                                          "chainId": tokenItem.chainId,
                                                           "name": tokenItem.name,
                                                           "artworkSource": tokenItem.artworkSource,
-                                                          "accountAddress": tokenItem.contractAddress
+                                                          "accountAddress": leftTab.currentAddress,
+                                                          "tokenAddress": tokenItem.contractAddress
                                                       },
                                                       walletStore.accounts,
                                                       root.sendModalPopup)
