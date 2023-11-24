@@ -48,11 +48,23 @@ ActivityNotificationBase {
         ColumnLayout {
             spacing: 2
             Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
 
-            StatusMessageHeader {
-                displayNameLabel.text: qsTr("%1 requires you to share your Accounts").arg(root.communityName)
-                timestamp: root.notification.timestamp
+            RowLayout {
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                    font.weight: Font.Medium
+                    font.pixelSize: Theme.primaryTextFontSize
+                    wrapMode: Text.WordWrap
+                    color: Theme.palette.primaryColor1
+                    text: qsTr("%1 requires you to share your Accounts").arg(root.communityName)
+                }
+
+                StatusTimeStampLabel {
+                    id: timestamp
+                    verticalAlignment: Text.AlignVCenter
+                    timestamp: root.notification.timestamp
+                }
             }
 
             RowLayout {
