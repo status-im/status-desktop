@@ -91,8 +91,9 @@ func callPrivateMethod(method string, params []interface{}) string {
 }
 
 type Config struct {
-	HashedPassword string `json:"hashedPassword"`
-	NodeConfigFile string `json:"nodeConfigFile"`
+	HashedPassword string  `json:"hashedPassword"`
+	NodeConfigFile string  `json:"nodeConfigFile"`
+	DataDir        *string `json:"dataDir,omitempty"`
 }
 
 func processConfigArgs() (config *Config, nodeConfigJson string, userFolder string, err error) {
@@ -128,6 +129,11 @@ func processConfigArgs() (config *Config, nodeConfigJson string, userFolder stri
 	if err == nil {
 		nodeConfigJson = string(nodeConfigData)
 	}
+
+	if config.DataDir != nil {
+		userFolder = *config.DataDir
+	}
+
 	return
 }
 

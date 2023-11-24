@@ -28,5 +28,8 @@ Item {
         onSessionRequestEvent: (details) => {
             modal.openWithSessionRequestEvent(details)
         }
+        onSessionDelete: (deletePayload) => {
+            root.controller.deletePairing(deletePayload.topic)
+        }
     }
 }

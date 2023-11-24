@@ -63,9 +63,9 @@ func signalHandler(jsonEvent string) {
 			return
 		}
 		// TODO: continue from here
-		if walletEvent.Type == "WalletConnectProposeUserPair" {
-			eventQueue <- GoEvent{Name: "proposeUserPair", Payload: walletEvent.Message}
-		}
+		// if walletEvent.Type == "WalletConnectProposeUserPair" {
+		// 	eventQueue <- GoEvent{Name: "proposeUserPair", Payload: walletEvent.Message}
+		// }
 	}
 }
 
@@ -91,30 +91,31 @@ func main() {
 	w.SetTitle("WC status-go test")
 	w.SetSize(1280, 1024, webview.HintNone)
 
-	w.Bind("pairSessionProposal", func(sessionProposalJson string) bool {
-		sessionProposalRes := callPrivateMethod("wallet_wCPairSessionProposal", []interface{}{sessionProposalJson})
-		var apiResponse wc.PairSessionResponse
-		err = getRPCAPIResponse(sessionProposalRes, &apiResponse)
-		if err != nil {
-			l.Error("Error parsing the API response", "error", err)
-			return false
-		}
-
-		go func() {
-			eventQueue <- GoEvent{Name: "proposeUserPair", Payload: apiResponse}
-		}()
-
-		return true
-	})
-
 	w.Bind("sessionRequest", func(sessionRequestJson, hashedPassword string) bool {
-		sessionReqRes := callPrivateMethod("wallet_wCSessionRequest", []interface{}{sessionRequestJson, hashedPassword})
+		fmt.Println("sessionRequestJson:", sessionRequestJson)
+		sessionReqRes := callPrivateMethod("wallet_wCSessionRequest", []interface{}{sessionRequestJson})
+		fmt.Println("sessionReqRes:", sessionReqRes)
 		var apiResponse wc.SessionRequestResponse
 		err = getRPCAPIResponse(sessionReqRes, &apiResponse)
 		if err != nil {
-			l.Error("Error parsing the API response", "error", err)
+			l.Error("Error parsing wallet_wCSessionRequest response", "error", err)
 			return false
 		}
+		if apiResponse.SignOnKeycard {
+			l.Error("SignOnKeycard is not supported in this test")
+			return false
+		}
+
+		sessionReqRes = callPrivateMethod("wallet_wCSignMessage", []interface{}{apiResponse.MessageToSign, apiResponse.Address, hashedPassword})
+		fmt.Println("sessionReqRes:", sessionReqRes)
+		var signature string
+		err = getRPCAPIResponse(sessionReqRes, &signature)
+		if err != nil {
+			l.Error("Error parsing wallet_wCSignMessage response", "error", err)
+			return false
+		}
+
+		// TODO: process the request type ...
 
 		go func() {
 			eventQueue <- GoEvent{Name: "sessionRequestResult", Payload: apiResponse}
@@ -146,6 +147,9 @@ func main() {
 		}
 	})
 
+	mockStatusObject(w)
+	mockController(w)
+
 	// Start a local server to serve the files
 	http.HandleFunc("/bundle.js", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
@@ -161,4 +165,65 @@ func main() {
 
 	w.Navigate("http://localhost:8080")
 	w.Run()
+}
+
+func mockController(w webview.WebView) {
+	w.Bind("controller_recordSuccessfulPairing", func(sessionProposalJson string) {
+		fmt.Println("controller_recordSuccessfulPairing:", sessionProposalJson)
+		sessionProposalRes := callPrivateMethod("wallet_wCRecordSuccessfulPairing", []interface{}{sessionProposalJson})
+		var apiResponse wc.PairSessionResponse
+		err := getRPCAPIResponse(sessionProposalRes, &apiResponse)
+		if err != nil {
+			l.Error("Error parsing the API response", "error", err)
+		}
+	})
+
+	w.Bind("controller_changePairingState", func(topic string, active bool) {
+		sessionProposalRes := callPrivateMethod("wallet_wCChangePairingState", []interface{}{topic, active})
+		var apiResponse wc.PairSessionResponse
+		err := getRPCAPIResponse(sessionProposalRes, &apiResponse)
+		if err != nil {
+			l.Error("Error parsing the API response", "error", err)
+		}
+	})
+}
+
+func mockStatusObject(w webview.WebView) {
+	w.Bind("statusObject_sdkInitialized", func(error string) {
+		// All OK here
+	})
+	w.Bind("statusObject_onSessionProposal", func(sessionProposalJson string) bool {
+		sessionProposalRes := callPrivateMethod("wallet_wCPairSessionProposal", []interface{}{sessionProposalJson})
+		var apiResponse wc.PairSessionResponse
+		err := getRPCAPIResponse(sessionProposalRes, &apiResponse)
+		if err != nil {
+			l.Error("Error parsing the API response", "error", err)
+			return false
+		}
+
+		go func() {
+			eventQueue <- GoEvent{Name: "proposeUserPair", Payload: apiResponse}
+		}()
+
+		return true
+	})
+	w.Bind("statusObject_onSessionRequest", func(sessionRequestJson string) bool {
+		sessionReqRes := callPrivateMethod("wallet_wCSessionRequest", []interface{}{sessionRequestJson})
+		var apiResponse wc.SessionRequestResponse
+		err := getRPCAPIResponse(sessionReqRes, &apiResponse)
+		if err != nil {
+			l.Error("Error parsing the API response", "error", err)
+			return false
+		}
+		return true
+	})
+
+	//     function onSessionUpdate(details)
+	//     function onSessionExtend(details)
+	//     function onSessionPing(details)
+	//     function onSessionDelete(details)
+	//     function onSessionExpire(details)
+	//     function onSessionRequestSent(details)
+	//     function onSessionEvent(details)
+	//     function onProposalExpire(details)
 }

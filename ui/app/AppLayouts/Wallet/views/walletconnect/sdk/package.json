@@ -1,10 +1,10 @@
 {
   "name": "wallet_connect_integration",
   "version": "0.1.0",
-  "description": "Wallet Connect Integration for status-desktop",
+  "description": "Wallet Connect integration for status-desktop",
   "private": true,
   "devDependencies": {
-    "webpack": "^5.88.2",
+    "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },
@@ -16,7 +16,6 @@
     "start": "webpack serve --mode development --open"
   },
   "dependencies": {
-    "@walletconnect/auth-client": "^2.1.2",
-    "@walletconnect/web3wallet": "^1.9.2"
+    "@walletconnect/web3wallet": "^1.9.4"
   }
 }
