@@ -16,7 +16,13 @@ rpc(wCSignMessage, "wallet"):
   address: string
   password: string
 
-rpc(wCSendTransaction, "wallet"):
+rpc(wCBuildRawTransaction, "wallet"):
+  signature: string
+
+rpc(wCSendRawTransaction, "wallet"):
+  rawTx: string
+
+rpc(wCSendTransactionWithSignature, "wallet"):
   signature: string
 
 rpc(wCPairSessionProposal, "wallet"):
@@ -40,9 +46,25 @@ proc signMessage*(res: var JsonNode, message: string, address: string, password:
     warn e.msg
     return e.msg
 
-proc sendTransaction*(res: var JsonNode, signature: string): string =
+proc buildRawTransaction*(res: var JsonNode, signature: string): string =
   try:
-    let response = wCSendTransaction(signature)
+    let response = wCBuildRawTransaction(signature)
+    return prepareResponse(res, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc sendRawTransaction*(res: var JsonNode, rawTx: string): string =
+  try:
+    let response = wCSendRawTransaction(rawTx)
+    return prepareResponse(res, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc sendTransactionWithSignature*(res: var JsonNode, signature: string): string =
+  try:
+    let response = wCSendTransactionWithSignature(signature)
     return prepareResponse(res, response)
   except Exception as e:
     warn e.msg
