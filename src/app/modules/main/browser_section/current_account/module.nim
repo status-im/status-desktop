@@ -78,7 +78,8 @@ proc switchAccount*(self: Module, accountIndex: int) =
     keycardAccount,
     currencyBalance,
     currencyFormat,
-    areTestNetworksEnabled
+    areTestNetworksEnabled,
+    self.controller.getTokensMarketValuesLoading()
   )
 
   self.view.setData(accountItem)

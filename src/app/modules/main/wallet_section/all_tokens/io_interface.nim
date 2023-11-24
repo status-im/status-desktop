@@ -24,6 +24,7 @@ type
     getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem,
     getPriceBySymbol: proc(symbol: string): float64,
     getCurrentCurrencyFormat: proc(): CurrencyFormatDto,
+    getTokensMarketValuesLoading: proc(): bool
   ]
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

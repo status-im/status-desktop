@@ -52,11 +52,10 @@ method viewDidLoad*(self: Module) =
   self.view.setCurrencyBalance(newCurrencyAmount())
   self.delegate.overviewModuleDidLoad()
 
-proc setBalance(self: Module, tokens: seq[WalletTokenDto], chainIds: seq[int]) =
+proc setBalance(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  let totalCurrencyBalanceForAllAssets = tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
-    
+  let totalCurrencyBalanceForAllAssets = self.controller.getTotalCurrencyBalance(addresses, chainIds)
   self.view.setCurrencyBalance(currencyAmountToItem(totalCurrencyBalanceForAllAssets, currencyFormat))
 
 proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) : seq[string] =
@@ -67,12 +66,14 @@ proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) 
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], allAddresses: bool) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
+  let walletAccount = walletAccounts[0]
+  let loading = walletAccounts[0].assetsLoading or self.controller.getTokensMarketValuesLoading()
   if allAddresses:
     let item = initItem(
       "",
       "",
       "",
-      walletAccounts[0].assetsLoading,
+      loading,
       "",
       "",
       isWatchOnlyAccount=false,
@@ -81,13 +82,12 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
     )
     self.view.setData(item)
   else:
-    let walletAccount = walletAccounts[0]
     let isWatchOnlyAccount = walletAccount.walletType == "watch"
     let item = initItem(
       walletAccount.name,
       walletAccount.mixedCaseAddress,
       walletAccount.ens,
-      walletAccount.assetsLoading,
+      loading,
       walletAccount.colorId,
       walletAccount.emoji,
       isWatchOnlyAccount=isWatchOnlyAccount,
@@ -95,8 +95,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
     )
     self.view.setData(item)
 
-  let walletTokens = self.controller.getWalletTokensByAddresses(addresses)
-  if walletTokens.len == 0 and walletAccounts[0].assetsLoading:
+  if loading:
     self.view.setCurrencyBalance(newCurrencyAmount())
   else:
-    self.setBalance(walletTokens, chainIds)
+    self.setBalance(addresses, chainIds)

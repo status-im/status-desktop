@@ -29,11 +29,14 @@ proc init*(self: Controller) =
 proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getAccountsByAddresses(addresses)
 
-proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddresses(addresses)
+proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): float64 =
+  return self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
+
+proc getTokensMarketValuesLoading*(self: Controller): bool =
+  return self.walletAccountService.getTokensMarketValuesLoading()

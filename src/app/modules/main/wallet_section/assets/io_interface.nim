@@ -1,3 +1,11 @@
+import app_service/service/wallet_account/dto/account_token_item
+import app_service/service/currency/dto
+
+type
+  GroupedAccountAssetsDataSource* = tuple[
+    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem]
+  ]
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -9,6 +17,9 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getGroupedAccountAssetsDataSource*(self: AccessInterface): GroupedAccountAssetsDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

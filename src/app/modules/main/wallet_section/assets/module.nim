@@ -27,8 +27,6 @@ type
     controller: Controller
     moduleLoaded: bool
 
-proc onTokensRebuilt(self: Module, hasBalanceCache: bool, hasMarketValuesCache: bool)
-
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -56,9 +54,23 @@ proc setLoadingAssets(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED) do(e:Args):
+    self.view.modelsAboutToUpdate()
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.onTokensRebuilt(arg.hasBalanceCache, arg.hasMarketValuesCache)
+    self.view.modelsUpdated()
+    self.view.setAssetsLoading(false)
+    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
+    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
+
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
+    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
+    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
+
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
+    self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
+    self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     if self.view.getAssetsModel().getCount() == 0:
@@ -92,15 +104,16 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto], enabledChain
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
 
-  let accountItem = walletAccountToWalletAssetsItem(walletAccounts[0])
-  self.view.setData(accountItem)
-
   if walletAccounts[0].assetsLoading:
+    self.view.setAssetsLoading(true)
     self.setLoadingAssets()
   else:
     let walletTokens = self.controller.getWalletTokensByAddresses(addresses)
     self.setAssetsAndBalance(walletTokens, chainIds)
 
-proc onTokensRebuilt(self: Module, hasBalanceCache: bool, hasMarketValuesCache: bool) =
-  self.view.setAssetsLoading(false)
-  self.view.setCacheValues(hasBalanceCache, hasMarketValuesCache)
+# Interfaces for getting lists from the service files into the abstract models
+
+method getGroupedAccountAssetsDataSource*(self: Module): GroupedAccountAssetsDataSource =
+  return (
+    getGroupedAccountsAssetsList: proc(): var seq[GroupedTokenItem] = self.controller.getGroupedAccountsAssetsList()
+  )

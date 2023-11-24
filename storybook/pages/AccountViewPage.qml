@@ -33,7 +33,6 @@ SplitView {
                                  colorId: clr,
                                  emoji: "⚽",
                                  balanceLoading: false,
-                                 hasBalanceCache: true,
                                  balance: ({amount: 1.25,
                                                symbol: "USD",
                                                displayDecimals: 4,

@@ -72,8 +72,6 @@ type DerivedAddressesArgs* = ref object of Args
 
 type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
-  hasBalanceCache*: bool
-  hasMarketValuesCache*: bool
 
 type KeycardActivityArgs* = ref object of Args
   success*: bool

@@ -175,7 +175,7 @@ method getCurrentCurrency*(self: Module): string =
 method setTotalCurrencyBalance*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
   var addresses = walletAccounts.filter(a => not a.hideFromTotalBalance).map(a => a.address)
-  self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(addresses))
+  self.view.setTotalCurrencyBalance(self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds))
 
 proc notifyFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allAddresses)
@@ -232,6 +232,12 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
+    self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):

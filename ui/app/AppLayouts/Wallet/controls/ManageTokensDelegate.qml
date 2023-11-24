@@ -82,7 +82,7 @@ DropArea {
             ManageTokensCommunityTag {
                 visible: !!model.communityId && !root.isGrouped
                 text: model.communityName
-                imageSrc: model.communityImage
+                asset.name: model && !!model.communityImage ? model.communityImage : ""
             },
             ManageTokenMenuButton {
                 id: menuBtn

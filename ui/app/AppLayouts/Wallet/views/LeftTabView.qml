@@ -365,7 +365,7 @@ Rectangle {
                                 customColor: Style.current.textColor
                                 text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, {noSymbol: true})
                                 font.pixelSize: 22
-                                loading: RootStore.assetsLoading
+                                loading: RootStore.balanceLoading
                                 lineHeightMode: Text.FixedHeight
                                 lineHeight: 36
                                 verticalAlignment: Text.AlignVCenter
@@ -374,7 +374,7 @@ Rectangle {
                                 customColor: Style.current.textColor
                                 text: RootStore.totalCurrencyBalance.symbol
                                 font.pixelSize: 13
-                                loading: RootStore.assetsLoading
+                                loading: RootStore.balanceLoading
                                 font.weight: Font.Medium
                                 lineHeightMode: Text.FixedHeight
                                 lineHeight: 22

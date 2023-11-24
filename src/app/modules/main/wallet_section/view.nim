@@ -24,6 +24,7 @@ QtObject:
       keypairOperabilityForObservedAccount: string
       wcController: wcc.Controller
       walletReady: bool
+      addressFilters: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -75,10 +76,22 @@ QtObject:
   QtProperty[QVariant] isMnemonicBackedUp:
     read = getIsMnemonicBackedUp
 
+  proc addressFiltersChanged*(self: View) {.signal.}
+  proc setAddressFilters(self: View, address: string) =
+    self.addressFilters = address
+    self.addressFiltersChanged()
+  proc getAddressFilters(self: View): string {.slot.} =
+    return self.addressFilters
+  QtProperty[string] addressFilters:
+    read = getAddressFilters
+    notify = addressFiltersChanged
+
   proc setFilterAddress(self: View, address: string) {.slot.} =
+    self.setAddressFilters(address)
     self.delegate.setFilterAddress(address)
 
   proc setFillterAllAddresses(self: View) {.slot.} =
+    self.setAddressFilters("")
     self.delegate.setFillterAllAddresses()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =

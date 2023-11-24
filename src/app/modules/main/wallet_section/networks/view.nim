@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils, sugar, strutils
 
 import app_service/service/network/[dto, types]
 import ./io_interface
@@ -18,6 +18,7 @@ QtObject:
       layer2: Model
       flatNetworks: Model
       areTestNetworksEnabled: bool
+      enabledChainIds: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -33,6 +34,7 @@ QtObject:
     result.layer2 = newModel()
     result.enabled = newModel()
     result.flatNetworks = newModel()
+    result.enabledChainIds = ""
     result.setup()
 
   proc areTestNetworksEnabledChanged*(self: View) {.signal.}
@@ -91,6 +93,13 @@ QtObject:
   QtProperty[QVariant] enabled:
     read = getEnabled
     notify = enabledChanged
+
+  proc enabledChainIdsChanged*(self: View) {.signal.}
+  proc getEnabledChainIds(self: View): QVariant {.slot.} =
+    return newQVariant(self.enabledChainIds)
+  QtProperty[QVariant] enabledChainIds:
+    read = getEnabledChainIds
+    notify = enabledChainIdsChanged
   
   proc setItems*(self: View, networks: seq[NetworkDto]) =
     var items: seq[Item] = @[]
@@ -120,11 +129,13 @@ QtObject:
     self.layer1.setItems(filteredItems.filter(i => i.getLayer() == NETWORK_LAYER_1))
     self.layer2.setItems(filteredItems.filter(i => i.getLayer() == NETWORK_LAYER_2))
     self.enabled.setItems(filteredItems.filter(i => i.getIsEnabled()))
+    self.enabledChainIds = filteredItems.filter(i => i.getIsEnabled()).map(a => a.getChainId()).join(":")
 
     self.allChanged()
     self.layer1Changed()
     self.layer2Changed()
     self.enabledChanged()
+    self.enabledChainIdsChanged()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

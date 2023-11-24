@@ -45,8 +45,8 @@ proc getSigningPhrase*(self: Controller): string =
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.settingsService.getMnemonic().len > 0
 
-proc getCurrencyBalance*(self: Controller, addresses: seq[string]): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(addresses), self.currencyService.getCurrencyFormat(self.getCurrency()))
+proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): CurrencyAmount =
+  return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds), self.currencyService.getCurrencyFormat(self.getCurrency()))
 
 proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): CurrencyAmount =
   return currencyAmountToItem(amount, self.currencyService.getCurrencyFormat(symbol))

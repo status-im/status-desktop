@@ -2,3 +2,4 @@ singleton RootStore 1.0 RootStore.qml
 ActivityFiltersStore 1.0 ActivityFiltersStore.qml
 CollectiblesStore 1.0 CollectiblesStore.qml
 TokensStore 1.0 TokensStore.qml
+WalletAssetsStore 1.0 WalletAssetsStore.qml

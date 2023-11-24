@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm
+import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm, sugar
 
 import web3/ethtypes
 from web3/conversions import `$`
@@ -35,7 +35,10 @@ const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
 const SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED* = "tokensListAboutToBeUpdated"
+const SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED* = "tokensDetailsAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
+const SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED* = "tokensMarketValuesAboutToBeUpdated"
+const SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED* = "tokensPricesValuesAboutToBeUpdated"
 const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
 const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
 const SIGNAL_TOKEN_PREFERENCES_UPDATED* = "tokenPreferencesUpdated"
@@ -80,6 +83,8 @@ QtObject:
     tokensDetailsLoading: bool
     tokensPricesLoading: bool
     tokensMarketDetailsLoading: bool
+    hasMarketDetailsCache: bool
+    hasPriceValuesCache: bool
 
   proc getCurrency*(self: Service): string
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
@@ -115,9 +120,12 @@ QtObject:
     result.tokensDetailsLoading = true
     result.tokensPricesLoading = true
     result.tokensMarketDetailsLoading = true
+    result.hasMarketDetailsCache = false
+    result.hasPriceValuesCache = false
 
   proc fetchTokensMarketValues(self: Service, symbols: seq[string]) =
     self.tokensMarketDetailsLoading = true
+    defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensMarketValuesTaskArg(
       tptr: cast[ByteAddress](fetchTokensMarketValuesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -154,6 +162,7 @@ QtObject:
           changePctDay: marketValuesDto.changePctDay,
           changePct24hour: marketValuesDto.changePct24hour,
           change24hour: marketValuesDto.change24hour)
+      self.hasMarketDetailsCache = true
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -196,6 +205,7 @@ QtObject:
 
   proc fetchTokensPrices(self: Service, symbols: seq[string]) =
     self.tokensPricesLoading = true
+    defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensPricesTaskArg(
       tptr: cast[ByteAddress](fetchTokensPricesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -226,6 +236,7 @@ QtObject:
         for (currency, price) in prices.pairs:
           if cmpIgnoreCase(self.getCurrency(), currency) == 0:
             self.tokenPriceTable[symbol] = price.getFloat
+      self.hasPriceValuesCache = true
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -274,16 +285,16 @@ QtObject:
                 chainID: token.chainID,
                 address: token.address,
                 decimals: token.decimals,
-                image: "",
+                image: token.image,
                 `type`: tokenType,
-                communityId: token.communityID)
+                communityId: token.communityData.id)
 
             # logic for building tokens by symbol list
             # In case the token is not a community token the unique key is symbol
             # In case this is a community token the only param reliably unique is its address
             # as there is always a rare case that a user can create two or more community token
             # with same symbol and cannot be avoided
-            let token_by_symbol_key = if token.communityID.isEmptyOrWhitespace: token.symbol
+            let token_by_symbol_key = if token.communityData.id.isEmptyOrWhitespace: token.symbol
                                       else: token.address
             if tokenBySymbolList.hasKey(token_by_symbol_key):
               if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
@@ -305,10 +316,10 @@ QtObject:
                 sources: @[s.name],
                 addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
                 decimals: token.decimals,
-                image: "",
+                image: token.image,
                 `type`: tokenType,
-                communityId: token.communityID)
-              if token.communityID.isEmptyOrWhitespace:
+                communityId: token.communityData.id)
+              if token.communityData.id.isEmptyOrWhitespace:
                 tokenSymbols.add(token.symbol)
 
       self.fetchTokensMarketValues(tokenSymbols)
@@ -322,7 +333,7 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
 
-  proc getSupportedTokensList(self: Service) =
+  proc getSupportedTokensList*(self: Service) =
     # this is emited so that the models can know that an update is about to happen
     self.events.emit(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED, Args())
     let arg = QObjectTaskArg(
@@ -390,7 +401,6 @@ QtObject:
     if(not main_constants.WALLET_ENABLED):
       return
     self.loadData()
-    self.getSupportedTokensList()
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -430,12 +440,33 @@ QtObject:
     return self.tokensDetailsLoading
 
   proc getTokensMarketValuesLoading*(self: Service): bool =
-    return self.tokensPricesLoading and self.tokensMarketDetailsLoading
+    return self.tokensPricesLoading or self.tokensMarketDetailsLoading
+
+  proc getHasMarketValuesCache*(self: Service): bool =
+    return self.hasMarketDetailsCache and self.hasPriceValuesCache
 
   proc rebuildMarketData*(self: Service) =
-    let symbols = self.tokenDetailsTable.keys.toSeq()
-    self.fetchTokensMarketValues(symbols)
-    self.fetchTokensPrices(symbols)
+    let symbols = self.tokenBySymbolList.map(a => a.symbol)
+    if symbols.len > 0:
+      self.fetchTokensMarketValues(symbols)
+      self.fetchTokensPrices(symbols)
+      self.fetchTokensDetails(symbols)
+
+  proc getTokenByFlatTokensKey*(self: Service, key: string): TokenItem =
+    for t in self.flatTokenList:
+      if t.key == key:
+        return t
+    return
+
+  proc getTokenMarketPrice*(self: Service, key: string): float64 =
+    let token = self.flatTokenList.filter(t => t.key == key)
+    var symbol: string = ""
+    for t in token:
+      symbol = t.symbol
+    if not self.tokenPriceTable.hasKey(symbol):
+      return 0
+    else:
+      return self.tokenPriceTable[symbol]
 
   # TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
   proc getTokenList*(self: Service): seq[TokenDto] =

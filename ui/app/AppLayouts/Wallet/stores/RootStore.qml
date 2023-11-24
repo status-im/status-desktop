@@ -2,6 +2,8 @@ pragma Singleton
 
 import QtQuick 2.13
 
+import shared.stores 1.0
+
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -12,6 +14,14 @@ QtObject {
     id: root
 
     readonly property TokensStore tokensStore: TokensStore {}
+    readonly property WalletAssetsStore walletAssetsStore: WalletAssetsStore {
+        walletTokensStore: tokensStore
+    }
+
+    /* This property holds address of currently selected account in Wallet Main layout  */
+    readonly property var addressFilters: walletSection.addressFilters
+    /* This property holds networks currently selected in the Wallet Main layout  */
+    readonly property var networkFilters: networksModule.enabledChainIds
 
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
@@ -20,6 +30,7 @@ QtObject {
     property var overview: walletSectionOverview
     property var assets: walletSectionAssets.assets
     property bool assetsLoading: walletSectionAssets.assetsLoading
+    property bool balanceLoading: overview.balanceLoading
     property var accounts: walletSectionAccounts.accounts
     property var receiveAccounts: walletSectionSend.accounts
     property var selectedReceiveAccount: walletSectionSend.selectedReceiveAccount
@@ -388,4 +399,6 @@ QtObject {
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
         walletSectionAccounts.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
     }
+
+    property CurrenciesStore currencyStore: CurrenciesStore {}   
 }

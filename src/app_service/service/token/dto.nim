@@ -13,6 +13,18 @@ const ALL_TIME_RANGE* = 4
 
 # Only contains DTO used for deserialisation of data from go lib
 
+type CommunityDataDto* = object
+    id* {.serializedFieldName("id").}: string
+    name* {.serializedFieldName("name").}: string
+    color* {.serializedFieldName("color").}: string
+
+proc `$`*(self: CommunityDataDto): string =
+  result = fmt"""CommunityDataDto[
+    id: {self.id},
+    name: {self.name},
+    color: {self.color}
+    ]"""
+
 type
   TokenDto* = ref object of RootObj
     address* {.serializedFieldName("address").}: string
@@ -20,8 +32,9 @@ type
     symbol* {.serializedFieldName("symbol").}: string
     decimals* {.serializedFieldName("decimals").}: int
     chainID* {.serializedFieldName("chainId").}: int
-    communityID* {.serializedFieldName("communityId").}: string
+    communityData* {.serializedFieldName("community_data").}: CommunityDataDto
     image* {.serializedFieldName("image").}: string
+    communityID* : string
 
 proc `$`*(self: TokenDto): string =
   result = fmt"""TokenDto[
@@ -30,7 +43,7 @@ proc `$`*(self: TokenDto): string =
     symbol: {self.symbol},
     decimals: {self.decimals},
     chainID: {self.chainID},
-    communityID: {self.communityID},
+    communityData: {self.communityData},
     image: {self.image}
     ]"""
 
