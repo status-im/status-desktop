@@ -119,8 +119,8 @@ type
 
 proc `%`*(self: ComputeFeeArgs): JsonNode =
     result = %* {
-      "ethFee": self.ethCurrency.toJsonNode(),
-      "fiatFee": self.fiatCurrency.toJsonNode(),
+      "ethFee": if self.ethCurrency == nil: newCurrencyAmount().toJsonNode() else: self.ethCurrency.toJsonNode(),
+      "fiatFee": if self.fiatCurrency == nil: newCurrencyAmount().toJsonNode() else: self.fiatCurrency.toJsonNode(),
       "errorCode": self.errorCode.int,
       "contractUniqueKey": self.contractUniqueKey,
     }
@@ -142,8 +142,8 @@ type
 proc `%`*(self: AirdropFeesArgs): JsonNode =
     result = %* {
       "fees": computeFeeArgsToJsonArray(self.fees),
-      "totalEthFee": self.totalEthFee.toJsonNode(),
-      "totalFiatFee": self.totalFiatFee.toJsonNode(),
+      "totalEthFee": if self.totalEthFee == nil: newCurrencyAmount().toJsonNode() else: self.totalEthFee.toJsonNode(),
+      "totalFiatFee": if self.totalFiatFee == nil: newCurrencyAmount().toJsonNode() else: self.totalFiatFee.toJsonNode(),
       "errorCode": self.errorCode.int,
       "requestId": self.requestId,
     }
