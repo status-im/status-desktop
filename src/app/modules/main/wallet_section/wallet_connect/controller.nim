@@ -1,4 +1,4 @@
-import NimQml, logging, json
+import NimQml, strutils, logging, json
 
 import backend/wallet_connect as backend
 
@@ -70,21 +70,37 @@ QtObject:
 
   proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
 
-  proc sendTransaction(self: Controller, signature: string) =
+  proc sendTransactionAndRespond(self: Controller, signature: string) =
     let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
     var res: JsonNode
-    let err = backend.sendTransaction(res, finalSignature)
+    let err = backend.sendTransactionWithSignature(res, finalSignature)
     if err.len > 0:
       error "Failed to send tx"
       return
-    let sessionResponseDto = res.toSessionResponseDto()
-    self.respondSessionRequest($self.sessionRequestJson, sessionResponseDto.signedMessage, false)
+    let txHash = res.getStr
+    self.respondSessionRequest($self.sessionRequestJson, txHash, false)
+
+  proc buildRawTransactionAndRespond(self: Controller, signature: string) =
+    let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
+    var res: JsonNode
+    let err = backend.buildRawTransaction(res, finalSignature)
+    if err.len > 0:
+      error "Failed to send tx"
+      return
+    let txHash = res.getStr
+    self.respondSessionRequest($self.sessionRequestJson, txHash, false)
 
   proc finishSessionRequest(self: Controller, signature: string) =
     let requestMethod = getRequestMethod(self.sessionRequestJson)
     if requestMethod == RequestMethod.SendTransaction:
-      self.sendTransaction(signature)
+      self.sendTransactionAndRespond(signature)
+    elif requestMethod == RequestMethod.SignTransaction:
+      self.buildRawTransactionAndRespond(signature)
     elif requestMethod == RequestMethod.PersonalSign:
+      self.respondSessionRequest($self.sessionRequestJson, signature, false)
+    elif requestMethod == RequestMethod.EthSign:
+      self.respondSessionRequest($self.sessionRequestJson, signature, false)
+    elif requestMethod == RequestMethod.SignTypedData:
       self.respondSessionRequest($self.sessionRequestJson, signature, false)
     else:
       error "Unknown request method"

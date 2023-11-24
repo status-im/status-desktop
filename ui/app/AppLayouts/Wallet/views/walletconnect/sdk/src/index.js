@@ -180,10 +180,21 @@ window.wc = {
 
     respondSessionRequest: function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)
-        return {
-            result: window.wc.web3wallet.respondSessionRequest({ topic, response }),
-            error: ""
-        };
+
+        try {
+            let r = window.wc.web3wallet.respondSessionRequest({ topic: topic, response: response });
+            return {
+                result: r,
+                error: ""
+            };
+
+        } catch (e) {
+            wc.statusObject.bubbleConsoleMessage("error", `respondSessionRequest error: ${JSON.stringify(e, null, 2)}`)
+            return {
+                result: "",
+                error: e
+            };
+        }
     },
 
     rejectSessionRequest: function (topic, id, error = false) {

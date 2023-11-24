@@ -243,6 +243,18 @@ Item {
 
         WebChannel.id: "statusObject"
 
+        function bubbleConsoleMessage(type, message) {
+            if (type === "warn") {
+                console.warn(message)
+            } else if (type === "debug") {
+                console.debug(message)
+            } else if (type === "error") {
+                console.error(message)
+            } else {
+                console.log(message)
+            }
+        }
+
         function sdkInitialized(error)
         {
             d.sdkReady = !error

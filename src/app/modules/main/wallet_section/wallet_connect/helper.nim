@@ -6,7 +6,10 @@ type
   RequestMethod* {.pure.} = enum
     Unknown = "unknown"
     SendTransaction = "eth_sendTransaction"
+    SignTransaction = "eth_signTransaction"
     PersonalSign = "personal_sign"
+    EthSign = "eth_sign"
+    SignTypedData = "eth_signTypedData"
 
 ## provided json represents a `SessionRequest`
 proc getRequestMethod*(jsonObj: JsonNode): RequestMethod =
