@@ -3,8 +3,10 @@ import QtQuick.Layouts 1.13
 import QtQuick.Controls 2.14
 import QtQuick.Window 2.12
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
@@ -13,6 +15,7 @@ import shared.views 1.0
 import shared.controls 1.0
 import shared.stores 1.0
 
+import SortFilterProxyModel 0.2
 
 /// \beware: heavy shortcuts here, refactor to match the requirements when touching this again
 /// \todo split into token history and balance views; they have different requirements that introduce unnecessary complexity
@@ -21,15 +24,26 @@ Item {
     id: root
 
     property var token: ({})
+    property var currencyStore
     property var networkConnectionStore
+    property var allNetworksModel
+    property var networkFilters
     /*required*/ property string address: ""
     property bool showAllAccounts: false
-    property bool assetsLoading: true
+    property TokenBalanceHistoryStore balanceStore: TokenBalanceHistoryStore {}
 
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
         readonly property string symbol: root.token ? root.token.symbol : ""
+        property bool marketDetailsLoading: token && token.marketDetailsLoading ? token.marketDetailsLoading: false
+        property bool tokenDetailsLoading: token && token.detailsLoading? token.detailsLoading: false
+
+        readonly property LeftJoinModel addressPerChainModel: LeftJoinModel {
+            leftModel: token && token.addressPerChain ? token.addressPerChain: null
+            rightModel: root.allNetworksModel
+            joinRole: "chainId"
+        }
     }
 
     Connections {
@@ -56,14 +70,18 @@ Item {
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
         primaryText: token && token.name ? token.name : Constants.dummyText
-        secondaryText: token && token.enabledNetworkBalance ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : Constants.dummyText
-        tertiaryText: token && token.enabledNetworkCurrencyBalance ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : Constants.dummyText
-        balances: token && token.balances ? token.balances : null
-        networksModel: RootStore.allNetworks
-        isLoading: root.assetsLoading
+        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(token.currentBalance, token.symbol)) : Constants.dummyText
+        tertiaryText: {
+            let totalCurrencyBalance = token && token.currentCurrencyBalance ? token.currentCurrencyBalance : 0
+            return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrentCurrencyAmount(totalCurrencyBalance))
+        }
+        decimals: token && token.decimals ? token.decimals : 4
+        balances: token && token.balances ? token.balances: null
+        allNetworksModel: root.allNetworksModel
+        isLoading: d.marketDetailsLoading
         errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
         formatBalance: function(balance){
-            return LocaleUtils.currencyAmountToLocaleString(balance)
+            return LocaleUtils.currencyAmountToLocaleString(currencyStore.getCurrencyAmount(balance, token.symbol))
         }
     }
 
@@ -94,47 +112,47 @@ Item {
 
             readonly property var labelsData: {
                 return timeRangeSelected()
-                    ? selectedStore.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
-                    : []
+                        ? selectedStore.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                        : []
             }
             readonly property var dataRange: {
                 return timeRangeSelected()
-                    ? selectedStore.dataRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
-                    : []
+                        ? selectedStore.dataRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                        : []
             }
             readonly property var maxTicksLimit: {
                 return timeRangeSelected() && typeof selectedStore.maxTicks != "undefined"
-                    ? selectedStore.maxTicks[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
-                    : 0
+                        ? selectedStore.maxTicks[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                        : 0
             }
 
             graphsModel: [
-                    {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
-                    {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance},
-                ]
+                {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
+                {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance},
+            ]
             defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
             timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
             onHeaderTabClicked: (privateIdentifier, isTimeRange) => {
-                if(!isTimeRange && graphDetail.selectedGraphType !== privateIdentifier) {
-                    graphDetail.selectedGraphType = privateIdentifier
-                }
+                                    if(!isTimeRange && graphDetail.selectedGraphType !== privateIdentifier) {
+                                        graphDetail.selectedGraphType = privateIdentifier
+                                    }
 
-                if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
-                    graphDetail.updateBalanceStore()
-                }
+                                    if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
+                                        graphDetail.updateBalanceStore()
+                                    }
 
-                if(!isTimeRange) {
-                    graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
-                }
+                                    if(!isTimeRange) {
+                                        graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
+                                    }
 
-                chart.animateToNewData()
-            }
+                                    chart.animateToNewData()
+                                }
 
             readonly property var dateToShortLabel: function (value) {
-                    const range = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                    return range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
-                         LocaleUtils.getDayMonth(value) :
-                         LocaleUtils.getMonthYear(value)
+                const range = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                return range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
+                            LocaleUtils.getDayMonth(value) :
+                            LocaleUtils.getMonthYear(value)
             }
             chart.chartType: 'line'
             chart.chartData: {
@@ -243,7 +261,7 @@ Item {
                                 },
                                 afterDataLimits: (axis) => {
                                     if(axis.min < 0)
-                                        axis.min = 0;
+                                    axis.min = 0;
                                 },
                                 ticks: {
                                     fontSize: 10,
@@ -272,24 +290,23 @@ Item {
                 }
             }
 
-            TokenBalanceHistoryStore {
-                id: balanceStore
-
-                onNewDataReady: (address, tokenSymbol, currencySymbol, timeRange) => {
+            Connections {
+                target: balanceStore
+                function onNewDataReady(address, tokenSymbol, currencySymbol, timeRange) {
                     if (timeRange === timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
                         chart.updateToNewData()
                     }
                 }
+            }
 
-                Connections {
-                    target: root
-                    function onAddressChanged() { graphDetail.updateBalanceStore() }
-                }
+            Connections {
+                target: root
+                function onAddressChanged() { graphDetail.updateBalanceStore() }
+            }
 
-                Connections {
-                    target: d
-                    function onSymbolChanged() { if (d.symbol) graphDetail.updateBalanceStore() }
-                }
+            Connections {
+                target: d
+                function onSymbolChanged() { if (d.symbol) graphDetail.updateBalanceStore() }
             }
         }
     }
@@ -310,53 +327,53 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap) : Constants.dummyText
-                isLoading: root.assetsLoading
+                secondaryText: token && token.marketDetails && token.marketDetails.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.marketCap) : Constants.dummyText
+                isLoading: d.marketDetailsLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay) : Constants.dummyText
-                isLoading: root.assetsLoading
+                secondaryText: token && token.marketDetails && token.marketDetails.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.lowDay) : Constants.dummyText
+                isLoading: d.marketDetailsLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay) : Constants.dummyText
-                isLoading: root.assetsLoading
+                secondaryText: token && token.marketDetails && token.marketDetails.highDay ? LocaleUtils.currencyAmountToLocaleString(token.marketDetails.highDay) : Constants.dummyText
+                isLoading: d.marketDetailsLoading
             }
             Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property double changePctHour: token && token.changePctHour ? token.changePctHour : 0
+                readonly property double changePctHour: token && token.marketDetails ? token.marketDetails.changePctHour : 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
                 secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2))
                 secondaryLabel.customColor: changePctHour === 0 ? Theme.palette.directColor1 :
                                                                   changePctHour < 0 ? Theme.palette.dangerColor1 :
                                                                                       Theme.palette.successColor1
-                isLoading: root.assetsLoading
+                isLoading: d.marketDetailsLoading
             }
             InformationTile {
-                readonly property double changePctDay: token && token.changePctDay ? token.changePctDay : 0
+                readonly property double changePctDay: token && token.marketDetails ? token.marketDetails.changePctDay : 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
                 secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2))
                 secondaryLabel.customColor: changePctDay === 0 ? Theme.palette.directColor1 :
                                                                  changePctDay < 0 ? Theme.palette.dangerColor1 :
                                                                                     Theme.palette.successColor1
-                isLoading: root.assetsLoading
+                isLoading: d.marketDetailsLoading
             }
             InformationTile {
-                readonly property double changePct24hour: token && token.changePct24hour ? token.changePct24hour : 0
+                readonly property double changePct24hour: token && token.marketDetails ? token.marketDetails.changePct24hour : 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
                 secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2))
                 secondaryLabel.customColor: changePct24hour === 0 ? Theme.palette.directColor1 :
                                                                     changePct24hour < 0 ? Theme.palette.dangerColor1 :
                                                                                           Theme.palette.successColor1
-                isLoading: root.assetsLoading
+                isLoading: d.marketDetailsLoading
             }
         }
 
@@ -402,7 +419,7 @@ Item {
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
                         textFormat: Qt.RichText
-                        loading: root.assetsLoading
+                        loading: d.tokenDetailsLoading
                     }
                     ColumnLayout {
                         id: tagsLayout
@@ -412,7 +429,7 @@ Item {
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
                             iconAsset.icon: "browser"
                             tagPrimaryLabel.text: qsTr("Website")
-                            visible: typeof token != "undefined" && token && token.assetWebsiteUrl !== ""
+                            visible: typeof token != "undefined" && token && token.websiteUrl !== ""
                             customBackground: Component {
                                 Rectangle {
                                     color: Theme.palette.baseColor2
@@ -424,29 +441,31 @@ Item {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Global.openLink(token.assetWebsiteUrl)
+                                onClicked: Global.openLink(token.websiteUrl)
                             }
                         }
-                        InformationTag {
-                            id: smartContractAddress
-                            Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
 
-                            image.source: {
-                                if (!token || token.builtOn === "") {
-                                    return ""
+                        /* TODO :: Issue with not being able to see correct balances after switching assets will be fixed under
+                        https://github.com/status-im/status-desktop/issues/12912 */
+                        Repeater {
+                            Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
+                            model: SortFilterProxyModel {
+                                sourceModel: d.addressPerChainModel
+                                filters: ExpressionFilter {
+                                    expression: root.networkFilters.split(":").includes(model.chainId+"")
                                 }
-                                let networkIconUrl = RootStore.getNetworkIconUrl(token.builtOn)
-                                return networkIconUrl ? Style.svg("tiny/" + networkIconUrl) : ""
                             }
-                            tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
-                            tagSecondaryLabel.text: token && token.address ? token.address : "---"
-                            visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
-                            customBackground: Component {
-                                Rectangle {
-                                    color: Theme.palette.baseColor2
-                                    border.width: 1
-                                    border.color: "transparent"
-                                    radius: 36
+                            InformationTag {
+                                image.source: Style.svg("tiny/" + model.iconUrl)
+                                tagPrimaryLabel.text: model.chainName
+                                tagSecondaryLabel.text: model.address
+                                customBackground: Component {
+                                    Rectangle {
+                                        color: Theme.palette.baseColor2
+                                        border.width: 1
+                                        border.color: "transparent"
+                                        radius: 36
+                                    }
                                 }
                             }
                         }

@@ -155,7 +155,7 @@ Control {
             Layout.rightMargin: Style.current.halfPadding
             Layout.maximumWidth: parent.width - Layout.leftMargin - Layout.rightMargin
             text: root.communityName
-            imageSrc: root.communityImage
+            asset.name: root.communityImage
             visible: root.isCommunityCollectible
             enabled: !root.isLoading
             StatusToolTip {

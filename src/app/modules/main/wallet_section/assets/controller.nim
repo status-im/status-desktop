@@ -33,6 +33,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.walletAccountService.newBuildAllTokens(self.walletAccountService.getWalletAddresses(), store = true)
   discard
 
 proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
@@ -49,3 +50,12 @@ proc getCurrentCurrency*(self: Controller): string =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
+
+proc getGroupedAccountsAssetsList*(self: Controller): var seq[GroupedTokenItem] =
+  return self.walletAccountService.getGroupedAccountsAssetsList()
+
+proc getHasBalanceCache*(self: Controller): bool =
+  return self.walletAccountService.getHasBalanceCache()
+
+proc getHasMarketValuesCache*(self: Controller): bool =
+  return self.tokenService.getHasMarketValuesCache()

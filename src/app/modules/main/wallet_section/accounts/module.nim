@@ -46,13 +46,14 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
   let items = walletAccounts.map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
-    let currencyBalance = self.controller.getCurrencyBalance(w.address, chainIds, currency)
+    let currencyBalance = self.controller.getTotalCurrencyBalance(w.address, chainIds)
     walletAccountToWalletAccountsItem(
       w,
       keycardAccount,
       currencyBalance,
       currencyFormat,
-      areTestNetworksEnabled
+      areTestNetworksEnabled,
+      self.controller.getTokensMarketValuesLoading()
     )
   ))
   self.view.setItems(items)

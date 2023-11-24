@@ -42,6 +42,8 @@ proc init*(self: Controller) =
     let args = TokenBalanceHistoryDataArgs(e)
     self.delegate.tokenBalanceHistoryDataResolved(args.result)
 
+  self.tokenService.getSupportedTokensList()
+
 proc findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
 

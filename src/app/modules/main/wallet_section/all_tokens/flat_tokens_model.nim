@@ -40,9 +40,9 @@ QtObject:
 
   proc setup(self: FlatTokensModel) =
     self.QAbstractListModel.setup
-    self.tokenMarketDetails = @[]
 
   proc delete(self: FlatTokensModel) =
+    self.tokenMarketDetails = @[]
     self.QAbstractListModel.delete
 
   proc newFlatTokensModel*(
@@ -53,6 +53,7 @@ QtObject:
     result.setup
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
+    result.tokenMarketDetails = @[]
 
   method rowCount(self: FlatTokensModel, index: QModelIndex = nil): int =
     return self.delegate.getFlatTokensList().len
@@ -80,13 +81,13 @@ QtObject:
       ModelRole.WebsiteUrl.int:"websiteUrl",
       ModelRole.MarketDetails.int:"marketDetails",
       ModelRole.DetailsLoading.int:"detailsLoading",
-      ModelRole.MarketDetailsLoading.int:"marketDetailsLoading",
+      ModelRole.MarketDetailsLoading.int:"marketDetailsLoading"
     }.toTable
 
   method data(self: FlatTokensModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if index.row < 0 or index.row >= self.rowCount():
+    if index.row < 0 or index.row >= self.rowCount() or index.row >= self.tokenMarketDetails.len:
       return
     # the only way to read items from service is by this single method getFlatTokensList
     let item = self.delegate.getFlatTokensList()[index.row]
@@ -129,26 +130,44 @@ QtObject:
 
 
   proc modelsAboutToUpdate*(self: FlatTokensModel) =
+    self.tokenMarketDetails = @[]
     self.beginResetModel()
 
   proc modelsUpdated*(self: FlatTokensModel) =
-    self.tokenMarketDetails =  @[]
     for token in self.delegate.getFlatTokensList():
-      self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, token.symbol))
+      let symbol = if token.communityId.isEmptyOrWhitespace: token.symbol
+                   else: ""
+      self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
     self.endResetModel()
 
-  proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
-    for i in countup(0, self.rowCount()):
-      let index = self.createIndex(i, 0, nil)
+  proc marketDetailsDataChanged(self: FlatTokensModel) =
+    if self.delegate.getFlatTokensList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
       defer: index.delete
-      self.dataChanged(index, index, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+
+  proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
+    self.marketDetailsDataChanged()
+
+  proc tokensMarketValuesAboutToUpdate*(self: FlatTokensModel) =
+    self.marketDetailsDataChanged()
+
+  proc detailsDataChanged(self: FlatTokensModel) =
+    if self.delegate.getFlatTokensList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      defer: index.delete
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
+
+  proc tokensDetailsAboutToUpdate*(self: FlatTokensModel) =
+    self.detailsDataChanged()
 
   proc tokensDetailsUpdated*(self: FlatTokensModel) =
-    for i in countup(0, self.rowCount()):
-      let index = self.createIndex(i, 0, nil)
-      defer: index.delete
-      self.dataChanged(index, index, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
+    self.detailsDataChanged()
 
   proc currencyFormatsUpdated*(self: FlatTokensModel) =
-    for mD in self.tokenMarketDetails:
-      mD.updateCurrencyFormat()
+    for marketDetails in self.tokenMarketDetails:
+      marketDetails.updateCurrencyFormat()

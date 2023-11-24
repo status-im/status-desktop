@@ -28,6 +28,8 @@ type
     # built from chainId and address using networks service
     WebsiteUrl
     MarketDetails
+    DetailsLoading
+    MarketDetailsLoading
 
 QtObject:
   type TokensBySymbolModel* = ref object of QAbstractListModel
@@ -42,6 +44,8 @@ QtObject:
     self.tokenMarketDetails = @[]
 
   proc delete(self: TokensBySymbolModel) =
+    self.addressPerChainModel = @[]
+    self.tokenMarketDetails = @[]
     self.QAbstractListModel.delete
 
   proc newTokensBySymbolModel*(
@@ -52,6 +56,7 @@ QtObject:
     result.setup
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
+    result.tokenMarketDetails = @[]
 
   method rowCount(self: TokensBySymbolModel, index: QModelIndex = nil): int =
     return self.delegate.getTokenBySymbolList().len
@@ -77,12 +82,16 @@ QtObject:
       ModelRole.Description.int:"description",
       ModelRole.WebsiteUrl.int:"websiteUrl",
       ModelRole.MarketDetails.int:"marketDetails",
+      ModelRole.DetailsLoading.int:"detailsLoading",
+      ModelRole.MarketDetailsLoading.int:"marketDetailsLoading",
     }.toTable
 
   method data(self: TokensBySymbolModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if index.row < 0 or index.row >= self.rowCount():
+    if index.row < 0 or index.row >= self.delegate.getTokenBySymbolList().len or
+      index.row >= self.addressPerChainModel.len or
+      index.row >= self.tokenMarketDetails.len:
       return
     # the only way to read items from service is by this single method getTokenBySymbolList
     let item = self.delegate.getTokenBySymbolList()[index.row]
@@ -107,43 +116,65 @@ QtObject:
       of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
       of ModelRole.Description:
-        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
-        result = if not tokenDetails.isNil: newQVariant(tokenDetails.description)
-          else: newQVariant("")
+        result = if not item.communityId.isEmptyOrWhitespace or self.delegate.getTokensDetailsLoading() : newQVariant("")
+                 else: newQVariant(self.delegate.getTokenDetails(item.symbol).description)
       of ModelRole.WebsiteUrl:
-        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
-        result = if not tokenDetails.isNil: newQVariant(tokenDetails.assetWebsiteUrl)
-                 else: newQVariant("")
+        result = if not item.communityId.isEmptyOrWhitespace or self.delegate.getTokensDetailsLoading() : newQVariant("")
+                 else: newQVariant(self.delegate.getTokenDetails(item.symbol).assetWebsiteUrl)
       of ModelRole.MarketDetails:
         result = newQVariant(self.tokenMarketDetails[index.row])
+      of ModelRole.DetailsLoading:
+        result = newQVariant(self.delegate.getTokensDetailsLoading())
+      of ModelRole.MarketDetailsLoading:
+        result = newQVariant(self.delegate.getTokensMarketValuesLoading())
 
   proc modelsAboutToUpdate*(self: TokensBySymbolModel) =
-      self.beginResetModel()
+    self.tokenMarketDetails = @[]
+    self.addressPerChainModel = @[]
+    self.beginResetModel()
 
   proc modelsUpdated*(self: TokensBySymbolModel) =
-      self.addressPerChainModel = @[]
-      for index in countup(0, self.delegate.getTokenBySymbolList().len):
-        self.addressPerChainModel.add(newAddressPerChainModel(self.delegate, index))
-
-      self.tokenMarketDetails = @[]
-      for token in self.delegate.getTokenBySymbolList():
-        if token.communityId.isEmptyOrWhitespace:
-          self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, token.symbol))
-
-      self.endResetModel()
+    let tokensList = self.delegate.getTokenBySymbolList()
+    for index in countup(0, tokensList.len-1):
+      self.addressPerChainModel.add(newAddressPerChainModel(self.delegate, index))
+      let symbol = if tokensList[index].communityId.isEmptyOrWhitespace: tokensList[index].symbol
+                   else: ""
+      self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
+    self.endResetModel()
 
   proc tokensMarketValuesUpdated*(self: TokensBySymbolModel) =
-    for i in countup(0, self.rowCount()):
-      let index = self.createIndex(i, 0, nil)
+    if not self.delegate.getTokensMarketValuesLoading():
+      if self.delegate.getTokenBySymbolList().len > 0:
+        let index = self.createIndex(0, 0, nil)
+        let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
+        defer: index.delete
+        defer: lastindex.delete
+        self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+
+  proc tokensMarketValuesAboutToUpdate*(self: TokensBySymbolModel) =
+    if self.delegate.getTokenBySymbolList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
       defer: index.delete
-      self.dataChanged(index, index, @[ModelRole.MarketDetails.int])
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
+
+  proc tokensDetailsAboutToUpdate*(self: TokensBySymbolModel) =
+    if self.delegate.getTokenBySymbolList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
+      defer: index.delete
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc tokensDetailsUpdated*(self: TokensBySymbolModel) =
-    for i in countup(0, self.rowCount()):
-      let index = self.createIndex(i, 0, nil)
+    if self.delegate.getTokenBySymbolList().len > 0:
+      let index = self.createIndex(0, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
       defer: index.delete
-      self.dataChanged(index, index, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int])
+      defer: lastindex.delete
+      self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc currencyFormatsUpdated*(self: TokensBySymbolModel) =
-    for mD in self.tokenMarketDetails:
-      mD.updateCurrencyFormat()
+    for marketDetails in self.tokenMarketDetails:
+      marketDetails.updateCurrencyFormat()

@@ -273,7 +273,7 @@ QtObject {
                 nativeCurrencyDecimals: 18,
                 isTest:  true,
                 layer:   2,
-                isEnabled: false,
+                isEnabled: true,
             }]
         )
     }

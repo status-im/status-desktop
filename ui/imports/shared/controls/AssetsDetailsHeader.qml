@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Controls 2.14
 
 import utils 1.0
@@ -8,7 +8,10 @@ import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
+
+import SortFilterProxyModel 0.2
 
 Control {
     id: root
@@ -17,7 +20,8 @@ Control {
     property alias secondaryText: cryptoBalance.text
     property alias tertiaryText: fiatBalance.text
     property var balances
-    property var networksModel
+    property int decimals
+    property var allNetworksModel
     property bool isLoading: false
     property string errorTooltipText
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -76,24 +80,34 @@ Control {
                 loading: root.isLoading
             }
         }
-        /* TODO :: Issue with not being able to see correct balnces after switching assets will be fixed under
-        https://github.com/status-im/status-desktop/issues/12912 */
+
         Row {
             spacing: Style.current.smallPadding
             anchors.left: parent.left
             anchors.leftMargin: identiconLoader.width
             Repeater {
                 id: chainRepeater
-                model: LeftJoinModel {
-                    leftModel: root.balances
-                    rightModel: root.networksModel
-                    joinRole: "chainId"
-                }
+                model: root.allNetworksModel
                 delegate: InformationTag {
-                    tagPrimaryLabel.text: root.formatBalance(model.balance)
+                    readonly property double aggregatedbalance: balancesAggregator.value/(10 ** root.decimals)
+                    SortFilterProxyModel {
+                        id: filteredBalances
+                        sourceModel: root.balances
+                        filters: ValueFilter {
+                            roleName: "chainId"
+                            value: model.chainId
+                        }
+                    }
+                    SumAggregator {
+                        id: balancesAggregator
+                        model: filteredBalances
+                        roleName: "balance"
+                    }
+                    tagPrimaryLabel.text: root.formatBalance(aggregatedbalance)
                     tagPrimaryLabel.color: model.chainColor
                     image.source: Style.svg("tiny/%1".arg(model.iconUrl))
                     loading: root.isLoading
+                    visible: balancesAggregator.value > 0
                     rightComponent: StatusFlatRoundButton {
                         width: 14
                         height: visible ? 14 : 0

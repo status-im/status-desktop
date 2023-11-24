@@ -13,7 +13,7 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    // expected roles: name, symbol, enabledNetworkBalance, enabledNetworkCurrencyBalance, currencyPrice, changePct24hour, communityId, communityName, communityImage
+    // expected roles: name, symbol, currencyPrice, changePct24hour, communityId, communityName, communityImage
 
     property alias currencyBalance: currencyBalance
     property alias change24HourPercentage: change24HourPercentageText
@@ -21,14 +21,14 @@ StatusListItem {
 
     property string currentCurrencySymbol
     property string textColor: {
-        if (!modelData) {
+        if (!modelData || !modelData.marketDetails) {
             return Theme.palette.successColor1
         }
-        return modelData.changePct24hour === undefined  ?
+        return modelData.marketDetails.changePct24hour === undefined  ?
             Theme.palette.baseColor1 :
-            modelData.changePct24hour === 0 ?
+            modelData.marketDetails.changePct24hour === 0 ?
                 Theme.palette.baseColor1 :
-                modelData.changePct24hour < 0 ?
+                modelData.marketDetails.changePct24hour < 0 ?
                     Theme.palette.dangerColor1 :
                     Theme.palette.successColor1
     }
@@ -40,18 +40,18 @@ StatusListItem {
     readonly property string symbolUrl: {
         if (!modelData)
             return ""
-        if (modelData.imageUrl)
-            return modelData.imageUrl
+        if (modelData.image)
+            return modelData.image
         if (modelData.symbol)
             return Constants.tokenIcon(modelData.symbol, false)
         return ""
     }
     readonly property string upDownTriangle: {
-        if (!modelData)
+        if (!modelData || !modelData.marketDetails)
             return ""
-        if (modelData.changePct24hour < 0)
+        if (modelData.marketDetails.changePct24hour < 0)
             return "▾"
-        if (modelData.changePct24hour > 0)
+        if (modelData.marketDetails.changePct24hour > 0)
             return "▴"
         return ""
     }
@@ -96,7 +96,7 @@ StatusListItem {
             StatusTextWithLoadingState   {
                 id: currencyBalance
                 anchors.right: parent.right
-                text: modelData ? LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkCurrencyBalance) : ""
+                loading: modelData && modelData.marketDetailsLoading
                 visible: !errorIcon.visible && !root.isCommunityToken
             }
             Row {
@@ -108,7 +108,8 @@ StatusListItem {
                     anchors.verticalCenter: parent.verticalCenter
                     customColor: root.textColor
                     font.pixelSize: 13
-                    text: modelData && modelData.changePct24hour !== undefined ? "%1 %2%".arg(root.upDownTriangle).arg(LocaleUtils.numberToLocaleString(modelData.changePct24hour, 2))
+                    loading: modelData && modelData.marketDetailsLoading
+                    text: modelData && modelData.marketDetails && modelData.marketDetails.changePct24hour !== undefined ? "%1 %2%".arg(root.upDownTriangle).arg(LocaleUtils.numberToLocaleString(modelData.marketDetails.changePct24hour, 2))
                                                                                : "---"
                 }
                 Rectangle {
@@ -122,13 +123,16 @@ StatusListItem {
                     anchors.verticalCenter: parent.verticalCenter
                     customColor: root.textColor
                     font.pixelSize: 13
-                    text: modelData ? LocaleUtils.currencyAmountToLocaleString(modelData.currencyPrice) : ""
+                    loading: modelData && modelData.marketDetailsLoading
+                                       text: modelData && modelData.marketDetails ? LocaleUtils.currencyAmountToLocaleString(modelData.marketDetails.currencyPrice) : ""
                 }
             }
             ManageTokensCommunityTag {
                 anchors.right: parent.right
                 text: modelData && !!modelData.communityName ? modelData.communityName : ""
-                imageSrc: modelData && !!modelData.communityImage ? modelData.communityImage : ""
+                name: modelData && !!modelData.communityName ? modelData.communityName : ""
+                asset.name: modelData && !!modelData.communityImage ? modelData.communityImage : ""
+                asset.letterSize: 12
                 visible: root.isCommunityToken
                 StatusToolTip {
                     text: modelData ? qsTr("This token was minted by the %1 community").arg(modelData.communityName) : ""

@@ -121,6 +121,14 @@ QtObject:
     self.flatTokensModel.tokensMarketValuesUpdated()
     self.tokensBySymbolModel.tokensMarketValuesUpdated()
 
+  proc tokensMarketValuesAboutToUpdate*(self: View) =
+    self.flatTokensModel.tokensMarketValuesAboutToUpdate()
+    self.tokensBySymbolModel.tokensMarketValuesAboutToUpdate()
+
+  proc tokensDetailsAboutToUpdate*(self: View) =
+    self.flatTokensModel.tokensDetailsAboutToUpdate()
+    self.tokensBySymbolModel.tokensDetailsAboutToUpdate()
+
   proc tokensDetailsUpdated*(self: View) =
     self.flatTokensModel.tokensDetailsUpdated()
     self.tokensBySymbolModel.tokensDetailsUpdated()

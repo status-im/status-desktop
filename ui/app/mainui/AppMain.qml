@@ -67,7 +67,7 @@ Item {
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
-    
+    readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
 
     // set from main.qml
     property var sysPalette

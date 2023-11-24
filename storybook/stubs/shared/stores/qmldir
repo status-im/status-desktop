@@ -2,3 +2,4 @@ CommunityTokensStore 1.0 CommunityTokensStore.qml
 CurrenciesStore 1.0 CurrenciesStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 singleton RootStore 1.0 RootStore.qml
+TokenBalanceHistoryStore 1.0 TokenBalanceHistoryStore.qml

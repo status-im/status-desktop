@@ -3,8 +3,10 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -25,13 +27,17 @@ import AppLayouts.Wallet.controls 1.0
 ColumnLayout {
     id: root
 
-    // expected roles: name, symbol, enabledNetworkBalance, enabledNetworkCurrencyBalance, currencyPrice, changePct24hour, communityId, communityName, communityImage
+    // expected roles: name, symbol, balances, currencyPrice, changePct24hour, communityId, communityName, communityImage
     required property var assets
 
+    property var currencyStore
     property var networkConnectionStore
     property var overview
     property bool assetDetailsLaunched: false
     property bool filterVisible
+    property bool areAssetsLoading: false
+    property string addressFilters
+    property string networkFilters
 
     signal assetClicked(var token)
     signal sendRequested(string symbol)
@@ -44,6 +50,7 @@ ColumnLayout {
     QtObject {
         id: d
         property int selectedAssetIndex: -1
+        readonly property int loadingItemsCount: 25
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
@@ -62,55 +69,95 @@ ColumnLayout {
             settingsKey: "WalletAssets"
         }
 
-        readonly property bool hasCommunityAssets: communityAssetsLV.count
-
         function hideAllCommunityTokens(communityId) {
-            const tokenSymbols = ModelUtils.getAll(communityAssetsLV.model, "symbol", "communityId", communityId)
+            const tokenSymbols = ModelUtils.getAll(assetsListView.model, "symbol", "communityId", communityId)
             d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
         }
-    }
 
-    component CustomSFPM: SortFilterProxyModel {
-        id: customFilter
-        property bool isCommunity
-
-        sourceModel: root.assets
-        proxyRoles: [
-            ExpressionRole {
-                name: "currentBalance"
-                expression: model.enabledNetworkBalance.amount
-            },
-            ExpressionRole {
-                name: "currentCurrencyBalance"
-                expression: model.enabledNetworkCurrencyBalance.amount
-            },
-            ExpressionRole {
-                name: "tokenPrice"
-                expression: model.currencyPrice.amount
-            }
-        ]
-        filters: [
-            ExpressionFilter {
-                expression: {
-                    d.controller.settingsDirty
-                    return d.tokenIsVisible(model.symbol, model.currentCurrencyBalance) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
+        readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
+            id: assetsWithFilteredBalances
+            sourceModel: root.assets
+            submodelRoleName: "balances"
+            delegateModel: SortFilterProxyModel {
+                sourceModel: submodel
+                filters: ExpressionFilter {
+                    expression: {
+                        root.networkFilters
+                        root.addressFilters
+                        return root.networkFilters.split(":").includes(chainId+"") &&
+                                (!!root.addressFilters ? root.addressFilters.toUpperCase() === account.toUpperCase() : true)
+                    }
                 }
             }
-        ]
-        sorters: [
-            ExpressionSorter {
-                expression: {
-                    d.controller.settingsDirty
-                    return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
-                }
-                enabled: d.isCustomView
-            },
-            RoleSorter {
-                roleName: cmbTokenOrder.currentSortRoleName
-                sortOrder: cmbTokenOrder.currentSortOrder
-                enabled: !d.isCustomView
+        }
+
+        function getTotalBalance(balances, decimals) {
+            let totalBalance = 0
+            for(let i=0; i<balances.count; i++) {
+                totalBalance+=SQUtils.AmountsArithmetic.toNumber(ModelUtils.get(balances, i, "balance"), decimals)
             }
-        ]
+            return totalBalance
+        }
+
+        property SortFilterProxyModel customSFPM: SortFilterProxyModel {
+            sourceModel: d.assetsWithFilteredBalances
+            proxyRoles: [
+                FastExpressionRole {
+                    id: filter
+                    name: "currentBalance"
+                    expression: d.getTotalBalance(model.balances, model.decimals, root.addressFilters, root.networkFilters)
+                    expectedRoles: ["balances", "decimals"]
+                },
+                FastExpressionRole {
+                    name: "currentCurrencyBalance"
+                    expression: {
+                        let totalBalance = d.getTotalBalance(model.balances, model.decimals, root.addressFilters, root.networkFilters)
+                        if(!model.communityId) {
+                            return totalBalance * model.marketDetails.currencyPrice.amount
+                        }
+                        else {
+                            return totalBalance
+                        }
+                    }
+                    expectedRoles: ["balances", "marketDetails", "decimals", "communityId"]
+                },
+                FastExpressionRole {
+                    name: "tokenPrice"
+                    expression: model.marketDetails.currencyPrice.amount
+                    expectedRoles: ["marketDetails"]
+                },
+                FastExpressionRole {
+                    name: "isCommunityAsset"
+                    expression: !!model.communityId
+                    expectedRoles: ["communityId"]
+                }
+            ]
+            filters: [
+                ExpressionFilter {
+                    expression: {
+                        d.controller.settingsDirty
+                        return d.tokenIsVisible(model.symbol, model.currentCurrencyBalance)
+                    }
+                }
+            ]
+            sorters: [
+                RoleSorter {
+                    roleName: "isCommunityAsset"
+                },
+                ExpressionSorter {
+                    expression: {
+                        d.controller.settingsDirty
+                        return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
+                    }
+                    enabled: d.isCustomView
+                },
+                RoleSorter {
+                    roleName: cmbTokenOrder.currentSortRoleName
+                    sortOrder: cmbTokenOrder.currentSortOrder
+                    enabled: !d.isCustomView
+                }
+            ]
+        }
     }
 
     Settings {
@@ -175,33 +222,42 @@ ColumnLayout {
         verticalPadding: 0
         contentWidth: availableWidth
 
-        ColumnLayout {
-            width: parent.width
-            spacing: 0
-
-            StatusListView {
-                id: regularAssetsLV
-                Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
-                interactive: false
-                objectName: "assetViewStatusListView"
-                model: CustomSFPM {}
-                delegate: delegateLoader
+        StatusListView {
+            id: assetsListView
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentHeight
+            interactive: false
+            objectName: "assetViewStatusListView"
+            model: root.areAssetsLoading ? d.loadingItemsCount : d.customSFPM
+            delegate: delegateLoader
+            section {
+                property: "isCommunityAsset"
+                delegate: Loader {
+                    width: ListView.view.width
+                    required property string section
+                    sourceComponent: section === "true" ? sectionDelegate: null
+                }
             }
+
+        }
+    }
+
+    Component {
+        id: sectionDelegate
+        ColumnLayout {
+            width: ListView.view.width
+            spacing: 0
 
             StatusDialogDivider {
                 Layout.fillWidth: true
                 Layout.topMargin: Style.current.padding
                 Layout.bottomMargin: Style.current.halfPadding
-                visible: d.hasCommunityAssets
             }
-
             RowLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: Style.current.padding
                 Layout.rightMargin: Style.current.smallPadding
                 Layout.bottomMargin: 4
-                visible: d.hasCommunityAssets
                 StatusBaseText {
                     text: qsTr("Community assets")
                     color: Theme.palette.baseColor1
@@ -217,16 +273,6 @@ ColumnLayout {
                     onClicked: Global.openPopup(communityInfoPopupCmp)
                 }
             }
-
-            StatusListView {
-                id: communityAssetsLV
-                Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
-                interactive: false
-                objectName: "communityAssetViewStatusListView"
-                model: CustomSFPM { isCommunity: true }
-                delegate: delegateLoader
-            }
         }
     }
 
@@ -236,7 +282,7 @@ ColumnLayout {
             property var modelData: model
             property int delegateIndex: index
             width: ListView.view.width
-            sourceComponent: model.loading ? loadingTokenDelegate: tokenDelegate
+            sourceComponent: root.areAssetsLoading ? loadingTokenDelegate: tokenDelegate
         }
     }
 
@@ -251,27 +297,29 @@ ColumnLayout {
         id: tokenDelegate
         TokenDelegate {
             objectName: "AssetView_TokenListItem_" + (!!modelData ? modelData.symbol : "")
-            readonly property string balance: !!modelData ? "%1".arg(modelData.enabledNetworkBalance.amount) : "" // Needed for the tests
+            readonly property string balance: !!modelData && !!modelData.currentBalance? "%1".arg(modelData.currentBalance) : "" // Needed for the tests
             errorTooltipText_1: !!modelData && !!networkConnectionStore ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
             errorTooltipText_2: !!networkConnectionStore ? networkConnectionStore.getMarketNetworkDownText() : ""
             subTitle: {
-                if (!modelData) {
+                if (!modelData || !modelData.symbol) {
                     return ""
                 }
                 if (networkConnectionStore && networkConnectionStore.noTokenBalanceAvailable) {
                     return ""
                 }
-                return "%1 %2".arg(LocaleUtils.stripTrailingZeroes(LocaleUtils.numberToLocaleString(modelData.enabledNetworkBalance.amount, 6), Qt.locale()))
-                              .arg(modelData.enabledNetworkBalance.symbol)
+                return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(modelData.currentBalance, modelData.symbol))
+            }
+            currencyBalance.text: {
+                let totalCurrencyBalance = modelData && modelData.currentCurrencyBalance ? modelData.currentCurrencyBalance : 0
+                return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrentCurrencyAmount(totalCurrencyBalance))
             }
             errorMode: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache : false
             errorIcon.tooltip.text: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCacheText : ""
             onClicked: (itemId, mouse) => {
                            if (mouse.button === Qt.LeftButton) {
-                               RootStore.getHistoricalDataForToken(modelData.symbol, RootStore.currencyStore.currentCurrency)
+                               RootStore.getHistoricalDataForToken(modelData.symbol, root.currencyStore.currentCurrency)
                                d.selectedAssetIndex = delegateIndex
-                               let selectedView = !!modelData.communityId ? communityAssetsLV : regularAssetsLV
-                               assetClicked(selectedView.model.get(delegateIndex))
+                               assetClicked(assetsListView.model.get(delegateIndex))
                            } else if (mouse.button === Qt.RightButton) {
                                Global.openMenu(tokenContextMenu, this,
                                                {symbol: modelData.symbol, assetName: modelData.name, assetImage: symbolUrl,
@@ -282,8 +330,7 @@ ColumnLayout {
             Component.onCompleted: {
                 // on Model reset if the detail view is shown, update the data in background.
                 if(root.assetDetailsLaunched && delegateIndex === d.selectedAssetIndex) {
-                    let selectedView = !!modelData.communityId ? communityAssetsLV : regularAssetsLV
-                    assetClicked(selectedView.model.get(delegateIndex))
+                    assetClicked(assetsListView.model.get(delegateIndex))
                 }
             }
         }

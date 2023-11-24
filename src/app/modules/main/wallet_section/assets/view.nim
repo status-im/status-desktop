@@ -1,15 +1,16 @@
-import NimQml, json
+import NimQml, json, stint, strutils
 
 import ./io_interface
 import ../../../shared_models/token_model as token_model
-
-import ./item as account_item
+import ./grouped_account_assets_model as grouped_account_assets_model
+import app_service/service/wallet_account/service
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       assets: token_model.Model
+      groupedAccountAssetsModel: grouped_account_assets_model.Model
       assetsLoading: bool
       hasBalanceCache: bool
       hasMarketValuesCache: bool
@@ -26,6 +27,7 @@ QtObject:
     result.setup()
     result.delegate = delegate
     result.assets = token_model.newModel()
+    result.groupedAccountAssetsModel = grouped_account_assets_model.newModel(delegate.getGroupedAccountAssetsDataSource())
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -35,10 +37,17 @@ QtObject:
 
   proc assetsChanged(self: View) {.signal.}
   proc getAssets*(self: View): QVariant {.slot.} =
-    return newQVariant(self.assets)
+    return newQVariant(self.groupedAccountAssetsModel)
   QtProperty[QVariant] assets:
     read = getAssets
-    notify = assetsChanged
+    notify = assetsChanged   
+
+  proc groupedAccountAssetsModelChanged(self: View) {.signal.}
+  proc getGroupedAccountAssetsModel*(self: View): QVariant {.slot.} =
+    return newQVariant(self.groupedAccountAssetsModel)
+  QtProperty[QVariant] groupedAccountAssetsModel:
+    read = getGroupedAccountAssetsModel
+    notify = groupedAccountAssetsModelChanged
 
   proc getAssetsLoading(self: View): QVariant {.slot.} =
     return newQVariant(self.assetsLoading)
@@ -59,6 +68,10 @@ QtObject:
     read = getHasBalanceCache
     notify = hasBalanceCacheChanged
 
+  proc setHasBalanceCache*(self: View, hasBalanceCache: bool) =
+    self.hasBalanceCache = hasBalanceCache
+    self.hasBalanceCacheChanged()
+
   proc getHasMarketValuesCache(self: View): QVariant {.slot.} =
     return newQVariant(self.hasMarketValuesCache)
   proc hasMarketValuesCacheChanged(self: View) {.signal.}
@@ -66,15 +79,12 @@ QtObject:
     read = getHasMarketValuesCache
     notify = hasMarketValuesCacheChanged
 
-  proc setData*(self: View, item: account_item.Item) =
-    self.setAssetsLoading(item.getAssetsLoading())  
-    self.hasBalanceCache = item.getHasBalanceCache()
-    self.hasBalanceCacheChanged()
-    self.hasMarketValuesCache = item.getHasMarketValuesCache()
+  proc setHasMarketValuesCache*(self: View, hasMarketValuesCache: bool) =
+    self.hasMarketValuesCache = hasMarketValuesCache
     self.hasMarketValuesCacheChanged()
 
-  proc setCacheValues*(self: View, hasBalanceCache: bool, hasMarketValuesCache: bool) =
-    self.hasBalanceCache = hasBalanceCache
-    self.hasBalanceCacheChanged()
-    self.hasMarketValuesCache = hasMarketValuesCache
-    self.hasMarketValuesCacheChanged()   
+  proc modelsAboutToUpdate*(self: View) =
+    self.groupedAccountAssetsModel.modelsAboutToUpdate()
+
+  proc modelsUpdated*(self: View) =
+    self.groupedAccountAssetsModel.modelsUpdated()

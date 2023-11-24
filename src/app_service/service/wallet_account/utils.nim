@@ -43,24 +43,12 @@ proc allBalancesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
           return false
     return true
 
-proc anyTokenHasBalanceForAnyChain(tokens: seq[WalletTokenDto]): bool =
-  for token in tokens:
-    if len(token.balancesPerChain) > 0:
-      return true
-  return false
-
 proc allMarketValuesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
   for token in tokens:
     for currency, marketDto in token.marketValuesPerCurrency:
       if not marketDto.hasError:
         return false
   return true
-
-proc anyTokenHasMarketValuesForAnyChain(tokens: seq[WalletTokenDto]): bool =
-  for token in tokens:
-    if len(token.marketValuesPerCurrency) > 0:
-      return true
-  return false
 
 #################################################
 # Remote functions

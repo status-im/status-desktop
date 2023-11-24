@@ -21,6 +21,9 @@ WalletAssetsModel 1.0 WalletAssetsModel.qml
 WalletCollectiblesModel 1.0 WalletCollectiblesModel.qml
 WalletKeyPairModel 1.0 WalletKeyPairModel.qml
 WalletNestedCollectiblesModel 1.0 WalletNestedCollectiblesModel.qml
+GroupedAccountsAssetsModel 1.0 GroupedAccountsAssetsModel.qml
+TokensBySymbolModel 1.0 TokensBySymbolModel.qml
+CommunitiesModel 1.0 CommunitiesModel.qml
 
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml

@@ -42,7 +42,6 @@ SplitView {
                                         color: color,
                                         emoji: "⚽",
                                         balanceLoading: false,
-                                        hasBalanceCache: true,
                                         currencyBalance: ({amount: 1.25,
                                                               symbol: "USD",
                                                               displayDecimals: 4,

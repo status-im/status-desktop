@@ -12,7 +12,8 @@ Control {
     id: root
 
     property string text
-    property string imageSrc
+    property alias asset: identicon.asset
+    property alias name: identicon.name
     property bool loading
 
     property Component customBackground: Component {
@@ -40,11 +41,12 @@ Control {
     contentItem: RowLayout {
         spacing: root.spacing
         visible: !root.loading
-        StatusRoundedImage {
+        StatusSmartIdenticon {
+            id: identicon
             Layout.maximumWidth: visible ? 16 : 0
             Layout.maximumHeight: visible ? 16 : 0
-            image.source: root.imageSrc
-            visible: !!image.source
+            asset.isImage: true
+            visible: !!asset.source
         }
         StatusBaseText {
             Layout.fillWidth: true

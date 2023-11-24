@@ -67,3 +67,6 @@ proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto]
 
 proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
   return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+
+proc getTokensMarketValuesLoading*(self: Controller): bool =
+  return self.walletAccountService.getTokensMarketValuesLoading()

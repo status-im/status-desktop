@@ -1002,4 +1002,8 @@ QtObject {
         var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
         return parseFloat(amount)
     }
+
+    function getCurrentCurrencyAmount(amount) {
+        return getCurrencyAmount(amount, currentCurrency)
+    }
 }

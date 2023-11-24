@@ -46,18 +46,22 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.controller.rebuildMarketData()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
-    self.controller.rebuildMarketData()
 
   # Passing on the events for changes in model to abstract model
   self.events.on(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED) do(e: Args):
     self.view.modelsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.view.modelsUpdated()
+  self.events.on(SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED) do(e: Args):
+    self.view.tokensDetailsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_DETAILS_UPDATED) do(e: Args):
     self.view.tokensDetailsUpdated()
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED) do(e: Args):
+    self.view.tokensMarketValuesAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
     self.view.tokensMarketValuesUpdated()
+  self.events.on(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED) do(e: Args):
+    self.view.tokensMarketValuesAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
     self.view.tokensMarketValuesUpdated()
   self.events.on(SIGNAL_TOKEN_PREFERENCES_UPDATED) do(e: Args):
@@ -124,7 +128,8 @@ method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSourc
   return (
     getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem = self.controller.getMarketValuesBySymbol(symbol),
     getPriceBySymbol: proc(symbol: string): float64 = self.controller.getPriceBySymbol(symbol),
-    getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat()
+    getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat(),
+    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )
 
 method filterChanged*(self: Module, addresses: seq[string]) = 

@@ -7,7 +7,6 @@ import backend/helpers/token
 import app_service/service/currency/dto as currency_dto
 
 import ../main/wallet_section/accounts/item as wallet_accounts_item
-import ../main/wallet_section/assets/item as wallet_assets_item
 import ../main/wallet_section/send/account_item as wallet_send_account_item
 
 import backend/helpers/balance
@@ -50,7 +49,8 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
   )
 
 proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool,
-  currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool): wallet_accounts_item.Item =
+  currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool,
+  marketValuesLoading: bool): wallet_accounts_item.Item =
   return wallet_accounts_item.initItem(
     w.name,
     w.address,
@@ -63,17 +63,12 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.createdAt,
     w.position,
     keycardAccount,
-    w.assetsLoading,
+    w.assetsLoading or marketValuesLoading,
     w.isWallet,
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
     w.testPreferredChainIds,
     w.hideFromTotalBalance
-  )
-
-proc walletAccountToWalletAssetsItem*(w: WalletAccountDto): wallet_assets_item.Item =
-  return wallet_assets_item.initItem(
-    w.assetsLoading,
   )
 
 proc walletTokenToItem*(

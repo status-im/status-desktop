@@ -1,10 +1,8 @@
-  proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
+  proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto]) =
     let acc = self.getAccountByAddress(address)
     if acc.isNil:
       return
     self.accountsTokens[address] = tokens
-    acc.hasBalanceCache = areBalancesCached
-    acc.hasMarketValuesCache = areMarketValuesCached
 
 proc updateReceivedTokens*(self: Service, address: string, tokens: var seq[WalletTokenDto]) =
     let acc = self.getAccountByAddress(address)
@@ -59,8 +57,6 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
 
     var data = TokensPerAccountArgs()
     data.accountsTokens = initOrderedTable[string, seq[WalletTokenDto]]()
-    data.hasBalanceCache = false
-    data.hasMarketValuesCache = false
     if resultObj.kind == JObject:
       for wAddress, tokensDetailsObj in resultObj:
         if tokensDetailsObj.kind == JArray:
@@ -68,18 +64,11 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
           tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
           tokens.sort(priorityTokenCmp)
           self.updateReceivedTokens(wAddress, tokens)
-          let hasBalanceCache = anyTokenHasBalanceForAnyChain(tokens)
-          let hasMarketValuesCache = anyTokenHasMarketValuesForAnyChain(tokens)
           data.accountsTokens[wAddress] = @[]
           deepCopy(data.accountsTokens[wAddress], tokens)
-          data.hasBalanceCache = data.hasBalanceCache or hasBalanceCache
-          data.hasMarketValuesCache = data.hasMarketValuesCache or hasMarketValuesCache
-
-          # set assetsLoading to false once the tokens are loaded
-          self.updateAssetsLoadingState(wAddress, false)
 
           if storeResult:
-            self.storeTokensForAccount(wAddress, tokens, hasBalanceCache, hasMarketValuesCache)
+            self.storeTokensForAccount(wAddress, tokens)
             self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
   except Exception as e:
@@ -89,10 +78,6 @@ proc buildAllTokens(self: Service, accounts: seq[string], store: bool) =
   if not main_constants.WALLET_ENABLED or
     accounts.len == 0:
       return
-
-  # set assetsLoading to true as the tokens are being loaded
-  for waddress in accounts:
-    self.updateAssetsLoadingState(waddress, true)
 
   let arg = BuildTokensTaskArg(
     tptr: cast[ByteAddress](prepareTokensTask),
@@ -132,11 +117,6 @@ proc getCurrencyBalance*(self: Service, address: string, chainIds: seq[int], cur
     return
   return self.accountsTokens[address].map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
 
-proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], currency: string = ""): float64 =
-  let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
-  let accounts = self.getWalletAccounts().filter(w => addresses.contains(w.address))
-  return accounts.map(a => self.getCurrencyBalance(a.address, chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
-
 proc findTokenSymbolByAddress*(self: Service, address: string): string =
   return self.tokenService.findTokenSymbolByAddress(address)
 
@@ -151,6 +131,7 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: str
   result.balance = self.getCurrencyBalance(acc.address, chainIds, self.getCurrentCurrencyIfEmpty())
   result.fetched = true
 
+# TODO:: remove once send module is updated with new tokens
 proc getTokenBalanceOnChain*(self: Service, address: string, chainId: int, symbol: string): float64 =
   if not self.accountsTokens.hasKey(address):
     return 0.0

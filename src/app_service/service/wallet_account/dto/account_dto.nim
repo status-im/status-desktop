@@ -1,6 +1,10 @@
 import tables, json, strformat, strutils
 
+import account_token_item
+
 include  app_service/common/json_utils
+
+export account_token_item
 
 const WalletTypeGenerated* = "generated" # refers to accounts generated from the profile keypair
 const WalletTypeSeed* = "seed"
@@ -26,8 +30,6 @@ type
     emoji*: string
     ens*: string
     assetsLoading*: bool
-    hasBalanceCache*: bool
-    hasMarketValuesCache*: bool
     removed*: bool # needs for synchronization
     operable*: string
     createdAt*: int
@@ -58,8 +60,6 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("testPreferredChainIds", result.testPreferredChainIds)
   discard jsonObj.getProp("hidden", result.hideFromTotalBalance)
   result.assetsLoading = true
-  result.hasBalanceCache = false
-  result.hasMarketValuesCache = false
 
 proc `$`*(self: WalletAccountDto): string =
   result = fmt"""WalletAccountDto[
@@ -74,8 +74,6 @@ proc `$`*(self: WalletAccountDto): string =
     isChat: {self.isChat},
     emoji: {self.emoji},
     assetsLoading: {self.assetsLoading},
-    hasBalanceCache: {self.hasBalanceCache},
-    hasMarketValuesCache: {self.hasMarketValuesCache},
     removed: {self.removed},
     operable: {self.operable},
     prodPreferredChainIds: {self.prodPreferredChainIds},
@@ -97,8 +95,6 @@ proc `%`*(x: WalletAccountDto): JsonNode =
   result["emoji"] = % x.emoji
   result["ens"] = % x.ens
   result["assetsLoading"] = % x.assetsLoading
-  result["hasBalanceCache"] = % x.hasBalanceCache
-  result["hasMarketValuesCache"] = % x.hasMarketValuesCache
   result["removed"] = % x.removed
   result["operable"] = % x.operable
   result["createdAt"] = % x.createdAt

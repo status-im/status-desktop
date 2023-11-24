@@ -135,8 +135,12 @@ Item {
                 currentIndex: walletTabBar.currentIndex
 
                 AssetsView {
-                    assets: RootStore.assets
+                    areAssetsLoading: RootStore.assetsLoading
+                    assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
+                    networkFilters: RootStore.networkFilters
+                    addressFilters: RootStore.addressFilters
                     overview: RootStore.overview
+                    currencyStore: RootStore.currencyStore
                     networkConnectionStore: root.networkConnectionStore
                     assetDetailsLaunched: stack.currentIndex === 2
                     filterVisible: filterButton.checked
@@ -207,9 +211,11 @@ Item {
 
             visible: (stack.currentIndex === 2)
 
-            assetsLoading: RootStore.assetsLoading
+            allNetworksModel: RootStore.allNetworks
             address: RootStore.overview.mixedcaseAddress
             showAllAccounts: root.showAllAccounts
+            currencyStore: RootStore.currencyStore
+            networkFilters: RootStore.networkFilters
 
             networkConnectionStore: root.networkConnectionStore
 
