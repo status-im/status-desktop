@@ -18,7 +18,8 @@ Install dependencies steps by executing commands in this directory:
 - update the [`package.json`](./package.json) versions and run `npm install`
   - alternatively
     - use the command `npm install <package-name>@<version/latest> --save` for individual packages
-    - or to update to the latest run `npm update` in here
+    - or to update to the latest run `ncu -u; npm install` in here
+      - run `npm install -g npm-check-updates` for `ncu` command
   - these commands will also create or update a `package-lock.json` file and populate the `node_modules` directory
 - update the [`bundle.js`](./dist/main.js) file by running `npm run build`
   - the result will be embedded with the app and loaded by [`WalletConnectSDK.qml`](../WalletConnectSDK.qml) component

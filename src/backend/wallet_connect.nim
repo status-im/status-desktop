@@ -31,6 +31,10 @@ rpc(wCPairSessionProposal, "wallet"):
 rpc(wCRecordSuccessfulPairing, "wallet"):
   sessionProposalJson: string
 
+rpc(wCChangePairingState, "wallet"):
+  topic: string
+  active: bool
+
 rpc(wCHasActivePairings, "wallet"):
   discard
 
@@ -39,9 +43,7 @@ rpc(wCSessionRequest, "wallet"):
 
 
 proc isErrorResponse(rpcResponse: RpcResponse[JsonNode]): bool =
-  if not rpcResponse.error.isNil:
-    return true
-  return false
+  return not rpcResponse.error.isNil
 
 proc prepareResponse(res: var JsonNode, rpcResponse: RpcResponse[JsonNode]): string =
   if isErrorResponse(rpcResponse):
@@ -94,6 +96,14 @@ proc pair*(res: var JsonNode, sessionProposalJson: string): string =
 proc recordSuccessfulPairing*(sessionProposalJson: string): bool =
   try:
     let response = wCRecordSuccessfulPairing(sessionProposalJson)
+    return not isErrorResponse(response)
+  except Exception as e:
+    warn e.msg
+    return false
+
+proc deletePairing*(topic: string): bool =
+  try:
+    let response = wCChangePairingState(topic, false)
     return not isErrorResponse(response)
   except Exception as e:
     warn e.msg

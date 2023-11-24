@@ -74,6 +74,13 @@ QtObject:
       if not self.hasActivePairings.get(false):
         self.hasActivePairings = some(true)
 
+  proc deletePairing(self: Controller, topic: string) {.slot.} =
+    if backend.deletePairing(topic):
+      if self.hasActivePairings.get(false):
+        self.hasActivePairings = some(backend.hasActivePairings())
+    else:
+      error "Failed to delete pairing"
+
   proc getHasActivePairings*(self: Controller): bool {.slot.} =
     if self.hasActivePairings.isNone:
       self.hasActivePairings = some(backend.hasActivePairings())

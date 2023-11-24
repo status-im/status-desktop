@@ -4,14 +4,13 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups 0.1
 
 Popup {
     id: root
 
-    implicitWidth: Math.min(mainLayout.implicitWidth, 400)
-    implicitHeight: Math.min(mainLayout.implicitHeight, 700)
+    implicitWidth: 500
+    implicitHeight: Math.min(mainLayout.implicitHeight * 2, 700)
 
     required property WalletConnectSDK sdk
 
@@ -38,89 +37,87 @@ Popup {
 
         anchors.fill: parent
 
-        contentWidth: mainLayout.width
-        contentHeight: mainLayout.height
+        contentWidth: mainLayout.implicitWidth
+        contentHeight: mainLayout.implicitHeight
+
+        interactive: contentHeight > height || contentWidth > width
 
         ColumnLayout {
-        id: mainLayout
+            id: mainLayout
 
-        StatusBaseText {
-            text: qsTr("Debugging UX until design is ready")
-        }
-
-        StatusInput {
-            id: pairLinkInput
-
-            Layout.fillWidth: true
-
-            placeholderText: "Insert pair link"
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-
-            StatusButton {
-                text: "Pair"
-                onClicked: {
-                    statusText.text = "Pairing..."
-                    sdk.pair(pairLinkInput.text)
-                }
-                enabled: pairLinkInput.text.length > 0 && sdk.sdkReady
-            }
-
-            StatusButton {
-                text: "Auth"
-                onClicked: {
-                    statusText.text = "Authenticating..."
-                    sdk.auth()
-                }
-                enabled: false && pairLinkInput.text.length > 0 && sdk.sdkReady
-            }
-
-            StatusButton {
-                text: "Accept"
-                onClicked: {
-                    sdk.approvePairSession(d.sessionProposal, d.supportedNamespaces)
-                }
-                visible: d.state === d.waitingPairState
-            }
-            StatusButton {
-                text: "Reject"
-                onClicked: {
-                    sdk.rejectPairSession(d.sessionProposal.id)
-                }
-                visible: d.state === d.waitingPairState
-            }
-        }
-
-        ColumnLayout {
             StatusBaseText {
-                id: statusText
-                text: "-"
+                text: qsTr("Debugging UX until design is ready")
             }
-            StatusBaseText {
-                text: "Pairings"
-                visible: sdk.pairingsModel.count > 0
-            }
-            StatusListView {
+
+            StatusInput {
+                id: pairLinkInput
+
                 Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
-                Layout.maximumHeight: 200
 
-                model: sdk.pairingsModel
+                placeholderText: "Insert pair link"
+            }
 
-                delegate: StatusBaseText {
-                    text: `${SQUtils.Utils.elideText(topic, 6, 6)} - ${new Date(expiry * 1000).toLocaleString()}`
-                    color: active ? "green" : "orange"
+            RowLayout {
+                Layout.fillWidth: true
+
+                StatusButton {
+                    text: "Pair"
+
+                    onClicked: {
+                        statusText.text = "Pairing..."
+                        sdk.pair(pairLinkInput.text)
+                    }
+                    enabled: pairLinkInput.text.length > 0 && sdk.sdkReady
+                }
+
+                StatusButton {
+                    text: "Auth"
+                    onClicked: {
+                        statusText.text = "Authenticating..."
+                        sdk.auth()
+                    }
+                    enabled: false && pairLinkInput.text.length > 0 && sdk.sdkReady
+                }
+
+                StatusButton {
+                    text: "Accept"
+                    onClicked: {
+                        sdk.approvePairSession(d.sessionProposal, d.supportedNamespaces)
+                        // Will trigger an onPairAcceptedResult if successful
+                    }
+                    visible: d.state === d.waitingPairState
+                }
+                StatusButton {
+                    text: "Reject"
+                    onClicked: {
+                        sdk.rejectPairSession(d.sessionProposal.id)
+                    }
+                    visible: d.state === d.waitingPairState
                 }
             }
-            Flickable {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 200
-                Layout.maximumHeight: 400
 
-                contentWidth: detailsText.width
-                contentHeight: detailsText.height
+            ColumnLayout {
+                StatusBaseText {
+                    id: statusText
+                    text: "-"
+                }
+                StatusBaseText {
+                    text: "Pairings"
+                    visible: sdk.pairingsModel.count > 0
+                }
+
+                Pairings {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: count > 0 ? 400 : 0
+                    Layout.preferredHeight: contentHeight
+                    Layout.maximumHeight: 300
+
+                    model: sdk.pairingsModel
+
+                    onDisconnect: function (topic) {
+                        sdk.disconnectPairing(topic)
+                    }
+                }
 
                 StatusBaseText {
                     id: detailsText
@@ -130,41 +127,36 @@ Popup {
                     color: "#FF00FF"
                 }
 
-                ScrollBar.vertical: ScrollBar {}
+                RowLayout {
+                    StatusButton {
+                        text: "Accept"
+                        onClicked: {
+                            root.controller.sessionRequest(JSON.stringify(d.sessionRequest), passwordInput.text)
+                        }
+                        visible: d.state === d.waitingUserResponseToSessionRequest
+                    }
+                    StatusButton {
+                        text: "Reject"
+                        onClicked: {
+                            sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, false)
+                        }
+                        visible: d.state === d.waitingUserResponseToSessionRequest
+                    }
+                    StatusInput {
+                        id: passwordInput
 
-                clip: true
+                        text: "1234567890"
+                        placeholderText: "Insert account password"
+                        visible: d.state === d.waitingUserResponseToSessionRequest
+                    }
+                }
+
+                ColumnLayout { /* spacer */ }
             }
 
-            RowLayout {
-                StatusButton {
-                    text: "Accept"
-                    onClicked: {
-                        root.controller.sessionRequest(JSON.stringify(d.sessionRequest), passwordInput.text)
-                    }
-                    visible: d.state === d.waitingUserResponseToSessionRequest
-                }
-                StatusButton {
-                    text: "Reject"
-                    onClicked: {
-                        sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, false)
-                    }
-                    visible: d.state === d.waitingUserResponseToSessionRequest
-                }
-                StatusInput {
-                    id: passwordInput
-
-                    text: "1234567890"
-                    placeholderText: "Insert account password"
-                    visible: d.state === d.waitingUserResponseToSessionRequest
-                }
-            }
-
-            ColumnLayout { /* spacer */ }
+            // Separator
+            ColumnLayout {}
         }
-
-        // Separator
-        ColumnLayout {}
-    }
 
         ScrollBar.vertical: ScrollBar {}
 
@@ -190,7 +182,7 @@ Popup {
             if (success) {
                 d.setStatusText("Pair ID: " + sessionProposal.id + "; Topic: " + sessionProposal.params.pairingTopic)
                 root.controller.pairSessionProposal(JSON.stringify(sessionProposal))
-                // Expecting signal onProposeUserPair from controller
+                // Expecting signal onProposeUserPair(..., true, ...) from controller
             } else {
                 d.setStatusText("Pairing error", "red")
             }

@@ -9,6 +9,8 @@
     <div id="log"></div>
     <script src="bundle.js" type="module"></script>
     <script>
+      // Helper functions
+      //
       function goEcho(message) {
         window.echo(message);
       }
@@ -47,39 +49,158 @@
         return addHtmlEntry(`${componentHtml}${statusHtml}`, null, entry);
       }
 
+      // SDK initialization
+      //
       const statusGoEntry = logComponentStatusChange("status-go", "Initializing...");
+      var initEventCount = 0;
       var eventCount = 0;
       const readyToPairEventName = "readyToPair";
       async function initializeSDK() {
         try {
           const sdkEntry = logComponentStatusChange("SDK", "Initializing...");
           const conf = await window.getConfiguration();
-          const wc = await window.wc.init(conf.projectId);
+          await window.wc.init(conf.projectId);
           logComponentStatusChange("SDK", "Initialized", "green", sdkEntry);
-          eventCount++;
+          initEventCount++;
         } catch (error) {
-          logComponentStatusChange("SDK", "FAIL initializing ${error.message}", "red", sdkEntry);
+          goEcho(`SDK init error: ${error}`);
+          logComponentStatusChange("SDK", "FAIL initializing ${error}", "red", sdkEntry);
         }
       }
+
+      // Simulate statusObject
+      window.statusq = {
+        channel: {
+          objects: {
+            statusObject: {
+              sdkInitialized: function (error) {
+                window.statusObject_sdkInitialized(error);
+              },
+              onSessionProposal: function (sessionProposal) {
+                window.statusObject_onSessionProposal(JSON.stringify(sessionProposal)).then((success) => {
+                  if (!success) {
+                    goEcho(`statusObject: onSessionProposal call failed ${sessionProposal.id}`);
+                    return;
+                  }
+                });
+              },
+              onSessionRequest: function (sessionRequest) {
+                eventCount++;
+
+                logComponentStatusChange("SDK", `received "session_request" event`, "green");
+                addLogEntry(`Data: ${JSON.stringify(sessionRequest)}`);
+
+                addHtmlEntry(
+                  `<button id="acceptSessionButton${eventCount}">Accept</button> <button id="rejectSessionButton${eventCount}">Reject</button>`
+                );
+
+                const acceptSessionButton = document.getElementById(`acceptSessionButton${eventCount}`);
+                const rejectSessionButton = document.getElementById(`rejectSessionButton${eventCount}`);
+                acceptSessionButton.addEventListener("click", function () {
+                  const sessionReqEntry = logComponentStatusChange("status-go", `sessionRequest called`, "orange");
+                  window.sessionRequest(JSON.stringify(sessionRequest), hashedPasswordInput.value).then((success) => {
+                    acceptSessionButton.disabled = true;
+                    rejectSessionButton.disabled = true;
+
+                    if (success) {
+                      logComponentStatusChange("status-go", `sessionRequest OK`, "green", sessionReqEntry);
+                      // waiting for "sessionRequestResult" event
+                    } else {
+                      logComponentStatusChange(
+                        "status-go",
+                        `sessionRequest call failed for topic ${sessionRequest.topic}`,
+                        "red",
+                        sessionReqEntry
+                      );
+                      window.wc.rejectSessionRequest(sessionRequest.topic, sessionRequest.id, true);
+                      setStatus(`Session ${sessionRequest.id} rejected, internal error`, "purple");
+                    }
+                  });
+                });
+
+                rejectSessionButton.addEventListener("click", function () {
+                  acceptSessionButton.disabled = true;
+                  rejectSessionButton.disabled = true;
+                  window.wc.rejectSessionRequest(sessionRequest.topic, sessionRequest.id).then(
+                    () => {
+                      addLogEntry(`Session ${sessionRequest.id} rejected`);
+                    },
+                    (err) => {
+                      addLogEntry(`Session ${sessionRequest.id} reject error: ${err.message}`, "red");
+                    }
+                  );
+                });
+              },
+              onSessionDelete: function (deletePayload) {
+                goEcho(`statusObject: onSessionDelete ${JSON.stringify(deletePayload)}`);
+              },
+              onSessionExpire: function (expirePayload) {
+                goEcho(`statusObject: onSessionExpire ${JSON.stringify(expirePayload)}`);
+              },
+              onSessionUpdate: function (updatePayload) {
+                goEcho(`statusObject: onSessionUpdate ${JSON.stringify(updatePayload)}`);
+              },
+              onSessionExtend: function (extendPayload) {
+                goEcho(`statusObject: onSessionExtend ${JSON.stringify(extendPayload)}`);
+              },
+              onSessionPing: function (pingPayload) {
+                goEcho(`statusObject: onSessionPing ${JSON.stringify(pingPayload)}`);
+              },
+              onSessionEvent: function (eventPayload) {
+                goEcho(`statusObject: onSessionEvent ${JSON.stringify(eventPayload)}`);
+              },
+              onSessionRequest: function (sessionRequestPayload) {
+                goEcho(`statusObject: onSessionRequest ${JSON.stringify(sessionRequestPayload)}`);
+              },
+              onSessionRequestSent: function (sessionRequestSentPayload) {
+                goEcho(`statusObject: onSessionRequestSent ${JSON.stringify(sessionRequestSentPayload)}`);
+              },
+              onProposalExpire: function (proposalExpirePayload) {
+                goEcho(`statusObject: onProposalExpire ${JSON.stringify(proposalExpirePayload)}`);
+              },
+            },
+          },
+        },
+      };
 
       var pairLinkInput = null;
       var pairButton = null;
       function newPairWorkflow() {
+        // Remove all the previous entries
         if (logEntries) {
           for (let i = 0; i < logEntries.length; i++) {
             logEntries[i].remove();
           }
         }
-
         logEntries = [];
         eventCount++;
+
+        // Add session reset and password input
+        addHtmlEntry(`<button id="newSessionButton" style="display: none;">New Session</button>`);
+        newSessionButton = document.getElementById("newSessionButton");
+        newSessionButton.addEventListener("click", function () {
+          newPairWorkflow();
+        });
+        addHtmlEntry(
+          `<input type="text" id="hashedPasswordInput" placeholder="Insert hashed password" value="0x38301fb0b5fcf3aaa4b97c4771bb6c75546e313b4ce7057c51a8cc6a3ace9d7e"/>`
+        );
+        hashedPasswordInput = document.getElementById(`hashedPasswordInput`);
 
         addHtmlEntry(
           `<input type="text" id="pairLinkInput" placeholder="Insert pair link" /><button id="pairButton" disabled>Pair</button>`
         );
 
         // List existing pairing sessions
-        const pairings = window.wc.getPairings();
+        const pairingsRes = window.wc.getPairings();
+        let pairings = [];
+        if (pairingsRes) {
+          if (!!pairingsRes.error) {
+            goEcho(`getPairings() error: ${pairingsRes.error}`);
+            return;
+          } else if (pairingsRes.result) {
+            pairings = pairingsRes.result;
+          }
+        }
         if (pairings.length > 0) {
           addHtmlEntry(`Existing pairings:`, "fuchsia");
         }
@@ -88,24 +209,23 @@
           const disconnectEntry = addHtmlEntry(
             `[${i + 1}] <span style="color: ${p.active ? "green" : "orange"};">${
               p.active ? "ACTIVE" : "INACTIVE"
-            }</span> <span class="elide-text">${
-              p.topic
-            }</span>; Expires: ${timestampToStr(p.expiry)} <button id="unpairButton${i}">Disconnect</button>`
+            }</span> <span class="elide-text">${p.topic}</span>; Expires: ${timestampToStr(
+              p.expiry
+            )} <button id="unpairButton${i}">Disconnect</button>`
           );
           const unpairButton = document.getElementById(`unpairButton${i}`);
           unpairButton.addEventListener("click", function () {
-            window.wc.disconnect(p.topic).then(
-              () => {
-                addLogEntry(`Pairing ${p.topic} disconnected`, "green", disconnectEntry);
-                unpairButton.remove();
-              },
-              (err) => {
-                addLogEntry(`Pairing ${p.topic} disconnect error: ${err.message}`, "red", disconnectEntry);
-              }
-            );
+            const res = window.wc.disconnect(p.topic);
+            if (res && !!res.error) {
+              addLogEntry(`Pairing ${p.topic} disconnect error: ${err.message}`, "red", disconnectEntry);
+              return;
+            }
+            addLogEntry(`Pairing ${p.topic} disconnected`, "green", disconnectEntry);
+            unpairButton.remove();
           });
         }
 
+        // Add pairing options
         pairLinkInput = document.getElementById(`pairLinkInput`);
         pairButton = document.getElementById(`pairButton`);
         pairLinkInput.addEventListener("input", function () {
@@ -117,139 +237,73 @@
           pairLinkInput.disabled = true;
 
           const sdkEntry = logComponentStatusChange("SDK", "Pairing...");
-          window.wc
-            .pair(pairLinkInput.value)
-            .then((sessionProposal) => {
-              logComponentStatusChange("SDK", "got Pair session proposal", "green", sdkEntry);
-              addLogEntry(`Pair ID: ${sessionProposal.id} ; Topic: ${sessionProposal.params.pairingTopic}`);
-              const goSession = logComponentStatusChange("GO.pairSessionProposal", "waiting status-go", "pink");
+          const result = window.wc.pair(pairLinkInput.value);
+          if (result && !!result.error) {
+            goEcho("pair() error: ", result.error);
+            logComponentStatusChange("SDK", `Pairing error ${error.message}`, "red", sdkEntry);
+            return;
+          }
 
-              document.addEventListener(`proposeUserPair`, function (event) {
-                pairProposalEntry = logComponentStatusChange(
-                  "GO.proposeUserPair",
-                  `received "proposeUserPair"`,
-                  "green"
-                );
-                addLogEntry(JSON.stringify(event.detail.supportedNamespaces));
-                addHtmlEntry(
-                  `<button id="acceptPairButton">Accept</button><button id="rejectPairButton">Reject</button>`
-                );
-                const acceptPairButton = document.getElementById(`acceptPairButton`);
-                const rejectPairButton = document.getElementById(`rejectPairButton`);
-                acceptPairButton.addEventListener("click", function () {
-                  window.wc.approvePairSession(sessionProposal, event.detail.supportedNamespaces).then(
-                    () => {
-                      logComponentStatusChange(
-                        "GO.pairSessionProposal",
-                        `Pair session ${sessionProposal.id} approved`,
-                        "green",
-                        pairProposalEntry
-                      );
-                      acceptPairButton.remove();
-                      rejectPairButton.remove();
-                    },
-                    (err) => {
-                      logComponentStatusChange(
-                        "GO.pairSessionProposal",
-                        `Pair session ${sessionProposal.id} approve error: ${err.message}`,
-                        "red",
-                        pairProposalEntry
-                      );
-                    }
-                  );
-                });
-                rejectPairButton.addEventListener("click", function () {
-                  window.wc.rejectPairSession(sessionProposal.id).then(
-                    () => {
-                      logComponentStatusChange(
-                        "GO.pairSessionProposal",
-                        `Pair session ${sessionProposal.id} rejected`,
-                        "green",
-                        pairProposalEntry
-                      );
-                      acceptPairButton.remove();
-                      rejectPairButton.remove();
-                    },
-                    (err) => {
-                      logComponentStatusChange(
-                        "GO.pairSessionProposal",
-                        `Pair session ${sessionProposal.id} reject error: ${err.message}`,
-                        "red",
-                        pairProposalEntry
-                      );
-                    }
-                  );
-                });
-              });
-
-              window.pairSessionProposal(JSON.stringify(sessionProposal)).then((success) => {
-                if (!success) {
-                  logComponentStatusChange(
-                    "GO.pairSessionProposal",
-                    `call failed ${sessionProposal.id}`,
-                    "red",
-                    goSession
-                  );
-                  return;
-                }
-                logComponentStatusChange("GO.pairSessionProposal", `waiting for "proposeUserPair"`, "black", goSession);
-              });
-            })
-            .catch((error) => {
-              logComponentStatusChange("SDK", `Pairing error ${error.message}`, "red", sdkEntry);
-            });
+          logComponentStatusChange("SDK", "got Pair session proposal", "green", sdkEntry);
+          const goSessionEntry = logComponentStatusChange("GO.pairSessionProposal", "waiting status-go", "pink");
         });
       }
 
-      function sdkReady() {
-        window.wc.registerForSessionRequest((event) => {
-          eventCount++;
-
-          logComponentStatusChange("SDK", `received "session_request" event`, "green");
-          addLogEntry(`Event: ${JSON.stringify(event)}`);
-
-          addHtmlEntry(
-            `<button id="acceptSessionButton${eventCount}">Accept</button> <button id="rejectSessionButton${eventCount}">Reject</button>`
-          );
-
-          const acceptSessionButton = document.getElementById(`acceptSessionButton${eventCount}`);
-          const rejectSessionButton = document.getElementById(`rejectSessionButton${eventCount}`);
-          acceptSessionButton.addEventListener("click", function () {
-            const sessionReqEntry = logComponentStatusChange("status-go", `sessionRequest called`, "orange");
-            window.sessionRequest(JSON.stringify(event), hashedPasswordInput.value).then((success) => {
-              acceptSessionButton.disabled = true;
-              rejectSessionButton.disabled = true;
-
-              if (success) {
-                logComponentStatusChange("status-go", `sessionRequest OK`, "green", sessionReqEntry);
-                // waiting for "sessionRequestResult" event
-              } else {
-                logComponentStatusChange(
-                  "status-go",
-                  `sessionRequest call failed for topic ${event.topic}`,
-                  "red",
-                  sessionReqEntry
-                );
-                window.wc.rejectSessionRequest(event.topic, event.id, true);
-                setStatus(`Session ${event.id} rejected, internal error`, "purple");
-              }
-            });
-          });
-
-          rejectSessionButton.addEventListener("click", function () {
-            acceptSessionButton.disabled = true;
-            rejectSessionButton.disabled = true;
-            window.wc.rejectSessionRequest(event.topic, event.id).then(
-              () => {
-                addLogEntry(`Session ${event.id} rejected`);
-              },
-              (err) => {
-                addLogEntry(`Session ${event.id} reject error: ${err.message}`, "red");
-              }
+      document.addEventListener(`proposeUserPair`, function (event) {
+        logComponentStatusChange("GO.proposeUserPair", `received "proposeUserPair"`, "green");
+        addLogEntry(JSON.stringify(event.detail.supportedNamespaces));
+        if (!document.getElementById(`acceptPairButton`)) {
+          addHtmlEntry(`<button id="acceptPairButton">Accept</button><button id="rejectPairButton">Reject</button>`);
+        }
+        const acceptPairButton = document.getElementById(`acceptPairButton`);
+        const rejectPairButton = document.getElementById(`rejectPairButton`);
+        const sessionProposal = event.detail.sessionProposal;
+        acceptPairButton.addEventListener("click", function () {
+          const result = window.wc.approvePairSession(sessionProposal, event.detail.supportedNamespaces);
+          if (result && !!result.error) {
+            logComponentStatusChange(
+              "GO.pairSessionProposal",
+              `Pair session ${sessionProposal.id} approve error: ${result.error}`,
+              "red",
+              goSessionEntry
             );
-          });
+            return;
+          }
+          acceptPairButton.remove();
+          rejectPairButton.remove();
+
+          root.controller_recordSuccessfulPairing(JSON.stringify(sessionProposal));
+
+          logComponentStatusChange(
+            "GO.pairSessionProposal",
+            `Pair session ${sessionProposal.id} approved`,
+            "green",
+            goSessionEntry
+          );
         });
-      }
+        rejectPairButton.addEventListener("click", function () {
+          const result = window.wc.rejectPairSession(sessionProposal.id);
+          if (result && !!result.error) {
+            logComponentStatusChange(
+              "GO.pairSessionProposal",
+              `Pair session ${sessionProposal.id} reject error: ${result.error}`,
+              "red",
+              goSessionEntry
+            );
+            return;
+          }
+
+          acceptPairButton.remove();
+          rejectPairButton.remove();
+
+          logComponentStatusChange(
+            "GO.pairSessionProposal",
+            `Pair session ${sessionProposal.id} rejected`,
+            "green",
+            goSessionEntry
+          );
+        });
+      });
 
       document.addEventListener("sessionRequestResult", function (event) {
         let req = event.detail.sessionRequest;
@@ -262,16 +316,6 @@
 
       // Add start from scratch option
       document.addEventListener(readyToPairEventName, function () {
-        addHtmlEntry(`<button id="newSessionButton" style="display: none;">New Session</button>`);
-        newSessionButton = document.getElementById("newSessionButton");
-        newSessionButton.addEventListener("click", function () {
-          newPairWorkflow();
-        });
-        addHtmlEntry(
-          `<input type="text" id="hashedPasswordInput" placeholder="Insert hashed password" value="0x38301fb0b5fcf3aaa4b97c4771bb6c75546e313b4ce7057c51a8cc6a3ace9d7e"/>`
-        );
-        hashedPasswordInput = document.getElementById(`hashedPasswordInput`);
-        sdkReady();
         newPairWorkflow();
       });
 
@@ -282,12 +326,12 @@
             switch (event.name) {
               case "nodeReady":
                 logComponentStatusChange("status-go", "Ready", "green", statusGoEntry);
-                eventCount++;
+                initEventCount++;
                 break;
               default:
                 // Handle status-go and SDK bootstrap events
-                if (eventCount == 2) {
-                  eventCount++;
+                if (initEventCount == 2) {
+                  initEventCount++;
                   document.dispatchEvent(new CustomEvent(readyToPairEventName, {}));
                 } else if (event.name != "") {
                   goEcho(`GO event: ${event.name}`);
@@ -315,7 +359,7 @@
         const readableDate = date.toLocaleDateString();
         const readableTime = date.toLocaleTimeString();
 
-        return `${readableDate} - ${readableTime}`
+        return `${readableDate} - ${readableTime}`;
       }
     </script>
   </body>

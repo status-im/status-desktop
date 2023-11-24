@@ -1,7 +1,8 @@
 import { Core } from "@walletconnect/core";
 import { Web3Wallet } from "@walletconnect/web3wallet";
 
-import AuthClient from '@walletconnect/auth-client'
+// Disabled for now to debug the issue with wrong pairing topic
+//import AuthClient from '@walletconnect/auth-client'
 
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
@@ -14,21 +15,24 @@ window.wc = {
     statusObject: null,
 
     init: function (projectId) {
-        (async () => {
+        return new Promise(async (resolve, reject) => {
             if (!window.statusq) {
-                console.error('missing window.statusq! Forgot to execute "ui/StatusQ/src/StatusQ/Components/private/qwebchannel/helpers.js" first?');
-                return;
+                const errMsg = 'missing window.statusq! Forgot to execute "ui/StatusQ/src/StatusQ/Components/private/qwebchannel/helpers.js" first?'
+                console.error(errMsg);
+                reject(errMsg);
             }
 
             if (window.statusq.error) {
-                console.error("Failed initializing WebChannel: " + window.statusq.error);
-                return;
+                const errMsg = "Failed initializing WebChannel: " + window.statusq.error
+                console.error(errMsg);
+                reject(errMsg);
             }
 
             wc.statusObject = window.statusq.channel.objects.statusObject;
             if (!wc.statusObject) {
-                console.error("Failed initializing WebChannel or initialization not run");
-                return;
+                const errMsg = "Failed initializing WebChannel or initialization not run"
+                console.error(errMsg);
+                reject(errMsg);
             }
 
             window.wc.core = new Core({
@@ -45,10 +49,10 @@ window.wc = {
                 },
             });
 
-            window.wc.authClient = await AuthClient.init({
-                projectId: projectId,
-                metadata: window.wc.web3wallet.metadata,
-            });
+            //window.wc.authClient = await AuthClient.init({
+            //    projectId: projectId,
+            //    metadata: window.wc.web3wallet.metadata,
+            //});
 
             // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
             window.wc.web3wallet.on("session_proposal", async (details) => {
@@ -92,9 +96,8 @@ window.wc = {
             });
 
             wc.statusObject.sdkInitialized("");
-        })();
-
-        return { result: "ok", error: "" };
+            resolve("");
+        });
     },
 
     // TODO: there is a corner case when attempting to pair with a link that is already paired or was rejected won't trigger any event back
@@ -127,6 +130,7 @@ window.wc = {
             supportedNamespaces: supportedNamespaces,
         });
 
+        wc.statusObject.bubbleConsoleMessage("debug", `web3wallet.approveSession id: ${id} ${JSON.stringify(approvedNamespaces, null, 2)}`)
         return {
             result: window.wc.web3wallet.approveSession({
                 id,
@@ -145,45 +149,45 @@ window.wc = {
         };
     },
 
-    auth: function (uri) {
-        return {
-            result: window.wc.authClient.core.pairing.pair({ uri }),
-            error: ""
-        };
-    },
+    // auth: function (uri) {
+    //     return {
+    //         result: window.wc.authClient.core.pairing.pair({ uri }),
+    //         error: ""
+    //     };
+    // },
 
-    approveAuth: function (authProposal) {
-        const { id, params } = authProposal;
+    // approveAuth: function (authProposal) {
+    //     const { id, params } = authProposal;
 
-        // TODO: source user’s address
-        const iss = `did:pkh:eip155:1:${"0x0123456789"}`;
+    //     // TODO: source user’s address
+    //     const iss = `did:pkh:eip155:1:${"0x0123456789"}`;
 
-        // format the cacao payload with the user’s address
-        const message = window.wc.authClient.formatMessage(params.cacaoPayload, iss);
+    //     // format the cacao payload with the user’s address
+    //     const message = window.wc.authClient.formatMessage(params.cacaoPayload, iss);
 
-        // TODO: signature
-        const signature = "0x123456789"
+    //     // TODO: signature
+    //     const signature = "0x123456789"
 
-        return {
-            result: window.wc.authClient.respond(
-            {
-                id: id,
-                signature: {
-                    s: signature,
-                    t: "eip191",
-                },
-            },
-            iss),
-            error: ""
-        };
-    },
+    //     return {
+    //         result: window.wc.authClient.respond(
+    //             {
+    //                 id: id,
+    //                 signature: {
+    //                     s: signature,
+    //                     t: "eip191",
+    //                 },
+    //             },
+    //             iss),
+    //         error: ""
+    //     };
+    // },
 
-    rejectAuth: function (id) {
-        return {
-            result: window.wc.authClient.reject(id),
-            error: ""
-        };
-    },
+    // rejectAuth: function (id) {
+    //     return {
+    //         result: window.wc.authClient.reject(id),
+    //         error: ""
+    //     };
+    // },
 
     respondSessionRequest: function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)

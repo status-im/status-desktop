@@ -31,9 +31,16 @@ Item {
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
 
+    signal sessionDelete(var deletePayload)
+
     function pair(pairLink)
     {
         wcCalls.pair(pairLink)
+    }
+
+    function disconnectPairing(topic)
+    {
+        wcCalls.disconnectPairing(topic)
     }
 
     function approvePairSession(sessionProposal, supportedNamespaces)
@@ -108,7 +115,7 @@ Item {
         function init() {
             console.debug(`WC WalletConnectSDK.wcCall.init; root.projectId: ${root.projectId}`)
 
-            d.engine.runJavaScript(`wc.init("${root.projectId}")`, function(result) {
+            d.engine.runJavaScript(`wc.init("${root.projectId}").catch((error) => {wc.statusObject.sdkInitialized("SDK init error: "+error);})`, function(result) {
 
                 console.debug(`WC WalletConnectSDK.wcCall.init; response: ${JSON.stringify(result, null, 2)}`)
 
@@ -252,6 +259,22 @@ Item {
                 d.resetPairingsModel()
             })
         }
+
+        function disconnectPairing(topic) {
+            console.debug(`WC WalletConnectSDK.wcCall.disconnectPairing; topic: "${topic}"`)
+
+            d.engine.runJavaScript(`wc.disconnect("${topic}")`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.disconnect; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error) {
+                        console.error("disconnect: ", result.error)
+                        return
+                    }
+                }
+                d.resetPairingsModel()
+            })
+        }
     }
 
     QtObject {
@@ -300,7 +323,8 @@ Item {
 
         function onSessionDelete(details)
         {
-            console.debug(`WC TODO WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
+            console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
+            root.sessionDelete(details)
         }
 
         function onSessionExpire(details)

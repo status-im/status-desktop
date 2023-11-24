@@ -10,6 +10,10 @@ Item {
 
     // function pairSessionProposal(/*string*/ sessionProposalJson)
     required property var pairSessionProposal
+    // function pairSessionRequest(/*string*/ sessionRequestJson)
+    required property var recordSuccessfulPairing
+    // function deletePairing(/*string*/ topic)
+    required property var deletePairing
 
     signal respondSessionRequest(string sessionRequestJson, string signedJson, bool error)
 
