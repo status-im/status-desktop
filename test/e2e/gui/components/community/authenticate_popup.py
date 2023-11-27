@@ -14,6 +14,7 @@ class AuthenticatePopup(BasePopup):
         self._content = QObject('keycardSharedPopupContent_KeycardPopupContent')
         self._passwort_text_edit = TextEdit('password_PlaceholderText')
         self._authenticate_button = Button('authenticate_StatusButton')
+        self._close_button = Button('headerCloseButton_StatusFlatRoundButton')
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -25,3 +26,7 @@ class AuthenticatePopup(BasePopup):
         self._passwort_text_edit.type_text(password)
         self._authenticate_button.click()
         self._authenticate_button.wait_until_hidden()
+
+    @allure.step('Close authenticate popup by close button')
+    def close_authenticate_popup(self):
+        self._close_button.click()

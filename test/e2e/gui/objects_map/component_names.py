@@ -193,6 +193,7 @@ delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow
 keycardSharedPopupContent_KeycardPopupContent = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardSharedPopupContent", "type": "KeycardPopupContent", "visible": True}
 password_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "type": "PlaceholderText", "unnamed": 1, "visible": True}
 authenticate_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "PrimaryButton", "text": "Authenticate", "type": "StatusButton", "visible": True}
+headerCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # Shared Popup
 sharedPopup_Popup_Content = {"container": statusDesktop_mainWindow, "objectName": "KeycardSharedPopupContent", "type": "Item"}
@@ -311,6 +312,8 @@ mainWindow_secureYourSeedPhraseBanner_Button = {"container": statusDesktop_mainW
 copy_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncCodeCopyButton", "type": "StatusButton", "visible": True}
 done_SyncCodeStatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "syncAnewDeviceNextButton", "type": "StatusButton", "visible": True}
 syncCodeInput_StatusPasswordInput = {"container": statusDesktop_mainWindow_overlay, "id": "syncCodeInput", "type": "StatusPasswordInput", "unnamed": 1, "visible": True}
+close_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "syncAnewDeviceNextButton", "type": "StatusButton", "visible": True}
+errorView_SyncingErrorMessage = {"container": statusDesktop_mainWindow_overlay, "id": "errorView", "type": "SyncingErrorMessage", "unnamed": 1, "visible": True}
 
 # Edit group name and image popup
 groupChatEdit_name_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_name", "type": "TextEdit", "visible": True}

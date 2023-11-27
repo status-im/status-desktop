@@ -10,8 +10,10 @@ import constants
 import driver
 from constants import UserAccount
 from constants.syncing import SyncingSettings
+from gui.components.community.authenticate_popup import AuthenticatePopup
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
+from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
@@ -106,3 +108,21 @@ def test_wrong_sync_code(sync_screen, wrong_sync_code):
         pyperclip.copy(wrong_sync_code)
         sync_view.paste_sync_code()
         assert SyncingSettings.SYNC_CODE_IS_WRONG_TEXT.value == sync_view.sync_code_error_message, f'Wrong sync code message did not appear'
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703591', 'Generate sync code. Negative')
+@pytest.mark.case(703591)
+def test_cancel_setup_syncing(main_screen: MainWindow):
+    with step('Open syncing settings'):
+        sync_settings_view = main_screen.left_panel.open_settings().left_panel.open_syncing_settings()
+        sync_settings_view.is_instructions_header_present()
+        sync_settings_view.is_instructions_subtitle_present()
+        if configs.DEV_BUILD:
+            sync_settings_view.is_backup_button_present()
+    with step('Click setup syncing and close authenticate popup'):
+        main_screen.left_panel.open_settings().left_panel.open_syncing_settings().click_setup_syncing().close_authenticate_popup()
+        sync_new_device_popup = SyncNewDevicePopup().wait_until_appears()
+
+    with step('Verify error messages appear'):
+        assert sync_new_device_popup.primary_error_message == SyncingSettings.SYNC_SETUP_ERROR_PRIMARY.value
+        assert sync_new_device_popup.secondary_error_message == SyncingSettings.SYNC_SETUP_ERROR_SECONDARY.value

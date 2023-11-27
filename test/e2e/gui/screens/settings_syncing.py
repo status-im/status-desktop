@@ -33,6 +33,11 @@ class SyncingSettingsView(QObject):
 
     @allure.step('Setup syncing')
     def set_up_syncing(self, password: str):
-        self._setup_syncing_button.click()
+        self.click_setup_syncing()
         AuthenticatePopup().wait_until_appears().authenticate(password)
         return SyncNewDevicePopup().wait_until_appears()
+
+    @allure.step('Click setup syncing')
+    def click_setup_syncing(self):
+        self._setup_syncing_button.click()
+        return AuthenticatePopup().wait_until_appears()
