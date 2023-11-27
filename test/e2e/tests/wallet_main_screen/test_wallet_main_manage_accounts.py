@@ -8,7 +8,7 @@ import constants
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings_keycard import KeycardSettingsView
 
@@ -63,9 +63,9 @@ def test_manage_watch_only_account_context_menu(main_screen: MainWindow, address
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Edit wallet account'):
@@ -101,9 +101,9 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -130,7 +130,7 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
@@ -162,9 +162,9 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                                                                                            user_account.password).save()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -179,7 +179,7 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
         wallet.left_panel.delete_account_from_context_menu(name).agree_and_confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
@@ -210,9 +210,9 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -247,7 +247,7 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
         wallet.left_panel.delete_account_from_context_menu(new_name).confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
@@ -287,9 +287,9 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -316,7 +316,7 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
@@ -346,9 +346,9 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -375,7 +375,7 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 

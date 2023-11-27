@@ -1,6 +1,5 @@
 import random
 import string
-import time
 
 import allure
 import pytest
@@ -11,7 +10,7 @@ import driver
 from constants.wallet import WalletAccountSettings, DerivationPath
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
@@ -61,7 +60,7 @@ def test_delete_generated_account_from_wallet_settings(
         delete_confirmation_popup.click_remove_account_button()
 
     with step('Verify toast message notification when removing account'):
-        messages = WalletToastMessage().get_toast_messages
+        messages = ToastMessage().get_toast_messages
         assert f'"{account_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 

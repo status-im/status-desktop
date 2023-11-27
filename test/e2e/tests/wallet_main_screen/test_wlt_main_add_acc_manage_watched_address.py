@@ -5,10 +5,9 @@ import pytest
 from allure_commons._allure import step
 
 import constants
-import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 
@@ -33,9 +32,9 @@ def test_wallet_add_acc_add_watched_address(
             f"Authentication should not appear for adding watched addresses"
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):

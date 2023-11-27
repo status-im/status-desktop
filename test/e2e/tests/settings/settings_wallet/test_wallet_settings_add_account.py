@@ -9,7 +9,7 @@ from allure_commons._allure import step
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 
@@ -34,9 +34,9 @@ def test_add_new_account_from_wallet_settings(
         add_account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{account_name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list on main wallet screen'):

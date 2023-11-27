@@ -13,14 +13,13 @@ from gui.components.wallet.popup_delete_account_from_settings import RemoveAccou
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
 from gui.components.wallet.wallet_account_popups import AccountPopup, EditAccountFromSettingsPopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from scripts.tools.image import Image
 
 
 class WalletSettingsView(QObject):
@@ -264,15 +263,15 @@ class EditNetworkSettings(WalletSettingsView):
     def check_toast_message(self, network_tab):
         match network_tab:
             case WalletNetworkSettings.EDIT_NETWORK_LIVE_TAB.value:
-                assert len(WalletToastMessage().get_toast_messages) == 1, \
+                assert len(ToastMessage().get_toast_messages) == 1, \
                     f"Multiple toast messages appeared"
-                message = WalletToastMessage().get_toast_messages[0]
+                message = ToastMessage().get_toast_messages[0]
                 assert message == WalletNetworkSettings.REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE.value, \
                     f"Toast message is incorrect, current message is {message}"
             case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
-                assert len(WalletToastMessage().get_toast_messages) == 1, \
+                assert len(ToastMessage().get_toast_messages) == 1, \
                     f"Multiple toast messages appeared"
-                message = WalletToastMessage().get_toast_messages[0]
+                message = ToastMessage().get_toast_messages[0]
                 assert message == WalletNetworkSettings.REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE.value, \
                     f"Toast message is incorrect, current message is {message}"
 

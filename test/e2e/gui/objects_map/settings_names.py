@@ -34,6 +34,12 @@ mainWindow_ContactsView = {"container": statusDesktop_mainWindow, "type": "Conta
 mainWindow_Send_contact_request_to_chat_key_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton", "visible": True}
 contactsTabBar_Pending_Requests_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton", "visible": True}
 settingsContentBaseScrollView_ContactListPanel = {"container": mainWindow_ContactsView, "objectName": "ContactListPanel_ListView", "type": "StatusListView", "visible": True}
+settingsContentBaseScrollView_sentRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "sentRequests_ContactsListPanel", "type": "ContactsListPanel", "visible": True}
+contactsTabBar_Contacts_StatusTabButton = {"checkable": True, "container": mainWindow_ContactsView, "id": "contactsBtn", "type": "StatusTabButton", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_receivedRequests_ContactsListPanel = {"container": mainWindow_ContactsView, "objectName": "receivedRequests_ContactsListPanel", "type": "ContactsListPanel", "visible": True}
+settingsContentBaseScrollView_mutualContacts_ContactsListPanel = {"container": mainWindow_ContactsView, "id": "mutualContacts", "type": "ContactsListPanel", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_Invite_friends_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "type": "StatusButton", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_NoFriendsRectangle = {"container": mainWindow_ContactsView, "type": "NoFriendsRectangle", "unnamed": 1, "visible": True}
 
 # Keycard Settings View
 mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}

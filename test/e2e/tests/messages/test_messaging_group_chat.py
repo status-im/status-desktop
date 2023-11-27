@@ -5,7 +5,7 @@ from allure_commons._allure import step
 import configs.testpath
 import constants
 from constants import UserAccount
-from constants.group_chat import GroupChatMessages
+from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 
@@ -99,7 +99,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
                 assert messages_screen.group_chat.group_name == group_chat_name, f'Group chat name is not correct'
             with step('Welcome group message is correct'):
                 actual_welcome_message = messages_screen.group_chat.group_welcome_message
-                assert actual_welcome_message.startswith(GroupChatMessages.WELCOME_GROUP_MESSAGE.value)
+                assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
                 assert actual_welcome_message.endswith(' group!')
                 assert group_chat_name in actual_welcome_message
             with step('Verify there are three members in group members list'):

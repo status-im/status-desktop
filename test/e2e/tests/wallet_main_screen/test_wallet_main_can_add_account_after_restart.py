@@ -5,11 +5,10 @@ import pytest
 from allure import step
 
 import constants
-import driver
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.wallet.authenticate_popup import AuthenticatePopup
-from gui.components.wallet.wallet_toast_message import WalletToastMessage
+from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 
@@ -39,9 +38,9 @@ def test_add_generated_account_restart_add_again(
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -66,9 +65,9 @@ def test_add_generated_account_restart_add_again(
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(WalletToastMessage().get_toast_messages) == 1, \
+        assert len(ToastMessage().get_toast_messages) == 1, \
             f"Multiple toast messages appeared"
-        message = WalletToastMessage().get_toast_messages[0]
+        message = ToastMessage().get_toast_messages[0]
         assert message == f'"{name2}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):

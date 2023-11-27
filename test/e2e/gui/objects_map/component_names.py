@@ -282,9 +282,9 @@ testnet_mode_closeCrossButton = {"container": statusDesktop_mainWindow_overlay, 
 mainWindow_testnetBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "testnetBanner", "type": "ModuleWarning", "visible": True}
 mainWindow_Turn_off_Button = {"checkable": False, "container": statusDesktop_mainWindow, "id": "button", "text": "Turn off", "type": "Button", "unnamed": 1, "visible": True}
 
-# Wallet toast message
-mainWallet_Ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
-ephemeralNotificationList_StatusToastMessage = {"container": mainWallet_Ephemeral_Notification_List, "objectName": "statusToastMessage", "type": "StatusToastMessage"}
+# Toast message
+ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
+ephemeralNotificationList_StatusToastMessage = {"container": ephemeral_Notification_List, "objectName": "statusToastMessage", "type": "StatusToastMessage"}
 
 # Change password popup
 change_password_menu_current_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}
