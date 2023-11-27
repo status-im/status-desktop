@@ -38,7 +38,8 @@ def keys_screen(main_window) -> KeysView:
     pytest.param('+1_3!48aT1', good_elements),
     pytest.param('+1_3!48aTq', great_elements)
 ])
-def test_check_password_strength_and_login(keys_screen, main_window, user_account, password: str, password_strength_elements):
+def test_check_password_strength_and_login(keys_screen, main_window, user_account, password: str,
+                                           password_strength_elements):
     with step('Input correct user name'):
         profile_view = keys_screen.generate_new_keys()
         profile_view.set_display_name(user_account.name)
@@ -48,14 +49,44 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
         create_password_view = details_view.next()
         create_password_view.set_password_in_first_field(password)
 
+    with step('Click show icon to show password and check that shown password is correct'):
+        create_password_view.click_show_icon(0)
+        assert create_password_view.get_password_from_first_field(0) == password
+
+    with step('Click show icon to hide password and check that there are dots instead'):
+        create_password_view.click_hide_icon(0)
+        assert create_password_view.get_password_from_first_field(2) == '●●●●●●●●●●'
+
     with step('Verify that correct strength indicator color, text and green messages appear'):
         assert create_password_view.strength_indicator_color == password_strength_elements[1]
         assert create_password_view.strength_indicator_text == password_strength_elements[0]
         assert sorted(create_password_view.green_indicator_messages) == sorted(password_strength_elements[2])
 
-    with step('Verify that user can login afterwards'):
-        confirm_password_view = create_password_view.create_password(password)
-        confirm_password_view.confirm_password(password)
+    with step('Enter password to confirmation field'):
+        create_password_view.set_password_in_confirmation_field(password)
+
+    with step('Click show icon to show password and check that shown password is correct'):
+        create_password_view.click_show_icon(1)
+        assert create_password_view.get_password_from_confirmation_field(0) == password
+
+    with step('Click show icon to hide password and check that there are dots instead'):
+        create_password_view.click_hide_icon(0)
+        assert create_password_view.get_password_from_confirmation_field(2) == '●●●●●●●●●●'
+
+    with step('Confirm creation of password and set password in confirmation again field'):
+        confirm_password_view = create_password_view.click_create_password()
+        confirm_password_view.set_password(password)
+
+    with step('Click show icon to show password and check that shown password is correct'):
+        create_password_view.click_show_icon(0)
+        assert confirm_password_view.get_password_from_confirmation_again_field(0) == password
+
+    with step('Click show icon to hide password and check that there are dots instead'):
+        create_password_view.click_hide_icon(0)
+        assert confirm_password_view.get_password_from_confirmation_again_field(2) == '●●●●●●●●●●'
+
+    with step('Verify that the user can login afterwards'):
+        confirm_password_view.click_confirm_password()
         if configs.system.IS_MAC:
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()

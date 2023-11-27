@@ -263,6 +263,7 @@ class YourProfileView(OnboardingView):
         self._erros_text_label = TextLabel('mainWindow_errorMessage_StatusBaseText')
         self._next_button = Button('mainWindow_Next_StatusButton')
         self._login_input_object = QObject('mainWindow_nameInput_StatusInput')
+        self._clear_icon = QObject('mainWindow_clear_icon_StatusIcon')
 
     @property
     @allure.step('Get next button enabled state')
@@ -282,6 +283,15 @@ class YourProfileView(OnboardingView):
     @allure.step('Set user display name')
     def set_display_name(self, value: str):
         self._display_name_text_field.clear().text = value
+        return self
+
+    @allure.step('Get user display name')
+    def get_display_name(self) -> str:
+        return str(self._display_name_text_field.object.text)
+
+    @allure.step('Click clear button')
+    def clear_field(self):
+        self._clear_icon.click()
         return self
 
     @allure.step('Set user image')
@@ -390,6 +400,18 @@ class CreatePasswordView(OnboardingView):
         self._password_view_object = QObject('mainWindow_view_PasswordView')
         self._strength_indicator = QObject('mainWindow_strengthInditactor_StatusPasswordStrengthIndicator')
         self._indicator_panel_object = QObject('mainWindow_RowLayout')
+        self._show_icon = QObject('mainWindow_show_icon_StatusIcon')
+        self._hide_icon = QObject('mainWindow_hide_icon_StatusIcon')
+
+    @allure.step('Get password content from first field')
+    def get_password_from_first_field(self, echo_mode) -> str:
+        self._new_password_text_field.real_name['echoMode'] = echo_mode
+        return str(self._new_password_text_field.object.displayText)
+
+    @allure.step('Get password content from confirmation field')
+    def get_password_from_confirmation_field(self, echo_mode) -> str:
+        self._confirm_password_text_field.real_name['echoMode'] = echo_mode
+        return str(self._confirm_password_text_field.object.displayText)
 
     @property
     @allure.step('Verify: Create password button enabled')
@@ -428,6 +450,16 @@ class CreatePasswordView(OnboardingView):
     def password_error_message(self) -> str:
         return self._password_view_object.object.errorMsgText
 
+    @allure.step('Click show icon by index')
+    def click_show_icon(self, index):
+        show_icons = driver.findAllObjects(self._show_icon.real_name)
+        driver.mouseClick(show_icons[index])
+
+    @allure.step('Click hide icon by index')
+    def click_hide_icon(self, index):
+        hide_icons = driver.findAllObjects(self._hide_icon.real_name)
+        driver.mouseClick(hide_icons[index])
+
     @allure.step('Set password in first field')
     def set_password_in_first_field(self, value: str):
         self._new_password_text_field.clear().text = value
@@ -440,6 +472,10 @@ class CreatePasswordView(OnboardingView):
     def create_password(self, value: str) -> 'ConfirmPasswordView':
         self.set_password_in_first_field(value)
         self.set_password_in_confirmation_field(value)
+        self.click_create_password()
+        return ConfirmPasswordView().wait_until_appears()
+
+    def click_create_password(self):
         self._create_button.click()
         time.sleep(1)
         return ConfirmPasswordView().wait_until_appears()
@@ -475,6 +511,10 @@ class ConfirmPasswordView(OnboardingView):
     def set_password(self, value: str):
         self._confirm_password_text_field.text = value
 
+    @allure.step('Click confirm password')
+    def click_confirm_password(self):
+        self._confirm_button.click()
+
     @allure.step('Confirm password')
     def confirm_password(self, value: str):
         self.set_password(value)
@@ -484,6 +524,11 @@ class ConfirmPasswordView(OnboardingView):
     def back(self):
         self._back_button.click()
         return CreatePasswordView().wait_until_appears()
+
+    @allure.step('Get password content from confirmation again field')
+    def get_password_from_confirmation_again_field(self, echo_mode) -> str:
+        self._confirm_password_text_field.real_name['echoMode'] = echo_mode
+        return str(self._confirm_password_text_field.object.displayText)
 
 
 class BiometricsView(OnboardingView):

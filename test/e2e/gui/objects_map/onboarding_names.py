@@ -70,6 +70,7 @@ mainWindow_inputLayout_ColumnLayout = {"container": statusDesktop_mainWindow, "i
 mainWindow_statusBaseInput_StatusBaseInput = {"container": mainWindow_inputLayout_ColumnLayout, "objectName": "onboardingDisplayNameInput", "type": "TextEdit", "visible": True}
 mainWindow_errorMessage_StatusBaseText = {"container": mainWindow_inputLayout_ColumnLayout, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_nameInput_StatusInput = {"container": statusDesktop_mainWindow, "id": "nameInput", "type": "StatusInput", "unnamed": 1, "visible": True}
+mainWindow_clear_icon_StatusIcon = {"container": mainWindow_StatusWindow, "objectName": "clear-icon", "type": "StatusIcon"}
 
 # Your emojihash and identicon ring
 mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon = {"container": mainWindow_InsertDetailsView, "objectName": "welcomeScreenUserProfileImage", "type": "StatusSmartIdenticon", "visible": True}
@@ -86,6 +87,8 @@ mainWindow_Create_password_StatusButton = {"checkable": False, "container": main
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
 mainWindow_RowLayout = {"container": mainWindow_StatusWindow, "type": "RowLayout", "unnamed": 1, "visible": True}
 mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": mainWindow_StatusWindow, "id": "strengthInditactor", "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
+mainWindow_show_icon_StatusIcon = {"container": mainWindow_StatusWindow, "objectName": "show-icon", "type": "StatusIcon", "visible": True}
+mainWindow_hide_icon_StatusIcon = {"container": mainWindow_StatusWindow, "objectName": "hide-icon", "type": "StatusIcon", "visible": True}
 
 # Confirm Password View
 mainWindow_ConfirmPasswordView = {"container": statusDesktop_mainWindow, "type": "ConfirmPasswordView", "unnamed": 1,"visible": True}

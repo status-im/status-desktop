@@ -80,6 +80,10 @@ def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
         assert profile_view.is_next_button_enabled is False
         assert profile_view.error_message == error
 
+    with step('Clear content of disply name field and verify it is empty'):
+        profile_view.clear_field()
+        assert profile_view.get_display_name() == ''
+
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702993',
                  'Sign up with wrong password format in both new password and confirmation input')
