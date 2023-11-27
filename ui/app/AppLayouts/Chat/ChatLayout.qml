@@ -215,6 +215,25 @@ StackLayout {
     }
 
     Component {
+        id: controlNodeOfflineComponent
+        ControlNodeOfflineCommunityView {
+            id: controlNodeOfflineView
+            readonly property var communityData: sectionItemModel
+            readonly property string communityId: communityData.id
+            name: communityData.name
+            communityDesc: communityData.description
+            color: communityData.color
+            image: communityData.image
+            membersCount: communityData.members.count
+            communityItemsModel: root.rootStore.communityItemsModel
+            notificationCount: activityCenterStore.unreadNotificationsCount
+            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+            onNotificationButtonClicked: Global.openActivityCenterPopup()
+            onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
+        }
+    }
+
+    Component {
         id: communityIntroDialogPopup
         CommunityIntroDialog {
             id: communityIntroDialog
