@@ -124,8 +124,14 @@ const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
 
   let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
+
+  var activityCenterNotifications: JsonNode
+  if response.result{"activityCenterNotifications"} != nil:
+    activityCenterNotifications = response.result["activityCenterNotifications"]
+
   let responseJson = %*{
     "chatId": arg.chatId,
+    "activityCenterNotifications": activityCenterNotifications,
     "error": response.error
   }
   arg.finish(responseJson)
@@ -150,6 +156,10 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
   var countWithMentions: int
   discard response.result.getProp("countWithMentions", countWithMentions)
 
+  var activityCenterNotifications: JsonNode
+  if response.result{"activityCenterNotifications"} != nil:
+    activityCenterNotifications = response.result["activityCenterNotifications"]
+
   var error = ""
   if(count == 0):
     error = "no message has updated"
@@ -159,6 +169,7 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
     "messagesIds": arg.messagesIds,
     "count": count,
     "countWithMentions": countWithMentions,
+    "activityCenterNotifications": activityCenterNotifications,
     "error": error
   }
   arg.finish(responseJson)

@@ -22,6 +22,7 @@ import ../../../backend/backend
 
 import ../../../backend/response_type
 
+import ../../common/activity_center
 import ../../common/conversion
 import ../../common/account_constants
 import ../../common/utils as common_utils
@@ -297,7 +298,9 @@ QtObject:
           let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: true, communityId: communityId)
           self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
           let response = tokens_backend.registerOwnerTokenReceivedNotification(communityId)
-          self.acService.parseActivityCenterResponse(response)
+          self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+            RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
+
     except Exception as e:
       error "Error registering owner token received notification", msg=e.msg
 
@@ -318,7 +321,8 @@ QtObject:
                               communityId: contractDetails.communityId)
       self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
       let response = if transactionArgs.success: tokens_backend.registerReceivedOwnershipNotification(contractDetails.communityId) else: tokens_backend.registerSetSignerFailedNotification(contractDetails.communityId)
-      self.acService.parseActivityCenterResponse(response)
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+        RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
       let notificationToSetRead = self.acService.getNotificationForTypeAndCommunityId(notification.ActivityCenterNotificationType.OwnerTokenReceived, contractDetails.communityId)
       if notificationToSetRead != nil:
         self.acService.markActivityCenterNotificationRead(notificationToSetRead.id)
@@ -1278,7 +1282,8 @@ QtObject:
       discard self.acService.deleteActivityCenterNotifications(@[notification.id])
     try:
       let response = tokens_backend.registerSetSignerDeclinedNotification(communityId)
-      self.acService.parseActivityCenterResponse(response)
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+        RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result{"activityCenterNotifications"}))
     except Exception as e:
       error "Error registering decline set signer notification", msg=e.msg
     let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: communityId)

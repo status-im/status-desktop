@@ -171,8 +171,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService,
-    result.activityCenterService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
   )
   result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
   result.tokenService = token_service.newService(
