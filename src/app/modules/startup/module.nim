@@ -84,6 +84,13 @@ proc newModule*[T](delegate: T,
 {.push warning[Deprecated]: off.}
 
 method delete*[T](self: Module[T]) =
+  self.view.delete
+  self.viewVariant.delete
+  self.controller.delete
+  if not self.keycardSharedModule.isNil:
+    self.keycardSharedModule.delete
+
+method onAppLoaded*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("startupModule", newQVariant())
   self.view.delete
   self.view = nil
