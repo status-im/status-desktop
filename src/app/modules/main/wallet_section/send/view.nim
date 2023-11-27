@@ -35,13 +35,11 @@ QtObject:
   proc delete*(self: View) =
     self.accounts.delete
     self.senderAccounts.delete
-    if self.selectedSenderAccount != nil:
-      self.selectedSenderAccount.delete
+    self.selectedSenderAccount.delete
     self.fromNetworksModel.delete
     self.toNetworksModel.delete
     self.transactionRoutes.delete
-    if self.selectedSenderAccount != nil:
-      self.selectedReceiveAccount.delete
+    self.selectedReceiveAccount.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

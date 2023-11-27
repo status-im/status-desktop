@@ -44,7 +44,7 @@ QtObject:
     self.canSend = canSend
 
   proc delete*(self: AccountItem) =
-    self.QObject.delete
+      self.QObject.delete
 
   proc newAccountItem*(
     name: string = "",

@@ -477,7 +477,7 @@ proc finishAppLoading*(self: AppController) =
     self.privacyService.removeMnemonic()
 
   if not self.startupModule.isNil:
-    self.startupModule.onAppLoaded()
+    self.startupModule.delete
     self.startupModule = nil
 
   self.mainModule.checkAndPerformProfileMigrationIfNeeded()
