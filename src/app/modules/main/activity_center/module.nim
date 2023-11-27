@@ -174,6 +174,8 @@ method convertToItems*(
         if (notification.notificationType == ActivityCenterNotificationType.ContactVerification):
           repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
 
+      let chatDetails = self.controller.getChatDetails(notification.chatId)
+
       return notification_item.initItem(
         notification.id,
         notification.chatId,
@@ -190,7 +192,7 @@ method convertToItems*(
         notification.accepted,
         messageItem,
         repliedMessageItem,
-        ChatType.Unknown # TODO: should use correct chat type
+        chatDetails.chatType
       )
     )
 
