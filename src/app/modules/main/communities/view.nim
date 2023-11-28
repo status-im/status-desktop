@@ -456,7 +456,7 @@ QtObject:
     if (self.discordImportCommunityName == name): return
     self.discordImportCommunityName = name
     self.discordImportCommunityNameChanged()
-  
+
   QtProperty[string] discordImportCommunityName:
     read = getDiscordImportCommunityName
     notify = discordImportCommunityNameChanged
@@ -549,9 +549,8 @@ QtObject:
   proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
-  proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
-    # TODO update the slot to accept the shard arguments when it's available from the QML
-    self.delegate.requestCommunityInfo(communityId, shardCluster = -1, shardIndex = -1, importing)
+  proc requestCommunityInfo*(self: View, communityId: string, shardCluster: int, shardIndex: int, importing: bool) {.slot.} =
+    self.delegate.requestCommunityInfo(communityId, shardCluster, shardIndex, importing)
 
   proc getCommunityDetails*(self: View, communityId: string): string {.slot.} =
     let communityItem = self.model.getItemById(communityId)
@@ -663,7 +662,7 @@ QtObject:
     self.discordImportChannelId = id
     self.discordImportChannelName = item.getName()
     self.discordImportChannelChanged()
-  
+
   proc setDiscordImportChannelId*(self: View, id: string) {.slot.} =
     if (self.discordImportChannelId == id): return
     self.discordImportChannelId = id
@@ -675,7 +674,7 @@ QtObject:
   QtProperty[string] discordImportChannelId:
     read = getDiscordImportChannelId
     notify = discordImportChannelChanged
-  
+
   proc setDiscordImportChannelName*(self: View, name: string) {.slot.} =
     if (self.discordImportChannelName == name): return
     self.discordImportChannelName = name
@@ -788,4 +787,4 @@ QtObject:
   proc sharedAddressesForAllNonKeycardKeypairsSigned(self: View) {.signal.}
   proc sendSharedAddressesForAllNonKeycardKeypairsSignedSignal*(self: View) =
     self.sharedAddressesForAllNonKeycardKeypairsSigned()
-  
+
