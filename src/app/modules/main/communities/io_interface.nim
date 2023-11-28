@@ -257,8 +257,5 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
     revealedAccounts: seq[RevealedAccount]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAllCommunityTokensLoaded*(self: AccessInterface, communityTokens: seq[CommunityTokenDto]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method removeCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
