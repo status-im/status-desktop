@@ -60,6 +60,7 @@ QtObject {
         Global.openCommunityProfilePopupRequested.connect(openCommunityProfilePopup)
         Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
+        Global.communityShareAddressesPopupRequested.connect(openCommunityShareAddressesPopup)
         Global.communityIntroPopupRequested.connect(openCommunityIntroPopup)
         Global.removeContactRequested.connect(openRemoveContactConfirmationPopup)
         Global.openPopupRequested.connect(openPopup)
@@ -238,6 +239,18 @@ QtObject {
                    imageSrc: imageSrc,
                    accessType: accessType,
                    isInvitationPending: isInvitationPending
+                  })
+    }
+
+    function openCommunityShareAddressesPopup(communityId, name, imageSrc) {
+        openPopup(communityIntroDialogPopup,
+                  {communityId: communityId,
+                   stackTitle: qsTr("Share addresses with %1's owner").arg(name),
+                   name: name,
+                   introMessage: qsTr("Share addresses to rejoin %1").arg(name),
+                   imageSrc: imageSrc,
+                   accessType: Constants.communityChatOnRequestAccess,
+                   isInvitationPending: false
                   })
     }
 
