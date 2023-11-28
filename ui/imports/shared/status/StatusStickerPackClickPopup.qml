@@ -11,6 +11,7 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 //TODO remove this dependency!
 import "../../../app/AppLayouts/Chat/stores"
@@ -22,6 +23,7 @@ ModalPopup {
     property string packId
 
     property var store
+    required property TransactionStore transactionStore
     property string thumbnail: ""
     property string name: ""
     property string author: ""
@@ -69,6 +71,7 @@ ModalPopup {
             SendModal {
                 id: buyStickersPackModal
                 interactive: false
+                store: stickerPackDetailsPopup.transactionStore
                 preSelectedSendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))

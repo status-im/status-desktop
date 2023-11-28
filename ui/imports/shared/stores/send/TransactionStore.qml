@@ -8,15 +8,17 @@ import utils 1.0
 
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Wallet.stores 1.0
+
 QtObject {
     id: root
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
+    property WalletAssetsStore walletAssetStore
 
     property var mainModuleInst: mainModule
     property var walletSectionSendInst: walletSectionSend
 
-    property var assets: walletSectionAssets.assets
     property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
     property var toNetworksModel: walletSectionSendInst.toNetworksModel
     property var allNetworksModel: networksModule.all
@@ -108,15 +110,15 @@ QtObject {
     }
 
     function getAsset(assetsList, symbol) {
-        for(var i=0; i< assetsList.count;i++) {
-            if(symbol === assetsList.rowData(i, "symbol")) {
+        for(var i=0; i< assetsList.rowCount();i++) {
+            let asset = ModelUtils.get(assetsList, i)
+            if(symbol === asset.symbol) {
                 return {
-                    name: assetsList.rowData(i, "name"),
-                    symbol: assetsList.rowData(i, "symbol"),
-                    totalBalance: JSON.parse(assetsList.rowData(i, "totalBalance")),
-                    totalCurrencyBalance: JSON.parse(assetsList.rowData(i, "totalCurrencyBalance")),
-                    balances: assetsList.rowData(i, "balances"),
-                    decimals: assetsList.rowData(i, "decimals")
+                    name: asset.name,
+                    symbol: asset.symbol,
+                    totalBalance: asset.totalBalance,
+                    balances: asset.balances,
+                    decimals: asset.decimals
                 }
             }
         }
@@ -141,7 +143,7 @@ QtObject {
 
     function getHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(selectedSenderAccount.assets, holdingId)
+            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getCollectible(holdingId)
         } else {
@@ -151,7 +153,7 @@ QtObject {
 
     function getSelectorHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(selectedSenderAccount.assets, holdingId)
+            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getSelectorCollectible(holdingId)
         } else {
@@ -255,5 +257,15 @@ QtObject {
 
     function getShortChainIds(chainShortNames) {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
+    }
+
+    function getCurrencyAmountFromBigInt(balance, symbol, decimals) {
+        let bigIntBalance = AmountsArithmetic.fromString(balance)
+        let decimalBalance = AmountsArithmetic.toNumber(bigIntBalance, decimals)
+        return currencyStore.getCurrencyAmount(decimalBalance, symbol)
+    }
+
+    function getCurrentCurrencyAmount(balance) {
+        return currencyStore.getCurrencyAmount(balance, currencyStore.currentCurrency)
     }
 }

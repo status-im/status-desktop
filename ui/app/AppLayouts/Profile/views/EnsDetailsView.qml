@@ -11,11 +11,13 @@ import utils 1.0
 import shared.status 1.0
 import shared.popups 1.0
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 Item {
     id: root
     property var ensUsernamesStore
     property var contactsStore
+    required property TransactionStore transactionStore
     property string username: ""
     property string chainId: ""
     property string walletAddress: "-"
@@ -118,6 +120,7 @@ Item {
             id: releaseEnsModal
             modalHeader: qsTr("Release your username")
             interactive: false
+            store: root.transactionStore
             preSelectedSendType: Constants.SendType.ENSRelease
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)

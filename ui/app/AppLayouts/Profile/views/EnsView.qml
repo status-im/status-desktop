@@ -5,6 +5,7 @@ import QtQml.StateMachine 1.14 as DSM
 
 import utils 1.0
 import shared 1.0
+import shared.stores.send 1.0
 
 import "../stores"
 
@@ -16,6 +17,7 @@ Item {
     property var contactsStore
     property var stickersStore
     property var networkConnectionStore
+    required property TransactionStore transactionStore
 
     property int profileContentWidth
     property bool showSearchScreen: false
@@ -222,6 +224,7 @@ Item {
         EnsSearchView {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
+            transactionStore: ensView.transactionStore
             profileContentWidth: ensView.profileContentWidth
             onContinueClicked: {
                 if(output === "connected"){
@@ -244,6 +247,7 @@ Item {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
             stickersStore: ensView.stickersStore
+            transactionStore: ensView.transactionStore
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameRegistered: done(userName);
@@ -302,6 +306,7 @@ Item {
         EnsDetailsView {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
+            transactionStore: ensView.transactionStore
             username: selectedUsername
             chainId: selectedChainId
             onBackBtnClicked: back()

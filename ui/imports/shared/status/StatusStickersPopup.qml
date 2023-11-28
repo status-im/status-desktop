@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 
 import utils 1.0
 import shared.panels 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,6 +18,7 @@ Popup {
     id: root
 
     property var store
+    required property TransactionStore transactionStore
 
     signal stickerSelected(string hashId, string packId, string url)
 
@@ -95,6 +97,7 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: root.store
+            transactionStore: root.transactionStore
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             marketVisible: d.stickerPacksLoaded && d.online

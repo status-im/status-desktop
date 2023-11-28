@@ -13,12 +13,14 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 Item {
     id: root
 
     property var ensUsernamesStore
     property var contactsStore
+    required property TransactionStore transactionStore
     property int profileContentWidth
 
     signal continueClicked(string output, string username)
@@ -63,6 +65,7 @@ Item {
             id: connectEnsModal
             modalHeader: qsTr("Connect username with your pubkey")
             interactive: false
+            store: root.transactionStore
             preSelectedSendType: Constants.SendType.ENSSetPubKey
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
