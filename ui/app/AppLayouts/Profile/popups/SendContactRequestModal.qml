@@ -44,6 +44,15 @@ StatusModal {
         })
 
         function textChanged(text) {
+            const urlContactData = Utils.parseContactUrl(text)
+            if (urlContactData) {
+                // Ignore all the data from the link, because it might be malformed.
+                // Except for the publicKey.
+                d.realChatKey = urlContactData.publicKey
+                Qt.callLater(d.lookupContact, urlContactData.publicKey);
+                return
+            }
+
             d.resolvedPubKey = ""
             d.realChatKey = text
 
