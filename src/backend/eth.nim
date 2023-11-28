@@ -15,9 +15,6 @@ proc getNativeChainBalance*(chainId: int, address: string): RpcResponse[JsonNode
   let payload = %* [address, "latest"]
   return core.callPrivateRPCWithChainId("eth_getBalance", chainId, payload)
 
-proc sendTransaction*(chainId: int, transactionData: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  core.sendTransaction(chainId, transactionData, password)
-
 # This is the replacement of the `call` function
 proc doEthCall*(payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPC("eth_call", payload)

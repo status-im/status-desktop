@@ -220,7 +220,8 @@ proc newModule*[T](
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
     networkService, keycardService, keychainService, tokenService
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService,
+    networkService, tokenService, keycardService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,

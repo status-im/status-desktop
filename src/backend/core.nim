@@ -7,7 +7,7 @@ export response_type
 logScope:
   topics = "rpc"
 
-## we guard majority db calls which may occure during Profile KeyPair migration 
+## we guard majority db calls which may occure during Profile KeyPair migration
 ## (if there is a need we can guard other non rpc calls as well in the same way)
 var DB_BLOCKED_DUE_TO_PROFILE_MIGRATION* = false
 
@@ -61,23 +61,6 @@ proc callPrivateRPC*(
   }
   return makePrivateRpcCall(methodName, inputJSON)
 
-proc signMessage*(rpcParams: string): string =
-  return $status_go.signMessage(rpcParams)
-
-proc signTypedData*(data: string, address: string, password: string): string =
-  return $status_go.signTypedData(data, address, password)
-
-proc sendTransaction*(chainId: int, inputJSON: string, password: string): RpcResponse[JsonNode]
-  {.raises: [RpcException, ValueError, Defect, SerializationError].} =
-  try:
-    var hashed_password = "0x" & $keccak_256.digest(password)
-    let rpcResponseRaw = status_go.sendTransactionWithChainId(chainId, inputJSON, hashed_password)
-    result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
-  except Exception as e:
-    error "error sending tx", inputJSON, exception=e.msg
-    raise newException(RpcException, e.msg)
-
-
 proc migrateKeyStoreDir*(account: string, hashedPassword: string, oldKeystoreDir: string, multiaccountKeystoreDir: string)
   {.raises: [RpcException, ValueError, Defect, SerializationError].} =
   try:
@@ -85,5 +68,3 @@ proc migrateKeyStoreDir*(account: string, hashedPassword: string, oldKeystoreDir
   except Exception as e:
     error "error migrating keystore dir", account, exception=e.msg
     raise newException(RpcException, e.msg)
-
-  
