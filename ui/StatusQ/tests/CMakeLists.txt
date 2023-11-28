@@ -111,3 +111,7 @@ add_test(NAME ModelEntryTest COMMAND ModelEntryTest)
 add_executable(SnapshotObjectTest tst_SnapshotObject.cpp)
 target_link_libraries(SnapshotObjectTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SnapshotObjectTest COMMAND SnapshotObjectTest)
+
+add_executable(GroupingModelTest tst_GroupingModel.cpp)
+target_link_libraries(GroupingModelTest PRIVATE Qt5::Qml StatusQ StatusQTestLib)
+add_test(NAME GroupingModelTest COMMAND GroupingModelTest)

@@ -10,14 +10,15 @@
 #include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/formatteddoubleproperty.h"
 #include "StatusQ/functionaggregator.h"
+#include "StatusQ/groupingmodel.h"
 #include "StatusQ/leftjoinmodel.h"
+#include "StatusQ/modelentry.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/movablemodel.h"
 #include "StatusQ/objectproxymodel.h"
 #include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rolesrenamingmodel.h"
 #include "StatusQ/rxvalidator.h"
-#include "StatusQ/modelentry.h"
 #include "StatusQ/snapshotobject.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
@@ -46,6 +47,7 @@ public:
         qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
         qmlRegisterType<ManageTokensModel>("StatusQ.Models", 0, 1, "ManageTokensModel");
 
+        qmlRegisterType<GroupingModel>("StatusQ", 0, 1, "GroupingModel");
         qmlRegisterType<SourceModel>("StatusQ", 0, 1, "SourceModel");
         qmlRegisterType<ConcatModel>("StatusQ", 0, 1, "ConcatModel");
         qmlRegisterType<MovableModel>("StatusQ", 0, 1, "MovableModel");
