@@ -29,6 +29,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 find_package(Qt5 COMPONENTS
         Core Qml Gui Quick QuickControls2 REQUIRED)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    find_package(Qt5 COMPONENTS QuickTest REQUIRED)
+endif()
+
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
 
@@ -105,6 +109,7 @@ add_library(StatusQ SHARED
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
         include/StatusQ/sumaggregator.h
+        include/StatusQ/writableproxymodel.h
         src/QClipboardProxy.cpp
         src/aggregator.cpp
         src/concatmodel.cpp
@@ -123,6 +128,7 @@ add_library(StatusQ SHARED
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
         src/sumaggregator.cpp
+        src/writableproxymodel.cpp
 
         # wallet
         src/wallet/managetokenscontroller.cpp
@@ -169,6 +175,12 @@ target_link_libraries(StatusQ PRIVATE
         SortFilterProxyModel
         qzxing
         )
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(StatusQ PRIVATE
+            Qt5::QuickTest
+            )
+endif()
 
 target_include_directories(StatusQ PUBLIC include)
 
