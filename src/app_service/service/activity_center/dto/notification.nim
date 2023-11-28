@@ -26,6 +26,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   OwnershipLost = 15
   SetSignerFailed = 16
   SetSignerDeclined = 17
+  ShareAccounts = 18
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -162,7 +163,8 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.OwnershipReceived.int,
         ActivityCenterNotificationType.SetSignerFailed.int,
         ActivityCenterNotificationType.SetSignerDeclined.int,
-        ActivityCenterNotificationType.OwnershipLost.int
+        ActivityCenterNotificationType.OwnershipLost.int,
+        ActivityCenterNotificationType.ShareAccounts.int
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]
