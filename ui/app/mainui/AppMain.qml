@@ -26,6 +26,7 @@ import shared.status 1.0
 import shared.stores 1.0
 import shared.popups.send 1.0
 import shared.popups.send.views 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -71,6 +72,10 @@ Item {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
+    readonly property CurrenciesStore currencyStore: CurrenciesStore{}
+    readonly property TransactionStore transactionStore: TransactionStore{
+        walletAssetStore: appMain.walletAssetsStore
+    }
 
     // set from main.qml
     property var sysPalette
@@ -488,6 +493,7 @@ Item {
         sourceComponent: StatusStickersPopup {
             id: statusStickersPopup
             store: appMain.rootChatStore
+            transactionStore: appMain.transactionStore
         }
     }
 
@@ -1198,6 +1204,7 @@ Item {
                                 }
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 tokensStore: appMain.tokensStore
+                                transactionStore: appMain.transactionStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -1270,6 +1277,7 @@ Item {
                         sourceComponent: BrowserLayout {
                             globalStore: appMain.rootStore
                             sendTransactionModal: sendModal
+                            transactionStore: appMain.transactionStore
                         }
                         // Loaders do not have access to the context, so props need to be set
                         // Adding a "_" to avoid a binding loop
@@ -1292,6 +1300,7 @@ Item {
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
+                            transactionStore: appMain.transactionStore
                         }
                     }
 
@@ -1372,6 +1381,7 @@ Item {
                                     }
                                 }
                                 tokensStore: appMain.tokensStore
+                                transactionStore: appMain.transactionStore
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1466,7 +1476,8 @@ Item {
             property bool onlyAssets: false
 
             sourceComponent: SendModal {
-                onlyAssets: sendModal.onlyAssets
+                onlyAssets: sendModal.onlyAssets                
+                store: appMain.transactionStore
                 onClosed: {
                     sendModal.closed()
                     sendModal.preSelectedSendType = Constants.SendType.Unknown

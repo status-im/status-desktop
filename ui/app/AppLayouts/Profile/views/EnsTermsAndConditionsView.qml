@@ -7,6 +7,7 @@ import utils 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,6 +20,7 @@ Item {
     property var ensUsernamesStore
     property var contactsStore
     property var stickersStore
+    required property TransactionStore transactionStore
     property string username: ""
 
     signal backBtnClicked();
@@ -48,6 +50,7 @@ Item {
         sourceComponent: SendModal {
             id: buyEnsModal
             interactive: false
+            store: root.transactionStore
             preSelectedSendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)

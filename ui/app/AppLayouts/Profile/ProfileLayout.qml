@@ -7,6 +7,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
 import shared.popups.keycard 1.0
+import shared.stores.send 1.0
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.stores 1.0
@@ -32,6 +33,7 @@ StatusSectionLayout {
     property var emojiPopup
     property var networkConnectionStore
     required property TokensStore tokensStore
+    required property TransactionStore transactionStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -159,6 +161,7 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 stickersStore: root.store.stickersStore
                 networkConnectionStore: root.networkConnectionStore
+                transactionStore: root.transactionStore
                 profileContentWidth: d.contentWidth
             }
         }

@@ -17,7 +17,9 @@ import "../controls"
 
 Item {
     id: root
+
     property var assetsModel
+    property string selectedSenderAccount
     property var collectiblesModel
     property var networksModel
     property string currentCurrencySymbol
@@ -29,6 +31,8 @@ Item {
     property var searchAssetSymbolByAddressFn: function (address) {
         return ""
     }
+    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
+    property var getCurrentCurrencyAmount: function(balance){}
 
     signal itemHovered(string holdingId, var holdingType)
     signal itemSelected(string holdingId, var holdingType)
@@ -189,7 +193,7 @@ Item {
               // asset
               property var symbol: model.symbol
               property var totalBalance: model.totalBalance
-              property var totalCurrencyBalance: model.totalCurrencyBalance
+              property var marketDetails: model.marketDetails
               property var decimals: model.decimals
               property var balances: model.balances
               // collectible
@@ -291,6 +295,7 @@ Item {
         TokenBalancePerChainDelegate {
             objectName: "AssetSelector_ItemDelegate_" + symbol
             width: holdingItemSelector.comboBoxControl.popup.width
+            selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
                 leftModel: balances
                 rightModel: root.networksModel
@@ -301,6 +306,12 @@ Item {
                 d.currentHoldingType = Constants.TokenType.ERC20
                 root.itemSelected(selectedToken.symbol, Constants.TokenType.ERC20)
                 holdingItemSelector.comboBoxControl.popup.close()
+            }
+            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                return root.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+            }
+            getCurrentCurrencyAmount: function(balance){
+                return root.getCurrentCurrencyAmount(balance)
             }
         }
     }

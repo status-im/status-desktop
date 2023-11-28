@@ -15,6 +15,7 @@ import shared.controls 1.0
 import shared 1.0
 import shared.status 1.0
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 import "popups"
 import "controls"
@@ -30,6 +31,7 @@ StatusSectionLayout {
 
     property var globalStore
     property var sendTransactionModal
+    required property TransactionStore transactionStore
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
@@ -65,6 +67,7 @@ StatusSectionLayout {
             anchors.centerIn: parent
             preSelectedHoldingID: "ETH"
             preSelectedHoldingType: Constants.TokenType.ERC20
+            store: root.transactionStore
         }
 
         property Component signMessageModalComponent: SignMessageModal {}

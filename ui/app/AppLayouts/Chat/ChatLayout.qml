@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.popups 1.0
+import shared.stores.send 1.0
 
 import "views"
 import "stores"
@@ -26,6 +27,7 @@ StackLayout {
     readonly property var permissionsStore: rootStore.permissionsStore
     property var communitiesStore
     required property WalletStore.TokensStore tokensStore
+    required property TransactionStore transactionStore
 
     property var sectionItemModel
     property var sendModalPopup
@@ -139,6 +141,7 @@ StackLayout {
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             rootStore: root.rootStore
+            transactionStore: root.transactionStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
             sectionItemModel: root.sectionItemModel
@@ -193,6 +196,7 @@ StackLayout {
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
             tokensStore: root.tokensStore
             sendModalPopup: root.sendModalPopup
+            transactionStore: root.transactionStore
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 

@@ -14,6 +14,7 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0 as SharedStores
 import shared.popups.send 1.0
+import shared.stores.send 1.0
 
 //TODO remove this dependency!
 import AppLayouts.Chat.stores 1.0
@@ -23,6 +24,7 @@ Item {
 
     property var store
     property var stickerPacks: StickerPackData {}
+    required property TransactionStore transactionStore
     property string packId
     property bool marketVisible
 
@@ -200,6 +202,7 @@ Item {
             required property string packId
 
             interactive: false
+            store: root.transactionStore
             preSelectedSendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))

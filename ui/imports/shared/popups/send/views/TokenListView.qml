@@ -16,6 +16,7 @@ import "../controls"
 Item {
     id: root
 
+    property string selectedSenderAccount
     property var assets: null
     property var collectibles: null
     property var networksModel
@@ -26,6 +27,8 @@ Item {
     }
     property bool onlyAssets: false
     property int browsingHoldingType: Constants.TokenType.ERC20
+    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
+    property var getCurrentCurrencyAmount: function(balance){}
 
     onVisibleChanged: {
         if(!visible && root.collectibles)
@@ -170,6 +173,7 @@ Item {
         id: tokenDelegate
         TokenBalancePerChainDelegate {
             width: ListView.view.width
+            selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
                 leftModel: model.balances
                 rightModel: root.networksModel
@@ -177,6 +181,12 @@ Item {
             }
             onTokenSelected: root.tokenSelected(symbol, Constants.TokenType.ERC20)
             onTokenHovered: root.tokenHovered(symbol, Constants.TokenType.ERC20, hovered)
+            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                return root.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+            }
+            getCurrentCurrencyAmount: function(balance){
+                return root.getCurrentCurrencyAmount(balance)
+            }
         }
     }
     Component {

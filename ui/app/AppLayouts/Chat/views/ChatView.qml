@@ -8,6 +8,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.views.chat 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
@@ -29,6 +30,7 @@ StatusSectionLayout {
     property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
+    required property TransactionStore transactionStore
     property var createChatPropertiesStore
     property var communitiesStore
     property var sectionItemModel
@@ -256,6 +258,7 @@ StatusSectionLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
+            transactionStore: root.transactionStore
             onClosed: {
                 destroy();
             }

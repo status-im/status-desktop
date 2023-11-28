@@ -36,7 +36,7 @@ StatusSectionLayout {
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
     property var community
-    property var transactionStore: TransactionStore {}
+    required property var transactionStore
     property bool communitySettingsDisabled
     property var sendModalPopup
 
