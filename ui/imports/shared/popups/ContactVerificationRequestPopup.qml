@@ -150,6 +150,7 @@ StatusDialog {
             StatusButton {
                 visible: !d.responseText
                 text: qsTr("Refuse Verification")
+                objectName: "refuseVerificationButton"
                 onClicked: {
                     root.verificationRefused(d.senderPublicKey)
                     root.close();
@@ -157,6 +158,7 @@ StatusDialog {
             }
             StatusButton {
                 text: qsTr("Send Answer")
+                objectName: "sendAnswerButton"
                 visible: !d.responseText
                 enabled: verificationResponse.text !== ""
                 onClicked: {
@@ -168,6 +170,7 @@ StatusDialog {
             StatusFlatButton {
                 visible: d.responseText
                 text: qsTr("Change answer")
+                objectName: "changeAnswerButton"
                 onClicked: {
                     d.responseText = ""
                 }
@@ -175,6 +178,7 @@ StatusDialog {
             StatusButton {
                 visible: d.responseText
                 text: qsTr("Close")
+                objectName: "closeButton"
                 onClicked: root.close()
             }
         }

@@ -112,6 +112,7 @@ StatusMenu {
 
     ViewProfileMenuItem {
         id: viewProfileAction
+        objectName: "viewProfile_StatusItem"
         onTriggered: {
             root.openProfileClicked(root.selectedUserPublicKey)
             root.close()
@@ -120,6 +121,7 @@ StatusMenu {
 
     SendMessageMenuItem {
         id: sendMessageMenuItem
+        objectName: "sendMessage_StatusItem"
         enabled: root.isContact && !root.isBlockedContact
         onTriggered: {
             root.createOneToOneChat("", root.selectedUserPublicKey, "")
@@ -129,6 +131,7 @@ StatusMenu {
 
     SendContactRequestMenuItem {
         id: sendContactRequestMenuItem
+        objectName: "sendContactRequest_StatusItem"
         enabled: !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
@@ -140,6 +143,7 @@ StatusMenu {
     StatusAction {
         id: verifyIdentityAction
         text: qsTr("Verify Identity")
+        objectName: "verifyIdentity_StatusItem"
         icon.name: "checkmark-circle"
         enabled: !root.isMe && root.isContact
                                 && !root.isBlockedContact
@@ -153,6 +157,7 @@ StatusMenu {
 
     StatusAction {
         id: pendingIdentityAction
+        objectName: "pendingIdentity_StatusItem"
         text: isVerificationRequestSent ||
             root.incomingVerificationStatus === Constants.verificationStatus.verified ?
             qsTr("ID Request Pending....") :
@@ -175,6 +180,7 @@ StatusMenu {
 
     StatusAction {
         id: renameAction
+        objectName: "rename_StatusItem"
         text: qsTr("Rename")
         icon.name: "edit_pencil"
         enabled: !root.isMe
@@ -187,6 +193,7 @@ StatusMenu {
 
     StatusAction {
         id: unblockAction
+        objectName: "unblock_StatusItem"
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
         enabled: !root.isMe && root.isBlockedContact
@@ -201,6 +208,7 @@ StatusMenu {
 
     StatusAction {
         id: markUntrustworthyMenuItem
+        objectName: "markUntrustworthy_StatusItem"
         text: qsTr("Mark as Untrustworthy")
         icon.name: "warning"
         type: StatusAction.Type.Danger
@@ -210,6 +218,7 @@ StatusMenu {
 
     StatusAction {
         id: removeUntrustworthyMarkMenuItem
+        objectName: "removeUntrustworthy_StatusItem"
         text: qsTr("Remove Untrustworthy Mark")
         icon.name: "warning"
         enabled: !root.isMe && root.userIsUntrustworthy
@@ -218,6 +227,7 @@ StatusMenu {
 
     StatusAction {
         text: qsTr("Remove Contact")
+        objectName: "removeContact_StatusItem"
         icon.name: "remove-contact"
         type: StatusAction.Type.Danger
         enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest
@@ -229,6 +239,7 @@ StatusMenu {
 
     StatusAction {
         id: blockMenuItem
+        objectName: blockUser_StatusItem
         text: qsTr("Block User")
         icon.name: "cancel"
         type: StatusAction.Type.Danger

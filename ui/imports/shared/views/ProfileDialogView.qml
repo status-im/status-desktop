@@ -239,6 +239,7 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             text: qsTr("Respond to ID Request")
+            objectName: "respondToIDRequest_StatusItem"
             onClicked: {
                 Global.openIncomingIDRequestPopup(root.publicKey,
                                                   popup => popup.closed.connect(d.reload))
