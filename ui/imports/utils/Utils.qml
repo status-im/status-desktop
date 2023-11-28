@@ -698,7 +698,12 @@ QtObject {
     }
 
     function parseContactUrl(link) {
-        const index = link.lastIndexOf("/u/")
+        let index = link.lastIndexOf("/u/")
+
+        if (index === -1) {
+            index = link.lastIndexOf("/u#")
+        }
+
         if (index === -1)
             return null
 
