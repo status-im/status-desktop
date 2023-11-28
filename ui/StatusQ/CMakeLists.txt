@@ -100,6 +100,7 @@ add_library(StatusQ SHARED
         include/StatusQ/fastexpressionsorter.h
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/functionaggregator.h
+        include/StatusQ/groupingmodel.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelentry.h
         include/StatusQ/modelsyncedcontainer.h
@@ -109,9 +110,9 @@ add_library(StatusQ SHARED
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
+        include/StatusQ/singleroleaggregator.h
         include/StatusQ/snapshotmodel.h
         include/StatusQ/snapshotobject.h
-        include/StatusQ/singleroleaggregator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
@@ -127,6 +128,7 @@ add_library(StatusQ SHARED
         src/fastexpressionsorter.cpp
         src/formatteddoubleproperty.cpp
         src/functionaggregator.cpp
+        src/groupingmodel.cpp
         src/leftjoinmodel.cpp
         src/modelentry.cpp
         src/modelutilsinternal.cpp

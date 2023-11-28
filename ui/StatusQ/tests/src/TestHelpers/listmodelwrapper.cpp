@@ -29,6 +29,8 @@ ListModelWrapper::ListModelWrapper(QQmlEngine& engine, const QString& content)
 
     m_model.reset(qobject_cast<QAbstractItemModel*>(
                       component.create(engine.rootContext())));
+
+    Q_ASSERT_X(m_model, "ListModelWrapper", "creating model failed!");
 }
 
 ListModelWrapper::ListModelWrapper(QQmlEngine& engine, const QJsonArray& content)
