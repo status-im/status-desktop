@@ -13,6 +13,8 @@ import ../../../backend/chat as status_chat
 import ../../../backend/response_type
 import ../../../backend/eth as status_eth
 import ../../../backend/backend as status_go_backend
+import ../../../backend/wallet_connect as status_wallet_connect
+import ../../../backend/wallet as status_wallet
 import ./dto/stickers
 import ../ens/utils as ens_utils
 import ../token/service as token_service
@@ -44,7 +46,7 @@ type
     estimate*: int
     uuid*: string
   GasPriceArgs* = ref object of Args
-    gasPrice*: string    
+    gasPrice*: string
   StickerTransactionArgs* = ref object of Args
     transactionHash*: string
     packID*: string
@@ -121,7 +123,7 @@ QtObject:
 
   proc getInstalledStickerPacks*(self: Service): Table[string, StickerPackDto] =
     return self.installedStickerPacks
-    
+
   proc getStickerMarketAddress*(self: Service): string =
     try:
       let chainId = self.networkService.getNetworkForStickers().chainId
@@ -133,7 +135,7 @@ QtObject:
   proc confirmTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
     try:
       if not self.marketStickerPacks.contains(packID):
-        let pendingStickerPacksResponse = status_stickers.pending() 
+        let pendingStickerPacksResponse = status_stickers.pending()
         for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
           if packID != pID: continue
           self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
@@ -155,7 +157,7 @@ QtObject:
   proc revertTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
     try:
       if not self.marketStickerPacks.contains(packID):
-        let pendingStickerPacksResponse = status_stickers.pending() 
+        let pendingStickerPacksResponse = status_stickers.pending()
         for (pID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
           if packID != pID: continue
           self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
@@ -181,67 +183,9 @@ QtObject:
       else:
         self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
 
-  proc buildTransaction*(
-    source: Address,
-    gas = "",
-    gasPrice = "",
-    isEIP1559Enabled = false,
-    maxPriorityFeePerGas = "",
-    maxFeePerGas = "",
-  ): TransactionDataDto =
-    result = TransactionDataDto(
-      source: source,
-      value: (0.u256).some,
-      gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some)
-    )
-    if isEIP1559Enabled:
-      result.maxPriorityFeePerGas = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
-      result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
-    else:
-      result.gasPrice = (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
-
   proc getStatusToken*(self: Service): TokenDto =
     let networkDto = self.networkService.getNetworkForStickers()
-
     return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
-
-  proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[txHash: string, error: string] =
-    let
-      chainId = self.networkService.getNetworkForStickers().chainId
-      txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-    try:
-      let transactionResponse = status_stickers.buy(chainId, %txData, packId, common_utils.hashPassword(password))
-      let transactionHash = transactionResponse.result.getStr()
-      let sntContract = self.getStatusToken()
-      self.transactionService.watchTransaction(
-        transactionHash,
-        address,
-        $sntContract.address,
-        $PendingTransactionTypeDto.BuyStickerPack,
-        packId,
-        chainId,
-      )
-      return (txHash: transactionHash, error: "")
-    except ValueError:
-      let message = getCurrentExceptionMsg()
-      var error = message
-      if message.contains("could not decrypt key with given password"):
-        error = "could not decrypt key with given password"
-      error "Error sending transaction", message
-      return (txHash: "", error: error)
-    except RpcException:
-      error "Error sending transaction", message = getCurrentExceptionMsg()
-
-  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): StickerBuyResultArgs =
-    try:
-      status_utils.validateTransactionInput(address, address, "", "0", gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
-    except Exception as e:
-      error "Error buying sticker pack", msg = e.msg
-      return StickerBuyResultArgs(chainId: 0, txHash: "", error: e.msg)
-
-    var (txHash, err) = self.buyPack(packId, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password)
-
-    return StickerBuyResultArgs(chainId: self.networkService.getNetworkForStickers().chainId, txHash: txHash, error: err)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
     let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
@@ -263,8 +207,7 @@ QtObject:
         isPending: false
       ))
 
-    # TODO move this to be async
-    let pendingStickerPacksResponse = status_stickers.pending() 
+    let pendingStickerPacksResponse = status_stickers.pending()
     for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
         if self.marketStickerPacks.contains(packID): continue
         self.marketStickerPacks[packID] = stickerPackJson.toStickerPackDto()
@@ -411,7 +354,7 @@ QtObject:
       ))
     else:
       error "Sticker pack did not get installed", packId = installedPack.packId
-    
+
   proc uninstallStickerPack*(self: Service, packId: string) =
     try:
       discard status_stickers.uninstall(packId)
@@ -453,3 +396,98 @@ QtObject:
 
     let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.address]).result
     return ens_utils.hex2Token(balances{account}{token.address}.getStr, token.decimals)
+
+  # proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string): JsonNode =
+  proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
+    maxFeePerGas: string, eip1559Enabled: bool): JsonNode =
+    try:
+      var prepareTxResponse = status_stickers.prepareTxForBuyingStickers(chainId, address, packId)
+      if not prepareTxResponse.error.isNil:
+        error "error occurred", procName="prepareTxForBuyingStickers", msg = prepareTxResponse.error.message
+        return
+
+      prepareTxResponse.result["gas"] = %* (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some)
+      if eip1559Enabled:
+        let maxPriorityFeePerGasFinal = if maxPriorityFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
+        let maxFeePerGasFinal = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some
+        prepareTxResponse.result["maxPriorityFeePerGas"] = %* ("0x" & maxPriorityFeePerGasFinal.unsafeGet.toHex)
+        prepareTxResponse.result["maxFeePerGas"] = %* ("0x" & maxFeePerGasFinal.unsafeGet.toHex)
+      else:
+        let gasPriceFinal = if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some
+        prepareTxResponse.result["gasPrice"] = %* ("0x" & gasPriceFinal.unsafeGet.toHex.stripLeadingZeros)
+
+      var buildTxResponse: JsonNode
+      let err = status_wallet.buildTransaction(buildTxResponse, chainId, $prepareTxResponse.result)
+      if err.len > 0:
+        error "error occurred", procName="prepareTxForBuyingStickers", msg = err
+        return
+
+      return buildTxResponse
+    except Exception as e:
+      error "error occurred", procName="prepareTxForBuyingStickers", msg = e.msg
+
+  proc signBuyingStickersTxLocally*(self: Service, data, account, hashedPasssword: string): string =
+    try:
+      var response: JsonNode
+      let err = status_wallet.signMessage(response, data, account, hashedPasssword)
+      if err.len > 0 or response.isNil:
+        error "error occurred", procName="signBuyingStickersTxLocally", msg = err
+        return
+      return response.getStr()
+    except Exception as e:
+      error "error occurred", procName="signBuyingStickersTxLocally", msg = e.msg
+
+  proc sendBuyingStickersTxWithSignatureAndWatch*(self: Service, chainId: int, txData: JsonNode, packId: string,
+    signature: string): StickerBuyResultArgs =
+    result = StickerBuyResultArgs(chainId: chainId)
+    try:
+      if txData.isNil:
+        result.error = "txData is nil"
+        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
+        return
+      if not txData.hasKey("from") or txData["from"].getStr().len == 0:
+        result.error = "from address is empty"
+        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
+        return
+      if not txData.hasKey("to") or txData["to"].getStr().len == 0:
+        result.error = "to address is empty"
+        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
+        return
+
+      var finalSignature = signature
+      if finalSignature.startsWith("0x"):
+        finalSignature = finalSignature[2..^1]
+
+      var txResponse: JsonNode
+      let err = status_wallet.sendTransactionWithSignature(txResponse, chainId, $PendingTransactionTypeDto.BuyStickerPack,
+        $txData, finalSignature)
+      if err.len > 0 or txResponse.isNil:
+        result.error = err
+        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
+        return
+
+      let
+        transactionHash = txResponse.getStr()
+        fromAddress = txData["from"].getStr()
+        toAddress = txData["to"].getStr()
+
+      let addPendingResponse = status_stickers.addPending(chainId, packId)
+      if not addPendingResponse.error.isNil:
+        result.error = addPendingResponse.error.message
+        error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
+        return
+
+      let sntContract = self.getStatusToken()
+      self.transactionService.watchTransaction(
+        transactionHash,
+        fromAddress,
+        toAddress,
+        $PendingTransactionTypeDto.BuyStickerPack,
+        packId,
+        chainId,
+      )
+
+      result.txHash = transactionHash
+    except Exception as e:
+      result.error = e.msg
+      error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
