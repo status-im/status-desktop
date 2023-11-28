@@ -1,4 +1,4 @@
-from gui.objects_map.main_names import statusDesktop_mainWindow
+from gui.objects_map.main_names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 from objectmaphelper import *
 
 mainWindow_ProfileLayout = {"container": statusDesktop_mainWindow, "objectName": "profileStatusSectionLayout", "type": "StatusSectionLayout", "visible": True}
@@ -40,6 +40,10 @@ settingsContentBaseScrollView_receivedRequests_ContactsListPanel = {"container":
 settingsContentBaseScrollView_mutualContacts_ContactsListPanel = {"container": mainWindow_ContactsView, "id": "mutualContacts", "type": "ContactsListPanel", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_Invite_friends_StatusButton = {"checkable": False, "container": mainWindow_ContactsView, "type": "StatusButton", "unnamed": 1, "visible": True}
 settingsContentBaseScrollView_NoFriendsRectangle = {"container": mainWindow_ContactsView, "type": "NoFriendsRectangle", "unnamed": 1, "visible": True}
+view_Profile_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "viewProfile_StatusItem", "type": "StatusMenuItem", "visible": True}
+verify_Identity_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "verifyIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}
+respond_to_ID_Request_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "pendingIdentity_StatusItem", "type": "StatusMenuItem", "visible": True}
+settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton = {"checkable": False, "container": mainWindow_ContactsView, "objectName": "verifyIdentity_StatusItem", "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 
 # Keycard Settings View
 mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}

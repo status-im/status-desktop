@@ -349,3 +349,15 @@ switchTabBar_24_words_StatusSwitchTabButton = {"checkable": True, "container": s
 i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "confirmation", "type": "StatusCheckBox", "visible": True}
 statusSmartIdenticonLetter_StatusLetterIdenticon = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusSmartIdenticonLetter", "type": "StatusLetterIdenticon", "visible": True}
 secondary_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "secondaryButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Verify identity popup
+profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}
+send_verification_request_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sendContactRequestButton", "type": "StatusButton", "visible": True}
+close_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "close-icon", "type": "StatusIcon", "visible": True}
+messageInput_StatusInput = {"container": statusDesktop_mainWindow_overlay, "id": "messageInput", "type": "StatusInput", "unnamed": 1, "visible": True}
+
+# Respond to ID request popup
+send_Answer_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "sendAnswerButton", "type": "StatusButton", "visible": True}
+refuse_Verification_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "refuseVerificationButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+change_answer_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "changeAnswerButton", "type": "StatusFlatButton", "visible": True}
+close_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "closeButton", "type": "StatusButton", "visible": True}

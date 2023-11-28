@@ -6,7 +6,9 @@ import allure
 import configs.timeouts
 import driver
 from driver.objects_access import walk_children
+from gui.components.settings.respond_to_id_request_popup import RespondToIDRequestPopup
 from gui.components.settings.send_contact_request_popup import SendContactRequest
+from gui.components.settings.verify_identity_popup import VerifyIdentityPopup
 
 from gui.elements.button import Button
 from gui.elements.list import List
@@ -56,14 +58,29 @@ class ContactItem:
             elif str(getattr(child, 'objectName', '')) == 'chat-icon':
                 self._chat_button = Button(name='', real_name=driver.objectMap.realName(child))
 
+    @allure.step('Accept request')
     def accept(self) -> MessagesScreen:
         assert self._accept_button is not None, 'Button not found'
         self._accept_button.click()
         return MessagesScreen().wait_until_appears()
 
+    @allure.step('Reject request')
     def reject(self):
         assert self._reject_button is not None, 'Button not found'
         self._reject_button.click()
+
+    @allure.step('Open more options popup')
+    def open_more_options_popup(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC, attempt: int = 2):
+        try:
+            self._open_canvas_button.click()
+            driver.waitFor(lambda: ContactsSettingsView()._view_profile_item.is_visible, timeout_msec)
+            return self
+        except:
+            if attempt:
+                self._open_canvas_button.click(attempt - 1)
+                return self
+            else:
+                raise f"Popup didn't appear"
 
 
 class ContactsSettingsView(QObject):
@@ -80,12 +97,16 @@ class ContactsSettingsView(QObject):
         self._contacts_panel = QObject('settingsContentBaseScrollView_mutualContacts_ContactsListPanel')
         self._invite_friends_button = QObject('settingsContentBaseScrollView_Invite_friends_StatusButton')
         self._no_friends_item = QObject('settingsContentBaseScrollView_NoFriendsRectangle')
+        # more options on contact
+        self._verify_identity_item = QObject('verify_Identity_StatusMenuItem')
+        self._respond_to_id_request_item = QObject('respond_to_ID_Request_StatusMenuItem')
+        self._view_profile_item = QObject('view_Profile_StatusMenuItem')
+        self._respond_to_id_request_button = Button('settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton')
 
     @property
     @allure.step('Get contact items')
     def contact_items(self) -> typing.List[ContactItem]:
         return [ContactItem(item) for item in self._contacts_items_list.items]
-
 
     @property
     @allure.step('Get title of list with sent pending requests')
@@ -115,10 +136,12 @@ class ContactsSettingsView(QObject):
     @allure.step('Open pending requests tab')
     def open_pending_requests(self):
         self._pending_request_tab.click()
+        return self
 
     @allure.step('Open contacts tab')
     def open_contacts(self):
         self._contacts_tab.click()
+        return self
 
     @allure.step('Open contacts request form')
     def open_contact_request_form(self) -> SendContactRequest:
@@ -132,7 +155,6 @@ class ContactsSettingsView(QObject):
     @allure.step('Accept contact request')
     def find_contact_in_list(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
-        self.open_pending_requests()
         started_at = time.monotonic()
         request = None
         while request is None:
@@ -146,11 +168,31 @@ class ContactsSettingsView(QObject):
     @allure.step('Accept contact request')
     def accept_contact_request(self, contact: str,
                                timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC) -> MessagesScreen:
+        self.open_pending_requests()
         request = self.find_contact_in_list(contact, timeout_sec)
         return request.accept()
 
     @allure.step('Reject contact request')
     def reject_contact_request(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
+        self.open_pending_requests()
         request = self.find_contact_in_list(contact, timeout_sec)
         request.reject()
+
+    @allure.step('Open verify identity popup')
+    def open_more_options_popup(
+            self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC, attempts: int = 2):
+        request = self.find_contact_in_list(contact, timeout_sec)
+        request.open_more_options_popup()
+        return self
+
+    def verify_identity(self):
+        self._verify_identity_item.click()
+        return VerifyIdentityPopup().wait_until_appears()
+
+    def is_respond_to_id_request_visible(self) -> bool:
+        return self._respond_to_id_request_item.is_visible
+
+    def respond_to_id_request(self):
+        self._respond_to_id_request_item.click()
+        return RespondToIDRequestPopup().wait_until_appears()
