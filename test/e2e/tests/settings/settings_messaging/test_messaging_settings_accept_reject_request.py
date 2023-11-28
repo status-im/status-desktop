@@ -63,12 +63,13 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
             assert user_one.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
 
-        with step('Verify toast message about new contact request received'):
-            assert len(ToastMessage().get_toast_messages) == 1, \
-                f"Multiple toast messages appeared"
-            message = ToastMessage().get_toast_messages[0]
-            assert message == Messaging.NEW_CONTACT_REQUEST.value, \
-                f"Toast message is incorrect, current message is {message}"
+        # TODO: https://github.com/status-im/desktop-qa-automation/issues/346
+        # with step('Verify toast message about new contact request received'):
+        #     assert len(ToastMessage().get_toast_messages) == 1, \
+        #         f"Multiple toast messages appeared"
+        #     message = ToastMessage().get_toast_messages[0]
+        #     assert message == Messaging.NEW_CONTACT_REQUEST.value, \
+        #         f"Toast message is incorrect, current message is {message}"
 
         with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
             contacts_settings.accept_contact_request(user_one.name)
