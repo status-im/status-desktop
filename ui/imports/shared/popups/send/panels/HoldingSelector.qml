@@ -29,6 +29,8 @@ Item {
     property var searchAssetSymbolByAddressFn: function (address) {
         return ""
     }
+    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
+    property var getCurrentCurrencyAmount: function(balance){}
 
     signal itemHovered(string holdingId, var holdingType)
     signal itemSelected(string holdingId, var holdingType)
@@ -301,6 +303,12 @@ Item {
                 d.currentHoldingType = Constants.TokenType.ERC20
                 root.itemSelected(selectedToken.symbol, Constants.TokenType.ERC20)
                 holdingItemSelector.comboBoxControl.popup.close()
+            }
+            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                return root.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+            }
+            getCurrentCurrencyAmount: function(balance){
+                return root.getCurrentCurrencyAmount(balance)
             }
         }
     }

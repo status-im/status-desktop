@@ -2,8 +2,12 @@ import QtQuick 2.15
 
 import Models 1.0
 import utils 1.0
-import StatusQ.Core.Utils 0.1
+import StatusQ 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import shared.stores 1.0
+import SortFilterProxyModel 0.2
+
+import AppLayouts.Wallet.stores 1.0
 
 QtObject {
     id: root
@@ -13,6 +17,9 @@ QtObject {
         Component.onCompleted: selectedSenderAccount = senderAccounts.get(0)
     }
     property var accounts: senderAccounts
+
+    property WalletAssetsStore walletAssetStore
+
     property QtObject tmpActivityController: QtObject {
         property ListModel model: ListModel{}
     }
@@ -58,32 +65,32 @@ QtObject {
     }
 
     function getAsset(assetsList, symbol) {
-        const idx = ModelUtils.indexOf(assetsList, "symbol", symbol)
+        const idx = SQUtils.ModelUtils.indexOf(assetsList, "symbol", symbol)
         if (idx < 0) {
             return {}
         }
-        return ModelUtils.get(assetsList, idx)
+        return SQUtils.ModelUtils.get(assetsList, idx)
     }
 
     function getCollectible(uid) {
-        const idx = ModelUtils.indexOf(collectiblesModel, "uid", uid)
+        const idx = SQUtils.ModelUtils.indexOf(collectiblesModel, "uid", uid)
         if (idx < 0) {
             return {}
         }
-        return ModelUtils.get(collectiblesModel, idx)
+        return SQUtils.ModelUtils.get(collectiblesModel, idx)
     }
 
     function getSelectorCollectible(uid) {
-        const idx = ModelUtils.indexOf(nestedCollectiblesModel, "uid", uid)
+        const idx = SQUtils.ModelUtils.indexOf(nestedCollectiblesModel, "uid", uid)
         if (idx < 0) {
             return {}
         }
-        return ModelUtils.get(nestedCollectiblesModel, idx)
+        return SQUtils.ModelUtils.get(nestedCollectiblesModel, idx)
     }
 
     function getHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(selectedSenderAccount.assets, holdingId)
+            return getAsset(walletAssetStore.builtAccountAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getCollectible(holdingId)
         } else {
@@ -93,7 +100,7 @@ QtObject {
 
     function getSelectorHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(selectedSenderAccount.assets, holdingId)
+            return getAsset(walletAssetStore.builtAccountAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getSelectorCollectible(holdingId)
         } else {
@@ -118,9 +125,9 @@ QtObject {
     }
 
     function holdingToSelectorHolding(holding, holdingType) {
-        if (holdingType === Constants.TokenType.Asset) {
+        if (holdingType === Constants.TokenType.ERC20) {
             return assetToSelectorAsset(holding)
-        } else if (holdingType === Constants.TokenType.Collectible) {
+        } else if (holdingType === Constants.TokenType.ERC721) {
             return collectibleToSelectorCollectible(holding)
         } else {
             return {}
@@ -179,7 +186,7 @@ QtObject {
         let listOfChains = chainIds.split(":")
         let listOfChainIds = []
         for (let k =0;k<listOfChains.length;k++) {
-            listOfChainIds.push(ModelUtils.getByKey(NetworksModel.allNetworks, "shortName", listOfChains[k], "chainId"))
+            listOfChainIds.push(SQUtils.ModelUtils.getByKey(NetworksModel.allNetworks, "shortName", listOfChains[k], "chainId"))
         }
         return listOfChainIds
     }
@@ -249,6 +256,17 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-        return ModelUtils.getByKey(NetworksModel.allNetworks, "chainId", chainId, "chainName")
+        return SQUtils.ModelUtils.getByKey(NetworksModel.allNetworks, "chainId", chainId, "chainName")
     }
+
+    function getCurrencyAmountFromBigInt(balance, symbol, decimals) {
+        let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
+        let balance123 = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
+        return currencyStore.getCurrencyAmount(balance123, symbol)
+    }
+
+    function getCurrentCurrencyAmount(balance) {
+        return currencyStore.getCurrencyAmount(balance, currencyStore.currentCurrency)
+    }
+
 }

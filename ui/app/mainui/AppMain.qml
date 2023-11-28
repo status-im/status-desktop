@@ -26,6 +26,7 @@ import shared.status 1.0
 import shared.stores 1.0
 import shared.popups.send 1.0
 import shared.popups.send.views 1.0
+import shared.stores.send 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -71,6 +72,7 @@ Item {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
+    readonly property CurrenciesStore currencyStore: CurrenciesStore{}
 
     // set from main.qml
     property var sysPalette
@@ -1277,6 +1279,8 @@ Item {
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
+                            walletAssetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
                         }
                     }
 
@@ -1451,7 +1455,10 @@ Item {
             property bool onlyAssets: false
 
             sourceComponent: SendModal {
-                onlyAssets: sendModal.onlyAssets
+                onlyAssets: sendModal.onlyAssets                
+                store: TransactionStore {
+                    walletAssetStore: appMain.walletAssetsStore
+                }
                 onClosed: {
                     sendModal.closed()
                     sendModal.preSelectedSendType = Constants.SendType.Unknown

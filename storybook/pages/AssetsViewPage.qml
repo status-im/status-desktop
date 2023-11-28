@@ -18,6 +18,8 @@ import Storybook 1.0
 import Models 1.0
 
 import AppLayouts.Wallet.views 1.0
+import AppLayouts.Wallet.stores 1.0
+
 
 SplitView {
     id: root
@@ -56,13 +58,13 @@ SplitView {
 
         readonly property var currencyStore: CurrenciesStore {}
 
-        readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
-        readonly property var tokensBySymbolModel: TokensBySymbolModel {}
-        readonly property CommunitiesModel communityModel: CommunitiesModel {}
+        property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+            assetsWithFilteredBalances: d.assetsWithFilteredBalances
+        }
 
         // Added this here simply because the network and address filtering wont work in Storybook applied in AssetsView
         readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
-            sourceModel: d.groupedAccountsAssetsModel
+            sourceModel: d.walletAssetStore.groupedAccountsAssetsModel
             submodelRoleName: "balances"
             delegateModel: SortFilterProxyModel {
                 sourceModel: submodel
@@ -71,35 +73,10 @@ SplitView {
                         d.networksChainsCurrentlySelected
                         d.addressesSelected
                         return d.networksChainsCurrentlySelected.split(":").includes(chainId+"") &&
-                                (!! d.addressesSelected ? d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
+                                (!!d.addressesSelected ?  d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
                     }
                 }
             }
-        }
-
-        // renaming tokens by symbol key so that can be used to join models
-        readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
-            sourceModel: d.tokensBySymbolModel
-            mapping: [
-                RoleRename {
-                    from: "key"
-                    to: "tokensKey"
-                }
-            ]
-        }
-
-        // join account assets and tokens by symbol model
-        property LeftJoinModel jointModel: LeftJoinModel {
-            leftModel: d.assetsWithFilteredBalances
-            rightModel: d.renamedTokensBySymbolModel
-            joinRole: "tokensKey"
-        }
-
-        // combining community model with assets to get community meta data
-        property LeftJoinModel builtAccountAssetsModel: LeftJoinModel {
-            leftModel: d.jointModel
-            rightModel: d.communityModel
-            joinRole: "communityId"
         }
     }
 
@@ -121,7 +98,7 @@ SplitView {
             Layout.fillHeight: true
             Layout.fillWidth: true
             areAssetsLoading: loadingCheckbox.checked
-            assets: d.builtAccountAssetsModel
+            assets: d.walletAssetStore.builtAccountAssetsModel
             filterVisible: ctrlFilterVisible.checked
             currencyStore: d.currencyStore
             networkFilters: d.networksChainsCurrentlySelected

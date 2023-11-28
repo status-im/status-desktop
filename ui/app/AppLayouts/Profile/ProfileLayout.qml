@@ -32,6 +32,8 @@ StatusSectionLayout {
     property var emojiPopup
     property var networkConnectionStore
     required property TokensStore tokensStore
+    required property WalletAssetsStore walletAssetsStore
+    required property SharedStores.CurrenciesStore currencyStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -122,6 +124,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                walletAssetsStore: root.walletAssetsStore
+                currencyStore: root.currencyStore
                 walletStore: root.store.walletStore
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore

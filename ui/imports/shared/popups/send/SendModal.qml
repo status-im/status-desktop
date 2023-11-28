@@ -8,6 +8,7 @@ import SortFilterProxyModel 0.2
 import utils 1.0
 import shared.stores.send 1.0
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
@@ -38,7 +39,7 @@ StatusDialog {
 
     property alias modalHeader: modalHeader.text
 
-    property TransactionStore store: TransactionStore {}
+    property TransactionStore store
     property var nestedCollectiblesModel: store.nestedCollectiblesModel
     property var bestRoutes
     property bool isLoading: false
@@ -76,8 +77,9 @@ StatusDialog {
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
                                                                            !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.totalCurrencyBalance.amount : 0
-        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.totalBalance.amount : 0
+        readonly property double totalSelectedHoldingBalance: isSelectedHoldingValidAsset ? !d.selectedHolding.communityId ? selectedHoldingAggregator.value/(10 ** d.selectedHolding.decimals): selectedHoldingAggregator.value: 0
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset && selectedHolding.marketDetails ? totalSelectedHoldingBalance * selectedHolding.marketDetails.currencyPrice.amount : 0
+        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? totalSelectedHoldingBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : store.selectedAssetSymbol
         readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
@@ -145,6 +147,23 @@ StatusDialog {
             
             return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
         }
+
+        property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
+            sourceModel: popup.store.walletAssetStore.groupedAccountAssetsModel
+            submodelRoleName: "balances"
+            delegateModel: SortFilterProxyModel {
+                sourceModel: submodel
+                filters: ExpressionFilter {
+                    expression: store.selectedSenderAccount.address === account
+                }
+            }
+        }
+    }
+
+    SumAggregator {
+        id: selectedHoldingAggregator
+        model: d.isSelectedHoldingValidAsset ? d.selectedHolding.balances: null
+        roleName: "balance"
     }
 
     width: 556
@@ -262,7 +281,7 @@ StatusDialog {
                             id: holdingSelector
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            assetsModel: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
+                            assetsModel: d.assetsWithFilteredBalances
                             collectiblesModel: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                             networksModel: popup.store.allNetworksModel
                             currentCurrencySymbol: d.currencyStore.currentCurrencySymbol
@@ -271,6 +290,12 @@ StatusDialog {
                             onItemSelected: {
                                 d.setSelectedHoldingId(holdingId, holdingType)
                             }
+                            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                                return store.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+                            }
+                            getCurrentCurrencyAmount: function(balance){
+                                return store.getCurrentCurrencyAmount(balance)
+                            }
                         }
 
                         StatusListItemTag {
@@ -278,22 +303,27 @@ StatusDialog {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
                             visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer
+                            SumAggregator {
+                                id: aggregator
+                                model: d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol ? d.hoveredHolding.balances: null
+                                roleName: "balance"
+                            }
                             title: {
                                 if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
-                                    const input = amountToSendInput.inputIsFiat ? d.hoveredHolding.totalCurrencyBalance.amount : d.hoveredHolding.totalBalance.amount
+                                    let totalAmount = !d.hoveredHolding.communityId ? aggregator.value/(10 ** d.hoveredHolding.decimals): aggregator.value
+                                    const input = amountToSendInput.inputIsFiat ? totalAmount * d.hoveredHolding.marketDetails.currencyPrice.amount : totalAmount
                                     const max = d.prepareForMaxSend(input, d.hoveredHolding.symbol)
                                     if (max <= 0)
                                         return qsTr("No balances active")
-
                                     const balance = d.currencyStore.formatCurrencyAmount(max , d.hoveredHolding.symbol)
-                                    return qsTr("Max: %1").arg(balance)
+                                    return qsTr("Max: %1").arg(balance.toString())
                                 }
                                 const max = d.prepareForMaxSend(d.maxInputBalance, d.inputSymbol)
                                 if (max <= 0)
                                     return qsTr("No balances active")
 
                                 const balance = d.currencyStore.formatCurrencyAmount(max, d.inputSymbol)
-                                return qsTr("Max: %1").arg(balance)
+                                return qsTr("Max: %1").arg(balance.toString())
                             }
                             tagClickable: true
                             closeButtonVisible: false
@@ -318,7 +348,7 @@ StatusDialog {
                             maxInputBalance: d.maxInputBalance
                             currentCurrency: d.currencyStore.currentCurrency
 
-                            multiplierIndex: holdingSelector.selectedItem
+                            multiplierIndex: !!holdingSelector.selectedItem
                                              ? holdingSelector.selectedItem.decimals
                                              : 0
 
@@ -397,7 +427,7 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
 
                         visible: !d.selectedHolding
-                        assets: popup.preSelectedAccount && popup.preSelectedAccount.assets ? popup.preSelectedAccount.assets : null
+                        assets: d.assetsWithFilteredBalances
                         collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.allNetworksModel
                         onlyAssets: holdingSelector.onlyAssets
@@ -414,6 +444,12 @@ StatusDialog {
                             } else {
                                 d.setHoveredHoldingId("", Constants.TokenType.Unknown)
                             }
+                        }
+                        getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                            return store.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+                        }
+                        getCurrentCurrencyAmount: function(balance){
+                            return store.getCurrentCurrencyAmount(balance)
                         }
                     }
 

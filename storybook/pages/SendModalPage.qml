@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
@@ -12,13 +13,33 @@ import shared.popups.send 1.0
 import shared.stores 1.0
 import shared.stores.send 1.0
 
+import SortFilterProxyModel 0.2
+import AppLayouts.Wallet.stores 1.0
+
 SplitView {
     id: root
 
     orientation: Qt.Horizontal
 
+    property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: root.assetsWithFilteredBalances
+    }
+
+
+    property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
+        sourceModel: root.walletAssetStore.groupedAccountsAssetsModel
+        submodelRoleName: "balances"
+        delegateModel: SortFilterProxyModel {
+            sourceModel: submodel
+            filters: ExpressionFilter {
+                expression: txStore.selectedSenderAccount.address === account
+            }
+        }
+    }
+
     TransactionStore {
         id: txStore
+        walletAssetStore: root.walletAssetStore
     }
 
     QtObject {
