@@ -1,14 +1,18 @@
-import NimQml, Tables, stint, sugar, sequtils, json, strutils, strformat, parseutils
+import NimQml, Tables, stint, sugar, sequtils, json, strutils, strformat, parseutils, chronicles
 import ./io_interface, ./view, ./controller, ./item, ./models/sticker_pack_list
 import ../io_interface as delegate_interface
-import ../../../global/global_singleton
-import ../../../core/eventemitter
-import ../../../../app_service/service/stickers/service as stickers_service
-import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/common/conversion as service_conversion
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/token/service as token_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/stickers/service as stickers_service
+import app_service/service/settings/service as settings_service
+import app_service/service/network/service as network_service
+import app_service/common/conversion as service_conversion
+import app_service/common/utils as common_utils
+import app_service/common/wallet_constants as common_wallet_constants
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/token/service as token_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/keycard/constants as keycard_constants
 
 export io_interface
 
@@ -18,12 +22,13 @@ const cancelledRequest* = "cancelled"
 type TmpBuyStickersTransactionDetails = object
   packId: string
   address: string
+  addressPath: string
   gas: string
   gasPrice: string
   maxPriorityFeePerGas: string
   maxFeePerGas: string
   eip1559Enabled: bool
-
+  txData: JsonNode
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -42,18 +47,27 @@ proc newModule*(
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
   tokenService: token_service.Service,
+  keycardService: keycard_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
+  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService,
+    networkService, tokenService, keycardService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)
 
 method delete*(self: Module) =
   self.view.delete
+
+proc clear(self: Module) =
+  self.tmpBuyStickersTransactionDetails = TmpBuyStickersTransactionDetails()
+
+proc finish(self: Module, chainId: int, txHash: string, error: string) =
+  self.clear()
+  self.view.transactionWasSent(chainId, txHash, error)
 
 method load*(self: Module) =
   self.controller.init()
@@ -76,53 +90,100 @@ method authenticateAndBuy*(self: Module, packId: string, address: string, gas: s
   self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
   self.tmpBuyStickersTransactionDetails.maxFeePerGas = maxFeePerGas
   self.tmpBuyStickersTransactionDetails.eip1559Enabled = eip1559Enabled
+  self.tmpBuyStickersTransactionDetails.txData = nil
 
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
+  let kp = self.controller.getKeypairByAccountAddress(address)
+  if kp.migratedToKeycard():
+    let accounts = kp.accounts.filter(acc => cmpIgnoreCase(acc.address, address) == 0)
+    if accounts.len != 1:
+      error "cannot resolve selected account to send from among known keypair accounts"
+      return
+    self.tmpBuyStickersTransactionDetails.addressPath = accounts[0].path
+    self.controller.authenticate(kp.keyUid)
   else:
-    self.controller.authenticateUser()
+    self.controller.authenticate()
 
-  ##################################
-  ## Do Not Delete
-  ##
-  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
-  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
-  ## address (key pair) is migrated to and sign the transaction using it.
-  ##
-  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
-  ##
-  ## let acc = self.controller.getAccountByAddress(from_addr)
-  ## if acc.isNil:
-  ##   echo "error: selected account to send a transaction from is not known"
-  ##   return
-  ## let keyPair = self.controller.getKeycardsWithSameKeyUid(acc.keyUid)
-  ## if keyPair.len == 0:
-  ##   self.controller.authenticateUser()
-  ## else:
-  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
-  ##
-  ##################################
+proc sendBuyingStickersTxWithSignatureAndWatch(self: Module, signature: string) =
+  if self.tmpBuyStickersTransactionDetails.txData.isNil:
+    let errMsg = "unexpected error while sending buying stickers tx"
+    error "error", msg=errMsg, methodName="sendBuyingStickersTxWithSignatureAndWatch"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
 
-method onUserAuthenticated*(self: Module, password: string) =
+  let response = self.controller.sendBuyingStickersTxWithSignatureAndWatch(
+    self.getChainIdForStickers(),
+    self.tmpBuyStickersTransactionDetails.txData,
+    self.tmpBuyStickersTransactionDetails.packId,
+    signature
+  )
+
+  if not response.error.isEmptyOrWhitespace():
+    error "sending buying stickers tx failed", errMsg=response.error, methodName="sendBuyingStickersTxWithSignatureAndWatch"
+    self.finish(chainId = 0, txHash =  "", error = response.error)
+    return
+
+  self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, installed = false, pending = true)
+  self.finish(response.chainId, response.txHash, response.error)
+
+method onKeypairAuthenticated*(self: Module, password: string, pin: string) =
   if password.len == 0:
-    let response = %* {"success": false, "error": cancelledRequest}
-    self.view.transactionWasSent(chainId = 0, txHash = "", error = cancelledRequest)
-  else:
-    let response = self.controller.buy(
-      self.tmpBuyStickersTransactionDetails.packId,
-      self.tmpBuyStickersTransactionDetails.address,
-      self.tmpBuyStickersTransactionDetails.gas,
-      self.tmpBuyStickersTransactionDetails.gasPrice,
-      self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas,
-      self.tmpBuyStickersTransactionDetails.maxFeePerGas,
-      password,
-      self.tmpBuyStickersTransactionDetails.eip1559Enabled
-    )
-    if response.error.isEmptyOrWhitespace():
-      self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, installed = false,
-        pending = true)
-    self.view.transactionWasSent(chainId = response.chainId, txHash = response.txHash, error = response.error)
+    self.finish(chainId = 0, txHash =  "", error = cancelledRequest)
+    return
+
+  let chainId = self.getChainIdForStickers()
+  let txDataJson = self.controller.prepareTxForBuyingStickers(
+    chainId,
+    self.tmpBuyStickersTransactionDetails.packId,
+    self.tmpBuyStickersTransactionDetails.address,
+    self.tmpBuyStickersTransactionDetails.gas,
+    self.tmpBuyStickersTransactionDetails.gasPrice,
+    self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas,
+    self.tmpBuyStickersTransactionDetails.maxFeePerGas,
+    self.tmpBuyStickersTransactionDetails.eip1559Enabled
+  )
+
+  if txDataJson.isNil or
+    txDataJson.kind != JsonNodeKind.JObject or
+    not txDataJson.hasKey("txArgs") or
+    not txDataJson.hasKey("messageToSign"):
+      let errMsg = "unexpected response format preparing tx for buying stickers"
+      error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+      self.finish(chainId = 0, txHash =  "", error = errMsg)
+      return
+
+  var txToBeSigned = txDataJson["messageToSign"].getStr
+  if txToBeSigned.len != common_wallet_constants.TX_HASH_LEN_WITH_PREFIX:
+    let errMsg = "unexpected tx hash length"
+    error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+
+  self.tmpBuyStickersTransactionDetails.txData = txDataJson["txArgs"]
+
+  if txDataJson.hasKey("signOnKeycard") and txDataJson["signOnKeycard"].getBool:
+    if pin.len != PINLengthForStatusApp:
+      let errMsg = "cannot proceed with keycard signing, unexpected pin"
+      error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+      self.finish(chainId = 0, txHash =  "", error = errMsg)
+      return
+    var txForKcFlow = txToBeSigned
+    if txForKcFlow.startsWith("0x"):
+      txForKcFlow = txForKcFlow[2..^1]
+    self.controller.runSignFlow(pin, self.tmpBuyStickersTransactionDetails.addressPath, txForKcFlow)
+    return
+
+  var finalPassword = password
+  if pin.len == 0:
+    finalPassword = common_utils.hashPassword(password)
+
+  let signature = self.controller.signBuyingStickersTxLocally(txToBeSigned, self.tmpBuyStickersTransactionDetails.address, finalPassword)
+  if signature.len == 0:
+    let errMsg = "couldn't sign tx locally"
+    error "error", msg=errMsg, methodName="onKeypairAuthenticated"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+
+  self.sendBuyingStickersTxWithSignatureAndWatch(signature)
 
 method obtainMarketStickerPacks*(self: Module) =
   self.controller.obtainMarketStickerPacks()
@@ -258,3 +319,12 @@ method stickerTransactionConfirmed*(self: Module, trxType: string, packID: strin
 method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, installed = false, pending = false)
   self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType)
+
+method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if keycardFlowType != keycard_constants.ResponseTypeValueKeycardFlowResult:
+    let errMsg = "unexpected error while keycard signing transaction"
+    error "error", msg=errMsg, methodName="onTransactionSigned"
+    self.finish(chainId = 0, txHash =  "", error = errMsg)
+    return
+  let signature = "0x" & keycardEvent.txSignature.r & keycardEvent.txSignature.s & keycardEvent.txSignature.v
+  self.sendBuyingStickersTxWithSignatureAndWatch(signature)

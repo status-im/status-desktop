@@ -11,6 +11,10 @@ proc pending*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   return core.callPrivateRPC("stickers_pending", payload)
 
+proc addPending*(chainId: int, packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, packId]
+  result = core.callPrivateRPC("stickers_addPending", payload)
+
 proc installed*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   return core.callPrivateRPC("stickers_installed", payload)
@@ -50,3 +54,7 @@ proc clearRecentStickers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc removePending*(packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [packId]
   return core.callPrivateRPC("stickers_removePending", payload)
+
+proc prepareTxForBuyingStickers*(chainId: int, address: string, packId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, address, packId]
+  result = core.callPrivateRPC("stickers_buyPrepareTx", payload)
