@@ -279,7 +279,7 @@ StatusListItem {
             const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
             const finalisationTimeStamp = WalletUtils.calculateFinalisationTimestamp(networkLayer, modelData.timestamp)
             details += qsTr("Status") + endl
-            const epoch = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber)
+            const epoch = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainId) - detailsObj.blockNumberOut)
             details += qsTr("Finalised in epoch %1 on %2").arg(epoch.toFixed(0)).arg(root.networkName) + endl2
             details += qsTr("Signed on %1").arg(root.networkName) + endl + timestampString + endl2
             details += qsTr("Confirmed on %1").arg(root.networkName) + endl
@@ -290,7 +290,7 @@ StatusListItem {
                 const networkInLayer = rootStore.getNetworkLayer(modelData.chainIdIn)
                 const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
                 const finalisationTimeStampIn = WalletUtils.calculateFinalisationTimestamp(networkInLayer, modelData.timestamp)
-                const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumber)
+                const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumberIn)
                 details += qsTr("Finalised in epoch %1 on %2").arg(epochIn.toFixed(0)).arg(root.networkNameIn) + endl2
                 details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
                 details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
@@ -337,12 +337,11 @@ StatusListItem {
         if (!!detailsObj.protocol) {
             details += qsTr("Using") + endl + detailsObj.protocol + endl2
         }
-        if (!!modelData.txHash) {
-            details += qsTr("%1 Tx hash").arg(root.networkName) + endl + modelData.txHash + endl2
+        if (!!detailsObj.txHashOut) {
+            details += qsTr("%1 Tx hash").arg(root.networkName) + endl + detailsObj.txHashOut + endl2
         }
-        const bridgeTxHash = "" // TODO fill tx hash for Bridge
-        if (!!bridgeTxHash) {
-            details += qsTr("%1 Tx hash").arg(networkNameOut) + endl + bridgeTxHash + endl2
+        if (!!detailsObj.txHashIn) {
+            details += qsTr("%1 Tx hash").arg(networkNameIn) + endl + detailsObj.txHashIn + endl2
         }
         const protocolFromContractAddress = "" // TODO fill protocol contract address for 'from' network for Bridge and Swap
         if (!!detailsObj.protocol && !!protocolFromContractAddress) {
@@ -359,19 +358,17 @@ StatusListItem {
             details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(detailsObj.protocol) + endl
             details += protocolToContractAddress + endl2
         }
-        const swapContractAddress = "" // TODO fill swap contract address for Swap
-        const bridgeContractAddress = "" // TODO fill token's contract address for 'to' network for Bridge
         switch (type) {
         case Constants.TransactionType.Swap:
-            if (!!swapContractAddress) {
+            if (!!detailsObj.contractOut) {
                 details += qsTr("%1 %2 contract address").arg(root.networkName).arg(modelData.toSymbol) + endl
-                details += swapContractAddress + endl2
+                details += detailsObj.contractOut + endl2
             }
             break
         case Constants.TransactionType.Bridge:
-            if (!!bridgeContractAddress) {
+            if (!!detailsObj.contractOut) {
                 details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(modelData.symbol) + endl
-                details += bridgeContractAddress + endl2
+                details += detailsObj.contractOut + endl2
             }
             break
         default:
@@ -388,14 +385,13 @@ StatusListItem {
         details += qsTr("Nonce") + endl + detailsObj.nonce + endl2
         if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
-            details += detailsObj.blockNumber  + endl2
-            const bridgeBlockNumber = 0 // TODO fill when bridge data is implemented
-            if (bridgeBlockNumber > 0) {
+            details += detailsObj.blockNumberOut  + endl2
+            if (detailsObj.blockNumberIn > 0) {
                 details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
-                details += bridgeBlockNumber  + endl2
+                details += detailsObj.blockNumberIn + endl2
             }
         } else {
-            details += qsTr("Included in Block") + endl + detailsObj.blockNumber  + endl2
+            details += qsTr("Included in Block") + endl + detailsObj.blockNumberOut  + endl2
         }
 
         // VALUES
