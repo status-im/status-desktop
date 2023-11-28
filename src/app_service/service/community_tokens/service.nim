@@ -221,7 +221,6 @@ const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokens-communityTokenRemoved"
 const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "communityTokens-ownerTokenDeployStatus"
 const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "communityTokens-ownerTokenDeploymentStarted"
 const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokens-communityTokenDetailsLoaded"
-const SIGNAL_ALL_COMMUNITY_TOKENS_LOADED* = "communityTokens-allCommunityTokensLoaded"
 const SIGNAL_OWNER_TOKEN_RECEIVED* = "communityTokens-ownerTokenReceived"
 const SIGNAL_SET_SIGNER_STATUS* = "communityTokens-setSignerStatus"
 const SIGNAL_FINALISE_OWNERSHIP_STATUS* = "communityTokens-finaliseOwnershipStatus"
@@ -250,7 +249,10 @@ QtObject:
       tempGasTable: Table[ContractTuple, int] # gas per contract, filled during gas computation, used during operation (deployment, mint, burn)
       tempTokensAndAmounts: seq[CommunityTokenAndAmount]
 
+      communityTokensCache: seq[CommunityTokenDto]
+
   # Forward declaration
+  proc getAllCommunityTokensAsync*(self: Service)
   proc fetchAllTokenOwners*(self: Service)
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner]
   proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
@@ -371,7 +373,42 @@ QtObject:
     except Exception as e:
       error "Error processing set signer transaction", msg=e.msg
 
+  # cache functions
+  proc saveCommunityTokenAndUpdateCache(self: Service, tokenToSave: CommunityTokenDto, croppedImageJson: string): CommunityTokenDto =
+    let savedTokenJson = tokens_backend.saveCommunityToken(tokenToSave, croppedImageJson)
+    let savedToken = savedTokenJson.result.toCommunityTokenDto()
+    self.communityTokensCache.add(savedToken)
+    return savedToken
+
+  proc updateCommunityTokenSupplyAndUpdateCache(self: Service, chainId: int, contractAddress: string, supply: Uint256) =
+    discard updateCommunityTokenSupply(chainId, contractAddress, supply)
+    for i in 0..self.communityTokensCache.len-1:
+      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
+        self.communityTokensCache[i].supply = supply
+        return
+
+  proc updateCommunityTokenStateAndUpdateCache(self: Service, chainId: int, contractAddress: string, deployState: DeployState) =
+    discard updateCommunityTokenState(chainId, contractAddress, deployState)
+    for i in 0..self.communityTokensCache.len-1:
+      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
+        self.communityTokensCache[i].deployState = deployState
+        return
+
+  proc updateCommunityTokenAddressAndUpdateCache(self: Service, chainId: int, contractAddress: string, newAddress: string) =
+    discard updateCommunityTokenAddress(chainId, contractAddress, newAddress)
+    for i in 0..self.communityTokensCache.len-1:
+      if self.communityTokensCache[i].chainId == chainId and self.communityTokensCache[i].address == contractAddress:
+        self.communityTokensCache[i].address = newAddress
+        return
+
+  proc removeCommunityTokenAndUpdateCache(self: Service, chainId: int, contractAddress: string) =
+    discard tokens_backend.removeCommunityToken(chainId, contractAddress)
+    self.communityTokensCache = self.communityTokensCache.filter(x => ((x.chainId != chainId) or (x.address != contractAddress)))
+  
+  # end of cache functions
+
   proc init*(self: Service) =
+    self.getAllCommunityTokensAsync()
     self.fetchAllTokenOwners()
     self.tokenOwnersTimer.start()
 
@@ -394,7 +431,7 @@ QtObject:
         if not receivedData.success:
           error "Community contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
         try:
-          discard updateCommunityTokenState(tokenDto.chainId, tokenDto.address, deployState) #update db state
+          self.updateCommunityTokenStateAndUpdateCache(tokenDto.chainId, tokenDto.address, deployState)
           # now add community token to community and publish update
           let response = tokens_backend.addCommunityToken(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
           if response.error != nil:
@@ -435,12 +472,12 @@ QtObject:
           debug "Minted master token contract address:", masterContractAddress
 
           # update master token address
-          discard updateCommunityTokenAddress(ownerTransactionDetails.masterToken.chainId, ownerTransactionDetails.masterToken.address, masterContractAddress)
+          self.updateCommunityTokenAddressAndUpdateCache(ownerTransactionDetails.masterToken.chainId, ownerTransactionDetails.masterToken.address, masterContractAddress)
           # update owner token address
-          discard updateCommunityTokenAddress(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, ownerContractAddress)
+          self.updateCommunityTokenAddressAndUpdateCache(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, ownerContractAddress)
           #update db state for owner and master token
-          discard updateCommunityTokenState(ownerTransactionDetails.ownerToken.chainId, ownerContractAddress, deployState)
-          discard updateCommunityTokenState(ownerTransactionDetails.masterToken.chainId, masterContractAddress, deployState)
+          self.updateCommunityTokenStateAndUpdateCache(ownerTransactionDetails.ownerToken.chainId, ownerContractAddress, deployState)
+          self.updateCommunityTokenStateAndUpdateCache(ownerTransactionDetails.masterToken.chainId, masterContractAddress, deployState)
           # now add owner token to community and publish update
           var response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.ownerToken.chainId, ownerContractAddress)
           if response.error != nil:
@@ -472,7 +509,7 @@ QtObject:
         let data = AirdropArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
         self.events.emit(SIGNAL_AIRDROP_STATUS, data)
 
-        # update owners list if burn was successfull
+        # update owners list if airdrop was successfull
         if receivedData.success:
           self.tempTokenOwnersToFetch = tokenDto
           self.tokenOwners1SecTimer.start()
@@ -488,7 +525,7 @@ QtObject:
         let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus, remoteDestructAddresses: @[])
         self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
 
-        # update owners list if burn was successfull
+        # update owners list if remote destruct was successfull
         if receivedData.success:
           self.tempTokenOwnersToFetch = tokenDto
           self.tokenOwners1SecTimer.start()
@@ -502,7 +539,7 @@ QtObject:
         let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
         if receivedData.success:
           try:
-            discard updateCommunityTokenSupply(tokenDto.chainId, tokenDto.address, tokenDto.supply) #update db state
+            self.updateCommunityTokenSupplyAndUpdateCache(tokenDto.chainId, tokenDto.address, tokenDto.supply)
           except RpcException:
             error "Error updating collectibles supply", message = getCurrentExceptionMsg()
         let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
@@ -545,9 +582,7 @@ QtObject:
     var croppedImage = croppedImageJson.parseJson
     croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
 
-    # save token to db
-    let communityTokenJson = tokens_backend.saveCommunityToken(communityToken, $croppedImage)
-    let addedCommunityToken = communityTokenJson.result.toCommunityTokenDto()
+    let addedCommunityToken = self.saveCommunityTokenAndUpdateCache(communityToken, $croppedImage)
     let data = CommunityTokenDeploymentArgs(communityToken: addedCommunityToken, transactionHash: transactionHash)
     self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
 
@@ -597,11 +632,8 @@ QtObject:
       ownerToken.image = croppedImage{"imagePath"}.getStr
       masterToken.image = croppedImage{"imagePath"}.getStr
 
-      let ownerTokenJson = tokens_backend.saveCommunityToken(ownerToken, "")
-      let addedOwnerToken = ownerTokenJson.result.toCommunityTokenDto()
-
-      let masterTokenJson = tokens_backend.saveCommunityToken(masterToken, "")
-      let addedMasterToken = masterTokenJson.result.toCommunityTokenDto()
+      let addedOwnerToken = self.saveCommunityTokenAndUpdateCache(ownerToken, "")
+      let addedMasterToken = self.saveCommunityTokenAndUpdateCache(masterToken, "")
 
       let data = OwnerTokenDeploymentArgs(ownerToken: addedOwnerToken, masterToken: addedMasterToken, transactionHash: transactionHash)
       self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED, data)
@@ -655,18 +687,10 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
   proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
-    try:
-      let response = tokens_backend.getCommunityTokens(communityId)
-      return parseCommunityTokens(response)
-    except RpcException:
-        error "Error getting community tokens", message = getCurrentExceptionMsg()
+    return self.communityTokensCache.filter(x => (x.communityId == communityId))
 
   proc getAllCommunityTokens*(self: Service): seq[CommunityTokenDto] =
-    try:
-      let response = tokens_backend.getAllCommunityTokens()
-      return parseCommunityTokens(response)
-    except RpcException:
-        error "Error getting all community tokens", message = getCurrentExceptionMsg()
+    return self.communityTokensCache
 
   proc getCommunityTokensDetailsAsync*(self: Service, communityId: string) =
     let arg = GetCommunityTokensDetailsArg(
@@ -707,22 +731,17 @@ QtObject:
   proc onGotAllCommunityTokens*(self:Service, response: string) {.slot.} =
     try:
       let responseJson = parseJson(response)
-      let communityTokens = map(responseJson["response"]["result"].getElems(),
+      self.communityTokensCache = map(responseJson["response"]["result"].getElems(),
         proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
-      self.events.emit(SIGNAL_ALL_COMMUNITY_TOKENS_LOADED, CommunityTokensArgs(communityTokens: communityTokens))
     except RpcException as e:
       error "Error getting all community tokens async", message = e.msg
 
   proc removeCommunityToken*(self: Service, communityId: string, chainId: int, address: string) =
     try:
-      let response = tokens_backend.removeCommunityToken(chainId, address)
-      if response.error != nil:
-        let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, "error removing community token: " & error.message)
+      self.removeCommunityTokenAndUpdateCache(chainId, address)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_REMOVED, CommunityTokenRemovedArgs(communityId: communityId, contractAddress: address, chainId: chainId))
-
-    except RpcException as e:
-      error "Error removing community token", message = getCurrentExceptionMsg()
+    except Exception as e:
+      error "Error removing community token", message = e.msg
       self.events.emit(SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED, Args())
 
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =

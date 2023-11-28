@@ -247,6 +247,8 @@ const SIGNAL_COMMUNITY_LOST_OWNERSHIP* = "communityLostOwnership"
 const SIGNAL_COMMUNITY_SHARD_SET* = "communityShardSet"
 const SIGNAL_COMMUNITY_SHARD_SET_FAILED* = "communityShardSetFailed"
 
+const SIGNAL_COMMUNITY_TOKENS_CHANGED* = "communityTokensChanged"
+
 QtObject:
   type
     Service* = ref object of QObject
@@ -507,6 +509,12 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
       CommunityMembersArgs(communityId: community.id, members: community.members))
 
+  proc communityTokensChanged(self: Service, community: CommunityDto, prev_community: CommunityDto): bool =
+    let communityTokens = community.communityTokensMetadata
+    let prevCommunityTokens = prev_community.communityTokensMetadata
+    # checking length is sufficient - communityTokensMetadata list can only extend
+    return communityTokens.len != prevCommunityTokens.len
+
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
       let myPublicKey = singletonInstance.userProfile.getPubKey()
@@ -526,6 +534,9 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_LOST_OWNERSHIP, CommunityIdArgs(communityId: community.id))
         let response = tokens_backend.registerLostOwnershipNotification(community.id)
         checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+
+      if self.communityTokensChanged(community, prev_community):
+        self.events.emit(SIGNAL_COMMUNITY_TOKENS_CHANGED, nil)
 
       # If there's settings without `id` it means the original
       # signal didn't include actual communitySettings, hence we

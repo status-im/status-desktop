@@ -95,6 +95,7 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
+proc buildTokensAndCollectiblesFromCommunities(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -158,8 +159,7 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  # Get all community tokens to construct the original list of collectibles and assets from communities
-  self.controller.getAllCommunityTokensAsync()
+  self.buildTokensAndCollectiblesFromCommunities()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -555,10 +555,11 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     infiniteSupply,
   )
 
-proc buildTokensAndCollectiblesFromCommunities(self: Module, communityTokens: seq[CommunityTokenDto]) =
+proc buildTokensAndCollectiblesFromCommunities(self: Module) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
+  let communityTokens = self.controller.getAllCommunityTokens()
   let communities = self.controller.getAllCommunities()
   for community in communities:
     if not community.isOwner and not community.isTokenMaster:
@@ -613,9 +614,6 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
 
 method onWalletAccountTokensRebuilt*(self: Module) =
   self.buildTokensAndCollectiblesFromWallet()
-
-method onAllCommunityTokensLoaded*(self: Module, communityTokens: seq[CommunityTokenDto]) =
-  self.buildTokensAndCollectiblesFromCommunities(communityTokens)
 
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
   let communityTokens = self.controller.getCommunityTokens(communityId)
