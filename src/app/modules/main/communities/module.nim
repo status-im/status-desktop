@@ -557,7 +557,7 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module, communityTokens: se
 
   let communities = self.controller.getAllCommunities()
   for community in communities:
-    if not community.isOwner or not community.isTokenMaster:
+    if not community.isOwner and not community.isTokenMaster:
       # No need to include those tokens, we do not manage that community
       continue
 
