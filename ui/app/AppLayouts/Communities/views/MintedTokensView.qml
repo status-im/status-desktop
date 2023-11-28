@@ -26,6 +26,7 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
     property string communityName
+    property string communityId
     property bool anyPrivilegedTokenFailed: false
     readonly property int count: assetsModel.count + collectiblesModel.count
 
@@ -247,6 +248,7 @@ StatusScrollView {
                     navigationIconVisible: false
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
+                    communityId: root.communityId
 
                     onClicked: root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,

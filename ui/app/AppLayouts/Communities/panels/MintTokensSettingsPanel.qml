@@ -163,6 +163,7 @@ StackView {
             isOwner: root.isOwner
             isAdmin: root.isAdmin
             communityName: root.communityName
+            communityId: root.communityId
             anyPrivilegedTokenFailed: root.anyPrivilegedTokenFailed
 
             onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
