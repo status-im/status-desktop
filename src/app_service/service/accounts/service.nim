@@ -263,6 +263,11 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareSubaccountJsonObject(self.importedAccount, displayName)
 
+  proc toStatusGoSupportedLogLevel*(logLevel: string): string =
+    if logLevel == "TRACE":
+      return "DEBUG"
+    return logLevel
+
   proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
     installationId: string, displayName: string): JsonNode =
     result = %* {
@@ -343,7 +348,7 @@ QtObject:
       result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
       result["Rendezvous"] = newJBool(false)
 
-    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
+    result["LogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
 
     if STATUS_PORT != 0:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
@@ -407,7 +412,7 @@ QtObject:
       "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
     }
 
-    result["LogLevel"] = newJString(main_constants.LOG_LEVEL)
+    result["LogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
 
     if STATUS_PORT != 0:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)

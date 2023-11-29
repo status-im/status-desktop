@@ -273,6 +273,7 @@ proc isDebugEnabled*(self: Service): bool =
   return self.getLogLevel() == $LogLevel.DEBUG
 
 proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
+  echo "<<< node_configuration.service.setLogLevel " & $logLevel
   var newConfiguration = self.configuration
   newConfiguration.LogLevel = $logLevel
   if self.saveConfiguration(newConfiguration):

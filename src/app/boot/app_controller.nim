@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles, os, uuids
+import NimQml, sequtils, sugar, chronicles, uuids
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -133,7 +133,7 @@ proc connect(self: AppController) =
     discard
 
   # Handle runtime log level settings changes
-  if not existsEnv("LOG_LEVEL"):
+  if not main_constants.runtimeLogLevelSet():
     self.statusFoundation.events.on(node_configuration_service.SIGNAL_NODE_LOG_LEVEL_UPDATE) do(a: Args):
       let args = NodeLogLevelUpdatedArgs(a)
       if args.logLevel == chronicles.LogLevel.DEBUG:
@@ -439,7 +439,7 @@ proc load(self: AppController) =
   self.walletAccountService.init()
 
   # Apply runtime log level settings
-  if not existsEnv("LOG_LEVEL"):
+  if not main_constants.runtimeLogLevelSet():
     if self.nodeConfigurationService.isDebugEnabled():
       setLogLevel(chronicles.LogLevel.DEBUG)
 
