@@ -2,12 +2,15 @@ import tables, sequtils, stint, sugar
 
 import ../shared_models/[balance_item, currency_amount, token_item, token_model, wallet_account_item]
 
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/currency/dto as currency_dto
+import backend/helpers/token
+
+import app_service/service/currency/dto as currency_dto
 
 import ../main/wallet_section/accounts/item as wallet_accounts_item
 import ../main/wallet_section/assets/item as wallet_assets_item
 import ../main/wallet_section/send/account_item as wallet_send_account_item
+
+import backend/helpers/balance
 
 proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : CurrencyAmount =
   return newCurrencyAmount(

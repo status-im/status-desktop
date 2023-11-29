@@ -1,3 +1,5 @@
+import backend/helpers/token
+
 #################################################
 # Special signal emitted by main module and handled in wallet account service
 #################################################

@@ -1,10 +1,8 @@
-import tables, json, strformat, stint, strutils
+import tables, json, strformat, stint, strutils, sequtils
 
-import balance_dto
+import backend/helpers/balance
 
-include  app_service/common/json_utils
-
-export balance_dto
+include app_service/common/json_utils
 
 type
   TokenMarketValuesDto* = object
@@ -179,4 +177,11 @@ proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: str
       sum += self.balancesPerChain[chainId].getCurrencyBalance(price)
   return sum
 
+proc parseWalletTokenDtoJson*(jsonData: JsonNode): seq[WalletTokenDto] =
+    if jsonData.kind != JArray:
+        raise newException(Exception, "Invalid tokens details json")
 
+    var tokens: seq[WalletTokenDto]
+    tokens = map(jsonData.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+
+    return tokens

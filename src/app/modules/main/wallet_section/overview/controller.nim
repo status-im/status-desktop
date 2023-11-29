@@ -1,13 +1,15 @@
 import io_interface
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/currency/service as currency_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/currency/service as currency_service
+
+import backend/helpers/token
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     walletAccountService: wallet_account_service.Service
     currencyService: currency_service.Service
- 
+
 proc newController*(
   delegate: io_interface.AccessInterface,
   walletAccountService: wallet_account_service.Service,
@@ -27,7 +29,7 @@ proc init*(self: Controller) =
 proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getAccountsByAddresses(addresses)
 
-proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletTokenDto] =
+proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
 
 proc getCurrentCurrency*(self: Controller): string =

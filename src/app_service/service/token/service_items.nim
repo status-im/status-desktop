@@ -1,8 +1,8 @@
 import strformat
 
 import app_service/common/types as common_types
-#TODO: remove dependency
-import ../wallet_account/dto/token_dto
+
+import backend/helpers/token
 
 # This file holds the data types used by models internally
 

@@ -6,14 +6,14 @@ import backend/backend as backend
 
 import app_service/service/network/service as network_service
 import app_service/service/settings/service as settings_service
-import app_service/service/wallet_account/dto/account_dto
 
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
 import app/core/signals/types
 import app_service/common/cache
-import ../../../constants as main_constants
+import constants as main_constants
 import ./dto, ./service_items
+import backend/helpers/token
 
 export dto, service_items
 

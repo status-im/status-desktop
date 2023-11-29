@@ -1,7 +1,9 @@
 import NimQml, tables
 import app/core/eventemitter
 from app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
-from app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
+
+from backend/helpers/token import WalletTokenDto
+
 import app/modules/shared_models/keypair_item
 
 type FlowType* {.pure.} = enum

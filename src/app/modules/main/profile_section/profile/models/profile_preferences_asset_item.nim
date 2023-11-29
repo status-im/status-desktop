@@ -5,10 +5,12 @@ import profile_preferences_base_item
 import app_service/service/wallet_account/dto/account_dto
 import app_service/service/profile/dto/profile_showcase_preferences
 
-import ../../../../shared_models/currency_amount
+import app/modules/shared_models/currency_amount
 
 include app_service/common/json_utils
 include app_service/common/utils
+
+import backend/helpers/token
 
 type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem

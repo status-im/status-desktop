@@ -1,15 +1,17 @@
 import NimQml, sequtils, sugar
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../shared/wallet_utils
-import ../../../shared_models/currency_amount
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/currency/service as currency_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app/modules/shared/wallet_utils
+import app/modules/shared_models/currency_amount
 import ./item
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
+
+import backend/helpers/token
 
 export io_interface
 

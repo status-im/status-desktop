@@ -1,20 +1,21 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, sets, strutils, tables, stint
+import NimQml, Tables, json, sequtils, chronicles, strutils, sets, stint
 
 import httpclient
 
-import ../../../app/core/[main]
-import ../../../app/core/tasks/[qt, threadpool]
+import app/core/[main]
+import app/core/tasks/[qt, threadpool]
 
-import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
-import json, tables, json_serialization
+import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization
 
-import ../../../backend/stickers as status_stickers
-import ../../../backend/chat as status_chat
-import ../../../backend/response_type
-import ../../../backend/eth as status_eth
-import ../../../backend/backend as status_go_backend
-import ../../../backend/wallet_connect as status_wallet_connect
-import ../../../backend/wallet as status_wallet
+import backend/stickers as status_stickers
+import backend/chat as status_chat
+import backend/response_type
+import backend/eth as status_eth
+import backend/helpers/helpers
+import backend/backend as status_go_backend
+import backend/wallet_connect as status_wallet_connect
+import backend/wallet as status_wallet
+
 import ./dto/stickers
 import ../ens/utils as ens_utils
 import ../token/service as token_service
@@ -24,8 +25,8 @@ import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
-import ../../common/types
-import ../../common/utils as common_utils
+import app_service/common/types
+import app_service/common/utils as common_utils
 import ../eth/utils as status_utils
 
 export StickerDto
@@ -394,8 +395,10 @@ QtObject:
     let account = self.walletAccountService.getWalletAccount(0).address
     let network = self.networkService.getNetworkForStickers()
 
-    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.address]).result
-    return ens_utils.hex2Token(balances{account}{token.address}.getStr, token.decimals)
+    let info = getTokenBalanceForAccount(network.chainId, account, token.address)
+    if info.isNone:
+      return "0"
+    return ens_utils.hex2Token(info.get().rawBalance.toString(16), token.decimals)
 
   # proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string): JsonNode =
   proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,

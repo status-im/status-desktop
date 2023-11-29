@@ -1,13 +1,16 @@
-import json, strformat, stint, strutils
+import json, tables, stint, strutils, net, options, chronicles, strformat
 
-include  app_service/common/json_utils
+import backend/backend
 
-type BalanceDto* = object
-  rawBalance*: Uint256
-  balance*: float64
-  address*: string
-  chainId*: int
-  hasError*: bool
+include app_service/common/json_utils
+
+type
+  BalanceDto* = object
+    rawBalance*: Uint256
+    balance*: float64
+    address*: string
+    chainId*: int
+    hasError*: bool
 
 proc `$`*(self: BalanceDto): string =
   result = fmt"""BalanceDto[

@@ -8,8 +8,10 @@ import app/global/global_singleton
 import backend/ens as status_ens
 import backend/backend as status_go_backend
 import backend/wallet as status_wallet
+import backend/helpers/helpers
 
 import app_service/common/conversion as common_conversion
+
 import utils as ens_utils
 import app_service/service/settings/service as settings_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -311,8 +313,11 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let balances = status_go_backend.getTokensBalancesForChainIDs(@[self.getChainId()], @[account], @[token.address]).result
-    return ens_utils.hex2Token(balances{account}{token.address}.getStr, token.decimals)
+
+    let info = getTokenBalanceForAccount(self.getChainId(), account, token.symbol)
+    if info.isNone:
+      return "0"
+    return ens_utils.hex2Token(info.get().rawBalance.toString(16), token.decimals)
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:

@@ -1,16 +1,18 @@
 import NimQml, Tables, sequtils, strutils, sugar
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/token/service as token_service
-import ../../../../../app_service/service/currency/service as currency_service
-import ../../../shared/wallet_utils
-import ../../../shared_models/token_model as token_model
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/token/service as token_service
+import app_service/service/currency/service as currency_service
+import app/modules/shared/wallet_utils
+import app/modules/shared_models/token_model as token_model
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
+
+import backend/helpers/token
 
 export io_interface
 

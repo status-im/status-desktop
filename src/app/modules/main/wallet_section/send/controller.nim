@@ -15,6 +15,8 @@ import app/modules/shared_models/currency_amount
 import app/core/signals/types
 import app/core/eventemitter
 
+import backend/helpers/token
+
 logScope:
   topics = "wallet-send-controller"
 
