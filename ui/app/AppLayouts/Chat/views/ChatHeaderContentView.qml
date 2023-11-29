@@ -232,7 +232,7 @@ Item {
                 onAddRemoveGroupMember: {
                     root.addRemoveGroupMember()
                 }
-                onFetchMoreMessages: {
+                onRequestMoreMessages: {
                     messageStore.requestMoreMessages();
                 }
                 onLeaveGroup: {

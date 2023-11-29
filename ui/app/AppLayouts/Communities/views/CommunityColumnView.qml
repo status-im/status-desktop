@@ -339,6 +339,10 @@ Item {
                     root.communitySectionModule.markAllMessagesRead(chatId)
                 }
 
+                onRequestMoreMessages: {
+                    root.communitySectionModule.requestMoreMessages(chatId)
+                }
+
                 onClearChatHistory: {
                     root.communitySectionModule.clearChatHistory(chatId)
                 }

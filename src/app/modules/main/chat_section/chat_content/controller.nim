@@ -8,6 +8,7 @@ import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
+import ../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ../../../../core/signals/types
@@ -26,6 +27,7 @@ type
     isUsersListAvailable: bool #users list is not available for 1:1 chat
     nodeConfigurationService: node_configuration_service.Service
     settingsService: settings_service.Service
+    mailserversService: mailservers_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
@@ -220,6 +222,9 @@ proc unblockChat*(self: Controller) =
 
 proc markAllMessagesRead*(self: Controller) =
   self.messageService.markAllMessagesRead(self.chatId)
+
+proc requestMoreMessages*(self: Controller) =
+  self.mailserversService.requestMoreMessages(self.chatId)
 
 proc markMessageRead*(self: Controller, msgID: string) =
   self.messageService.markCertainMessagesRead(self.chatId, @[msgID])

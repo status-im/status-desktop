@@ -42,7 +42,7 @@ StatusMenu {
 
     signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
     signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor, string newCategory)
-    signal fetchMoreMessages(int timeFrame)
+    signal requestMoreMessages(string chatId)
     signal addRemoveGroupMember()
 
     width: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat) ? 207 : implicitWidth
@@ -124,39 +124,15 @@ StatusMenu {
         }
     }
 
-    //TODO uncomment when implemented
-//    StatusMenu {
-//        title: qsTr("Fetch messages")
-//        enabled: (root.chatType === Constants.chatType.oneToOne ||
-//                  root.chatType === Constants.chatType.privateGroupChat)
-//        StatusAction {
-//            text: "Last 24 hours"
-//            onTriggered: {
-//                root.fetchMoreMessages();
-//            }
-//        }
-
-//        StatusAction {
-//            text: "Last 2 days"
-//            onTriggered: {
-
-//            }
-//        }
-
-//        StatusAction {
-//            text: "Last 3 days"
-//            onTriggered: {
-
-//            }
-//        }
-
-//        StatusAction {
-//            text: "Last 7 days"
-//            onTriggered: {
-
-//            }
-//        }
-//    }
+    StatusAction {
+        objectName: "chatFetchMessagesMenuItem"
+        text: qsTr("Fetch messages")
+        icon.name: "download"
+        enabled: !production
+        onTriggered: {
+            root.requestMoreMessages(root.chatId)
+        }
+    }
 
     StatusAction {
         objectName: "editChannelMenuItem"

@@ -49,23 +49,20 @@ const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
   try:
     info "Requesting additional message history for chat", chatId=arg.chatId
-    let response = status_mailservers.syncChatFromSyncedFrom(arg.chatId)
+    let response = status_mailservers.requestMoreMessages(arg.chatId)
 
     if(not response.error.isNil):
       error "Could not request additional messages due to error", errDescription = response.error.message
-
-    let syncedFrom = response.result.getInt()
-    if(syncedFrom != 0):
-      let resultJson = %* {
-        "chatId": arg.chatId,
-        "syncedFrom": syncedFrom
-      }
-      arg.finish(%resultJson)
+      arg.finish(%*{"error": response.error.message})
     else:
-      warn "Syncing mailserver failed", errDescription=arg.chatId
+      info "synced mailserver successfully", chatID=arg.chatId
+      arg.finish(%*{"error": ""})
 
   except Exception as e:
     warn "Could not request additional messages due to error", errDescription=e.msg
+    arg.finish(%* {
+      "error": e.msg
+    })
 
 const fillGapsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FillGapsTaskArg](argEncoded)
@@ -126,20 +123,11 @@ QtObject:
     if MAILSERVER_ID != "":
       discard self.settingsService.pinMailserver(MAILSERVER_ID, fleet)
 
-  proc mailserverSynced*(self: Service, syncInfo: string) {.slot.} =
-    let syncInfoParsed = parseJson(syncInfo)
-    let signalData = MailserverSyncedArgs(
-      chatId: syncInfoParsed["chatId"].getStr(),
-      syncedFrom: syncInfoParsed["syncedFrom"].getInt()
-      )
-    self.events.emit(SIGNAL_MAILSERVER_SYNCED, signalData)
-
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
       tptr: cast[ByteAddress](requestMoreMessagesTask),
       vptr: cast[ByteAddress](self.vptr),
       chatId: chatId,
-      slot: "mailserverSynced"
     )
     self.threadpool.start(arg)
 

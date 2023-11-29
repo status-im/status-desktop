@@ -479,6 +479,9 @@ proc unmuteChat*(self: Controller, chatId: string) =
 proc markAllMessagesRead*(self: Controller, chatId: string) =
   self.messageService.markAllMessagesRead(chatId)
 
+proc requestMoreMessages*(self: Controller, chatId: string) =
+  self.mailserversService.requestMoreMessages(chatId)
+
 proc clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
 

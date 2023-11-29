@@ -202,6 +202,9 @@ method markAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
 method clearChatHistory*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method requestMoreMessages*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCurrentFleet*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

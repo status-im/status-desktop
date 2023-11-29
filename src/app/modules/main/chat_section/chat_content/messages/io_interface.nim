@@ -126,9 +126,6 @@ method editMessage*(self: AccessInterface, messageId: string, contentType: int, 
 method onHistoryCleared*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestMoreMessages*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method fillGaps*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -157,6 +154,9 @@ method resetAndScrollToNewMessagesMarker*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markAllMessagesRead*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestMoreMessages*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markMessagesAsRead*(self: AccessInterface, messages: seq[string]) {.base.} =

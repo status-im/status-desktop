@@ -179,6 +179,10 @@ Item {
                         root.chatSectionModule.markAllMessagesRead(chatId)
                     }
 
+                    onRequestMoreMessages: {
+                        root.chatSectionModule.requestMoreMessages(chatId)
+                    }
+
                     onClearChatHistory: {
                         root.chatSectionModule.clearChatHistory(chatId)
                     }

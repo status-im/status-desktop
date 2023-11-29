@@ -902,6 +902,9 @@ method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
 
+method requestMoreMessages*(self: Module, chatId: string) =
+  self.controller.requestMoreMessages(chatId)
+
 method clearChatHistory*(self: Module, chatId: string) =
   self.controller.clearChatHistory(chatId)
 
