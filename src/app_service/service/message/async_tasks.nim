@@ -126,8 +126,7 @@ const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
 
   var activityCenterNotifications: JsonNode
-  if response.result{"activityCenterNotifications"} != nil:
-    activityCenterNotifications = response.result["activityCenterNotifications"]
+  discard response.result.getProp("notifications", activityCenterNotifications)
 
   let responseJson = %*{
     "chatId": arg.chatId,
@@ -157,8 +156,7 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
   discard response.result.getProp("countWithMentions", countWithMentions)
 
   var activityCenterNotifications: JsonNode
-  if response.result{"activityCenterNotifications"} != nil:
-    activityCenterNotifications = response.result["activityCenterNotifications"]
+  discard response.result.getProp("notifications", activityCenterNotifications)
 
   var error = ""
   if(count == 0):
