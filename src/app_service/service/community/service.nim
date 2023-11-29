@@ -1669,7 +1669,7 @@ QtObject:
 
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: rpcresponse.result["activityCenterNotifications"]))
+        RawActivityCenterNotificationsArgs(activityCenterNotifications: rpcResponse.result["activityCenterNotifications"]))
 
       if not self.processRequestsToJoinCommunity(rpcResponse.result):
         raise newException(CatchableError, "no 'requestsToJoinCommunity' key in response")
