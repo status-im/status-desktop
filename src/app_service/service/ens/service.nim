@@ -1,23 +1,24 @@
-import NimQml, Tables, sets, json, sequtils, strutils, chronicles
-import web3/ethtypes, stint
+import NimQml, Tables, sets, json, sequtils, strutils, stint, chronicles
+import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization
 
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
 
-import ../../../app/global/global_singleton
-import ../../../backend/ens as status_ens
-import ../../../backend/backend as status_go_backend
+import app/global/global_singleton
+import backend/ens as status_ens
+import backend/backend as status_go_backend
+import backend/wallet as status_wallet
 
-import ../../common/conversion as common_conversion
-import ../../common/utils as common_utils
+import app_service/common/conversion as common_conversion
 import utils as ens_utils
-import ../settings/service as settings_service
-import ../wallet_account/service as wallet_account_service
-import ../transaction/service as transaction_service
-import ../network/service as network_service
-import ../token/service as token_service
-import ../eth/dto/coder
-import ../eth/dto/transaction
+import app_service/service/settings/service as settings_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/network/service as network_service
+import app_service/service/token/service as token_service
+import app_service/service/eth/utils as status_utils
+import app_service/service/eth/dto/coder
+import app_service/service/eth/dto/transaction
 import dto/ens_username_dto
 
 export ens_username_dto
@@ -211,7 +212,7 @@ QtObject:
 
   proc checkEnsUsernameAvailability*(self: Service, ensUsername: string, isStatus: bool) =
     let registeredEnsUsernames = self.getAllMyEnsUsernames(true)
-    let dto = EnsUsernameDto(chainId: self.getChainId(), 
+    let dto = EnsUsernameDto(chainId: self.getChainId(),
                              username: self.formatUsername(ensUsername, isStatus))
     var availability = ""
     if registeredEnsUsernames.find(dto) >= 0:
@@ -267,7 +268,7 @@ QtObject:
   proc extractCoordinates(self: Service, pubkey: string):tuple[x: string, y:string] =
     result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
-  proc setPubKeyGasEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int = 
+  proc setPubKeyGasEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int =
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
       let resp = status_ens.setPubKeyEstimate(chainId, %txData, ensUsername,
@@ -276,38 +277,6 @@ QtObject:
     except Exception as e:
       result = 80000
       error "error occurred", procName="setPubKeyGasEstimate", msg = e.msg
-
-  proc setPubKey*(
-      self: Service,
-      chainId: int,
-      ensUsername: string,
-      address: string,
-      gas: string,
-      gasPrice: string, 
-      maxPriorityFeePerGas: string,
-      maxFeePerGas: string,
-      password: string,
-      eip1559Enabled: bool,
-    ): EnsTxResultArgs =
-    try:
-      let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
-          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      let resp = status_ens.setPubKey(chainId, %txData, common_utils.hashPassword(password), ensUsername.addDomain(),
-        singletonInstance.userProfile.getPubKey())
-      let hash = resp.result.getStr
-
-      let resolverAddress = status_ens.resolver(chainId, ensUsername.addDomain()).result.getStr
-      self.transactionService.watchTransaction(
-        hash, $address, resolverAddress,
-        $PendingTransactionTypeDto.SetPubKey, ensUsername, chainId
-      )
-      let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
-      self.pendingEnsUsernames.incl(dto)
-
-      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
-    except Exception as e:
-      error "error occurred", procName="setPubKey", msg = e.msg
-      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
 
   proc releaseEnsEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int =
     try:
@@ -325,43 +294,6 @@ QtObject:
   proc getEnsRegisteredAddress*(self: Service): string =
     return status_ens.getRegistrarAddress(self.getChainId()).result.getStr
 
-  proc release*(
-      self: Service,
-      chainId: int,
-      ensUsername: string,
-      address: string,
-      gas: string,
-      gasPrice: string, 
-      maxPriorityFeePerGas: string,
-      maxFeePerGas: string,
-      password: string,
-      eip1559Enabled: bool
-    ): EnsTxResultArgs =
-    try:
-      let
-        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
-          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-
-      var userNameNoDomain = ensUsername
-      if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
-        userNameNoDomain = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
-
-      let resp = status_ens.release(chainId, %txData, common_utils.hashPassword(password), userNameNoDomain)
-      let hash = resp.result.getStr
-
-      let ensUsernamesAddress = self.getEnsRegisteredAddress()
-      self.transactionService.watchTransaction(
-        hash, address, ensUsernamesAddress,
-        $PendingTransactionTypeDto.ReleaseENS, ensUsername, chainId
-      )
-      let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
-      self.pendingEnsUsernames.excl(dto)
-
-      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
-    except Exception as e:
-      error "error occurred", procName="release", msg = e.msg
-      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
-
   proc registerENSGasEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int =
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
@@ -376,39 +308,6 @@ QtObject:
     let networkDto = self.networkService.getNetworkForEns()
     return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
-  proc registerEns*(
-      self: Service,
-      chainId: int,
-      username: string,
-      address: string,
-      gas: string,
-      gasPrice: string, 
-      maxPriorityFeePerGas: string,
-      maxFeePerGas: string,
-      password: string,
-      eip1559Enabled: bool,
-    ): EnsTxResultArgs =
-    try:
-      let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
-          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      let resp = status_ens.register(chainId, %txData, common_utils.hashPassword(password), username,
-        singletonInstance.userProfile.getPubKey())
-      let hash = resp.result.getStr
-      let sntContract = self.getStatusToken()
-      let ensUsername = self.formatUsername(username, true)
-      self.transactionService.watchTransaction(
-        hash, address, $sntContract.address,
-        $PendingTransactionTypeDto.RegisterEns, ensUsername,
-        chainId
-      )
-
-      let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
-      self.pendingEnsUsernames.incl(dto)
-      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
-    except Exception as e:
-      error "error occurred", procName="registerEns", msg = e.msg
-      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
-
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
@@ -422,3 +321,135 @@ QtObject:
     except Exception as e:
       error "Error getting ENS resourceUrl", username=username, exception=e.msg
       raise
+
+  proc prepareEnsTx*(self: Service, txType: PendingTransactionTypeDto, chainId: int, ensUsername: string, address: string,
+    gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool): JsonNode =
+    try:
+      var prepareTxResponse: RpcResponse[JsonNode]
+      let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice, eip1559Enabled,
+        maxPriorityFeePerGas, maxFeePerGas)
+      if txType == PendingTransactionTypeDto.SetPubKey:
+        prepareTxResponse = status_ens.prepareTxForSetPubKey(chainId, %txData, ensUsername.addDomain(),
+          singletonInstance.userProfile.getPubKey())
+      elif txType == PendingTransactionTypeDto.RegisterENS:
+        prepareTxResponse = status_ens.prepareTxForRegisterEnsUsername(chainId, %txData, ensUsername,
+          singletonInstance.userProfile.getPubKey())
+      elif txType == PendingTransactionTypeDto.ReleaseENS:
+        var userNameNoDomain = ensUsername
+        if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
+          userNameNoDomain = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
+        prepareTxResponse = status_ens.prepareTxForReleaseEnsUsername(chainId, %txData, userNameNoDomain)
+      else:
+        error "Unknown action", procName="prepareEnsTx"
+
+      if not prepareTxResponse.error.isNil:
+        error "error occurred", procName="prepareEnsTx", msg = prepareTxResponse.error.message
+        return
+
+      prepareTxResponse.result["gas"] = %* (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some)
+      if eip1559Enabled:
+        let maxPriorityFeePerGasFinal = if maxPriorityFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
+        let maxFeePerGasFinal = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some
+        prepareTxResponse.result["maxPriorityFeePerGas"] = %* ("0x" & maxPriorityFeePerGasFinal.unsafeGet.toHex)
+        prepareTxResponse.result["maxFeePerGas"] = %* ("0x" & maxFeePerGasFinal.unsafeGet.toHex)
+      else:
+        let gasPriceFinal = if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some
+        prepareTxResponse.result["gasPrice"] = %* ("0x" & gasPriceFinal.unsafeGet.toHex.stripLeadingZeros)
+
+      var buildTxResponse: JsonNode
+      let err = status_wallet.buildTransaction(buildTxResponse, chainId, $prepareTxResponse.result)
+      if err.len > 0:
+        error "error occurred", procName="prepareEnsTx", msg = err
+        return
+
+      return buildTxResponse
+    except Exception as e:
+      error "error occurred", procName="prepareEnsTx", msg = e.msg
+
+  proc signEnsTxLocally*(self: Service, data, account, hashedPasssword: string): string =
+    try:
+      var response: JsonNode
+      let err = status_wallet.signMessage(response, data, account, hashedPasssword)
+      if err.len > 0 or response.isNil:
+        error "error occurred", procName="signEnsTxLocally", msg = err
+        return
+      return response.getStr()
+    except Exception as e:
+      error "error occurred", procName="signEnsTxLocally", msg = e.msg
+
+  proc sendEnsTxWithSignatureAndWatch*(self: Service, txType: PendingTransactionTypeDto, chainId: int,
+    txData: JsonNode, ensUsername: string, signature: string): EnsTxResultArgs =
+    result = EnsTxResultArgs(chainId: chainId)
+    try:
+      if txData.isNil:
+        result.error = "txData is nil"
+        error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+        return
+      if not txData.hasKey("from") or txData["from"].getStr().len == 0:
+        result.error = "from address is empty"
+        error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+        return
+      if not txData.hasKey("to") or txData["to"].getStr().len == 0:
+        result.error = "to address is empty"
+        error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+        return
+      if txType != PendingTransactionTypeDto.SetPubKey and
+        txType != PendingTransactionTypeDto.RegisterENS and
+        txType != PendingTransactionTypeDto.ReleaseENS:
+          result.error = "invalid tx type"
+          error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+          return
+
+      var finalSignature = signature
+      if finalSignature.startsWith("0x"):
+        finalSignature = finalSignature[2..^1]
+
+      var txResponse: JsonNode
+      let err = status_wallet.sendTransactionWithSignature(txResponse, chainId, $txType, $txData, finalSignature)
+      if err.len > 0 or txResponse.isNil:
+        result.error = err
+        error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+        return
+
+      let
+        transactionHash = txResponse.getStr()
+        fromAddress = txData["from"].getStr()
+        toAddress = txData["to"].getStr()
+
+      if txType == PendingTransactionTypeDto.SetPubKey:
+        let usernameWithDomain = ensUsername.addDomain()
+        if not self.add(chainId, usernameWithDomain):
+          result.error = "failed to add ens username"
+          error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+          return
+        let resolverAddress = status_ens.resolver(chainId, usernameWithDomain).result.getStr
+        self.transactionService.watchTransaction(transactionHash, fromAddress, resolverAddress, $txType,
+          ensUsername, chainId)
+        let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
+        self.pendingEnsUsernames.incl(dto)
+      elif txType == PendingTransactionTypeDto.RegisterENS:
+        let sntContract = self.getStatusToken()
+        let ensUsernameFinal = self.formatUsername(ensUsername, true)
+        if not self.add(chainId, ensUsernameFinal):
+          result.error = "failed to add ens username"
+          error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+          return
+        self.transactionService.watchTransaction(transactionHash, fromAddress, $sntContract.address, $txType,
+          ensUsernameFinal, chainId)
+        let dto = EnsUsernameDto(chainId: chainId, username: ensUsernameFinal)
+        self.pendingEnsUsernames.incl(dto)
+      elif txType == PendingTransactionTypeDto.ReleaseENS:
+        let ensUsernameFinal = self.formatUsername(ensUsername, true)
+        if not self.remove(chainId, ensUsernameFinal):
+          result.error = "failed to add ens username"
+          error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
+          return
+        let ensUsernamesAddress = self.getEnsRegisteredAddress()
+        self.transactionService.watchTransaction(transactionHash, fromAddress, ensUsernamesAddress, $txType, ensUsername, chainId)
+        let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
+        self.pendingEnsUsernames.excl(dto)
+
+      result.txHash = transactionHash
+    except Exception as e:
+      result.error = e.msg
+      error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error

@@ -1,4 +1,5 @@
 import NimQml
+from app_service/service/keycard/service import KeycardEvent
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -100,5 +101,8 @@ method getChainIdForEns*(self: AccessInterface): int {.base.} =
 method setPrefferedEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+method onKeypairAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
