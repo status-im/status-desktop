@@ -26,34 +26,44 @@ QtObject:
     result.setup()
     result.events = events
 
-  proc processSignal(self: SignalsManager, statusSignal: string) =
+  # This method might be called with `ChroniclesLogs` event from `nim_status_client`. 
+  # In such case we must not log anything to prevent recursive calls.
+  # I tried to make a better solution, but ended up with such workaround, check out PR for more details.
+  proc processSignal(self: SignalsManager, statusSignal: string, allowLogging: bool) =
     var jsonSignal: JsonNode
     try:
       jsonSignal = statusSignal.parseJson
     except CatchableError:
-      error "Invalid signal received", data = statusSignal
+      if allowLogging:
+        error "Invalid signal received", data = statusSignal
       return
 
-    trace "Raw signal data", data = $jsonSignal
+    if allowLogging:
+      trace "Raw signal data", data = $jsonSignal
 
     var signal:Signal
     try:
       signal = self.decode(jsonSignal)
     except CatchableError:
-      warn "Error decoding signal", err=getCurrentExceptionMsg()
+      if allowLogging:
+        warn "Error decoding signal", err=getCurrentExceptionMsg()
       return
 
-    if(signal.signalType == SignalType.NodeLogin):
-      if NodeSignal(signal).error != "":
+    if signal.signalType == SignalType.NodeLogin and NodeSignal(signal).error != "":
+      if allowLogging:
         error "node.login", error=NodeSignal(signal).error
 
-    if(signal.signalType == SignalType.NodeCrashed):
+    if signal.signalType == SignalType.NodeCrashed:
+      if allowLogging:
         error "node.crashed", error=statusSignal
 
     self.events.emit(signal.signalType.event, signal)
 
   proc receiveSignal(self: SignalsManager, signal: string) {.slot.} =
-    self.processSignal(signal)
+    self.processSignal(signal, allowLogging=true)
+
+  proc receiveChroniclesLogEvent(self: SignalsManager, signal: string) {.slot.} =
+    self.processSignal(signal, allowLogging=false)
 
   proc decode(self: SignalsManager, jsonSignal: JsonNode): Signal =
     let signalString = jsonSignal{"type"}.getStr

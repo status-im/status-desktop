@@ -51,7 +51,7 @@ proc prepareLogging() =
       proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
         try:
           if signalsManagerQObjPointer != nil:
-            signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
+            signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveChroniclesLogEvent")
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
