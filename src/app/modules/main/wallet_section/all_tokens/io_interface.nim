@@ -34,7 +34,7 @@ method getHistoricalDataForToken*(self: AccessInterface, symbol: string, currenc
 method tokenHistoricalDataResolved*(self: AccessInterface, tokenDetails: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchHistoricalBalanceForTokenAsJson*(self: AccessInterface, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.base.} =
+method fetchHistoricalBalanceForTokenAsJson*(self: AccessInterface, address: string, allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method tokenBalanceHistoryDataResolved*(self: AccessInterface, balanceHistoryJson: string) {.base.} =
@@ -53,4 +53,7 @@ method getTokenBySymbolModelDataSource*(self: AccessInterface): TokenBySymbolMod
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method filterChanged*(self: AccessInterface, addresses: seq[string]) =
   raise newException(ValueError, "No implementation available")

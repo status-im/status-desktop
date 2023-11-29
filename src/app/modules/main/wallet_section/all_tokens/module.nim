@@ -18,6 +18,7 @@ type
     view: View
     controller: Controller
     moduleLoaded: bool
+    addresses: seq[string]
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -31,6 +32,7 @@ proc newModule*(
   result.view = newView(result)
   result.controller = controller.newController(result, events, tokenService, walletAccountService)
   result.moduleLoaded = false
+  result.addresses = @[]
 
 method delete*(self: Module) =
   self.view.delete
@@ -68,8 +70,9 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.setTokenHistoricalDataReady(tokenDetails)
 
-method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.controller.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol,timeIntervalEnum)
+method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
+  let addresses = if allAddresses: self.addresses else: @[address]
+  self.controller.fetchHistoricalBalanceForTokenAsJson(addresses, allAddresses, tokenSymbol, currencySymbol,timeIntervalEnum)
 
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
@@ -99,3 +102,8 @@ method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSou
   return (
     getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.getTokenBySymbolList()
   )
+
+method filterChanged*(self: Module, addresses: seq[string]) = 
+  if addresses == self.addresses:
+      return
+  self.addresses = addresses

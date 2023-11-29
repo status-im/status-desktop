@@ -85,7 +85,8 @@ type
 type
   GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
     chainIds: seq[int]
-    address: string
+    addresses: seq[string]
+    allAddresses: bool
     tokenSymbol: string
     currencySymbol: string
     timeInterval: BalanceHistoryTimeInterval
@@ -95,11 +96,12 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
   var response = %*{}
   try:
     # status-go time intervals are starting from 1
-    response = backend.getBalanceHistory(arg.chainIds, arg.address, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
+    response = backend.getBalanceHistory(arg.chainIds, arg.addresses, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
 
     let output = %* {
         "chainIds": arg.chainIds,
-        "address": arg.address,
+        "addresses": arg.addresses,
+        "allAddresses": arg.allAddresses,
         "tokenSymbol": arg.tokenSymbol,
         "currencySymbol": arg.currencySymbol,
         "timeInterval": int(arg.timeInterval),
@@ -111,7 +113,8 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
   except Exception as e:
     let output = %* {
       "chainIds": arg.chainIds,
-      "address": arg.address,
+      "addresses": arg.addresses,
+      "allAddresses": arg.allAddresses,
       "tokenSymbol": arg.tokenSymbol,
       "currencySymbol": arg.currencySymbol,
       "timeInterval": int(arg.timeInterval),
