@@ -35,6 +35,7 @@ type
 
   ClusterConfig* = object
     Enabled*: bool
+    ClusterID*: int
     Fleet*: string
     StaticNodes*: seq[string]
     BootNodes*: seq[string]
@@ -247,6 +248,7 @@ proc toNetwork*(jsonObj: JsonNode): Network =
   discard jsonObj.getProp("enabled", result.enabled)
 
 proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
+  discard jsonObj.getProp("ClusterID", result.ClusterID)
   discard jsonObj.getProp("Enabled", result.Enabled)
   discard jsonObj.getProp("Fleet", result.Fleet)
 
