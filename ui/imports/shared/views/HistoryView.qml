@@ -64,10 +64,6 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        enabled: root.visible
-    }
-
     QtObject {
         id: d
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0

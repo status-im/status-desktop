@@ -119,11 +119,11 @@ StatusListItem {
             }
             ManageTokensCommunityTag {
                 anchors.right: parent.right
-                text: modelData.communityName
-                imageSrc: modelData.communityImage
+                text: modelData && !!modelData.communityName ? modelData.communityName : ""
+                imageSrc: modelData && !!modelData.communityImage ? modelData.communityImage : ""
                 visible: root.isCommunityToken
                 StatusToolTip {
-                    text: qsTr("This token was minted by the %1 community").arg(modelData.communityName)
+                    text: modelData ? qsTr("This token was minted by the %1 community").arg(modelData.communityName) : ""
                     visible: parent.hovered
                 }
                 TapHandler {

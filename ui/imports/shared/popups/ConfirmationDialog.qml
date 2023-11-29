@@ -107,6 +107,7 @@ StatusModal {
             }
         },
         StatusButton {
+            Layout.maximumWidth: confirmationDialog.availableWidth/2
             id: confirmButton
             objectName: confirmationDialog.confirmButtonObjectName
             type: {

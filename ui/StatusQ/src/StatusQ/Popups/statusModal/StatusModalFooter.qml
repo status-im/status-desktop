@@ -35,13 +35,14 @@ Rectangle {
 
     RowLayout {
         id: rootLayout
+        spacing: 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 16
         anchors.rightMargin: 18
 
-        Row {
+        RowLayout {
             id: leftButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             visible: statusModalFooter.showFooter
@@ -51,10 +52,9 @@ Rectangle {
 
         Item {
             Layout.fillWidth: true
-            implicitHeight: 1
         }
 
-        Row {
+        RowLayout {
             id: rightButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             visible: statusModalFooter.showFooter

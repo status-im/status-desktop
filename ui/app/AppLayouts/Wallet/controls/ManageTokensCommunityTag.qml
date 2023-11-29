@@ -47,9 +47,12 @@ Control {
             visible: !!image.source
         }
         StatusBaseText {
+            Layout.fillWidth: true
             font.pixelSize: Style.current.tertiaryTextFontSize
             font.weight: Font.Medium
             text: root.text
+            elide: Text.ElideRight
+            color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
         }
     }
 }

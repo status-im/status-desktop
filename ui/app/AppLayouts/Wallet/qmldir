@@ -1,5 +1,2 @@
-LeftTabView 1.0 LeftTabView.qml
-WalletHeader 1.0 WalletHeader.qml
-CollectiblesView 1.0 CollectiblesView.qml
 WalletLayout 1.0 WalletLayout.qml
 singleton WalletUtils 1.0 WalletUtils.qml
