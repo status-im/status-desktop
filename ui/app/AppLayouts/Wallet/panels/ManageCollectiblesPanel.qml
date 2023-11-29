@@ -77,7 +77,7 @@ Control {
 //            LayoutMirroring.childrenInherit: true
 //            id: switchArrangeByCollection
 //            textColor: Theme.palette.baseColor1
-//            text: qsTr("Arrange by collection (TODO)")
+//            text: qsTr("Arrange by collection")
 //            visible: d.controller.regularTokensModel.count
 //        }
 

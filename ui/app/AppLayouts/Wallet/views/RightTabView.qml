@@ -159,11 +159,22 @@ Item {
                     id: collectiblesView
                     CollectiblesView {
                         collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
+                        sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
                             stack.currentIndex = 1
                         }
+                        onSendRequested: (symbol) => {
+                                             root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                                             root.sendModal.preSelectedHoldingID = symbol
+                                             root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                                             root.sendModal.onlyAssets = false
+                                             root.sendModal.open()
+                                         }
+                        onReceiveRequested: (symbol) => root.launchShareAddressModal()
+                        onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
+                        onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet)
                     }
                 }
                 Component {

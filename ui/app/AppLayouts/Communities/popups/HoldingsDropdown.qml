@@ -335,12 +335,11 @@ StatusDropdown {
 
                     //When the collectible is unique, there is no need for the user to select amount
                     //Just send the add/update events
-                    if(item.supply.toString() === "1"
-                            || (item.remainingSupply
-                                && item.remainingSupply.toString() === "1")) {
+                    if((item.supply && item.supply.toString() === "1")
+                            || (item.remainingSupply && item.remainingSupply.toString() === "1")) {
                         root.collectibleAmount = "1"
                         d.updateSelected ? root.updateCollectible(root.collectibleKey, "1")
-                                            : root.addCollectible(root.collectibleKey, "1")
+                                         : root.addCollectible(root.collectibleKey, "1")
                         return
                     }
                 }
