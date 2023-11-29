@@ -3,21 +3,23 @@ import NimQml, tables, strutils, sequtils, sugar, chronicles
 import io_interface
 import view, controller
 import internal/[state, state_factory]
-import ../../shared/[keypairs, wallet_utils]
-import ../../shared_models/[keypair_model, keypair_item, currency_amount]
-import ../../../global/app_translatable_constants as atc
-import ../../../global/global_singleton
-import ../../../core/eventemitter
+import app/modules/shared/[keypairs, wallet_utils]
+import app/modules/shared_models/[keypair_model, keypair_item, currency_amount]
+import app/global/app_translatable_constants as atc
+import app/global/global_singleton
+import app/core/eventemitter
 
-import ../../../../app_service/common/utils
-import ../../../../app_service/service/keycard/constants
-import ../../../../app_service/service/keycard/service as keycard_service
-import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/service/privacy/service as privacy_service
-import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/keychain/service as keychain_service
+import app_service/common/utils
+import app_service/service/keycard/constants
+import app_service/service/keycard/service as keycard_service
+import app_service/service/settings/service as settings_service
+import app_service/service/network/service as network_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/keychain/service as keychain_service
+
+import backend/helpers/token
 
 export io_interface
 

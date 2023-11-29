@@ -15,6 +15,8 @@ import app_service/service/settings/service
 
 import backend/collectibles as backend_collectibles
 
+import backend/helpers/token
+
 export io_interface
 
 type

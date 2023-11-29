@@ -98,11 +98,6 @@ rpc(getTokens, "wallet"):
 rpc(getTokenList, "wallet"):
   discard
 
-rpc(getTokensBalancesForChainIDs, "wallet"):
-  chainIds: seq[int]
-  accounts: seq[string]
-  tokens: seq[string]
-
 rpc(getPendingTransactions, "wallet"):
   discard
 

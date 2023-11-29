@@ -10,6 +10,8 @@ import app_service/common/types
 
 import app_service/service/profile/dto/profile_showcase_preferences
 
+import backend/helpers/token
+
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface

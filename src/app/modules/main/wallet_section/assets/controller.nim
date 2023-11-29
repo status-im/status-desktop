@@ -1,9 +1,11 @@
 import sugar, sequtils
 import io_interface
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/token/service as token_service
-import ../../../../../app_service/service/currency/service as currency_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/token/service as token_service
+import app_service/service/currency/service as currency_service
+
+import backend/helpers/token
 
 type
   Controller* = ref object of RootObj
@@ -36,7 +38,7 @@ proc init*(self: Controller) =
 proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getAccountsByAddresses(addresses)
 
-proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletTokenDto] =
+proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
 
 proc getChainIds*(self: Controller): seq[int] =

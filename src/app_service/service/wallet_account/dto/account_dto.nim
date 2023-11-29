@@ -1,10 +1,6 @@
 import tables, json, strformat, strutils
 
-import token_dto
-
 include  app_service/common/json_utils
-
-export token_dto
 
 const WalletTypeGenerated* = "generated" # refers to accounts generated from the profile keypair
 const WalletTypeSeed* = "seed"
