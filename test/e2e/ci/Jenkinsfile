@@ -159,6 +159,7 @@ pipeline {
   }
   post {
     always { script {
+      archiveArtifacts('aut/*.log')
       allure([
         results: [[path: 'allure-results']],
         reportBuildPolicy: 'ALWAYS',
