@@ -10,6 +10,7 @@ from scripts.utils import system_path
 from scripts.utils.system_path import SystemPath
 
 
+
 @pytest.fixture
 def options(request):
     if hasattr(request, 'param'):

@@ -1,9 +1,8 @@
 import allure
 import pytest
+import psutil
 from allure_commons._allure import step
-
 from gui.main_window import MainWindow
-from scripts.utils.local_system import wait_for_close
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
@@ -17,4 +16,4 @@ def test_sign_out_and_quit(aut, main_screen: MainWindow):
         sign_out_screen.sign_out_and_quit()
 
     with step('Check that app was closed'):
-        wait_for_close(aut.pid)
+        psutil.Process(aut.pid).wait()

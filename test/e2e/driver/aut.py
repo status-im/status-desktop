@@ -81,8 +81,9 @@ class AUT:
 
     def _kill_process(self):
         if self.pid is None:
-            raise Exception('No process to kill, no PID available.')
-        local_system.kill_process(self.pid, verify=True)
+            LOG.warning('No PID availale for AUT.')
+            return
+        local_system.kill_process_with_retries(self.pid)
         self.pid = None
 
     @allure.step('Close application')

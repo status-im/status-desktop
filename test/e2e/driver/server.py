@@ -36,9 +36,10 @@ class SquishServer:
 
     @classmethod
     def stop(cls):
-        if cls.pid is not None:
-            local_system.kill_process(cls.pid, verify=True)
-            cls.pid = None
+        if cls.pid is None:
+            return
+        local_system.kill_process(cls.pid)
+        cls.pid = None
         cls.port = None
 
     @classmethod
