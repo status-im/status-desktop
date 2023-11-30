@@ -43,14 +43,15 @@ StatusScrollView {
 
         readonly property bool isCustomView: d.controller.hasSettings // TODO add respect other predefined orders (#12517)
 
-        function symbolIsVisible(symbol, balance) {
+        function symbolIsVisible(symbol) {
             if (symbol === "ETH") // always visible
                 return true
             if (!d.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
-            if (symbol === "SNT" || symbol === "DAI") // visible by default
+            if (symbol === "SNT" || symbol === "STT" || symbol === "DAI") // visible by default
                 return true
-            return !!balance && !!balance.amount // visible with non-zero balance
+            // We'll receive the tokens only with non zero balance except for Eth, Dai or SNT/STT
+            return true
         }
 
         readonly property var regularAssetsModel: SortFilterProxyModel {
@@ -60,7 +61,7 @@ StatusScrollView {
                 ExpressionFilter {
                     expression: {
                         d.controller.settingsDirty
-                        return d.symbolIsVisible(model.symbol, model.enabledNetworkBalance) && !model.communityId
+                        return d.symbolIsVisible(model.symbol) && !model.communityId
                     }
                 }
                 // TODO add other sort/filter using ManageTokensController (#12517)
@@ -80,7 +81,7 @@ StatusScrollView {
                 ExpressionFilter {
                     expression: {
                         d.controller.settingsDirty
-                        return d.symbolIsVisible(model.symbol, model.enabledNetworkBalance) && !!model.communityId
+                        return d.symbolIsVisible(model.symbol) && !!model.communityId
                     }
                 }
                 // TODO add other sort/filter using ManageTokensController (#12517)
