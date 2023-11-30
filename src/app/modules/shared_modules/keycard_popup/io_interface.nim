@@ -106,6 +106,9 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method keycardReady*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 

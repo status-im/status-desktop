@@ -37,9 +37,14 @@ const SupportedMnemonicLength18* = 18
 const SupportedMnemonicLength24* = 24
 
 const MnemonicLengthForStatusApp = SupportedMnemonicLength12
-const TimerIntervalInMilliseconds = 3 * 1000 # 3 seconds
+const ReRunCurrentFlowInterval = 3 * 1000 # 3 seconds
+const CheckKeycardAvailabilityInterval = 1000 # 1 seconds
 
 const SIGNAL_KEYCARD_RESPONSE* = "keycardResponse"
+
+type TimerReason {.pure.} = enum
+  ReRunCurrentFlowLater = "ReRunCurrentFlowLater"
+  WaitForKeycardAvailability = "WaitForKeycardAvailability"
 
 logScope:
   topics = "keycard-service"
@@ -63,6 +68,16 @@ QtObject:
     lastReceivedKeycardData: tuple[flowType: string, flowEvent: KeycardEvent]
     setPayloadForCurrentFlow: JsonNode
     doLogging: bool
+    busy: bool
+    waitingFlows: seq[tuple[flow: KCSFlowType, payload: JsonNode]]
+    registeredCallback: proc ()
+
+  ## Forward declaration
+  proc startFlow(self: Service, payload: JsonNode)
+  proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string)
+
+  proc isBusy*(self: Service): bool =
+    return self.busy
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -108,7 +123,13 @@ QtObject:
     self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent))
 
   proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
+    self.busy = false
     self.processSignal(signal)
+    if self.waitingFlows.len > 0:
+      let (flow, payload) = self.waitingFlows[0]
+      self.waitingFlows.delete(0)
+      self.currentFlow = flow
+      self.startFlow(payload)
 
   proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] =
     return self.lastReceivedKeycardData
@@ -132,18 +153,28 @@ QtObject:
     return self.currentFlow
 
   proc startFlow(self: Service, payload: JsonNode) =
+    if self.busy:
+      self.waitingFlows.add((flow: self.currentFlow, payload: payload))
+      return
+    self.busy = true
     self.updateLocalPayloadForCurrentFlow(payload, cleanBefore = true)
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
     if self.doLogging:
       debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
+    if self.busy:
+      return
+    self.busy = true
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
     if self.doLogging:
       debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
+    if self.busy:
+      return
+    writeStackTrace()
     let response = keycard_go.keycardCancelFlow()
     self.currentFlow = KCSFlowType.NoFlow
     if self.doLogging:
@@ -199,13 +230,23 @@ QtObject:
       result = result & $rand(0 .. 9)
 
   proc onTimeout(self: Service, response: string) {.slot.} =
-    if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
-      return
-    if self.doLogging:
-      debug "onTimeout, about to start flow: ", kcServiceCurrFlow=($self.currentFlow)
-    self.startFlow(self.setPayloadForCurrentFlow)
+    if response == $TimerReason.ReRunCurrentFlowLater:
+      if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
+        return
+      if self.doLogging:
+        debug "onTimeout, about to start flow: ", kcServiceCurrFlow=($self.currentFlow)
+      self.startFlow(self.setPayloadForCurrentFlow)
+    elif response == $TimerReason.WaitForKeycardAvailability:
+      if self.busy:
+        self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)
+        return
+      if self.registeredCallback != nil:
+        self.registeredCallback()
+        self.registeredCallback = nil
+    else:
+      error "unknown timer reason", reason = response
 
-  proc runTimer(self: Service) =
+  proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string) =
     if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
 
@@ -213,7 +254,8 @@ QtObject:
       tptr: cast[ByteAddress](timerTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onTimeout",
-      timeoutInMilliseconds: TimerIntervalInMilliseconds
+      timeoutInMilliseconds: timeoutInMilliseconds,
+      reason: reason
     )
     self.threadpool.start(arg)
 
@@ -440,4 +482,11 @@ QtObject:
     let tmpFlow = self.currentFlow
     self.cancelCurrentFlow()
     self.currentFlow = tmpFlow
-    self.runTimer()
+    self.runTimer(ReRunCurrentFlowInterval, "reRunCurrentFlowLater")
+
+  proc registerForKeycardAvailability*(self: Service, p: proc()) =
+    if not self.busy:
+      error "registerForKeycardAvailability can be called only when keycard is busy"
+      return
+    self.registeredCallback = p
+    self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)

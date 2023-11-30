@@ -170,6 +170,14 @@ proc disconnectAll*(self: Controller) =
 proc delete*(self: Controller) =
   self.disconnectAll()
 
+proc checkKeycardAvailability*(self: Controller) =
+  if self.keycardService.isBusy():
+    self.keycardService.registerForKeycardAvailability(proc () =
+      self.delegate.keycardReady()
+    )
+  else:
+    self.delegate.keycardReady()
+
 proc init*(self: Controller, fullConnect = true) =
   self.connectKeycardReponseSignal()
 
