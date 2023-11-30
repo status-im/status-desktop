@@ -3,6 +3,7 @@ import typing
 
 import configs.testpath
 from scripts.utils import local_system
+from scripts.utils.wait_for_port import wait_for_port
 
 _PROCESS_NAME = '_squishserver'
 
@@ -39,6 +40,12 @@ class SquishServer:
             local_system.kill_process(cls.pid, verify=True)
             cls.pid = None
         cls.port = None
+
+    @classmethod
+    def wait(cls, timeout: int = 1, retries: int = 10):
+        LOG.info('Waiting for Squish server port %s:%d...', cls.host, cls.port)
+        wait_for_port(cls.host, cls.port, timeout, retries)
+        LOG.info('Squish server port available!')
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     @classmethod
