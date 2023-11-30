@@ -105,7 +105,7 @@ class AUT:
                 f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
                 options
             ]
-            self.pid = local_system.execute(command)
+            self.pid = local_system.execute_with_log_files(command)
             self.attach()
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             return self
