@@ -3,7 +3,6 @@ configs/_local.py
 
 .idea/
 .venv/
-/squish_server.ini
 
 *.pyc
 
