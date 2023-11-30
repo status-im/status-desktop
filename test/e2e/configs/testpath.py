@@ -21,7 +21,9 @@ TEST_FILES: SystemPath = ROOT / 'ext' / 'test_files'
 TEST_USER_DATA: SystemPath = ROOT / 'ext' / 'user_data'
 
 # Driver Directories
-SQUISH_DIR = SystemPath(os.getenv('SQUISH_DIR'))
+SQUISH_DIR_RAW = os.getenv('SQUISH_DIR')
+assert SQUISH_DIR_RAW is not None
+SQUISH_DIR = SystemPath(SQUISH_DIR_RAW)
 
 # Status Application
 STATUS_DATA: SystemPath = RUN / 'status'
