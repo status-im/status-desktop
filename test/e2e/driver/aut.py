@@ -1,7 +1,5 @@
-import logging
-from datetime import datetime
-
 import allure
+import logging
 import cv2
 import numpy as np
 import squish
@@ -9,6 +7,8 @@ from PIL import ImageGrab
 
 import configs
 import driver
+from os import path
+from datetime import datetime
 from configs.system import IS_LIN
 from driver import context
 from driver.server import SquishServer
@@ -92,30 +92,26 @@ class AUT:
         self._kill_process()
 
     @allure.step("Start application")
-    def launch(self, options='', attempt: int = 2) -> 'AUT':
-        self.options = options
+    def launch(self) -> 'AUT':
+        LOG.info('Launching AUT: %s', self.path)
+        self.port = local_system.find_free_port(configs.squish.AUT_PORT, 100)
+        SquishServer().add_attachable_aut(self.aut_id, self.port)
+        command = [
+            str(configs.testpath.SQUISH_DIR / 'bin/startaut'),
+            f'--port={self.port}',
+            str(self.path),
+            f'-d={self.app_data}',
+            f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
+        ]
         try:
-            self.port = local_system.find_free_port(configs.squish.AUT_PORT, 1000)
-            SquishServer().add_attachable_aut(self.aut_id, self.port)
-            command = [
-                configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
-                f'--port={self.port}',
-                f'"{self.path}"',
-                f'-d={self.app_data}',
-                f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
-                options
-            ]
             self.pid = local_system.execute_with_log_files(command)
             self.attach()
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             return self
-        except (AssertionError, TypeError) as err:
-            _logger.debug(err)
+        except Exception as err:
+            LOG.error('Failed to start AUT: %s', err)
             self.stop()
-            if attempt:
-                return self.launch(options, attempt - 1)
-            else:
-                raise err
+            raise err
 
     @allure.step('Restart application')
     def restart(self):

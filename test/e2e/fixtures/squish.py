@@ -1,26 +1,26 @@
 import allure
 import pytest
+import logging
 
 from driver.server import SquishServer
+
+LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope='session')
 def start_squish_server():
-    squish_server = SquishServer()
-    squish_server.stop()
-    attempt = 3
-    while True:
-        try:
-            squish_server.start()
-            squish_server.set_cursor_animation()
-            squish_server.set_aut_timeout()
-            break
-        except AssertionError as err:
-            attempt -= 1
-            if not attempt:
-                pytest.exit(err)
-    yield squish_server
-    squish_server.stop()
-    if squish_server.config.exists():
-        allure.attach.file(str(squish_server.config), 'Squish server config')
-        squish_server.config.unlink()
+    server = SquishServer()
+    server.stop()
+    try:
+        server.start()
+        server.wait()
+        yield server
+    except Exception as err:
+        LOG.error('Failed to start Squish Server: %s', error)
+        pytest.exit(err)
+    finally:
+        LOG.info('Stopping Squish Server...')
+        server.stop()
+    if server.config.exists():
+        allure.attach.file(str(server.config), 'Squish server config')
+        server.config.unlink()
