@@ -27,8 +27,9 @@ class SquishServer:
     def start(cls):
         cls.port = local_system.find_free_port(configs.squish.SERVER_PORT, 100)
         cmd = [
-            f'"{cls.path}"',
-            '--configfile', str(cls.config),
+            str(cls.path),
+            '--verbose',
+            f'--configfile={cls.config}',
             f'--host={cls.host}',
             f'--port={cls.port}',
         ]
@@ -51,8 +52,11 @@ class SquishServer:
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     @classmethod
     def configuring(cls, action: str, options: typing.Union[int, str, list]):
-        local_system.run(
-            [f'"{cls.path}"', '--configfile', str(cls.config), '--config', action, ' '.join(options)])
+        local_system.run([
+            str(cls.path),
+            f'--configfile={cls.config}',
+            f'--config={action}',
+        ] + options)
 
     @classmethod
     def add_attachable_aut(cls, aut_id: str, port: int):
