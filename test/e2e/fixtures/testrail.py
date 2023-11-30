@@ -7,7 +7,7 @@ from testrail_api import TestRailAPI
 
 import configs
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 testrail_api = None
 test_run_id = None
@@ -22,37 +22,39 @@ test_case = namedtuple('TestCase', ['id', 'skipped'])
 
 @pytest.fixture(scope='session')
 def init_testrail_api(request):
-    if configs.testrail.RUN_NAME:
-        _logger.info('TestRail API initializing')
-        global testrail_api
-        testrail_api = TestRailAPI(
-            configs.testrail.URL,
-            configs.testrail.USR,
-            configs.testrail.PSW
-        )
-        test_cases = get_test_cases_in_session(request)
-        test_run = get_test_run(configs.testrail.RUN_NAME)
-        if not test_run:
-            test_case_ids = list(set([tc_id.id for tc_id in test_cases]))
-            test_run = create_test_run(configs.testrail.RUN_NAME, test_case_ids)
+    if not configs.testrail.RUN_NAME:
+        LOG.info('TestRail report skipped')
+        return
 
-        global test_run_id
-        test_run_id = test_run['id']
+    LOG.info('TestRail API initializing')
+    global testrail_api
+    testrail_api = TestRailAPI(
+        configs.testrail.URL,
+        configs.testrail.USR,
+        configs.testrail.PSW
+    )
+    test_cases = get_test_cases_in_session(request)
+    test_run = get_test_run(configs.testrail.RUN_NAME)
+    if not test_run:
+        test_case_ids = list(set([tc_id.id for tc_id in test_cases]))
+        test_run = create_test_run(configs.testrail.RUN_NAME, test_case_ids)
 
-        for test_case in test_cases:
-            if is_test_case_in_run(test_case.id):
-                if test_case.skipped:
-                    _update_result(test_case.id, SKIPPED, test_case.skipped)
-                    _logger.info(f'Test: "{test_case.id}" marked as "Skipped"')
-                else:
-                    if _get_test_case_status(test_case.id) != UNTESTED:
-                        _update_result(test_case.id, UNTESTED)
-                        _logger.info(f'Test: "{test_case.id}" marked as "Untested"')
-            else:
-                _logger.info(
-                    f'Report result for test case: {test_case.id} skipped, not in test run: {configs.testrail.RUN_NAME}')
-    else:
-        _logger.info('TestRail report skipped')
+    global test_run_id
+    test_run_id = test_run['id']
+
+    for test_case in test_cases:
+        if not is_test_case_in_run(test_case.id):
+            LOG.info('Report result for test case: %s skipped, not in test run: %s',
+                     test_case.id, configs.testrail.RUN_NAME)
+            continue
+
+        if test_case.skipped:
+            _update_result(test_case.id, SKIPPED, test_case.skipped)
+            LOG.info(f'Test: "{test_case.id}" marked as "Skipped"')
+        else:
+            if _get_test_case_status(test_case.id) != UNTESTED:
+                _update_result(test_case.id, UNTESTED)
+                LOG.info(f'Test: "{test_case.id}" marked as "Untested"')
 
 
 @pytest.fixture
