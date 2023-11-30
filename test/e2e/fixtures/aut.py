@@ -38,8 +38,8 @@ def user_data(request) -> system_path.SystemPath:
 
 @pytest.fixture
 def aut(user_data) -> AUT:
-    if not configs.APP_DIR.exists():
-        pytest.exit(f"Application not found: {configs.APP_DIR}")
+    if not configs.AUT_PATH.exists():
+        pytest.exit(f"Application not found: {configs.AUT_PATH}")
     _aut = AUT(user_data=user_data)
     yield _aut
 
@@ -47,8 +47,8 @@ def aut(user_data) -> AUT:
 @pytest.fixture()
 def multiple_instance():
     def _aut(user_data: SystemPath = None) -> AUT:
-        if not configs.APP_DIR.exists():
-            pytest.exit(f"Application not found: {configs.APP_DIR}")
+        if not configs.AUT_PATH.exists():
+            pytest.exit(f"Application not found: {configs.AUT_PATH}")
         return AUT(user_data=user_data)
 
     yield _aut

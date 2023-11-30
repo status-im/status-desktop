@@ -91,13 +91,13 @@ pipeline {
     stage('Download') {
       when { expression { params.BUILD_SOURCE.startsWith('http') } }
       steps { timeout(5) { script {
-        sh 'mkdir -p ./tmp/pkg/'
+        sh 'mkdir -p ./pkg/'
         setBuildDescFromFile(params.BUILD_SOURCE)
         fileOperations([
           fileDownloadOperation(
             url:            params.BUILD_SOURCE,
             targetFileName: 'StatusIm-Desktop.tar.gz',
-            targetLocation: './tmp/pkg/',
+            targetLocation: './pkg/',
             userName:       '',
             password:       '',
           )
@@ -112,16 +112,17 @@ pipeline {
           projectName: params.BUILD_SOURCE,
           filter:      'pkg/*-x86_64.tar.gz',
           selector:    lastWithArtifacts(),
-          target:      './tmp'
+          target:      './'
         )
-        setBuildDescFromFile(utils.findFile('tmp/pkg/*tar.gz'))
+        setBuildDescFromFile(utils.findFile('pkg/*tar.gz'))
       } } }
     }
 
     stage('Unpack') {
       steps { timeout(5) { script {
-        sh "tar -zxvf '${utils.findFile('tmp/pkg/*tar.gz')}' -C './tmp'"
-        env.APP_DIR = utils.findFile('tmp/*.AppImage')
+        sh 'mkdir aut'
+        sh "tar -zxvf '${utils.findFile('pkg/*tar.gz')}' -C './aut'"
+        env.AUT_PATH = utils.findFile('aut/*.AppImage')
       } } }
     }
 

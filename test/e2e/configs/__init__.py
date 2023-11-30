@@ -14,8 +14,8 @@ except ImportError:
         rf'cp {testpath.ROOT}/configs/_local.default.py {testpath.ROOT}/configs/_local.py'
     )
 
-if APP_DIR is None:
-    exit('Please add "APP_DIR" in ./configs/_local.py')
-if system.IS_WIN and 'bin' not in APP_DIR:
-    exit('Please use launcher from "bin" folder in "APP_DIR"')
-APP_DIR = SystemPath(APP_DIR)
+if AUT_PATH is None:
+    exit('Please add "AUT_PATH" in ./configs/_local.py')
+if system.IS_WIN and 'bin' not in AUT_PATH:
+    exit('Please use launcher from "bin" folder in "AUT_PATH"')
+AUT_PATH = SystemPath(AUT_PATH)

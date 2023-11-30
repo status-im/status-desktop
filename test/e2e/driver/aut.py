@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 class AUT:
     def __init__(
             self,
-            app_path: system_path.SystemPath = configs.APP_DIR,
+            app_path: system_path.SystemPath = configs.AUT_PATH,
             user_data: SystemPath = None
     ):
         super(AUT, self).__init__()
