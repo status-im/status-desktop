@@ -98,6 +98,9 @@ add_library(StatusQ SHARED
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
+        include/StatusQ/aggregator.h
+        include/StatusQ/singleroleaggregator.h
+        include/StatusQ/sumaggregator.h
         src/QClipboardProxy.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
@@ -109,6 +112,9 @@ add_library(StatusQ SHARED
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
+        src/aggregator.cpp
+        src/singleroleaggregator.cpp
+        src/sumaggregator.cpp
 
         # wallet
         src/wallet/managetokenscontroller.cpp

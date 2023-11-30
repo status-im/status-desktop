@@ -52,3 +52,15 @@ add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
 target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
+
+add_executable(AggregatorTest tst_Aggregator.cpp)
+target_link_libraries(AggregatorTest PRIVATE Qt5::Test StatusQ)
+add_test(NAME AggregatorTest COMMAND AggregatorTest)
+
+add_executable(SingleRoleAggregatorTest tst_SingleRoleAggregator.cpp)
+target_link_libraries(SingleRoleAggregatorTest PRIVATE Qt5::Test StatusQ)
+add_test(NAME SingleRoleAggregatorTest COMMAND SingleRoleAggregatorTest)
+
+add_executable(SumAggregatorTest tst_SumAggregator.cpp)
+target_link_libraries(SumAggregatorTest PRIVATE Qt5::Test StatusQ)
+add_test(NAME SumAggregatorTest COMMAND SumAggregatorTest)
