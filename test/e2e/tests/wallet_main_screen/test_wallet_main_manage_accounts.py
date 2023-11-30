@@ -89,6 +89,7 @@ def test_manage_watch_only_account_context_menu(main_screen: MainWindow, address
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e',
                                           'GenAcc1edited', '#216266', 'thumbsup', '1f44d')
                          ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_manage_generated_account(main_screen: MainWindow, user_account,
                                   color: str, emoji: str, emoji_unicode: str,
                                   name: str, new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
@@ -150,6 +151,7 @@ def test_manage_generated_account(main_screen: MainWindow, user_account,
     pytest.param('N/A', '95', 'Custom path', '#216266', 'sunglasses', '1f60e')
 ])
 @pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/220')
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                                          derivation_path: str, generated_address_index: int,
                                          name: str, color: str, emoji: str, emoji_unicode: str):
@@ -197,6 +199,7 @@ def test_manage_custom_generated_account(main_screen: MainWindow, user_account,
                              pytest.param('PrivKeyAcc1', '#2a4af5', 'sunglasses', '1f60e',
                                           'PrivKeyAcc1edited', '#216266', 'thumbsup', '1f44d')
                          ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_private_key_imported_account(main_screen: MainWindow, user_account, address_pair,
                                       name: str, color: str, emoji: str, emoji_unicode: str,
                                       new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
@@ -273,6 +276,7 @@ def test_private_key_imported_account(main_screen: MainWindow, user_account, add
                                           'SPAcc12edited', '#216266', 'thumbsup', '1f44d',
                                           'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial')
                          ])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
                                       name: str, color: str, emoji: str, emoji_unicode: str,
                                       new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str,
@@ -333,6 +337,7 @@ def test_seed_phrase_imported_account(main_screen: MainWindow, user_account,
                          'new_name, new_color, new_emoji, new_emoji_unicode, keypair_name', [
                              pytest.param('SPAcc', '#2a4af5', 'sunglasses', '1f60e',
                                           'SPAccedited', '#216266', 'thumbsup', '1f44d', 'SPKeyPair')])
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
                                        name: str, color: str, emoji: str, emoji_unicode: str,
                                        new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str,
@@ -387,6 +392,7 @@ def test_seed_phrase_generated_account(main_screen: MainWindow, user_account,
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703514',
                  'Choosing Use Keycard when adding account')
 @pytest.mark.case(703514)
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_use_keycard_when_adding_account(main_screen: MainWindow):
     with step('Choose continue in keycard settings'):
         wallet = main_screen.left_panel.open_wallet()
