@@ -1,4 +1,4 @@
-import chronicles, tables, strutils, os, sequtils, sugar
+import chronicles, tables, strutils, sequtils, sugar
 import uuids
 import io_interface
 
@@ -491,9 +491,6 @@ proc cancelCurrentFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):
     return
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one,
-  # this way we're giving to the keycard some time to cancel the current flow
-  sleep(200)
 
 proc runGetAppInfoFlow*(self: Controller, factoryReset = false) =
   if not serviceApplicable(self.keycardService):

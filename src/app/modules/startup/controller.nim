@@ -1,4 +1,4 @@
-import Tables, chronicles, strutils, os
+import Tables, chronicles, strutils
 import uuids
 import io_interface
 
@@ -534,9 +534,6 @@ proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flow
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one,
-  # this way we're giving to the keycard some time to cancel the current flow
-  sleep(200)
 
 proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
