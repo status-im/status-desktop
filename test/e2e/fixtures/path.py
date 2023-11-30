@@ -16,10 +16,10 @@ def generate_test_data(request):
     node_dir = configs.testpath.TEST / test_params
     configs.testpath.TEST_ARTIFACTS = node_dir / 'artifacts'
     configs.testpath.TEST_VP = configs.testpath.VP / test_path / test_name
-    _logger.info(
-        f'\nArtifacts directory:\t{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}'
-        f'\nVerification points directory:\t{configs.testpath.TEST_VP.relative_to(configs.testpath.ROOT)}'
-    )
+    _logger.debug('Artifacts directory: %s',
+                  configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT))
+    _logger.debug('Verification points directory: %s',
+                  configs.testpath.TEST_VP.relative_to(configs.testpath.ROOT))
     _logger.info(f'Start test: {test_name}')
 
 

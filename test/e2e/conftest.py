@@ -10,7 +10,14 @@ from configs.system import IS_LIN
 from fixtures.path import generate_test_info
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+# Send logs to pytest.log as well
+handler = logging.FileHandler(filename=configs.PYTEST_LOG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    handlers=[handler],
+)
+LOG = logging.getLogger(__name__)
 
 pytest_plugins = [
     'fixtures.aut',
@@ -26,6 +33,7 @@ def setup_session_scope(
         prepare_test_directory,
         start_squish_server,
 ):
+    LOG.info('Session startup...')
     yield
 
 
@@ -36,7 +44,8 @@ def setup_function_scope(
         check_result,
         application_logs
 ):
-    caplog.set_level(configs.LOG_LEVEL)
+    # FIXME: broken due to KeyError: <_pytest.stash.StashKey object at 0x7fd1ba6d78c0>
+    #caplog.set_level(configs.LOG_LEVEL)
     yield
 
 
@@ -48,18 +57,16 @@ def pytest_runtest_makereport(item, call):
 
 
 def pytest_exception_interact(node):
-    try:
-        test_path, test_name, test_params = generate_test_info(node)
-        node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
-        node_dir.mkdir(parents=True, exist_ok=True)
+    test_path, test_name, test_params = generate_test_info(node)
+    node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
+    node_dir.mkdir(parents=True, exist_ok=True)
 
-        screenshot = node_dir / 'screenshot.png'
-        if screenshot.exists():
-            screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
-        ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
-        allure.attach(
-            name='Screenshot on fail',
-            body=screenshot.read_bytes(),
-            attachment_type=allure.attachment_type.PNG)
-    except Exception as ex:
-        _logger.debug(ex)
+    screenshot = node_dir / 'screenshot.png'
+    if screenshot.exists():
+        screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
+    ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
+    allure.attach(
+        name='Screenshot on fail',
+        body=screenshot.read_bytes(),
+        attachment_type=allure.attachment_type.PNG
+    )

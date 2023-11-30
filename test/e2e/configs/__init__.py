@@ -23,5 +23,8 @@ AUT_PATH = SystemPath(AUT_PATH)
 
 # Save application logs
 AUT_DIR = path.dirname(AUT_PATH)
-AUT_LOGS_STDOUT = path.join(APP_DIR, 'aut_stdout.log')
-AUT_LOGS_STDERR = path.join(APP_DIR, 'aut_stderr.log')
+PYTEST_LOG = path.join(AUT_DIR, 'pytest.log')
+AUT_LOGS_STDOUT = path.join(AUT_DIR, 'aut_stdout.log')
+AUT_LOGS_STDERR = path.join(AUT_DIR, 'aut_stderr.log')
+SERVER_LOGS_STDOUT = path.join(AUT_DIR, 'server_stdout.log')
+SERVER_LOGS_STDERR = path.join(AUT_DIR, 'server_stderr.log')

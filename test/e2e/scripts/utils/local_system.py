@@ -74,6 +74,18 @@ def execute(
     process = subprocess.Popen(command, shell=shell, stderr=stderr, stdout=stdout)
     return process.pid
 
+def execute_with_log_files(
+        command: list,
+        stderr_log=configs.AUT_LOGS_STDERR,
+        stdout_log=configs.AUT_LOGS_STDOUT,
+        shell=False,
+):
+    with (
+        open(stderr_log, "ab") as out_file,
+        open(stdout_log, "ab") as err_file,
+    ):
+        return execute(command, shell=shell, stderr=err_file, stdout=out_file)
+
 @allure.step('System run command')
 def run(
         command: list,

@@ -7,7 +7,7 @@ from scripts.utils.wait_for_port import wait_for_port
 
 _PROCESS_NAME = '_squishserver'
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class SquishServer:
@@ -26,6 +26,7 @@ class SquishServer:
     @classmethod
     def start(cls):
         cls.port = local_system.find_free_port(configs.squish.SERVER_PORT, 100)
+        LOG.info('Starting Squish Server on port: %d', cls.port)
         cmd = [
             str(cls.path),
             '--verbose',
@@ -33,13 +34,18 @@ class SquishServer:
             f'--host={cls.host}',
             f'--port={cls.port}',
         ]
-        cls.pid = local_system.execute(cmd)
+        cls.pid = local_system.execute_with_log_files(
+            cmd,
+            stderr_log=configs.SERVER_LOGS_STDOUT,
+            stdout_log=configs.SERVER_LOGS_STDOUT,
+        )
 
     @classmethod
     def stop(cls):
         if cls.pid is None:
             return
-        local_system.kill_process(cls.pid)
+        LOG.info('Stopping Squish Server with PID: %d', cls.pid)
+        local_system.kill_process_with_retries(cls.pid)
         cls.pid = None
         cls.port = None
 
@@ -52,11 +58,20 @@ class SquishServer:
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     @classmethod
     def configuring(cls, action: str, options: typing.Union[int, str, list]):
-        local_system.run([
-            str(cls.path),
-            f'--configfile={cls.config}',
-            f'--config={action}',
-        ] + options)
+        with (
+            open(configs.SERVER_LOGS_STDOUT, "ab") as out_file,
+            open(configs.SERVER_LOGS_STDERR, "ab") as err_file,
+        ):
+            rval = local_system.run(
+                [
+                    str(cls.path),
+                    f'--configfile={cls.config}',
+                    f'--config={action}',
+                ] + options,
+                stdout=out_file,
+                stderr=err_file,
+            )
+            LOG.info('rval: %s', rval)
 
     @classmethod
     def add_attachable_aut(cls, aut_id: str, port: int):

@@ -1,6 +1,6 @@
 import allure
 import pytest
-
+import logging
 import configs
 import constants
 from constants import UserAccount
@@ -9,6 +9,7 @@ from gui.main_window import MainWindow
 from scripts.utils import system_path
 from scripts.utils.system_path import SystemPath
 
+LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -55,8 +56,9 @@ def multiple_instance():
 
 
 @pytest.fixture
-def main_window(aut: AUT, user_data, options):
-    aut.launch(options)
+def main_window(aut: AUT, user_data):
+    aut.launch()
+    LOG.debug('Waiting for main window...')
     yield MainWindow().wait_until_appears().prepare()
     aut.stop()
 

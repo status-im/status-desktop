@@ -16,7 +16,7 @@ from gui.objects_map import statusDesktop_mainWindow
 from scripts.utils import system_path, local_system
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class AUT:
@@ -63,7 +63,7 @@ class AUT:
                     body=screenshot.read_bytes(),
                     attachment_type=allure.attachment_type.PNG)
             except Exception as err:
-                _logger.info(err)
+                LOG.info(err)
 
         self.stop()
 
@@ -88,6 +88,7 @@ class AUT:
 
     @allure.step('Close application')
     def stop(self):
+        LOG.info('Stoping AUT: %s', self.path)
         self._detach_context()
         self._kill_process()
 
@@ -105,6 +106,7 @@ class AUT:
         ]
         try:
             self.pid = local_system.execute_with_log_files(command)
+            LOG.debug('Launched AUT under PID: %d', self.pid)
             self.attach()
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             return self
