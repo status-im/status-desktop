@@ -73,27 +73,22 @@ class AUT:
             self.ctx = context.attach(self.aut_id, timeout_sec)
         squish.setApplicationContext(self.ctx)
 
+    def _detach_context(self):
+        if self.ctx is None:
+            return
+        squish.currentApplicationContext().detach()
+        self.ctx = None
+
+    def _kill_process(self):
+        if self.pid is None:
+            raise Exception('No process to kill, no PID available.')
+        local_system.kill_process(self.pid, verify=True)
+        self.pid = None
+
     @allure.step('Close application')
     def stop(self):
-        if self.ctx is not None:
-            squish.currentApplicationContext().detach()
-            self.ctx = None
-
-        if self.port is not None:
-            pid_list = local_system.find_process_by_port(self.port)
-            if pid_list:
-                for pid in pid_list:
-                    local_system.kill_process(pid, verify=True)
-            assert driver.waitFor(
-                lambda: not local_system.find_process_by_port(self.port), configs.timeouts.PROCESS_TIMEOUT_SEC), \
-                f'Port {self.port} still in use by process: {local_system.find_process_by_port(self.port)}'
-            self.port = None
-            if self.pid in pid_list:
-                self.pid = None
-
-        if self.pid is not None:
-            local_system.kill_process(self.pid, verify=True)
-            self.pid = None
+        self._detach_context()
+        self._kill_process()
 
     @allure.step("Start application")
     def launch(self, options='', attempt: int = 2) -> 'AUT':
