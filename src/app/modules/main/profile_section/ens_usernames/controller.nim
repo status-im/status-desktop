@@ -1,4 +1,4 @@
-import Tables, os, uuids, chronicles, json
+import Tables, uuids, chronicles, json
 import io_interface
 
 import app/global/global_singleton
@@ -196,9 +196,6 @@ proc connectKeycardReponseSignal(self: Controller) =
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one,
-  # this way we're giving to the keycard some time to cancel the current flow
-  sleep(200)
 
 proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
   self.cancelCurrentFlow()

@@ -1,4 +1,4 @@
-import times, os, chronicles
+import times, chronicles
 import uuids
 import io_interface
 
@@ -224,9 +224,6 @@ proc connectKeycardReponseSignal(self: Controller) =
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one,
-  # this way we're giving to the keycard some time to cancel the current flow
-  sleep(200)
 
 proc fetchAddressesFromKeycard*(self: Controller, bip44Paths: seq[string]) =
   self.cancelCurrentFlow()
