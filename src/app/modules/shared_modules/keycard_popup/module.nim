@@ -35,6 +35,15 @@ type
     authenticationPopupIsAlreadyRunning: bool
     runningFlow: FlowType # in general used to mark the global shared flow that is being running (`Authentication` or `Sign`)
 
+    # temporary variables used to store data while we're wiating for keycard lib to get ready
+    tmpFlowToRun: FlowType
+    tmpKeyUid: string
+    tmpBip44Paths: seq[string]
+    tmpTxHash: string
+    tmpForceFlow: bool
+    tmpReturnToFlow: FlowType
+    tmpPin: string
+
 proc newModule*[T](delegate: T,
   uniqueIdentifier: string,
   events: EventEmitter,
@@ -58,6 +67,10 @@ proc newModule*[T](delegate: T,
 
 {.push warning[Deprecated]: off.}
 
+## Forward declarations
+proc proceedWithSyncKeycardBasedOnAppState[T](self: Module[T], keyUid: string, pin: string)
+proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string, bip44Paths: seq[string], txHash: string, forceFlow: bool, returnToFlow: FlowType)
+
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -68,6 +81,12 @@ proc init[T](self: Module[T], fullConnect = true) =
     self.initialized = true
     self.controller.cleanReceivedKeycardData()
     self.controller.init(fullConnect)
+
+method keycardReady*[T](self: Module[T]) =
+  if self.tmpPin.len > 0:
+    self.proceedWithSyncKeycardBasedOnAppState(self.tmpKeyUid, self.tmpPin)
+  else:
+    self.proceedWithRunFlow(self.tmpFlowToRun, self.tmpKeyUid, self.tmpBip44Paths, self.tmpTxHash, self.tmpForceFlow, self.tmpReturnToFlow)
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
@@ -318,6 +337,11 @@ method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: stri
   if keyUid.len == 0:
     debug "cannot sync with the empty keyUid"
     return
+  self.tmpKeyUid = keyUid
+  self.tmpPin = pin
+  self.controller.checkKeycardAvailability()
+
+proc proceedWithSyncKeycardBasedOnAppState[T](self: Module[T], keyUid: string, pin: string) =
   self.init(fullConnect = false)
   self.controller.setKeyUidWhichIsBeingSyncing(keyUid)
   self.controller.setPin(pin)
@@ -478,6 +502,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
     error "sm_cannot run an general flow"
     return
+  self.tmpFlowToRun = flowToRun
+  self.tmpKeyUid = keyUid
+  self.tmpBip44Paths = bip44Paths
+  self.tmpTxHash = txHash
+  self.tmpForceFlow = forceFlow
+  self.tmpReturnToFlow = returnToFlow
+  self.controller.checkKeycardAvailability()
+
+proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string, bip44Paths: seq[string], txHash: string, forceFlow: bool, returnToFlow: FlowType) =
   self.init()
   self.view.setForceFlow(forceFlow)
   self.view.setReturnToFlow(returnToFlow)
