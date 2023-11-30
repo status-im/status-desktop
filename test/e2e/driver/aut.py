@@ -100,23 +100,16 @@ class AUT:
         self.options = options
         try:
             self.port = local_system.find_free_port(configs.squish.AUT_PORT, 1000)
-            if configs.ATTACH_MODE:
-                SquishServer().add_attachable_aut(self.aut_id, self.port)
-                command = [
-                    configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
-                    f'--port={self.port}',
-                    f'"{self.path}"',
-                    f'-d={self.app_data}',
-                    f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
-                    options
-                ]
-                self.pid = local_system.execute(command)
-            else:
-                SquishServer().add_executable_aut(self.aut_id, self.path.parent)
-                command = [self.aut_id, f'-d={self.app_data}']
-                self.ctx = squish.startApplication(' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
-                self.pid = self.ctx.pid
-
+            SquishServer().add_attachable_aut(self.aut_id, self.port)
+            command = [
+                configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
+                f'--port={self.port}',
+                f'"{self.path}"',
+                f'-d={self.app_data}',
+                f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
+                options
+            ]
+            self.pid = local_system.execute(command)
             self.attach()
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             return self
