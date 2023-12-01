@@ -1,24 +1,24 @@
-import collectibles_item as flat_item
-import collectibles_nested_item as nested_item
+import ./collectibles_entry as flat_item
+import ./collectibles_nested_item as nested_item
 
-proc collectibleToCollectibleNestedItem*(flatItem: flat_item.Item): nested_item.Item =
+proc collectibleToCollectibleNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
   return nested_item.initItem(
-    flatItem.getId(),
-    flatItem.getChainId(),
+    flatItem.getID(),
+    flatItem.getChainID(),
     flatItem.getName(),
-    flatItem.getImageUrl(),
-    flatItem.getCollectionId(),
+    flatItem.getImageURL(),
+    flatItem.getCollectionID(),
     flatItem.getCollectionName(),
     false
   )
 
-proc collectibleToCollectionNestedItem*(flatItem: flat_item.Item): nested_item.Item =
+proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
   return nested_item.initItem(
-    flatItem.getCollectionId(),
-    flatItem.getChainId(),
+    flatItem.getCollectionID(),
+    flatItem.getChainID(),
     flatItem.getCollectionName(),
-    flatItem.getCollectionImageUrl(),
-    flatItem.getCollectionId(),
+    flatItem.getCollectionImageURL(),
+    flatItem.getCollectionID(),
     flatItem.getCollectionName(),
     true
   )

@@ -131,6 +131,7 @@ proc newModule*(
   let collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
     autofetch = false,
+    networkService = networkService,
     events = events
   )
   result.collectiblesController = collectiblesController

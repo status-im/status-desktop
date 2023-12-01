@@ -46,6 +46,7 @@ proc newModule*(
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
     autofetch = false,
+    networkService = networkService,
     events = events
   )
   result.moduleLoaded = false

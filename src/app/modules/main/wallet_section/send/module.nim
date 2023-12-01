@@ -77,6 +77,7 @@ proc newModule*(
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.WalletSend),
     autofetch = true,
+    networkService = networkService,
     events = events
   )
   result.nestedCollectiblesModel = nested_collectibles.newModel(result.collectiblesController.getModel())

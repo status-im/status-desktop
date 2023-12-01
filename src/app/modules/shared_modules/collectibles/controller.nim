@@ -1,6 +1,7 @@
 import NimQml, std/json, sequtils, sugar, strutils
 import stint, logging, Tables
 
+import app/modules/shared_models/collectibles_entry
 import app/modules/shared_models/collectibles_model
 import app/modules/shared_models/collectibles_utils
 import events_handler
@@ -9,12 +10,15 @@ import app/core/eventemitter
 
 import backend/collectibles as backend_collectibles
 import backend/activity as backend_activity
+import app_service/service/network/service as network_service
 
 const FETCH_BATCH_COUNT_DEFAULT = 50
 
 QtObject:
   type
     Controller* = ref object of QObject
+      networkService: network_service.Service
+
       model: Model
       fetchFromStart: bool
 
@@ -122,6 +126,10 @@ QtObject:
       self.fetchFromStart = true
       error "error fetching collectibles entries: ", response.error
 
+  proc getExtraData(self: Controller, chainID: int): ExtraData =
+    let network = self.networkService.getNetwork(chainID)
+    return getExtraData(network)
+
   proc processGetOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
     defer: self.model.setIsFetching(false)
 
@@ -135,7 +143,10 @@ QtObject:
       return
     
     try: 
-      let items = res.collectibles.map(header => collectibleToItem(header))
+      let items = res.collectibles.map(header => (block:
+        let extradata = self.getExtraData(header.id.contractID.chainID)
+        newCollectibleDetailsFullEntry(header, extradata)
+      ))
       self.model.setItems(items, res.offset, res.hasMore)
     except Exception as e:
       error "Error converting activity entries: ", e.msg
@@ -175,6 +186,7 @@ QtObject:
     )
   proc newController*(
     requestId: int32,
+    networkService: network_service.Service,
     events: EventEmitter,
     autofetch: bool = true,
     dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
@@ -187,6 +199,8 @@ QtObject:
     result.autofetch = autofetch
     result.dataType = dataType
     result.fetchCriteria = fetchCriteria
+
+    result.networkService = networkService
 
     result.model = newModel()
     result.fetchFromStart = true

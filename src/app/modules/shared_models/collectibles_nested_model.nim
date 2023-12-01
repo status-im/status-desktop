@@ -1,7 +1,7 @@
 import NimQml, Tables, strutils, strformat, sequtils
 
 import ./collectibles_model as flat_model
-import ./collectibles_item as flat_item
+import ./collectibles_entry as flat_item
 import ./collectibles_nested_item as nested_item
 
 import ./collectibles_nested_utils
@@ -120,11 +120,11 @@ QtObject:
       of "collectionName": result = item.getCollectionName()
       of "isCollection": result = $item.getIsCollection()
 
-  proc getCollectiblesPerCollectionId(items: seq[flat_item.Item]): Table[string, seq[flat_item.Item]] =
-    var collectiblesPerCollection = initTable[string, seq[flat_item.Item]]()
+  proc getCollectiblesPerCollectionId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
+    var collectiblesPerCollection = initTable[string, seq[flat_item.CollectiblesEntry]]()
 
     for item in items:
-      let collectionId = item.getCollectionId()
+      let collectionId = item.getCollectionID()
       if not collectiblesPerCollection.hasKey(collectionId):
         collectiblesPerCollection[collectionId] = @[]
       collectiblesPerCollection[collectionId].add(item)
