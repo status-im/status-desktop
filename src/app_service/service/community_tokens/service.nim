@@ -338,7 +338,7 @@ QtObject:
       if data.eventType == collectibles_backend.eventCommunityCollectiblesReceived:
         self.processReceivedCollectiblesWalletEvent(data.message)
 
-    self.events.on(PendingTransactionTypeDto.SetSigner.event) do(e: Args):
+    self.events.on(PendingTransactionTypeDto.SetSignerPublicKey.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
       self.processSetSignerTransactionEvent(receivedData)
 
@@ -999,7 +999,7 @@ QtObject:
         transactionHash,
         addressFrom,
         contractAddress,
-        $PendingTransactionTypeDto.SetSigner,
+        $PendingTransactionTypeDto.SetSignerPublicKey,
         $(%contractDetails),
         chainId,
       )

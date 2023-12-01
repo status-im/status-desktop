@@ -1,17 +1,19 @@
 import NimQml, strutils, logging, json, options
 
-import backend/wallet_connect as backend
+import backend/wallet as backend_wallet
+import backend/wallet_connect as backend_wallet_connect
 
 import app/global/global_singleton
 import app/core/eventemitter
 import app/core/signals/types
 
 import app_service/common/utils as common_utils
+from app_service/service/transaction/dto import PendingTransactionTypeDto
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import constants
-import session_response_dto, helper
+import tx_response_dto, helper
 
 const UNIQUE_WALLET_CONNECT_MODULE_SIGNING_IDENTIFIER* = "WalletConnect-Signing"
 
@@ -20,6 +22,7 @@ QtObject:
     Controller* = ref object of QObject
       events: EventEmitter
       sessionRequestJson: JsonNode
+      txResponseDto: TxResponseDto
       hasActivePairings: Option[bool]
 
   ## Forward declarations
@@ -61,7 +64,7 @@ QtObject:
 
   proc pairSessionProposal(self: Controller, sessionProposalJson: string) {.slot.} =
     var res: JsonNode
-    let err = backend.pair(res, sessionProposalJson)
+    let err = backend_wallet_connect.pair(res, sessionProposalJson)
     if err.len > 0:
       error "Failed to pair session"
       return
@@ -70,20 +73,20 @@ QtObject:
     self.proposeUserPair(sessionProposalJson, supportedNamespacesJson)
 
   proc recordSuccessfulPairing(self: Controller, sessionProposalJson: string) {.slot.} =
-    if backend.recordSuccessfulPairing(sessionProposalJson):
+    if backend_wallet_connect.recordSuccessfulPairing(sessionProposalJson):
       if not self.hasActivePairings.get(false):
         self.hasActivePairings = some(true)
 
   proc deletePairing(self: Controller, topic: string) {.slot.} =
-    if backend.deletePairing(topic):
+    if backend_wallet_connect.deletePairing(topic):
       if self.hasActivePairings.get(false):
-        self.hasActivePairings = some(backend.hasActivePairings())
+        self.hasActivePairings = some(backend_wallet_connect.hasActivePairings())
     else:
       error "Failed to delete pairing"
 
   proc getHasActivePairings*(self: Controller): bool {.slot.} =
     if self.hasActivePairings.isNone:
-      self.hasActivePairings = some(backend.hasActivePairings())
+      self.hasActivePairings = some(backend_wallet_connect.hasActivePairings())
     return self.hasActivePairings.get(false)
 
   QtProperty[bool] hasActivePairings:
@@ -93,23 +96,25 @@ QtObject:
 
   proc sendTransactionAndRespond(self: Controller, signature: string) =
     let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
-    var res: JsonNode
-    let err = backend.sendTransactionWithSignature(res, finalSignature)
-    if err.len > 0:
+    var txResponse: JsonNode
+    let err = backend_wallet.sendTransactionWithSignature(txResponse, self.txResponseDto.chainId,
+      $PendingTransactionTypeDto.WalletConnectTransfer, $self.txResponseDto.txArgsJson, finalSignature)
+    if err.len > 0 or txResponse.isNil:
       error "Failed to send tx"
       return
-    let txHash = res.getStr
+    let txHash = txResponse.getStr
     self.respondSessionRequest($self.sessionRequestJson, txHash, false)
 
   proc buildRawTransactionAndRespond(self: Controller, signature: string) =
     let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
-    var res: JsonNode
-    let err = backend.buildRawTransaction(res, finalSignature)
+    var txResponse: JsonNode
+    let err = backend_wallet.buildRawTransaction(txResponse, self.txResponseDto.chainId, $self.txResponseDto.txArgsJson,
+      finalSignature)
     if err.len > 0:
-      error "Failed to send tx"
+      error "Failed to build raw tx"
       return
-    let txHash = res.getStr
-    self.respondSessionRequest($self.sessionRequestJson, txHash, false)
+    let txResponseDto = txResponse.toTxResponseDto()
+    self.respondSessionRequest($self.sessionRequestJson, txResponseDto.rawTx, false)
 
   proc finishSessionRequest(self: Controller, signature: string) =
     let requestMethod = getRequestMethod(self.sessionRequestJson)
@@ -130,25 +135,25 @@ QtObject:
     try:
       self.sessionRequestJson = parseJson(sessionRequestJson)
       var sessionRes: JsonNode
-      let err = backend.sessionRequest(sessionRes, sessionRequestJson)
+      let err = backend_wallet_connect.sessionRequest(sessionRes, sessionRequestJson)
       if err.len > 0:
         error "Failed to request a session"
-        self.respondSessionRequest($sessionRequestJson, "", true)
+        self.respondSessionRequest(sessionRequestJson, "", true)
         return
 
-      let sessionResponseDto = sessionRes.toSessionResponseDto()
-      if sessionResponseDto.signOnKeycard:
+      self.txResponseDto = sessionRes.toTxResponseDto()
+      if self.txResponseDto.signOnKeycard:
         let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_WALLET_CONNECT_MODULE_SIGNING_IDENTIFIER,
-          keyUid: sessionResponseDto.keyUid,
-          path: sessionResponseDto.addressPath,
-          dataToSign: singletonInstance.utils.removeHexPrefix(sessionResponseDto.messageToSign))
+          keyUid: self.txResponseDto.keyUid,
+          path: self.txResponseDto.addressPath,
+          dataToSign: singletonInstance.utils.removeHexPrefix(self.txResponseDto.messageToSign))
         self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA, data)
       else:
         let hashedPasssword = common_utils.hashPassword(password)
         var signMsgRes: JsonNode
-        let err = backend.signMessage(signMsgRes,
-          sessionResponseDto.messageToSign,
-          sessionResponseDto.address,
+        let err = backend_wallet.signMessage(signMsgRes,
+          self.txResponseDto.messageToSign,
+          self.txResponseDto.address,
           hashedPasssword)
         if err.len > 0:
           error "Failed to sign message on statusgo side"
