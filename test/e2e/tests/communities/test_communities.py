@@ -14,7 +14,6 @@ from gui.screens.community import CommunityScreen
 from scripts.tools import image
 
 
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
@@ -28,15 +27,15 @@ def test_create_community(user_account, main_screen: MainWindow, params):
     with step('Verify community parameters in community overview'):
         # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
         # with step('Icon is correct'):
-            # community_icon = main_screen.left_panel.get_community_logo(params['name'])
-            # image.compare(community_icon, 'button_logo.png', timout_sec=5)
+        # community_icon = main_screen.left_panel.get_community_logo(params['name'])
+        # image.compare(community_icon, 'button_logo.png', timout_sec=5)
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
         with step('Members count is correct'):
             assert '1' in community_screen.left_panel.members
         # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
         # with step('Logo is correct'):
-            # image.compare(community_screen.left_panel.logo, 'logo.png')
+        # image.compare(community_screen.left_panel.logo, 'logo.png')
 
     with step('Verify community parameters in community settings view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -133,12 +132,12 @@ def test_edit_community(main_screen: MainWindow, params):
         # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
         # with step('Icon is correct'):
         #     community_icon = main_screen.left_panel.get_community_logo(params['name'])
-            # image.compare(community_icon, 'button_updated_logo.png')
+        # image.compare(community_icon, 'button_updated_logo.png')
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
         # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
         # with step('Logo is correct'):
-            # image.compare(community_screen.left_panel.logo, 'updated_logo.png')
+        # image.compare(community_screen.left_panel.logo, 'updated_logo.png')
 
     with step('Verify community parameters in community settings screen'):
         settings_screen = main_screen.left_panel.open_settings()

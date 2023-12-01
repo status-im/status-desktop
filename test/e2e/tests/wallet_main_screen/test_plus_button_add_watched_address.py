@@ -18,7 +18,7 @@ from gui.main_window import MainWindow
                  'sunglasses', '1f60e')
 ])
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
-def test_wallet_add_acc_add_watched_address(
+def test_plus_button_add_watched_address(
         main_screen: MainWindow, address: str, color: str, emoji: str, emoji_unicode: str,
         name: str):
     with step('Add watched address with plus action button'):
