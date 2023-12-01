@@ -1,12 +1,12 @@
 import unittest
 
-import ../../../src/app_service/common/types
-import ../../../src/app_service/service/contacts/dto/contact_details
-import ../../../src/app_service/service/message/dto/message
+import app_service/common/types
+import app_service/service/contacts/dto/contact_details
+import app_service/service/message/dto/message
 
-import ../../../src/app/modules/shared_models/message_model
-import ../../../src/app/modules/shared_models/message_item
-import ../../../src/app/modules/shared_models/message_transaction_parameters_item
+import app/modules/shared_models/message_model
+import app/modules/shared_models/message_item
+import app/modules/shared_models/message_transaction_parameters_item
 
 proc createTestMessageItem(id: string, clock: int64): Item =
   return initItem(

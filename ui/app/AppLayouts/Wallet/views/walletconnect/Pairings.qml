@@ -22,7 +22,7 @@ ListView {
             width: root.width
 
             StatusIcon {
-                icon: model.peerMetadata.icons.length > 0? model.peerMetadata.icons[0] : ""
+                icon: model.peerMetadata.icons.length > 0 ? model.peerMetadata.icons[0] : ""
                 visible: !!icon
             }
 

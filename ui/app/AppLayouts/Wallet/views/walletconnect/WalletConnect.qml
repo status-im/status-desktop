@@ -32,4 +32,11 @@ Item {
             root.controller.deletePairing(deletePayload.topic)
         }
     }
+
+    Connections {
+        target: root.controller
+        function onRequestOpenWalletConnectPopup(uri) {
+            modal.openWithUri(uri)
+        }
+    }
 }

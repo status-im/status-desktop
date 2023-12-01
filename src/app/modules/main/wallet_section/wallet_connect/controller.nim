@@ -6,6 +6,7 @@ import backend/wallet_connect as backend_wallet_connect
 import app/global/global_singleton
 import app/core/eventemitter
 import app/core/signals/types
+import app/global/app_signals
 
 import app_service/common/utils as common_utils
 from app_service/service/transaction/dto import PendingTransactionTypeDto
@@ -14,7 +15,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import constants
-import tx_response_dto, helper
+import tx_response_dto, helpers
 
 const UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER* = "WalletConnect-SessionRequestSigning"
 const UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER* = "WalletConnect-AuthRequestSigning"
@@ -37,6 +38,8 @@ QtObject:
   proc finishSessionRequest(self: Controller, signature: string)
   proc finishAuthRequest(self: Controller, signature: string)
 
+  proc requestOpenWalletConnectPopup*(self: Controller, uri: string) {.signal.}
+
   proc setup(self: Controller) =
     self.QObject.setup
 
@@ -45,6 +48,12 @@ QtObject:
       # TODO #12434: async processing
       discard
     )
+
+    self.events.on(SIGNAL_STATUS_URL_ACTIVATED) do(e: Args):
+      var args = StatusUrlArgs(e)
+      let (found, wcUri) = extractAndCheckUriParameter(args.url)
+      if found:
+        self.requestOpenWalletConnectPopup(wcUri)
 
     self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
       let args = SharedKeycarModuleArgs(e)

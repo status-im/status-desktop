@@ -153,7 +153,7 @@ func main() {
 	// Start a local server to serve the files
 	http.HandleFunc("/bundle.js", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
-		http.ServeFile(w, r, "../../../ui/app/AppLayouts/Wallet/views/walletconnect/sdk/generated/bundle.js")
+		http.ServeFile(w, r, "../../../../ui/app/AppLayouts/Wallet/views/walletconnect/sdk/generated/bundle.js")
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -161,9 +161,9 @@ func main() {
 		http.ServeFile(w, r, "./index.html")
 	})
 
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":8081", nil)
 
-	w.Navigate("http://localhost:8080")
+	w.Navigate("http://localhost:8081")
 	w.Run()
 }
 

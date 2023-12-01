@@ -33,21 +33,8 @@ Item {
         url: `${pagesFolder}/../stubs/AppLayouts/Wallet/views/walletconnect/src/index.html`
 
         controller: WalletConnectController {
-            pairSessionProposal: function(sessionProposalJson) {
-                proposeUserPair(sessionProposalJson, `{"eip155":{"methods":[
-                    "personal_sign",
-                    "eth_sendTransaction",
-                    "eth_signTransaction",
-                    "eth_sign",
-                    "eth_signTypedData",
-                    "eth_signTypedData_v4"
-                ],
-                 "chains":["eip155:5"],
-                 "events":[
-                    "chainChanged",
-                    "accountsChanged"
-                 ],
-                 "accounts":["eip155:5:0xBd54A96c0Ae19a220C8E1234f54c940DFAB34639"]}}`)
+            sessionProposal: function(sessionProposalJson) {
+                respondSessionProposal(sessionProposalJson, `{"eip155":{"methods":["eth_sendTransaction","eth_sendRawTransaction","personal_sign","eth_sign","eth_signTransaction","eth_signTypedData","wallet_switchEthereumChain"],"chains":["eip155:5"],"events":["accountsChanged","chainChanged"],"accounts":["eip155:5:0xE2d622C817878dA5143bBE06866ca8E35273Ba8a"]}}`, "")
             }
 
             recordSuccessfulPairing: function(sessionProposalJson) {
@@ -57,6 +44,11 @@ Item {
                     topic: sessionProposal.params.pairingTopic,
                     expiry: sessionProposal.params.expiry,
                     active: true,
+                    peerMetadata: {
+                        name: sessionProposal.params.proposer.metadata.name,
+                        url: sessionProposal.params.proposer.metadata.url,
+                        icons: sessionProposal.params.proposer.metadata.icons,
+                    }
                 })
                 root.saveListModel(pairingsModel)
             }
@@ -64,7 +56,7 @@ Item {
                 var found = false
                 for (var i = 0; i < pairingsModel.count; i++) {
                     if (pairingsModel.get(i).topic === pairingTopic) {
-                        pairingsModel.get.active = false
+                        pairingsModel.get(i).active = false
                         found = true
                         break;
                     }
@@ -154,6 +146,23 @@ Item {
                     id: pairingsModel
                 }
                 clip: true
+            }
+
+            RowLayout {
+                StatusButton {
+                    text: "Trigger Deep-Link"
+                    onClicked: {
+                        wc.controller.requestOpenWalletConnectPopup(deepLinkInput.text)
+                    }
+                }
+
+                StatusInput {
+                    id: deepLinkInput
+
+                    Layout.preferredWidth: 300
+
+                    placeholderText: "wc:a4f32854428af0f5b66...."
+                }
             }
 
             // spacer
