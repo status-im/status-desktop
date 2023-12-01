@@ -830,8 +830,10 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe $(ARGS)
 
+NIM_TEST_FILES := $(wildcard test/nim/*.nim)
+
 tests-nim-linux: | dotherside
 	LD_LIBRARY_PATH="$(QT5_LIBDIR):$(LD_LIBRARY_PATH)" \
-	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
+	$(foreach nimfile,$(NIM_TEST_FILES),$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r $(nimfile);)
 
 endif # "variables.mk" was not included

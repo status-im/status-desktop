@@ -19,8 +19,6 @@ Popup {
 
     clip: true
 
-    property bool sdkReady: d.state === d.sdkReadyState
-
     // wallet_connect.Controller \see wallet_section/wallet_connect/controller.nim
     required property var controller
 
@@ -30,6 +28,19 @@ Popup {
         d.sessionRequest = sessionRequest
         d.state = d.waitingUserResponseToSessionRequest
         root.open()
+    }
+
+    function openWithUri(uri) {
+        pairLinkInput.text = uri
+
+        root.open()
+
+        if (root.sdk.sdkReady) {
+            d.setStatusText("Pairing from deeplink ...")
+            sdk.pair(uri)
+        } else {
+            d.pairModalUriWhenReady = uri
+        }
     }
 
     Flickable {
@@ -257,15 +268,22 @@ Popup {
     Connections {
         target: root.sdk
 
+        function onSdkReadyChanged() {
+            if (root.sdk.sdkReady && d.pairModalUriWhenReady) {
+                d.setStatusText("Lazy pairing from deeplink ...")
+                sdk.pair(d.pairModalUriWhenReady)
+                d.pairModalUriWhenReady = ""
+            }
+        }
+
         function onSdkInit(success, info) {
             d.setDetailsText(info)
             if (success) {
                 d.setStatusText("Ready to pair or auth")
-                d.state = d.sdkReadyState
             } else {
                 d.setStatusText("SDK Error", "red")
-                d.state = ""
             }
+            d.state = ""
         }
 
         function onSessionProposal(sessionProposal) {
@@ -282,13 +300,13 @@ Popup {
                 root.controller.recordSuccessfulPairing(JSON.stringify(sessionProposal))
             } else {
                 d.setStatusText("Pairing error", "red")
-                d.state = d.sdkReadyState
+                d.state = ""
             }
         }
 
         function onRejectSessionResult(error) {
             d.setDetailsText("")
-            d.state = d.sdkReadyState
+            d.state = ""
             if (!error) {
                 d.setStatusText("Pairing rejected")
             } else {
@@ -390,8 +408,9 @@ Popup {
         property var sessionRequest: null
         property var signedData: null
 
+        property string pairModalUriWhenReady: ""
+
         property string state: ""
-        readonly property string sdkReadyState: "sdk_ready"
         readonly property string waitingPairState: "waiting_pairing"
         readonly property string waitingUserResponseToSessionRequest: "waiting_user_response_to_session_request"
         readonly property string waitingUserResponseToAuthRequest: "waiting_user_response_to_auth_request"

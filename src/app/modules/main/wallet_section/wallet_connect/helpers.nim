@@ -1,4 +1,5 @@
 import json, strutils
+import uri
 
 include  app_service/common/json_utils
 
@@ -25,3 +26,16 @@ proc getRequestMethod*(jsonObj: JsonNode): RequestMethod =
         discard
   return RequestMethod.Unknown
 
+# check and extract Wallet Connect URI parameter from a deep link updated URL
+proc extractAndCheckUriParameter*(url: string): (bool, string) =
+  let parsedUrl = parseUri(url)
+
+  if parsedUrl.path != "/wc":
+    return (false, "")
+
+  for (key, value) in decodeQuery(parsedUrl.query):
+    if key.toLower == "uri":
+      if value.startsWith("wc:"):
+        return (true, value)
+
+  return (false, "")
