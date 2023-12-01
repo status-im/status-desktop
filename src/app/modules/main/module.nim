@@ -325,6 +325,16 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == channelGroup.id # We must pass on if the current item section is currently active to keep that property as it is
 
+
+  # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
+  var members = channelGroup.members
+  for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
+    var chatMember = ChatMember()
+    chatMember.id = requestForAutoRejoin.publicKey
+    chatMember.joined = false
+    chatMember.role = MemberRole.None
+    members.add(chatMember)
+
   result = initItem(
     channelGroup.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
@@ -353,8 +363,12 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     channelGroup.permissions.ensOnly,
     channelGroup.muted,
     # members
-    channelGroup.members.map(proc(member: ChatMember): MemberItem =
+    members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
+      var state = MembershipRequestState.Accepted
+      if not member.joined:
+        state = MembershipRequestState.AwaitingAddress
+
       result = initMemberItem(
         pubKey = member.id,
         displayName = contactDetails.dto.displayName,
@@ -369,7 +383,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
         memberRole = member.role,
-        membershipRequestState = MembershipRequestState.Accepted
+        membershipRequestState = state
       )),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -1284,7 +1298,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     finalEphNotifType = EphemeralNotificationType.Success
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
-    
+
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, "",
   loading, finalEphNotifType, url, 0, "", details)
   self.view.ephemeralNotificationModel().addItem(item)
@@ -1300,7 +1314,7 @@ method displayEphemeralWithActionNotification*[T](self: Module[T], title: string
     finalEphNotifType = EphemeralNotificationType.Success
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
-    
+
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, iconColor,
   loading, finalEphNotifType, "", actionType, actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
@@ -1369,7 +1383,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
         self.pendingSpectateRequest.channelUuid = ""
         self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
         return
-      
+
       self.controller.switchTo(communityId, "", "")
 
     of StatusUrlAction.OpenCommunityChannel:

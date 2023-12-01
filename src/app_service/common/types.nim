@@ -57,7 +57,7 @@ type MemberRole* {.pure} = enum
 
 # TODO: consider refactor MembershipRequestState to MembershipState and use both for request to join and kick/ban actions
 # Issue: https://github.com/status-im/status-desktop/issues/11842
-type MembershipRequestState* {.pure} = enum 
+type MembershipRequestState* {.pure} = enum
   None = 0,
   Pending = 1,
   Accepted = 2,
@@ -69,6 +69,7 @@ type MembershipRequestState* {.pure} = enum
   BannedPending = 8,
   UnbannedPending = 9,
   KickedPending = 10,
+  AwaitingAddress = 11,
 
 type
   ContractTransactionStatus* {.pure.} = enum

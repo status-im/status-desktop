@@ -400,8 +400,8 @@ method isUserMemberOfCommunity*(self: Module, communityId: string): bool =
 method userCanJoin*(self: Module, communityId: string): bool =
   self.controller.userCanJoin(communityId)
 
-method isCommunityRequestPending*(self: Module, communityId: string): bool =
-  self.controller.isCommunityRequestPending(communityId)
+method isMyCommunityRequestPending*(self: Module, communityId: string): bool =
+  self.controller.isMyCommunityRequestPending(communityId)
 
 method communityImported*(self: Module, community: CommunityDto) =
   self.view.addOrUpdateItem(self.getCommunityItem(community))

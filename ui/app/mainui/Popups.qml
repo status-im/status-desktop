@@ -538,7 +538,7 @@ QtObject {
                                             communityDetails.introMessage,
                                             communityDetails.image,
                                             communityDetails.access,
-                                            root.rootStore.isCommunityRequestPending(communityId))
+                                            root.rootStore.isMyCommunityRequestPending(communityId))
                 }
                 onClosed: destroy()
             }

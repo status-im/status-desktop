@@ -573,7 +573,7 @@ Item {
                             enabled: {
                                 if (model.memberRole === Constants.memberRole.owner)
                                     return false
-                                if (communityContextMenu.isSpectator && !appMain.rootStore.isCommunityRequestPending(model.id))
+                                if (communityContextMenu.isSpectator && !appMain.rootStore.isMyCommunityRequestPending(model.id))
                                     return false
                                 return true
                             }
@@ -587,7 +587,8 @@ Item {
 
                         StatusAction {
                             id: leaveCommunityMenuItem
-                            enabled: model.memberRole !== Constants.memberRole.owner
+                            // allow to leave community for the owner in non-production builds
+                            enabled: model.memberRole !== Constants.memberRole.owner || !production
                             text: {
                                 if (communityContextMenu.isSpectator)
                                     return qsTr("Close Community")

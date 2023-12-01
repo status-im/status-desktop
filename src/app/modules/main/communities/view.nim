@@ -590,8 +590,8 @@ QtObject:
   proc userCanJoin*(self: View, communityId: string): bool {.slot.} =
     self.delegate.userCanJoin(communityId)
 
-  proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
-    self.delegate.isCommunityRequestPending(communityId)
+  proc isMyCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
+    self.delegate.isMyCommunityRequestPending(communityId)
 
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)

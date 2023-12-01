@@ -84,6 +84,7 @@ Item {
                 //    - Reject button is visible when the user is hovered or when the request is in rejected pending state. This condition can be overriden by the ctaAllowed property
                 //    - Kick and ban buttons are visible when the user is hovered or when the request is in kick or ban pending state. This condition can be overriden by the ctaAllowed property
                 // 3. Other conditions - buttons are visible when the user is hovered and is not himself or other privileged user
+                // 4. All members tab, member in AwaitingAddress state - buttons is not visible, sandwatch icon is shown
 
                 /// Helpers ///
 
@@ -147,6 +148,8 @@ Item {
                                                             isBanPending ? qsTr("Ban pending...") :
                                                             isUnbanPending ? qsTr("Unban pending...") :
                                                             isKickPending ? qsTr("Kick pending...") : ""
+
+                isAwaitingAddress: model.membershipRequestState === Constants.CommunityMembershipRequestState.AwaitingAddress
 
                 statusListItemComponentsSlot.spacing: 16
                 statusListItemTitleArea.anchors.rightMargin: 0
