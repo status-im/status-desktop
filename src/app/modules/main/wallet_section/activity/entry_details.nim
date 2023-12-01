@@ -11,6 +11,12 @@ import web3/conversions
 type
   AmountToCurrencyConvertor* = proc (amount: UInt256, symbol: string): CurrencyAmount
 
+  ActivityChainDetails = object
+    chainId: ChainId
+    blockNumber: int
+    txHash: string
+    contractAddress: Option[eth.Address]
+
 QtObject:
   type
     ActivityDetails* = ref object of QObject
@@ -21,11 +27,14 @@ QtObject:
       # TODO use medatada
       multiTxId: int
       nonce*: int
-      blockNumber*: int
+      blockNumberOut*: int
+      blockNumberIn*: int
       protocolType*: Option[backend.ProtocolType]
-      txHash*: string
+      txHashOut*: string
+      txHashIn*: string
       input*: string
-      contractAddress: Option[eth.Address]
+      contractAddressIn: Option[eth.Address]
+      contractAddressOut: Option[eth.Address]
       maxTotalFees: CurrencyAmount
       totalFees: CurrencyAmount
 
@@ -37,6 +46,18 @@ QtObject:
 
   proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
     return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
+
+  proc fromJson*(e: JsonNode, T: typedesc[ActivityChainDetails]): ActivityChainDetails {.inline.} =
+    const contractAddressField = "contractAddress"
+    result = T(
+      chainId: ChainId(e["chainId"].getInt()),
+      blockNumber: e["blockNumber"].getInt(),
+      txHash: e["hash"].getStr(),
+    )
+    if e.hasKey(contractAddressField) and e[contractAddressField].kind != JNull:
+      var contractAddress: eth.Address
+      fromJson(e[contractAddressField], contractAddressField, contractAddress)
+      result.contractAddress = some(contractAddress)
 
   proc newActivityDetails*(metadata: backend.ActivityEntry, valueConvertor: AmountToCurrencyConvertor): ActivityDetails =
     new(result, delete)
@@ -65,15 +86,28 @@ QtObject:
         e = res.result
 
     const protocolTypeField = "protocolType"
-    const hashField = "hash"
-    const contractAddressField = "contractAddress"
     const inputField = "input"
     const totalFeesField = "totalFees"
+    const chainDetailsField = "chainDetails"
 
     result.id = e["id"].getStr()
     result.multiTxId = e["multiTxId"].getInt()
     result.nonce = e["nonce"].getInt()
-    result.blockNumber = e["blockNumber"].getInt()
+
+    let chainIdOut = metadata.chainIdOut.get(ChainId(0))
+    let chainIdIn = metadata.chainIdIn.get(ChainId(0))
+
+    if e[chainDetailsField].kind == JArray:
+      for chainDetails in e[chainDetailsField].items:
+        let chainDetails = fromJson(chainDetails, ActivityChainDetails)
+        if chainDetails.chainId == chainIdOut:
+          result.blockNumberOut = chainDetails.blockNumber
+          result.txHashOut = chainDetails.txHash
+          result.contractAddressOut = chainDetails.contractAddress
+        elif chainDetails.chainId == chainIdIn:
+          result.blockNumberIn = chainDetails.blockNumber
+          result.txHashIn = chainDetails.txHash
+          result.contractAddressIn = chainDetails.contractAddress
 
     let maxFeePerGas = e["maxFeePerGas"].getStr()
     let gasLimit = e["gasLimit"].getStr()
@@ -90,16 +124,10 @@ QtObject:
       if resTotalFees != nil:
         result.totalFees = resTotalFees
 
-    if e.hasKey(hashField) and e[hashField].kind != JNull:
-      result.txHash = e[hashField].getStr()
     if e.hasKey(protocolTypeField) and e[protocolTypeField].kind != JNull:
       result.protocolType = some(fromJson(e[protocolTypeField], backend.ProtocolType))
     if e.hasKey(inputField) and e[inputField].kind != JNull:
       result.input = e[inputField].getStr()
-    if e.hasKey(contractAddressField) and e[contractAddressField].kind != JNull:
-      var contractAddress: eth.Address
-      fromJson(e[contractAddressField], contractAddressField, contractAddress)
-      result.contractAddress = some(contractAddress)
 
   proc getNonce*(self: ActivityDetails): int {.slot.} =
     return self.nonce
@@ -107,8 +135,22 @@ QtObject:
   QtProperty[int] nonce:
     read = getNonce
 
+  proc getBlockNumberIn*(self: ActivityDetails): int {.slot.} =
+    return self.blockNumberIn
+
+  QtProperty[int] blockNumberIn:
+    read = getBlockNumberIn
+
+  proc getBlockNumberOut*(self: ActivityDetails): int {.slot.} =
+    return self.blockNumberOut
+
+  QtProperty[int] blockNumberOut:
+    read = getBlockNumberOut
+
   proc getBlockNumber*(self: ActivityDetails): int {.slot.} =
-    return self.blockNumber
+    if self.blockNumberOut > 0:
+      return self.blockNumberOut
+    return self.blockNumberIn
 
   QtProperty[int] blockNumber:
     read = getBlockNumber
@@ -121,11 +163,17 @@ QtObject:
   QtProperty[string] protocol:
     read = getProtocol
 
-  proc getTxHash*(self: ActivityDetails): string {.slot.} =
-    return self.txHash
+  proc getTxHashOut*(self: ActivityDetails): string {.slot.} =
+    return self.txHashOut
 
-  QtProperty[string] txHash:
-    read = getTxHash
+  QtProperty[string] txHashOut:
+    read = getTxHashOut
+
+  proc getTxHashIn*(self: ActivityDetails): string {.slot.} =
+    return self.txHashIn
+
+  QtProperty[string] txHashIn:
+    read = getTxHashIn
 
   proc getInput*(self: ActivityDetails): string {.slot.} =
     return self.input
@@ -133,11 +181,17 @@ QtObject:
   QtProperty[string] input:
     read = getInput
 
-  proc getContract*(self: ActivityDetails): string {.slot.} =
-    return if self.contractAddress.isSome(): "0x" & self.contractAddress.unsafeGet().toHex() else: ""
+  proc getContractIn*(self: ActivityDetails): string {.slot.} =
+    return if self.contractAddressIn.isSome(): "0x" & self.contractAddressIn.unsafeGet().toHex() else: ""
 
-  QtProperty[string] contract:
-    read = getContract
+  QtProperty[string] contractIn:
+    read = getContractIn
+
+  proc getContractOut*(self: ActivityDetails): string {.slot.} =
+    return if self.contractAddressOut.isSome(): "0x" & self.contractAddressOut.unsafeGet().toHex() else: ""
+
+  QtProperty[string] contractOut:
+    read = getContractOut
 
   proc getMaxTotalFees*(self: ActivityDetails): QVariant {.slot.} =
     return newQVariant(self.maxTotalFees)

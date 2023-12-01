@@ -123,6 +123,9 @@ proc fromJson*(jn: JsonNode, T: typedesc[ChainId]): ChainId {.inline.} =
 
 proc `$`*(cid: ChainId): string = $(int(cid))
 
+proc `==`*(c1, c2: ChainId): bool =
+    return int(c1) == int(c2)
+
 const addressField = "address"
 const tokenIdField = "tokenId"
 
