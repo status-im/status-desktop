@@ -31,7 +31,7 @@ type
     RemoteDestructCollectible = "RemoteDestructCollectible"
     BurnCommunityToken = "BurnCommunityToken"
     DeployOwnerToken = "DeployOwnerToken"
-    SetSigner = "SetSigner"
+    SetSignerPublicKey = "SetSignerPublicKey"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
