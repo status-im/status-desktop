@@ -32,6 +32,7 @@ type
     BurnCommunityToken = "BurnCommunityToken"
     DeployOwnerToken = "DeployOwnerToken"
     SetSignerPublicKey = "SetSignerPublicKey"
+    WalletConnectTransfer = "WalletConnectTransfer"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self

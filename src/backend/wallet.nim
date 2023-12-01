@@ -12,6 +12,11 @@ rpc(buildTransaction, "wallet"):
   chainId: int
   sendTxArgsJson: string
 
+rpc(buildRawTransaction, "wallet"):
+  chainId: int
+  sendTxArgsJson: string
+  signature: string
+
 rpc(sendTransactionWithSignature, "wallet"):
   chainId: int
   txType: string
@@ -58,6 +63,20 @@ proc buildTransaction*(resultOut: var JsonNode, chainId: int, sendTxArgsJson: st
     warn e.msg
     return e.msg
 
+
+## Builds the raw tx with the provided tx args, chain id and signature
+## `resultOut` represents a json object that corresponds to the status go `transfer.TxResponse` type, or `nil` if the call was unsuccessful
+## `chainId` is the chain id of the network
+## `txArgsJSON` is the json string of the tx, corresponds to the status go `transactions.SendTxArgs` type
+## `signature` is the signature of the tx
+## returns the error message if any, or an empty string
+proc buildRawTransaction*(resultOut: var JsonNode, chainId: int, sendTxArgsJson: string, signature: string): string =
+  try:
+    let response = buildRawTransaction(chainId, sendTxArgsJson, signature)
+    return prepareResponse(resultOut, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
 
 ## Sends the tx with signature on provided chain, setting tx type
 ## `resultOut` represents a json object that contains the tx hash if the call was successful, or `nil`
