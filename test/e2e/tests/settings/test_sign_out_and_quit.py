@@ -13,7 +13,8 @@ def test_sign_out_and_quit(aut, main_screen: MainWindow):
         settings = main_screen.left_panel.open_settings()
 
     with step('Click sign out and quit in settings'):
-        settings.left_panel.sign_out_and_quit()
+        sign_out_screen = settings.left_panel.open_sign_out_and_quit()
+        sign_out_screen.sign_out_and_quit()
 
     with step('Check that app was closed'):
         wait_for_close(aut.pid)

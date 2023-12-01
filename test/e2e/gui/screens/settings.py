@@ -9,6 +9,7 @@ from gui.screens.settings_messaging import MessagingSettingsView
 from gui.screens.settings_profile import ProfileSettingsView
 from gui.screens.settings_syncing import SyncingSettingsView
 from gui.screens.settings_wallet import WalletSettingsView
+from gui.components.settings.sign_out_popup import SignOutPopup
 
 
 class LeftPanel(QObject):
@@ -66,8 +67,9 @@ class LeftPanel(QObject):
                 raise f"Sync settings was not opened"
 
     @allure.step('Choose sign out and quit in settings')
-    def sign_out_and_quit(self):
+    def open_sign_out_and_quit(self):
         self._open_settings('16-ExtraMenuItem')
+        return SignOutPopup()
 
     @allure.step('Open keycard settings')
     def open_keycard_settings(self):
