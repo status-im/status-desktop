@@ -34,11 +34,8 @@ class SquishServer:
             f'--host={cls.host}',
             f'--port={cls.port}',
         ]
-        cls.pid = local_system.execute_with_log_files(
-            cmd,
-            stderr_log=configs.SERVER_LOGS_STDOUT,
-            stdout_log=configs.SERVER_LOGS_STDOUT,
-        )
+        with open(configs.SQUISH_LOG_FILE, "ab") as log:
+            cls.pid = local_system.execute(cmd, stderr=log, stdout=log)
 
     @classmethod
     def stop(cls):
@@ -58,20 +55,14 @@ class SquishServer:
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     @classmethod
     def configuring(cls, action: str, options: typing.Union[int, str, list]):
-        with (
-            open(configs.SERVER_LOGS_STDOUT, "ab") as out_file,
-            open(configs.SERVER_LOGS_STDERR, "ab") as err_file,
-        ):
-            rval = local_system.run(
-                [
-                    str(cls.path),
-                    f'--configfile={cls.config}',
-                    f'--config={action}',
-                ] + options,
-                stdout=out_file,
-                stderr=err_file,
-            )
-            LOG.info('rval: %s', rval)
+        LOG.info('Configuring Squish server config: %s', cls.config)
+        cmd = [
+            str(cls.path),
+            f'--configfile={cls.config}',
+            f'--config={action}',
+        ] + options
+        with open(configs.SQUISH_LOG_FILE, "ab") as log:
+            rval = local_system.run(cmd, stdout=log, stderr=log)
 
     @classmethod
     def add_attachable_aut(cls, aut_id: str, port: int):

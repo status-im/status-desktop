@@ -105,7 +105,8 @@ class AUT:
             f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
         ]
         try:
-            self.pid = local_system.execute_with_log_files(command)
+            with open(configs.AUT_LOG_FILE, "ab") as log:
+                self.pid = local_system.execute(command, stderr=log, stdout=log)
             LOG.debug('Launched AUT under PID: %d', self.pid)
             self.attach()
             assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
