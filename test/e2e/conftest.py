@@ -14,7 +14,7 @@ from scripts.utils.system_path import SystemPath
 handler = logging.FileHandler(filename=configs.PYTEST_LOG)
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    format='[%(asctime)s] (%(filename)18s:%(lineno)-3s) [%(levelname)-7s] --- %(message)s',
     handlers=[handler],
 )
 LOG = logging.getLogger(__name__)
