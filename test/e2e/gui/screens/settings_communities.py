@@ -13,7 +13,7 @@ from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class CommunitiesSettingsView(QObject):
@@ -43,7 +43,7 @@ class CommunitiesSettingsView(QObject):
             try:
                 members = self._community_template_members.text
             except LookupError as err:
-                _logger.info(err)
+                LOG.info(err)
                 members = 0
             image = self._community_template_image.image
 

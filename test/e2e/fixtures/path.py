@@ -6,7 +6,7 @@ import pytest
 import configs
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -16,11 +16,11 @@ def generate_test_data(request):
     node_dir = configs.testpath.TEST / test_params
     configs.testpath.TEST_ARTIFACTS = node_dir / 'artifacts'
     configs.testpath.TEST_VP = configs.testpath.VP / test_path / test_name
-    _logger.debug('Artifacts directory: %s',
+    LOG.debug('Artifacts directory: %s',
                   configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT))
-    _logger.debug('Verification points directory: %s',
+    LOG.debug('Verification points directory: %s',
                   configs.testpath.TEST_VP.relative_to(configs.testpath.ROOT))
-    _logger.info(f'Start test: {test_name}')
+    LOG.info(f'Start test: {test_name}')
 
 
 def generate_test_info(node):
@@ -40,6 +40,6 @@ def prepare_test_directory():
         del_runs = runs[:len(runs) - keep_results]
         for run in del_runs:
             SystemPath(run).rmtree(ignore_errors=True)
-            _logger.info(f"Remove old test run directory: {run.relative_to(configs.testpath.ROOT)}")
+            LOG.info(f"Remove old test run directory: {run.relative_to(configs.testpath.ROOT)}")
     configs.testpath.RUN.mkdir(parents=True, exist_ok=True)
-    _logger.info(f"Created new test run directory: {configs.testpath.RUN.relative_to(configs.testpath.ROOT)}")
+    LOG.info(f"Created new test run directory: {configs.testpath.RUN.relative_to(configs.testpath.ROOT)}")

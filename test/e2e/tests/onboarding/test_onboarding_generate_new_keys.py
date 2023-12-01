@@ -12,7 +12,7 @@ from gui.components.picture_edit_popup import shift_image
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture

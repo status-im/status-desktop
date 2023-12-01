@@ -7,7 +7,7 @@ from gui.elements.text_edit import TextEdit
 from gui.elements.window import Window
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class OpenFileDialog(Window):

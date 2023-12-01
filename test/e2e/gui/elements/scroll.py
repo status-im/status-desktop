@@ -6,7 +6,7 @@ import allure
 import driver
 from .object import QObject
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Scroll(QObject):
@@ -29,9 +29,9 @@ class Scroll(QObject):
                 if hasattr(element.object, 'height'):
                     y += int(element.object.height)
                 driver.flick(self.object, 0, y)
-                _logger.info(f'{self}: scrolled to {element}')
+                LOG.info(f'{self}: scrolled to {element}')
         except LookupError as err:
-            _logger.debug(err)
+            LOG.debug(err)
 
     @allure.step('Scroll down to object')
     def vertical_down_to(self, element: QObject, timeout_sec: int = 5):
@@ -41,4 +41,4 @@ class Scroll(QObject):
             driver.flick(self.object, 0, step)
             if time.monotonic() - started_at > timeout_sec:
                 raise LookupError(f'Object not found: {element}')
-            _logger.info(f'{self}: scrolled down to {element}')
+            LOG.info(f'{self}: scrolled down to {element}')

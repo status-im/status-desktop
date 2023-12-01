@@ -16,7 +16,7 @@ from configs.system import IS_LIN
 from scripts.tools.ocv import Ocv
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Image:
@@ -53,7 +53,7 @@ class Image:
 
     @allure.step('Grab image view from object')
     def update_view(self):
-        _logger.debug(f'Image view was grab from: {self.object_name}')
+        LOG.debug(f'Image view was grab from: {self.object_name}')
         rect = driver.object.globalBounds(driver.waitForObject(self.object_name))
         img = ImageGrab.grab(
             bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
@@ -77,10 +77,10 @@ class Image:
             self.update_view()
         correlation = Ocv.compare_images(self.view, expected)
         result = correlation >= threshold
-        _logger.info(f'Images equals on: {abs(round(correlation, 4) * 100)}%')
+        LOG.info(f'Images equals on: {abs(round(correlation, 4) * 100)}%')
 
         if result:
-            _logger.info(f'Screenshot comparison passed')
+            LOG.info(f'Screenshot comparison passed')
         else:
             configs.testpath.TEST_ARTIFACTS.mkdir(parents=True, exist_ok=True)
             diff = Ocv.draw_contours(self.view, expected)
@@ -97,7 +97,7 @@ class Image:
             allure.attach(name='expected', body=expected_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
             allure.attach(name='diff', body=diff_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
 
-            _logger.info(
+            LOG.info(
                 f"Screenshot comparison failed.\n"
                 f"Actual, Diff and Expected screenshots are saved:\n"
                 f"{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}.")
@@ -112,7 +112,7 @@ class Image:
     @allure.step('Parse text on image')
     def to_string(self, custom_config: str):
         text: str = pytesseract.image_to_string(self.view, config=custom_config)
-        _logger.debug(f'Text on image: {text}')
+        LOG.debug(f'Text on image: {text}')
         return text
 
     @allure.step('Verify: Image contains text: {1}')
@@ -227,8 +227,8 @@ def compare(actual: Image,
         if (datetime.now() - start).seconds > timout_sec:
             if configs.UPDATE_VP_ON_FAIL and expected_fp is not None:
                 actual.save(expected_fp, force=True)
-                _logger.warning(f'VP file updated: {expected_fp}')
+                LOG.warning(f'VP file updated: {expected_fp}')
                 break
             else:
                 raise AssertionError('Images comparison failed')
-    _logger.info(f'Screenshot comparison passed')
+    LOG.info(f'Screenshot comparison passed')

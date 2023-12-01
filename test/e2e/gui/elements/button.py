@@ -6,7 +6,7 @@ import allure
 import driver
 from gui.elements.object import QObject
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Button(QObject):
@@ -20,6 +20,6 @@ class Button(QObject):
     ):
         if None not in (x, y, button):
             getattr(self.object, 'clicked')()
-            _logger.info(f'{self}: clicked')
+            LOG.info(f'{self}: clicked')
         else:
             super(Button, self).click(x, y, button)

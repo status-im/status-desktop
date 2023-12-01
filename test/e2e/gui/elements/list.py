@@ -8,7 +8,7 @@ import configs
 import driver
 from gui.elements.object import QObject
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class List(QObject):
@@ -30,7 +30,7 @@ class List(QObject):
     @allure.step('Select item {1} in {0}')
     def select(self, value: str, attr_name: str):
         driver.mouseClick(self.wait_for_item(value, attr_name))
-        _logger.info(f'{self}: {value} selected')
+        LOG.info(f'{self}: {value} selected')
 
     @allure.step('Wait for item {1} in {0} with attribute {2}')
     def wait_for_item(self, value: str, attr_name: str, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC):
@@ -40,7 +40,7 @@ class List(QObject):
             for index in range(self.object.count):
                 cur_value = str(getattr(self.object.itemAtIndex(index), attr_name, ''))
                 if cur_value == value:
-                    _logger.info(f'{self}: "{value}" for attribute "{attr_name}" appeared')
+                    LOG.info(f'{self}: "{value}" for attribute "{attr_name}" appeared')
                     return self.object.itemAtIndex(index)
                 values.append(cur_value)
             time.sleep(1)

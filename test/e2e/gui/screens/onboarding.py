@@ -20,7 +20,7 @@ from gui.elements.text_label import TextLabel
 from scripts.tools.image import Image
 from scripts.utils.system_path import SystemPath
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class AllowNotificationsView(QObject):

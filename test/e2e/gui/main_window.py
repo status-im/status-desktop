@@ -25,7 +25,7 @@ from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 from scripts.tools.image import Image
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class LeftPanel(QObject):

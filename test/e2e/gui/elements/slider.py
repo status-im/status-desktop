@@ -3,7 +3,7 @@ import allure
 
 from gui.elements.object import QObject
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Slider(QObject):
@@ -34,4 +34,4 @@ class Slider(QObject):
                 if self.value > value:
                     while self.value > value:
                         self.object.decrease()
-            _logger.info(f'{self}: value changed to "{value}"')
+            LOG.info(f'{self}: value changed to "{value}"')

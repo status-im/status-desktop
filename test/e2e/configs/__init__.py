@@ -4,7 +4,7 @@ from os import path
 from scripts.utils.system_path import SystemPath
 from . import testpath, timeouts, testrail, squish, system
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 try:
     from ._local import *

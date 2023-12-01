@@ -6,7 +6,7 @@ import configs
 import driver
 from gui.elements.object import QObject
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class CheckBox(QObject):
@@ -17,4 +17,4 @@ class CheckBox(QObject):
             self.click(x, y)
             assert driver.waitFor(
                 lambda: self.is_checked is value, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Value not changed'
-        _logger.info(f'{self}: value changed to "{value}"')
+        LOG.info(f'{self}: value changed to "{value}"')

@@ -5,7 +5,7 @@ import shutil
 
 import allure
 
-_logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class SystemPath(pathlib.Path):
