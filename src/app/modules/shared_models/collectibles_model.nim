@@ -1,7 +1,7 @@
 import NimQml, Tables, strutils, strformat, sequtils, stint, json
 import logging
 
-import ./collectibles_item
+import ./collectibles_entry
 import web3/ethtypes as eth
 import backend/activity as backend_activity
 import app_service/common/utils as common_utils
@@ -22,7 +22,6 @@ type
     CollectionName
     CollectionSlug
     IsLoading
-    IsPinned
     # Community-related roles
     CommunityId
     CommunityName
@@ -34,7 +33,7 @@ const loadingItemsCount = 10
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      items: seq[Item]
+      items: seq[CollectiblesEntry]
       hasMore: bool
       isFetching: bool
       isUpdating: bool
@@ -160,7 +159,6 @@ QtObject:
       CollectibleRole.CollectionName.int:"collectionName",
       CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
-      CollectibleRole.IsPinned.int:"isPinned",
       CollectibleRole.CommunityId.int:"communityId",
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
@@ -180,33 +178,31 @@ QtObject:
       let item = self.items[index.row]
       case enumRole:
       of CollectibleRole.Uid:
-        result = newQVariant(item.getId())
+        result = newQVariant(item.getID())
       of CollectibleRole.ChainId:
-        result = newQVariant(item.getChainId())
+        result = newQVariant(item.getChainID())
       of CollectibleRole.ContractAddress:
         result = newQVariant(item.getContractAddress())
       of CollectibleRole.TokenId:
-        result = newQVariant(item.getTokenId().toString())
+        result = newQVariant(item.getTokenIDAsString())
       of CollectibleRole.Name:
         result = newQVariant(item.getName())
       of CollectibleRole.MediaUrl:
-        result = newQVariant(item.getMediaUrl())
+        result = newQVariant(item.getMediaURL())
       of CollectibleRole.MediaType:
         result = newQVariant(item.getMediaType())
       of CollectibleRole.ImageUrl:
-        result = newQVariant(item.getImageUrl())
+        result = newQVariant(item.getImageURL())
       of CollectibleRole.BackgroundColor:
         result = newQVariant(item.getBackgroundColor())
       of CollectibleRole.CollectionUid:
-        result = newQVariant(item.getCollectionId())
+        result = newQVariant(item.getCollectionID())
       of CollectibleRole.CollectionName:
         result = newQVariant(item.getCollectionName())
       of CollectibleRole.CollectionSlug:
         result = newQVariant(item.getCollectionSlug())
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
-      of CollectibleRole.IsPinned:
-        result = newQVariant(item.getIsPinned())
       of CollectibleRole.CommunityId:
         result = newQVariant(item.getCommunityId())
       of CollectibleRole.CommunityName:
@@ -229,26 +225,25 @@ QtObject:
       return
     let item = self.items[index]
     case column:
-      of "uid": result = item.getId()
-      of "chainId": result = $item.getChainId()
+      of "uid": result = item.getID()
+      of "chainId": result = $item.getChainID()
       of "contractAddress": result = item.getContractAddress()
-      of "tokenId": result = item.getTokenId().toString()
+      of "tokenId": result = item.getTokenIDAsString()
       of "name": result = item.getName()
-      of "mediaUrl": result = item.getMediaUrl()
+      of "mediaUrl": result = item.getMediaURL()
       of "mediaType": result = item.getMediaType()
-      of "imageUrl": result = item.getImageUrl()
+      of "imageUrl": result = item.getImageURL()
       of "backgroundColor": result = item.getBackgroundColor()
-      of "collectionUid": result = item.getCollectionId()
+      of "collectionUid": result = item.getCollectionID()
       of "collectionName": result = item.getCollectionName()
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
-      of "isPinned": result = $item.getIsPinned()
-      of "communityId": result = item.getCommunityId()
+      of "communityId": result = item.getCommunityID()
       of "communityName": result = item.getCommunityName()
       of "communityColor": result = item.getCommunityColor()
       of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
 
-  proc appendCollectibleItems(self: Model, newItems: seq[Item]) =
+  proc appendCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
     if len(newItems) == 0:
       return
 
@@ -324,10 +319,10 @@ QtObject:
     else:
       self.removeLoadingItems()
 
-  proc getItems*(self: Model): seq[Item] =
+  proc getItems*(self: Model): seq[CollectiblesEntry] =
     return self.items
 
-  proc setItems*(self: Model, newItems: seq[Item], offset: int, hasMore: bool) =
+  proc setItems*(self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool) =
     if offset == 0:
       self.removeCollectibleItems()
     elif offset != self.getCollectiblesCount():
@@ -351,15 +346,15 @@ QtObject:
 
   proc getActivityToken*(self: Model, id: string): backend_activity.Token =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if(cmpIgnoreCase(item.getID(), id) == 0):
         result.tokenType = TokenType.ERC721
-        result.chainId = backend_activity.ChainId(item.getChainId())
+        result.chainId = backend_activity.ChainId(item.getChainID())
         var contract = item.getContractAddress()
         if len(contract) > 0:
           var address: eth.Address
           address = eth.fromHex(eth.Address, contract)
           result.address = some(address)
-        var tokenId = item.getTokenId()
+        var tokenId = item.getTokenID()
         if tokenId > 0:
           result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
         return result
@@ -376,8 +371,8 @@ QtObject:
 
   proc getUidForData*(self: Model, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getTokenId().toString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
-        return item.getId()
+      if(cmpIgnoreCase(item.getTokenIDAsString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
+        return item.getID()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
       return $chainId & "+" & tokenAddress & "+" & tokenId

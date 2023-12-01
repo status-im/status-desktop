@@ -1,7 +1,8 @@
 import NimQml, logging, std/json, sequtils, strutils
 import stint
 
-import app/modules/shared_models/collectible_details_entry
+import app/modules/shared_models/collectibles_entry
+import app/modules/shared_models/collectibles_utils
 import events_handler
 
 import app/core/eventemitter
@@ -15,7 +16,7 @@ QtObject:
       networkService: network_service.Service
 
       isDetailedEntryLoading: bool
-      detailedEntry: CollectibleDetailsEntry
+      detailedEntry: CollectiblesEntry
 
       eventsHandler: EventsHandler
 
@@ -54,12 +55,7 @@ QtObject:
 
   proc getExtraData(self: Controller, chainID: int): ExtraData =
     let network = self.networkService.getNetwork(chainID)
-
-    return ExtraData(
-      networkShortName: network.shortName,
-      networkColor: network.chainColor,
-      networkIconUrl: network.iconURL
-    )
+    return getExtraData(network)
 
   proc processGetCollectiblesDetailsResponse(self: Controller, response: JsonNode) =
     defer: self.setIsDetailedEntryLoading(false)
@@ -106,7 +102,8 @@ QtObject:
       self.processGetCollectiblesDetailsResponse(jsonObj)
     )
 
-  proc newController*(requestId: int32,
+  proc newController*(
+    requestId: int32,
     networkService: network_service.Service,
     events: EventEmitter,
     dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Details
