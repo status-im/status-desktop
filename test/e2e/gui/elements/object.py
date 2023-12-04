@@ -110,17 +110,17 @@ class QObject:
             y or self.height // 2,
             button or driver.Qt.LeftButton
         )
-        LOG.info(f'{self}: clicked')
+        LOG.info('%s: clicked', self)
 
     @allure.step('Hover {0}')
     def hover(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         def _hover():
             try:
                 driver.mouseMove(self.object)
-                LOG.info(f'{self}: mouse hovered')
+                LOG.info('%s: mouse hovered', self)
                 return getattr(self.object, 'hovered', True)
             except RuntimeError as err:
-                LOG.debug(err)
+                LOG.error(err)
                 time.sleep(1)
                 return False
 
@@ -138,18 +138,18 @@ class QObject:
             y or self.height // 2,
             driver.Qt.RightButton
         )
-        LOG.info(f'{self}: clicked via Right Mouse Button')
+        LOG.info('%s: clicked via Right Mouse Button', self)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         assert driver.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
-        LOG.info(f'{self}: is visible')
+        LOG.info('%s: is visible', self)
         return self
 
     @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         assert driver.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
-        LOG.info(f'{self}: is hidden')
+        LOG.info('%s: is hidden', self)
 
     @classmethod
     def wait_for(cls, condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> bool:

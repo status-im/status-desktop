@@ -34,4 +34,4 @@ class Slider(QObject):
                 if self.value > value:
                     while self.value > value:
                         self.object.decrease()
-            LOG.info(f'{self}: value changed to "{value}"')
+            LOG.debug('%s: value changed to "%s"', self, value)

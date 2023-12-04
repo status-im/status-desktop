@@ -17,42 +17,46 @@ class Window(QObject):
         self.on_top_level()
         return self
 
+    @property
+    def title(self):
+        return str(getattr(self.object, 'title', ''))
+
     @allure.step("Maximize {0}")
     def maximize(self):
         assert driver.toplevel_window.maximize(self.real_name), 'Maximize failed'
-        LOG.info(f'Window {getattr(self.object, "title", "")} is maximized')
+        LOG.info('Window %s was maximized', self.title)
 
     @allure.step("Minimize {0}")
     def minimize(self):
         assert driver.toplevel_window.minimize(self.real_name), 'Minimize failed'
-        LOG.info(f'Window {getattr(self.object, "title", "")} is minimized')
+        LOG.info('Window %s was minimized', self.title)
 
     @allure.step("Set focus on {0}")
     def set_focus(self):
         assert driver.toplevel_window.set_focus(self.real_name), 'Set focus failed'
-        LOG.info(f'Window {getattr(self.object, "title", "")} in focus')
+        LOG.info('Window %s was focused', self.title)
 
     @allure.step("Move {0} on top")
     def on_top_level(self):
         assert driver.toplevel_window.on_top_level(self.real_name), 'Set on top failed'
-        LOG.info(f'Window {getattr(self.object, "title", "")} moved on top')
+        LOG.info('Window %s moved on top', self.title)
 
     @allure.step("Close {0}")
     def close(self):
         driver.toplevel_window.close(self.real_name)
-        LOG.info(f'{self} closed')
+        LOG.info('%s closed', self)
 
     @allure.step("Show {0}")
     def show(self):
         driver.waitForObjectExists(self.real_name).setVisible(True)
-        LOG.info(f'{self} is visible')
+        LOG.info('%s is visible', self)
 
     @allure.step("Hide {0}")
     def hide(self):
         driver.waitForObjectExists(self.real_name).setVisible(False)
-        LOG.info(f'{self} hidden')
+        LOG.info('%s hidden', self)
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         super().wait_until_appears(timeout_msec)
-        LOG.info(f'Window {getattr(self.object, "title", "")} appears')
+        LOG.info('Window %s appears', self.title)
         return self

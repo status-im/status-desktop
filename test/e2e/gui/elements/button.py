@@ -20,6 +20,6 @@ class Button(QObject):
     ):
         if None not in (x, y, button):
             getattr(self.object, 'clicked')()
-            LOG.info(f'{self}: clicked')
+            LOG.info('%s: clicked', self)
         else:
             super(Button, self).click(x, y, button)

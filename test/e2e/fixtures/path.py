@@ -20,7 +20,7 @@ def generate_test_data(request):
                   configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT))
     LOG.debug('Verification points directory: %s',
                   configs.testpath.TEST_VP.relative_to(configs.testpath.ROOT))
-    LOG.info(f'Start test: {test_name}')
+    LOG.info('Start test: %s', test_name)
 
 
 def generate_test_info(node):
