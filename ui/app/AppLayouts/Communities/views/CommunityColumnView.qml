@@ -60,7 +60,7 @@ Item {
         readonly property bool discordImportInProgress: (root.communitiesStore.discordImportProgress > 0 && root.communitiesStore.discordImportProgress < 100)
                                                         || root.communitiesStore.discordImportInProgress
 
-        property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
+        property bool invitationPending: root.store.isMyCommunityRequestPending(communityData.id)
 
         property bool joiningCommunityInProgress: false
     }
@@ -494,7 +494,7 @@ Item {
                 target: root.store.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
                     if (communityId === communityData.id) {
-                        d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                        d.invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
                         d.joiningCommunityInProgress = false
                     }
                 }
@@ -554,7 +554,7 @@ Item {
 
                     onCancelMembershipRequest: {
                         root.store.cancelPendingRequest(communityData.id)
-                        d.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                        d.invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
                     }
 
                     onSharedAddressesUpdated: {

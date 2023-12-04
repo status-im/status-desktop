@@ -94,7 +94,7 @@ StackLayout {
             viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            isInvitationPending: root.rootStore.isCommunityRequestPending(communityId)
+            isInvitationPending: root.rootStore.isMyCommunityRequestPending(communityId)
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
@@ -113,14 +113,14 @@ StackLayout {
             }
             onInvitationPendingClicked: {
                 root.rootStore.cancelPendingRequest(communityId)
-                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
+                joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
             }
 
             Connections {
                 target: root.rootStore.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
                     if (communityId === joinCommunityView.communityId) {
-                        joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
+                        joinCommunityView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
                     }
                 }
             }
@@ -152,7 +152,7 @@ StackLayout {
             viewAndPostPermissionsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            isInvitationPending: root.rootStore.isCommunityRequestPending(chatView.communityId)
+            isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId)
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
 
@@ -169,7 +169,7 @@ StackLayout {
             onRevealAddressClicked: {
                 Global.openPopup(communityIntroDialogPopup, {
                     communityId: chatView.communityId,
-                    isInvitationPending: root.rootStore.isCommunityRequestPending(chatView.communityId),
+                    isInvitationPending: root.rootStore.isMyCommunityRequestPending(chatView.communityId),
                     name: root.sectionItemModel.name,
                     introMessage: root.sectionItemModel.introMessage,
                     imageSrc: root.sectionItemModel.image,
@@ -178,7 +178,7 @@ StackLayout {
             }
             onInvitationPendingClicked: {
                 root.rootStore.cancelPendingRequest(chatView.communityId)
-                chatView.isInvitationPending = root.rootStore.isCommunityRequestPending(chatView.communityId)
+                chatView.isInvitationPending = root.rootStore.isMyCommunityRequestPending(chatView.communityId)
             }
         }
     }
@@ -270,7 +270,7 @@ StackLayout {
 
             onCancelMembershipRequest: {
                 root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
-                mainViewLoader.item.isInvitationPending = root.rootStore.isCommunityRequestPending(communityIntroDialog.communityId)
+                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityIntroDialog.communityId)
             }
 
             onSharedAddressesUpdated: {
@@ -298,7 +298,7 @@ StackLayout {
         enabled: mainViewLoader.item
         function onCommunityAccessRequested(communityId: string) {
             if (communityId === mainViewLoader.item.communityId) {
-                mainViewLoader.item.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
+                mainViewLoader.item.isInvitationPending = root.rootStore.isMyCommunityRequestPending(communityId)
             }
         }
     }

@@ -350,8 +350,8 @@ proc isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
 proc userCanJoin*(self: Controller, communityId: string): bool =
   return self.communityService.userCanJoin(communityId)
 
-proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
-  return self.communityService.isCommunityRequestPending(communityId)
+proc isMyCommunityRequestPending*(self: Controller, communityId: string): bool =
+  return self.communityService.isMyCommunityRequestPending(communityId)
 
 proc asyncLoadCuratedCommunities*(self: Controller) =
   self.communityService.asyncLoadCuratedCommunities()

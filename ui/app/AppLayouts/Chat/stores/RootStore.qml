@@ -426,8 +426,8 @@ QtObject {
         return communitiesModuleInst.isUserMemberOfCommunity(id)
     }
 
-    function isCommunityRequestPending(id) {
-        return communitiesModuleInst.isCommunityRequestPending(id)
+    function isMyCommunityRequestPending(id) {
+        return communitiesModuleInst.isMyCommunityRequestPending(id)
     }
 
     function cancelPendingRequest(id: string) {

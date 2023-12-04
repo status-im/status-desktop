@@ -259,23 +259,19 @@ QtObject:
       messageService: message_service.Service
       communityTags: string # JSON string contraining tags map
       communities: Table[string, CommunityDto] # [community_id, CommunityDto]
-      myCommunityRequests*: seq[CommunityMembershipRequestDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
       requestedCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
-      myAwaitingAddressesRequestsToJoin: Table[string, CommunityMembershipRequestDto]
       communityInfoRequests: Table[string, Time]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
   proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
+  proc handleCommunitiesRequestsToJoin(self: Service, membershipRequests: seq[CommunityMembershipRequestDto])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
-  proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
-  proc allPendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
-  proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
-  proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
+  proc getWaitingForSharedAddressesRequestIndex(self: Service, communityId: string, requestId: string): int
   proc updateMembershipRequestToNewState*(self: Service, communityId: string, requestId: string,
     updatedCommunity: CommunityDto, newState: RequestToJoinType)
   proc getUserPubKeyFromPendingRequest*(self: Service, communityId: string, requestId: string): string
@@ -299,7 +295,6 @@ QtObject:
     result.messageService = messageService
     result.communityTags = newString(0)
     result.communities = initTable[string, CommunityDto]()
-    result.myCommunityRequests = @[]
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
     result.requestedCommunityIds = initHashSet[string]()
     result.communityMetrics = initTable[string, CommunityMetricsDto]()
@@ -345,29 +340,7 @@ QtObject:
 
       # Handling membership requests
       if(receivedData.membershipRequests.len > 0):
-        for membershipRequest in receivedData.membershipRequests:
-          if (not self.communities.contains(membershipRequest.communityId)):
-            error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
-            continue
-          var community = self.communities[membershipRequest.communityId]
-
-          let requestToJoinState = RequestToJoinType(membershipRequest.state)
-
-          if self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
-            community.pendingRequestsToJoin.add(membershipRequest)
-            self.communities[membershipRequest.communityId] = community
-            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
-              CommunityRequestArgs(communityRequest: membershipRequest))
-          else:
-            try:
-              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
-                requestToJoinState)
-              if requestToJoinState == RequestToJoinType.AwaitingAddress:
-                self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
-            except Exception as e:
-              error "Unknown request", msg = e.msg
-
-          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[membershipRequest.communityId]))
+        self.handleCommunitiesRequestsToJoin(receivedData.membershipRequests)
 
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
@@ -493,10 +466,10 @@ QtObject:
   proc saveUpdatedCommunity(self: Service, community: var CommunityDto) =
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
-
     community.pendingRequestsToJoin = self.communities[community.id].pendingRequestsToJoin
     community.declinedRequestsToJoin = self.communities[community.id].declinedRequestsToJoin
     community.canceledRequestsToJoin = self.communities[community.id].canceledRequestsToJoin
+    community.waitingForSharedAddressesRequestsToJoin = self.communities[community.id].waitingForSharedAddressesRequestsToJoin
 
     # Update the joinded community list with the new data
     self.communities[community.id] = community
@@ -540,6 +513,7 @@ QtObject:
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
+      let myPublicKey = singletonInstance.userProfile.getPubKey()
       var community = communities[0]
       if not self.communities.hasKey(community.id):
         self.communities[community.id] = community
@@ -547,9 +521,6 @@ QtObject:
 
         if (community.joined and community.isMember):
           self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
-          # remove my pending requests
-          keepIf(self.myCommunityRequests, request => request.communityId != community.id)
-
         return
 
       let prev_community = self.communities[community.id]
@@ -730,9 +701,6 @@ QtObject:
 
       # If the community was not joined before but is now, we signal it
       if(not wasJoined and community.joined and community.isMember):
-        if community.id in self.myAwaitingAddressesRequestsToJoin:
-          self.myAwaitingAddressesRequestsToJoin.del(community.id)
-
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
@@ -741,6 +709,35 @@ QtObject:
 
     except Exception as e:
       error "Error handling community updates", msg = e.msg
+
+  proc handleCommunitiesRequestsToJoin(self: Service, membershipRequests: seq[CommunityMembershipRequestDto]) =
+    for membershipRequest in membershipRequests:
+          if (not self.communities.contains(membershipRequest.communityId)):
+            error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
+            continue
+          var community = self.communities[membershipRequest.communityId]
+
+          let requestToJoinState = RequestToJoinType(membershipRequest.state)
+          let noAwaitingIndex = self.getWaitingForSharedAddressesRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1
+          if requestToJoinState == RequestToJoinType.AwaitingAddress and noAwaitingIndex:
+            community.waitingForSharedAddressesRequestsToJoin.add(membershipRequest)
+            self.communities[membershipRequest.communityId] = community
+            let myPublicKey = singletonInstance.userProfile.getPubKey()
+            if myPublicKey == membershipRequest.publicKey:
+              self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
+          elif (requestToJoinState != RequestToJoinType.AwaitingAddress and noAwaitingIndex) and self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
+            community.pendingRequestsToJoin.add(membershipRequest)
+            self.communities[membershipRequest.communityId] = community
+            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
+              CommunityRequestArgs(communityRequest: membershipRequest))
+          else:
+            try:
+              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
+                requestToJoinState)
+            except Exception as e:
+              error "Unknown request", msg = e.msg
+
+          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[membershipRequest.communityId]))
 
   proc init*(self: Service) =
     self.doConnect()
@@ -771,32 +768,12 @@ QtObject:
       let communities = parseCommunities(responseObj["communities"])
       for community in communities:
         self.communities[community.id] = community
-        if community.memberRole == MemberRole.Owner or
-            community.memberRole == MemberRole.Admin or community.memberRole == MemberRole.TokenMaster:
-          self.communities[community.id].pendingRequestsToJoin = self.allPendingRequestsToJoinForCommunity(community.id)
-          self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
-          self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
 
       # Communities settings
       let communitiesSettings = parseCommunitiesSettings(responseObj["settings"])
       for settings in communitiesSettings:
         if self.communities.hasKey(settings.id):
           self.communities[settings.id].settings = settings
-
-      # My pending requests
-      let myPendingRequestResponse = responseObj["myPendingRequestsToJoin"]
-
-      if myPendingRequestResponse{"result"}.kind != JNull:
-        for jsonCommunityReqest in myPendingRequestResponse["result"]:
-          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-          self.myCommunityRequests.add(communityRequest)
-
-      let myAwaitingRequestResponse = responseObj["myAwaitingAddressesRequestsToJoin"]
-
-      if myAwaitingRequestResponse{"result"}.kind != JNull:
-        for jsonCommunityReqest in myAwaitingRequestResponse["result"]:
-            let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-            self.myAwaitingAddressesRequestsToJoin[communityRequest.communityId] = communityRequest
 
       self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
     except Exception as e:
@@ -933,7 +910,14 @@ QtObject:
 
     for jsonCommunityReqest in responseResult["requestsToJoinCommunity"]:
       let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-      self.myCommunityRequests.add(communityRequest)
+      if (not self.communities.contains(communityRequest.communityId)):
+        error "Request to join for an unknown community", communityId=communityRequest.communityId
+        return false
+
+      var community = self.communities[communityRequest.communityId]
+      community.pendingRequestsToJoin.add(communityRequest)
+      self.communities[communityRequest.communityId] = community
+
       self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
 
     return true
@@ -990,50 +974,6 @@ QtObject:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
 
-  proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
-    try:
-      let response = status_go.canceledRequestsToJoinForCommunity(communityId)
-
-      result = @[]
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
-    except Exception as e:
-      error "Error fetching community requests", msg = e.msg
-
-  proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
-    try:
-      let response = status_go.pendingRequestsToJoinForCommunity(communityId)
-
-      result = @[]
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
-    except Exception as e:
-      error "Error fetching community requests", msg = e.msg
-
-  proc allPendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
-    try:
-      let response = status_go.allPendingRequestsToJoinForCommunity(communityId)
-
-      result = @[]
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
-    except Exception as e:
-      error "Error fetching community requests", msg = e.msg
-
-  proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
-    try:
-      let response = status_go.declinedRequestsToJoinForCommunity(communityId)
-
-      result = @[]
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
-    except Exception as e:
-      error "Error fetching community declined requests", msg = e.msg
-
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
@@ -1055,9 +995,6 @@ QtObject:
 
       for chat in updatedCommunity.chats:
         self.messageService.resetMessageCursor(chat.id)
-
-      # remove related community requests
-      keepIf(self.myCommunityRequests, request => request.communityId != communityId)
 
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
 
@@ -1832,7 +1769,7 @@ QtObject:
     if communityId in self.requestedCommunityIds:
       info "requestCommunityInfo: skipping as already requested", communityId
       self.events.emit(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED, Args())
-      return      
+      return
 
     let now = now().toTime()
     if self.communityInfoRequests.hasKey(communityId):
@@ -1966,54 +1903,74 @@ QtObject:
       i.inc()
     return -1
 
+  proc getWaitingForSharedAddressesRequestIndex(self: Service, communityId: string, requestId: string): int =
+    let community = self.communities[communityId]
+    for i in 0 ..< len(community.waitingForSharedAddressesRequestsToJoin):
+      if (community.waitingForSharedAddressesRequestsToJoin[i].id == requestId):
+        return i
+    return -1
+
   proc updateMembershipRequestToNewState*(self: Service, communityId: string, requestId: string,
       updatedCommunity: CommunityDto, newState: RequestToJoinType) =
     let indexPending = self.getPendingRequestIndex(communityId, requestId)
     let indexDeclined = self.getDeclinedRequestIndex(communityId, requestId)
+    let indexAwaitingAddresses = self.getWaitingForSharedAddressesRequestIndex(communityId, requestId)
 
-    if (indexPending == -1 and indexDeclined == -1):
+    if (indexPending == -1 and indexDeclined == -1 and indexAwaitingAddresses == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     var community = self.communities[communityId]
 
     if (indexPending != -1):
-      if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled, RequestToJoinType.AwaitingAddress].any(x => x == newState):
+      if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
         # If the state is now declined, add to the declined requests
         if newState == RequestToJoinType.Declined:
           community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
 
         # If the state is no longer pending, delete the request
         community.pendingRequestsToJoin.delete(indexPending)
-        # Delete if control node changed status for awaiting addresses request to join
-        if communityId in self.myAwaitingAddressesRequestsToJoin:
-          self.myAwaitingAddressesRequestsToJoin.del(communityId)
-
       else:
         community.pendingRequestsToJoin[indexPending].state = newState.int
-    else:
+    elif indexDeclined != -1:
       community.declinedRequestsToJoin.delete(indexDeclined)
+    elif indexAwaitingAddresses != -1 and newState != RequestToJoinType.AwaitingAddress:
+      if newState == RequestToJoinType.Declined:
+        community.declinedRequestsToJoin.add(community.waitingForSharedAddressesRequestsToJoin[indexAwaitingAddresses])
+
+      let myPublicKey = singletonInstance.userProfile.getPubKey()
+      let awaitingRequestToJoin = community.waitingForSharedAddressesRequestsToJoin[indexAwaitingAddresses]
+      community.waitingForSharedAddressesRequestsToJoin.delete(indexAwaitingAddresses)
+      if awaitingRequestToJoin.publicKey == myPublicKey:
+        self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: communityId))
 
     community.members = updatedCommunity.members
     self.communities[communityId] = community
 
   proc cancelRequestToJoinCommunity*(self: Service, communityId: string) =
     try:
+      if (not self.communities.contains(communityId)):
+        error "Cancel request to join community failed: unknown community", communityId=communityId
+        return
+
+      var community = self.communities[communityId]
+      let myPublicKey = singletonInstance.userProfile.getPubKey()
       var i = 0
-      for communityRequest in self.myCommunityRequests:
-        if (communityRequest.communityId == communityId):
-          let response = status_go.cancelRequestToJoinCommunity(communityRequest.id)
+      for myPendingRequest in community.pendingRequestsToJoin:
+        if myPendingRequest.publicKey == myPublicKey:
+          let response = status_go.cancelRequestToJoinCommunity(myPendingRequest.id)
           if (not response.error.isNil):
             let msg = response.error.message & " communityId=" & communityId
             error "error while cancel membership request ", msg
             return
-          self.myCommunityRequests.delete(i)
+
+          community.pendingRequestsToJoin.delete(i)
+          self.communities[communityId] = community
           self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
             RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result["activityCenterNotifications"]))
           self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
           return
 
         i.inc()
-
     except Exception as e:
       error "Error canceled request to join community", msg = e.msg
 
@@ -2154,14 +2111,29 @@ QtObject:
     except Exception as e:
       error "Error setting community un/muted", msg = e.msg
 
-  proc isCommunityRequestPending*(self: Service, communityId: string): bool {.slot.} =
-    for communityRequest in self.myCommunityRequests:
-      if (communityRequest.communityId == communityId and RequestToJoinType(communityRequest.state) == RequestToJoinType.Pending):
+  proc isMyCommunityRequestPending*(self: Service, communityId: string): bool {.slot.} =
+    if not self.communities.contains(communityId):
+      error "IsMyCommunityRequestPending failed: unknown community", communityId=communityId
+      return false
+
+    let myPublicKey = singletonInstance.userProfile.getPubKey()
+    var community = self.communities[communityId]
+    for pendingRequest in community.pendingRequestsToJoin:
+      if pendingRequest.publicKey == myPublicKey:
         return true
     return false
 
   proc waitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: Service, communityId: string): bool {.slot.} =
-    return communityId in self.myAwaitingAddressesRequestsToJoin
+    if not self.communities.contains(communityId):
+      error "waitingOnNewCommunityOwnerToConfirmRequestToRejoin failed: unknown community", communityId=communityId
+      return false
+
+    let myPublicKey = singletonInstance.userProfile.getPubKey()
+    var community = self.communities[communityId]
+    for request in community.waitingForSharedAddressesRequestsToJoin:
+      if request.publicKey == myPublicKey:
+        return true
+    return false
 
   proc requestExtractDiscordChannelsAndCategories*(self: Service, filesToImport: seq[string]) =
     try:

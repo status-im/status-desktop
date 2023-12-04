@@ -63,7 +63,7 @@ method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): boo
 method userCanJoin*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
+method isMyCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method cancelRequestToJoinCommunity*(self: AccessInterface, communityId: string) {.base.} =

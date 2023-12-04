@@ -84,6 +84,12 @@ StatusListItem {
     */
     property bool isAdmin: false
 
+    /*!
+       \qmlproperty bool StatusMemberListItem::isAwaitingAddress
+       This property indicate if member shared his addresses
+    */
+    property bool isAwaitingAddress: false
+
     QtObject {
         id: d
 
@@ -113,16 +119,9 @@ StatusListItem {
 
     // root object settings:
     title: root.nickName || root.userName
-    statusListItemTitleIcons.sourceComponent: StatusContactVerificationIcons {
-        isContact: root.isContact
-        trustIndicator: {
-            if (root.isVerified)
-                return StatusContactVerificationIcons.TrustedType.Verified
-            if (root.isUntrustworthy)
-                return StatusContactVerificationIcons.TrustedType.Untrustworthy
-            return StatusContactVerificationIcons.TrustedType.None
-        } 
-    }
+    statusListItemTitleIcons.sourceComponent: root.isAwaitingAddress ?
+                                                  awaitingAddressComponent : statusContactVerificationIcons
+
     subTitle: d.composeSubtitle()
     statusListItemSubTitle.font.pixelSize: 10
     statusListItemIcon.badge.visible: true
@@ -152,4 +151,29 @@ StatusListItem {
             }
         }
     ]
+
+    Component {
+        id: statusContactVerificationIcons
+        StatusContactVerificationIcons {
+            isContact: root.isContact
+            trustIndicator: {
+                if (root.isVerified)
+                    return StatusContactVerificationIcons.TrustedType.Verified
+                if (root.isUntrustworthy)
+                    return StatusContactVerificationIcons.TrustedType.Untrustworthy
+                return StatusContactVerificationIcons.TrustedType.None
+            }
+        }
+    }
+
+    Component {
+        id: awaitingAddressComponent
+        StatusIcon {
+            width: 16
+            height: 16
+
+            color: Theme.palette.baseColor1
+            icon: "sandwatch"
+        }
+    }
 }

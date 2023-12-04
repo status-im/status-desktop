@@ -206,7 +206,7 @@ SettingsContentBase {
         onShowCommunityIntroDialog: {
             Global.openPopup(communityIntroDialogPopup, {
                 communityId: communityId,
-                isInvitationPending: root.rootStore.isCommunityRequestPending(communityId),
+                isInvitationPending: root.rootStore.isMyCommunityRequestPending(communityId),
                 name: name,
                 introMessage: introMessage,
                 imageSrc: imageSrc,

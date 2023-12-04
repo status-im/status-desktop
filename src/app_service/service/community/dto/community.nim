@@ -154,12 +154,13 @@ type CommunityDto* = object
   listedInDirectory*: bool
   featuredInDirectory*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
+  declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
+  canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]
+  waitingForSharedAddressesRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
   pendingAndBannedMembers*: Table[string, CommunityMemberPendingBanOrKick]
-  declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
   encrypted*: bool
-  canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
   tokenPermissions*: Table[string, CommunityTokenPermissionDto]
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
   channelPermissions*: CheckAllChannelsPermissionsResponseDto
@@ -359,7 +360,7 @@ proc toMetricsIntervalDto*(jsonObj: JsonNode): MetricsIntervalDto =
 
   discard jsonObj.getProp("count", result.count)
 
-proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto = 
+proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
   result = CommunityMetricsDto()
 
   discard jsonObj.getProp("communityId", result.communityId)
@@ -374,6 +375,15 @@ proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
   if (jsonObj.getProp("intervals", intervalsObj) and intervalsObj.kind == JArray):
     for interval in intervalsObj:
       result.intervals.add(interval.toMetricsIntervalDto)
+
+proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
+  result = CommunityMembershipRequestDto()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("publicKey", result.publicKey)
+  discard jsonObj.getProp("chatId", result.chatId)
+  discard jsonObj.getProp("state", result.state)
+  discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("our", result.our)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -457,6 +467,22 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   result.shard = jsonObj.getShard()
 
+  var requestsToJoinCommunityObj: JsonNode
+  if(jsonObj.getProp("requestsToJoinCommunity", requestsToJoinCommunityObj) and requestsToJoinCommunityObj.kind == JArray):
+    for requestObj in requestsToJoinCommunityObj:
+      let request = requestObj.toCommunityMembershipRequestDto()
+      case RequestToJoinType(request.state):
+        of RequestToJoinType.Pending, RequestToJoinType.AcceptedPending, RequestToJoinType.DeclinedPending:
+          result.pendingRequestsToJoin.add(request)
+        of RequestToJoinType.Declined:
+          result.declinedRequestsToJoin.add(request)
+        of RequestToJoinType.Canceled:
+          result.canceledRequestsToJoin.add(request)
+        of RequestToJoinType.AwaitingAddress:
+          result.waitingForSharedAddressesRequestsToJoin.add(request)
+        of RequestToJoinType.Accepted:
+          continue
+
 proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:
     of CommunityMemberPendingBanOrKick.Banned:
@@ -468,15 +494,6 @@ proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): Membersh
     of CommunityMemberPendingBanOrKick.KickPending:
       return MembershipRequestState.KickedPending
   return MembershipRequestState.None
-
-proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
-  result = CommunityMembershipRequestDto()
-  discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("publicKey", result.publicKey)
-  discard jsonObj.getProp("chatId", result.chatId)
-  discard jsonObj.getProp("state", result.state)
-  discard jsonObj.getProp("communityId", result.communityId)
-  discard jsonObj.getProp("our", result.our)
 
 proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   result = CommunitySettingsDto()
@@ -635,4 +652,3 @@ proc getOwnerTokenAddressFromPermissions*(self: CommunityDto): (int, string) =
       for ch, add in addresses.pairs:
         return (ch, add)
   return (0, "")
-      

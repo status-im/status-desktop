@@ -118,27 +118,6 @@ proc checkAllCommunityChannelsPermissions*(communityId: string, addresses: seq[s
     "addresses": addresses,
   }])
 
-proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
-
-proc myAwaitingAddressesRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result =  callPrivateRPC("myAwaitingAddressesRequestsToJoin".prefix)
-
-proc myCanceledRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result =  callPrivateRPC("myCanceledRequestsToJoin".prefix)
-
-proc pendingRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("pendingRequestsToJoinForCommunity".prefix, %*[communityId])
-
-proc allPendingRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("allPendingRequestsToJoinForCommunity".prefix, %*[communityId])
-
-proc declinedRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("declinedRequestsToJoinForCommunity".prefix, %*[communityId])
-
-proc canceledRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("canceledRequestsToJoinForCommunity".prefix, %*[communityId])
-
 proc cancelRequestToJoinCommunity*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("cancelRequestToJoinCommunity".prefix, %*[{
     "id": requestId
