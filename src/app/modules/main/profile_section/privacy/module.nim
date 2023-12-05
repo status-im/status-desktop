@@ -75,6 +75,9 @@ method getMnemonic*(self: Module): string =
 method removeMnemonic*(self: Module) =
   self.controller.removeMnemonic()
 
+method mnemonicWasShown*(self: Module) =
+  self.controller.mnemonicWasShown()
+
 method getMnemonicWordAtIndex*(self: Module, index: int): string =
   return self.controller.getMnemonicWordAtIndex(index)
 

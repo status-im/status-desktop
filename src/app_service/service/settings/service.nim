@@ -1000,3 +1000,9 @@ QtObject:
 
   proc getProfileMigrationNeeded*(self: Service): bool =
     self.settings.profileMigrationNeeded
+
+  proc mnemonicWasShown*(self: Service) =
+    let response = status_settings.mnemonicWasShown()
+    if(not response.error.isNil):
+      error "error saving mnemonic was shown setting: ", errDescription = response.error.message
+      return

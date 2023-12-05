@@ -41,6 +41,9 @@ QtObject:
   proc removeMnemonic*(self: View) {.slot.} =
     self.delegate.removeMnemonic()
 
+  proc mnemonicWasShown*(self: View) {.slot.} =
+    self.delegate.mnemonicWasShown()
+
   proc getMnemonicWordAtIndex*(self: View, index: int): string {.slot.} =
     return self.delegate.getMnemonicWordAtIndex(index)
 
