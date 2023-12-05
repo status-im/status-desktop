@@ -112,6 +112,20 @@ class QObject:
         )
         LOG.info('%s: clicked', self)
 
+    @allure.step('Native click {0}')
+    def native_click(
+            self,
+            x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
+            y: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
+            button: driver.MouseButton = None
+    ):
+        driver.nativeMouseClick(
+            x or self.bounds.x + self.width // 2,
+            y or self.bounds.y + self.height // 2,
+            button or driver.MouseButton.LeftButton
+        )
+        LOG.info(f'{self}: native clicked')
+
     @allure.step('Hover {0}')
     def hover(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         def _hover():

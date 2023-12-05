@@ -41,22 +41,22 @@ class LeftPanel(QObject):
         return CommunitiesSettingsView()
 
     @allure.step('Open wallet settings')
-    def open_wallet_settings(self):
+    def open_wallet_settings(self) -> WalletSettingsView:
         self._open_settings('4-AppMenuItem')
         return WalletSettingsView().wait_until_appears()
 
     @allure.step('Open profile settings')
-    def open_profile_settings(self):
+    def open_profile_settings(self) -> ProfileSettingsView:
         self._open_settings('0-MainMenuItem')
         return ProfileSettingsView()
 
     @allure.step('Choose back up seed phrase in settings')
-    def open_back_up_seed_phrase(self):
+    def open_back_up_seed_phrase(self) -> BackUpYourSeedPhrasePopUp:
         self._open_settings('17-MainMenuItem')
         return BackUpYourSeedPhrasePopUp()
 
     @allure.step('Open syncing settings')
-    def open_syncing_settings(self, attempts: int = 2):
+    def open_syncing_settings(self, attempts: int = 2) -> SyncingSettingsView:
         self._open_settings('8-MainMenuItem')
         try:
             return SyncingSettingsView().wait_until_appears()
@@ -72,7 +72,7 @@ class LeftPanel(QObject):
         return SignOutPopup()
 
     @allure.step('Open keycard settings')
-    def open_keycard_settings(self):
+    def open_keycard_settings(self) -> KeycardSettingsView:
         self._open_settings('13-MainMenuItem')
         return KeycardSettingsView()
 

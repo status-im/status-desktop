@@ -58,3 +58,7 @@ class WalletEditNetworkErrorMessages(Enum):
 
 class WalletOrigin(Enum):
     WATCHED_ADDRESS_ORIGIN = 'New watched address'
+
+
+class WalletTransactions(Enum):
+    TRANSACTION_PENDING_TOAST_MESSAGE = 'Transaction pending'

@@ -1,8 +1,5 @@
-import time
-
 import squishtest  # noqa
 
-import configs
 from . import server, context, objects_access, toplevel_window, aut, mouse
 from .squish_api import *
 

@@ -207,6 +207,8 @@ addAccountPopup_GeneratedAddress = {"container": statusDesktop_mainWindow_overla
 address_0x_StatusBaseText = {"container": statusDesktop_mainWindow_overlay_popup2, "text": RegularExpression("0x*"), "type": "StatusBaseText", "unnamed": 1, "visible": True}
 addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator = {"container": statusDesktop_mainWindow_overlay_popup2, "objectName": "AddAccountPopup-GeneratedAddressesListPageIndicatior", "type": "StatusPageIndicator", "visible": True}
 page_StatusBaseButton = {"checkable": False, "container": addAccountPopup_GeneratedAddressesListPageIndicatior_StatusPageIndicator, "objectName": RegularExpression("Page-*"), "type": "StatusBaseButton", "visible": True}
+mainWindow_DisabledTooltipButton = {"container": statusDesktop_mainWindow, "type": "DisabledTooltipButton", "icon": "send", "visible": True}
+
 
 # Add/Edit account popup:
 grid_Grid = {"container": statusDesktop_mainWindow_overlay, "id": "grid", "type": "Grid", "unnamed": 1, "visible": True}
@@ -349,6 +351,23 @@ switchTabBar_24_words_StatusSwitchTabButton = {"checkable": True, "container": s
 i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "confirmation", "type": "StatusCheckBox", "visible": True}
 statusSmartIdenticonLetter_StatusLetterIdenticon = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusSmartIdenticonLetter", "type": "StatusLetterIdenticon", "visible": True}
 secondary_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "secondaryButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Send Popup
+o_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "type": "StatusTabBar", "unnamed": 1, "visible": True}
+search_TextEdit = {"container": o_StatusTabBar, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+tab_Status_template = {"container": o_StatusTabBar, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "type": "TokenBalancePerChainDelegate", "unnamed": 1, "visible": True}
+amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountInput", "type": "TextEdit", "visible": True}
+paste_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+ens_or_address_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+accountSelectionTabBar_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "id": "accountSelectionTabBar", "type": "StatusTabBar", "unnamed": 1, "visible": True}
+accountSelectionTabBar_My_Accounts_StatusTabButton = {"checkable": True, "container": accountSelectionTabBar_StatusTabBar, "objectName": "myAccountsTab", "type": "StatusTabButton", "visible": True}
+status_account_WalletAccountListItem_template = {"container": statusDesktop_mainWindow_overlay, "objectName": "Status account", "type": "WalletAccountListItem", "visible": True}
+arbitrum_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "Arbitrum", "type": "StatusListItem", "visible": True}
+mainnet_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "Mainnet", "type": "StatusListItem", "visible": True}
+statusListItemSubTitle_StatusTextWithLoadingState = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
+fiatFees_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "fiatFees", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+send_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "sendModalFooterSendButton", "type": "StatusFlatButton", "visible": True}
 
 # Verify identity popup
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}

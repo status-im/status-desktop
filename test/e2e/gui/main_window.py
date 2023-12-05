@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 import typing
 
 import allure
@@ -12,6 +13,7 @@ from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
+from gui.components.toast_message import ToastMessage
 from gui.components.user_canvas import UserCanvas
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -184,3 +186,13 @@ class MainWindow(Window):
         create_community_form = communities_portal.open_create_community_popup()
         app_screen = create_community_form.create(params)
         return app_screen
+
+    @allure.step('Wait for notification and get text')
+    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> str:
+        started_at = time.monotonic()
+        while True:
+            try:
+                return ToastMessage().get_toast_messages
+            except LookupError as err:
+                LOG.info(err)
+                assert time.monotonic() - started_at < timeout_msec, str(err)

@@ -26,7 +26,7 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         assert not networks.is_testnet_mode_toggle_checked(), f"Testnet toggle is on when it should not"
 
     with step('Turn on Testnet mode'):
-        networks.switch_testnet_mode_toggle().click_turn_on_testnet_mode_in_testnet_modal()
+        networks.switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned on'):
         assert len(ToastMessage().get_toast_messages) == 1, \
@@ -101,7 +101,7 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         testnet_modal = networks.switch_testnet_mode_toggle()
 
     with step('Confirm enabling testnet mode in testnet modal'):
-        testnet_modal.click_turn_on_testnet_mode_in_testnet_modal()
+        testnet_modal.turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify testnet mode is enabled'):
         assert len(ToastMessage().get_toast_messages) == 1, \

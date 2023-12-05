@@ -17,16 +17,17 @@ class TestnetModePopup(BasePopup):
         self._close_cross_button.click()
         self.wait_until_hidden()
 
-    @allure.step('Choose turn on option in the testnet modal')
-    def click_turn_on_testnet_mode_in_testnet_modal(self):
+    @allure.step('Confirm turning on in the testnet modal')
+    def turn_on_testnet_mode_in_testnet_modal(self):
         self._turn_on_button.click()
         self.wait_until_hidden()
 
-    @allure.step('Choose turn off option on the testnet modal')
+    @allure.step('Confirm turning off in the testnet modal')
     def turn_off_testnet_mode_in_testnet_modal(self):
         self._turn_off_button.click()
         self.wait_until_hidden()
 
+    @allure.step('Cancel switching testnet mode in the testnet modal')
     def click_cancel_button_in_testnet_modal(self):
         self._cancel_button.click()
         self.wait_until_hidden()

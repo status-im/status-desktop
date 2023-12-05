@@ -23,3 +23,4 @@ savedAddressView_Delegate_menuButton = {"container": mainWindow_SavedAddressesVi
 # Wallet Account View
 mainWindow_StatusSectionLayout_ContentItem = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
 mainWallet_Account_Name = {"container": mainWindow_StatusSectionLayout_ContentItem, "objectName": "accountName", "type": "StatusBaseText", "visible": True}
+mainWindow_Send_Button = {"container": mainWindow_StatusWindow, "type": "DisabledTooltipButton", "icon": "send", "visible": True}

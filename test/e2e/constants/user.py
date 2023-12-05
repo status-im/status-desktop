@@ -17,6 +17,10 @@ user_account_one_changed_password = UserAccount('squisher', 'NewPassword@12345',
 
 user_account_one_changed_name = UserAccount('NewUserName', '0000000000', [], '')
 
+user_with_funds = UserAccount('User_with_funds', '0000000000', [
+    'vocal', 'fruit', 'ordinary', 'meadow', 'south', 'athlete', 'inherit', 'since', 'version', 'pitch', 'oppose', 'lonely'
+], '0x26d6e10a6af4eb4d12ff4cf133a843eb4fa88d0b')
+
 community_params = {
     'name': 'Name',
     'description': 'Description',

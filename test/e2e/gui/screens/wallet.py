@@ -11,6 +11,7 @@ from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
 from gui.components.wallet.confirmation_popup import ConfirmationPopup
 from gui.components.wallet.remove_wallet_account_popup import RemoveWalletAccountPopup
+from gui.components.wallet.send_popup import SendPopup
 from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -22,7 +23,7 @@ class WalletScreen(QObject):
 
     def __init__(self):
         super().__init__('mainWindow_WalletLayout')
-        self.left_panel = LeftPanel()
+        self.left_panel: LeftPanel = LeftPanel()
 
 
 class LeftPanel(QObject):
@@ -34,6 +35,10 @@ class LeftPanel(QObject):
         self._add_account_button = Button('mainWallet_Add_Account_Button')
         self._all_accounts_button = Button('mainWallet_All_Accounts_Button')
         self._all_accounts_balance = TextLabel('mainWallet_All_Accounts_Balance')
+
+    @allure.step('Get total balance visibility state')
+    def is_total_balance_visible(self) -> bool:
+        return self._all_accounts_balance.is_visible
 
     @property
     @allure.step('Get all accounts from list')
@@ -179,6 +184,7 @@ class WalletAccountView(QObject):
         super(WalletAccountView, self).__init__('mainWindow_StatusSectionLayout_ContentItem')
         self._account_name_text_label = TextLabel('mainWallet_Account_Name')
         self._addresses_panel = QObject('mainWallet_Address_Panel')
+        self._send_button = Button('mainWindow_Send_Button')
 
     @property
     @allure.step('Get name of account')
@@ -194,3 +200,8 @@ class WalletAccountView(QObject):
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._account_name_text_label.wait_until_appears(timeout_msec)
         return self
+
+    @allure.step('Open send popup')
+    def open_send_popup(self) -> SendPopup:
+        self._send_button.click()
+        return SendPopup().wait_until_appears()
