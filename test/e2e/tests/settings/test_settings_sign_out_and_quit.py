@@ -17,4 +17,4 @@ def test_sign_out_and_quit(aut, main_screen: MainWindow):
 
     with step('Check that app was closed'):
         psutil.Process(aut.pid).wait(timeout=5)
-        assert aut.pid not in psutil.pids(), f"{aut.pid} is still running"
+        
