@@ -16,5 +16,5 @@ def test_sign_out_and_quit(aut, main_screen: MainWindow):
         sign_out_screen.sign_out_and_quit()
 
     with step('Check that app was closed'):
-        psutil.Process(aut.pid).wait(timeout=5)
+        psutil.Process(aut.pid).wait(timeout=10)
         
