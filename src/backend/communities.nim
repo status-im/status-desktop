@@ -118,6 +118,9 @@ proc checkAllCommunityChannelsPermissions*(communityId: string, addresses: seq[s
     "addresses": addresses,
   }])
 
+proc allNonApprovedCommunitiesRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("allNonApprovedCommunitiesRequestsToJoin".prefix)
+
 proc cancelRequestToJoinCommunity*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("cancelRequestToJoinCommunity".prefix, %*[{
     "id": requestId

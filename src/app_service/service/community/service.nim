@@ -775,6 +775,27 @@ QtObject:
         if self.communities.hasKey(settings.id):
           self.communities[settings.id].settings = settings
 
+      # Non approver requests to join for all communities
+      let nonAprrovedRequestsToJoinObj = responseObj["nonAprrovedRequestsToJoin"]
+
+      if nonAprrovedRequestsToJoinObj{"result"}.kind != JNull:
+        for jsonCommunityReqest in nonAprrovedRequestsToJoinObj["result"]:
+          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+          if not (communityRequest.communityId in self.communities):
+            warn "community was not found for community request", communityID=communityRequest.communityId, requestId=communityRequest.id
+            continue
+          case RequestToJoinType(communityRequest.state):
+            of RequestToJoinType.Pending, RequestToJoinType.AcceptedPending, RequestToJoinType.DeclinedPending:
+              self.communities[communityRequest.communityId].pendingRequestsToJoin.add(communityRequest)
+            of RequestToJoinType.Declined:
+              self.communities[communityRequest.communityId].declinedRequestsToJoin.add(communityRequest)
+            of RequestToJoinType.Canceled:
+              self.communities[communityRequest.communityId].canceledRequestsToJoin.add(communityRequest)
+            of RequestToJoinType.AwaitingAddress:
+              self.communities[communityRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(communityRequest)
+            of RequestToJoinType.Accepted:
+              continue
+
       self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
     except Exception as e:
       let errDesription = e.msg
