@@ -467,22 +467,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   result.shard = jsonObj.getShard()
 
-  var requestsToJoinCommunityObj: JsonNode
-  if(jsonObj.getProp("requestsToJoinCommunity", requestsToJoinCommunityObj) and requestsToJoinCommunityObj.kind == JArray):
-    for requestObj in requestsToJoinCommunityObj:
-      let request = requestObj.toCommunityMembershipRequestDto()
-      case RequestToJoinType(request.state):
-        of RequestToJoinType.Pending, RequestToJoinType.AcceptedPending, RequestToJoinType.DeclinedPending:
-          result.pendingRequestsToJoin.add(request)
-        of RequestToJoinType.Declined:
-          result.declinedRequestsToJoin.add(request)
-        of RequestToJoinType.Canceled:
-          result.canceledRequestsToJoin.add(request)
-        of RequestToJoinType.AwaitingAddress:
-          result.waitingForSharedAddressesRequestsToJoin.add(request)
-        of RequestToJoinType.Accepted:
-          continue
-
 proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
   case state:
     of CommunityMemberPendingBanOrKick.Banned:
