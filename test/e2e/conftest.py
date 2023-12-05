@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import os
 import allure
 import pytest
 from PIL import ImageGrab
@@ -13,7 +14,7 @@ from scripts.utils.system_path import SystemPath
 # Send logs to pytest.log as well
 handler = logging.FileHandler(filename=configs.PYTEST_LOG)
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=os.getenv('LOG_LEVEL', 'INFO'),
     format='[%(asctime)s] (%(filename)18s:%(lineno)-3s) [%(levelname)-7s] --- %(message)s',
     handlers=[handler],
 )
