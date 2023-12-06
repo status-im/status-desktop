@@ -175,6 +175,14 @@ QtObject:
   QtProperty[string] txHashIn:
     read = getTxHashIn
 
+  proc getTxHash*(self: ActivityDetails): string {.slot.} =
+    if self.txHashOut.len > 0:
+      return self.txHashOut
+    return self.txHashIn
+
+  QtProperty[string] txHash:
+    read = getTxHash
+
   proc getInput*(self: ActivityDetails): string {.slot.} =
     return self.input
 

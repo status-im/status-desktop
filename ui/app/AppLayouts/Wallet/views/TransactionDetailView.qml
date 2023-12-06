@@ -341,16 +341,24 @@ Item {
                     TransactionDataTile {
                         width: parent.width
                         title: qsTr("%1 Tx hash").arg(transactionHeader.networkName)
-                        subTitle: d.isDetailsValid ? d.details.txHashOut : ""
-                        visible: !!subTitle
+                        subTitle: d.isDetailsValid ? d.details.txHash : ""
+                        visible: !!subTitle && !transactionHeader.isMultiTransaction
                         buttonIconName: "more"
                         onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortName])
                     }
                     TransactionDataTile {
                         width: parent.width
+                        title: qsTr("%1 Tx hash").arg(transactionHeader.networkNameOut)
+                        subTitle: d.isDetailsValid ? d.details.txHashOut : ""
+                        visible: !!subTitle && transactionHeader.isMultiTransaction
+                        buttonIconName: "more"
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortNameOut])
+                    }
+                    TransactionDataTile {
+                        width: parent.width
                         title: qsTr("%1 Tx hash").arg(transactionHeader.networkNameIn)
                         subTitle: d.isDetailsValid ? d.details.txHashIn : ""
-                        visible: !!subTitle
+                        visible: !!subTitle && transactionHeader.isMultiTransaction
                         buttonIconName: "more"
                         onButtonClicked: addressMenu.openTxMenu(this, subTitle, [d.networkShortNameIn])
                     }
