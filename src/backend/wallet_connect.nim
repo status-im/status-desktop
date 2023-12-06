@@ -39,6 +39,10 @@ rpc(wCHasActivePairings, "wallet"):
 rpc(wCSessionRequest, "wallet"):
   sessionRequestJson: string
 
+rpc(wCAuthRequest, "wallet"):
+  address: string
+  message: string
+
 
 proc isErrorResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return not rpcResponse.error.isNil
@@ -88,6 +92,14 @@ proc hasActivePairings*(): bool =
 proc sessionRequest*(res: var JsonNode, sessionRequestJson: string): string =
   try:
     let response = wCSessionRequest(sessionRequestJson)
+    return prepareResponse(res, response)
+  except Exception as e:
+    warn e.msg
+    return e.msg
+
+proc authRequest*(res: var JsonNode, address: string, authMessage: string): string =
+  try:
+    let response = wCAuthRequest(address, authMessage)
     return prepareResponse(res, response)
   except Exception as e:
     warn e.msg

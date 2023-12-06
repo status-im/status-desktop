@@ -1,4 +1,4 @@
-import NimQml, strutils, logging, json, options
+import NimQml, strutils, logging, json, options, chronicles
 
 import backend/wallet as backend_wallet
 import backend/wallet_connect as backend_wallet_connect
@@ -9,25 +9,33 @@ import app/core/signals/types
 
 import app_service/common/utils as common_utils
 from app_service/service/transaction/dto import PendingTransactionTypeDto
+import app_service/service/wallet_account/service as wallet_account_service
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import constants
 import tx_response_dto, helper
 
-const UNIQUE_WALLET_CONNECT_MODULE_SIGNING_IDENTIFIER* = "WalletConnect-Signing"
+const UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER* = "WalletConnect-SessionRequestSigning"
+const UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER* = "WalletConnect-AuthRequestSigning"
+
+logScope:
+  topics = "wallet-connect"
 
 QtObject:
   type
     Controller* = ref object of QObject
       events: EventEmitter
+      walletAccountService: wallet_account_service.Service
       sessionRequestJson: JsonNode
       txResponseDto: TxResponseDto
       hasActivePairings: Option[bool]
 
   ## Forward declarations
-  proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string)
+  proc invalidateData(self: Controller)
+  proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string, identifier: string)
   proc finishSessionRequest(self: Controller, signature: string)
+  proc finishAuthRequest(self: Controller, signature: string)
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -40,24 +48,36 @@ QtObject:
 
     self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
       let args = SharedKeycarModuleArgs(e)
-      if args.uniqueIdentifier != UNIQUE_WALLET_CONNECT_MODULE_SIGNING_IDENTIFIER:
+      if args.uniqueIdentifier != UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER and
+        args.uniqueIdentifier != UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER:
         return
-      self.onDataSigned(args.keyUid, args.path, args.r, args.s, args.v, args.pin)
+      self.onDataSigned(args.keyUid, args.path, args.r, args.s, args.v, args.pin, args.uniqueIdentifier)
 
   proc delete*(self: Controller) =
+    self.invalidateData()
     self.QObject.delete
 
-  proc newController*(events: EventEmitter): Controller =
+  proc newController*(events: EventEmitter, walletAccountService: wallet_account_service.Service): Controller =
     new(result, delete)
     result.events = events
+    result.walletAccountService = walletAccountService
     result.setup()
 
-  proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string) =
+  proc invalidateData(self: Controller) =
+    self.sessionRequestJson = nil
+    self.txResponseDto = nil
+
+  proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string, identifier: string) =
     if keyUid.len == 0 or path.len == 0 or r.len == 0 or s.len == 0 or v.len == 0 or pin.len == 0:
       error "invalid data signed"
       return
     let signature = "0x" & r & s & v
-    self.finishSessionRequest(signature)
+    if identifier == UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER:
+      self.finishSessionRequest(signature)
+    elif identifier == UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER:
+      self.finishAuthRequest(signature)
+    else:
+      error "Unknown identifier"
 
   # supportedNamespaces is a Namespace as defined in status-go: services/wallet/walletconnect/walletconnect.go
   proc proposeUserPair*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string) {.signal.}
@@ -117,6 +137,9 @@ QtObject:
     self.respondSessionRequest($self.sessionRequestJson, txResponseDto.rawTx, false)
 
   proc finishSessionRequest(self: Controller, signature: string) =
+    if signature.len == 0:
+      self.respondSessionRequest($self.sessionRequestJson, "", true)
+      return
     let requestMethod = getRequestMethod(self.sessionRequestJson)
     if requestMethod == RequestMethod.SendTransaction:
       self.sendTransactionAndRespond(signature)
@@ -130,24 +153,26 @@ QtObject:
       self.respondSessionRequest($self.sessionRequestJson, signature, false)
     else:
       error "Unknown request method"
+      self.respondSessionRequest($self.sessionRequestJson, "", true)
 
   proc sessionRequest*(self: Controller, sessionRequestJson: string, password: string) {.slot.} =
+    var signature: string
     try:
+      self.invalidateData()
       self.sessionRequestJson = parseJson(sessionRequestJson)
       var sessionRes: JsonNode
       let err = backend_wallet_connect.sessionRequest(sessionRes, sessionRequestJson)
       if err.len > 0:
-        error "Failed to request a session"
-        self.respondSessionRequest(sessionRequestJson, "", true)
-        return
+        raise newException(CatchableError, err)
 
       self.txResponseDto = sessionRes.toTxResponseDto()
       if self.txResponseDto.signOnKeycard:
-        let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_WALLET_CONNECT_MODULE_SIGNING_IDENTIFIER,
+        let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_WC_SESSION_REQUEST_SIGNING_IDENTIFIER,
           keyUid: self.txResponseDto.keyUid,
           path: self.txResponseDto.addressPath,
           dataToSign: singletonInstance.utils.removeHexPrefix(self.txResponseDto.messageToSign))
         self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA, data)
+        return
       else:
         let hashedPasssword = common_utils.hashPassword(password)
         var signMsgRes: JsonNode
@@ -156,14 +181,56 @@ QtObject:
           self.txResponseDto.address,
           hashedPasssword)
         if err.len > 0:
-          error "Failed to sign message on statusgo side"
-          return
-        let signature = signMsgRes.getStr
-        self.finishSessionRequest(signature)
-    except:
-      error "session request action failed"
+          raise newException(CatchableError, err)
+        signature = signMsgRes.getStr
+    except Exception as e:
+      error "session request", msg=e.msg
+    self.finishSessionRequest(signature)
 
   proc getProjectId*(self: Controller): string {.slot.} =
     return constants.WALLET_CONNECT_PROJECT_ID
   QtProperty[string] projectId:
     read = getProjectId
+
+  proc getWalletAccounts*(self: Controller): string {.slot.} =
+    let jsonObj = % self.walletAccountService.getWalletAccounts()
+    return $jsonObj
+
+  proc respondAuthRequest*(self: Controller, signature: string, error: bool) {.signal.}
+
+  proc finishAuthRequest(self: Controller, signature: string) =
+    if signature.len == 0:
+      self.respondAuthRequest("", true)
+      return
+    self.respondAuthRequest(signature, false)
+
+  proc authRequest*(self: Controller, selectedAddress: string, authMessage: string, password: string) {.slot.} =
+    var signature: string
+    try:
+      self.invalidateData()
+      var sessionRes: JsonNode
+      let err = backend_wallet_connect.authRequest(sessionRes, selectedAddress, authMessage)
+      if err.len > 0:
+        raise newException(CatchableError, err)
+
+      self.txResponseDto = sessionRes.toTxResponseDto()
+      if self.txResponseDto.signOnKeycard:
+        let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_WC_AUTH_REQUEST_SIGNING_IDENTIFIER,
+          keyUid: self.txResponseDto.keyUid,
+          path: self.txResponseDto.addressPath,
+          dataToSign: singletonInstance.utils.removeHexPrefix(self.txResponseDto.messageToSign))
+        self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA, data)
+        return
+      else:
+        let hashedPasssword = common_utils.hashPassword(password)
+        var signMsgRes: JsonNode
+        let err = backend_wallet.signMessage(signMsgRes,
+          self.txResponseDto.messageToSign,
+          self.txResponseDto.address,
+          hashedPasssword)
+        if err.len > 0:
+          raise newException(CatchableError, err)
+        signature = signMsgRes.getStr
+    except Exception as e:
+      error "auth request", msg=e.msg
+    self.finishAuthRequest(signature)

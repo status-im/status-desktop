@@ -1,8 +1,7 @@
 import { Core } from "@walletconnect/core";
 import { Web3Wallet } from "@walletconnect/web3wallet";
 
-// Disabled for now to debug the issue with wrong pairing topic
-//import AuthClient from '@walletconnect/auth-client'
+import AuthClient from '@walletconnect/auth-client'
 
 // import the builder util
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
@@ -49,10 +48,10 @@ window.wc = {
                 },
             });
 
-            //window.wc.authClient = await AuthClient.init({
-            //    projectId: projectId,
-            //    metadata: window.wc.web3wallet.metadata,
-            //});
+            window.wc.authClient = await AuthClient.init({
+                projectId: projectId,
+                metadata: window.wc.web3wallet.metadata,
+            });
 
             // connect session responses https://specs.walletconnect.com/2.0/specs/clients/sign/session-events#events
             window.wc.web3wallet.on("session_proposal", async (details) => {
@@ -95,6 +94,10 @@ window.wc = {
                 wc.statusObject.onProposalExpire(details)
             });
 
+            window.wc.authClient.on("auth_request", async (details) => {
+                wc.statusObject.onAuthRequest(details)
+            });
+
             wc.statusObject.sdkInitialized("");
             resolve("");
         });
@@ -130,7 +133,6 @@ window.wc = {
             supportedNamespaces: supportedNamespaces,
         });
 
-        wc.statusObject.bubbleConsoleMessage("debug", `web3wallet.approveSession id: ${id} ${JSON.stringify(approvedNamespaces, null, 2)}`)
         return {
             result: window.wc.web3wallet.approveSession({
                 id,
@@ -149,45 +151,66 @@ window.wc = {
         };
     },
 
-    // auth: function (uri) {
-    //     return {
-    //         result: window.wc.authClient.core.pairing.pair({ uri }),
-    //         error: ""
-    //     };
-    // },
+    auth: function (uri) {
+        try {
+            return {
+                result: window.wc.authClient.core.pairing.pair({ uri }),
+                error: ""
+            };
+        } catch (e) {
+            return {
+                result: "",
+                error: e
+            };
+        }
+    },
 
-    // approveAuth: function (authProposal) {
-    //     const { id, params } = authProposal;
+    formatAuthMessage: function (cacaoPayload, address) {
+        const iss = `did:pkh:eip155:1:${address}`;
 
-    //     // TODO: source user’s address
-    //     const iss = `did:pkh:eip155:1:${"0x0123456789"}`;
+        return {
+            result: window.wc.authClient.formatMessage(cacaoPayload, iss),
+            error: ""
+        };
+    },
 
-    //     // format the cacao payload with the user’s address
-    //     const message = window.wc.authClient.formatMessage(params.cacaoPayload, iss);
+    approveAuth: function (authRequest, address, signature) {
+        const { id, params } = authRequest;
 
-    //     // TODO: signature
-    //     const signature = "0x123456789"
+        const iss = `did:pkh:eip155:1:${address}`;
 
-    //     return {
-    //         result: window.wc.authClient.respond(
-    //             {
-    //                 id: id,
-    //                 signature: {
-    //                     s: signature,
-    //                     t: "eip191",
-    //                 },
-    //             },
-    //             iss),
-    //         error: ""
-    //     };
-    // },
+        const message = window.wc.authClient.formatMessage(params.cacaoPayload, iss);
 
-    // rejectAuth: function (id) {
-    //     return {
-    //         result: window.wc.authClient.reject(id),
-    //         error: ""
-    //     };
-    // },
+        return {
+            result: window.wc.authClient.respond(
+                {
+                    id: id,
+                    signature: {
+                        s: signature,
+                        t: "eip191",
+                    },
+                },
+                iss),
+            error: ""
+        };
+    },
+
+    rejectAuth: function (id, address) {
+        const iss = `did:pkh:eip155:1:${address}`;
+
+        return {
+            result: window.wc.authClient.respond(
+                {
+                    id: id,
+                    error: {
+                        code: 4001,
+                        message: 'Auth request has been rejected'
+                    },
+                },
+                iss),
+            error: ""
+        };
+    },
 
     respondSessionRequest: function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)
@@ -200,7 +223,6 @@ window.wc = {
             };
 
         } catch (e) {
-            wc.statusObject.bubbleConsoleMessage("error", `respondSessionRequest error: ${JSON.stringify(e, null, 2)}`)
             return {
                 result: "",
                 error: e
