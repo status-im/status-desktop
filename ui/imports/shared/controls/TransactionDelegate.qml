@@ -337,12 +337,17 @@ StatusListItem {
         if (!!detailsObj.protocol) {
             details += qsTr("Using") + endl + detailsObj.protocol + endl2
         }
-        if (!!detailsObj.txHashOut) {
-            details += qsTr("%1 Tx hash").arg(root.networkName) + endl + detailsObj.txHashOut + endl2
+        if (root.isMultiTransaction) {
+            if (!!detailsObj.txHashOut) {
+                details += qsTr("%1 Tx hash").arg(root.networkNameOut) + endl + detailsObj.txHashOut + endl2
+            }
+            if (!!detailsObj.txHashIn) {
+                details += qsTr("%1 Tx hash").arg(root.networkNameIn) + endl + detailsObj.txHashIn + endl2
+            }
+        } else if (!!detailsObj.txHash) {
+            details += qsTr("%1 Tx hash").arg(root.networkName) + endl + detailsObj.txHash + endl2
         }
-        if (!!detailsObj.txHashIn) {
-            details += qsTr("%1 Tx hash").arg(networkNameIn) + endl + detailsObj.txHashIn + endl2
-        }
+
         const protocolFromContractAddress = "" // TODO fill protocol contract address for 'from' network for Bridge and Swap
         if (!!detailsObj.protocol && !!protocolFromContractAddress) {
             details += qsTr("%1 %2 contract address").arg(root.networkName).arg(detailsObj.protocol) + endl
@@ -384,10 +389,10 @@ StatusListItem {
         }
         details += qsTr("Nonce") + endl + detailsObj.nonce + endl2
         if (type === Constants.TransactionType.Bridge) {
-            details += qsTr("Included in Block on %1").arg(networkName) + endl
+            details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
             details += detailsObj.blockNumberOut  + endl2
             if (detailsObj.blockNumberIn > 0) {
-                details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
+                details += qsTr("Included in Block on %1").arg(networkNameIn) + endl
                 details += detailsObj.blockNumberIn + endl2
             }
         } else {
