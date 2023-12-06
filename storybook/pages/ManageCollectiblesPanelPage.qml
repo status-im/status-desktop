@@ -50,6 +50,11 @@ SplitView {
                 text: "Dirty: %1".arg(showcasePanel.dirty ? "true" : "false")
             }
 
+            Label {
+                Layout.fillWidth: true
+                text: "Has saved settings: %1".arg(showcasePanel.hasSettings ? "true" : "false")
+            }
+
             Button {
                 text: "Save"
                 onClicked: showcasePanel.saveSettings()
@@ -71,6 +76,7 @@ SplitView {
             }
 
             Button {
+                enabled: showcasePanel.hasSettings
                 text: "Clear settings"
                 onClicked: showcasePanel.clearSettings()
             }

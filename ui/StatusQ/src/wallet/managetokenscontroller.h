@@ -25,6 +25,7 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_PROPERTY(QAbstractItemModel* communityTokenGroupsModel READ communityTokenGroupsModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* hiddenTokensModel READ hiddenTokensModel CONSTANT FINAL)
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged FINAL)
+    Q_PROPERTY(bool hasSettings READ hasSettings NOTIFY settingsDirtyChanged FINAL)
     Q_PROPERTY(bool settingsDirty READ settingsDirty NOTIFY settingsDirtyChanged FINAL)
 
 public:
@@ -38,7 +39,6 @@ public:
     Q_INVOKABLE void saveSettings(bool reuseCurrent = false);
     Q_INVOKABLE void clearSettings();
     Q_INVOKABLE void revert();
-    Q_INVOKABLE bool hasSettings() const;
 
     Q_INVOKABLE void settingsHideToken(const QString& symbol);
     Q_INVOKABLE void settingsHideCommunityTokens(const QString& communityId, const QStringList& symbols);
@@ -95,6 +95,7 @@ private:
     void setSettingsKey(const QString& newSettingsKey);
     QSettings m_settings;
     SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId}
+    bool hasSettings() const;
 
     bool m_settingsDirty{false};
     bool settingsDirty() const { return m_settingsDirty; }

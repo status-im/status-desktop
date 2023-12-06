@@ -164,12 +164,15 @@ void ManageTokensController::clearSettings()
     m_settings.remove(QString());
     m_settings.endGroup();
     m_settings.sync();
+
+    emit settingsDirtyChanged(false);
 }
 
 void ManageTokensController::loadSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
+    setSettingsDirty(true);
     m_settingsData.clear();
 
     // load from QSettings
@@ -189,6 +192,7 @@ void ManageTokensController::loadSettings()
     }
     m_settings.endArray();
     m_settings.endGroup();
+    setSettingsDirty(false);
 }
 
 void ManageTokensController::setSettingsDirty(bool dirty)
@@ -212,7 +216,7 @@ bool ManageTokensController::hasSettings() const
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
     const auto groups = m_settings.childGroups();
-    return !groups.isEmpty() && groups.contains(settingsGroupName());
+    return groups.contains(settingsGroupName());
 }
 
 void ManageTokensController::settingsHideToken(const QString& symbol)

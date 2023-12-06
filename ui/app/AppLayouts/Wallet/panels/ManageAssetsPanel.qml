@@ -19,6 +19,7 @@ Control {
     required property var baseModel
 
     readonly property bool dirty: d.controller.dirty
+    readonly property bool hasSettings: d.controller.hasSettings
 
     background: null
 

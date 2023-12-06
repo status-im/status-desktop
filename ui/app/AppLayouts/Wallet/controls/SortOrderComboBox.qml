@@ -13,79 +13,71 @@ import utils 1.0
 ComboBox {
     id: root
 
-    property int sortOrder: Qt.DescendingOrder
-    readonly property string currentSortRoleName: d.currentSortRoleName
+    // expected model role names: text, value (enum TokenOrder), sortRoleName, icon (optional)
+    // text === "---" denotes a separator
 
-    model: d.predefinedSortModel
+    property bool hasCustomOrderDefined
+
+    property int currentSortOrder: Qt.DescendingOrder
+    readonly property string currentSortRoleName: root.currentIndex !== -1 ? root.model[root.currentIndex].sortRoleName : ""
+
+    signal createOrEditRequested()
+
     textRole: "text"
     valueRole: "value"
-    displayText: !d.isCustomSortOrder ? "%1 %2".arg(currentText).arg(sortOrder === Qt.DescendingOrder ? "↓" : "↑")
-                                      : currentText
 
-    Component.onCompleted: currentIndex = indexOfValue(SortOrderComboBox.TokenOrderCustom)
+    displayText: root.currentValue === SortOrderComboBox.TokenOrderCustom ? currentText
+                                                                          : "%1 %2".arg(currentText).arg(currentSortOrder === Qt.DescendingOrder ? "↓" : "↑")
+
+    onActivated: {
+        if (index === indexOfValue(SortOrderComboBox.TokenOrderCreateCustom)) { // restore the previous sort role and signal we want create/edit
+            currentIndex = d.currentIndex
+            root.createOrEditRequested()
+        } else {
+            if (d.currentIndex === index)  // just keep the same sort role and flip the up/down
+                currentSortOrder = currentSortOrder === Qt.AscendingOrder ? Qt.DescendingOrder : Qt.AscendingOrder
+
+            // update internal index
+            d.currentIndex = index
+        }
+    }
+
+    Component.onCompleted: {
+        d.currentIndex = root.currentIndex // sync with settings which might arrive from the outside
+    }
 
     enum TokenOrder {
         TokenOrderNone = 0,
-        TokenOrderCustom,
-        TokenOrderValue,
-        TokenOrderBalance,
-        TokenOrder1WChange,
-        TokenOrderAlpha
+        TokenOrderCurrencyBalance, // FIAT value of asset balance (enabledNetworkCurrencyBalance)
+        TokenOrderBalance, // Number of tokens (enabledNetworkBalance)
+        TokenOrderCurrencyPrice, // Value per token in FIAT (currencyPrice)
+        TokenOrder1WChange, // Level of change in asset balance value (in FIAT) comp. to 7 days earlier
+        TokenOrderAlpha, // Alphabetic by asset name (name)
+        TokenOrderDateAdded, // Date added descending (newest first)
+        TokenOrderGroupName, // Collection or Community name
+        TokenOrderCustom, // Custom (user created) order
+        TokenOrderCreateCustom // special menu entry to create/edit the custom sort order
     }
 
     horizontalPadding: 12
-    verticalPadding: 8
-    spacing: 8
+    verticalPadding: Style.current.halfPadding
+    spacing: Style.current.halfPadding
 
     font.family: Theme.palette.baseFont.name
     font.pixelSize: Style.current.additionalTextSize
-
 
     QtObject {
         id: d
 
         readonly property int defaultDelegateHeight: 34
 
-//        // models
-//        readonly property SortFilterProxyModel tokensModel: SortFilterProxyModel {
-//            sourceModel: root.baseModel
-//            proxyRoles: [
-//                ExpressionRole {
-//                    name: "currentBalance"
-//                    expression: model.enabledNetworkBalance.amount
-//                },
-//                ExpressionRole {
-//                    name: "currentCurrencyBalance"
-//                    expression: model.enabledNetworkCurrencyBalance.amount
-//                }
-//            ]
-//            sorters: RoleSorter {
-//                roleName: cmbTokenOrder.currentSortRoleName
-//                sortOrder: cmbTokenOrder.sortOrder
-//                enabled: !d.isCustomSortOrder
-//            }
-//            filters: ValueFilter {
-//                roleName: "visibleForNetworkWithPositiveBalance"
-//                value: true
-//            }
-//        }
-
-        readonly property var predefinedSortModel: [
-            { value: SortOrderComboBox.TokenOrderValue, text: qsTr("Token value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole
-            { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Token balance"), icon: "wallet", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole
-            { value: SortOrderComboBox.TokenOrder1WChange, text: qsTr("1W change"), icon: "time", sortRoleName: "changePct24hour" }, // FIXME changePct1Week role missing in backend!!!
-            { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Alphabetic"), icon: "bold", sortRoleName: "name" },
-            { value: SortOrderComboBox.TokenOrderNone, text: "---", icon: "", sortRoleName: "" },
-            { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" }
-        ]
-        readonly property string currentSortRoleName: root.currentIndex !== -1 ? d.predefinedSortModel[root.currentIndex].sortRoleName : ""
-        readonly property bool isCustomSortOrder: root.currentValue === SortOrderComboBox.TokenOrderCustom
+        property int currentIndex: 0
     }
 
     background: Rectangle {
         border.width: 1
         border.color: Theme.palette.directColor7
-        radius: 8
+        radius: Style.current.radius
         color: root.down ? Theme.palette.baseColor2 : "transparent"
         HoverHandler {
             cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
@@ -116,16 +108,15 @@ ComboBox {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         y: root.height + 4
 
-        implicitWidth: root.width
-        margins: 8
+        implicitWidth: 290
+        margins: Style.current.halfPadding
 
         padding: 1
-        verticalPadding: 8
+        verticalPadding: Style.current.halfPadding
 
         background: Rectangle {
             color: Theme.palette.statusSelect.menuItemBackgroundColor
-            radius: 8
-            border.color: Theme.palette.baseColor2
+            radius: Style.current.radius
             layer.enabled: true
             layer.effect: DropShadow {
                 horizontalOffset: 0
@@ -138,6 +129,7 @@ ComboBox {
         }
 
         contentItem: ColumnLayout {
+            spacing: 0
             StatusBaseText {
                 Layout.fillWidth: true
                 Layout.preferredHeight: d.defaultDelegateHeight
@@ -164,20 +156,18 @@ ComboBox {
             spacing: root.spacing
 
             StatusIcon {
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
                 visible: !!icon
                 icon: iconName
                 color: root.enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-                width: 16
-                height: 16
             }
 
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
                 text: menuText
-                verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
-                color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                color: isEditAction ? Theme.palette.primaryColor1 : root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                 font.pixelSize: root.font.pixelSize
                 font.weight: root.currentIndex === menuIndex ? Font.DemiBold : Font.Normal
             }
@@ -185,7 +175,7 @@ ComboBox {
             Item { Layout.fillWidth: true }
 
             Row {
-                visible: !isCustomOrder
+                visible: showUpDownArrows
                 spacing: 4
                 StatusFlatRoundButton {
                     radius: 6
@@ -195,11 +185,12 @@ ComboBox {
                     icon.width: 18
                     icon.height: 18
                     opacity: root.highlightedIndex === menuIndex || highlighted // not "visible, we want the item to stay put
-                    highlighted: root.currentIndex === menuIndex && root.sortOrder === Qt.AscendingOrder
+                    highlighted: root.currentIndex === menuIndex && root.currentSortOrder === Qt.AscendingOrder
                     onClicked: {
                         if (root.currentIndex !== menuIndex)
                             root.currentIndex = menuIndex
-                        root.sortOrder = Qt.AscendingOrder
+                        d.currentIndex = menuIndex
+                        root.currentSortOrder = Qt.AscendingOrder
                         root.popup.close()
                     }
                 }
@@ -211,11 +202,12 @@ ComboBox {
                     icon.width: 18
                     icon.height: 18
                     opacity: root.highlightedIndex === menuIndex || highlighted // not "visible, we want the item to stay put
-                    highlighted: root.currentIndex === menuIndex && root.sortOrder === Qt.DescendingOrder
+                    highlighted: root.currentIndex === menuIndex && root.currentSortOrder === Qt.DescendingOrder
                     onClicked: {
                         if (root.currentIndex !== menuIndex)
                             root.currentIndex = menuIndex
-                        root.sortOrder = Qt.DescendingOrder
+                        d.currentIndex = menuIndex
+                        root.currentSortOrder = Qt.DescendingOrder
                         root.popup.close()
                     }
                 }
@@ -234,9 +226,15 @@ ComboBox {
         readonly property bool isSeparator: text === "---"
 
         id: menuDelegate
-        width: root.width
+        width: ListView.view.width
         highlighted: root.highlightedIndex === index
         enabled: !isSeparator
+        visible: {
+            if (modelData["value"] === SortOrderComboBox.TokenOrderCustom) // hide "Custom order" menu entry if none defined
+                return root.hasCustomOrderDefined
+            return true
+        }
+        height: visible ? implicitHeight : 0
         leftPadding: isSeparator ? 0 : 14
         rightPadding: isSeparator ? 0 : 8
         verticalPadding: isSeparator ? 2 : 5
@@ -264,9 +262,9 @@ ComboBox {
             readonly property int menuIndex: menuDelegate.index
             readonly property string menuText: menuDelegate.text
             readonly property string iconName: menuDelegate.icon.name
-            readonly property bool isCustomOrder: !menuDelegate.modelData["sortRoleName"]
+            readonly property bool showUpDownArrows: menuDelegate.modelData["sortRoleName"] !== ""
+            readonly property bool isEditAction: modelData["value"] === SortOrderComboBox.TokenOrderCreateCustom
             sourceComponent: menuDelegate.isSeparator ? separatorMenuComponent : regularMenuComponent
         }
-        onClicked: root.currentIndex = index
     }
 }

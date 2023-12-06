@@ -29,6 +29,7 @@ Item {
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
+        readonly property string symbol: root.token ? root.token.symbol : ""
     }
 
     Connections {
@@ -286,8 +287,8 @@ Item {
                 }
 
                 Connections {
-                    target: token
-                    function onSymbolChanged() { graphDetail.updateBalanceStore() }
+                    target: d
+                    function onSymbolChanged() { if (d.symbol) graphDetail.updateBalanceStore() }
                 }
             }
         }

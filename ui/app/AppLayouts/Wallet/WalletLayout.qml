@@ -197,6 +197,7 @@ Item {
     Component {
         id: receiveModalComponent
         ReceiveModal {
+            destroyOnClose: true
             anchors.centerIn: parent
         }
     }

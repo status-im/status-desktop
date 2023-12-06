@@ -115,6 +115,7 @@ Item {
 
         function onActiveSectionChanged() {
             createChatView.opened = false
+            Global.settingsSubSubsection = -1
         }
 
         function onOpenActivityCenter() {
@@ -325,13 +326,14 @@ Item {
             appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
         }
 
-        function onAppSectionBySectionTypeChanged(sectionType: int, subsection: int) {
+        function onAppSectionBySectionTypeChanged(sectionType, subsection, settingsSubsection = -1) {
             if(!appMain.rootStore.mainModuleInst)
                 return
 
             appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
             if (sectionType === Constants.appSection.profile) {
                 Global.settingsSubsection = subsection;
+                Global.settingsSubSubsection = settingsSubsection;
             }
         }
 
@@ -750,7 +752,7 @@ Item {
                     active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
                     delay: false
                     onClicked: Global.openTestnetPopup()
-                    onCloseClicked: hide()
+                    closeBtnVisible: false
                 }
 
                 ModuleWarning {
@@ -1410,7 +1412,11 @@ Item {
             id: sendModal
             active: false
 
-            function open() {
+            function open(address = "") {
+                if (!!address) {
+                    preSelectedRecipient = address
+                    preSelectedRecipientType = TabAddressSelectorView.Type.Address
+                }
                 this.active = true
                 this.item.open()
             }
@@ -1626,7 +1632,8 @@ Item {
                     const sectionArgs = link.substring(1).split("/")
                     const section = sectionArgs[0]
                     let subsection = sectionArgs.length > 1 ? sectionArgs[1] : 0
-                    Global.changeAppSectionBySectionType(section, subsection)
+                    let subsubsection = sectionArgs.length > 2 ? sectionArgs[2] : -1
+                    Global.changeAppSectionBySectionType(section, subsection, subsubsection)
                 }
                 else
                     Global.openLink(link)
