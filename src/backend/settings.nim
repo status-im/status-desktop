@@ -101,3 +101,6 @@ proc addOrReplaceSocialLinks*(value: JsonNode): RpcResponse[JsonNode] {.raises: 
 
 proc getSocialLinks*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("settings_getSocialLinks")
+
+proc mnemonicWasShown*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("settings_mnemonicWasShown")

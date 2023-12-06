@@ -130,6 +130,7 @@ StatusStackModal {
         ConfirmSeedPhrasePanel {
             id: confirmSeedPhrase
             seedPhrase: root.privacyStore.getMnemonic().split(" ")
+            privacyStore: root.privacyStore
         },
         BackupSeedStepBase {
             id: confirmFirstWord

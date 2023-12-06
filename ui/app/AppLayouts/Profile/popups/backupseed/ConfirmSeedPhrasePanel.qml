@@ -14,6 +14,7 @@ BackupSeedStepBase {
 
     property var seedPhrase: []
     property bool hideSeed: true
+    property var privacyStore
 
     titleText: qsTr("Write down your 12-word seed phrase to keep offline")
 
@@ -68,6 +69,7 @@ BackupSeedStepBase {
             icon.name: "view"
             text: qsTr("Reveal seed phrase")
             onClicked: {
+                privacyStore.mnemonicWasShown();
                 hideSeed = false;
             }
         }

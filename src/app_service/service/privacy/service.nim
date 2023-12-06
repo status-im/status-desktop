@@ -102,6 +102,9 @@ QtObject:
       data.success = false
       error "error: ", procName="removeMnemonic", errDesription = "an error occurred removing mnemonic"
 
+  proc mnemonicWasShown*(self: Service) =
+    self.settingsService.mnemonicWasShown()
+
   proc getMnemonicWordAtIndex*(self: Service, index: int): string =
     let mnemonic = self.settingsService.getMnemonic()
     if(mnemonic.len == 0):

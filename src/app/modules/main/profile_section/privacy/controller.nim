@@ -86,6 +86,9 @@ proc getMnemonic*(self: Controller): string =
 proc removeMnemonic*(self: Controller) =
   self.privacyService.removeMnemonic()
 
+proc mnemonicWasShown*(self: Controller) =
+  self.settingsService.mnemonicWasShown()
+
 proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
   return self.privacyService.getMnemonicWordAtIndex(index)
 

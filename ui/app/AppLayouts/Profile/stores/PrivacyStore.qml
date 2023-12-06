@@ -40,4 +40,8 @@ QtObject {
     function backupData() {
         return root.privacyModule.backupData()
     }
+
+    function mnemonicWasShown() {
+        root.privacyModule.mnemonicWasShown()
+    }
 }
