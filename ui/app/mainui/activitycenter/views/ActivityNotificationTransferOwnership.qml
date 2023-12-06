@@ -96,6 +96,7 @@ ActivityNotificationBase {
             Layout.fillWidth: true
 
             StatusMessageHeader {
+                Layout.fillWidth: true
                 displayNameLabel.text: d.title
                 timestamp: root.notification.timestamp
             }

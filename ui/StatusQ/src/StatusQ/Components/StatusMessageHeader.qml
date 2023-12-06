@@ -38,8 +38,11 @@ Item {
     RowLayout {
         id: layout
         spacing: 4
+        width: parent.width
         StatusBaseText {
+
             id: primaryDisplayName
+            Layout.fillWidth: true
             objectName: "StatusMessageHeader_DisplayName"
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
