@@ -4,6 +4,8 @@
 #include <QQmlListProperty>
 #include <QQmlParserStatus>
 
+#include <unordered_map>
+
 class SourceModel : public QObject
 {
     Q_OBJECT
