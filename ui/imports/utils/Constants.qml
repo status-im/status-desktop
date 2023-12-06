@@ -352,6 +352,14 @@ QtObject {
         readonly property int backUpSeed: 17
     }
 
+    readonly property QtObject walletSettingsSubsection: QtObject {
+        readonly property int manageNetworks: 0
+        readonly property int manageAccounts: 1
+        readonly property int manageAssets: 2
+        readonly property int manageCollectibles: 3
+        readonly property int manageTokenLists: 4
+    }
+
     readonly property QtObject currentUserStatus: QtObject{
         readonly property int unknown: 0
         readonly property int automatic: 1

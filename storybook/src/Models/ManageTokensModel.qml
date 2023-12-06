@@ -44,11 +44,7 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
-            currencyPrice: {
-                amount: 10.37,
-                symbol: "EUR",
-                displayDecimals: 2
-            },
+            currencyPrice: {},
             communityId: "ddls",
             communityName: "Doodles",
             communityImage: ModelsData.collectibles.doodles // FIXME backend
@@ -65,6 +61,7 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {},
             communityId: "sox",
             communityName: "Socks",
             communityImage: ModelsData.icons.socks
@@ -81,21 +78,31 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {
+                amount: 0.25,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
             changePct24hour: -2.1,
             communityId: "",
             communityName: "",
             communityImage: ""
         },
         {
-            name: "Ave Maria",
-            symbol: "AAVE",
+            name: "Request",
+            symbol: "REQ",
             enabledNetworkBalance: {
-                amount: 23.3,
-                symbol: "AAVE",
+                amount: 0.00005,
+                symbol: "REQ",
                 displayDecimals: 2
             },
             enabledNetworkCurrencyBalance: {
                 amount: 2.335,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
+            currencyPrice: {
+                amount: 0.1000001,
                 symbol: "EUR",
                 displayDecimals: 2
             },
@@ -113,6 +120,11 @@ ListModel {
             },
             enabledNetworkCurrencyBalance: {
                 amount: 2.7,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
+            currencyPrice: {
+                amount: 0.000752089,
                 symbol: "EUR",
                 displayDecimals: 2
             },
@@ -134,6 +146,11 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {
+                amount: 0.937718773,
+                symbol: "EUR",
+                displayDecimals: 2
+            },
             changePct24hour: 0,
             communityId: "",
             communityName: "",
@@ -152,6 +169,7 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {},
             changePct24hour: -1,
             communityId: "",
             communityName: "",
@@ -161,13 +179,13 @@ ListModel {
             name: "Ethereum",
             symbol: "ETH",
             enabledNetworkBalance: {
-                amount: 0.12345,
+                amount: 0.123456789,
                 symbol: "ETH",
                 displayDecimals: 8,
                 stripTrailingZeroes: true
             },
             enabledNetworkCurrencyBalance: {
-                amount: 182.72,
+                amount: 182.73004849,
                 symbol: "EUR",
                 displayDecimals: 2
             },
@@ -186,6 +204,7 @@ ListModel {
             symbol: "InvisibleSYM",
             enabledNetworkBalance: {},
             enabledNetworkCurrencyBalance: {},
+            currencyPrice: {},
             changePct24hour: NaN,
             communityId: "",
             communityName: "",
@@ -193,7 +212,7 @@ ListModel {
         },
         {
             enabledNetworkBalance: ({
-                                        displayDecimals: true,
+                                        displayDecimals: 4,
                                         stripTrailingZeroes: true,
                                         amount: 0,
                                         symbol: "SNT"
@@ -201,7 +220,7 @@ ListModel {
             enabledNetworkCurrencyBalance: ({
                                                 displayDecimals: 4,
                                                 stripTrailingZeroes: true,
-                                                amount: 0,
+                                                amount: 0.,
                                                 symbol: "EUR"
                                             }),
             currencyPrice: {
@@ -228,6 +247,7 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {},
             communityId: "ddls",
             communityName: "Doodles",
             communityImage: ModelsData.collectibles.doodles
@@ -244,6 +264,7 @@ ListModel {
                 symbol: "EUR",
                 displayDecimals: 2
             },
+            currencyPrice: {},
             communityId: "ast",
             communityName: "Astafarians",
             communityImage: ModelsData.icons.dribble

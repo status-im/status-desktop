@@ -54,6 +54,7 @@ StatusSectionLayout {
             keycardView.item.handleBackAction()
             break;
         }
+        Global.settingsSubSubsection = -1
     }
 
     Component.onCompleted: {

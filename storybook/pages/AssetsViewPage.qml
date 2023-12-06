@@ -34,6 +34,7 @@ SplitView {
         SplitView.preferredWidth: 600
         SplitView.fillHeight: true
         assets: assetsModel
+        filterVisible: ctrlFilterVisible.checked
         onAssetClicked: logs.logEvent("onAssetClicked", ["token"], [token.symbol, token.communityId])
         onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
         onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
@@ -48,6 +49,14 @@ SplitView {
         SplitView.preferredWidth: 250
 
         logsView.logText: logs.logText
+
+        ColumnLayout {
+            Switch {
+                id: ctrlFilterVisible
+                text: "Filter visible"
+                checked: true
+            }
+        }
     }
 }
 

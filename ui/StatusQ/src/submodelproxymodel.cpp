@@ -23,7 +23,7 @@ QVariant SubmodelProxyModel::data(const QModelIndex &index, int role) const
                 ? creationContext : m_delegateModel->engine()->rootContext();
 
         auto context = new QQmlContext(parentContext, parentContext);
-        context->setContextProperty("submodel", submodel);
+        context->setContextProperty(QStringLiteral("submodel"), submodel);
 
         QObject* instance = m_delegateModel->create(context);
         QQmlEngine::setObjectOwnership(instance, QQmlEngine::JavaScriptOwnership);

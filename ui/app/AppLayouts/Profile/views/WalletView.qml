@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import QtQml 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -87,6 +88,14 @@ SettingsContentBase {
                 stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
                                                                              accountView.height
         currentIndex: mainViewIndex
+
+        Binding on currentIndex {
+            value: root.manageTokensViewIndex
+            when: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
+                  Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
+                  Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageTokenLists
+            restoreMode: Binding.RestoreNone
+        }
 
         onCurrentIndexChanged: {
             root.rootStore.backButtonName = ""
@@ -256,6 +265,23 @@ SettingsContentBase {
                 RootStore.setFillterAllAddresses() // FIXME no other way to get _all_ collectibles?
                 // TODO concat proxy model to include community collectibles (#12519)
                 return RootStore.collectiblesStore.ownedCollectibles
+            }
+
+            Binding on currentIndex {
+                value: {
+                    switch (Global.settingsSubSubsection) {
+                    case Constants.walletSettingsSubsection.manageAssets:
+                        return 0
+                    case Constants.walletSettingsSubsection.manageCollectibles:
+                        return 1
+                    case Constants.walletSettingsSubsection.manageTokenLists:
+                        return 2
+                    }
+                }
+                when: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
+                      Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
+                      Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageTokenLists
+                restoreMode: Binding.RestoreNone
             }
         }
 

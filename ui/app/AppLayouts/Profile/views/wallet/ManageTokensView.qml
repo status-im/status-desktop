@@ -18,6 +18,8 @@ ColumnLayout {
     required property var baseWalletAssetsModel
     required property var baseWalletCollectiblesModel
 
+    property alias currentIndex: tabBar.currentIndex
+
     readonly property bool dirty: {
         if (!loader.item)
             return false

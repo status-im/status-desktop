@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import Qt.labs.settings 1.1
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -19,20 +20,24 @@ import shared.popups 1.0
 import utils 1.0
 
 import AppLayouts.Wallet.views.collectibles 1.0
+import AppLayouts.Wallet.controls 1.0
 
 import SortFilterProxyModel 0.2
 
-StatusScrollView {
+ColumnLayout {
     id: root
 
     required property var collectiblesModel
     property bool sendEnabled: true
+    property bool filterVisible
 
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
     signal sendRequested(string symbol)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
+
+    spacing: 0
 
     QtObject {
         id: d
@@ -41,11 +46,7 @@ StatusScrollView {
         readonly property int communityCellHeight: 242
         readonly property int cellWidth: 176
 
-        readonly property bool isCustomView: d.controller.hasSettings // TODO add respect other predefined orders (#12517)
-
-        function symbolIsVisible(symbol) {
-            return d.controller.filterAcceptsSymbol(symbol)
-        }
+        readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
         readonly property var renamedModel: RolesRenamingModel {
             sourceModel: root.collectiblesModel
@@ -58,121 +59,162 @@ StatusScrollView {
             ]
         }
 
-        readonly property var regularCollectiblesModel: SortFilterProxyModel {
-            sourceModel: d.renamedModel
-
-            filters: [
-                ExpressionFilter {
-                    expression: {
-                        d.controller.settingsDirty
-                        return d.symbolIsVisible(model.symbol) && !model.communityId
-                    }
-                }
-                // TODO add other sort/filter using ManageTokensController (#12517)
-            ]
-            sorters: [
-                RoleSorter {
-                    roleName: "name"
-                    enabled: !d.isCustomView
-                },
-                ExpressionSorter {
-                    expression: {
-                        d.controller.settingsDirty
-                        return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
-                    }
-                    enabled: d.isCustomView
-                }
-            ]
-        }
-
-        readonly property var communityCollectiblesModel: SortFilterProxyModel {
-            sourceModel: d.renamedModel
-            filters: [
-                ExpressionFilter {
-                    expression: {
-                        d.controller.settingsDirty
-                        return d.symbolIsVisible(model.symbol) && !!model.communityId
-                    }
-                }
-                // TODO add other sort/filter using ManageTokensController (#12517)
-            ]
-            sorters: [
-                RoleSorter {
-                    roleName: "name"
-                    enabled: !d.isCustomView
-                },
-                ExpressionSorter {
-                    expression: {
-                        d.controller.settingsDirty
-                        return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
-                    }
-                    enabled: d.isCustomView
-                }
-            ]
-        }
-
-        readonly property bool hasCollectibles: d.regularCollectiblesModel.count
-        readonly property bool hasCommunityCollectibles: d.communityCollectiblesModel.count
+        readonly property bool hasCollectibles: regularCollectiblesView.count
+        readonly property bool hasCommunityCollectibles: communityCollectiblesView.count
 
         readonly property var controller: ManageTokensController {
             settingsKey: "WalletCollectibles"
         }
 
         function hideAllCommunityTokens(communityId) {
-            const tokenSymbols = ModelUtils.getAll(communityCollectiblesModel, "symbol", "communityId", communityId)
+            const tokenSymbols = ModelUtils.getAll(communityCollectiblesView.model, "symbol", "communityId", communityId)
             d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
         }
     }
 
+    component CustomSFPM: SortFilterProxyModel {
+        id: customFilter
+        property bool isCommunity
+
+        sourceModel: d.renamedModel
+        proxyRoles: JoinRole {
+            name: "groupName"
+            roleNames: ["collectionName", "communityName"]
+        }
+        filters: [
+            ExpressionFilter {
+                expression: {
+                    d.controller.settingsDirty
+                    return d.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
+                }
+            }
+        ]
+        sorters: [
+            ExpressionSorter {
+                expression: {
+                    d.controller.settingsDirty
+                    return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
+                }
+                enabled: d.isCustomView
+            },
+            RoleSorter {
+                roleName: cmbTokenOrder.currentSortRoleName
+                sortOrder: cmbTokenOrder.currentSortOrder
+                enabled: !d.isCustomView
+            }
+        ]
+    }
+
+    Settings {
+        category: "CollectiblesViewSortSettings"
+        property alias currentSortField: cmbTokenOrder.currentIndex
+        property alias currentSortOrder: cmbTokenOrder.currentSortOrder
+    }
+
     ColumnLayout {
-        width: root.availableWidth
-        spacing: 0
+        Layout.fillWidth: true
+        Layout.preferredHeight: root.filterVisible && (d.hasCollectibles || d.hasCommunityCollectibles) ? implicitHeight : 0
+        spacing: 20
+        opacity: Layout.preferredHeight < implicitHeight ? 0 : 1
 
-        ShapeRectangle {
-            visible: !d.hasCollectibles && !d.hasCommunityCollectibles
-            Layout.fillWidth: true
-            text: qsTr("Collectibles will appear here")
-        }
-
-        CustomGridView {
-            cellHeight: d.cellHeight
-            model: d.regularCollectiblesModel
-            visible: d.hasCollectibles
-        }
+        Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
+        Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
 
         StatusDialogDivider {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            Layout.bottomMargin: Style.current.halfPadding
-            visible: d.hasCommunityCollectibles
         }
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.smallPadding
-            Layout.bottomMargin: 4
-            visible: d.hasCommunityCollectibles
+            spacing: Style.current.halfPadding
+
             StatusBaseText {
-                text: qsTr("Community collectibles")
                 color: Theme.palette.baseColor1
+                font.pixelSize: Style.current.additionalTextSize
+                text: qsTr("Sort by:")
             }
-            Item { Layout.fillWidth: true }
-            StatusFlatButton {
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                icon.name: "info"
-                textColor: Theme.palette.baseColor1
-                horizontalPadding: 0
-                verticalPadding: 0
-                onClicked: Global.openPopup(communityInfoPopupCmp)
+
+            SortOrderComboBox {
+                id: cmbTokenOrder
+                hasCustomOrderDefined: d.controller.hasSettings
+                model: [
+                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "calendar", sortRoleName: "dateAdded" }, // FIXME sortRoleName #12942
+                    { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "bold", sortRoleName: "name" },
+                    { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "group", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
+                    { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" },
+                    { value: SortOrderComboBox.TokenOrderNone, text: "---", icon: "", sortRoleName: "" }, // separator
+                    { value: SortOrderComboBox.TokenOrderCreateCustom, text: hasCustomOrderDefined ? qsTr("Edit custom order →") : qsTr("Create custom order →"),
+                        icon: "", sortRoleName: "" }
+                ]
+                onCreateOrEditRequested: {
+                    root.manageTokensRequested()
+                }
             }
         }
 
-        CustomGridView {
-            cellHeight: d.communityCellHeight
-            model: d.communityCollectiblesModel
-            visible: d.hasCommunityCollectibles
+        StatusDialogDivider {
+            Layout.fillWidth: true
+        }
+    }
+
+    ShapeRectangle {
+        Layout.fillWidth: true
+        visible: !d.hasCollectibles && !d.hasCommunityCollectibles
+        text: qsTr("Collectibles will appear here")
+    }
+
+    StatusScrollView {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.topMargin: Style.current.padding
+        leftPadding: 0
+        verticalPadding: 0
+        contentWidth: availableWidth
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 0
+
+            CustomGridView {
+                id: regularCollectiblesView
+                cellHeight: d.cellHeight
+                model: CustomSFPM {}
+            }
+
+            StatusDialogDivider {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+                Layout.bottomMargin: Style.current.halfPadding
+                visible: d.hasCommunityCollectibles
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Style.current.smallPadding
+                Layout.bottomMargin: 4
+                visible: d.hasCommunityCollectibles
+                StatusBaseText {
+                    text: qsTr("Community collectibles")
+                    color: Theme.palette.baseColor1
+                }
+                Item { Layout.fillWidth: true }
+                StatusFlatButton {
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                    icon.name: "info"
+                    textColor: Theme.palette.baseColor1
+                    horizontalPadding: 0
+                    verticalPadding: 0
+                    onClicked: Global.openPopup(communityInfoPopupCmp)
+                }
+            }
+
+            CustomGridView {
+                id: communityCollectiblesView
+                cellHeight: d.communityCellHeight
+                model: CustomSFPM { isCommunity: true }
+            }
         }
     }
 
@@ -224,7 +266,7 @@ StatusScrollView {
             width: d.cellWidth
             height: isCommunityCollectible ? d.communityCellHeight : d.cellHeight
             title: model.name ? model.name : "..."
-            subTitle: model.collectionName ?? ""
+            subTitle: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             mediaUrl: model.mediaUrl ?? ""
             mediaType: model.mediaType ?? ""
             fallbackImageUrl: model.imageUrl ?? ""
@@ -330,7 +372,7 @@ StatusScrollView {
                 close()
                 Global.displayToastMessage(
                     qsTr("%1 was successfully hidden. You can toggle collectible visibility via %2.").arg(formattedName)
-                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}">` + qsTr("Settings", "Go to Settings") + "</a>"),
+                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageCollectibles}">` + qsTr("Settings", "Go to Settings") + "</a>"),
                     "",
                     "checkmark-circle",
                     false,
@@ -362,7 +404,7 @@ StatusScrollView {
                 close()
                 Global.displayToastMessage(
                     qsTr("%1 community collectibles were successfully hidden. You can toggle collectible visibility via %2.").arg(communityName)
-                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}">` + qsTr("Settings", "Go to Settings") + "</a>"),
+                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageCollectibles}">` + qsTr("Settings", "Go to Settings") + "</a>"),
                     "",
                     "checkmark-circle",
                     false,

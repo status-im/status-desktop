@@ -78,11 +78,9 @@ QQmlListProperty<RoleRename> RolesRenamingModel::mapping()
 
 QHash<int, QByteArray> RolesRenamingModel::roleNames() const
 {
-    QHash<int, QByteArray> roles = sourceModel()
-            ? sourceModel()->roleNames()
-            : QHash<int, QByteArray>{};
+    const auto roles = sourceModel() ? sourceModel()->roleNames() : QHash<int, QByteArray>{};
 
-    if (roles.empty())
+    if (roles.isEmpty())
         return roles;
 
     QHash<QString, RoleRename*> renameMap;

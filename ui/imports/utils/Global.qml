@@ -9,6 +9,7 @@ QtObject {
     property var applicationWindow
     property bool activityPopupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
+    property int settingsSubSubsection: -1
 
     property var userProfile
     property bool appIsReady: false
@@ -62,7 +63,7 @@ QtObject {
     signal activateDeepLink(string link)
 
     signal setNthEnabledSectionActive(int nthSection)
-    signal appSectionBySectionTypeChanged(int sectionType, int subsection)
+    signal appSectionBySectionTypeChanged(int sectionType, int subsection, int settingsSubsection)
 
     signal openSendModal(string address)
     signal switchToCommunity(string communityId)
@@ -103,8 +104,8 @@ QtObject {
         root.openDownloadModalRequested(available, version, url);
     }
 
-    function changeAppSectionBySectionType(sectionType, subsection = 0) {
-        root.appSectionBySectionTypeChanged(sectionType, subsection);
+    function changeAppSectionBySectionType(sectionType, subsection = 0, settingsSubsection = -1) {
+        root.appSectionBySectionTypeChanged(sectionType, subsection, settingsSubsection)
     }
 
     function openMenu(menuComponent, menuParent, params = {}, point = undefined) {
