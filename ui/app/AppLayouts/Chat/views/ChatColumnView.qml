@@ -292,7 +292,7 @@ Item {
                     chatType: root.activeChatType
 
                     textInput.onTextChanged: {
-                        if (!!d.activeChatContentModule) {
+                        if (!!d.activeChatContentModule && textInput.text !== d.activeChatContentModule.inputAreaModule.preservedProperties.text) {
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
                             d.updateLinkPreviews()
                         }
