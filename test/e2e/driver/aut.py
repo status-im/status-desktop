@@ -15,6 +15,7 @@ from driver.server import SquishServer
 from gui.objects_map import statusDesktop_mainWindow
 from scripts.utils import system_path, local_system
 from scripts.utils.system_path import SystemPath
+from scripts.utils.wait_for_port import wait_for_port
 
 LOG = logging.getLogger(__name__)
 
@@ -67,36 +68,39 @@ class AUT:
 
         self.stop()
 
-    @allure.step('Attach Squish to Test Application')
-    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
-        if self.ctx is None:
-            self.ctx = context.attach(self.aut_id, timeout_sec)
-        squish.setApplicationContext(self.ctx)
-
-    def _detach_context(self):
+    def detach_context(self):
         if self.ctx is None:
             return
         squish.currentApplicationContext().detach()
         self.ctx = None
 
-    def _kill_process(self):
+    def kill_process(self):
         if self.pid is None:
             LOG.warning('No PID availale for AUT.')
             return
         local_system.kill_process_with_retries(self.pid)
         self.pid = None
 
-    @allure.step('Close application')
-    def stop(self):
-        LOG.info('Stoping AUT: %s', self.path)
-        self._detach_context()
-        self._kill_process()
+    @allure.step('Attach Squish to Test Application')
+    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+        LOG.info('Attaching to AUT: localhost:%d', self.port)
+        try:
+            SquishServer().add_attachable_aut(self.aut_id, self.port)
+            if self.ctx is None:
+                self.ctx = context.attach(self.aut_id, timeout_sec)
+            squish.setApplicationContext(self.ctx)
+            assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
+        except Exception as err:
+            LOG.error('Failed to attach AUT: %s', err)
+            self.stop()
+            raise err
+        LOG.info('Succesfully attached AUT!')
+        return self
 
-    @allure.step("Start application")
-    def launch(self) -> 'AUT':
+    @allure.step('Start AUT')
+    def startaut(self):
         LOG.info('Launching AUT: %s', self.path)
         self.port = local_system.find_free_port(configs.squish.AUT_PORT, 100)
-        SquishServer().add_attachable_aut(self.aut_id, self.port)
         command = [
             str(configs.testpath.SQUISH_DIR / 'bin/startaut'),
             f'--port={self.port}',
@@ -107,14 +111,36 @@ class AUT:
         try:
             with open(configs.AUT_LOG_FILE, "ab") as log:
                 self.pid = local_system.execute(command, stderr=log, stdout=log)
-            LOG.debug('Launched AUT under PID: %d', self.pid)
-            self.attach()
-            assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
-            return self
         except Exception as err:
             LOG.error('Failed to start AUT: %s', err)
             self.stop()
             raise err
+        LOG.info('Launched AUT under PID: %d', self.pid)
+        return self
+
+    @allure.step('Close application')
+    def stop(self):
+        LOG.info('Stoping AUT: %s', self.path)
+        self.detach_context()
+        self.kill_process()
+
+    @allure.step("Start and attach AUT")
+    def launch(self) -> 'AUT':
+        self.startaut()
+        self.wait()
+        self.attach()
+        return self
+
+    @allure.step('Waiting for port')
+    def wait(self, timeout: int = 1, retries: int = 10):
+        LOG.info('Waiting for AUT port localhost:%d...', self.port)
+        try:
+            wait_for_port('localhost', self.port, timeout, retries)
+        except TimeoutError as err:
+            LOG.error('Wait for AUT port timed out: %s', err)
+            self.stop()
+            raise err
+        LOG.info('AUT port available!')
 
     @allure.step('Restart application')
     def restart(self):
