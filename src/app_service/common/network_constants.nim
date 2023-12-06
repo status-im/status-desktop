@@ -124,7 +124,7 @@ var NETWORKS* = %* [
    {
     "chainId": 421614,
     "chainName": "Arbitrum",
-    "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+    "rpcUrl": "https://arbitrum-sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "fallbackUrl": "",
     "blockExplorerUrl": "https://sepolia-explorer.arbitrum.io/",
     "iconUrl": "network/Network=Arbitrum",
