@@ -19,7 +19,7 @@ class SendPopup(BasePopup):
     def __init__(self):
         super().__init__()
         self._tab_item_template = QObject('tab_Status_template')
-        self._search_field = TextEdit('edit_TextEdit')
+        self._search_field = TextEdit('search_TextEdit')
         self._asset_list_item = QObject('o_TokenBalancePerChainDelegate_template')
         self._amount_text_edit = TextEdit('amountInput_TextEdit')
         self._paste_button = Button('paste_StatusButton')

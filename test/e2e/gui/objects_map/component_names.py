@@ -354,7 +354,6 @@ secondary_StatusButton = {"checkable": False, "container": statusDesktop_mainWin
 
 # Send Popup
 o_StatusTabBar = {"container": statusDesktop_mainWindow_overlay, "type": "StatusTabBar", "unnamed": 1, "visible": True}
-search_TextEdit = {"container": o_StatusTabBar, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 tab_Status_template = {"container": o_StatusTabBar, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 o_TokenBalancePerChainDelegate_template = {"container": statusDesktop_mainWindow_overlay, "type": "TokenBalancePerChainDelegate", "unnamed": 1, "visible": True}
 amountInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountInput", "type": "TextEdit", "visible": True}
@@ -368,6 +367,8 @@ mainnet_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "object
 statusListItemSubTitle_StatusTextWithLoadingState = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
 fiatFees_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "fiatFees", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 send_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "sendModalFooterSendButton", "type": "StatusFlatButton", "visible": True}
+o_SearchBoxWithRightIcon = {"container": statusDesktop_mainWindow_overlay, "type": "SearchBoxWithRightIcon", "unnamed": 1, "visible": True}
+search_TextEdit = {"container": o_SearchBoxWithRightIcon, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 
 # Verify identity popup
 profileSendContactRequestModal_sayWhoYouAreInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit", "visible": True}
