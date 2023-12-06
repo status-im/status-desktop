@@ -145,7 +145,8 @@ var NODE_CONFIG* = %* {
     "Enabled": true
   },
   "ClusterConfig": {
-    "Enabled": true
+    "Enabled": true,
+    "ClusterID": 16
   },
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,
@@ -221,6 +222,7 @@ var NODE_CONFIG* = %* {
     "AutoUpdate": true,
     "Rendezvous": true,
     "EnableFilterFullNode": true,
+    "UseShardAsDefaultTopic": true,
   },
   "WalletConfig": {
     "Enabled": true,

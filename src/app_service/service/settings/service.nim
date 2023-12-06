@@ -18,7 +18,7 @@ export stickers_dto
 # Default values:
 const DEFAULT_CURRENCY* = "USD"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
-const DEFAULT_FLEET* = $Fleet.StatusProd
+const DEFAULT_FLEET* = $Fleet.ShardsTest
 
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
