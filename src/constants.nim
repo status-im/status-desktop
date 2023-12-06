@@ -60,3 +60,12 @@ let
   RARIBLE_TESTNET_API_KEY_RESOLVED* = desktopConfig.raribleTestnetApiKey
   TENOR_API_KEY_RESOLVED* = desktopConfig.tenorApiKey
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
+
+proc hasLogLevelOption*(): bool =
+  for p in cliParams:
+    if p.startswith("--log-level") or p.startsWith("--LOG_LEVEL"):
+      return true
+  return false
+
+proc runtimeLogLevelSet*(): bool =
+  return existsEnv(RUN_TIME_PREFIX & "_LOG_LEVEL") or hasLogLevelOption()
