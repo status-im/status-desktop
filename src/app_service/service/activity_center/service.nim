@@ -1,11 +1,10 @@
-import NimQml, json, sequtils, chronicles, strutils, strutils, stint, sugar
+import NimQml, json, sequtils, chronicles, strutils, strutils, stint, sugar, tables, json_serialization
 
 import ../../../app/core/eventemitter
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 
-import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
-import json, tables, json_serialization
+import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto
 
 import ../../../backend/backend
 import ../../../backend/response_type
@@ -103,7 +102,7 @@ QtObject:
 
     self.events.on(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS) do(e: Args):
       let raw = RawActivityCenterNotificationsArgs(e)
-      if raw.activityCenterNotifications.kind != JNull:
+      if raw.activityCenterNotifications.len > 0:
         var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
         for notificationJson in raw.activityCenterNotifications:
           activityCenterNotifications.add(notificationJson.toActivityCenterNotificationDto)

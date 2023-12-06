@@ -732,6 +732,9 @@ QtObject:
 
   proc onMarkAllMessagesRead*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      self.finishAsyncSearchMessagesWithError("", "mark all messages read response is not an json object")
+      return
 
     var error: string
     discard responseObj.getProp("error", error)
@@ -744,13 +747,7 @@ QtObject:
 
     let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-
-    var activityCenterNotifications: JsonNode
-    discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
-
-    if activityCenterNotifications != nil:
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+    checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
 
   proc markAllMessagesRead*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -798,13 +795,7 @@ QtObject:
       self.chatService.updateUnreadMessage(chatId, count, countWithMentions)
 
       self.events.emit(SIGNAL_MESSAGE_MARKED_AS_UNREAD, data)
-
-      var activityCenterNotifications: JsonNode
-      discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
-
-      if activityCenterNotifications != nil:
-        self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-          RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+      checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
 
     except Exception as e:
       error "error: ", procName="markMessageAsUnread", errName = e.name, errDesription = e.msg
@@ -843,13 +834,7 @@ QtObject:
       messagesCount: count,
       messagesWithMentionsCount: countWithMentions)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-
-    var activityCenterNotifications: JsonNode
-    discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
-
-    if activityCenterNotifications != nil:
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+    checkAndEmitACNotificationsFromResponse(self.events, responseObj{"activityCenterNotifications"})
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
     if (chatId.len == 0):

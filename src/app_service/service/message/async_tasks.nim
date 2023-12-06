@@ -125,19 +125,16 @@ const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, ni
 
   let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
 
-  var activityCenterNotifications: JsonNode
+  var activityCenterNotifications: JsonNode = newJObject()
   discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
   let responseJson = %*{
     "chatId": arg.chatId,
+    "activityCenterNotifications": activityCenterNotifications,
     "error": response.error
   }
 
-  if activityCenterNotifications != nil:
-    responseJson["activityCenterNotifications"] = activityCenterNotifications
-
   arg.finish(responseJson)
-#################################################
 
 #################################################
 # Async mark certain messages read
@@ -158,7 +155,7 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
   var countWithMentions: int
   discard response.result.getProp("countWithMentions", countWithMentions)
 
-  var activityCenterNotifications: JsonNode
+  var activityCenterNotifications: JsonNode = newJObject()
   discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
   var error = ""
@@ -170,11 +167,9 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
     "messagesIds": arg.messagesIds,
     "count": count,
     "countWithMentions": countWithMentions,
+    "activityCenterNotifications": activityCenterNotifications,
     "error": error
   }
-
-  if activityCenterNotifications != nil:
-    responseJson["activityCenterNotifications"] = activityCenterNotifications
 
   arg.finish(responseJson)
 
@@ -322,13 +317,11 @@ const asyncMarkMessageAsUnreadTask: Task = proc(argEncoded: string) {.gcsafe, ni
   try:
     let response = status_go.markMessageAsUnread(arg.chatId, arg.messageId)
 
-    var activityCenterNotifications: JsonNode
+    var activityCenterNotifications: JsonNode = newJObject()
     discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
-    if activityCenterNotifications != nil:
-      responseJson["activityCenterNotifications"] = activityCenterNotifications
-
     responseJson["messagesCount"] = %response.result["count"]
+    responseJson["activityCenterNotifications"] = activityCenterNotifications
     responseJson["messagesWithMentionsCount"] = %response.result["countWithMentions"]
 
     if response.error != nil:
