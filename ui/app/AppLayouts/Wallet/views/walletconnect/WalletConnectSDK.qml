@@ -24,32 +24,32 @@ Item {
 
     signal statusChanged(string message)
     signal sdkInit(bool success, var result)
-    signal pairSessionProposal(bool success, var sessionProposal)
+    signal pairSessionProposal(var sessionProposal)
     signal pairSessionProposalExpired()
     signal pairAcceptedResult(var sessionProposal, bool success, var sessionType)
     signal pairRejectedResult(bool success, var result)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
 
+    signal authRequest(var request)
+    signal authSignMessage(string message, string address)
+    signal authRequestUserAnswerResult(bool accept, string error)
+
     signal sessionDelete(var deletePayload)
 
-    function pair(pairLink)
-    {
+    function pair(pairLink) {
         wcCalls.pair(pairLink)
     }
 
-    function disconnectPairing(topic)
-    {
+    function disconnectPairing(topic) {
         wcCalls.disconnectPairing(topic)
     }
 
-    function approvePairSession(sessionProposal, supportedNamespaces)
-    {
+    function approvePairSession(sessionProposal, supportedNamespaces) {
         wcCalls.approvePairSession(sessionProposal, supportedNamespaces)
     }
 
-    function rejectPairSession(id)
-    {
+    function rejectPairSession(id) {
         wcCalls.rejectPairSession(id)
     }
 
@@ -59,6 +59,22 @@ Item {
 
     function rejectSessionRequest(topic, id, error) {
         wcCalls.rejectSessionRequest(topic, id, error)
+    }
+
+    function auth(authLink) {
+        wcCalls.auth(authLink)
+    }
+
+    function formatAuthMessage(cacaoPayload, address) {
+        wcCalls.formatAuthMessage(cacaoPayload, address)
+    }
+
+    function authApprove(authRequest, address, signature) {
+        wcCalls.authApprove(authRequest, address, signature)
+    }
+
+    function authReject(id, address) {
+        wcCalls.authReject(id, address)
     }
 
     QtObject {
@@ -275,6 +291,74 @@ Item {
                 d.resetPairingsModel()
             })
         }
+
+        function auth(authLink) {
+            console.debug(`WC WalletConnectSDK.wcCall.auth; authLink: ${authLink}`)
+
+            d.engine.runJavaScript(`wc.auth("${authLink}")`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.auth; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error) {
+                        console.error("auth: ", result.error)
+                        return
+                    }
+                }
+            })
+        }
+
+        function formatAuthMessage(cacaoPayload, address) {
+            console.debug(`WC WalletConnectSDK.wcCall.auth; cacaoPayload: ${JSON.stringify(cacaoPayload)}, address: ${address}`)
+
+            d.engine.runJavaScript(`wc.formatAuthMessage(${JSON.stringify(cacaoPayload)}, "${address}")`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error) {
+                        console.error("formatAuthMessage: ", result.error)
+                        return
+                    }
+                }
+
+                root.authSignMessage(result.result, address)
+            })
+        }
+
+        function authApprove(authRequest, address, signature) {
+            console.debug(`WC WalletConnectSDK.wcCall.authApprove; authRequest: ${JSON.stringify(authRequest)}, address: ${address}, signature: ${signature}`)
+
+            d.engine.runJavaScript(`wc.approveAuth(${JSON.stringify(authRequest)}, "${address}", "${signature}")`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.approveAuth; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("approveAuth: ", result.error)
+                        root.authRequestUserAnswerResult(true, result.error)
+                        return
+                    }
+                    root.authRequestUserAnswerResult(true, result.error)
+                }
+            })
+        }
+
+        function authReject(id, address) {
+            console.debug(`WC WalletConnectSDK.wcCall.authReject; id: ${id}, address: ${address}`)
+
+            d.engine.runJavaScript(`wc.rejectAuth(${id}, "${address}")`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.rejectAuth; response: ${JSON.stringify(result, null, 2)}`)
+
+                if (result) {
+                    if (!!result.error)
+                    {
+                        console.error("rejectAuth: ", result.error)
+                        root.authRequestUserAnswerResult(false, result.error)
+                        return
+                    }
+                    root.authRequestUserAnswerResult(false, result.error)
+                }
+            })
+        }
     }
 
     QtObject {
@@ -303,7 +387,7 @@ Item {
         function onSessionProposal(details)
         {
             console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
-            root.pairSessionProposal(true, details)
+            root.pairSessionProposal(details)
         }
 
         function onSessionUpdate(details)
@@ -352,6 +436,12 @@ Item {
         {
             console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
             root.pairSessionProposalExpired()
+        }
+
+        function onAuthRequest(details)
+        {
+            console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details, null, 2)}`)
+            root.authRequest(details)
         }
     }
 

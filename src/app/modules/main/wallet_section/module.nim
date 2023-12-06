@@ -141,7 +141,7 @@ proc newModule*(
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.wcController = wcc.newController(events)
+  result.wcController = wcc.newController(events, walletAccountService)
 
   result.view = newView(result, result.activityController, result.tmpActivityController, result.collectiblesController, result.collectibleDetailsController, result.wcController)
 
@@ -260,7 +260,7 @@ method load*(self: Module) =
     self.onUpdatedKeypairsOperability(args.keypairs)
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e:Args):
     let data = LocalPairingStatus(e)
-    self.onLocalPairingStatusUpdate(data)    
+    self.onLocalPairingStatusUpdate(data)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
     self.filter.setFillterAllAddresses()
     self.notifyFilterChanged()

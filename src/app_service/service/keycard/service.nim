@@ -174,7 +174,6 @@ QtObject:
   proc cancelCurrentFlow*(self: Service) =
     if self.busy:
       return
-    writeStackTrace()
     let response = keycard_go.keycardCancelFlow()
     self.currentFlow = KCSFlowType.NoFlow
     if self.doLogging:

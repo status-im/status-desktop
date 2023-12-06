@@ -82,3 +82,27 @@ proc `$`*(self: WalletAccountDto): string =
     testPreferredChainIds: {self.testPreferredChainIds},
     hideFromTotalBalance: {self.hideFromTotalBalance}
     ]"""
+
+proc `%`*(x: WalletAccountDto): JsonNode =
+  result = newJobject()
+  result["name"] = % x.name
+  result["address"] = % x.address
+  result["mixedcaseAddress"] = % x.mixedcaseAddress
+  result["keyUid"] = % x.keyUid
+  result["path"] = % x.path
+  result["colorId"] = % x.colorId
+  result["publicKey"] = % x.publicKey
+  result["isWallet"] = % x.isWallet
+  result["isChat"] = % x.isChat
+  result["emoji"] = % x.emoji
+  result["ens"] = % x.ens
+  result["assetsLoading"] = % x.assetsLoading
+  result["hasBalanceCache"] = % x.hasBalanceCache
+  result["hasMarketValuesCache"] = % x.hasMarketValuesCache
+  result["removed"] = % x.removed
+  result["operable"] = % x.operable
+  result["createdAt"] = % x.createdAt
+  result["position"] = % x.position
+  result["prodPreferredChainIds"] = % x.prodPreferredChainIds
+  result["testPreferredChainIds"] = % x.testPreferredChainIds
+  result["hideFromTotalBalance"] = % x.hideFromTotalBalance

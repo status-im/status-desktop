@@ -49,6 +49,12 @@ Popup {
                 text: qsTr("Debugging UX until design is ready")
             }
 
+            StatusSwitch {
+                id: testAuthentication
+                checkable: true
+                text: qsTr("Test Authentication")
+            }
+
             StatusInput {
                 id: pairLinkInput
 
@@ -61,36 +67,37 @@ Popup {
                 Layout.fillWidth: true
 
                 StatusButton {
-                    text: "Pair"
+                    text: testAuthentication.checked? "Authentication" : "Pair"
 
                     onClicked: {
+                        if (testAuthentication.checked) {
+                            d.setStatusText("")
+                            d.setDetailsText("")
+                            d.state = ""
+                            accountsModel.clear()
+
+                            statusText.text = "Authenticating..."
+                            root.sdk.auth(pairLinkInput.text)
+                            return
+                        }
+
                         statusText.text = "Pairing..."
-                        sdk.pair(pairLinkInput.text)
+                        root.sdk.pair(pairLinkInput.text)
                     }
-                    enabled: pairLinkInput.text.length > 0 && sdk.sdkReady
-                }
-
-                StatusButton {
-                    text: "Auth"
-                    onClicked: {
-                        statusText.text = "Authenticating..."
-                        sdk.auth()
-                    }
-                    enabled: false && pairLinkInput.text.length > 0 && sdk.sdkReady
+                    enabled: pairLinkInput.text.length > 0 && root.sdk.sdkReady
                 }
 
                 StatusButton {
                     text: "Accept"
                     onClicked: {
-                        sdk.approvePairSession(d.sessionProposal, d.supportedNamespaces)
-                        // Will trigger an onPairAcceptedResult if successful
+                        root.sdk.approvePairSession(d.observedData, d.supportedNamespaces)
                     }
                     visible: d.state === d.waitingPairState
                 }
                 StatusButton {
                     text: "Reject"
                     onClicked: {
-                        sdk.rejectPairSession(d.sessionProposal.id)
+                        root.sdk.rejectPairSession(d.observedData.id)
                     }
                     visible: d.state === d.waitingPairState
                 }
@@ -103,7 +110,7 @@ Popup {
                 }
                 StatusBaseText {
                     text: "Pairings"
-                    visible: sdk.pairingsModel.count > 0
+                    visible: root.sdk.pairingsModel.count > 0
                 }
 
                 Pairings {
@@ -112,10 +119,29 @@ Popup {
                     Layout.preferredHeight: contentHeight
                     Layout.maximumHeight: 300
 
-                    model: sdk.pairingsModel
+                    model: root.sdk.pairingsModel
 
                     onDisconnect: function (topic) {
-                        sdk.disconnectPairing(topic)
+                        root.sdk.disconnectPairing(topic)
+                    }
+                }
+
+                ButtonGroup {
+                    id: selAccBtnGroup
+                }
+
+                SelectAccount {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: count > 0 ? 400 : 0
+                    Layout.preferredHeight: contentHeight
+                    Layout.maximumHeight: 300
+
+                    model: accountsModel
+
+                    buttonGroup: selAccBtnGroup
+
+                    onAccountSelected: {
+                        root.sdk.formatAuthMessage(d.observedData.params.cacaoPayload, address)
                     }
                 }
 
@@ -131,23 +157,36 @@ Popup {
                     StatusButton {
                         text: "Accept"
                         onClicked: {
+                            if (testAuthentication.checked) {
+                                root.controller.authRequest(d.selectedAddress, d.authMessage, passwordInput.text)
+                                return
+                            }
+
                             root.controller.sessionRequest(JSON.stringify(d.sessionRequest), passwordInput.text)
                         }
-                        visible: d.state === d.waitingUserResponseToSessionRequest
+                        visible: d.state === d.waitingUserResponseToSessionRequest ||
+                                 d.state === d.waitingUserResponseToAuthRequest
                     }
                     StatusButton {
                         text: "Reject"
                         onClicked: {
-                            sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, false)
+                            if (testAuthentication.checked) {
+                                root.sdk.authReject(d.observedData.id, d.selectedAddress)
+                                return
+                            }
+
+                            root.sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, false)
                         }
-                        visible: d.state === d.waitingUserResponseToSessionRequest
+                        visible: d.state === d.waitingUserResponseToSessionRequest ||
+                                 d.state === d.waitingUserResponseToAuthRequest
                     }
                     StatusInput {
                         id: passwordInput
 
                         text: "1234567890"
                         placeholderText: "Insert account password"
-                        visible: d.state === d.waitingUserResponseToSessionRequest
+                        visible: d.state === d.waitingUserResponseToSessionRequest ||
+                                 d.state === d.waitingUserResponseToAuthRequest
                     }
                 }
 
@@ -177,15 +216,10 @@ Popup {
             }
         }
 
-        function onPairSessionProposal(success, sessionProposal) {
+        function onPairSessionProposal(sessionProposal) {
             d.setDetailsText(sessionProposal)
-            if (success) {
-                d.setStatusText("Pair ID: " + sessionProposal.id + "; Topic: " + sessionProposal.params.pairingTopic)
-                root.controller.pairSessionProposal(JSON.stringify(sessionProposal))
-                // Expecting signal onProposeUserPair(..., true, ...) from controller
-            } else {
-                d.setStatusText("Pairing error", "red")
-            }
+            d.setStatusText("Pair ID: " + sessionProposal.id + "; Topic: " + sessionProposal.params.pairingTopic)
+            root.controller.pairSessionProposal(JSON.stringify(sessionProposal))
         }
 
         function onPairAcceptedResult(sessionProposal, success, result) {
@@ -230,12 +264,75 @@ Popup {
         function onStatusChanged(message) {
             statusText.text = message
         }
+
+        function onAuthRequest(request) {
+            d.observedData = request
+            d.setStatusText("Select the address you want to sign in with:")
+
+            accountsModel.clear()
+
+            let walletAccounts = root.controller.getWalletAccounts()
+            try {
+                let walletAccountsJsonArr = JSON.parse(walletAccounts)
+
+                for (let i = 0; i < walletAccountsJsonArr.length; i++) {
+                    let obj = {
+                        preferredSharingChainIds: ""
+                    }
+
+                    for (var key in walletAccountsJsonArr[i]) {
+                        obj[key] = walletAccountsJsonArr[i][key]
+                    }
+
+                    accountsModel.append(obj)
+                }
+
+            } catch (e) {
+                console.error("error parsing wallet accounts, error: ", e)
+                d.setStatusText("error parsing walelt accounts", "red")
+                return
+            }
+        }
+
+        function onAuthSignMessage(message, address) {
+            let details = ""
+            if (!!d.observedData.verifyContext.verified.isScam) {
+                details = "This website you`re trying to connect is flagged as malicious by multiple security providers.\nApproving may lead to loss of funds."
+            } else {
+                if (d.observedData.verifyContext.verified.validation === "UNKNOWN")
+                    details = "Website is Unverified"
+                else if (d.observedData.verifyContext.verified.validation === "INVALID")
+                    details = "Website is Mismatched"
+                else
+                    details = "Website is Valid"
+            }
+
+            d.selectedAddress = address
+            d.authMessage = message
+            d.setDetailsText(`${details}\n\n${message}`)
+            d.state = d.waitingUserResponseToAuthRequest
+        }
+
+        function onAuthRequestUserAnswerResult(accept, error) {
+            if (error) {
+                d.setStatusText(`Auth Request ${accept ? "Accept" : "Reject"} error`, "red")
+                return
+            }
+
+            if (accept) {
+                d.setStatusText(`Auth Request completed`)
+            } else {
+                d.setStatusText(`Auth Request aborted`)
+            }
+        }
     }
 
     QtObject {
         id: d
 
-        property var sessionProposal: null
+        property string selectedAddress: ""
+        property var observedData: null
+        property var authMessage: null
         property var supportedNamespaces: null
 
         property var sessionRequest: null
@@ -245,6 +342,7 @@ Popup {
         readonly property string sdkReadyState: "sdk_ready"
         readonly property string waitingPairState: "waiting_pairing"
         readonly property string waitingUserResponseToSessionRequest: "waiting_user_response_to_session_request"
+        readonly property string waitingUserResponseToAuthRequest: "waiting_user_response_to_auth_request"
         readonly property string pairedState: "paired"
 
         function setStatusText(message, textColor) {
@@ -264,13 +362,17 @@ Popup {
         }
     }
 
+    ListModel {
+        id: accountsModel
+    }
+
     Connections {
         target: root.controller
 
         function onProposeUserPair(sessionProposalJson, supportedNamespacesJson) {
             d.setStatusText("Waiting user accept")
 
-            d.sessionProposal = JSON.parse(sessionProposalJson)
+            d.observedData = JSON.parse(sessionProposalJson)
             d.supportedNamespaces = JSON.parse(supportedNamespacesJson)
 
             d.setDetailsText(JSON.stringify(d.supportedNamespaces, null, 2))
@@ -282,19 +384,30 @@ Popup {
             console.log("WC respondSessionRequest", sessionRequestJson, "  signedData", signedData, "  error: ", error)
             if (error) {
                 d.setStatusText("Session Request error", "red")
-                sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, true)
+                root.sdk.rejectSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, true)
                 return
             }
 
             d.sessionRequest = JSON.parse(sessionRequestJson)
             d.signedData = signedData
 
-            sdk.acceptSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, d.signedData)
+            root.sdk.acceptSessionRequest(d.sessionRequest.topic, d.sessionRequest.id, d.signedData)
 
             d.state = d.pairedState
 
             d.setStatusText("Session Request accepted")
             d.setDetailsText(d.signedData)
+        }
+
+        function onRespondAuthRequest(signature, error) {
+            console.log("WC signature", signature, "  error: ", error)
+            if (error) {
+                d.setStatusText("Session Request error", "red")
+                root.sdk.authReject(d.observedData.id, d.selectedAddress)
+                return
+            }
+
+            root.sdk.authApprove(d.observedData, d.selectedAddress, signature)
         }
     }
 }
