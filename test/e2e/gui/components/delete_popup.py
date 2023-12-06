@@ -14,3 +14,10 @@ class DeletePopup(BasePopup):
     def delete(self):
         self._delete_button.click()
         self.wait_until_hidden()
+
+
+class DeleteCategoryPopup(DeletePopup):
+
+    def __init__(self):
+        super().__init__()
+        self._delete_button = Button('confirm_StatusButton')

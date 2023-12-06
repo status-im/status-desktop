@@ -1,13 +1,17 @@
+import time
 import typing
 
 import allure
 from allure_commons._allure import step
 
+import configs
 import driver
 from constants import UserChannel
+from driver.objects_access import walk_children
+from gui.components.community.community_category_popup import NewCategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
-from gui.components.delete_popup import DeletePopup
+from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
@@ -58,6 +62,20 @@ class CommunityScreen(QObject):
             assert self.chat.channel_name == name
             image.compare(self.chat.channel_icon, icon_in_chat, timout_sec=5)
 
+    @allure.step('Create category')
+    def create_category(self, name: str, general_checkbox: bool):
+        self.left_panel.open_create_category_popup().create(name, general_checkbox)
+
+    @allure.step('Delete category from the list')
+    def delete_category(self):
+        self.left_panel.open_more_options()
+        self.left_panel.open_delete_category_popup().delete()
+
+    @allure.step('Verify category in the list')
+    def verify_category(self, category_name: str):
+        category = self.left_panel.find_category_in_list(category_name)
+        assert category.category_name == category_name
+
 
 class ToolBar(QObject):
 
@@ -99,6 +117,35 @@ class ToolBar(QObject):
         return DeletePopup().wait_until_appears()
 
 
+class CategoryItem:
+
+    def __init__(self, obj):
+        self.object = obj
+        self.category_name: typing.Optional[Image] = None
+        self._add_category_button: typing.Optional[Button] = None
+        self._more_button: typing.Optional[Button] = None
+        self._arrow_button: typing.Optional[Button] = None
+        self.init_ui()
+
+    def __repr__(self):
+        return self.category_name
+
+    def init_ui(self):
+        for child in walk_children(self.object):
+            if str(getattr(child, 'id', '')) == 'statusChatListCategoryItem':
+                self.category_name = str(child.text)
+            elif str(getattr(child, 'id', '')) == 'addButton':
+                self._add_channel_button = Button(name='', real_name=driver.objectMap.realName(child))
+            elif str(getattr(child, 'id', '')) == 'menuButton':
+                self._more_button = Button(name='', real_name=driver.objectMap.realName(child))
+            elif str(getattr(child, 'id', '')) == 'toggleButton':
+                self._arrow_button = Button(name='', real_name=driver.objectMap.realName(child))
+
+    @allure.step('Click arrow button')
+    def click_arrow_button(self):
+        self._arrow_button.click()
+
+
 class LeftPanel(QObject):
 
     def __init__(self):
@@ -111,7 +158,15 @@ class LeftPanel(QObject):
         self._channel_icon_template = QObject('channel_identicon_StatusSmartIdenticon')
         self._channel_or_category_button = Button('mainWindow_createChannelOrCategoryBtn_StatusBaseText')
         self._create_channel_menu_item = Button('create_channel_StatusMenuItem')
+        self._create_category_menu_item = Button('create_category_StatusMenuItem')
         self._join_community_button = Button('mainWindow_Join_Community_StatusButton')
+        self._categories_items_list = List('scrollView_chatListItems_StatusListView')
+        self._category_list_item = QObject('categoryItem_StatusChatListCategoryItem')
+        self._create_category_button = Button('add_categories_StatusFlatButton')
+        self._delete_category_item = QObject('delete_Category_StatusMenuItem')
+        self._add_channel_inside_category_item = QObject('scrollView_addButton_StatusChatListCategoryItemButton')
+        self._more_button = Button('scrollView_menuButton_StatusChatListCategoryItemButton')
+        self._arrow_button = Button('scrollView_toggleButton_StatusChatListCategoryItemButton')
 
     @property
     @allure.step('Get community logo')
@@ -147,6 +202,11 @@ class LeftPanel(QObject):
             ))
         return channels_list
 
+    @property
+    @allure.step('Get categories')
+    def categories_items(self) -> typing.List[CategoryItem]:
+        return [CategoryItem(item) for item in self._categories_items_list.items]
+
     @allure.step('Get channel params')
     def get_channel_parameters(self, name) -> UserChannel:
         for channal in self.channels:
@@ -173,10 +233,45 @@ class LeftPanel(QObject):
                 return
         raise LookupError('Channel not found')
 
+    @allure.step('Open create category popup')
+    def open_create_category_popup(self) -> NewCategoryPopup:
+        self._channel_or_category_button.click()
+        self._create_category_menu_item.click()
+        return NewCategoryPopup().wait_until_appears()
+
     @allure.step('Open join community popup')
     def open_welcome_community_popup(self):
         self._join_community_button.click()
         return WelcomeCommunityPopup().wait_until_appears()
+
+    @allure.step('Find category')
+    def find_category_in_list(
+            self, category_name: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
+        started_at = time.monotonic()
+        category = None
+        while category is None:
+            categories = self.categories_items
+            for _category in categories:
+                if _category.category_name == category_name:
+                    category = _category
+            assert time.monotonic() - started_at < timeout_sec, f'Category: {category_name} not found in {categories}'
+        return category
+
+    @allure.step('Open more options')
+    def open_more_options(self):
+        self._arrow_button.click()
+        self._more_button.click()
+
+    @allure.step('Open delete category popup')
+    def open_delete_category_popup(self) -> DeleteCategoryPopup:
+        self._delete_category_item.click()
+        return DeleteCategoryPopup().wait_until_appears()
+
+    @allure.step('Open new channel popup inside category')
+    def open_new_channel_popup_in_category(self) -> NewChannelPopup:
+        self._arrow_button.click()
+        self._add_channel_inside_category_item.click()
+        return NewChannelPopup().wait_until_appears()
 
 
 class Chat(QObject):
