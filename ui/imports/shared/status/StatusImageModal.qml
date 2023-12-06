@@ -3,51 +3,45 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared 1.0
 import shared.views.chat 1.0
 
-Popup {
+StatusDialog {
     id: root
 
     property var store
     property var image
     property string url: ""
 
-    modal: true
-    Overlay.modal: Rectangle {
-        color: "#40000000"
-    }
-    parent: Overlay.overlay
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    x: Math.round(((parent ? parent.width : 0) - width) / 2)
-    y: Math.round(((parent ? parent.height : 0) - height) / 2)
-    background: Rectangle {
-        color: "transparent"
-    }
+    width: (root.image.sourceSize.width > d.maxWidth) ?
+            d.maxWidth : root.image.sourceSize.width
+    height: (root.image.sourceSize.height > d.maxHeight) ?
+            d.maxHeight : root.image.sourceSize.height
+
     padding: 0
+    background: null
+    standardButtons: Dialog.NoButton
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+    QtObject {
+        id: d
+
+        property int maxHeight: Global.applicationWindow.height - 80
+        property int maxWidth: Global.applicationWindow.width - 80
+    }
 
     onOpened: {
         messageImage.source = root.image.source;
-        const maxHeight = Global.applicationWindow.height - 80
-        const maxWidth = Global.applicationWindow.width - 80
-
-        if (root.image.sourceSize.width >= maxWidth || root.image.sourceSize.height >= maxHeight) {
-            this.width = maxWidth
-            this.height = maxHeight
-        } else {
-            this.width = image.sourceSize.width
-            this.height = image.sourceSize.height
-        }
     }
 
     contentItem: AnimatedImage {
         id: messageImage
+        anchors.fill: parent
         asynchronous: true
         fillMode: Image.PreserveAspectFit
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
         mipmap: true
         smooth: false
 
