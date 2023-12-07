@@ -176,7 +176,6 @@ SettingsContentBase {
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
-                visible: root.advancedStore.isWakuV2
                 text: qsTr("WakuV2 options")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
@@ -188,7 +187,6 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Enable creation of sharded communities")
                 isSwitch: true
-                visible: root.advancedStore.isWakuV2
                 switchChecked: root.advancedStore.isWakuV2ShardedCommunitiesEnabled
                 onClicked: root.advancedStore.toggleWakuV2ShardedCommunities()
             }
@@ -197,7 +195,6 @@ SettingsContentBase {
                  anchors.left: parent.left
                  anchors.right: parent.right
                  title: qsTr("Waku Nodes")
-                 visible: root.advancedStore.isWakuV2
                  components: [
                      StatusIcon {
                          icon: "next"
@@ -207,89 +204,12 @@ SettingsContentBase {
                  onClicked: Global.openPopup(wakuNodesModalComponent)
              }
 
-            StatusSectionHeadline {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                visible: !root.advancedStore.isWakuV2
-                text: qsTr("Bloom filter level")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
-            }
-
-            Row {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                visible: !root.advancedStore.isWakuV2
-                spacing: 11
-
-                Component {
-                    id: bloomConfirmationDialogComponent
-                    ConfirmationDialog {
-                        property string mode: "normal"
-
-                        id: confirmDialog
-                        headerSettings.title: qsTr("Warning!")
-                        confirmationText: qsTr("The account will be logged out. When you login again, the selected mode will be enabled")
-                        onConfirmButtonClicked: {
-                            root.advancedStore.setBloomLevel(mode)
-                        }
-                        onClosed: {
-                            switch(root.advancedStore.bloomLevel){
-                                case "light":  btnBloomLight.toggle(); break;
-                                case "normal":  btnBloomNormal.toggle(); break;
-                                case "full":  btnBloomFull.toggle(); break;
-                            }
-                            destroy()
-                        }
-                    }
-                }
-
-                ButtonGroup {
-                    id: bloomGroup
-                }
-
-                BloomSelectorButton {
-                    id: btnBloomLight
-                    buttonGroup: bloomGroup
-                    checkedByDefault: root.advancedStore.bloomLevel == "light"
-                    btnText: qsTr("Light Node")
-                    onToggled: {
-                        Global.openPopup(bloomConfirmationDialogComponent, {mode: "light"})
-                    }
-                }
-
-                BloomSelectorButton {
-                    id: btnBloomNormal
-                    buttonGroup: bloomGroup
-                    checkedByDefault: root.advancedStore.bloomLevel == "normal"
-                    btnText: qsTr("Normal")
-                    onToggled: {
-                        Global.openPopup(bloomConfirmationDialogComponent, {mode: "normal"})
-                    }
-                }
-
-                BloomSelectorButton {
-                    id: btnBloomFull
-                    buttonGroup: bloomGroup
-                    checkedByDefault: root.advancedStore.bloomLevel == "full"
-                    btnText: qsTr("Full Node")
-                    onToggled: {
-                        Global.openPopup(bloomConfirmationDialogComponent, {mode: "full"})
-                    }
-                }
-            }
-
             Row {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 spacing: 11
-                visible: root.advancedStore.isWakuV2
 
                 Component {
                     id: wakuV2ModeConfirmationDialogComponent

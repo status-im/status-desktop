@@ -52,15 +52,8 @@ QtObject:
                result.add(id)
 
     proc fetchPeers*(self: Service): seq[string] =
-        var fleet = self.nodeConfigurationService.getFleet()
-        let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd:
-            true 
-        else:
-            false
-        if isWakuV2:
-            return wakuV2Peers()
-        else:
-            return adminPeers()
+        return wakuV2Peers()
+
 
     proc peerSummaryChange*(self: Service, peers: seq[string]) =
         if peers.len == 0 and self.connected:

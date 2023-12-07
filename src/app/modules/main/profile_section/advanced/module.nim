@@ -65,16 +65,6 @@ method onFleetSet*(self: Module) =
 method getLogDir*(self: Module): string =
   return url_fromLocalFile(constants.LOGDIR)
 
-method getBloomLevel*(self: Module): string =
-  return self.controller.getBloomLevel()
-
-method setBloomLevel*(self: Module, bloomLevel: string) =
-  self.controller.setBloomLevel(bloomLevel)
-
-method onBloomLevelSet*(self: Module) =
-  info "quit the app because of successful bloom level change"
-  quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
 method getWakuV2LightClientEnabled*(self: Module): bool =
   return self.controller.getWakuV2LightClientEnabled()
 

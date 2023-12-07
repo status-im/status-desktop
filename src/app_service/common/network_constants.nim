@@ -146,7 +146,7 @@ var NODE_CONFIG* = %* {
   },
   "ClusterConfig": {
     "Enabled": true,
-    "ClusterID": 16
+    "ClusterID": MAIN_STATUS_SHARD_CLUSTER_ID
   },
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,

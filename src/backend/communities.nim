@@ -1,6 +1,7 @@
 import json, strutils
 import core, ../app_service/common/utils
 import response_type
+import ../constants
 
 import interpret/cropped_image
 
@@ -521,13 +522,12 @@ proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.rai
   return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])
 
 proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let mainStatusShardClusterID = 16
   if index != -1:
     result = callPrivateRPC("setCommunityShard".prefix, %*[
       {
         "communityId": communityId,
         "shard": {
-          "cluster": mainStatusShardClusterID,
+          "cluster": MAIN_STATUS_SHARD_CLUSTER_ID,
           "index": index
         },
       }])

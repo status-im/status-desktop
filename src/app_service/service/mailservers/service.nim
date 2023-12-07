@@ -181,10 +181,8 @@ QtObject:
 
 
   proc initMailservers(self: Service) =
-    let wakuVersion = self.nodeConfigurationService.getWakuVersion()
-    let isWakuV2 = wakuVersion == WAKU_VERSION_2
     let fleet = self.nodeConfigurationService.getFleet()
-    let mailservers = self.fleetConfiguration.getMailservers(fleet, isWakuV2)
+    let mailservers = self.fleetConfiguration.getMailservers(fleet)
 
     for (name, nodeAddress) in mailservers.pairs():
       info "initMailservers", topics="mailserver-interaction", name, nodeAddress

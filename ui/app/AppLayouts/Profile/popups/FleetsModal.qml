@@ -31,18 +31,6 @@ ModalPopup {
 
         FleetRadioSelector {
             advancedStore: popup.advancedStore
-            fleetName: Constants.eth_prod
-            buttonGroup: fleetSettings
-        }
-
-        FleetRadioSelector {
-            advancedStore: popup.advancedStore
-            fleetName: Constants.eth_staging
-            buttonGroup: fleetSettings
-        }
-
-        FleetRadioSelector {
-            advancedStore: popup.advancedStore
             fleetName: Constants.waku_prod
             buttonGroup: fleetSettings
         }
@@ -50,18 +38,6 @@ ModalPopup {
         FleetRadioSelector {
             advancedStore: popup.advancedStore
             fleetName: Constants.waku_test
-            buttonGroup: fleetSettings
-        }
-
-        FleetRadioSelector {
-            advancedStore: popup.advancedStore
-            fleetName: Constants.status_test
-            buttonGroup: fleetSettings
-        }
-
-        FleetRadioSelector {
-            advancedStore: popup.advancedStore
-            fleetName: Constants.status_prod
             buttonGroup: fleetSettings
         }
 

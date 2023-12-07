@@ -69,3 +69,5 @@ proc hasLogLevelOption*(): bool =
 
 proc runtimeLogLevelSet*(): bool =
   return existsEnv(RUN_TIME_PREFIX & "_LOG_LEVEL") or hasLogLevelOption()
+
+const MAIN_STATUS_SHARD_CLUSTER_ID* = 16

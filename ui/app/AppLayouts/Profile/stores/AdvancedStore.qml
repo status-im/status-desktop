@@ -10,7 +10,6 @@ QtObject {
 
     // Advanced Module Properties
     property string fleet: advancedModule? advancedModule.fleet : ""
-    property string bloomLevel: advancedModule? advancedModule.bloomLevel : ""
     property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false
     property bool isTelemetryEnabled: advancedModule? advancedModule.isTelemetryEnabled : false
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
@@ -19,12 +18,6 @@ QtObject {
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
-
-    property bool isWakuV2: root.fleet === Constants.waku_prod   ||
-                            root.fleet === Constants.waku_test   ||
-                            root.fleet === Constants.status_test ||
-                            root.fleet === Constants.status_prod ||
-                            root.fleet === Constants.shards_test
 
     readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
     property bool isManageCommunityOnTestModeEnabled: false
@@ -65,13 +58,6 @@ QtObject {
             return
 
         root.advancedModule.setFleet(fleetName)
-    }
-
-    function setBloomLevel(mode) {
-        if(!root.advancedModule)
-            return
-
-        root.advancedModule.setBloomLevel(mode)
     }
 
     function setWakuV2LightClientEnabled(mode) {

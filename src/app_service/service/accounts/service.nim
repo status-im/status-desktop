@@ -319,18 +319,13 @@ QtObject:
 
     result = NODE_CONFIG.copy()
     result["ClusterConfig"]["Fleet"] = newJString($fleet)
-    result["ClusterConfig"]["BootNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Bootnodes)
-    result["ClusterConfig"]["TrustedMailServers"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Mailservers)
-    result["ClusterConfig"]["StaticNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Whisper)
-    result["ClusterConfig"]["RendezvousNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Rendezvous)
     result["NetworkId"] = NETWORKS[0]{"chainId"}
     result["DataDir"] = "ethereum".newJString()
     result["UpstreamConfig"]["Enabled"] = true.newJBool()
     result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
     result["ShhextConfig"]["InstallationID"] = newJString(installationId)
 
-    # TODO: fleet.status.im should have different sections depending on the node type
-    #       or maybe it's not necessary because a node has the identify protocol
+
     result["ClusterConfig"]["WakuNodes"] = %* @[dnsDiscoveryURL]
 
     var discV5Bootnodes = self.fleetConfiguration.getNodes(fleet, FleetNodes.WakuENR)
