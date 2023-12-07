@@ -14,7 +14,3 @@ proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 
 proc sendRPCMessageRaw*(inputJSON: string): string {.raises: [Exception].} =
     result = callPrivateRPCRaw(inputJSON)
-
-proc getBloomFilter*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-    let payload = %* []
-    result = callPrivateRPC("bloomFilter".prefix, payload)

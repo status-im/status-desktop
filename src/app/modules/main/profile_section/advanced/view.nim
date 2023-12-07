@@ -34,20 +34,6 @@ QtObject:
   proc logDir*(self: View): string {.slot.} =
     return self.delegate.getLogDir()
 
-  proc bloomLevelChanged*(self: View) {.signal.}
-  proc getBloomLevel*(self: View): string {.slot.} =
-    return self.delegate.getBloomLevel()
-  QtProperty[string] bloomLevel:
-    read = getBloomLevel
-    notify = bloomLevelChanged
-
-  proc setBloomLevel*(self: View, bloomLevel: string) {.slot.} =
-    self.delegate.setBloomLevel(bloomLevel)
-
-  # include this if we decide to not quit the app on bloom level change
-  # proc emitBloomLevelSignal*(self: View) =
-  #   self.bloomLevelChanged()
-
   proc wakuV2LightClientEnabledChanged*(self: View) {.signal.}
   proc getWakuV2LightClientEnabled*(self: View): bool {.slot.} =
     return self.delegate.getWakuV2LightClientEnabled()

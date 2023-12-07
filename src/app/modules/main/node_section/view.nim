@@ -59,28 +59,8 @@ QtObject:
     read = getLastMessage
     notify = receivedMessage
 
-  proc getWakuBloomFilterMode*(self: View): bool {.slot.} =
-    return self.delegate.getWakuBloomFilterMode()
-
-  proc getBloomLevel*(self: View): string {.slot.} =
-    return self.delegate.getBloomLevel()
-
-  QtProperty[bool] wakuBloomFilterMode:
-    read = getWakuBloomFilterMode
-    notify = initialized
-
-  QtProperty[string] bloomLevel:
-    read = getBloomLevel
-    notify = initialized
-
-  proc setWakuBloomFilterMode*(self: View, bloomFilterMode: bool) {.slot.} =
-    self.delegate.setBloomFilterMode(bloomFilterMode)
-
   proc wakuVersion*(self: View): int {.slot.} =
     return self.delegate.getWakuVersion()
-
-  proc setBloomLevel*(self: View, level: string) {.slot.} =
-    self.delegate.setBloomLevel(level)
 
   proc statsChanged*(self: View) {.signal.}
 

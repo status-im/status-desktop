@@ -3,13 +3,9 @@ import json, typetraits, tables, sequtils
 type
   Fleet* {.pure.} = enum
     Undefined = "",
-    Prod = "eth.prod",
-    Staging = "eth.staging",
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
     GoWakuTest = "go-waku.test"
-    StatusTest = "status.test"
-    StatusProd = "status.prod"
     ShardsTest = "shards.test"
 
   FleetNodes* {.pure.} = enum
@@ -70,18 +66,12 @@ proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = Fl
   if not self.fleet[$fleet].hasKey($t): return
   result = toSeq(self.fleet[$fleet][$t].values)
 
-proc getMailservers*(self: FleetConfiguration, fleet: Fleet, isWakuV2: bool): Table[string, string] =
-  # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes.
-  # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
-  # Discuss with @iurimatias, @cammellos and Vac team
+proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, string] =
   var fleetKey: string
-  if isWakuV2:
-    if fleet == Fleet.ShardsTest:
-      fleetKey = $FleetNodes.WakuStore 
-    else:
-      fleetKey = $FleetNodes.Waku 
+  if fleet == Fleet.ShardsTest:
+    fleetKey = $FleetNodes.WakuStore 
   else:
-    fleetKey = $FleetNodes.Mailservers
+    fleetKey = $FleetNodes.Waku 
 
   if not self.fleet[$fleet].hasKey(fleetKey) :
     result = initTable[string,string]()

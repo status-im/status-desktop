@@ -404,20 +404,12 @@ QtObject:
     self.settings.currentUserStatus
 
   proc getPinnedMailserver*(self: Service, fleet: Fleet): string =
-    if (fleet == Fleet.Prod):
-      return self.settings.pinnedMailserver.ethProd
-    elif (fleet == Fleet.Staging):
-      return self.settings.pinnedMailserver.ethStaging
-    elif (fleet == Fleet.WakuV2Prod):
+    if (fleet == Fleet.WakuV2Prod):
       return self.settings.pinnedMailserver.wakuv2Prod
     elif (fleet == Fleet.WakuV2Test):
       return self.settings.pinnedMailserver.wakuv2Test
     elif (fleet == Fleet.GoWakuTest):
       return self.settings.pinnedMailserver.goWakuTest
-    elif (fleet == Fleet.StatusTest):
-      return self.settings.pinnedMailserver.statusTest
-    elif (fleet == Fleet.StatusProd):
-      return self.settings.pinnedMailserver.statusProd
     elif (fleet == Fleet.ShardsTest):
       return self.settings.pinnedMailserver.shardsTest
     return ""
@@ -426,20 +418,12 @@ QtObject:
     var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
     newMailserverJsonObj[$fleet] = %* mailserverID
     if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
-      if (fleet == Fleet.Prod):
-        self.settings.pinnedMailserver.ethProd = mailserverID
-      elif (fleet == Fleet.Staging):
-        self.settings.pinnedMailserver.ethStaging = mailserverID
-      elif (fleet == Fleet.WakuV2Prod):
+      if (fleet == Fleet.WakuV2Prod):
         self.settings.pinnedMailserver.wakuv2Prod = mailserverID
       elif (fleet == Fleet.WakuV2Test):
         self.settings.pinnedMailserver.wakuv2Test = mailserverID
       elif (fleet == Fleet.GoWakuTest):
         self.settings.pinnedMailserver.goWakuTest = mailserverID
-      elif (fleet == Fleet.StatusTest):
-        self.settings.pinnedMailserver.statusTest = mailserverID
-      elif (fleet == Fleet.StatusProd):
-        self.settings.pinnedMailserver.statusProd = mailserverID
       elif (fleet == Fleet.ShardsTest):
         self.settings.pinnedMailserver.shardsTest = mailserverID
       return true
@@ -451,12 +435,6 @@ QtObject:
   proc saveNodeConfiguration*(self: Service, value: JsonNode): bool =
     if(self.saveSetting(KEY_NODE_CONFIG, value)):
       self.settings.nodeConfig = value
-      return true
-    return false
-
-  proc saveWakuBloomFilterMode*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_WAKU_BLOOM_FILTER_MODE, value)):
-      self.settings.wakuBloomFilterMode = value
       return true
     return false
 
@@ -474,9 +452,6 @@ QtObject:
       self.settings.defaultSyncPeriod = value
       return true
     return false
-
-  proc getWakuBloomFilterMode*(self: Service): bool =
-    return self.settings.wakuBloomFilterMode
 
   proc areTestNetworksEnabled*(self: Service): bool =
     return self.settings.testNetworksEnabled
