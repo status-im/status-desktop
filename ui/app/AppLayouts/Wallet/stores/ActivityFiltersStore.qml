@@ -102,35 +102,38 @@ QtObject {
             break
         case Constants.TransactionTimePeriod.ThisWeek:
             let dt2 = LocaleUtils.getFirstDayOfTheCurrentWeek()
-            dt2.setHours(0, 0, 0, 0)
-            d.setFromTimestamp(dt2.valueOf()) // First day of this week
-            d.resetToTimestamp()
+            d.setFromTimestamp(dt2.setHours(0, 0, 0, 0).valueOf()) // First day of this week
+            let dt3 = new Date()
+            d.setToTimestamp(dt3.setHours(23,59,59,0).valueOf()) // Today
+            d.toTimestampNoLimit = true
             break
         case Constants.TransactionTimePeriod.LastWeek:
-            let dt3 = LocaleUtils.getFirstDayOfTheCurrentWeek()
-            dt3.setDate(dt3.getDate() - 7)
-            dt3.setHours(0, 0, 0, 0)
-            d.setFromTimestamp(dt3.valueOf()) // First day of last week
-            dt3.setDate(dt3.getDate() + 6)
-            dt3.setHours(23, 59, 59, 0)
-            d.setToTimestamp(dt3.valueOf()) // Last day of last week
+            let dt4 = LocaleUtils.getFirstDayOfTheCurrentWeek()
+            dt4.setDate(dt4.getDate() - 7)
+            dt4.setHours(0, 0, 0, 0)
+            d.setFromTimestamp(dt4.valueOf()) // First day of last week
+            dt4.setDate(dt4.getDate() + 6)
+            dt4.setHours(23, 59, 59, 0)
+            d.setToTimestamp(dt4.valueOf()) // Last day of last week
             break
         case Constants.TransactionTimePeriod.ThisMonth:
-            let dt4 = new Date()
-            dt4.setDate(1)
-            dt4.setHours(0, 0, 0, 0)
-            d.setFromTimestamp(dt4.valueOf()) // This month
-            d.resetToTimestamp()
-            break
-        case Constants.TransactionTimePeriod.LastMonth:
             let dt5 = new Date()
             dt5.setDate(1)
-            dt5.setMonth(dt5.getMonth()-1)
             dt5.setHours(0, 0, 0, 0)
-            d.setFromTimestamp(dt5.valueOf()) // Last month
-            dt5.setDate(new Date(dt5.getFullYear(), dt5.getMonth(), 0).getDate() + 2)
-            dt5.setHours(0, 0, 0, -1)
-            d.setToTimestamp(dt5.valueOf())
+            d.setFromTimestamp(dt5.valueOf()) // This month
+            let dt6 = new Date()
+            d.setToTimestamp(dt6.setHours(23,59,59,0).valueOf()) // Today
+            d.toTimestampNoLimit = true
+            break
+        case Constants.TransactionTimePeriod.LastMonth:
+            let dt7 = new Date()
+            dt7.setDate(1)
+            dt7.setMonth(dt7.getMonth()-1)
+            dt7.setHours(0, 0, 0, 0)
+            d.setFromTimestamp(dt7.valueOf()) // Last month
+            dt7.setDate(new Date(dt7.getFullYear(), dt7.getMonth(), 0).getDate() + 1)
+            dt7.setHours(0, 0, 0, -1)
+            d.setToTimestamp(dt7.valueOf())
             break
         default:
             return ""
