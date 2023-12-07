@@ -934,12 +934,8 @@ QtObject {
     readonly property string eth_signTypedData: "eth_signTypedData"
     readonly property string eth_signTypedData_v3: "eth_signTypedData_v3"
 
-    readonly property string eth_prod: "eth.prod"
-    readonly property string eth_staging: "eth.staging"
     readonly property string waku_prod: "wakuv2.prod"
     readonly property string waku_test: "wakuv2.test"
-    readonly property string status_test: "status.test"
-    readonly property string status_prod: "status.prod"
     readonly property string shards_test: "shards.test"
 
     readonly property int browserSearchEngineNone: 0

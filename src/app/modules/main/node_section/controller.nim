@@ -62,12 +62,6 @@ proc init*(self: Controller) =
 proc sendRPCMessageRaw*(self: Controller, inputJSON: string): string =
    return self.nodeService.sendRPCMessageRaw(inputJSON);
 
-proc setBloomFilterMode*(self: Controller, bloomFilterMode: bool): bool =
-   return self.nodeConfigurationService.setBloomFilterMode(bloomFilterMode)
-
-proc setBloomLevel*(self: Controller, level: string): bool =
-   return self.nodeConfigurationService.setBloomLevel(level)
-
 proc isV2LightMode*(self: Controller): bool =
    return self.nodeConfigurationService.isV2LightMode()
 
@@ -77,17 +71,5 @@ proc isFullNode*(self: Controller): bool =
 proc setV2LightMode*(self: Controller, enabled: bool): bool =
    return self.nodeConfigurationService.setV2LightMode(enabled)
 
-proc getWakuBloomFilterMode*(self: Controller): bool =
-    return self.settingsService.getWakuBloomFilterMode()
-
 proc getWakuVersion*(self: Controller): int =
-    var fleet = self.nodeConfigurationService.getFleet()
-    let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd: 
-      true 
-    else:
-      false
-    if isWakuV2: return 2
-    return 1
-
-proc getBloomLevel*(self: Controller): string =
-    return self.nodeConfigurationService.getBloomLevel()
+    return 2

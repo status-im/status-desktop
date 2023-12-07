@@ -13,9 +13,6 @@ logScope:
 
 const WAKU_VERSION_1* = 1
 const WAKU_VERSION_2* = 2
-const BLOOM_LEVEL_NORMAL* = "normal"
-const BLOOM_LEVEL_FULL* = "full"
-const BLOOM_LEVEL_LIGHT* = "light"
 
 const SIGNAL_NODE_LOG_LEVEL_UPDATE* = "nodeLogLevelUpdated"
 
@@ -95,51 +92,24 @@ proc getWakuVersion*(self: Service): int =
   error "unsupported waku version"
   return 0
 
-proc getBloomLevel*(self: Service): string =
-  let wakuVersion = self.getWakuVersion()
-  if wakuVersion == WAKU_VERSION_2:
-    error "get - bloom level is supported only for a waku version 1"
-    return BLOOM_LEVEL_NORMAL
-
-  if wakuVersion == WAKU_VERSION_1:
-    let bloomFilterMode = self.configuration.WakuConfig.BloomFilterMode
-    let fullNode = self.configuration.WakuConfig.FullNode
-
-    if (bloomFilterMode):
-      if(fullNode):
-        return BLOOM_LEVEL_FULL
-      else:
-        return BLOOM_LEVEL_NORMAL
-    else:
-      return BLOOM_LEVEL_LIGHT
-
 proc isShardFleet(config: NodeConfigDto): bool =
   return case config.ClusterConfig.Fleet:
     of $Fleet.ShardsTest: true
     else: false
 
-proc setWakuConfig(configuration: NodeConfigDto, wakuVersion: int): NodeConfigDto =
+proc setWakuConfig(configuration: NodeConfigDto): NodeConfigDto =
   var newConfiguration = configuration
   newConfiguration.RegisterTopics = @["whispermail"]
-  newConfiguration.WakuConfig.Enabled = wakuVersion == WAKU_VERSION_1
-  newConfiguration.WakuV2Config.Enabled = wakuVersion == WAKU_VERSION_2
-
-  if wakuVersion == WAKU_VERSION_1:
-    newConfiguration.NoDiscovery = false
-    newConfiguration.Rendezvous = true
-  elif wakuVersion == WAKU_VERSION_2:
-    newConfiguration.NoDiscovery = true
-    newConfiguration.Rendezvous = false
-    newConfiguration.WakuV2Config.EnableDiscV5 = true
-    newConfiguration.WakuV2Config.DiscoveryLimit = 20
-    newConfiguration.WakuV2Config.Rendezvous = true
-    newConfiguration.WakuV2Config.UseShardAsDefaultTopic = isShardFleet(newConfiguration)
+  newConfiguration.NoDiscovery = true
+  newConfiguration.Rendezvous = false
+  newConfiguration.WakuConfig.Enabled = false
+  newConfiguration.WakuV2Config.Enabled = true
+  newConfiguration.WakuV2Config.EnableDiscV5 = true
+  newConfiguration.WakuV2Config.DiscoveryLimit = 20
+  newConfiguration.WakuV2Config.Rendezvous = true
+  newConfiguration.WakuV2Config.UseShardAsDefaultTopic = isShardFleet(newConfiguration)
 
   return newConfiguration
-
-proc setWakuVersion*(self: Service, wakuVersion: int): bool =
-  let newConfiguration = setWakuConfig(self.configuration, wakuVersion)
-  return self.saveConfiguration(newConfiguration)
 
 proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
   return self.configuration.TorrentConfig.Enabled
@@ -151,47 +121,6 @@ proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
     return false
 
   return true
-
-proc setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
-  if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
-    error "error saving waku bloom filter mode ", procName="setBloomFilterMode"
-    return false
-
-  var newConfiguration = self.configuration
-  newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
-  return self.saveConfiguration(newConfiguration)
-
-proc setBloomLevel*(self: Service, bloomLevel: string): bool =
-  let wakuVersion = self.getWakuVersion()
-  if wakuVersion == WAKU_VERSION_2:
-    error "set - bloom level is supported only for a waku version 1"
-    return false
-
-  # default is BLOOM_LEVEL_NORMAL
-  var bloomFilterMode = false
-  var fullNode = true
-  if bloomLevel == BLOOM_LEVEL_LIGHT:
-    bloomFilterMode = false
-    fullNode = false
-  elif bloomLevel == BLOOM_LEVEL_FULL:
-    bloomFilterMode = true
-    fullNode = true
-  elif bloomLevel == BLOOM_LEVEL_NORMAL:
-    bloomFilterMode = true
-    fullNode = false
-
-  if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
-    error "error saving waku bloom filter mode ", procName="setBloomLevel"
-    return false
-
-  if wakuVersion == WAKU_VERSION_1:
-    var newConfiguration = self.configuration
-    newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
-    newConfiguration.WakuConfig.FullNode = fullNode
-    newConfiguration.WakuConfig.LightClient = not fullNode
-    return self.saveConfiguration(newConfiguration)
-
-  return false
 
 proc getFleet*(self: Service): Fleet =
   result = self.settingsService.getFleet()
@@ -224,21 +153,16 @@ proc setFleet*(self: Service, fleet: string): bool =
   newConfiguration.ClusterConfig.StaticNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Whisper)
   newConfiguration.ClusterConfig.RendezvousNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Rendezvous)
 
-  var wakuVersion = 2
   var dnsDiscoveryURL: seq[string] = @[]
   case fleetType:
     of Fleet.WakuV2Prod:
       dnsDiscoveryURL.add("enrtree://ANEDLO25QVUGJOUTQFRYKWX6P4Z4GKVESBMHML7DZ6YK4LGS5FC5O@prod.wakuv2.nodes.status.im")
     of Fleet.WakuV2Test:
       dnsDiscoveryURL.add("enrtree://AO47IDOLBKH72HIZZOXQP6NMRESAN7CHYWIBNXDXWRJRZWLODKII6@test.wakuv2.nodes.status.im")
-    of Fleet.StatusTest:
-      dnsDiscoveryURL.add("enrtree://AIO6LUM3IVWCU2KCPBBI6FEH2W42IGK3ASCZHZGG5TIXUR56OGQUO@test.status.nodes.status.im")
-    of Fleet.StatusProd:
-      dnsDiscoveryURL.add("enrtree://AL65EKLJAUXKKPG43HVTML5EFFWEZ7L4LOKTLZCLJASG4DSESQZEC@prod.status.nodes.status.im")
     of Fleet.ShardsTest:
       dnsDiscoveryURL.add("enrtree://AMOJVZX4V6EXP7NTJPMAYJYST2QP6AJXYW76IU6VGJS7UVSNDYZG4@boot.test.shards.nodes.status.im")
     else:
-      wakuVersion = 1
+      discard
 
   newConfiguration.ClusterConfig.WakuNodes = dnsDiscoveryURL
 
@@ -248,7 +172,7 @@ proc setFleet*(self: Service, fleet: string): bool =
 
   newConfiguration.ClusterConfig.DiscV5BootstrapNodes = discV5Bootnodes
 
-  newConfiguration = setWakuConfig(newConfiguration, wakuVersion)
+  newConfiguration = setWakuConfig(newConfiguration)
 
   try:
     discard status_node_config.switchFleet(fleet, newConfiguration.toJsonNode())

@@ -45,17 +45,6 @@ proc changeFleetTo*(self: Controller, fleet: string) =
 
   self.delegate.onFleetSet()
 
-proc getBloomLevel*(self: Controller): string =
-  return self.nodeConfigurationService.getBloomLevel()
-
-proc setBloomLevel*(self: Controller, bloomLevel: string) =
-  if (not self.nodeConfigurationService.setBloomLevel(bloomLevel)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't set bloom level"
-    return
-
-  self.delegate.onBloomLevelSet()
-
 proc getLogMaxBackups*(self: Controller): int =
   return self.nodeConfigurationService.getLogMaxBackups()
 
