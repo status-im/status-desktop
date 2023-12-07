@@ -4,6 +4,7 @@ import allure
 import pyperclip
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs.testpath
 import constants
@@ -19,6 +20,7 @@ from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
     SyncCodeView, SyncDeviceFoundView
 
+pytestmark = marks
 
 @pytest.fixture
 def sync_screen(main_window) -> SyncCodeView:

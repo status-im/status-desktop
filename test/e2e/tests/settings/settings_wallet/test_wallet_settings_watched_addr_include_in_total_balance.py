@@ -4,6 +4,7 @@ import string
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs
 import driver
@@ -12,7 +13,7 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703508',
                  'Watched addresses: Excl. / Include in total balance functionality for watched address')
 @pytest.mark.case(703508)

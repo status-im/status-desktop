@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs
 import driver
@@ -9,7 +10,7 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow, LeftPanel
 from scripts.tools import image
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
                  'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)

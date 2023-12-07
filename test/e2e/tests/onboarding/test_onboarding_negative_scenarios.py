@@ -4,6 +4,7 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs.system
 import constants
@@ -15,6 +16,7 @@ from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, KeysView, BiometricsView, LoginView
 
+pytestmark = marks
 
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:

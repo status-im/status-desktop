@@ -1,11 +1,13 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 from gui.screens.settings_keycard import KeycardSettingsView
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703514',
                  'Choosing Use Keycard when adding account')

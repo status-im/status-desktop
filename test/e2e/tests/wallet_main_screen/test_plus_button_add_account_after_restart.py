@@ -3,6 +3,7 @@ import time
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import constants
 from driver.aut import AUT
@@ -11,7 +12,7 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
                  'User can add  one more account after restarting the app')
 @pytest.mark.case(704459)

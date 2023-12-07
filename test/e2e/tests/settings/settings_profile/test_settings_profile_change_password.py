@@ -1,11 +1,13 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 from driver.aut import AUT
 from gui.main_window import MainWindow
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')

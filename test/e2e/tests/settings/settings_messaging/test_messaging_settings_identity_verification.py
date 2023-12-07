@@ -3,6 +3,7 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs.testpath
 import constants
@@ -10,7 +11,7 @@ from constants import UserAccount
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704611', 'Reply to identity request')
 @pytest.mark.case(704611)
 @pytest.mark.parametrize('user_data_one, user_data_two', [

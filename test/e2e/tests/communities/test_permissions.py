@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 import driver
@@ -8,6 +9,7 @@ from constants.community_settings import PermissionsElements
 from constants.images_paths import PERMISSION_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
 
+pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',

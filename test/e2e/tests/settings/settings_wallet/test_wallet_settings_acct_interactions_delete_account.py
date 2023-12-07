@@ -4,6 +4,7 @@ import string
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 import driver
@@ -14,7 +15,7 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)

@@ -4,6 +4,7 @@ from pathlib import Path
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import configs
 import constants
@@ -16,6 +17,7 @@ from gui.components.community.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703623',
                  'Setup a keycard with an existing account')

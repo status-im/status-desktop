@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 from constants.community_settings import TokensElements
@@ -8,6 +9,7 @@ from constants.images_paths import TOKENS_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
 from scripts.tools import image
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703199',
                  'Manage community: Manage Mint Tokens screen overview')

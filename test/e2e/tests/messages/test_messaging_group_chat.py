@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs.testpath
 import constants
@@ -9,6 +10,7 @@ from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014)

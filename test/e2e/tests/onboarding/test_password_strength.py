@@ -1,6 +1,7 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs.system
 import constants
@@ -9,6 +10,7 @@ from constants.onboarding import very_weak_lower_elements, very_weak_upper_eleme
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, KeysView
 
+pytestmark = marks
 
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:

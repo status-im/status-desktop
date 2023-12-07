@@ -3,6 +3,7 @@ import time
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import constants
 import driver
@@ -11,7 +12,7 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703036',
                  'Manage an account created from the generated seed phrase')
 @pytest.mark.case(703036)

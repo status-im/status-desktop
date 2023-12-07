@@ -3,12 +3,13 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703022', 'Edit default wallet account')
 @pytest.mark.case(703022)
 @pytest.mark.parametrize('name, new_name, new_color, new_emoji, new_emoji_unicode', [

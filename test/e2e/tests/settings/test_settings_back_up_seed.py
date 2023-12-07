@@ -1,13 +1,14 @@
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs
 import driver
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703001', 'Backup seed phrase')
 @pytest.mark.case(703001)
 def test_back_up_seed_phrase(main_screen: MainWindow):

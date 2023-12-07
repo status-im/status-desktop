@@ -1,13 +1,14 @@
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import configs
 import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703021', 'Manage a saved address')
 @pytest.mark.case(703021)
 @pytest.mark.parametrize('name, address, new_name', [

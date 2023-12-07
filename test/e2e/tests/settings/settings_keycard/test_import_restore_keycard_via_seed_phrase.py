@@ -3,6 +3,7 @@ import time
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import configs
 import constants
@@ -13,6 +14,7 @@ from constants.keycard import Keycard
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703625',
                  'Import or restore a Keycard via a seed phrase')

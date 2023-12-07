@@ -4,6 +4,7 @@ import os
 import allure
 import pytest
 from allure import step
+from . import marks
 
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -12,6 +13,7 @@ from gui.components.picture_edit_popup import shift_image
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 
+pytestmark = marks
 LOG = logging.getLogger(__name__)
 
 

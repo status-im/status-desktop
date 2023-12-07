@@ -3,13 +3,14 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026',
                  'Manage a watch-only account from context menu option')
 @pytest.mark.case(703026)

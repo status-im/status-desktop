@@ -3,8 +3,9 @@ import pytest
 import psutil
 from allure_commons._allure import step
 from gui.main_window import MainWindow
+from . import marks
 
-
+pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703010)
 def test_sign_out_and_quit(aut, main_screen: MainWindow):
