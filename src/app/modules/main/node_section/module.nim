@@ -54,20 +54,9 @@ method viewDidLoad*(self: Module) =
 method sendRPCMessageRaw*(self: Module, inputJSON: string): string =
   return self.controller.sendRPCMessageRaw(inputJSON)
 
-method setBloomFilterMode*(self: Module, bloomFilterMode: bool) =
-  if(self.controller.setBloomFilterMode(bloomFilterMode)):
-    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
-method setBloomLevel*(self: Module, level: string) =
-  if(self.controller.setBloomLevel(level)):
-    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
 method setV2LightMode*(self: Module, enabled: bool) =
   if(self.controller.setV2LightMode(enabled)):
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
-method getWakuBloomFilterMode*(self: Module): bool =
-  return self.controller.getWakuBloomFilterMode()
 
 method isV2LightMode*(self: Module): bool =
   return self.controller.isV2LightMode()
@@ -77,11 +66,6 @@ method isFullNode*(self: Module): bool =
 
 method getWakuVersion*(self: Module): int =
    return self.controller.getWakuVersion()
-
-method getBloomLevel*(self: Module): string =
-   return self.controller.getBloomLevel()
-
-
 
 method setLastMessage*(self: Module, lastMessage: string) =
   self.view.setLastMessage(lastMessage)
