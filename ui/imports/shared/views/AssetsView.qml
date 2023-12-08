@@ -161,7 +161,7 @@ StatusScrollView {
             id: delegateLoader
             Loader {
                 property var modelData: model
-                property int index: index
+                property int delegateIndex: index
                 width: ListView.view.width
                 sourceComponent: model.loading ? loadingTokenDelegate: tokenDelegate
             }
@@ -170,7 +170,7 @@ StatusScrollView {
         Component {
             id: loadingTokenDelegate
             LoadingTokenDelegate {
-                objectName: "AssetView_LoadingTokenDelegate_" + index
+                objectName: "AssetView_LoadingTokenDelegate_" + delegateIndex
             }
         }
 
@@ -195,8 +195,9 @@ StatusScrollView {
                 onClicked: (itemId, mouse) => {
                                if (mouse.button === Qt.LeftButton) {
                                    RootStore.getHistoricalDataForToken(modelData.symbol, RootStore.currencyStore.currentCurrency)
-                                   d.selectedAssetIndex = index
-                                   assetClicked(modelData)
+                                   d.selectedAssetIndex = delegateIndex
+                                   let selectedModel = !!modelData.communityId ? d.communityAssetsModel: d.regularAssetsModel
+                                   assetClicked(selectedModel.get(delegateIndex))
                                } else if (mouse.button === Qt.RightButton) {
                                    Global.openMenu(tokenContextMenu, this,
                                                    {symbol: modelData.symbol, assetName: modelData.name, assetImage: symbolUrl,
@@ -206,8 +207,10 @@ StatusScrollView {
                 onSwitchToCommunityRequested: root.switchToCommunityRequested(communityId)
                 Component.onCompleted: {
                     // on Model reset if the detail view is shown, update the data in background.
-                    if(root.assetDetailsLaunched && index === d.selectedAssetIndex)
-                        assetClicked(modelData)
+                    if(root.assetDetailsLaunched && delegateIndex === d.selectedAssetIndex) {
+                        let selectedModel = !!modelData.communityId ? d.communityAssetsModel: d.regularAssetsModel
+                        assetClicked(selectedModel.get(delegateIndex))
+                    }
                 }
             }
         }
