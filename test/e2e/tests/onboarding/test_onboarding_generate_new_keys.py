@@ -30,10 +30,9 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @pytest.mark.case(703421)
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
-    pytest.param('Test-User _1', '*P@ssw0rd*', None, None, None),
+    pytest.param('Test-User _1', '*P@ssw0rd*', None, None, None, marks=pytest.mark.critical),
     pytest.param('Test-User', '*P@ssw0rd*', 'tv_signal.png', 5, shift_image(0, 0, 0, 0)),
-    pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', 5, shift_image(0, 1000, 1000, 0),
-                 marks=pytest.mark.smoke),
+    pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', 5, shift_image(0, 1000, 1000, 0))
 ])
 @pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/218")
 def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
@@ -81,8 +80,8 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
-            BetaConsentPopup().confirm()
+        # if not configs.system.TEST_MODE:
+        #     BetaConsentPopup().confirm()
 
     with step('Open User Canvas and verify user info'):
 

@@ -11,6 +11,7 @@ from gui.main_window import MainWindow
 
 pytestmark = marks
 
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
 @pytest.mark.parametrize('params', [constants.community_params])
