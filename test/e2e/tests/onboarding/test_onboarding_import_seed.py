@@ -61,6 +61,4 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
         user_canvas = main_window.left_panel.open_user_canvas()
         profile_popup = user_canvas.open_profile_popup()
         assert profile_popup.user_name == user_account.name
-
-    aut.restart()
-    main_window.authorize_user(user_account)
+        
