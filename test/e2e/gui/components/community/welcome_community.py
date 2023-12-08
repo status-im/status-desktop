@@ -17,6 +17,8 @@ class WelcomeCommunityPopup(BasePopup):
         self._intro_text_label = TextLabel('intro_StatusBaseText')
         self._select_address_button = Button('select_addresses_to_share_StatusFlatButton')
         self._join_button = Button('join_StatusButton')
+        self._authenticate_button = Button('welcome_authenticate_StatusButton')
+        self._share_address_button = Button('share_your_addresses_to_join_StatusButton')
 
     @property
     @allure.step('Get title')
@@ -36,4 +38,8 @@ class WelcomeCommunityPopup(BasePopup):
     @allure.step('Join community')
     def join(self) -> AuthenticatePopup:
         self._join_button.click()
+        self._authenticate_button.click()
         return AuthenticatePopup().wait_until_appears()
+
+    def share_address(self):
+        self._share_address_button.click()

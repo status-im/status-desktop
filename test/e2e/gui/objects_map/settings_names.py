@@ -20,9 +20,8 @@ settingsContentBaseScrollView_listItem_StatusListItem = {"container": mainWindow
 
 # Templates to generate Real Name in test
 settings_iconOrImage_StatusSmartIdenticon = {"id": "iconOrImage", "type": "StatusSmartIdenticon", "unnamed": 1, "visible": True}
-settings_Name_StatusTextWithLoadingState = {"type": "StatusTextWithLoadingState", "unnamed": 1, "visible": True}
+settings_StatusTextWithLoadingState = {"type": "StatusTextWithLoadingState", "unnamed": 1, "visible": True}
 settings_statusListItemSubTitle = {"objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
-settings_member_StatusTextWithLoadingState = {"text": "1 member", "type": "StatusTextWithLoadingState", "unnamed": 1, "visible": True}
 settings_StatusFlatButton = {"type": "StatusFlatButton", "unnamed": 1, "visible": True}
 
 # Messaging View

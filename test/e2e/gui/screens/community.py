@@ -46,21 +46,24 @@ class CommunityScreen(QObject):
 
     @allure.step('Verify channel')
     def verify_channel(
-            self, name: str, description: str, icon_in_list: str, icon_in_toolbar: str, icon_in_chat: str):
+            self, name: str, description: str, emoji, color: str):
         with step('Channel is correct in channels list'):
             channel = self.left_panel.get_channel_parameters(name)
-            image.compare(channel.image, icon_in_list, timout_sec=5)
             assert channel.name == name
             assert channel.selected
 
         with step('Channel is correct in community toolbar'):
             assert self.tool_bar.channel_name == name
             assert self.tool_bar.channel_description == description
-            image.compare(self.tool_bar.channel_icon, icon_in_toolbar, timout_sec=5)
+            if emoji is not None:
+                assert self.tool_bar.channel_emoji == emoji
+            assert self.tool_bar.channel_color == color
 
         with step('Verify channel in chat'):
             assert self.chat.channel_name == name
-            image.compare(self.chat.channel_icon, icon_in_chat, timout_sec=5)
+            if emoji is not None:
+                assert self.chat.channel_emoji == emoji
+            assert self.chat.channel_color == color
 
     @allure.step('Create category')
     def create_category(self, name: str, general_checkbox: bool):
@@ -88,11 +91,18 @@ class ToolBar(QObject):
         self._channel_name = TextLabel('statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip')
         self._channel_description = TextLabel('statusToolBar_TruncatedTextWithTooltip')
         self._delete_channel_context_item = QObject('delete_Channel_StatusMenuItem')
+        self._channel_header = QObject('statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton')
+
 
     @property
-    @allure.step('Get channel icon')
-    def channel_icon(self) -> Image:
-        return self._channel_icon.image
+    @allure.step('Get channel emoji')
+    def channel_emoji(self):
+        return self._channel_header.object.asset.emoji
+
+    @property
+    @allure.step('Get channel color')
+    def channel_color(self) -> str:
+        return str(self._channel_header.object.asset.color.name).lower()
 
     @property
     @allure.step('Get channel name')
@@ -197,7 +207,6 @@ class LeftPanel(QObject):
             self._channel_icon_template.real_name['container'] = container
             channels_list.append(UserChannel(
                 str(obj.objectName),
-                self._channel_icon_template.image,
                 obj.item.selected
             ))
         return channels_list
@@ -281,11 +290,18 @@ class Chat(QObject):
         self._channel_icon = QObject('chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon')
         self._channel_name_label = TextLabel('chatMessageViewDelegate_channelIdentifierNameText_StyledText')
         self._channel_welcome_label = TextLabel('chatMessageViewDelegate_Welcome')
+        self._channel_identifier_view = QObject('chatMessageViewDelegate_ChannelIdentifierView')
+
 
     @property
-    @allure.step('Get channel icon')
-    def channel_icon(self) -> Image:
-        return self._channel_icon.image
+    @allure.step('Get channel emoji')
+    def channel_emoji(self):
+        return self._channel_identifier_view.object.chatEmoji
+
+    @property
+    @allure.step('Get channel color')
+    def channel_color(self) -> str:
+        return str(self._channel_identifier_view.object.chatColor).lower()
 
     @property
     @allure.step('Get channel name')

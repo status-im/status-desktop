@@ -117,11 +117,14 @@ send_1_invite_StatusButton = {"checkable": False, "container": statusDesktop_mai
 o_StatusMemberListItem_2 = {"container": communityProfilePopupInviteMessagePanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
 
 # Welcome community
+o_ColumnLayout = {"container": statusDesktop_mainWindow_overlay, "type": "ColumnLayout", "unnamed": 1, "visible": True}
 headerTitle_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
 image_StatusImage = {"container": statusDesktop_mainWindow_overlay, "id": "image", "type": "StatusImage", "unnamed": 1, "visible": True}
-intro_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Intro", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+intro_StatusBaseText = {"container": o_ColumnLayout, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 select_addresses_to_share_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusFlatButton", "unnamed": 1, "visible": True}
 join_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+welcome_authenticate_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "text": "Authenticate", "unnamed": 1, "visible": True}
+share_your_addresses_to_join_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 
 """ Settings """
 

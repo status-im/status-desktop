@@ -22,8 +22,7 @@ channel_identicon_StatusSmartIdenticon = {"container": None, "id": "identicon", 
 channel_name_StatusBaseText = {"container": None, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_createChannelOrCategoryBtn_StatusBaseText = {"container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "createChannelOrCategoryBtn", "type": "StatusBaseText", "visible": True}
 create_channel_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "createCommunityChannelBtn", "type": "StatusMenuItem", "visible": True}
-mainWindow_Join_Community_StatusButton = {"checkable": False, "container": mainWindow_communityColumnView_CommunityColumnView, "id": "joinCommunityButton", "text": "Join Community", "type": "StatusButton", "unnamed": 1, "visible": True}
-
+mainWindow_Join_Community_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "type": "StatusButton", "unnamed": 1, "visible": True}
 add_categories_StatusFlatButton = {"checkable": False, "container": mainWindow_scrollView_StatusScrollView, "id": "manageBtn", "type": "StatusFlatButton", "visible": True}
 categoryItem_StatusChatListCategoryItem = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "categoryItem", "type": "StatusChatListCategoryItem", "visible": True}
 delete_Category_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteCategoryMenuItem", "type": "StatusMenuItem", "visible": True}
@@ -40,12 +39,15 @@ edit_Channel_StatusMenuItem = {"checkable": False, "container": statusDesktop_ma
 statusToolBar_statusSmartIdenticonLetter_StatusLetterIdenticon = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "statusSmartIdenticonLetter", "type": "StatusLetterIdenticon", "visible": True}
 statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "statusChatInfoButtonNameText", "type": "TruncatedTextWithTooltip", "visible": True}
 statusToolBar_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "type": "TruncatedTextWithTooltip", "unnamed": 1, "visible": True}
+statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton = {"checkable": False, "container": mainWindow_statusToolBar_StatusToolBar, "objectName": "chatInfoBtnInHeader", "type": "StatusChatInfoButton",  "visible": True}
 
 # Chat
+mainWindow_ChatMessagesView = {"container": mainWindow_StatusWindow, "type": "ChatMessagesView", "unnamed": 1, "visible": True}
 mainWindow_ChatColumnView = {"container": mainWindow_communityLoader_Loader, "type": "ChatColumnView", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_channelIdentifierNameText_StyledText = {"container": mainWindow_ChatColumnView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
 chatMessageViewDelegate_Welcome = {"container": mainWindow_ChatColumnView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
-chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon = {"container": mainWindow_ChatColumnView, "objectName": "channelIdentifierSmartIdenticon", "type": "StatusSmartIdenticon", "visible": True}
+chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon = {"container": mainWindow_ChatMessagesView, "objectName": "channelIdentifierSmartIdenticon", "type": "StatusSmartIdenticon", "visible": True}
+chatMessageViewDelegate_ChannelIdentifierView = {"container": mainWindow_ChatMessagesView, "type": "ChannelIdentifierView", "unnamed": 1, "visible": True}
 
 # Community Settings
 mainWindow_communitySettingsBackToCommunityButton_StatusBaseText = {"container": mainWindow_communityLoader_Loader, "objectName": "communitySettingsBackToCommunityButton", "type": "StatusBaseText", "visible": True}

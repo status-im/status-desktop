@@ -33,7 +33,7 @@ community_params = {
 }
 
 UserCommunityInfo = namedtuple('CommunityInfo', ['name', 'description', 'members', 'image'])
-UserChannel = namedtuple('Channel', ['name', 'image', 'selected'])
+UserChannel = namedtuple('Channel', ['name', 'selected'])
 
 account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
 wallet_account_list_item = namedtuple('WalletAccountListItem', ['name', 'icon_color', 'icon_emoji', 'object'])

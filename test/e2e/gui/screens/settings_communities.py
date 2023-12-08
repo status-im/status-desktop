@@ -22,9 +22,8 @@ class CommunitiesSettingsView(QObject):
         super().__init__('mainWindow_CommunitiesView')
         self._community_item = QObject('settingsContentBaseScrollView_listItem_StatusListItem')
         self._community_template_image = QObject('settings_iconOrImage_StatusSmartIdenticon')
-        self._community_template_name = TextLabel('settings_Name_StatusTextWithLoadingState')
+        self._community_template_name_members = QObject('settings_StatusTextWithLoadingState')
         self._community_template_description = TextLabel('settings_statusListItemSubTitle')
-        self._community_template_members = TextLabel('settings_member_StatusTextWithLoadingState')
         self._community_template_button = Button('settings_StatusFlatButton')
 
     @property
@@ -34,17 +33,16 @@ class CommunitiesSettingsView(QObject):
         for obj in driver.findAllObjects(self._community_item.real_name):
             container = driver.objectMap.realName(obj)
             self._community_template_image.real_name['container'] = container
-            self._community_template_name.real_name['container'] = container
+            self._community_template_name_members.real_name['container'] = container
             self._community_template_description.real_name['container'] = container
-            self._community_template_members.real_name['container'] = container
 
-            name = self._community_template_name.text
             description = self._community_template_description.text
-            try:
-                members = self._community_template_members.text
-            except LookupError as err:
-                LOG.info(err)
-                members = 0
+            name_members_labels = []
+            for item in driver.findAllObjects(self._community_template_name_members.real_name):
+                name_members_labels.append(item)
+            sorted(name_members_labels, key=lambda item: item.y)
+            name = str(name_members_labels[0].text)
+            members = str(name_members_labels[1].text)
             image = self._community_template_image.image
 
             _communities.append(UserCommunityInfo(name, description, members, image))

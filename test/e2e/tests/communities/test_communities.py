@@ -10,7 +10,6 @@ import constants
 import driver
 from constants import UserAccount
 from gui.main_window import MainWindow
-from scripts.tools import image
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
@@ -23,17 +22,10 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         community_screen = create_community_form.create(params)
 
     with step('Verify community parameters in community overview'):
-        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
-        # with step('Icon is correct'):
-        # community_icon = main_screen.left_panel.get_community_logo(params['name'])
-        # image.compare(community_icon, 'button_logo.png', timout_sec=5)
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
         with step('Members count is correct'):
             assert '1' in community_screen.left_panel.members
-        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
-        # with step('Logo is correct'):
-        # image.compare(community_screen.left_panel.logo, 'logo.png')
 
     with step('Verify community parameters in community settings view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -53,8 +45,6 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         assert community.name == params['name']
         assert community.description == params['description']
         # assert '1' in community.members TODO: Test on linux, members label is not visible
-        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
-        # image.compare(community.image, 'logo_in_settings.png')
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703056', 'Edit community separately')
@@ -65,9 +55,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         'description': f'Description_{datetime.now():%H%M%S}',
         'color': '#ff7d46',
     },
-
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_edit_community_separately(main_screen, community_params):
     main_screen.create_community(constants.community_params)
 
@@ -108,7 +96,6 @@ def test_edit_community_separately(main_screen, community_params):
         'outro': 'Updated Outro'
     }
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_edit_community(main_screen: MainWindow, params):
     main_screen.create_community(constants.community_params)
 
@@ -127,15 +114,8 @@ def test_edit_community(main_screen: MainWindow, params):
 
     with step('Verify community parameters in community screen'):
         community_setting.left_panel.back_to_community()
-        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
-        # with step('Icon is correct'):
-        #     community_icon = main_screen.left_panel.get_community_logo(params['name'])
-        # image.compare(community_icon, 'button_updated_logo.png')
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
-        # TODO: change image comparison https://github.com/status-im/desktop-qa-automation/issues/263
-        # with step('Logo is correct'):
-        # image.compare(community_screen.left_panel.logo, 'updated_logo.png')
 
     with step('Verify community parameters in community settings screen'):
         settings_screen = main_screen.left_panel.open_settings()
@@ -143,8 +123,8 @@ def test_edit_community(main_screen: MainWindow, params):
         community_info = community_settings.communities[0]
         assert community_info.name == params['name']
         assert community_info.description == params['description']
-        assert '1' in community_info.members
-        # image.compare(community_info.image, 'logo_in_settings_updated.png')
+        # TODO after https://github.com/status-im/status-desktop/issues/12967 will be fixed
+        # assert '1' in community_info.members
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
@@ -152,7 +132,6 @@ def test_edit_community(main_screen: MainWindow, params):
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/167")
 def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
@@ -214,6 +193,7 @@ def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_
             assert community_params['name'] in welcome_popup.title
             assert community_params['intro'] == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
+            welcome_popup.share_address()
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
