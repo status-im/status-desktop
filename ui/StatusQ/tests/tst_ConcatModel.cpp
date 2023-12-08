@@ -1,3 +1,4 @@
+#include <QIdentityProxyModel>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -16,6 +17,16 @@
 #include <StatusQ/concatmodel.h>
 
 namespace {
+
+// Workaround for a bug in QIdentityProxyModel (returning roleNames improperly)
+class IdentityModel : public QIdentityProxyModel {
+public:
+    QHash<int,QByteArray>  roleNames() const override {
+        if (sourceModel())
+            return sourceModel()->roleNames();
+        return {};
+    }
+};
 
 class ListModelWrapper {
 
@@ -103,7 +114,7 @@ public:
     }
 
     void clear() {
-        runExpression(QString("append()"));
+        runExpression(QString("clear()"));
     }
 
     void remove(int index, int count = 1) {
@@ -1609,9 +1620,285 @@ private slots:
         QCOMPARE(layoutChangedSpy.count(), 1);
     }
 
-    void layoutResetTest()
+    void modelResetWhenEmptyTest()
     {
-        // TODO
+        QQmlEngine engine;
+        ConcatModel model;
+
+        ListModelWrapper sourceModel1(engine);
+        ListModelWrapper sourceModel2(engine);
+        ListModelWrapper sourceModel3(engine);
+        ListModelWrapper sourceModel4(engine);
+        ListModelWrapper sourceModel5(engine, QJsonArray {
+            QJsonObject {{ "key", 1}, { "color", "red" }},
+            QJsonObject {{ "key", 2}, { "color", "blue" }}
+        });
+
+        QQmlListProperty<SourceModel> sources = model.sources();
+
+        SourceModel source1, source2, source3;
+
+        IdentityModel proxy1, proxy2, proxy3;
+
+        proxy1.setSourceModel(sourceModel1.model());
+        proxy2.setSourceModel(sourceModel2.model());
+        proxy3.setSourceModel(sourceModel3.model());
+
+        source1.setModel(&proxy1);
+        source2.setModel(&proxy2);
+        source3.setModel(&proxy3);
+
+        sources.append(&sources, &source1);
+        sources.append(&sources, &source2);
+        sources.append(&sources, &source3);
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+        QCOMPARE(model.index(0, 0).isValid(), false);
+
+        model.componentComplete();
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+
+        {
+            QSignalSpy modelAboutToBeResetSpy(&model, &ConcatModel::modelAboutToBeReset);
+            QSignalSpy modelResetSpy(&model, &ConcatModel::modelReset);
+
+            QSignalSpy rowsAboutToBeInsertedSpy(&model, &ConcatModel::rowsAboutToBeInserted);
+            QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
+
+            proxy2.setSourceModel(sourceModel4.model());
+
+            QCOMPARE(modelAboutToBeResetSpy.count(), 0);
+            QCOMPARE(modelResetSpy.count(), 0);
+
+            QCOMPARE(rowsAboutToBeInsertedSpy.count(), 0);
+            QCOMPARE(rowsInsertedSpy.count(), 0);
+
+            QCOMPARE(model.rowCount(), 0);
+            QCOMPARE(model.roleNames(), {});
+        }
+        {
+            QSignalSpy modelAboutToBeResetSpy(&model, &ConcatModel::modelAboutToBeReset);
+            QSignalSpy modelResetSpy(&model, &ConcatModel::modelReset);
+
+            QSignalSpy rowsAboutToBeInsertedSpy(&model, &ConcatModel::rowsAboutToBeInserted);
+            QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
+
+            // checking validity inside rowsAboutToBeInserted signal
+            {
+                QObject context;
+                connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
+                        [&model] { QCOMPARE(model.rowCount(), 0); });
+
+                proxy2.setSourceModel(sourceModel5.model());
+            }
+
+            QCOMPARE(modelAboutToBeResetSpy.count(), 0);
+            QCOMPARE(modelResetSpy.count(), 0);
+
+            QCOMPARE(rowsAboutToBeInsertedSpy.count(), 1);
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(0), QModelIndex{});
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(1), 0);
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(2), 1);
+
+            QCOMPARE(rowsInsertedSpy.count(), 1);
+            QCOMPARE(rowsInsertedSpy.at(0).at(0), QModelIndex{});
+            QCOMPARE(rowsInsertedSpy.at(0).at(1), 0);
+            QCOMPARE(rowsInsertedSpy.at(0).at(2), 1);
+
+            auto roles = model.roleNames();
+
+            QCOMPARE(model.rowCount(), 2);
+            QCOMPARE(roles.count(), 3);
+
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), "red");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "color")), "blue");
+        }
+    }
+
+    void modelResetWhenNotEmptyTest()
+    {
+        QQmlEngine engine;
+        ConcatModel model;
+
+        ListModelWrapper sourceModel1(engine, QJsonArray {
+            QJsonObject {{ "key", 1}, { "color", "red" }},
+            QJsonObject {{ "key", 2}, { "color", "blue" }}
+        });
+        ListModelWrapper sourceModel2(engine, QJsonArray {
+            QJsonObject {{ "key", 3}},
+            QJsonObject {{ "key", 4}},
+            QJsonObject {{ "key", 5}}
+        });
+        ListModelWrapper sourceModel3(engine);
+
+        ListModelWrapper sourceModel4(engine);
+        ListModelWrapper sourceModel5(engine, QJsonArray {
+            QJsonObject {{ "color", "red" }, { "name", "a" }, { "key", 11}},
+            QJsonObject {{ "color", "blue" }, { "name", "b" }, { "key", 12}},
+            QJsonObject {{ "color", "pink" }, { "name", "c" }, { "key", 13}}
+        });
+
+        QQmlListProperty<SourceModel> sources = model.sources();
+
+        SourceModel source1, source2, source3;
+
+        IdentityModel proxy1, proxy2, proxy3;
+
+        proxy1.setSourceModel(sourceModel1.model());
+        proxy2.setSourceModel(sourceModel2.model());
+        proxy3.setSourceModel(sourceModel3.model());
+
+        source1.setModel(&proxy1);
+        source2.setModel(&proxy2);
+        source3.setModel(&proxy3);
+
+        sources.append(&sources, &source1);
+        sources.append(&sources, &source2);
+        sources.append(&sources, &source3);
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames(), {});
+        QCOMPARE(model.index(0, 0).isValid(), false);
+
+        model.componentComplete();
+
+        auto roles = model.roleNames();
+
+        QCOMPARE(model.rowCount(), 5);
+        QCOMPARE(roles.count(), 3);
+
+        // reset to empty model
+        {
+            QSignalSpy modelAboutToBeResetSpy(&model, &ConcatModel::modelAboutToBeReset);
+            QSignalSpy modelResetSpy(&model, &ConcatModel::modelReset);
+
+            QSignalSpy rowsAboutToBeInsertedSpy(&model, &ConcatModel::rowsAboutToBeInserted);
+            QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
+
+            QSignalSpy rowsAboutToBeRemovedSpy(&model, &ConcatModel::rowsAboutToBeRemoved);
+            QSignalSpy rowsRemovedSpy(&model, &ConcatModel::rowsRemoved);
+
+            // checking validity inside rowsAboutToBeRemoved signal
+            {
+                QObject context;
+                connect(&model, &ConcatModel::rowsAboutToBeRemoved, &context,
+                        [this, &model, &roles] {
+                    QCOMPARE(model.rowCount(), 5);
+
+                    QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "key")), 4);
+                    QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "color")), {});
+                });
+
+                proxy2.setSourceModel(sourceModel4.model());
+            }
+
+            QCOMPARE(modelAboutToBeResetSpy.count(), 0);
+            QCOMPARE(modelResetSpy.count(), 0);
+
+            QCOMPARE(rowsAboutToBeInsertedSpy.count(), 0);
+            QCOMPARE(rowsInsertedSpy.count(), 0);
+
+            QCOMPARE(rowsAboutToBeRemovedSpy.count(), 1);
+            QCOMPARE(rowsRemovedSpy.count(), 1);
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(0), QModelIndex{});
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(1), 2);
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(2), 4);
+
+            QCOMPARE(model.rowCount(), 2);
+
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), "red");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "color")), "blue");
+
+            // insert some data to check if roles are re-initialized properly
+            sourceModel4.append(QJsonArray {
+                QJsonObject {{ "color", "purple"}, { "key", 3} },
+                QJsonObject {{ "color", "green" }, { "key", 4}}
+            });
+
+            QCOMPARE(model.rowCount(), 4);
+
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "key")), 3);
+            QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "key")), 4);
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), "red");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "color")), "blue");
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "color")), "purple");
+            QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "color")), "green");
+
+            sourceModel4.clear();
+        }
+        // reset to not empty model
+        {
+            QSignalSpy modelAboutToBeResetSpy(&model, &ConcatModel::modelAboutToBeReset);
+            QSignalSpy modelResetSpy(&model, &ConcatModel::modelReset);
+
+            QSignalSpy rowsAboutToBeRemovedSpy(&model, &ConcatModel::rowsAboutToBeRemoved);
+            QSignalSpy rowsRemovedSpy(&model, &ConcatModel::rowsRemoved);
+
+            QSignalSpy rowsAboutToBeInsertedSpy(&model, &ConcatModel::rowsAboutToBeInserted);
+            QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
+
+            // checking validity inside rowsAboutToBeRemoved, rowsRemoved and
+            // rowsAboutToBeInserted signals
+            {
+                QObject context;
+                connect(&model, &ConcatModel::rowsAboutToBeRemoved, &context,
+                        [this, &model, &roles] {
+                    QCOMPARE(model.rowCount(), 2);
+
+                    QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
+                    QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
+                    QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), "red");
+                    QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "color")), "blue");
+                });
+
+                connect(&model, &ConcatModel::rowsRemoved, &context,
+                        [this, &model, &roles] {
+                    QCOMPARE(model.rowCount(), 0);
+                });
+
+                connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
+                        [this, &model, &roles] {
+                    QCOMPARE(model.rowCount(), 0);
+                });
+
+                proxy1.setSourceModel(sourceModel5.model());
+            }
+
+            QCOMPARE(modelAboutToBeResetSpy.count(), 0);
+            QCOMPARE(modelResetSpy.count(), 0);
+
+            QCOMPARE(rowsAboutToBeRemovedSpy.count(), 1);
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(0), QModelIndex{});
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(1), 0);
+            QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(2), 1);
+
+            QCOMPARE(rowsRemovedSpy.count(), 1);
+
+            QCOMPARE(rowsAboutToBeInsertedSpy.count(), 1);
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(0), QModelIndex{});
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(1), 0);
+            QCOMPARE(rowsAboutToBeInsertedSpy.at(0).at(2), 2);
+
+            QCOMPARE(rowsInsertedSpy.count(), 1);
+
+            QCOMPARE(model.rowCount(), 3);
+
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 11);
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 12);
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "key")), 13);
+            QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "color")), "red");
+            QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "color")), "blue");
+            QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "color")), "pink");
+        }
     }
 
     void sameModelUsedMultipleTimesTest()
