@@ -77,7 +77,7 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
 
         assert driver.waitFor(
             lambda: float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
-                          .replace(",", "")) > 0, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
+                          .replace(",", "")) > 0, 10000), \
             f"Balance after adding watched address can't be 0"
 
     with step('Right click the watched address and select Exclude from total balance option'):
