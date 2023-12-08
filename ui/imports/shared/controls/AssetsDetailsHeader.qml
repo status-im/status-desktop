@@ -76,6 +76,8 @@ Control {
                 loading: root.isLoading
             }
         }
+        /* TODO :: Issue with not being able to see correct balnces after switching assets will be fixed under
+        https://github.com/status-im/status-desktop/issues/12912 */
         Row {
             spacing: Style.current.smallPadding
             anchors.left: parent.left
