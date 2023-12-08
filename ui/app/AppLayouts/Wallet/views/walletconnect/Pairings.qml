@@ -11,6 +11,8 @@ ListView {
 
     signal disconnect(string topic)
 
+    spacing: 32
+
     delegate: Item {
         implicitWidth: delegateLayout.implicitWidth
         implicitHeight: delegateLayout.implicitHeight
@@ -19,10 +21,16 @@ ListView {
             id: delegateLayout
             width: root.width
 
+            StatusIcon {
+                icon: model.peerMetadata.icons.length > 0? model.peerMetadata.icons[0] : ""
+                visible: !!icon
+            }
+
             StatusBaseText {
-                text: `${SQUtils.Utils.elideText(model.topic, 6, 6)}\n${new Date(model.expiry * 1000).toLocaleString()}`
+                text: `${model.peerMetadata.name}\n${model.peerMetadata.url}\nTopic: ${SQUtils.Utils.elideText(model.topic, 6, 6)}\nExpire: ${new Date(model.expiry * 1000).toLocaleString()}`
                 color: model.active ? "green" : "orange"
             }
+
             StatusButton {
                 text: "Disconnect"
 

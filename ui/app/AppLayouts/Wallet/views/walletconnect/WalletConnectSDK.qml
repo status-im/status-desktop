@@ -8,12 +8,15 @@ import QtWebChannel 1.15
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 
+import utils 1.0
+
 Item {
     id: root
 
     required property string projectId
     readonly property alias sdkReady: d.sdkReady
     readonly property alias pairingsModel: d.pairingsModel
+    readonly property alias sessionsModel: d.sessionsModel
     readonly property alias webEngineLoader: loader
 
     property alias active: loader.active
@@ -24,10 +27,10 @@ Item {
 
     signal statusChanged(string message)
     signal sdkInit(bool success, var result)
-    signal pairSessionProposal(var sessionProposal)
-    signal pairSessionProposalExpired()
-    signal pairAcceptedResult(var sessionProposal, bool success, var sessionType)
-    signal pairRejectedResult(bool success, var result)
+    signal sessionProposal(var sessionProposal)
+    signal sessionProposalExpired()
+    signal approveSessionResult(var sessionProposal, string error)
+    signal rejectSessionResult(string error)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
 
@@ -41,16 +44,20 @@ Item {
         wcCalls.pair(pairLink)
     }
 
-    function disconnectPairing(topic) {
-        wcCalls.disconnectPairing(topic)
+    function disconnectTopic(topic) {
+        wcCalls.disconnectTopic(topic)
     }
 
-    function approvePairSession(sessionProposal, supportedNamespaces) {
-        wcCalls.approvePairSession(sessionProposal, supportedNamespaces)
+    function ping(topic) {
+        wcCalls.ping(topic)
     }
 
-    function rejectPairSession(id) {
-        wcCalls.rejectPairSession(id)
+    function approveSession(sessionProposal, supportedNamespaces) {
+        wcCalls.approveSession(sessionProposal, supportedNamespaces)
+    }
+
+    function rejectSession(id) {
+        wcCalls.rejectSession(id)
     }
 
     function acceptSessionRequest(topic, id, signature) {
@@ -82,6 +89,7 @@ Item {
 
         property bool sdkReady: false
         property ListModel pairingsModel: pairings
+        property ListModel sessionsModel: sessions
 
         property WebEngineView engine: loader.instance
 
@@ -89,6 +97,7 @@ Item {
             if (sdkReady)
             {
                 d.resetPairingsModel()
+                d.resetSessionsModel()
             }
         }
 
@@ -96,18 +105,33 @@ Item {
         {
             pairings.clear();
 
-            wcCalls.getPairings((pairList) => {
-                for (let i = 0; i < pairList.length; i++) {
-                    pairings.append({
-                        active: pairList[i].active,
-                        topic: pairList[i].topic,
-                        expiry: pairList[i].expiry
-                    });
-                    if (entryCallback) {
-                        entryCallback(pairList[i])
-                    }
-                }
-            })
+            // We have to postpone `getPairings` call, cause otherwise:
+            // - the last made pairing will always have `active` prop set to false
+            // - expiration date won't be the correct one, but one used in session proposal
+            // - the list of pairings will display succesfully made pairing as inactive
+            Backpressure.debounce(this, 250, () => {
+                                      wcCalls.getPairings((pairList) => {
+                                                              for (let i = 0; i < pairList.length; i++) {
+                                                                  pairings.append(pairList[i]);
+
+                                                                  if (entryCallback) {
+                                                                      entryCallback(pairList[i])
+                                                                  }
+                                                              }
+                                                          });
+                                  })();
+        }
+
+        function resetSessionsModel() {
+            sessions.clear();
+
+            Backpressure.debounce(this, 250, () => {
+                                      wcCalls.getActiveSessions((sessionList) => {
+                                                                    for (var topic of Object.keys(sessionList)) {
+                                                                        sessions.append(sessionList[topic]);
+                                                                    }
+                                                                });
+                                  })();
         }
 
         function getPairingTopicFromPairingUrl(url)
@@ -116,11 +140,13 @@ Item {
             {
                 return null;
             }
+
             const atIndex = url.indexOf("@");
             if (atIndex < 0)
             {
                 return null;
             }
+
             return url.slice(3, atIndex);
         }
     }
@@ -147,17 +173,19 @@ Item {
 
             d.engine.runJavaScript(`wc.getPairings()`, function(result) {
 
-                console.debug(`WC WalletConnectSDK.wcCall.getPairings; response: ${JSON.stringify(result, null, 2)}`)
+                if (callback && result) {
+                    callback(result)
+                }
+            })
+        }
 
-                if (result)
-                {
-                    if (!!result.error) {
-                        console.error("getPairings: ", result.error)
-                        return
-                    }
+        function getActiveSessions(callback) {
+            console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions;`)
 
-                    callback(result.result)
-                    return
+            d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
+
+                if (callback && result) {
+                    callback(result)
                 }
             })
         }
@@ -165,75 +193,46 @@ Item {
         function pair(pairLink) {
             console.debug(`WC WalletConnectSDK.wcCall.pair; pairLink: ${pairLink}`)
 
-            wcCalls.getPairings((allPairings) => {
-
-                                    console.debug(`WC WalletConnectSDK.wcCall.pair; response: ${JSON.stringify(allPairings, null, 2)}`)
-
-                                    let pairingTopic = d.getPairingTopicFromPairingUrl(pairLink);
-
-                                    // Find pairing by topic
-                                    const pairing = allPairings.find((p) => p.topic === pairingTopic);
-                                    if (pairing)
-                                    {
-                                        if (pairing.active) {
-                                            console.warn("pair: already paired")
-                                            return
-                                        }
-                                    }
-
-                                    d.engine.runJavaScript(`wc.pair("${pairLink}")`, function(result) {
-                                        if (result && !!result.error)
-                                        {
-                                            console.error("pair: ", result.error)
-                                        }
+            d.engine.runJavaScript(`
+                                    wc.pair("${pairLink}")
+                                    .then((value) => {
+                                        wc.statusObject.onPairResponse("")
                                     })
-                                }
-                                )
+                                    .catch((e) => {
+                                        wc.statusObject.onPairResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
-        function approvePairSession(sessionProposal, supportedNamespaces) {
-            console.debug(`WC WalletConnectSDK.wcCall.approvePairSession; sessionProposal: ${JSON.stringify(sessionProposal)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
+        function approveSession(sessionProposal, supportedNamespaces) {
+            console.debug(`WC WalletConnectSDK.wcCall.approveSession; sessionProposal: ${JSON.stringify(sessionProposal)}, supportedNamespaces: ${JSON.stringify(supportedNamespaces)}`)
 
-            d.engine.runJavaScript(`wc.approvePairSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})`, function(result) {
-
-                console.debug(`WC WalletConnectSDK.wcCall.approvePairSession; response: ${JSON.stringify(result, null, 2)}`)
-
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("approvePairSession: ", result.error)
-                        root.pairAcceptedResult(sessionProposal, false, result.error)
-                        return
-                    }
-                    // Update the temporary expiry with the one from the pairing
-                    d.resetPairingsModel((pairing) => {
-                        if (pairing.topic === sessionProposal.params.pairingTopic) {
-                            sessionProposal.params.expiry = pairing.expiry
-                            root.pairAcceptedResult(sessionProposal, true, result.error)
-                        }
-                    })
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.approveSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})
+                                    .then((value) => {
+                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, e.message)
+                                    })
+                                   `
+            )
         }
 
-        function rejectPairSession(id) {
-            console.debug(`WC WalletConnectSDK.wcCall.rejectPairSession; id: ${id}`)
+        function rejectSession(id) {
+            console.debug(`WC WalletConnectSDK.wcCall.rejectSession; id: ${id}`)
 
-            d.engine.runJavaScript(`wc.rejectPairSession(${id})`, function(result) {
-
-                console.debug(`WC WalletConnectSDK.wcCall.rejectPairSession; response: ${JSON.stringify(result, null, 2)}`)
-
-                d.resetPairingsModel()
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("rejectPairSession: ", result.error)
-                        root.pairRejectedResult(false, result.error)
-                        return
-                    }
-                    root.pairRejectedResult(true, result.error)
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.rejectSession(${id})
+                                    .then((value) => {
+                                        wc.statusObject.onRejectSessionResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onRejectSessionResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function acceptSessionRequest(topic, id, signature) {
@@ -241,7 +240,7 @@ Item {
 
             d.engine.runJavaScript(`wc.respondSessionRequest("${topic}", ${id}, "${signature}")`, function(result) {
 
-                console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(allPairings, null, 2)}`)
+                console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
 
                 if (result) {
                     if (!!result.error)
@@ -252,7 +251,9 @@ Item {
                     }
                     root.sessionRequestUserAnswerResult(true, result.error)
                 }
+
                 d.resetPairingsModel()
+                d.resetSessionsModel()
             })
         }
 
@@ -263,6 +264,9 @@ Item {
 
                 console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
 
+                d.resetPairingsModel()
+                d.resetSessionsModel()
+
                 if (result) {
                     if (!!result.error)
                     {
@@ -272,24 +276,37 @@ Item {
                     }
                     root.sessionRequestUserAnswerResult(false, result.error)
                 }
-                d.resetPairingsModel()
             })
         }
 
-        function disconnectPairing(topic) {
-            console.debug(`WC WalletConnectSDK.wcCall.disconnectPairing; topic: "${topic}"`)
+        function disconnectTopic(topic) {
+            console.debug(`WC WalletConnectSDK.wcCall.disconnectTopic; topic: "${topic}"`)
 
-            d.engine.runJavaScript(`wc.disconnect("${topic}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.disconnect; response: ${JSON.stringify(result, null, 2)}`)
+            d.engine.runJavaScript(`
+                                    wc.disconnect("${topic}")
+                                    .then((value) => {
+                                        wc.statusObject.onDisconnectResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onDisconnectResponse(e.message)
+                                    })
+                                   `
+            )
+        }
 
-                if (result) {
-                    if (!!result.error) {
-                        console.error("disconnect: ", result.error)
-                        return
-                    }
-                }
-                d.resetPairingsModel()
-            })
+        function ping(topic) {
+            console.debug(`WC WalletConnectSDK.wcCall.ping; topic: "${topic}"`)
+
+            d.engine.runJavaScript(`
+                                    wc.ping("${topic}")
+                                    .then((value) => {
+                                        wc.statusObject.onPingResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onPingResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function auth(authLink) {
@@ -378,68 +395,93 @@ Item {
             }
         }
 
-        function sdkInitialized(error)
-        {
+        function sdkInitialized(error) {
+            console.debug(`WC WalletConnectSDK.sdkInitialized; error: ${error}`)
             d.sdkReady = !error
             root.sdkInit(d.sdkReady, error)
         }
 
-        function onSessionProposal(details)
-        {
-            console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
-            root.pairSessionProposal(details)
+        function onPairResponse(error) {
+            console.debug(`WC WalletConnectSDK.onPairResponse; error: ${error}`)
         }
 
-        function onSessionUpdate(details)
-        {
+        function onPingResponse(error) {
+            console.debug(`WC WalletConnectSDK.onPingResponse; error: ${error}`)
+        }
+
+        function onDisconnectResponse(error) {
+            console.debug(`WC WalletConnectSDK.onDisconnectResponse; error: ${error}`)
+            d.resetPairingsModel()
+            d.resetSessionsModel()
+        }
+
+        function onApproveSessionResponse(sessionProposal, error) {
+            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionProposal: ${JSON.stringify(sessionProposal, null, 2)}, error: ${error}`)
+
+            // Update the temporary expiry with the one from the pairing
+            d.resetPairingsModel((pairing) => {
+                if (pairing.topic === sessionProposal.params.pairingTopic) {
+                    sessionProposal.params.expiry = pairing.expiry
+                    root.approveSessionResult(sessionProposal, error)
+                }
+            })
+            d.resetSessionsModel()
+        }
+
+        function onRejectSessionResponse(error) {
+            console.debug(`WC WalletConnectSDK.onRejectSessionResponse; error: ${error}`)
+            root.rejectSessionResult(error)
+            d.resetPairingsModel()
+            d.resetSessionsModel()
+        }
+
+        function onSessionProposal(details) {
+            console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
+            root.sessionProposal(details)
+        }
+
+        function onSessionUpdate(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionUpdate; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onSessionExtend(details)
-        {
+        function onSessionExtend(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionExtend; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onSessionPing(details)
-        {
+        function onSessionPing(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionPing; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onSessionDelete(details)
-        {
+        function onSessionDelete(details) {
             console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
             root.sessionDelete(details)
+            d.resetPairingsModel()
+            d.resetSessionsModel()
         }
 
-        function onSessionExpire(details)
-        {
+        function onSessionExpire(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionExpire; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onSessionRequest(details)
-        {
+        function onSessionRequest(details) {
             console.debug(`WC WalletConnectSDK.onSessionRequest; details: ${JSON.stringify(details, null, 2)}`)
             root.sessionRequestEvent(details)
         }
 
-        function onSessionRequestSent(details)
-        {
+        function onSessionRequestSent(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionRequestSent; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onSessionEvent(details)
-        {
+        function onSessionEvent(details) {
             console.debug(`WC TODO WalletConnectSDK.onSessionEvent; details: ${JSON.stringify(details, null, 2)}`)
         }
 
-        function onProposalExpire(details)
-        {
+        function onProposalExpire(details) {
             console.debug(`WC WalletConnectSDK.onProposalExpire; details: ${JSON.stringify(details, null, 2)}`)
-            root.pairSessionProposalExpired()
+            root.sessionProposalExpired()
         }
 
-        function onAuthRequest(details)
-        {
+        function onAuthRequest(details) {
             console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details, null, 2)}`)
             root.authRequest(details)
         }
@@ -447,6 +489,10 @@ Item {
 
     ListModel {
         id: pairings
+    }
+
+    ListModel {
+        id: sessions
     }
 
     WebEngineLoader {
