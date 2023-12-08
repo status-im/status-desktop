@@ -60,11 +60,11 @@ class LeftPanel(QObject):
         self._open_settings('8-MainMenuItem')
         try:
             return SyncingSettingsView().wait_until_appears()
-        except AssertionError:
+        except (AssertionError, LookupError) as ec:
             if attempts:
                 return self.open_syncing_settings(attempts - 1)
             else:
-                raise f"Sync settings was not opened"
+                raise ec
 
     @allure.step('Choose sign out and quit in settings')
     def open_sign_out_and_quit(self):

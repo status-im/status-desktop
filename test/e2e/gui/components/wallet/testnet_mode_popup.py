@@ -13,9 +13,14 @@ class TestnetModePopup(BasePopup):
         self._turn_off_button = Button('turn_off_testnet_mode_StatusButton')
 
     @allure.step('Close testnet mode modal with cross button')
-    def close_testnet_modal_with_cross_button(self):
-        self._close_cross_button.click()
-        self.wait_until_hidden()
+    def close_testnet_modal_with_cross_button(self, attempts: int = 2):
+        try:
+            self._close_cross_button.click()
+        except Exception as ec:
+            if attempts:
+                self.close_testnet_modal_with_cross_button(attempts - 1)
+            else:
+                raise ec
 
     @allure.step('Confirm turning on in the testnet modal')
     def turn_on_testnet_mode_in_testnet_modal(self):
