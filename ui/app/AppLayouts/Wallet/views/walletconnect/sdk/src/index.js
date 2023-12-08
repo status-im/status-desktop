@@ -104,51 +104,51 @@ window.wc = {
     },
 
     // TODO: there is a corner case when attempting to pair with a link that is already paired or was rejected won't trigger any event back
-    pair: function (uri) {
-        return {
-            result: window.wc.web3wallet.pair({ uri }),
-            error: ""
-        };
+    pair: async function (uri) {
+        await window.wc.web3wallet.pair({ uri });
     },
 
     getPairings: function () {
-        return {
-            result: window.wc.core.pairing.getPairings(),
-            error: ""
-        };
+        return window.wc.web3wallet.core.pairing.getPairings();
     },
 
-    disconnect: function (topic) {
-        return {
-            result: window.wc.core.pairing.disconnect({ topic: topic }),
-            error: ""
-        };
+    getActiveSessions: function () {
+        return window.wc.web3wallet.getActiveSessions();
     },
 
-    approvePairSession: function (sessionProposal, supportedNamespaces) {
+    disconnect: async function (topic) {
+        await window.wc.web3wallet.disconnectSession({
+                                                        topic,
+                                                        reason: getSdkError('USER_DISCONNECTED')
+                                                     });
+    },
+
+    ping: async function (topic) {
+        await window.wc.web3wallet.engine.signClient.ping({ topic });
+    },
+
+    approveSession: async function (sessionProposal, supportedNamespaces) {
         const { id, params } = sessionProposal;
+
+        const { relays } = params
 
         const approvedNamespaces = buildApprovedNamespaces({
             proposal: params,
             supportedNamespaces: supportedNamespaces,
         });
 
-        return {
-            result: window.wc.web3wallet.approveSession({
+        await window.wc.web3wallet.approveSession({
                 id,
+                relayProtocol: relays[0].protocol,
                 namespaces: approvedNamespaces,
-            }),
-            error: ""
-        };
+            });
     },
-    rejectPairSession: function (id) {
-        return {
-            result: window.wc.web3wallet.rejectSession({
-                id: id,
+
+    rejectSession: async function (id) {
+        await window.wc.web3wallet.rejectSession({
+                id,
                 reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
-            }),
-            error: ""
-        };
+            });
     },
 
     auth: function (uri) {

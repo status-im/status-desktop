@@ -80,17 +80,23 @@ QtObject:
       error "Unknown identifier"
 
   # supportedNamespaces is a Namespace as defined in status-go: services/wallet/walletconnect/walletconnect.go
-  proc proposeUserPair*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string) {.signal.}
+  proc respondSessionProposal*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string, error: string) {.signal.}
 
-  proc pairSessionProposal(self: Controller, sessionProposalJson: string) {.slot.} =
-    var res: JsonNode
-    let err = backend_wallet_connect.pair(res, sessionProposalJson)
-    if err.len > 0:
-      error "Failed to pair session"
-      return
-    let sessionProposalJson = if res.hasKey("sessionProposal"): $res["sessionProposal"] else: ""
-    let supportedNamespacesJson = if res.hasKey("supportedNamespaces"): $res["supportedNamespaces"] else: ""
-    self.proposeUserPair(sessionProposalJson, supportedNamespacesJson)
+  proc sessionProposal(self: Controller, sessionProposalJson: string) {.slot.} =
+    var
+      supportedNamespacesJson: string
+      error: string
+    try:
+      var res: JsonNode
+      let err = backend_wallet_connect.pair(res, sessionProposalJson)
+      if err.len > 0:
+        raise newException(CatchableError, err)
+
+      supportedNamespacesJson = if res.hasKey("supportedNamespaces"): $res["supportedNamespaces"] else: ""
+    except Exception as e:
+      error = e.msg
+      error "pairing", msg=error
+    self.respondSessionProposal(sessionProposalJson, supportedNamespacesJson, error)
 
   proc recordSuccessfulPairing(self: Controller, sessionProposalJson: string) {.slot.} =
     if backend_wallet_connect.recordSuccessfulPairing(sessionProposalJson):
