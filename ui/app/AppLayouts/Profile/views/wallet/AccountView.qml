@@ -77,7 +77,7 @@ ColumnLayout {
         StatusButton {
             Layout.alignment: Qt.AlignRight
             objectName: "walletAccountViewEditAccountButton"
-            text: qsTr("Edit account")
+            text: d.watchOnlyAccount ? qsTr("Edit watched address") : qsTr("Edit account")
             icon.name: "edit_pencil"
             onClicked: Global.openPopup(renameAccountModalComponent)
         }
@@ -295,7 +295,7 @@ ColumnLayout {
         Layout.fillWidth: true
         objectName: "deleteAccountButton"
         visible: !!root.account && !root.account.isDefaultAccount
-        text: qsTr("Remove account")
+        text:  d.watchOnlyAccount ? qsTr("Remove watched address") : qsTr("Remove account")
         icon.name: "delete"
         type: StatusBaseButton.Type.Danger
         onClicked: confirmationPopup.open()
