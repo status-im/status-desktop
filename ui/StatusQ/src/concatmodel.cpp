@@ -303,7 +303,7 @@ QVariant ConcatModel::data(const QModelIndex &index, int role) const
             if (model == nullptr)
                 return {};
 
-            auto& mapping = m_rolesMappingToSource.at(i);
+            auto& mapping = m_rolesMappingToSource[i];
             auto it = mapping.find(role);
 
             if (it == mapping.end())
@@ -517,7 +517,7 @@ void ConcatModel::initRolesMapping()
     m_rolesMappingInitializationFlags.resize(m_sources.size(), false);
 
     for (auto i = 0; i < m_sources.size(); ++i) {
-        auto sourceModelWrapper = m_sources.at(i);
+        auto sourceModelWrapper = m_sources[i];
         auto sourceModel = sourceModelWrapper->model();
 
         if (sourceModel == nullptr)
@@ -530,7 +530,7 @@ void ConcatModel::initRolesMapping()
 void ConcatModel::initAllModelsSlots()
 {
     for (auto sourceIndex = 0; sourceIndex < m_sources.size(); ++sourceIndex) {
-        auto sourceModelWrapper = m_sources.at(sourceIndex);
+        auto sourceModelWrapper = m_sources[sourceIndex];
         auto sourceModel = sourceModelWrapper->model();
 
         if (sourceModel)
@@ -556,7 +556,7 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
             initRoles();
             initRolesMapping();
             m_initialized = true;
-        } else if (!m_rolesMappingInitializationFlags.at(index)) {
+        } else if (!m_rolesMappingInitializationFlags[index]) {
             initRolesMapping(index, model);
         }
 
@@ -603,17 +603,54 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
         emit this->layoutChanged();
     });
 
-    connect(model, &QAbstractItemModel::modelAboutToBeReset, this, [this]
+    connect(model, &QAbstractItemModel::modelAboutToBeReset, this, [this, index]
     {
-        this->beginResetModel();
+        if (!m_initialized)
+            return;
+
+        auto currentCount = m_rowCounts[index];
+
+        if (currentCount) {
+            auto prefix = this->countPrefix(index);
+            this->beginRemoveRows({}, prefix, prefix + currentCount - 1);
+        }
     });
 
     connect(model, &QAbstractItemModel::modelReset, this, [this, model, index]
     {
-        m_rowCounts[index] = model->rowCount();
-        m_rolesMappingInitializationFlags[index] = false;
+        auto count = model->rowCount();
 
-        this->endResetModel();
+        if (!m_initialized) {
+            if (count) {
+                this->beginInsertRows({}, 0, count - 1);
+
+                initRoles();
+                initRolesMapping();
+                m_initialized = true;
+
+                m_rowCounts[index] = count;
+
+                this->endInsertRows();
+            }
+        } else {
+            auto previousCount = m_rowCounts[index];
+
+            if (previousCount) {
+                m_rowCounts[index] = 0;
+                this->endRemoveRows();
+            }
+
+            initRolesMapping(index, model);
+
+            if (count) {
+                auto prefix = this->countPrefix(index);
+                this->beginInsertRows({}, prefix, prefix + count - 1);
+
+                m_rowCounts[index] = count;
+
+                this->endInsertRows();
+            }
+        }
     });
 
     connect(model, &QAbstractItemModel::dataChanged, this,
@@ -655,7 +692,7 @@ void ConcatModel::fetchRowCounts()
     m_rowCounts.resize(m_sources.size());
 
     for (auto i = 0; i < m_sources.size(); ++i) {
-        auto sourceModelWrapper = m_sources.at(i);
+        auto sourceModelWrapper = m_sources[i];
         auto sourceModel = sourceModelWrapper->model();
 
         m_rowCounts[i] = (sourceModel == nullptr) ? 0 : sourceModel->rowCount();
