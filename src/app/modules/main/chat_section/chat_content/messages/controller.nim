@@ -111,6 +111,12 @@ proc init*(self: Controller) =
       return
     self.delegate.onUnpinMessage(args.messageId)
 
+  self.events.on(SIGNAL_MESSAGE_MARKED_AS_UNREAD) do(e:Args):
+    let args = MessageMarkMessageAsUnreadArgs(e)
+    if (self.chatId != args.chatId):
+      return
+    self.delegate.onMarkMessageAsUnread(args.messageId)
+
   self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e:Args):
     let args = MessageAddRemoveReactionArgs(e)
     if(self.chatId != args.chatId):
@@ -266,6 +272,9 @@ proc removeReaction*(self: Controller, messageId: string, emojiId: int, reaction
 
 proc pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, pin)
+
+proc markMessageAsUnread*(self: Controller, messageId: string) =
+  self.messageService.asyncMarkMessageAsUnread(self.chatId, messageId)
 
 proc getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)

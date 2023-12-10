@@ -784,6 +784,24 @@ QtObject:
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Seen.int])
 
+  proc setMessageMarker*(self: Model, messageId: string) =
+    self.firstUnseenMessageId = messageId
+    self.resetNewMessagesMarker()
+
+  proc markMessageAsUnread*(self: Model, messageId: string) =
+    self.setMessageMarker(messageId)
+
+    for i in 0 ..< self.items.len:
+      let item = self.items[i]
+
+      if item.id == messageId and item.seen:
+        item.seen = false
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.Seen.int])
+        break
+
+
   proc markAsSeen*(self: Model, messages: seq[string]) =
     var messagesSet = toHashSet(messages)
 

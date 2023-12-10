@@ -126,14 +126,16 @@ const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
 
   var activityCenterNotifications: JsonNode
-  if response.result["activityCenterNotifications"] != nil:
-    activityCenterNotifications = response.result["activityCenterNotifications"]
+  discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
   let responseJson = %*{
     "chatId": arg.chatId,
-    "activityCenterNotifications": activityCenterNotifications,
     "error": response.error
   }
+
+  if activityCenterNotifications != nil:
+    responseJson["activityCenterNotifications"] = activityCenterNotifications
+
   arg.finish(responseJson)
 #################################################
 
@@ -157,8 +159,7 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
   discard response.result.getProp("countWithMentions", countWithMentions)
 
   var activityCenterNotifications: JsonNode
-  if response.result["activityCenterNotifications"] != nil:
-    activityCenterNotifications = response.result["activityCenterNotifications"]
+  discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
 
   var error = ""
   if(count == 0):
@@ -169,9 +170,12 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
     "messagesIds": arg.messagesIds,
     "count": count,
     "countWithMentions": countWithMentions,
-    "activityCenterNotifications": activityCenterNotifications,
     "error": error
   }
+
+  if activityCenterNotifications != nil:
+    responseJson["activityCenterNotifications"] = activityCenterNotifications
+
   arg.finish(responseJson)
 
 
@@ -295,3 +299,43 @@ const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, 
     }
     arg.finish(output)
 
+#################################################
+# Async mark message as unread
+#################################################
+
+type
+    AsyncMarkMessageAsUnreadTaskArg = ref object of QObjectTaskArg
+      messageId*: string
+      chatId*: string
+
+const asyncMarkMessageAsUnreadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMarkMessageAsUnreadTaskArg](argEncoded)
+
+  var responseJson = %*{
+    "chatId": arg.chatId,
+    "messageId": arg.messageId,
+    "messagesCount": 0,
+    "messagesWithMentionsCount": 0,
+    "error": ""
+  }
+
+  try:
+    let response = status_go.markMessageAsUnread(arg.chatId, arg.messageId)
+
+    var activityCenterNotifications: JsonNode
+    discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
+
+    if activityCenterNotifications != nil:
+      responseJson["activityCenterNotifications"] = activityCenterNotifications
+
+    responseJson["messagesCount"] = %response.result["count"]
+    responseJson["messagesWithMentionsCount"] = %response.result["countWithMentions"]
+
+    if response.error != nil:
+      responseJson["error"] = %response.error
+
+  except Exception as e:
+    error "asyncMarkMessageAsUnreadTask failed", message = e.msg
+    responseJson["error"] = %e.msg
+
+  arg.finish(responseJson)

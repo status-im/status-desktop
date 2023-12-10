@@ -63,6 +63,7 @@ const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
 const SIGNAL_GET_MESSAGE_FINISHED* = "getMessageFinished"
 const SIGNAL_URLS_UNFURLING_PLAN_READY* = "urlsUnfurlingPlanReady"
+const SIGNAL_MESSAGE_MARKED_AS_UNREAD* = "messageMarkedAsUnread"
 
 include async_tasks
 
@@ -89,6 +90,12 @@ type
     chatId*: string
     messageId*: string
     actionInitiatedBy*: string
+
+  MessageMarkMessageAsUnreadArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
+    messagesCount*: int
+    messagesWithMentionsCount*: int
 
   MessagesMarkedAsReadArgs* = ref object of Args
     chatId*: string
@@ -581,6 +588,20 @@ QtObject:
     except Exception as e:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
+  proc asyncMarkMessageAsUnread*(self: Service, chatId: string, messageId: string) =
+    if (chatId.len == 0):
+      error "empty chat id", procName="markAllMessagesRead"
+      return
+
+    let arg = AsyncMarkMessageAsUnreadTaskArg(
+      tptr: cast[ByteAddress](asyncMarkMessageAsUnreadTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncMarkMessageAsUnread",
+      messageId: messageId,
+      chatId: chatId
+    )
+    self.threadpool.start(arg)
+
   proc getMessageByMessageId*(self: Service, messageId: string): GetMessageResult =
     try:
       result = GetMessageResult()
@@ -723,8 +744,13 @@ QtObject:
 
     let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: true)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-    self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-      RawActivityCenterNotificationsArgs(activityCenterNotifications: responseObj{"activityCenterNotifications"}))
+
+    var activityCenterNotifications: JsonNode
+    discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
+
+    if activityCenterNotifications != nil:
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+        RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
 
   proc markAllMessagesRead*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -739,6 +765,49 @@ QtObject:
     )
 
     self.threadpool.start(arg)
+
+  proc onAsyncMarkMessageAsUnread*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+
+      if responseObj.kind != JObject:
+        raise newException(RpcException, "markMessageAsUnread response is not a json object")
+
+      var error: string
+      discard responseObj.getProp("error", error)
+
+      if error.len > 0:
+        error "error: ", procName="onAsyncMarkMessageAsUnread", errDescription=error
+        return
+
+      var chatId, messageId: string
+      var count, countWithMentions: int
+
+      discard responseObj.getProp("chatId", chatId)
+      discard responseObj.getProp("messageId", messageId)
+      discard responseObj.getProp("messagesCount", count)
+      discard responseObj.getProp("messagesWithMentionsCount", countWithMentions)
+
+      let data = MessageMarkMessageAsUnreadArgs(
+        chatId: chatId,
+        messageId: messageId,
+        messagesCount: count,
+        messagesWithMentionsCount: countWithMentions
+      )
+
+      self.chatService.updateUnreadMessage(chatId, count, countWithMentions)
+
+      self.events.emit(SIGNAL_MESSAGE_MARKED_AS_UNREAD, data)
+
+      var activityCenterNotifications: JsonNode
+      discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
+
+      if activityCenterNotifications != nil:
+        self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+          RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+
+    except Exception as e:
+      error "error: ", procName="markMessageAsUnread", errName = e.name, errDesription = e.msg
 
   proc onMarkCertainMessagesRead*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
@@ -774,8 +843,13 @@ QtObject:
       messagesCount: count,
       messagesWithMentionsCount: countWithMentions)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
-    self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-      RawActivityCenterNotificationsArgs(activityCenterNotifications: responseObj{"activityCenterNotifications"}))
+
+    var activityCenterNotifications: JsonNode
+    discard responseObj.getProp("activityCenterNotifications", activityCenterNotifications)
+
+    if activityCenterNotifications != nil:
+      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
+        RawActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
     if (chatId.len == 0):

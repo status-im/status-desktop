@@ -352,3 +352,66 @@ suite "mark as seen":
     check(model.items[0].seen == true)
     check(model.items[1].seen == true)
     check(model.items[2].seen == true)
+
+suite "mark message as unread":
+  setup:
+    let model = newModel()
+
+    var msg1 = createTestMessageItem("0xa", 1)
+    msg1.seen = true
+    var msg2 = createTestMessageItem("0xb", 2)
+    msg2.seen = true
+    var msg3 = createTestMessageItem("0xc", 3)
+    msg3.seen = true
+
+    model.insertItemsBasedOnClock(@[msg1, msg2, msg3])
+    require(model.items.len == 3)
+    check(model.items[0].seen == true)
+    check(model.items[1].seen == true)
+    check(model.items[2].seen == true)
+
+  test "mark message as unread":
+    model.markMessageAsUnread("0xa")
+    check(model.items[2].seen == false)
+
+    model.markMessageAsUnread("0xb")
+    check(model.items[1].seen == false)
+
+    model.markMessageAsUnread("0xc")
+    check(model.items[0].seen == false)
+
+  test "mark an already unread message as unread":
+    model.markMessageAsUnread("0xa")
+    check(model.items[2].seen == false)
+    model.markMessageAsUnread("0xa")
+    check(model.items[2].seen == false)
+
+    model.markMessageAsUnread("0xb")
+    check(model.items[1].seen == false)
+    model.markMessageAsUnread("0xb")
+    check(model.items[1].seen == false)
+
+    model.markMessageAsUnread("0xc")
+    check(model.items[0].seen == false)
+    model.markMessageAsUnread("0xc")
+    check(model.items[0].seen == false)
+
+  test "mark all messages as unread":
+    require(model.items.len == 3)
+
+    model.markMessageAsUnread("0xa")
+    model.markMessageAsUnread("0xc")
+    model.markMessageAsUnread("0xb")
+
+
+    # Because new row is inserted for message marker
+    require(model.items.len == 4)
+
+    check(model.items[0].seen == false)
+    check(model.items[1].seen == false)
+
+    # message marker is inserted on top of the last inserted element
+    # last inserted element is `0xc` which is at position 0
+    # and marker is insert last at position : position('0xb') - 1 equals to position 2 here
+    check(model.items[2].seen == true)
+    check(model.items[3].seen == false)

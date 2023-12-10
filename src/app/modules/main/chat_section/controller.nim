@@ -135,6 +135,12 @@ proc init*(self: Controller) =
     self.chatService.updateUnreadMessagesAndMentions(args.chatId, args.allMessagesMarked, args.messagesCount, args.messagesWithMentionsCount)
     self.delegate.onMarkAllMessagesRead(chat)
 
+  self.events.on(message_service.SIGNAL_MESSAGE_MARKED_AS_UNREAD) do(e:Args):
+    let args = message_service.MessageMarkMessageAsUnreadArgs(e)
+    let chat = self.chatService.getChatById(args.chatId)
+    self.delegate.onMarkMessageAsUnread(chat)
+
+
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onCommunityChannelDeletedOrChatLeft(args.chatId)

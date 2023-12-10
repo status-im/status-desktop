@@ -899,6 +899,9 @@ method onJoinedCommunity*(self: Module) =
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
 
+method onMarkMessageAsUnread*(self: Module, chat: ChatDto) =
+  self.updateBadgeNotifications(chat, hasUnreadMessages=true, chat.unviewedMentionsCount)
+
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
 
