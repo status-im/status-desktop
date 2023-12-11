@@ -84,7 +84,6 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
         main_screen.left_panel.open_wallet().left_panel.hide_include_in_total_balance_from_context_menu(name)
 
     with step('Check the balance is back to 0 again'):
-        main_screen.left_panel.open_wallet()
         assert driver.waitFor(
             lambda: float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", "")
                           .replace(",", "")) == 0, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \

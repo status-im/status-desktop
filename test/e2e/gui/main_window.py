@@ -126,12 +126,12 @@ class LeftPanel(QObject):
     def open_wallet(self, attempts: int = 2) -> WalletScreen:
         self._wallet_button.click()
         try:
-            return WalletScreen().wait_until_appears()
-        except AssertionError as err:
+            return WalletScreen()
+        except Exception as ex:
             if attempts:
                 return self.open_wallet(attempts - 1)
             else:
-                raise err
+                raise ex
 
 
 class MainWindow(Window):
