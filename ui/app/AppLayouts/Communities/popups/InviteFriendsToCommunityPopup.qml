@@ -54,8 +54,8 @@ StatusStackModal {
 
     stackTitle: qsTr("Invite Contacts to %1").arg(community.name)
     width: 640
+    height: d.popupContentHeight
 
-    padding: 0
     leftPadding: 0
     rightPadding: 0
 
@@ -90,30 +90,17 @@ StatusStackModal {
     }
 
     stackItems: [
-        Item {
-            implicitHeight: d.popupContentHeight
-
-            ProfilePopupInviteFriendsPanel {
-                anchors.fill: parent
-                anchors.topMargin: 16
-                anchors.bottomMargin: 16
-
-                rootStore: root.rootStore
-                contactsStore: root.contactsStore
-                community: root.community
-                onPubKeysChanged: root.pubKeys = pubKeys
-            }
+        ProfilePopupInviteFriendsPanel {
+            rootStore: root.rootStore
+            contactsStore: root.contactsStore
+            community: root.community
+            onPubKeysChanged: root.pubKeys = pubKeys
         },
 
-        Item {
-            ProfilePopupInviteMessagePanel {
-                anchors.fill: parent
-                anchors.topMargin: 16
-
-                contactsStore: root.contactsStore
-                pubKeys: root.pubKeys
-                onInviteMessageChanged: root.inviteMessage = inviteMessage
-            }
+        ProfilePopupInviteMessagePanel {
+            contactsStore: root.contactsStore
+            pubKeys: root.pubKeys
+            onInviteMessageChanged: root.inviteMessage = inviteMessage
         }
     ]
 }

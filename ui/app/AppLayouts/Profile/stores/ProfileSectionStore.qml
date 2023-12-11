@@ -3,6 +3,8 @@ import utils 1.0
 
 import AppLayouts.Chat.stores 1.0
 
+import SortFilterProxyModel 0.2
+
 QtObject {
     id: root
 
@@ -73,7 +75,13 @@ QtObject {
     property bool walletMenuItemEnabled: profileStore.isWalletEnabled
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
-    property var communitiesList: !!communitiesModuleInst? communitiesModuleInst.model : null
+    property var communitiesList: SortFilterProxyModel {
+        sourceModel: root.mainModuleInst.sectionsModel
+        filters: ValueFilter {
+            roleName: "sectionType"
+            value: Constants.appSection.community
+        }
+    }
     property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
 
     property ListModel mainMenuItems: ListModel {
