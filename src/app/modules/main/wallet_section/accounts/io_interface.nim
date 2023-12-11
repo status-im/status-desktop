@@ -14,6 +14,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method deleteAccount*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addressWasShown*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

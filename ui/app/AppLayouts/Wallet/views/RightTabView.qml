@@ -77,7 +77,10 @@ Item {
                 store: root.store
                 walletStore: RootStore
                 networkConnectionStore: root.networkConnectionStore
-                onLaunchShareAddressModal: root.launchShareAddressModal()
+                onLaunchShareAddressModal: {
+                    walletStore.addressWasShown(walletStore.overview.mixedcaseAddress)
+                    root.launchShareAddressModal();
+                }
                 onSwitchHideWatchOnlyAccounts: RootStore.toggleWatchOnlyAccounts()
             }
 

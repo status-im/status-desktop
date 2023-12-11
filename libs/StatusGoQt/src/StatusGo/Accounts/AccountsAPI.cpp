@@ -76,6 +76,16 @@ void deleteAccount(const EOAddress& address)
     checkPrivateRpcCallResultAndReportError(resultJson);
 }
 
+void addressWasShown(const EOAddress& address)
+{
+    std::vector<json> params = {address};
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "accounts_addressWasShown"}, {"params", params}};
+
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+}
+
 void deleteMultiaccount(const QString& keyUID, const fs::path& keyStoreDir)
 {
     // We know go bridge won't misbehave with the input arguments

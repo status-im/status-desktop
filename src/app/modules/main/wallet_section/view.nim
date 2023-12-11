@@ -45,6 +45,9 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc addressWasShown*(self: View, address: string) {.slot.} =
+    self.delegate.addressWasShown(address)
+
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
   proc getCurrentCurrency(self: View): string {.slot.} =

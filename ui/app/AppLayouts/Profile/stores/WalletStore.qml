@@ -149,4 +149,8 @@ QtObject {
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
         accountsModule.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
     }
+
+    function addressWasShown(address) {
+        accountsModule.addressWasShown(address)
+    }
 }

@@ -431,3 +431,6 @@ method hasPairedDevices*(self: Module): bool =
 proc onLocalPairingStatusUpdate*(self: Module, data: LocalPairingStatus) =
   if data.state == LocalPairingState.Finished:
     self.view.emitHasPairedDevicesChangedSignal()
+
+method addressWasShown*(self: Module, address: string) =
+  self.controller.addressWasShown(address)

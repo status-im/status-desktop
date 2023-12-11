@@ -85,7 +85,9 @@ Item {
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
             showAllAccounts: leftTab.showAllAccounts
-            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent);
+            onLaunchShareAddressModal: {
+              Global.openPopup(receiveModalComponent);
+            }
         }
     }
 
@@ -157,7 +159,9 @@ Item {
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityName : ""
-            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
+            onLaunchShareAddressModal: {
+              Global.openPopup(receiveModalComponent)
+            }
             onLaunchSendModal: {
                 if(isCommunityOwnershipTransfer) {
                     let tokenItem = walletStore.currentViewedCollectible

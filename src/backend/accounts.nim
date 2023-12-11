@@ -273,6 +273,11 @@ proc importPrivateKey*(privateKey, password: string):
   let payload = %* [privateKey, password]
   return core.callPrivateRPC("accounts_importPrivateKey", payload)
 
+proc addressWasShown*(address: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address]
+  return core.callPrivateRPC("accounts_addressWasShown", payload)
+
 proc makePrivateKeyKeypairFullyOperable*(privateKey, password: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [privateKey, password]

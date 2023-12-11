@@ -609,6 +609,12 @@ proc updateWatchAccountHiddenFromTotalBalance*(self: Service, address: string, h
     error "error: ", procName="updateWatchAccountHiddenFromTotalBalance", errName=e.name, errDesription=e.msg
   return false
 
+proc addressWasShown*(self: Service, address: string) =
+  let response = status_go_accounts.addressWasShown(address)
+  if not response.error.isNil:
+    error "status-go error", procName="addressWasShown", errCode=response.error.code, errDesription=response.error.message
+    return
+
 proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
   var updated = false
   try:

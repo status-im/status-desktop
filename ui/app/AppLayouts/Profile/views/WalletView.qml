@@ -145,6 +145,7 @@ SettingsContentBase {
                 root.walletStore.selectedAccount = account
                 accountView.keyPair = keypair
                 stackContainer.currentIndex = accountViewIndex
+                root.walletStore.addressWasShown(account.address)
             }
 
             onGoToAccountOrderView: {

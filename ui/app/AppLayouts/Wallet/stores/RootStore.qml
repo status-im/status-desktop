@@ -212,6 +212,10 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
+    function addressWasShown(address) {
+        return walletSection.addressWasShown(address)
+    }
+
     function updateCurrentAccount(address, accountName, colorId, emoji) {
         return walletSectionAccounts.updateAccount(address, accountName, colorId, emoji)
     }

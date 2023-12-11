@@ -39,6 +39,9 @@ proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
+proc addressWasShown*(self: Controller, address: string) =
+  self.walletAccountService.addressWasShown(address)
+
 proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 

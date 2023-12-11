@@ -226,3 +226,6 @@ method updateWalletAccountTestPreferredChains*(self: Module, address, preferredC
 
 method updateWatchAccountHiddenFromTotalBalance*(self: Module, address: string, hideFromTotalBalance: bool) =
   self.controller.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+
+method addressWasShown*(self: Module, address: string) =
+  self.controller.addressWasShown(address)

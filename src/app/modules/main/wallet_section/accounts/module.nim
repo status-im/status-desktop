@@ -72,6 +72,9 @@ method viewDidLoad*(self: Module) =
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
 
+method addressWasShown*(self: Module, address: string) =
+  self.controller.addressWasShown(address)
+
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
 

@@ -74,3 +74,6 @@ proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], 
 
 proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string, hideFromTotalBalance: bool) =
   discard self.walletAccountService.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+
+proc addressWasShown*(self: Controller, address: string) =
+ self.walletAccountService.addressWasShown(address)
