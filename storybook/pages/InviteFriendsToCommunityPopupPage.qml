@@ -13,6 +13,7 @@ SplitView {
 
     property bool globalUtilsReady: false
     property bool mainModuleReady: false
+    property bool communitiesModuleReady: false
 
     Item {
 
@@ -44,6 +45,9 @@ SplitView {
                                        {colorId: 19, segmentLength: 2}])
             }
 
+            function copyToClipboard(text) {
+            }
+
             Component.onCompleted: {
                 Utils.globalUtilsInst = this
                 globalUtilsReady = true
@@ -70,9 +74,24 @@ SplitView {
             }
         }
 
+        QtObject {
+            function shareCommunityUrlWithData(communityId) {
+                return "status-app:/"+communityId
+            }
+
+            Component.onCompleted: {
+                communitiesModuleReady = true
+                Utils.communitiesModuleInst = this
+            }
+            Component.onDestruction: {
+                communitiesModuleReady = false
+                Utils.communitiesModuleInst = {}
+            }
+        }
+
         Loader {
             id: loader
-            active: globalUtilsReady && mainModuleReady
+            active: globalUtilsReady && mainModuleReady && communitiesModuleReady
             anchors.fill: parent
 
             sourceComponent: InviteFriendsToCommunityPopup {

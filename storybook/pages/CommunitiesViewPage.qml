@@ -155,7 +155,7 @@ SplitView {
             property var communitiesList: ctrlEmptyView.checked ? emptyModel : communitiesModel
         }
         rootStore: QtObject {
-            function isCommunityRequestPending(communityId) {
+            function isMyCommunityRequestPending(communityId) {
                 return communityId === "0x0006"
             }
             function cancelPendingRequest(communityId) {
