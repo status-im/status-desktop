@@ -44,3 +44,6 @@ wallet_account_list_item_2 = namedtuple('WalletAccountListItem', ['name', 'icon'
 wallet_account = namedtuple('PrivateKeyAddressPair', ['private_key', 'wallet_address'])
 private_key_address_pair_1 = wallet_account('2daa36a3abe381a9c01610bf10fda272fbc1b8a22179a39f782c512346e3e470',
                                             '0xd89b48cbcb4244f84a4fb5d3369c120e8f8aa74e')
+
+ens_user_name = ''.join(
+    random.choices(string.digits + string.ascii_lowercase, k=8))

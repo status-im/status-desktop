@@ -1,9 +1,12 @@
+import time
+
 import allure
 
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.screens.settings_communities import CommunitiesSettingsView
+from gui.screens.settings_ens_usernames import ENSSettingsView
 from gui.screens.settings_keycard import KeycardSettingsView
 from gui.screens.settings_messaging import MessagingSettingsView
 from gui.screens.settings_profile import ProfileSettingsView
@@ -75,6 +78,12 @@ class LeftPanel(QObject):
     def open_keycard_settings(self) -> KeycardSettingsView:
         self._open_settings('13-MainMenuItem')
         return KeycardSettingsView()
+
+    @allure.step('Open ENS usernames settings')
+    def open_ens_usernames_settings(self) -> ENSSettingsView:
+        time.sleep(1)
+        self._open_settings('2-MainMenuItem')
+        return ENSSettingsView()
 
 
 class SettingsScreen(QObject):

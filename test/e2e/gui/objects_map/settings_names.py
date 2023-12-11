@@ -132,3 +132,18 @@ settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView
 
 #Sing out and quit View
 signOutConfirmationButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signOutConfirmation", "type": "StatusButton", "visible": True}
+
+# ENS usernames View
+mainWindow_EnsWelcomeView = {"container": statusDesktop_mainWindow, "type": "EnsWelcomeView", "unnamed": 1, "visible": True}
+mainWindow_Start_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton", "visible": True}
+mainWindow_EnsSearchView = {"container": statusDesktop_mainWindow, "type": "EnsSearchView", "unnamed": 1, "visible": True}
+mainWindow_ensUsernameInput_StyledTextField = {"container": statusDesktop_mainWindow, "echoMode": 0, "objectName": "ensUsernameInput", "type": "StyledTextField", "visible": True}
+mainWindow_ensNextButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "ensNextButton", "type": "StatusRoundButton", "visible": True}
+ens_StatusBaseText = {"container": mainWindow_EnsSearchView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_EnsTermsAndConditionsView = {"container": statusDesktop_mainWindow, "type": "EnsTermsAndConditionsView", "unnamed": 1, "visible": True}
+mainWindow_sview_StatusScrollView = {"container": statusDesktop_mainWindow, "id": "sview", "type": "StatusScrollView", "unnamed": 1, "visible": True}
+sview_walletAddressLbl_StatusDescriptionListItem = {"container": mainWindow_sview_StatusScrollView, "id": "walletAddressLbl", "type": "StatusDescriptionListItem", "unnamed": 1, "visible": True}
+sview_keyLbl_StatusDescriptionListItem = {"container": mainWindow_sview_StatusScrollView, "id": "keyLbl", "type": "StatusDescriptionListItem", "unnamed": 1, "visible": True}
+sview_ensAgreeTerms_StatusCheckBox = {"checkable": True, "container": mainWindow_sview_StatusScrollView, "objectName": "ensAgreeTerms", "type": "StatusCheckBox", "visible": True}
+mainWindow_Register_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "ensStartTransaction", "text": "Register", "type": "StatusButton", "visible": True}
+mainWindow_EnsRegisteredView = {"container": statusDesktop_mainWindow, "type": "EnsRegisteredView", "unnamed": 1, "visible": True}

@@ -47,6 +47,10 @@ class SendPopup(BasePopup):
         self._amount_text_edit.text = str(amount)
         self._ens_address_text_edit.type_text(address)
         driver.waitFor(lambda: self._send_button.is_visible, timeout_msec=6000)
+        self.click_send()
+
+    @allure.step('Click send button')
+    def click_send(self):
         self._send_button.click()
 
     def is_arbitrum_network_identified(self) -> bool:
