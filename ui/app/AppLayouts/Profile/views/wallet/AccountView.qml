@@ -41,6 +41,7 @@ ColumnLayout {
         id: d
         readonly property bool watchOnlyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly: false
         readonly property bool privateKeyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.privateKeyImport: false
+        readonly property bool seedImport: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.seedImport: false
         readonly property string preferredSharingNetworks: !!root.account? root.account.preferredSharingChainIds: ""
         property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
         property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
@@ -300,18 +301,29 @@ ColumnLayout {
         type: StatusBaseButton.Type.Danger
         onClicked: confirmationPopup.open()
 
-        ConfirmationDialog {
+        RemoveAccountConfirmationPopup {
             id: confirmationPopup
-            objectName: "deleteAccountConfirmationPopup"
-            confirmButtonObjectName: "confirmDeleteAccountButton"
-            headerSettings.title: qsTr("Confirm %1 Removal").arg(!!root.account? root.account.name : "")
-            confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
-            confirmButtonLabel: qsTr("Remove Account")
-            onConfirmButtonClicked: {
-                if (!!root.account) {
-                    root.walletStore.deleteAccount(root.account.address)
+            accountType: {
+                if (d.watchOnlyAccount) {
+                    return Constants.watchWalletType
+                } else if (d.privateKeyAccount) {
+                    return Constants.keyWalletType
+                } else if (d.seedImport){
+                    return Constants.seedWalletType
+                } else {
+                    return Constants.generatedWalletType
                 }
-                confirmationPopup.close()
+            }
+            accountName: !!root.account ? root.account.name : ""
+            accountAddress: !!root.account ? root.account.address : ""
+            accountDerivationPath: !!root.account ? root.account.path : ""
+            preferredSharingNetworkShortNames: d.preferredSharingNetworkShortNames
+            emoji: !!root.account ? root.account.emoji : ""
+            color: !!root.account ? Utils.getColorForId(root.account.colorId) : ""
+
+            onRemoveAccount: {
+                root.walletStore.deleteAccount(root.account.address)
+                close()
                 root.goBack()
             }
         }

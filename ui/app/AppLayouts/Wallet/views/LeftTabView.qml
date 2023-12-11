@@ -109,10 +109,13 @@ Rectangle {
             onDeleteAccountClicked: {
                 if (!account)
                     return
-                removeAccountConfirmation.simple = account.walletType === Constants.watchWalletType || account.walletType === Constants.keyWalletType
+                removeAccountConfirmation.accountType = account.walletType
                 removeAccountConfirmation.accountName = account.name
                 removeAccountConfirmation.accountAddress = account.address
                 removeAccountConfirmation.accountDerivationPath = account.path
+                removeAccountConfirmation.preferredSharingChainIds = account.preferredSharingChainIds
+                removeAccountConfirmation.emoji = account.emoji
+                removeAccountConfirmation.colorId = account.colorId
                 removeAccountConfirmation.active = true
             }
 
@@ -124,17 +127,23 @@ Rectangle {
         id: removeAccountConfirmation
         active: false
 
-        property bool simple
+        property string accountType
         property string accountKeyUid
         property string accountName
         property string accountAddress
         property string accountDerivationPath
+        property string preferredSharingChainIds
+        property string emoji
+        property string colorId
 
         sourceComponent: RemoveAccountConfirmationPopup {
-            simple: removeAccountConfirmation.simple
+            accountType: removeAccountConfirmation.accountType
             accountName: removeAccountConfirmation.accountName
             accountAddress: removeAccountConfirmation.accountAddress
             accountDerivationPath: removeAccountConfirmation.accountDerivationPath
+            preferredSharingNetworkShortNames: RootStore.getNetworkShortNames(removeAccountConfirmation.preferredSharingChainIds)
+            emoji: removeAccountConfirmation.emoji
+            color: Utils.getColorForId(removeAccountConfirmation.colorId)
 
             onClosed: {
                 removeAccountConfirmation.active = false
