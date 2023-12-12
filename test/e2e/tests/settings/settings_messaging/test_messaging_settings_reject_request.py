@@ -1,22 +1,20 @@
-import time
-
 import allure
+import configs.testpath
+import configs.timeouts
+import constants
 import pytest
 from allure_commons._allure import step
-
-import configs.testpath
-import constants
 from constants import UserAccount
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704611', 'Reply to identity request')
-@pytest.mark.case(704611)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610', 'Reject a contact request with a chat key')
+@pytest.mark.case(704610)
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-def test_messaging_settings_identity_verification(multiple_instance, user_data_one, user_data_two):
+def test_messaging_settings_rejecting_request(multiple_instance, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
     main_window = MainWindow()
@@ -45,36 +43,29 @@ def test_messaging_settings_identity_verification(multiple_instance, user_data_o
             contacts_settings = messaging_settings.open_contacts_settings()
             contact_request_popup = contacts_settings.open_contact_request_form()
             contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+
             main_window.hide()
 
-        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
+        with step(f'Verify that contact request from user {user_two.name} was received and reject contact request'):
             aut_two.attach()
             main_window.prepare()
-            contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
-            contacts_settings.open_pending_requests().accept_contact_request(user_one.name)
+            settings = main_window.left_panel.open_settings()
+            messaging_settings = settings.left_panel.open_messaging_settings()
+            contacts_settings = messaging_settings.open_contacts_settings()
+            contacts_settings.open_pending_requests()
+            contacts_settings.reject_contact_request(user_one.name)
 
-        with step(f'Verify that contact appeared in contacts list of {user_two.name} in messaging settings'):
+        with step(f'Verify that contacts list of {user_two.name} is empty in messaging settings'):
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
+            assert contacts_settings.no_friends_item_text == Messaging.NO_FRIENDS_ITEM.value
+            assert contacts_settings.is_invite_friends_button_visible
             main_window.hide()
 
-        with step(f'Send verify identity request from {user_one.name} to {user_two.name}'):
+        with step(f'Verify that contacts list of {user_one.name} is empty in messaging settings'):
             aut_one.attach()
             main_window.prepare()
-            verify_identity_popup = contacts_settings.open_contacts().open_more_options_popup(
-                user_two.name).verify_identity()
-            assert verify_identity_popup.message_note == Messaging.MESSAGE_NOTE_IDENTITY_REQUEST.value
-            assert not verify_identity_popup.is_send_verification_button_enabled
-            verify_identity_popup.type_message('Hi. Is that you?').send_verification()
-            main_window.hide()
-
-        with step(f'Check incoming identity request for {user_two.name}'):
-            aut_two.attach()
-            main_window.prepare()
-            time.sleep(2)
-            respond_identity_popup = contacts_settings.open_more_options_popup(user_one.name).respond_to_id_request()
-            respond_identity_popup.type_message('Hi. Yes, its me').send_answer()
-
-        with step(f'Answer has been sent {user_two.name}'):
-            assert respond_identity_popup.is_change_answer_button_visible
-            respond_identity_popup.close()
+            contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
+            contacts_settings.open_contacts()
+            assert contacts_settings.no_friends_item_text == Messaging.NO_FRIENDS_ITEM.value
+            assert contacts_settings.is_invite_friends_button_visible

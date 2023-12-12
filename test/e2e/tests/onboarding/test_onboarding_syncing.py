@@ -86,7 +86,7 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
                 BetaConsentPopup().confirm()
 
         with step('Verify user details are the same with user in first instance'):
-            user_canvas = main_window.left_panel.open_user_canvas()
+            user_canvas = main_window.left_panel.open_user_online_identifier()
             user_canvas_name = user_canvas.user_name
             assert user_canvas_name == user.name
             # TODO: temp removing tesseract usage because it is not stable

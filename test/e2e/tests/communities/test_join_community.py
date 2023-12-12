@@ -35,7 +35,7 @@ def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_window.prepare()
-            profile_popup = main_window.left_panel.open_user_canvas().open_profile_popup()
+            profile_popup = main_window.left_panel.open_user_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.chat_key
             profile_popup.close()
             main_window.hide()

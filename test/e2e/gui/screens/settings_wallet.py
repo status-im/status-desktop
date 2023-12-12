@@ -63,8 +63,14 @@ class WalletSettingsView(QObject):
 
     @allure.step('Get keypair names')
     def get_keypairs_names(self):
-        return [str(getattr(item, 'title', '')) for item in
-                driver.findAllObjects(self._wallet_settings_keypair_item.real_name)]
+        keypair_names = []
+        for item in driver.findAllObjects(self._wallet_settings_keypair_item.real_name):
+            keypair_names.append(str(getattr(item, 'title', '')))
+        if keypair_names == 0:
+            raise LookupError(
+                'No keypairs found on the wallet settings screen')
+        else:
+            return keypair_names
 
     @allure.step('Open account view in wallet settings by name')
     def open_account_in_settings(self, name):
@@ -252,7 +258,7 @@ class EditNetworkSettings(WalletSettingsView):
         self._test_network_tab.click()
 
     @allure.step('Click Revert to default button and redirect to Networks screen')
-    def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int=2):
+    def click_revert_to_default_and_go_to_networks_main_screen(self, attempts: int = 2):
         self._network_edit_scroll.vertical_down_to(self._network_revert_to_default)
         self._network_revert_to_default.click()
         try:

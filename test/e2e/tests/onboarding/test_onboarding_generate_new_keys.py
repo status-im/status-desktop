@@ -84,7 +84,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
     with step('Open User Canvas and verify user info'):
 
-        user_canvas = main_window.left_panel.open_user_canvas()
+        user_canvas = main_window.left_panel.open_user_online_identifier()
         assert user_canvas.user_name == user_name
         # TODO: temp removing tesseract usage because it is not stable
     # if user_image is None:
@@ -95,7 +95,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
     with step('Open Profile popup and verify user info'):
 
-        profile_popup = user_canvas.open_profile_popup()
+        profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_name
         assert profile_popup.chat_key == chat_key
         assert profile_popup.emoji_hash.compare(emoji_hash.view, threshold=0.9)

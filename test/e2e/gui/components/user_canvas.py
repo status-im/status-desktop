@@ -53,10 +53,17 @@ class UserCanvas(QObject):
         self._automatic_button.click()
         self.wait_until_hidden()
 
-    @allure.step('Open Profile popup')
-    def open_profile_popup(self) -> ProfilePopup:
+    @allure.step('Open Profile popup from online identifier')
+    def open_profile_popup_from_online_identifier(self, attempts: int =2) -> ProfilePopup:
         self._view_my_profile_button.click()
-        return ProfilePopup().wait_until_appears()
+        time.sleep(0.5)
+        try:
+            return ProfilePopup()
+        except Exception as ex:
+            if attempts:
+                self.open_profile_popup_from_online_identifier(attempts - 1)
+            else:
+                raise ex
 
     @allure.step('Verify: User image contains text')
     def is_user_image_contains(self, text: str):

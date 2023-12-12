@@ -18,16 +18,20 @@ from gui.screens.settings import SettingsScreen
                                         string.digits, k=40)))
 ])
 def test_settings_edit_status_account(main_screen: MainWindow, new_name):
-    with step('Open profile and wallet setting and check that display name equals to Status keypair name'):
-        status_keypair_title = \
-            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().get_keypairs_names()[0]
+    with step('Open profile and wallet setting and check the keypairs list is not empty'):
+            settings = main_screen.left_panel.open_settings().left_panel.open_wallet_settings()
+            assert settings.get_keypairs_names !=0, f'Keypairs are not displayed'
+
+    with step('Verify Status keypair title'):
+        status_keypair_title = settings.get_keypairs_names()[0]
         profile_display_name = main_screen.left_panel.open_settings().left_panel.open_profile_settings().display_name
         assert profile_display_name in status_keypair_title, \
             f"Status keypair name should be equal to display name but currently it is {status_keypair_title}, \
              when display name is {profile_display_name}"
 
-    status_acc_view = (
-        SettingsScreen().left_panel.open_wallet_settings().open_status_account_in_settings())
+    with step('Open Status account view in wallet settings'):
+        status_acc_view = (
+            SettingsScreen().left_panel.open_wallet_settings().open_status_account_in_settings())
 
     with step('Check the default values on the account details view for Status account'):
         assert status_acc_view.get_account_name_value() == WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value, \

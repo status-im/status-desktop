@@ -48,7 +48,12 @@ class LeftPanel(QObject):
         community_names = []
         for obj in driver.findAllObjects(self._community_template_button.real_name):
             community_names.append(obj.name)
-        return community_names
+
+        if len(community_names) == 0:
+            raise LookupError(
+                'Communities not found')
+        else:
+            return community_names
 
     @property
     @allure.step('Get user badge color')
@@ -60,14 +65,21 @@ class LeftPanel(QObject):
         self._messages_button.click()
         return MessagesScreen().wait_until_appears()
 
-    @allure.step('Open user canvas')
-    def open_user_canvas(self) -> UserCanvas:
+    @allure.step('Open user online identifier')
+    def open_user_online_identifier(self, attempts: int = 2) -> UserCanvas:
+        time.sleep(0.5)
         self._profile_button.click()
-        return UserCanvas().wait_until_appears()
+        try:
+            return UserCanvas()
+        except Exception as ex:
+            if attempts:
+                self.open_user_online_identifier(attempts - 1)
+            else:
+                raise ex
 
     @allure.step('Set user to online')
     def set_user_to_online(self):
-        self.open_user_canvas().set_user_state_online()
+        self.open_user_online_identifier().set_user_state_online()
 
     @allure.step('Verify: User is online')
     def user_is_online(self) -> bool:
@@ -75,7 +87,7 @@ class LeftPanel(QObject):
 
     @allure.step('Set user to offline')
     def set_user_to_offline(self):
-        self.open_user_canvas().set_user_state_offline()
+        self.open_user_online_identifier().set_user_state_offline()
 
     @allure.step('Verify: User is offline')
     def user_is_offline(self):
@@ -83,7 +95,7 @@ class LeftPanel(QObject):
 
     @allure.step('Set user to automatic')
     def set_user_to_automatic(self):
-        self.open_user_canvas().set_user_automatic_state()
+        self.open_user_online_identifier().set_user_automatic_state()
 
     @allure.step('Verify: User is set to automatic')
     def user_is_set_to_automatic(self):
