@@ -10,10 +10,17 @@ class DeletePopup(BasePopup):
         super().__init__()
         self._delete_button = Button('delete_StatusButton')
 
-    @allure.step("Delete entity")
-    def delete(self):
-        self._delete_button.click()
-        self.wait_until_hidden()
+    @allure.step("Delete channel")
+    def delete(self, attempts: int = 2):
+        try:
+            self._delete_button.click()
+        except Exception as ex:
+            if attempts:
+                self.delete(attempts-1)
+            else:
+                raise ex
+
+
 
 
 class DeleteCategoryPopup(DeletePopup):
