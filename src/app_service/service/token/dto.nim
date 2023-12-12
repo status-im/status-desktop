@@ -21,6 +21,7 @@ type
     decimals* {.serializedFieldName("decimals").}: int
     chainID* {.serializedFieldName("chainId").}: int
     communityID* {.serializedFieldName("communityId").}: string
+    image* {.serializedFieldName("image").}: string
 
 proc `$`*(self: TokenDto): string =
   result = fmt"""TokenDto[
@@ -29,7 +30,8 @@ proc `$`*(self: TokenDto): string =
     symbol: {self.symbol},
     decimals: {self.decimals},
     chainID: {self.chainID},
-    communityID: {self.communityID}
+    communityID: {self.communityID},
+    image: {self.image}
     ]"""
 
 # TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
@@ -39,7 +41,8 @@ proc newTokenDto*(
   symbol: string,
   decimals: int,
   chainId: int,
-  communityId: string = ""
+  communityId: string = "",
+  image: string = ""
 ): TokenDto =
   return TokenDto(
     address: address,
@@ -47,7 +50,8 @@ proc newTokenDto*(
     symbol: symbol,
     decimals: decimals,
     chainId: chainId,
-    communityId: communityId
+    communityId: communityId,
+    image: image
   )
 
 type TokenSourceDto* = ref object of RootObj

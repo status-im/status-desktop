@@ -37,7 +37,15 @@ StatusListItem {
     property string errorTooltipText_2
 
     readonly property bool isCommunityToken: !!modelData && !!modelData.communityId
-    readonly property string symbolUrl: !!modelData && modelData.symbol ? Constants.tokenIcon(modelData.symbol, false) : ""
+    readonly property string symbolUrl: {
+        if (!modelData)
+            return ""
+        if (modelData.imageUrl)
+            return modelData.imageUrl
+        if (modelData.symbol)
+            return Constants.tokenIcon(modelData.symbol, false)
+        return ""
+    }
     readonly property string upDownTriangle: {
         if (!modelData)
             return ""

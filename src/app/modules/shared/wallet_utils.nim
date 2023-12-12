@@ -103,6 +103,10 @@ proc walletTokenToItem*(
     marketValues.change24hour,
     currencyAmountToItem(marketValues.price, currencyFormat),
     t.decimals,
+    t.image,
+    t.communityId,
+    t.communityName,
+    t.communityImage,
     loading = false
     )
 
