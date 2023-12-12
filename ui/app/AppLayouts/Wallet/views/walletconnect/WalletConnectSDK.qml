@@ -172,6 +172,7 @@ Item {
             console.debug(`WC WalletConnectSDK.wcCall.getPairings;`)
 
             d.engine.runJavaScript(`wc.getPairings()`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.getPairings; result: ${JSON.stringify(result, null, 2)}`)
 
                 if (callback && result) {
                     callback(result)
@@ -183,6 +184,7 @@ Item {
             console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions;`)
 
             d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
+                console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${JSON.stringify(result, null, 2)}`)
 
                 if (callback && result) {
                     callback(result)
