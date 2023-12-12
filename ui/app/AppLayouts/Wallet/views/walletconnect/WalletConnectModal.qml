@@ -371,7 +371,7 @@ Popup {
             }
         }
 
-        function onAuthSignMessage(message, address) {
+        function onAuthMessageFormated(formatedMessage, address) {
             let details = ""
             if (!!d.observedData.verifyContext.verified.isScam) {
                 details = "This website you`re trying to connect is flagged as malicious by multiple security providers.\nApproving may lead to loss of funds."
@@ -385,8 +385,8 @@ Popup {
             }
 
             d.selectedAddress = address
-            d.authMessage = message
-            d.setDetailsText(`${details}\n\n${message}`)
+            d.authMessage = formatedMessage
+            d.setDetailsText(`${details}\n\n${formatedMessage}`)
             d.state = d.waitingUserResponseToAuthRequest
         }
 

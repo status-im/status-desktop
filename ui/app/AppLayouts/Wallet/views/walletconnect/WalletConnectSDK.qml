@@ -35,7 +35,7 @@ Item {
     signal sessionRequestUserAnswerResult(bool accept, string error)
 
     signal authRequest(var request)
-    signal authSignMessage(string message, string address)
+    signal authMessageFormated(string formatedMessage, string address)
     signal authRequestUserAnswerResult(bool accept, string error)
 
     signal sessionDelete(var deletePayload)
@@ -240,45 +240,31 @@ Item {
         function acceptSessionRequest(topic, id, signature) {
             console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; topic: "${topic}", id: ${id}, signature: "${signature}"`)
 
-            d.engine.runJavaScript(`wc.respondSessionRequest("${topic}", ${id}, "${signature}")`, function(result) {
-
-                console.debug(`WC WalletConnectSDK.wcCall.acceptSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
-
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("respondSessionRequest: ", result.error)
-                        root.sessionRequestUserAnswerResult(true, result.error)
-                        return
-                    }
-                    root.sessionRequestUserAnswerResult(true, result.error)
-                }
-
-                d.resetPairingsModel()
-                d.resetSessionsModel()
-            })
+            d.engine.runJavaScript(`
+                                    wc.respondSessionRequest("${topic}", ${id}, "${signature}")
+                                    .then((value) => {
+                                        wc.statusObject.onRespondSessionRequestResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onRespondSessionRequestResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function rejectSessionRequest(topic, id, error) {
             console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; topic: "${topic}", id: ${id}, error: "${error}"`)
 
-            d.engine.runJavaScript(`wc.rejectSessionRequest("${topic}", ${id}, "${error}")`, function(result) {
-
-                console.debug(`WC WalletConnectSDK.wcCall.rejectSessionRequest; response: ${JSON.stringify(result, null, 2)}`)
-
-                d.resetPairingsModel()
-                d.resetSessionsModel()
-
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("rejectSessionRequest: ", result.error)
-                        root.sessionRequestUserAnswerResult(false, result.error)
-                        return
-                    }
-                    root.sessionRequestUserAnswerResult(false, result.error)
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.rejectSessionRequest("${topic}", ${id}, "${error}")
+                                    .then((value) => {
+                                        wc.statusObject.onRejectSessionRequestResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onRejectSessionRequestResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function disconnectTopic(topic) {
@@ -314,16 +300,16 @@ Item {
         function auth(authLink) {
             console.debug(`WC WalletConnectSDK.wcCall.auth; authLink: ${authLink}`)
 
-            d.engine.runJavaScript(`wc.auth("${authLink}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.auth; response: ${JSON.stringify(result, null, 2)}`)
-
-                if (result) {
-                    if (!!result.error) {
-                        console.error("auth: ", result.error)
-                        return
-                    }
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.auth("${authLink}")
+                                    .then((value) => {
+                                        wc.statusObject.onAuthResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onAuthResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function formatAuthMessage(cacaoPayload, address) {
@@ -332,51 +318,38 @@ Item {
             d.engine.runJavaScript(`wc.formatAuthMessage(${JSON.stringify(cacaoPayload)}, "${address}")`, function(result) {
                 console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; response: ${JSON.stringify(result, null, 2)}`)
 
-                if (result) {
-                    if (!!result.error) {
-                        console.error("formatAuthMessage: ", result.error)
-                        return
-                    }
-                }
-
-                root.authSignMessage(result.result, address)
+                root.authMessageFormated(result, address)
             })
         }
 
         function authApprove(authRequest, address, signature) {
             console.debug(`WC WalletConnectSDK.wcCall.authApprove; authRequest: ${JSON.stringify(authRequest)}, address: ${address}, signature: ${signature}`)
 
-            d.engine.runJavaScript(`wc.approveAuth(${JSON.stringify(authRequest)}, "${address}", "${signature}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.approveAuth; response: ${JSON.stringify(result, null, 2)}`)
-
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("approveAuth: ", result.error)
-                        root.authRequestUserAnswerResult(true, result.error)
-                        return
-                    }
-                    root.authRequestUserAnswerResult(true, result.error)
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.approveAuth(${JSON.stringify(authRequest)}, "${address}", "${signature}")
+                                    .then((value) => {
+                                        wc.statusObject.onApproveAuthResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onApproveAuthResponse(e.message)
+                                    })
+                                   `
+            )
         }
 
         function authReject(id, address) {
             console.debug(`WC WalletConnectSDK.wcCall.authReject; id: ${id}, address: ${address}`)
 
-            d.engine.runJavaScript(`wc.rejectAuth(${id}, "${address}")`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.rejectAuth; response: ${JSON.stringify(result, null, 2)}`)
-
-                if (result) {
-                    if (!!result.error)
-                    {
-                        console.error("rejectAuth: ", result.error)
-                        root.authRequestUserAnswerResult(false, result.error)
-                        return
-                    }
-                    root.authRequestUserAnswerResult(false, result.error)
-                }
-            })
+            d.engine.runJavaScript(`
+                                    wc.rejectAuth(${id}, "${address}")
+                                    .then((value) => {
+                                        wc.statusObject.onRejectAuthResponse("")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onRejectAuthResponse(e.message)
+                                    })
+                                   `
+            )
         }
     }
 
@@ -437,6 +410,20 @@ Item {
             d.resetSessionsModel()
         }
 
+        function onRespondSessionRequestResponse(error) {
+            console.debug(`WC WalletConnectSDK.onRespondSessionRequestResponse; error: ${error}`)
+            root.sessionRequestUserAnswerResult(true, error)
+            d.resetPairingsModel()
+            d.resetSessionsModel()
+        }
+
+        function onRejectSessionRequestResponse(error) {
+            console.debug(`WC WalletConnectSDK.onRejectSessionRequestResponse; error: ${error}`)
+            root.sessionRequestUserAnswerResult(false, error)
+            d.resetPairingsModel()
+            d.resetSessionsModel()
+        }
+
         function onSessionProposal(details) {
             console.debug(`WC WalletConnectSDK.onSessionProposal; details: ${JSON.stringify(details, null, 2)}`)
             root.sessionProposal(details)
@@ -486,6 +473,20 @@ Item {
         function onAuthRequest(details) {
             console.debug(`WC WalletConnectSDK.onAuthRequest; details: ${JSON.stringify(details, null, 2)}`)
             root.authRequest(details)
+        }
+
+        function onAuthResponse(error) {
+            console.debug(`WC WalletConnectSDK.onAuthResponse; error: ${error}`)
+        }
+
+        function onApproveAuthResponse(error) {
+            console.debug(`WC WalletConnectSDK.onApproveAuthResponse; error: ${error}`)
+            root.authRequestUserAnswerResult(true, error)
+        }
+
+        function onRejectAuthResponse(error) {
+            console.debug(`WC WalletConnectSDK.onRejectAuthResponse; error: ${error}`)
+            root.authRequestUserAnswerResult(false, error)
         }
     }
 
