@@ -6,8 +6,7 @@ import shared 1.0
 Row {
     id: root
 
-    property var reactionsModel
-    property var messageReactionsModel: [] // TODO: https://github.com/status-im/status-desktop/issues/10703
+    property var reactionsModel: []
 
     signal toggleReaction(int emojiId)
 
@@ -20,8 +19,11 @@ Row {
         delegate: EmojiReaction {
             source: Style.svg(filename)
             emojiId: model.emojiId
-            // reactedByUser: !!root.messageReactionsModel[emojiId]
+            reactedByUser: model.didIReactWithThisEmoji
             onCloseModal: {
+                if (reactedByUser) {
+                    return
+                }
                 root.toggleReaction(emojiId)
             }
         }

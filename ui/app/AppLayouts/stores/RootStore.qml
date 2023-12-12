@@ -124,9 +124,6 @@ QtObject {
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {
     }
 
-    property EmojiReactions emojiReactionsModel: EmojiReactions {
-    }
-
     property var chatSearchModel: mainModuleInst.chatSearchModel
 
     function rebuildChatSearchModel() {
