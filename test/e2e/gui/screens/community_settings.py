@@ -1,3 +1,4 @@
+import time
 import typing
 
 import allure
@@ -86,10 +87,16 @@ class OverviewView(QObject):
         return self._description_text_label.text
 
     @allure.step('Open edit community view')
-    def open_edit_community_view(self) -> 'EditCommunityView':
+    def open_edit_community_view(self, attempts: int = 2) -> 'EditCommunityView':
+        time.sleep(0.5)
         self._edit_button.click()
-        return EditCommunityView().wait_until_appears()
-
+        try:
+            return EditCommunityView()
+        except Exception as ex:
+            if attempts:
+                self.open_edit_community_view(attempts-1)
+            else:
+                raise ex
 
 class EditCommunityView(QObject):
 

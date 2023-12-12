@@ -29,6 +29,7 @@ class CommunitiesSettingsView(QObject):
     @property
     @allure.step('Get communities')
     def communities(self) -> typing.List[UserCommunityInfo]:
+        time.sleep(0.5)
         _communities = []
         for obj in driver.findAllObjects(self._community_item.real_name):
             container = driver.objectMap.realName(obj)

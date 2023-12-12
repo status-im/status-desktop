@@ -39,9 +39,15 @@ class LeftPanel(QObject):
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
-    def open_communities_settings(self) -> 'CommunitiesSettingsView':
+    def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
         self._open_settings('12-AppMenuItem')
-        return CommunitiesSettingsView()
+        try:
+            return CommunitiesSettingsView()
+        except Exception as ex:
+            if attempts:
+                self.open_communities_settings(attempts-1)
+            else:
+                raise ex
 
     @allure.step('Open wallet settings')
     def open_wallet_settings(self) -> WalletSettingsView:

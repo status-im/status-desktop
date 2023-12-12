@@ -34,7 +34,7 @@ class CommunityScreen(QObject):
     def create_channel(self, name: str, description: str, emoji: str = None):
         self.left_panel.open_create_channel_popup().create(name, description, emoji)
 
-    @allure.step('Create channel')
+    @allure.step('Edit channel')
     def edit_channel(self, channel, name: str, description: str, emoji: str = None):
         self.left_panel.select_channel(channel)
         self.tool_bar.open_edit_channel_popup().edit(name, description, emoji)
@@ -218,9 +218,9 @@ class LeftPanel(QObject):
 
     @allure.step('Get channel params')
     def get_channel_parameters(self, name) -> UserChannel:
-        for channal in self.channels:
-            if channal.name == name:
-                return channal
+        for channel in self.channels:
+            if channel.name == name:
+                return channel
         raise LookupError(f'Channel not found in {self.channels}')
 
     @allure.step('Open community settings')
@@ -243,10 +243,16 @@ class LeftPanel(QObject):
         raise LookupError('Channel not found')
 
     @allure.step('Open create category popup')
-    def open_create_category_popup(self) -> NewCategoryPopup:
+    def open_create_category_popup(self, attempts: int = 2) -> NewCategoryPopup:
         self._channel_or_category_button.click()
-        self._create_category_menu_item.click()
-        return NewCategoryPopup().wait_until_appears()
+        try:
+            self._create_category_menu_item.click()
+            return NewCategoryPopup().wait_until_appears()
+        except Exception as ex:
+            if attempts:
+                self.open_create_category_popup(attempts-1)
+            else:
+                raise ex
 
     @allure.step('Open join community popup')
     def open_welcome_community_popup(self):
