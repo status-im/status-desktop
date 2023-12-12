@@ -117,10 +117,12 @@ window.wc = {
     },
 
     disconnect: async function (topic) {
-        await window.wc.web3wallet.disconnectSession({
-                                                        topic,
-                                                        reason: getSdkError('USER_DISCONNECTED')
-                                                     });
+        await window.wc.web3wallet.disconnectSession(
+            {
+                topic,
+                reason: getSdkError('USER_DISCONNECTED')
+            }
+        );
     },
 
     ping: async function (topic) {
@@ -132,112 +134,91 @@ window.wc = {
 
         const { relays } = params
 
-        const approvedNamespaces = buildApprovedNamespaces({
-            proposal: params,
-            supportedNamespaces: supportedNamespaces,
-        });
+        const approvedNamespaces = buildApprovedNamespaces(
+            {
+                proposal: params,
+                supportedNamespaces: supportedNamespaces,
+            }
+        );
 
-        await window.wc.web3wallet.approveSession({
+        await window.wc.web3wallet.approveSession(
+            {
                 id,
                 relayProtocol: relays[0].protocol,
                 namespaces: approvedNamespaces,
-            });
+            }
+        );
     },
 
     rejectSession: async function (id) {
-        await window.wc.web3wallet.rejectSession({
+        await window.wc.web3wallet.rejectSession(
+            {
                 id,
                 reason: getSdkError("USER_REJECTED"), // TODO USER_REJECTED_METHODS, USER_REJECTED_CHAINS, USER_REJECTED_EVENTS
-            });
+            }
+        );
     },
 
-    auth: function (uri) {
-        try {
-            return {
-                result: window.wc.authClient.core.pairing.pair({ uri }),
-                error: ""
-            };
-        } catch (e) {
-            return {
-                result: "",
-                error: e
-            };
-        }
+    auth: async function (uri) {
+        await window.wc.authClient.core.pairing.pair({ uri });
     },
 
     formatAuthMessage: function (cacaoPayload, address) {
         const iss = `did:pkh:eip155:1:${address}`;
-
-        return {
-            result: window.wc.authClient.formatMessage(cacaoPayload, iss),
-            error: ""
-        };
+        return window.wc.authClient.formatMessage(cacaoPayload, iss);
     },
 
-    approveAuth: function (authRequest, address, signature) {
-        const { id, params } = authRequest;
+    approveAuth: async function (authRequest, address, signature) {
+        const { id } = authRequest;
 
         const iss = `did:pkh:eip155:1:${address}`;
 
-        const message = window.wc.authClient.formatMessage(params.cacaoPayload, iss);
-
-        return {
-            result: window.wc.authClient.respond(
-                {
-                    id: id,
-                    signature: {
-                        s: signature,
-                        t: "eip191",
-                    },
+        await window.wc.authClient.respond(
+            {
+                id: id,
+                signature: {
+                    s: signature,
+                    t: "eip191",
                 },
-                iss),
-            error: ""
-        };
+            },
+            iss
+        );
     },
 
-    rejectAuth: function (id, address) {
+    rejectAuth: async function (id, address) {
         const iss = `did:pkh:eip155:1:${address}`;
 
-        return {
-            result: window.wc.authClient.respond(
-                {
-                    id: id,
-                    error: {
-                        code: 4001,
-                        message: 'Auth request has been rejected'
-                    },
+        await window.wc.authClient.respond(
+            {
+                id: id,
+                error: {
+                    code: 4001,
+                    message: 'Auth request has been rejected'
                 },
-                iss),
-            error: ""
-        };
+            },
+            iss
+        );
     },
 
-    respondSessionRequest: function (topic, id, signature) {
+    respondSessionRequest: async function (topic, id, signature) {
         const response = formatJsonRpcResult(id, signature)
 
-        try {
-            let r = window.wc.web3wallet.respondSessionRequest({ topic: topic, response: response });
-            return {
-                result: r,
-                error: ""
-            };
-
-        } catch (e) {
-            return {
-                result: "",
-                error: e
-            };
-        }
+        await window.wc.web3wallet.respondSessionRequest(
+            {
+                topic: topic,
+                response: response
+            }
+        );
     },
 
-    rejectSessionRequest: function (topic, id, error = false) {
+    rejectSessionRequest: async function (topic, id, error = false) {
         const errorType = error ? "SESSION_SETTLEMENT_FAILED" : "USER_REJECTED";
-        return {
-            result: window.wc.web3wallet.respondSessionRequest({
+
+        await window.wc.web3wallet.respondSessionRequest(
+            {
                 topic: topic,
                 response: formatJsonRpcError(id, getSdkError(errorType)),
-            }),
-            error: ""
-        };
+            }
+        );
     },
 };
