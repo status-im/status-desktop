@@ -52,13 +52,18 @@ Item {
         readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
         readonly property var chatDetails: chatContentModule && chatContentModule.chatDetails || null
+        readonly property bool keepUnread: messageStore.keepUnread
 
         readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTimeQueued(root, 100, function() {
             if(scrollY < 1000) messageStore.loadMoreMessages()
         })
 
+        function setKeepUnread(flag: bool) {
+            root.messageStore.setKeepUnread(flag)
+        }
+
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
-            if (!isMostRecentMessageInViewport || !chatLogView.visible) {
+            if (!isMostRecentMessageInViewport || !chatLogView.visible || keepUnread) {
                 return
             }
 
@@ -107,6 +112,7 @@ Item {
         target: !!d.chatDetails ? d.chatDetails : null
 
         function onActiveChanged() {
+            d.setKeepUnread(false)
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
             d.loadMoreMessagesIfScrollBelowThreshold()
         }

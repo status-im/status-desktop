@@ -981,6 +981,21 @@ Loader {
                         }
                     },
                     Loader {
+                        active: !root.editModeOn && delegate.hovered && !delegate.hideQuickActions
+                        visible: active
+                        sourceComponent: StatusFlatRoundButton {
+                            objectName: "markAsUnreadButton"
+                            width: d.chatButtonSize
+                            height: d.chatButtonSize
+                            icon.name: "hide"
+                            type: StatusFlatRoundButton.Type.Tertiary
+                            tooltip.text: qsTr("Mark as unread")
+                            onClicked: {
+                                root.messageStore.markMessageAsUnread(root.messageId)
+                            }
+                        }
+                    },
+                    Loader {
                         active: {
                             if(!delegate.hovered)
                                 return false;
@@ -1100,6 +1115,10 @@ Loader {
                                                         root.chatContentModule.pinnedMessagesModel,
                                                         messageId,
                                                         root.chatId)
+            }
+
+            onMarkMessageAsUnread: (messageId) => {
+                root.messageStore.markMessageAsUnread(messageId)
             }
 
             onToggleReaction: (messageId, emojiId) => {

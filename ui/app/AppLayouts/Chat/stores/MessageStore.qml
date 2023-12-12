@@ -19,6 +19,7 @@ QtObject {
     readonly property int chatType: messageModule ? messageModule.chatType : Constants.chatType.unknown
     readonly property string chatColor: messageModule ? messageModule.chatColor : Style.current.blue
     readonly property string chatIcon: messageModule ? messageModule.chatIcon : ""
+    readonly property bool keepUnread: messageModule ? messageModule.keepUnread : false
 
     onMessageModuleChanged: {
         if(!messageModule)
@@ -34,6 +35,14 @@ QtObject {
             return
 
         messageModule.loadMoreMessages()
+    }
+
+    function setKeepUnread(flag: bool) {
+        if (!messageModule) {
+            return
+        }
+
+        messageModule.updateKeepUnread(flag)
     }
 
     function getMessageByIdAsJson (id) {
@@ -122,6 +131,13 @@ QtObject {
         if(!messageModule)
             return
         messageModule.deleteMessage(messageId)
+    }
+
+    function markMessageAsUnread(messageId) {
+        if (!messageModule) {
+            return
+        }
+        messageModule.markMessageAsUnread(messageId)
     }
 
     function warnAndDeleteMessage(messageId) {

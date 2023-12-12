@@ -510,11 +510,17 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)
 
+method markMessageAsUnread*(self: Module, messageId: string) =
+  self.controller.markMessageAsUnread(messageId)
+
 method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
   self.view.model().pinUnpinMessage(messageId, true, actionInitiatedBy)
 
 method onUnpinMessage*(self: Module, messageId: string) =
   self.view.model().pinUnpinMessage(messageId, false, "")
+
+method onMarkMessageAsUnread*(self: Module, messageId: string) =
+  self.view.model().markMessageAsUnread(messageId)
 
 method getSectionId*(self: Module): string =
   return self.controller.getMySectionId()

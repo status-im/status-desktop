@@ -32,6 +32,10 @@ proc pinUnpinMessage*(chatId: string, messageId: string, pin: bool): RpcResponse
   }]
   result = callPrivateRPC("sendPinMessage".prefix, payload)
 
+proc markMessageAsUnread*(chatId: string, messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chatId, messageId]
+  result = callPrivateRPC("markMessageAsUnread".prefix, payload)
+
 proc getMessageByMessageId*(messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [messageId]
   result = callPrivateRPC("messageByMessageID".prefix, payload)

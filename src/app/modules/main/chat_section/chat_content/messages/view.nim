@@ -17,6 +17,7 @@ QtObject:
       chatIcon: string
       chatType: int
       loading: bool
+      keepUnread: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -36,6 +37,7 @@ QtObject:
     result.chatIcon = ""
     result.chatType = ChatType.Unknown.int
     result.loading = false
+    result.keepUnread = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -56,6 +58,25 @@ QtObject:
 
   proc unpinMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.pinUnpinMessage(messageId, false)
+
+  proc keepUnreadChanged*(self: View) {.signal.}
+  proc getKeepUnread*(self: View): bool {.slot.} =
+    return self.keepUnread
+
+  QtProperty[bool] keepUnread:
+    read = getKeepUnread
+    notify = keepUnreadChanged
+
+  proc setKeepUnread*(self: View, value: bool) =
+    self.keepUnread = value
+    self.keepUnreadChanged()
+
+  proc markMessageAsUnread*(self: View, messageId: string) {.slot.} =
+    self.delegate.markMessageAsUnread(messageId)
+    self.setKeepUnread(true)
+
+  proc updateKeepUnread*(self: View, flag: bool) {.slot.} =
+    self.setKeepUnread(flag)
 
   proc getMessageByIdAsJson*(self: View, messageId: string): string {.slot.} =
     let jsonObj = self.model.getMessageByIdAsJson(messageId)
