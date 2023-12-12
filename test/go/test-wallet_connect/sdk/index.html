@@ -272,7 +272,7 @@
           acceptPairButton.remove();
           rejectPairButton.remove();
 
-          root.controller_recordSuccessfulPairing(JSON.stringify(sessionProposal));
+          root.controller_upsertSession(JSON.stringify(sessionProposal));
 
           logComponentStatusChange(
             "GO.pairSessionProposal",

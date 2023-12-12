@@ -26,8 +26,8 @@ rpc(wCSendTransactionWithSignature, "wallet"):
 rpc(wCPairSessionProposal, "wallet"):
   sessionProposalJson: string
 
-rpc(wCRecordSuccessfulPairing, "wallet"):
-  sessionProposalJson: string
+rpc(wCUpsertSession, "wallet"):
+  sessionJson: string
 
 rpc(wCChangePairingState, "wallet"):
   topic: string
@@ -63,9 +63,9 @@ proc pair*(res: var JsonNode, sessionProposalJson: string): string =
     warn e.msg
     return e.msg
 
-proc recordSuccessfulPairing*(sessionProposalJson: string): bool =
+proc upsertSession*(sessionJson: string): bool =
   try:
-    let response = wCRecordSuccessfulPairing(sessionProposalJson)
+    let response = wCUpsertSession(sessionJson)
     return not isErrorResponse(response)
   except Exception as e:
     warn e.msg

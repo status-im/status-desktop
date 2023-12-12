@@ -29,7 +29,7 @@ Item {
     signal sdkInit(bool success, var result)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
-    signal approveSessionResult(var sessionProposal, string error)
+    signal approveSessionResult(var session, string error)
     signal rejectSessionResult(string error)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
@@ -212,11 +212,11 @@ Item {
 
             d.engine.runJavaScript(`
                                     wc.approveSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})
-                                    .then((value) => {
-                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, "")
+                                    .then((session) => {
+                                        wc.statusObject.onApproveSessionResponse(session, ${JSON.stringify(sessionProposal)}, "")
                                     })
                                     .catch((e) => {
-                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, e.message)
+                                        wc.statusObject.onApproveSessionResponse('', ${JSON.stringify(sessionProposal)}, e.message)
                                     })
                                    `
             )
@@ -390,16 +390,12 @@ Item {
             d.resetSessionsModel()
         }
 
-        function onApproveSessionResponse(sessionProposal, error) {
-            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionProposal: ${JSON.stringify(sessionProposal, null, 2)}, error: ${error}`)
+        function onApproveSessionResponse(session, error) {
+            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; session: ${JSON.stringify(session, null, 2)}; error: ${error}`)
 
-            // Update the temporary expiry with the one from the pairing
-            d.resetPairingsModel((pairing) => {
-                if (pairing.topic === sessionProposal.params.pairingTopic) {
-                    sessionProposal.params.expiry = pairing.expiry
-                    root.approveSessionResult(sessionProposal, error)
-                }
-            })
+            root.approveSessionResult(session, error)
+
+            d.resetPairingsModel()
             d.resetSessionsModel()
         }
 

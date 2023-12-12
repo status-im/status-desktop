@@ -299,12 +299,12 @@ Popup {
             root.state = d.waitingUserResponseToSessionRequest
         }
 
-        function onApproveSessionResult(sessionProposal, error) {
+        function onApproveSessionResult(session, error) {
             d.setDetailsText("")
             if (!error) {
                 d.setStatusText("Pairing OK")
                 d.state = d.pairedState
-                root.controller.recordSuccessfulPairing(JSON.stringify(sessionProposal))
+                root.controller.upsertSession(JSON.stringify(session))
             } else {
                 d.setStatusText("Pairing error", "red")
                 d.state = ""

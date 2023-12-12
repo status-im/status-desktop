@@ -9,8 +9,8 @@ Item {
 
     // function sessionProposal(/*string*/ sessionProposalJson)
     required property var sessionProposal
-    // function pairSessionRequest(/*string*/ sessionRequestJson)
-    required property var recordSuccessfulPairing
+    // function upsertSession(/*string*/ sessionRequestJson)
+    required property var upsertSession
     // function deletePairing(/*string*/ topic)
     required property var deletePairing
 

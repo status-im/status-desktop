@@ -129,7 +129,7 @@ window.wc = {
         await window.wc.web3wallet.engine.signClient.ping({ topic });
     },
 
-    approveSession: async function (sessionProposal, supportedNamespaces) {
+    approveSession: function (sessionProposal, supportedNamespaces) {
         const { id, params } = sessionProposal;
 
         const { relays } = params
@@ -141,7 +141,7 @@ window.wc = {
             }
         );
 
-        await window.wc.web3wallet.approveSession(
+        return window.wc.web3wallet.approveSession(
             {
                 id,
                 relayProtocol: relays[0].protocol,

@@ -168,9 +168,9 @@ func main() {
 }
 
 func mockController(w webview.WebView) {
-	w.Bind("controller_recordSuccessfulPairing", func(sessionProposalJson string) {
-		fmt.Println("controller_recordSuccessfulPairing:", sessionProposalJson)
-		sessionProposalRes := callPrivateMethod("wallet_wCRecordSuccessfulPairing", []interface{}{sessionProposalJson})
+	w.Bind("controller_upsertSession", func(sessionProposalJson string) {
+		fmt.Println("controller_upsertSession:", sessionProposalJson)
+		sessionProposalRes := callPrivateMethod("wallet_wCUpsertSession", []interface{}{sessionProposalJson})
 		var apiResponse wc.PairSessionResponse
 		err := getRPCAPIResponse(sessionProposalRes, &apiResponse)
 		if err != nil {

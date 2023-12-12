@@ -45,6 +45,8 @@ Item {
 
             visible: false
 
+            profile.storageName: "WC"
+
             url: root.url
             webChannel: statusChannel
 

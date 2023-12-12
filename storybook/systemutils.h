@@ -7,7 +7,8 @@ class SystemUtils : public QObject
 {
     Q_OBJECT
 public:
-    explicit SystemUtils(QObject *parent = nullptr);
+    explicit SystemUtils(QObject* parent = nullptr);
 
-    Q_INVOKABLE QString getEnvVar(const QString &varName);
+    Q_INVOKABLE QString getEnvVar(const QString& varName);
+    Q_INVOKABLE bool removeDir(const QString& path);
 };

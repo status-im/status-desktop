@@ -107,8 +107,8 @@ QtObject:
       error "pairing", msg=error
     self.respondSessionProposal(sessionProposalJson, supportedNamespacesJson, error)
 
-  proc recordSuccessfulPairing(self: Controller, sessionProposalJson: string) {.slot.} =
-    if backend_wallet_connect.recordSuccessfulPairing(sessionProposalJson):
+  proc upsertSession(self: Controller, sessionJson: string) {.slot.} =
+    if backend_wallet_connect.upsertSession(sessionJson):
       if not self.hasActivePairings.get(false):
         self.hasActivePairings = some(true)
 

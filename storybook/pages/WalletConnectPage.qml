@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 import Qt.labs.settings 1.0
+import QtWebEngine 1.10
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
@@ -37,17 +38,17 @@ Item {
                 respondSessionProposal(sessionProposalJson, `{"eip155":{"methods":["eth_sendTransaction","eth_sendRawTransaction","personal_sign","eth_sign","eth_signTransaction","eth_signTypedData","wallet_switchEthereumChain"],"chains":["eip155:5"],"events":["accountsChanged","chainChanged"],"accounts":["eip155:5:0xE2d622C817878dA5143bBE06866ca8E35273Ba8a"]}}`, "")
             }
 
-            recordSuccessfulPairing: function(sessionProposalJson) {
-                const sessionProposal = JSON.parse(sessionProposalJson)
+            upsertSession: function(sessionJson) {
+                const session = JSON.parse(sessionJson)
 
                 pairingsModel.append({
-                    topic: sessionProposal.params.pairingTopic,
-                    expiry: sessionProposal.params.expiry,
+                    topic: session.topic,
+                    expiry: session.expiry,
                     active: true,
                     peerMetadata: {
-                        name: sessionProposal.params.proposer.metadata.name,
-                        url: sessionProposal.params.proposer.metadata.url,
-                        icons: sessionProposal.params.proposer.metadata.icons,
+                        name: session.peer.metadata.name,
+                        url: session.peer.metadata.url,
+                        icons: session.peer.metadata.icons,
                     }
                 })
                 root.saveListModel(pairingsModel)
@@ -139,7 +140,7 @@ Item {
                 Layout.maximumHeight: 300
 
                 onDisconnect: function(pairingTopic) {
-                    wc.sdk.disconnectPairing(pairingTopic)
+                    wc.sdk.disconnectTopic(pairingTopic)
                 }
 
                 model: ListModel {
@@ -167,6 +168,23 @@ Item {
 
             // spacer
             ColumnLayout {}
+            StatusButton {
+                text: "Clear SDK cache"
+
+                enabled: d.webEngine
+
+                onClicked: {
+                    SystemUtils.removeDir(d.webEngine.profile.persistentStoragePath)
+                    d.webEngine.reload()
+                }
+            }
+            StatusCheckBox {
+                id: autoOpenCheckBox
+
+                text: "Auto-open dialog"
+
+                checked: false
+            }
         }
     }
 
@@ -177,10 +195,14 @@ Item {
 
         property bool hasActivePairings: hasActivePairingsCheckBox.checked
         property string pairingsHistory: ""
+        property bool autoOpenModal: autoOpenCheckBox.checked
     }
 
     Component.onCompleted: {
         loadListModel(pairingsModel)
+
+        wc.modal.visible = settings.autoOpenModal
+        autoOpenCheckBox.checked = settings.autoOpenModal
     }
 
     function saveListModel(model) {
@@ -200,6 +222,23 @@ Item {
         listArray.forEach(function(entry) {
             pairingsModel.append(entry);
         });
+    }
+
+    QtObject {
+        id: d
+
+        property WebEngineView webEngine: null
+    }
+
+    Connections {
+        target: wc.sdk.webEngineLoader
+        function onEngineLoaded(instance) {
+            d.webEngine = instance
+        }
+
+        function onEngineUnloaded() {
+            d.webEngine = null
+        }
     }
 }
 
