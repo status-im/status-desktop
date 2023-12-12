@@ -10,6 +10,8 @@ type
     PersonalSign = "personal_sign"
     EthSign = "eth_sign"
     SignTypedData = "eth_signTypedData"
+    SignTypedDataV3 = "eth_signTypedData_v3"
+    SignTypedDataV4 = "eth_signTypedData_v4"
 
 ## provided json represents a `SessionRequest`
 proc getRequestMethod*(jsonObj: JsonNode): RequestMethod =

@@ -274,6 +274,13 @@ Popup {
             root.controller.sessionProposal(JSON.stringify(sessionProposal))
         }
 
+        function onSessionRequestEvent(sessionRequest) {
+            d.setStatusText("Approve session request")
+            d.setDetailsText(JSON.stringify(sessionRequest, null, 2))
+            d.sessionRequest = sessionRequest
+            root.state = d.waitingUserResponseToSessionRequest
+        }
+
         function onApproveSessionResult(sessionProposal, error) {
             d.setDetailsText("")
             if (!error) {
