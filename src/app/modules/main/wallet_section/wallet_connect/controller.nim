@@ -164,8 +164,10 @@ QtObject:
       self.respondSessionRequest($self.sessionRequestJson, signature, false)
     elif requestMethod == RequestMethod.EthSign:
       self.respondSessionRequest($self.sessionRequestJson, signature, false)
-    elif requestMethod == RequestMethod.SignTypedData:
-      self.respondSessionRequest($self.sessionRequestJson, signature, false)
+    elif requestMethod == RequestMethod.SignTypedData or
+      requestMethod == RequestMethod.SignTypedDataV3 or
+      requestMethod == RequestMethod.SignTypedDataV4:
+        self.respondSessionRequest($self.sessionRequestJson, signature, false)
     else:
       error "Unknown request method"
       self.respondSessionRequest($self.sessionRequestJson, "", true)
