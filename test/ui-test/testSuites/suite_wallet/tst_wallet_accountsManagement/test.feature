@@ -45,7 +45,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
         When the user edits an account with "<name>" to "<new_name>" with color "#<new_color>" and emoji "<new_emoji>"
         Then the account is correctly displayed with "<new_name>" and "#<new_color>" and emoji unicode "<new_emoji_unicode>" in accounts list
-        When the user removes account "<new_name>"
+        When the user removes account "<new_name>" with agreement
         Then the account with "<new_name>" is not displayed
 
         Examples:
