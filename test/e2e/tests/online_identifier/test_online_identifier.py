@@ -16,7 +16,7 @@ pytestmark = allure.suite("Settings")
 @pytest.mark.parametrize('new_name', [pytest.param('NewUserName')])
 def test_change_own_display_name(main_screen: MainWindow, user_account, new_name):
     with step('Open own profile popup and check name of user is correct'):
-        profile = main_screen.left_panel.open_user_online_identifier()
+        profile = main_screen.left_panel.open_online_identifier()
         profile_popup = profile.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name
 
@@ -24,7 +24,7 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
         profile_popup.edit_profile().set_name(new_name)
 
     with step('Open own profile popup and check name of user is correct'):
-        assert main_screen.left_panel.open_user_online_identifier().open_profile_popup_from_online_identifier().user_name == new_name
+        assert main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().user_name == new_name
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703002', 'Switch state to offline')

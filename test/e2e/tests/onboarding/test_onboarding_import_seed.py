@@ -58,7 +58,7 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
             f"Recovered account should have address {user_account.status_address}, but has {address}"
 
     with step('Verify that the user logged in via seed phrase correctly'):
-        user_canvas = main_window.left_panel.open_user_online_identifier()
+        user_canvas = main_window.left_panel.open_online_identifier()
         profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name
         

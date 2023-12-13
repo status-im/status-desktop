@@ -24,6 +24,6 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
         main_screen.authorize_user(user_account_changed_password)
 
     with step('Verify that the user logged in correctly'):
-        user_canvas = main_screen.left_panel.open_user_online_identifier()
+        user_canvas = main_screen.left_panel.open_online_identifier()
         profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_account.name

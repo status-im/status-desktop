@@ -76,7 +76,7 @@ pipeline {
     TESTRAIL_PROJECT_ID = 17
 
     /* Runtime flag to make testing of the app easier.  Switched off: unpredictable app behavior under new tests */
-    STATUS_RUNTIME_TEST_MODE = 'True'
+    /* STATUS_RUNTIME_TEST_MODE = 'True' */
   }
 
   stages {

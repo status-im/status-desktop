@@ -36,7 +36,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_window.prepare()
-            profile_popup = main_window.left_panel.open_user_online_identifier().open_profile_popup_from_online_identifier()
+            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.chat_key
             profile_popup.close()
             main_window.hide()
@@ -63,7 +63,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
         with step(f'User {user_three.name}, get chat key'):
             aut_three.attach()
             main_window.prepare()
-            profile_popup = main_window.left_panel.open_user_online_identifier().open_profile_popup_from_online_identifier()
+            profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
             chat_key = profile_popup.chat_key
             profile_popup.close()
             main_window.hide()

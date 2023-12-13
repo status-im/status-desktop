@@ -70,5 +70,5 @@ def test_delete_community_channel(main_screen):
     with step('Delete channel'):
         community_screen.delete_channel('general')
 
-    with step('Verify channel is not exists'):
-        assert not community_screen.left_panel.channels
+    with step('Verify channel list is empty'):
+        assert len(community_screen.left_panel.channels) == 0

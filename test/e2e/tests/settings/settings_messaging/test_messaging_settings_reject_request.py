@@ -30,7 +30,8 @@ def test_messaging_settings_rejecting_request(multiple_instance, user_data_one, 
         with step(f'User {user_two.name}, get chat key'):
             aut_two.attach()
             main_window.prepare()
-            profile_popup = main_window.left_panel.open_user_online_identifier().open_profile_popup_from_online_identifier()
+            online_identifier = main_window.left_panel.open_online_identifier()
+            profile_popup = online_identifier.open_profile_popup_from_online_identifier()
             chat_key = profile_popup.chat_key
             profile_popup.close()
             main_window.hide()

@@ -201,6 +201,7 @@ class LeftPanel(QObject):
     @property
     @allure.step('Get channels')
     def channels(self) -> typing.List[UserChannel]:
+        time.sleep(0.5)
         channels_list = []
         for obj in driver.findAllObjects(self._channel_list_item.real_name):
             container = driver.objectMap.realName(obj)

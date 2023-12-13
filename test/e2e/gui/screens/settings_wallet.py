@@ -66,7 +66,7 @@ class WalletSettingsView(QObject):
         keypair_names = []
         for item in driver.findAllObjects(self._wallet_settings_keypair_item.real_name):
             keypair_names.append(str(getattr(item, 'title', '')))
-        if keypair_names == 0:
+        if len(keypair_names) == 0:
             raise LookupError(
                 'No keypairs found on the wallet settings screen')
         else:

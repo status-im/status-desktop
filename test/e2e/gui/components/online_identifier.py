@@ -11,16 +11,21 @@ from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 
 
-class UserCanvas(QObject):
+class OnlineIdentifier(QObject):
 
     def __init__(self):
-        super(UserCanvas, self).__init__('o_StatusListView')
+        super(OnlineIdentifier, self).__init__('o_StatusListView')
         self._always_active_button = Button('userContextmenu_AlwaysActiveButton')
         self._inactive_button = Button('userContextmenu_InActiveButton')
         self._automatic_button = Button('userContextmenu_AutomaticButton')
         self._view_my_profile_button = Button('userContextMenu_ViewMyProfileAction')
         self._user_name_text_label = TextLabel('userLabel_StyledText')
         self._profile_image = QObject('o_StatusIdenticonRing')
+
+    @allure.step('Wait until appears {0}')
+    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        driver.waitFor(lambda: self._view_my_profile_button.is_visible, timeout_msec)
+        return self
 
     @property
     @allure.step('Get profile image')
@@ -31,12 +36,6 @@ class UserCanvas(QObject):
     @allure.step('Get user name')
     def user_name(self) -> str:
         return self._user_name_text_label.text
-
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        super(UserCanvas, self).wait_until_appears(timeout_msec)
-        time.sleep(1)
-        return self
 
     @allure.step('Set user state online')
     def set_user_state_online(self):

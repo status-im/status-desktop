@@ -14,7 +14,7 @@ from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
-from gui.components.user_canvas import UserCanvas
+from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.window import Window
@@ -65,21 +65,21 @@ class LeftPanel(QObject):
         self._messages_button.click()
         return MessagesScreen().wait_until_appears()
 
-    @allure.step('Open user online identifier')
-    def open_user_online_identifier(self, attempts: int = 2) -> UserCanvas:
+    @allure.step('Open online identifier')
+    def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
         time.sleep(0.5)
         self._profile_button.click()
         try:
-            return UserCanvas()
+            return OnlineIdentifier().wait_until_appears()
         except Exception as ex:
             if attempts:
-                self.open_user_online_identifier(attempts - 1)
+                self.open_online_identifier(attempts - 1)
             else:
                 raise ex
 
     @allure.step('Set user to online')
     def set_user_to_online(self):
-        self.open_user_online_identifier().set_user_state_online()
+        self.open_online_identifier().set_user_state_online()
 
     @allure.step('Verify: User is online')
     def user_is_online(self) -> bool:
@@ -87,7 +87,7 @@ class LeftPanel(QObject):
 
     @allure.step('Set user to offline')
     def set_user_to_offline(self):
-        self.open_user_online_identifier().set_user_state_offline()
+        self.open_online_identifier().set_user_state_offline()
 
     @allure.step('Verify: User is offline')
     def user_is_offline(self):
@@ -95,7 +95,7 @@ class LeftPanel(QObject):
 
     @allure.step('Set user to automatic')
     def set_user_to_automatic(self):
-        self.open_user_online_identifier().set_user_automatic_state()
+        self.open_online_identifier().set_user_automatic_state()
 
     @allure.step('Verify: User is set to automatic')
     def user_is_set_to_automatic(self):
@@ -130,9 +130,16 @@ class LeftPanel(QObject):
         InviteContactsPopup().wait_until_appears().invite(contacts, message)
 
     @allure.step('Open settings')
-    def open_settings(self) -> SettingsScreen:
+    def open_settings(self, attempts: int = 2) -> SettingsScreen:
         self._settings_button.click()
-        return SettingsScreen().wait_until_appears()
+        time.sleep(0.5)
+        try:
+            return SettingsScreen()
+        except Exception as ex:
+            if attempts:
+                self.open_settings(attempts - 1)
+            else:
+                raise ex
 
     @allure.step('Open Wallet section')
     def open_wallet(self, attempts: int = 2) -> WalletScreen:

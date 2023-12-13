@@ -50,7 +50,7 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
             BetaConsentPopup().confirm()
 
     with step('Verify that the user logged in correctly'):
-        user_canvas = main_window.left_panel.open_user_online_identifier()
+        user_canvas = main_window.left_panel.open_online_identifier()
         profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_one.name
 
