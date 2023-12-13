@@ -529,8 +529,7 @@ QtObject:
       if prev_community.isOwner and not community.isOwner:
         self.events.emit(SIGNAL_COMMUNITY_LOST_OWNERSHIP, CommunityIdArgs(communityId: community.id))
         let response = tokens_backend.registerLostOwnershipNotification(community.id)
-        self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-          RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result["activityCenterNotifications"]))
+        checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
       # If there's settings without `id` it means the original
       # signal didn't include actual communitySettings, hence we
@@ -998,8 +997,6 @@ QtObject:
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result["activityCenterNotifications"]))
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -1018,6 +1015,7 @@ QtObject:
         self.messageService.resetMessageCursor(chat.id)
 
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
+      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
       error "Error leaving community", msg = e.msg, communityId
@@ -1626,8 +1624,7 @@ QtObject:
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: rpcResponse.result["activityCenterNotifications"]))
+      checkAndEmitACNotificationsFromResponse(self.events, rpcResponse.result{"activityCenterNotifications"})
 
       if not self.processRequestsToJoinCommunity(rpcResponse.result):
         raise newException(CatchableError, "no 'requestsToJoinCommunity' key in response")
@@ -1718,9 +1715,8 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED,
         CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications:
-        rpcResponseObj["response"]["result"]{"activityCenterNotifications"}))
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      checkAndEmitACNotificationsFromResponse(self.events, rpcResponse.result{"activityCenterNotifications"})
 
     except Exception as e:
       let errMsg = e.msg
@@ -1986,9 +1982,8 @@ QtObject:
 
           community.pendingRequestsToJoin.delete(i)
           self.communities[communityId] = community
-          self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-            RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result["activityCenterNotifications"]))
           self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
+          checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
           return
 
         i.inc()
@@ -1998,15 +1993,13 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.declineRequestToJoinCommunity(requestId)
-      self.events.emit(SIGNAL_PARSE_RAW_ACTIVITY_CENTER_NOTIFICATIONS,
-        RawActivityCenterNotificationsArgs(activityCenterNotifications: response.result["activityCenterNotifications"]))
-
       let requestToJoin = response.result["requestsToJoinCommunity"][0].toCommunityMembershipRequestDto
 
       self.updateMembershipRequestToNewState(communityId, requestId, self.communities[communityId],
         RequestToJoinType(requestToJoin.state))
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
+      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
     except Exception as e:
       error "Error declining request to join community", msg = e.msg
 
