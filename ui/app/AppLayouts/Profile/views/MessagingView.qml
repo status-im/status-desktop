@@ -101,6 +101,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.fillWidth: true
             title: qsTr("Allow show GIF previews")
+            objectName: "MessagingView_AllowShowGifs_StatusListItem"
             components: [
                 StatusSwitch {
                     id: showGifPreviewsSwitch
@@ -136,6 +137,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             label: qsTr("Always ask")
+            objectName: "MessagingView_AlwaysAsk_RadioButton"
             group: urlUnfurlingGroup
             checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeAlwaysAsk
             onClicked: {
@@ -149,6 +151,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             label: qsTr("Always show previews")
+            objectName: "MessagingView_AlwaysShow_RadioButton"
             group: urlUnfurlingGroup
             checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeEnableAll
             onClicked: {
@@ -162,6 +165,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             label: qsTr("Never show previews")
+            objectName: "MessagingView_NeverShow_RadioButton"
             group: urlUnfurlingGroup
             checked: root.messagingStore.privacyModule.urlUnfurlingMode === Constants.UrlUnfurlingModeDisableAll
             onClicked: {
