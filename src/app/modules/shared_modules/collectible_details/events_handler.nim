@@ -26,6 +26,9 @@ QtObject:
   proc onGetCollectiblesDetailsDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_collectibles.eventGetCollectiblesDetailsDone] = handler
 
+  proc onCollectiblesDataUpdate*(self: EventsHandler, handler: EventCallbackProc) =
+    self.eventHandlers[backend_collectibles.eventCollectiblesDataUpdated] = handler
+
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 

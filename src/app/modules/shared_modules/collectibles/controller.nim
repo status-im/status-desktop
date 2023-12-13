@@ -156,6 +156,16 @@ QtObject:
     if self.autofetch and res.hasMore:
       self.loadMoreItems()
 
+  proc processCollectiblesDataUpdate(self: Controller, jsonObj: JsonNode) =
+      if jsonObj.kind != JArray:
+        error "processCollectiblesDataUpdate expected an array"
+
+      var collectibles: seq[backend_collectibles.Collectible]
+      for jsonCollectible in jsonObj.getElems():
+        let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
+        collectibles.add(collectible)
+      self.model.updateItems(collectibles)
+
   proc resetModel(self: Controller) {.slot.} =
     self.model.setItems(@[], 0, true)
     self.fetchFromStart = true
@@ -165,6 +175,10 @@ QtObject:
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
       self.processGetOwnedCollectiblesResponse(jsonObj)
+    )
+
+    self.eventsHandler.onCollectiblesDataUpdate(proc (jsonObj: JsonNode) =
+      self.processCollectiblesDataUpdate(jsonObj)
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc (address: string, chainID: int) =
@@ -184,6 +198,7 @@ QtObject:
     self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(proc (address: string, chainID: int) =
       self.setOwnershipState(address, chainID, OwnershipStateError)
     )
+
   proc newController*(
     requestId: int32,
     networkService: network_service.Service,

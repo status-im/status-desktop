@@ -29,15 +29,19 @@ QtObject:
   proc delete*(self: CollectiblesEntry) =
     self.QObject.delete
 
+  proc setData(self: CollectiblesEntry, data: backend.Collectible) =
+    self.data = data
+    self.traits = newTraitModel()
+    if isSome(data.collectibleData) and isSome(data.collectibleData.get().traits):
+      let traits = data.collectibleData.get().traits.get()
+      self.traits.setItems(traits)
+    self.setup()
+
   proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
     new(result, delete)
     result.id = data.id
-    result.data = data
+    result.setData(data)
     result.extradata = extradata
-    result.traits = newTraitModel()
-    if isSome(data.collectibleData) and isSome(data.collectibleData.get().traits):
-      let traits = data.collectibleData.get().traits.get()
-      result.traits.setItems(traits)
     result.setup()
 
   proc newCollectibleDetailsBasicEntry*(id: backend.CollectibleUniqueID, extradata: ExtraData): CollectiblesEntry =
@@ -65,6 +69,9 @@ QtObject:
       extradata:{self.extradata},
       traits:{self.traits}
     )"""
+
+  proc getCollectiblUniqueID*(self: CollectiblesEntry): backend.CollectibleUniqueID =
+    return self.id
 
   proc hasCollectibleData(self: CollectiblesEntry): bool =
     return self.data != nil and isSome(self.data.collectibleData)
@@ -113,6 +120,7 @@ QtObject:
   proc getCollectionID*(self: CollectiblesEntry): string =
     return fmt"{self.getChainId}+{self.getContractAddress}"
 
+  proc nameChanged*(self: CollectiblesEntry) {.signal.}
   proc getName*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectibleData():
       return ""
@@ -120,7 +128,9 @@ QtObject:
 
   QtProperty[string] name:
     read = getName
+    notify = nameChanged
 
+  proc imageURLChanged*(self: CollectiblesEntry) {.signal.}
   proc getImageURL*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectibleData() or isNone(self.getCollectibleData().imageUrl):
       return ""
@@ -128,12 +138,14 @@ QtObject:
 
   QtProperty[string] imageUrl:
     read = getImageURL
+    notify = imageURLChanged
 
   proc getOriginalMediaURL(self: CollectiblesEntry): string =
     if not self.hasCollectibleData() or isNone(self.getCollectibleData().animationUrl):
       return ""
     return self.getCollectibleData().animationUrl.get()
 
+  proc mediaURLChanged*(self: CollectiblesEntry) {.signal.}
   proc getMediaURL*(self: CollectiblesEntry): string {.slot.} =
     result = self.getOriginalMediaURL()
     if result == "":
@@ -141,12 +153,14 @@ QtObject:
 
   QtProperty[string] mediaUrl:
     read = getMediaURL
+    notify = mediaURLChanged
 
   proc getOriginalMediaType(self: CollectiblesEntry): string =
     if not self.hasCollectibleData() or isNone(self.getCollectibleData().animationMediaType):
       return ""
     return self.getCollectibleData().animationMediaType.get()
 
+  proc mediaTypeChanged*(self: CollectiblesEntry) {.signal.}
   proc getMediaType*(self: CollectiblesEntry): string {.slot.} =
     result = self.getOriginalMediaType()
     if result == "":
@@ -154,7 +168,9 @@ QtObject:
 
   QtProperty[string] mediaType:
     read = getMediaType
+    notify = mediaTypeChanged
 
+  proc backgroundColorChanged*(self: CollectiblesEntry) {.signal.}
   proc getBackgroundColor*(self: CollectiblesEntry): string {.slot.} =
     var color = "transparent"
     if self.hasCollectibleData() and isSome(self.getCollectibleData().backgroundColor):
@@ -165,7 +181,9 @@ QtObject:
 
   QtProperty[string] backgroundColor:
     read = getBackgroundColor
+    notify = backgroundColorChanged
 
+  proc descriptionChanged*(self: CollectiblesEntry) {.signal.}
   proc getDescription*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectibleData() or isNone(self.getCollectibleData().description):
       return ""
@@ -173,7 +191,9 @@ QtObject:
 
   QtProperty[string] description:
     read = getDescription
+    notify = descriptionChanged
 
+  proc collectionSlugChanged*(self: CollectiblesEntry) {.signal.}
   proc getCollectionSlug*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectionData():
       return ""
@@ -181,7 +201,9 @@ QtObject:
 
   QtProperty[string] collectionSlug:
     read = getCollectionSlug
+    notify = collectionSlugChanged
 
+  proc collectionNameChanged*(self: CollectiblesEntry) {.signal.}
   proc getCollectionName*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectionData():
       return ""
@@ -189,7 +211,9 @@ QtObject:
 
   QtProperty[string] collectionName:
     read = getCollectionName
+    notify = collectionNameChanged
 
+  proc collectionImageURLChanged*(self: CollectiblesEntry) {.signal.}
   proc getCollectionImageURL*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCollectionData():
       return ""
@@ -197,19 +221,18 @@ QtObject:
 
   QtProperty[string] collectionImageUrl:
     read = getCollectionImageURL
+    notify = collectionImageURLChanged
 
+  proc traitsChanged*(self: CollectiblesEntry) {.signal.}
   proc getTraits*(self: CollectiblesEntry): QVariant {.slot.} =
     return newQVariant(self.traits)
 
   QtProperty[QVariant] traits:
     read = getTraits
+    notify = traitsChanged
 
-  proc getNetworkShortName*(self: CollectiblesEntry): string {.slot.} =
-    return self.extradata.networkShortName
 
-  QtProperty[string] networkShortName:
-    read = getNetworkShortName
-
+  proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityID*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData():
       return ""
@@ -217,7 +240,9 @@ QtObject:
 
   QtProperty[string] communityId:
     read = getCommunityId
+    notify = communityIdChanged
 
+  proc communityNameChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityName*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData():
       return ""
@@ -225,7 +250,9 @@ QtObject:
 
   QtProperty[string] communityName:
     read = getCommunityName
+    notify = communityNameChanged
 
+  proc communityColorChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityColor*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData():
       return ""
@@ -233,7 +260,9 @@ QtObject:
 
   QtProperty[string] communityColor:
     read = getCommunityColor
+    notify = communityColorChanged
 
+  proc communityPrivilegesLevelChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityPrivilegesLevel*(self: CollectiblesEntry): int {.slot.} =
     if not self.hasCommunityData():
       return PrivilegesLevel.Community.int
@@ -241,7 +270,9 @@ QtObject:
 
   QtProperty[int] communityPrivilegesLevel:
     read = getCommunityPrivilegesLevel
+    notify = communityPrivilegesLevelChanged
 
+  proc communityImageChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityImage*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData() or isNone(self.getCommunityData().imageUrl):
       return ""
@@ -249,6 +280,13 @@ QtObject:
 
   QtProperty[string] communityImage:
     read = getCommunityImage
+    notify = communityImageChanged
+
+  proc getNetworkShortName*(self: CollectiblesEntry): string {.slot.} =
+    return self.extradata.networkShortName
+
+  QtProperty[string] networkShortName:
+    read = getNetworkShortName
 
   proc getNetworkColor*(self: CollectiblesEntry): string {.slot.} =
     return self.extradata.networkColor
@@ -261,3 +299,26 @@ QtObject:
 
   QtProperty[string] networkIconUrl:
     read = getNetworkIconURL
+
+  proc updateData*(self: CollectiblesEntry, update: backend.Collectible) =
+    if self.id != update.id:
+      return
+    
+    self.setData(update)
+
+    # Notify changes for all properties
+    self.nameChanged()
+    self.imageUrlChanged()
+    self.mediaUrlChanged()
+    self.mediaTypeChanged()
+    self.backgroundColorChanged()
+    self.descriptionChanged()
+    self.collectionSlugChanged()
+    self.collectionNameChanged()
+    self.collectionImageUrlChanged()
+    self.traitsChanged()
+    self.communityIdChanged()
+    self.communityNameChanged()
+    self.communityColorChanged()
+    self.communityPrivilegesLevelChanged()
+    self.communityImageChanged()
