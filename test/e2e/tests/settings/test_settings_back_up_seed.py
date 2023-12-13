@@ -9,6 +9,7 @@ from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanne
 from gui.main_window import MainWindow
 
 pytestmark = marks
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703001', 'Backup seed phrase')
 @pytest.mark.case(703001)
 def test_back_up_seed_phrase(main_screen: MainWindow):

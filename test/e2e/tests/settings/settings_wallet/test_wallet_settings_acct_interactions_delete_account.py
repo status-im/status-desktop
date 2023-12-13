@@ -16,6 +16,7 @@ from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
 pytestmark = marks
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)

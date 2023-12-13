@@ -4,7 +4,7 @@ from allure_commons._allure import step
 
 import constants
 from gui.main_window import MainWindow
-from gui.screens.community import CommunityScreen
+from . import marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703049', 'Create community channel')
@@ -62,7 +62,6 @@ def test_edit_community_channel(main_screen, channel_name, channel_description, 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703051', 'Delete community channel')
 @pytest.mark.case(703051)
 def test_delete_community_channel(main_screen):
-
     with step('Create simple community'):
         main_screen.create_community(constants.community_params)
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])

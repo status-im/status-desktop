@@ -11,11 +11,11 @@ from scripts.tools import image
 
 pytestmark = marks
 
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703199',
                  'Manage community: Manage Mint Tokens screen overview')
 @pytest.mark.case(703199)
 @pytest.mark.parametrize('params', [constants.community_params])
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/186')
 def test_tokens_screen(main_screen: MainWindow, params):
     with step('Create community'):
         main_screen.create_community(params)

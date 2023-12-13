@@ -11,6 +11,7 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026',
                  'Manage a watch-only account from context menu option')
 @pytest.mark.case(703026)

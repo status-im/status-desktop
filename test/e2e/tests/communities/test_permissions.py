@@ -16,7 +16,6 @@ pytestmark = marks
                  'Manage community: Manage Permissions screen overview')
 @pytest.mark.case(703198)
 @pytest.mark.parametrize('params', [constants.community_params])
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/186')
 def test_permissions_screen_overview(main_screen: MainWindow, params):
     main_screen.create_community(params)
 

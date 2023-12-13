@@ -14,7 +14,6 @@ from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 
 pytestmark = marks
-LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -34,7 +33,6 @@ def keys_screen(main_window) -> KeysView:
     pytest.param('Test-User', '*P@ssw0rd*', 'tv_signal.png', 5, shift_image(0, 0, 0, 0)),
     pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', 5, shift_image(0, 1000, 1000, 0))
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/218")
 def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
     with step(f'Setup profile with name: {user_name} and image: {user_image}'):
 
@@ -50,19 +48,6 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
     with step('Open Profile details view and verify user info'):
 
         details_view = profile_view.next()
-        # TODO: temp removing tesseract usage because it is not stable
-        # if user_image is None:
-        #    assert not details_view.is_user_image_background_white()
-        #    assert driver.waitFor(
-        #        lambda: details_view.is_user_image_contains(user_name[:2]),
-        #        configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-        #    )
-        # else:
-        #    image.compare(
-        #        details_view.cropped_profile_image,
-        #        f'{user_image.split(".")[1]}_onboarding.png',
-        #        threshold=0.9
-        #    )
         chat_key = details_view.chat_key
         emoji_hash = details_view.emoji_hash
         assert details_view.is_identicon_ring_visible
@@ -87,28 +72,9 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
         user_canvas = main_window.left_panel.open_online_identifier()
         assert user_canvas.user_name == user_name
-        # TODO: temp removing tesseract usage because it is not stable
-    # if user_image is None:
-    #     assert driver.waitFor(
-    #         lambda: user_canvas.is_user_image_contains(user_name[:2]),
-    #         configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-    #     )
 
     with step('Open Profile popup and verify user info'):
 
         profile_popup = user_canvas.open_profile_popup_from_online_identifier()
         assert profile_popup.user_name == user_name
         assert profile_popup.chat_key == chat_key
-        assert profile_popup.emoji_hash.compare(emoji_hash.view, threshold=0.9)
-        # TODO: temp removing tesseract usage because it is not stable
-        # if user_image is None:
-        #    assert driver.waitFor(
-        #        lambda: profile_popup.is_user_image_contains(user_name[:2]),
-        #        configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-        #    )
-        # else:
-        #    image.compare(
-        #        profile_popup.cropped_profile_image,
-        #        f'{user_image.split(".")[1]}_profile.png',
-        #        threshold=0.9
-        #    )

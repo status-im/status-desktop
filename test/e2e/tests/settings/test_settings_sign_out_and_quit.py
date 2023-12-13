@@ -8,6 +8,7 @@ from . import marks
 pytestmark = marks
 
 
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703010)
 @pytest.mark.flaky
@@ -22,3 +23,4 @@ def test_sign_out_and_quit(aut, main_screen: MainWindow):
 
     with step('Check that app was closed'):
         psutil.Process(aut.pid).wait(timeout=10)
+        

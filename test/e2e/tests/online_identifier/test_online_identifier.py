@@ -5,8 +5,9 @@ from allure import step
 import constants
 from driver.aut import AUT
 from gui.main_window import MainWindow
+from . import marks
 
-pytestmark = allure.suite("Settings")
+pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703007',

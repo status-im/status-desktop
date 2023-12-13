@@ -11,6 +11,7 @@ from gui.main_window import MainWindow
 
 pytestmark = marks
 
+
 @pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
@@ -44,7 +45,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         community = community_settings.get_community_info(params['name'])
         assert community.name == params['name']
         assert community.description == params['description']
-        # assert '1' in community.members TODO: Test on linux, members label is not visible
+        assert '1' in community.members
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703056', 'Edit community separately')
