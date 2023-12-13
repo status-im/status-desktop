@@ -21,6 +21,7 @@ const eventCollectiblesOwnershipUpdateFinished*: string = "wallet-collectibles-o
 const eventCollectiblesOwnershipUpdateFinishedWithError*: string = "wallet-collectibles-ownership-update-finished-with-error"
 const eventCommunityCollectiblesReceived*: string = "wallet-collectibles-community-collectibles-received"
 
+const eventCollectiblesDataUpdated*: string = "wallet-collectibles-data-updated"
 const eventOwnedCollectiblesFilteringDone*: string = "wallet-owned-collectibles-filtering-done"
 const eventGetCollectiblesDetailsDone*: string = "wallet-get-collectibles-details-done"
 

@@ -76,6 +76,14 @@ QtObject:
     self.detailedEntry = newCollectibleDetailsFullEntry(collectible, extradata)
     self.detailedEntryChanged()
 
+  proc processCollectiblesDataUpdate(self: Controller, jsonObj: JsonNode) =
+      if jsonObj.kind != JArray:
+        error "onCollectiblesDataUpdate expected an array"
+
+      for jsonCollectible in jsonObj.getElems():
+        let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
+        self.detailedEntry.updateData(collectible) # Will only update if UniqueID matches
+
   proc getDetailedCollectible*(self: Controller, chainId: int, contractAddress: string, tokenId: string) {.slot.} =
     self.setIsDetailedEntryLoading(true)
 
@@ -100,6 +108,10 @@ QtObject:
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onGetCollectiblesDetailsDone(proc (jsonObj: JsonNode) =
       self.processGetCollectiblesDetailsResponse(jsonObj)
+    )
+
+    self.eventsHandler.onCollectiblesDataUpdate(proc (jsonObj: JsonNode) =
+      self.processCollectiblesDataUpdate(jsonObj)
     )
 
   proc newController*(

@@ -3,6 +3,7 @@ import logging
 
 import ./collectibles_entry
 import web3/ethtypes as eth
+import backend/collectibles as backend_collectibles
 import backend/activity as backend_activity
 import app_service/common/utils as common_utils
 import app_service/common/types
@@ -331,6 +332,23 @@ QtObject:
 
     self.appendCollectibleItems(newItems)
     self.setHasMore(hasMore)
+
+  proc itemsUpdated(self: Model) {.signal.}
+  proc updateItems*(self: Model, updates: seq[backend_collectibles.Collectible]) =
+    var anyUpdated = false
+    for i in countdown(self.items.high, 0):
+      let entry = self.items[i]
+      for j in countdown(updates.high, 0):
+        let update = updates[j]
+        if entry.getCollectiblUniqueID() == update.id:
+          entry.updateData(update)
+          let index = self.createIndex(i, 0, nil)
+          defer: index.delete
+          self.dataChanged(index, index)
+          anyUpdated = true
+          break
+    if anyUpdated:
+      self.itemsUpdated()
 
   proc getImageUrl*(self: Model, id: string): string {.slot.} =
     for item in self.items:
