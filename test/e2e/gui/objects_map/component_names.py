@@ -281,6 +281,8 @@ removeConfirmationCrossCloseButton = {"container": statusDesktop_mainWindow_over
 removeConfirmationTextTitle = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerTitle", "type": "StatusBaseText", "visible": True}
 removeConfirmationTextBody = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 removeConfirmationRemoveButton = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("confirm*"), "type": "StatusButton"}
+removeConfirmationAgreementCheckBox = {"container": statusDesktop_mainWindow_overlay, "objectName": "RemoveAccountPopup-HavePenPaper", "type": "StatusCheckBox"}
+removeConfirmationConfirmButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "RemoveAccountPopup-ConfirmButton", "type": "StatusButton"}
 
 # Testnet mode popup
 turn_on_testnet_mode_StatusButton = {"container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn on testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
