@@ -74,7 +74,7 @@ Item {
 
                 RowLayout{
                     Button {
-                        text: "Insert"
+                        text: "Insert at"
                         onClicked: {
                             listModel.insert(parseInt(insertIndex.text),{
                                 name: "Item " + (listModel.count + 1),
@@ -84,21 +84,21 @@ Item {
                     }
                     TextField {
                         id: insertIndex
-                        text: "Insert at"
+                        text: "0"
                         cursorVisible: false
                         inputMethodHints: Qt.ImhDigitsOnly
                     }
                 }
                 RowLayout{
                     Button {
-                        text: "Remove"
+                        text: "Remove at"
                         onClicked: {
                             listModel.remove(parseInt(removeIndex.text), 1)
                         }
                     }
                     TextField {
                         id: removeIndex
-                        text: "Remove from"
+                        text: "0"
                         cursorVisible: false
                         inputMethodHints: Qt.ImhDigitsOnly
                     }
@@ -146,34 +146,42 @@ Item {
 
             RowLayout{
                 Button {
-                    text: "Insert"
+                    text: "Insert at"
                     onClicked: {
-                        if(writableProxyModel.insert(parseInt(insertWritableIndex.text)))
-                        {
-                            let item = writableProxyModel.get(parseInt(insertWritableIndex.text))
-                            item.name = "New " + (listView.count + 1)
-                            item.key = listView.count + 1
-                            writableProxyModel.set(parseInt(insertWritableIndex.text), item)
-                        }
+                        writableProxyModel.insert(parseInt(insertWritableIndex.text), {
+                            name: "Item " + (writableProxyModel.rowCount() + 1),
+                            key: writableProxyModel.rowCount() + 1
+                        })
                     }
                 }
                 TextField {
                     id: insertWritableIndex
-                    text: "Insert at"
+                    text: "0"
                     cursorVisible: false
                     inputMethodHints: Qt.ImhDigitsOnly
                 }
             }
             RowLayout{
                 Button {
-                    text: "Remove"
+                    text: "Append"
+                    onClicked: {
+                        writableProxyModel.append({
+                            name: "Item " + (writableProxyModel.rowCount() + 1),
+                            key: writableProxyModel.rowCount() + 1
+                        })
+                    }
+                }
+            }
+            RowLayout{
+                Button {
+                    text: "Remove from"
                     onClicked: {
                         writableProxyModel.remove(parseInt(removeWritableIndex.text))
                     }
                 }
                 TextField {
                     id: removeWritableIndex
-                    text: "Remove from"
+                    text: "0"
                     cursorVisible: false
                     inputMethodHints: Qt.ImhDigitsOnly
                 }

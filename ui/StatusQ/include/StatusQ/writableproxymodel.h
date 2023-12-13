@@ -32,7 +32,8 @@ public:
     ~WritableProxyModel();
 
     Q_INVOKABLE QVariantMap toVariantMap() const;
-    Q_INVOKABLE bool insert(int at);
+    Q_INVOKABLE bool insert(int at, const QVariantMap& data = {});
+    Q_INVOKABLE bool append(const QVariantMap& data = {});
     Q_INVOKABLE bool remove(int at);
     //Returns a VariantMap of the data at the given index
     //The map contains the role names as keys and the data as values
@@ -46,30 +47,26 @@ public:
     //QAbstractProxyModel overrides
     void setSourceModel(QAbstractItemModel* sourceModel) override;
 
-    int	columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    int	rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int	columnCount(const QModelIndex& parent = QModelIndex()) const override;
+    int	rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
-    QMap<int, QVariant> itemData(const QModelIndex &index) const override;
+    QMap<int, QVariant> itemData(const QModelIndex& index) const override;
     bool setItemData(const QModelIndex& index, const QMap<int, QVariant>& roles) override;
 
-    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
-    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
+    bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
 
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-    QModelIndex sibling(int row, int column, const QModelIndex &idx) const override;
-    QModelIndex parent(const QModelIndex &child) const override;
-    QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
-    QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
+    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
+    QModelIndex sibling(int row, int column, const QModelIndex& idx) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
+    QModelIndex mapToSource(const QModelIndex& proxyIndex) const override;
+    QModelIndex mapFromSource(const QModelIndex& sourceIndex) const override;
 
-    bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
+    bool hasChildren(const QModelIndex& parent = QModelIndex()) const override;
     void revert() override;
-
-    // TODO: implement these
-    // bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
-    // bool	submit() override;
 
 signals:
     void dirtyChanged();
@@ -77,19 +74,17 @@ signals:
 private:
     void setDirty(bool flag);
 
-    void handleSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
-    void handleRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
-    void handleRowsInserted(const QModelIndex &parent, int first, int last);
-    void handleRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
-    void handleRowsRemoved(const QModelIndex &parent, int first, int last);
-    void handleModelAboutToBeReset();
-    void handleModelReset();
-    void handleLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &sourceParents, QAbstractItemModel::LayoutChangeHint hint);
-    void handleLayoutChanged(const QList<QPersistentModelIndex> &sourceParents, QAbstractItemModel::LayoutChangeHint hint);
-    void handleRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow);
-
-    bool m_dirty{false};
-
+    void onSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
+    void onRowsAboutToBeInserted(const QModelIndex& parent, int start, int end);
+    void onRowsInserted(const QModelIndex& parent, int first, int last);
+    void onRowsAboutToBeRemoved(const QModelIndex& parent, int start, int end);
+    void onRowsRemoved(const QModelIndex& parent, int first, int last);
+    void onModelAboutToBeReset();
+    void onModelReset();
+    void onLayoutAboutToBeChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint);
+    void onLayoutChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint);
+    void onRowsMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow);
+    
     QScopedPointer<WritableProxyModelPrivate> d;
     friend class WritableProxyModelPrivate;
 };

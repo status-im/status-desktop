@@ -5,7 +5,6 @@
 #endif
 #include <memory>
 
-
 template <typename T>
 using IndexedValues = QHash<T /*key*/, QMap<int/*role*/, QVariant/*value*/>>;
 
@@ -20,51 +19,54 @@ public:
     WritableProxyModel& q;
     IndexedValues<QPersistentModelIndex> cache;
     IndexedValues<QModelIndex> insertedRows;
-    int rowsAboutToBeInserted = 0;
     QSet<QPersistentModelIndex> removedRows;
     QVector<int> proxyToSourceRowMapping;
-    //internal operations can change dirty flag
-    bool canUpdateDirtyFlag = true;
+    bool dirty{false};
 
-    inline void setData(const QModelIndex& index, const QVariant& value, int role);
+    void setData(const QModelIndex& index, const QVariant& value, int role);
     template<typename T>
-    inline void setData(const QModelIndex& index, const QVariant& value, int role, IndexedValues<T>& indexedMap);
+    void setData(const QModelIndex& index, const QVariant& value, int role, IndexedValues<T>& indexedMap);
 
-    inline QVariant data(const QModelIndex &index, int role, bool& found) const;
+    QVariant data(const QModelIndex& index, int role, bool& found) const;
     template<typename T>
-    inline QVariant data(const QModelIndex &index, int role, bool& found, const IndexedValues<T>& indexedMap) const;
-    
-    inline int proxyToSourceRow(int row) const;
-    inline int sourceToProxyRow(int row) const;
+    QVariant data(const QModelIndex& index, int role, bool& found, const IndexedValues<T>& indexedMap) const;
+
+    int proxyToSourceRow(int row) const;
+    int sourceToProxyRow(int row) const;
     QVector<QPair<int, int>> sourceRowRangesBetween(int start, int end) const;
 
     //Simple mapping. No sorting, no moving
-    //TODO: add mapping for temporarely moved rows
+    //TODO: add mapping for temporarily moved rows
     void createProxyToSourceRowMap();
 
-    inline bool contains(const QModelIndex& sourceIndex) const;
-    inline void clear();
-    inline void clearInvalidatedCache();
-    
-    void moveFromCacheToInserted(const QModelIndex& sourceIndex);
-    void adjustInsertedRowsBy(int start, int offset);
+    void clear();
+    void clearInvalidatedCache();
+    bool contains(const QModelIndex& sourceIndex, const QVector<int>& roles = {}) const;
+    int countOffset() const;
 
+    void moveFromCacheToInserted(const QModelIndex& sourceIndex);
+    bool removeRows(int row, int count, const QModelIndex& parent = {});
+
+    void adjustInsertedRowsBy(int start, int offset);
+    void alignInsertedRowsAtBeginning();
+
+    void checkForDirtyRemoval(const QModelIndex& sourceIndex, const QVector<int>& roles);
 
     //Fix for missing role names in source model
     void applyRoleNamesFix();
 };
 
 template<typename T>
-inline void WritableProxyModelPrivate::setData(const QModelIndex &index, const QVariant &value, int role, IndexedValues<T>& indexedMap)
+void WritableProxyModelPrivate::setData(const QModelIndex& index, const QVariant& value, int role, IndexedValues<T>& indexedMap)
 {
     auto valueMap = indexedMap.take(index);
     valueMap[role] = value;
     indexedMap.insert(index, valueMap);
 }
 
-inline void WritableProxyModelPrivate::setData(const QModelIndex &index, const QVariant &value, int role)
+void WritableProxyModelPrivate::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(proxyToSourceRowMapping[index.row()] >= 0)
+    if (proxyToSourceRowMapping[index.row()] >= 0)
     {
         setData(q.mapToSource(index), value, role, cache);
         return;
@@ -73,25 +75,24 @@ inline void WritableProxyModelPrivate::setData(const QModelIndex &index, const Q
     setData(index, value, role, insertedRows);
 }
 
-inline QVariant WritableProxyModelPrivate::data(const QModelIndex &index, int role, bool& found) const
+QVariant WritableProxyModelPrivate::data(const QModelIndex& index, int role, bool& found) const
 {
-    if(index.row() < 0 || index.row() >= proxyToSourceRowMapping.size())
+    if (index.row() < 0 || index.row() >= proxyToSourceRowMapping.size())
     {
         found = false;
         return {};
     }
 
-    if(proxyToSourceRowMapping[index.row()] >= 0)
-    {
+    if (proxyToSourceRowMapping[index.row()] >= 0)
         //value in cache (updated role value)
         return data(q.mapToSource(index), role, found, cache);
-    }
+
     //value in inserted rows
     return data(index, role, found, insertedRows);
 }
 
 template<typename T>
-inline QVariant WritableProxyModelPrivate::data(const QModelIndex &index, int role, bool& found, const IndexedValues<T>& indexedMap) const
+QVariant WritableProxyModelPrivate::data(const QModelIndex& index, int role, bool& found, const IndexedValues<T>& indexedMap) const
 {
     QVariant value;
     auto it = indexedMap.find(index);
@@ -107,57 +108,64 @@ inline QVariant WritableProxyModelPrivate::data(const QModelIndex &index, int ro
     return value;
 }
 
-int WritableProxyModelPrivate::proxyToSourceRow(int row) const 
+int WritableProxyModelPrivate::proxyToSourceRow(int row) const
 {
-    if(row < 0 || row >= proxyToSourceRowMapping.size())
-    {
+    if (row < 0 || row >= proxyToSourceRowMapping.size())
         return -1;
-    }
 
     return proxyToSourceRowMapping[row];
 }
 
 int WritableProxyModelPrivate::sourceToProxyRow(int row) const
 {
-    for (int i = 0; i < proxyToSourceRowMapping.size(); ++i) {
-        if(proxyToSourceRowMapping[i] == row)
-        {
+    for (int i = 0; i < proxyToSourceRowMapping.size(); ++i)
+    {
+        if (proxyToSourceRowMapping[i] == row)
             return i;
-        }
     }
     return -1;
 }
 
 void WritableProxyModelPrivate::createProxyToSourceRowMap()
 {
-    if(!q.sourceModel())
-    {
+    if (!q.sourceModel())
         return;
-    }
 
     auto sourceModel = q.sourceModel();
 
     proxyToSourceRowMapping.clear();
     int sourceIter = 0;
     for (int i = 0; i < q.rowCount(); ++i) {
-        if(insertedRows.contains(q.index(i, 0)))
+        if (insertedRows.contains(q.index(i, 0)))
         {
             proxyToSourceRowMapping.append(-1);
             continue;
         }
-        
-        while(removedRows.contains(q.sourceModel()->index(sourceIter, 0)) && sourceIter < sourceModel->rowCount())
-        {
+
+        while(removedRows.contains(sourceModel->index(sourceIter, 0)) && sourceIter < sourceModel->rowCount())
             ++sourceIter;
-        }
 
         proxyToSourceRowMapping.append(sourceIter);
         sourceIter++;
     }
 }
 
-bool WritableProxyModelPrivate::contains(const QModelIndex& sourceIndex) const {
-    return cache.contains(sourceIndex) || insertedRows.contains(q.mapFromSource(sourceIndex));
+bool WritableProxyModelPrivate::contains(const QModelIndex& sourceIndex, const QVector<int>& roles) const {
+    if (cache.contains(sourceIndex)) {
+        auto valueMap = cache[sourceIndex];
+        return std::all_of(roles.begin(), roles.end(), [&valueMap](int role) { return valueMap.contains(role); });
+    }
+
+    if (insertedRows.contains(q.mapFromSource(sourceIndex))) {
+        auto valueMap = insertedRows[q.mapFromSource(sourceIndex)];
+        for (auto& role : roles) {
+            if (!valueMap.contains(role))
+                return false;
+        }
+        return true;
+    }
+
+    return false;
 }
 
 void WritableProxyModelPrivate::WritableProxyModelPrivate::clear()
@@ -170,9 +178,9 @@ void WritableProxyModelPrivate::WritableProxyModelPrivate::clear()
 
 void WritableProxyModelPrivate::clearInvalidatedCache()
 {
-    for(auto iter = removedRows.begin(); iter != removedRows.end();)
+    for (auto iter = removedRows.begin(); iter != removedRows.end();)
     {
-        if(iter->isValid())
+        if (iter->isValid())
         {
             ++iter;
             continue;
@@ -181,9 +189,9 @@ void WritableProxyModelPrivate::clearInvalidatedCache()
         iter = removedRows.erase(iter);
     }
 
-    for(auto iter = cache.begin(); iter != cache.end();)
+    for (auto iter = cache.begin(); iter != cache.end();)
     {
-        if(iter.key().isValid())
+        if (iter.key().isValid())
         {
             ++iter;
             continue;
@@ -193,34 +201,70 @@ void WritableProxyModelPrivate::clearInvalidatedCache()
     }
 }
 
+int WritableProxyModelPrivate::countOffset() const
+{
+    return insertedRows.count() - removedRows.count();
+}
+
 void WritableProxyModelPrivate::moveFromCacheToInserted(const QModelIndex& sourceIndex)
 {
+    if (!q.sourceModel())
+        return;
+        
     //User updated this row. Move it in inserted rows. We shouldn't delete it
-    insertedRows.insert(q.mapFromSource(sourceIndex), cache.take(sourceIndex));
+    auto proxyIndex = insertedRows.insert(q.mapFromSource(sourceIndex), cache.take(sourceIndex));
     auto itemData = q.sourceModel()->itemData(sourceIndex);
-    auto proxyIndex = q.mapFromSource(sourceIndex);
-    for(auto it = itemData.begin(); it != itemData.end(); ++it)
+    for (auto it = itemData.begin(); it != itemData.end(); ++it)
     {
-        if(insertedRows[proxyIndex].contains(it.key()))
-        {
+        if (proxyIndex.value().contains(it.key()))
             continue;
+
+        proxyIndex.value()[it.key()] = it.value();
+    }
+
+    if (proxyIndex.key().isValid())
+        proxyToSourceRowMapping[proxyIndex.key().row()] = -1;
+}
+
+void WritableProxyModelPrivate::checkForDirtyRemoval(const QModelIndex& sourceIndex, const QVector<int>& roles)
+{
+    q.setDirty(!cache.isEmpty() || !insertedRows.isEmpty() || !removedRows.isEmpty());
+
+    if (!q.sourceModel() || !q.dirty())
+        return;
+
+    auto sourceCount = q.sourceModel()->rowCount();
+    auto proxyCount = q.rowCount();
+    auto insertedRowsCount = insertedRows.size();
+
+    if (sourceCount != proxyCount - insertedRowsCount)
+        return;
+
+    if (cache.contains(sourceIndex))
+    {
+        auto& cachedData = cache[sourceIndex];
+        for (auto& role : roles)
+        {
+            if (cachedData.contains(role) && cachedData[role] == q.sourceModel()->data(sourceIndex, role))
+                cachedData.remove(role);
         }
 
-        insertedRows[proxyIndex][it.key()] = it.value();
+        if (cachedData.isEmpty()) {
+            cache.remove(sourceIndex);
+            q.setDirty(!cache.isEmpty() || !insertedRows.isEmpty() || !removedRows.isEmpty());
+            return;
+        }
     }
+    
 }
 
 void WritableProxyModelPrivate::applyRoleNamesFix()
 {
-    if(!q.sourceModel())
-    {
+    if (!q.sourceModel())
         return;
-    }
 
-    if(q.sourceModel()->rowCount() != 0)
-    {
+    if (q.sourceModel()->rowCount() != 0)
         return;
-    }
 
     auto connectionPtr = new QMetaObject::Connection();
     *connectionPtr =
@@ -236,57 +280,116 @@ QVector<QPair<int, int>> WritableProxyModelPrivate::sourceRowRangesBetween(int s
     QVector<QPair<int, int>> result;
     int currentStart = -1;
     int currentEnd = -1;
-    for(int i = start; i <= end; ++i)
+
+    for (int i = start; i <= end; ++i)
     {
         auto proxyRow = sourceToProxyRow(i);
-        if(proxyRow >= 0)
+
+        if (proxyRow == -1) //is removed
         {
-            if(currentStart == -1)
-            {
-                currentStart = proxyRow;
-                currentEnd = currentStart;
-            }
-            else
-            {
-                currentEnd = proxyRow;
-            }
-        }
-        else
-        {
-            if(currentStart != -1)
+            //first removed row is hit
+            if (currentStart != -1)
             {
                 result.append({ currentStart, currentEnd });
                 currentStart = -1;
                 currentEnd = -1;
             }
+            continue;
         }
+
+        if (currentStart == -1) //first row to be added to current range
+        {
+            currentStart = proxyRow;
+            currentEnd = currentStart;
+            continue;
+        }
+
+        if (currentEnd + 1 == proxyRow) //continue current range
+        {
+            currentEnd = proxyRow;
+            continue;
+        }
+
+        result.append({ currentStart, currentEnd });
+        currentStart = proxyRow;
+        currentEnd = proxyRow;
     }
 
-    if(currentStart != -1)
-    {
+    if (currentStart != -1)
         result.append({ currentStart, currentEnd });
-    }
 
     return result;
 }
 
+bool WritableProxyModelPrivate::removeRows(int row, int count, const QModelIndex& parent)
+{
+    if (row < 0 || count < 1 || row + count > q.rowCount(parent))
+        return false;
+
+    q.beginRemoveRows(parent, row, row + count - 1);
+
+
+    QVector<QPersistentModelIndex> populateRemovedRows;
+    QVector<QModelIndex> removeFromInsertedRows;
+
+    for (int i = row; i < row + count; ++i) {
+        auto proxyIndex = q.index(i, 0, parent);
+        auto sourceIndex = q.mapToSource(proxyIndex);
+        if (sourceIndex.isValid())
+            populateRemovedRows.push_back(sourceIndex);
+        else
+            removeFromInsertedRows.push_back(proxyIndex);
+    }
+
+    for (auto iter = removeFromInsertedRows.rbegin(); iter != removeFromInsertedRows.rend(); ++iter)
+    {
+        insertedRows.remove(*iter);
+        adjustInsertedRowsBy(iter->row(), -1);
+    }
+
+    for (auto iter = populateRemovedRows.rbegin(); iter != populateRemovedRows.rend(); ++iter)
+    {
+         removedRows.insert(*iter);
+         adjustInsertedRowsBy(sourceToProxyRow(iter->row()), -1);
+    }
+
+    createProxyToSourceRowMap();
+    q.endRemoveRows();
+
+    checkForDirtyRemoval({}, {});
+    return true;
+}
+
 void WritableProxyModelPrivate::adjustInsertedRowsBy(int start, int offset)
 {
+    if (offset == 0)
+        return;
+
     IndexedValues<QModelIndex> newInsertedRows;
-    for(auto iter = insertedRows.begin(); iter != insertedRows.end(); ++iter)
+    for (auto iter = insertedRows.begin(); iter != insertedRows.end(); ++iter)
     {
         auto key = iter.key();
         auto value = iter.value();
-        if(key.row() >= start)
+        if (key.row() >= start)
         {
-            newInsertedRows.insert(key.siblingAtRow(key.row() + offset), value);
+            auto index = q.createIndex(key.row() + offset, 0);
+            newInsertedRows.insert(index, value);
         }
         else
-        {
             newInsertedRows.insert(key, value);
-        }
     }
     insertedRows.swap(newInsertedRows);
+}
+
+void WritableProxyModelPrivate::alignInsertedRowsAtBeginning()
+{
+    for (int i = 0; i < proxyToSourceRowMapping.size(); ++i)
+    {
+        if (proxyToSourceRowMapping[i] != -1)
+            continue;
+
+        adjustInsertedRowsBy(i, -i);
+    }
 }
 
 WritableProxyModel::WritableProxyModel(QObject* parent)
@@ -305,53 +408,57 @@ QVariantMap WritableProxyModel::toVariantMap() const
 {
     QVariantMap result;
     int rowCount = this->rowCount();
-    for(int row = 0; row < rowCount; ++row)
+    for (int row = 0; row < rowCount; ++row)
     {
         auto index = this->index(row, 0);
         auto data = itemData(index);
         QVariantMap rowMap;
-        for(auto it = data.begin(); it != data.end(); ++it)
-        {
+        for (auto it = data.begin(); it != data.end(); ++it)
             rowMap[QString::number(it.key())] = it.value();
-        }
         result[QString::number(row)] = rowMap;
     }
 
     return result;
 }
 
-bool WritableProxyModel::insert(int at)
+bool WritableProxyModel::insert(int at, const QVariantMap& data)
 {
-    if(at < 0 || at > rowCount())
-    {
-        return false;
-    }
+    auto rowCount = this->rowCount();
 
-    return insertRows(at, 1);
+    if (at < 0 || at > rowCount)
+        return false;
+
+    auto success = insertRows(at, 1);
+
+    if (success)
+        set(at, data);
+
+    return success;
+}
+
+bool WritableProxyModel::append(const QVariantMap& data)
+{
+    return insert(rowCount(), data);
 }
 
 bool WritableProxyModel::remove(int at)
 {
-    if(at < 0 || at >= rowCount())
-    {
+    if (at < 0 || at >= rowCount())
         return false;
-    }
 
     return removeRows(at, 1);
 }
 
 QVariantMap WritableProxyModel::get(int at) const
 {
-    if(at < 0 || at >= rowCount())
-    {
+    if (at < 0 || at >= rowCount())
         return {};
-    }
 
     auto index = this->index(at, 0);
     auto data = this->itemData(index);
     auto roleNames = this->roleNames();
     QVariantMap rowMap;
-    for(auto it = data.begin(); it != data.end(); ++it)
+    for (auto it = data.begin(); it != data.end(); ++it)
     {
         auto roleName = roleNames[it.key()];
         rowMap[roleName] = it.value();
@@ -361,16 +468,14 @@ QVariantMap WritableProxyModel::get(int at) const
 
 bool WritableProxyModel::set(int at, const QVariantMap& data)
 {
-    if(at < 0 || at >= rowCount())
-    {
+    if (at < 0 || at >= rowCount())
         return false;
-    }
 
     auto index = this->index(at, 0);
     auto itemData = this->itemData(index);
     auto roleNames = this->roleNames();
 
-    for(auto it = data.begin(); it != data.end(); ++it)
+    for (auto it = data.begin(); it != data.end(); ++it)
     {
         auto role = roleNames.key(it.key().toUtf8(), -1);
         itemData[role] = it.value();
@@ -381,40 +486,34 @@ bool WritableProxyModel::set(int at, const QVariantMap& data)
 
 bool WritableProxyModel::dirty() const
 {
-    return m_dirty;
+    return d->dirty;
 }
 
 void WritableProxyModel::setDirty(bool flag)
 {
-    if(m_dirty == flag || !d->canUpdateDirtyFlag)
-    {
+    if (d->dirty == flag)
         return;
-    }
 
-    m_dirty = flag;
+    d->dirty = flag;
     emit dirtyChanged();
 }
 
 void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
 {
-    if(sourceModel == QAbstractProxyModel::sourceModel())
-    {
+    if (sourceModel == QAbstractProxyModel::sourceModel())
         return;
-    }
 
     beginResetModel();
 
     d->clear();
 
-    if(QAbstractProxyModel::sourceModel())
-    {
+    if (QAbstractProxyModel::sourceModel())
         disconnect(QAbstractProxyModel::sourceModel(), nullptr, this, nullptr);
-    }
 
     setDirty(false);
     QAbstractProxyModel::setSourceModel(sourceModel);
 
-    if(!sourceModel)
+    if (!sourceModel)
     {
         endResetModel();
         return;
@@ -423,120 +522,99 @@ void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
     d->applyRoleNamesFix();
 
     d->createProxyToSourceRowMap();
-    connect(sourceModel, &QAbstractItemModel::dataChanged, this, &WritableProxyModel::handleSourceDataChanged);
-    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this, &WritableProxyModel::handleRowsAboutToBeInserted);
-    connect(sourceModel, &QAbstractItemModel::rowsInserted, this, &WritableProxyModel::handleRowsInserted);
-    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this, &WritableProxyModel::handleRowsAboutToBeRemoved);
-    connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &WritableProxyModel::handleRowsRemoved);
-    connect(sourceModel, &QAbstractItemModel::modelAboutToBeReset, this, &WritableProxyModel::handleModelAboutToBeReset);
-    connect(sourceModel, &QAbstractItemModel::modelReset, this, &WritableProxyModel::handleModelReset);
-    connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &WritableProxyModel::handleRowsMoved);
-    connect(sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this, &WritableProxyModel::handleLayoutAboutToBeChanged);
-    connect(sourceModel, &QAbstractItemModel::layoutChanged, this, &WritableProxyModel::handleModelReset);
-    
+    connect(sourceModel, &QAbstractItemModel::dataChanged, this, &WritableProxyModel::onSourceDataChanged);
+    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this, &WritableProxyModel::onRowsAboutToBeInserted);
+    connect(sourceModel, &QAbstractItemModel::rowsInserted, this, &WritableProxyModel::onRowsInserted);
+    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this, &WritableProxyModel::onRowsAboutToBeRemoved);
+    connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &WritableProxyModel::onRowsRemoved);
+    connect(sourceModel, &QAbstractItemModel::modelAboutToBeReset, this, &WritableProxyModel::onModelAboutToBeReset);
+    connect(sourceModel, &QAbstractItemModel::modelReset, this, &WritableProxyModel::onModelReset);
+    connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &WritableProxyModel::onRowsMoved);
+    connect(sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this, &WritableProxyModel::onLayoutAboutToBeChanged);
+    connect(sourceModel, &QAbstractItemModel::layoutChanged, this, &WritableProxyModel::onModelReset);
+
     endResetModel();
 }
 
-int	WritableProxyModel::columnCount(const QModelIndex &parent) const
+int WritableProxyModel::columnCount(const QModelIndex& parent) const
 {
-    if(parent.isValid())
-    {
+    if (parent.isValid())
         return 0; //no children
-    }
 
     return 1;
 }
 
-int	WritableProxyModel::rowCount(const QModelIndex &parent) const
+int WritableProxyModel::rowCount(const QModelIndex& parent) const
 {
-    if(parent.isValid())
-    {
+    if (parent.isValid())
         return 0; //no children
-    }
 
-    if(!sourceModel())
-    {
+    if (!sourceModel())
         return 0;
-    }
 
-    return sourceModel()->rowCount(parent) + d->insertedRows.count() + d->rowsAboutToBeInserted - d->removedRows.count();
+    return sourceModel()->rowCount(parent) + d->countOffset();
 }
 
-QModelIndex WritableProxyModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex WritableProxyModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(parent.isValid())
-    {
+    if (parent.isValid())
         return {}; //no children
-    }
 
-    if(row < 0 || column < 0 || row >= rowCount(parent) || column >= columnCount(parent))
-    {
+    if (row < 0 || column < 0 || row >= rowCount(parent) || column >= columnCount(parent))
         return {};
-    }
 
     return createIndex(row, column);
 }
 
-QModelIndex WritableProxyModel::sibling(int row, int column, const QModelIndex &idx) const
+QModelIndex WritableProxyModel::sibling(int row, int column, const QModelIndex& idx) const
 {
-    if(!idx.isValid())
-    {
+    if (!idx.isValid())
         return {};
-    }
 
-    if(row < 0 || column < 0 || row >= rowCount(idx.parent()) || column >= columnCount(idx.parent()))
-    {
+    if (row < 0 || column < 0 || row >= rowCount(idx.parent()) || column >= columnCount(idx.parent()))
         return {};
-    }
 
     return createIndex(row, column);
 }
 
-QModelIndex WritableProxyModel::parent(const QModelIndex &child) const
+QModelIndex WritableProxyModel::parent(const QModelIndex& child) const
 {
     //no children. List models only
     return {};
 }
 
-QModelIndex WritableProxyModel::mapToSource(const QModelIndex &proxyIndex) const
+QModelIndex WritableProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 {
-    if(!proxyIndex.isValid())
-    {
+    if (!sourceModel())
         return {};
-    }
 
-    if(auto row = d->proxyToSourceRow(proxyIndex.row()); row >= 0) {
+    if (!proxyIndex.isValid())
+        return {};
+
+    if (auto row = d->proxyToSourceRow(proxyIndex.row()); row >= 0)
         return sourceModel()->index(row, proxyIndex.column());
-    }
 
     return {};
 }
 
-QModelIndex WritableProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
+QModelIndex WritableProxyModel::mapFromSource(const QModelIndex& sourceIndex) const
 {
-    if(!sourceIndex.isValid())
-    {
+    if (!sourceIndex.isValid())
         return {};
-    }
 
-    if(auto row = d->sourceToProxyRow(sourceIndex.row()); row >= 0) {
+    if (auto row = d->sourceToProxyRow(sourceIndex.row()); row >= 0)
         return index(row, sourceIndex.column());
-    }
 
     return {};
 }
 
-bool WritableProxyModel::hasChildren(const QModelIndex &parent) const
+bool WritableProxyModel::hasChildren(const QModelIndex& parent) const
 {
-    if(parent.isValid())
-    {
+    if (parent.isValid())
         return false; //no children
-    }
 
-    if(!sourceModel())
-    {
+    if (!sourceModel())
         return false;
-    }
 
     return rowCount(parent) > 0;
 }
@@ -553,129 +631,98 @@ void WritableProxyModel::revert()
 
 QVariant WritableProxyModel::data(const QModelIndex& index, int role) const
 {
-    if(!index.isValid())
-    {
+    if (!index.isValid())
         return {};
-    }
 
-    if(!sourceModel())
-    {
+    if (!sourceModel())
         return {};
-    }
 
-    if(role == -1)
-    {
+    auto roleNames = this->roleNames();
+    if (!roleNames.contains(role))
         return {};
-    }
 
     bool found = false;
     auto data = d->data(index, role, found);
 
-    if(found)
-    {
+    if (found)
         return data;
-    }
 
     return QAbstractProxyModel::data(index, role);
 }
 
 bool WritableProxyModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(!index.isValid())
-    {
+    if (!sourceModel())
         return false;
-    }
+
+    if (!index.isValid())
+        return false;
 
     d->setData(index, value, role);
-        
+
     setDirty(true);
 
     emit dataChanged(index, index, { role });
     return true;
 }
 
-QMap<int, QVariant> WritableProxyModel::itemData(const QModelIndex &index) const
+QMap<int, QVariant> WritableProxyModel::itemData(const QModelIndex& index) const
 {
-    if(!index.isValid())
-    {
+    if (!index.isValid())
         return {};
-    }
 
     return QAbstractProxyModel::itemData(index);
 }
 
 bool WritableProxyModel::setItemData(const QModelIndex& index, const QMap<int, QVariant>& roles)
 {
-    if(!index.isValid())
-    {
+    if (!index.isValid())
         return false;
-    }
 
-    if(QAbstractProxyModel::itemData(index) == roles)
-    {
+    if (QAbstractProxyModel::itemData(index) == roles)
         return false;
-    }
 
     setDirty(true);
     return QAbstractProxyModel::setItemData(index, roles);
 }
 
-bool WritableProxyModel::removeRows(int row, int count, const QModelIndex &parent)
+bool WritableProxyModel::removeRows(int row, int count, const QModelIndex& parent)
 {
-    if(row < 0 || count < 1 || row + count > rowCount(parent))
-    {
-        return false;
-    }
-
-    beginRemoveRows(parent, row, row + count - 1);
-    for (int i = row; i < row + count; ++i) {
-        auto sourceIndex = mapToSource(index(i, 0, parent));
-        if(sourceIndex.isValid())
-        {
-            d->removedRows.insert(sourceIndex);
-        }
-        else
-        {
-            d->insertedRows.remove(index(i, 0, parent));
-        }
-
-        d->adjustInsertedRowsBy(i, -1);
-    }
-    
-    d->createProxyToSourceRowMap();
-    endRemoveRows();
-    setDirty(true);
-    return true;
+    return d->removeRows(row, count, parent);;
 }
 
 bool WritableProxyModel::insertRows(int row, int count, const QModelIndex& parent)
 {
-    if(row < 0 || count < 1 || row > rowCount(parent))
-    {
+    if (!sourceModel())
         return false;
-    }
+
+    if (row < 0 || count < 1 || row > rowCount(parent))
+        return false;
 
     beginInsertRows(parent, row, row + count - 1);
-    d->rowsAboutToBeInserted += count;
     d->adjustInsertedRowsBy(row, count);
-    for (int i = row; i < row + count; ++i) {
-        d->insertedRows.insert(index(i, 0, parent), {});
+
+    for (int i = row; i < row + count; ++i)
+    {
+        auto index = createIndex(i, 0);
+        d->insertedRows.insert(index, {});
     }
-    d->rowsAboutToBeInserted -= count;
+
     d->createProxyToSourceRowMap();
     endInsertRows();
     setDirty(true);
     return true;
 }
 
-void WritableProxyModel::handleSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
+void WritableProxyModel::onSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
 {
-    if(!topLeft.isValid() || !bottomRight.isValid())
-    {
+    if (!sourceModel())
         return;
-    }
 
-    if(!dirty())
+    if (!topLeft.isValid() || !bottomRight.isValid())
+        return;
+
+    if (!dirty())
     {
         auto begin = mapFromSource(topLeft);
         auto end = mapFromSource(bottomRight);
@@ -685,42 +732,43 @@ void WritableProxyModel::handleSourceDataChanged(const QModelIndex& topLeft, con
 
     auto begin = qMin(topLeft.row(), rowCount() - 1);
     auto end = qMin(bottomRight.row(), rowCount() - 1);
-    for(int row = topLeft.row(); row <= end; ++row)
+
+    for (int row = topLeft.row(); row <= end; ++row)
     {
         auto sourceIndex = sourceModel()->index(row, 0);
 
-        if(d->contains(sourceIndex) || d->removedRows.contains(sourceIndex))
+        if (d->contains(sourceIndex, roles) || d->removedRows.contains(sourceIndex))
         {
-            if(begin < row - 1)
-            {
+            if (begin < row - 1)
                 emit dataChanged(mapFromSource(sourceModel()->index(begin, 0)), mapFromSource(sourceModel()->index(row - 1, 0)), roles);
-            }
 
             begin = row + 1;
         }
+
+        d->checkForDirtyRemoval(sourceIndex, roles);
     }
 
-    if(begin <= end)
-    {
+    if (begin <= end)
         emit dataChanged(mapFromSource(sourceModel()->index(begin, 0)), mapFromSource(sourceModel()->index(end, 0)), roles);
-    }
 }
 
-void WritableProxyModel::handleRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void WritableProxyModel::onRowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
 {
-    if(parent.isValid())
+    if (!sourceModel())
+        return;
+
+    if (parent.isValid())
+        return;
+
+    if (!dirty())
     {
+        beginInsertRows({}, start, end);
         return;
     }
 
-    if(!dirty())
-    {
-        beginInsertRows({}, start, start + end - start);
-        return;
-    }
-
+    auto count = end - start + 1;
     auto sourceRowRanges = d->sourceRowRangesBetween(start, qMax(end, sourceModel()->rowCount()));
-    if(sourceRowRanges.isEmpty())
+    if (sourceRowRanges.isEmpty())
     {
         //append
         beginInsertRows({}, rowCount(), rowCount() + end - start);
@@ -728,79 +776,93 @@ void WritableProxyModel::handleRowsAboutToBeInserted(const QModelIndex &parent, 
     }
 
     beginInsertRows({}, sourceRowRanges.first().first, sourceRowRanges.first().first + end - start);
-    d->rowsAboutToBeInserted += end - start;
-    d->adjustInsertedRowsBy(sourceRowRanges.first().second, end - start);
-    d->rowsAboutToBeInserted -= end - start;
+    d->adjustInsertedRowsBy(sourceRowRanges.first().second, count);
 }
 
-void WritableProxyModel::handleRowsInserted(const QModelIndex &parent, int first, int last)
+void WritableProxyModel::onRowsInserted(const QModelIndex& parent, int first, int last)
 {
-    if(parent.isValid())
-    {
+    if (!sourceModel())
         return;
-    }
+
+    if (parent.isValid())
+        return;
 
     d->createProxyToSourceRowMap();
     endInsertRows();
+
+    if (!sourceModel())
+        return;
+
+    int rowToRemove = first;
+    for (int row = first; row <= last; ++row)
+    {
+        if (d->insertedRows.contains(index(rowToRemove, 0)))
+        {
+            if (itemData(index(rowToRemove, 0)) == sourceModel()->itemData(sourceModel()->index(row, 0)))
+            {
+                //rowToRemove remains in place if the proxy row is removed
+                d->removeRows(rowToRemove, 1, {});
+                continue;
+            }
+            rowToRemove++;
+        }
+    }
 }
 
-void WritableProxyModel::handleRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+void WritableProxyModel::onRowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
-    if(parent.isValid())
-    {
+    if (!sourceModel())
         return;
-    }
 
-    for(int row = start; row <= end; ++row)
+    if (parent.isValid())
+        return;
+
+    for (int row = start; row <= end; ++row)
     {
         auto sourceIndex = sourceModel()->index(row, 0);
 
-        if(d->cache.contains(sourceIndex))
+        if (d->cache.contains(sourceIndex))
         {
             d->moveFromCacheToInserted(sourceIndex);
             continue;
         }
+    }
 
-        auto sourceRemoveRanges = d->sourceRowRangesBetween(start, end);
-        for(auto& sourceRemoveRange : sourceRemoveRanges)
-        {
-            auto proxyStart = sourceRemoveRange.first;
-            auto proxyEnd = sourceRemoveRange.second;
-            if(proxyStart == -1 || proxyEnd == -1)
-            {
-                continue;
-            }
+    auto sourceRemoveRanges = d->sourceRowRangesBetween(start, end);
+    for (auto& sourceRemoveRange : sourceRemoveRanges)
+    {
+        auto proxyStart = sourceRemoveRange.first;
+        auto proxyEnd = sourceRemoveRange.second;
+        if (proxyStart == -1 || proxyEnd == -1)
+            continue;
 
-            d->canUpdateDirtyFlag = false;
-            removeRows(proxyStart, proxyEnd - proxyStart + 1);
-            d->canUpdateDirtyFlag = true;
-        }
+        d->removeRows(proxyStart, proxyEnd - proxyStart + 1);
     }
 }
 
-void WritableProxyModel::handleRowsRemoved(const QModelIndex &parent, int first, int last)
+void WritableProxyModel::onRowsRemoved(const QModelIndex& parent, int first, int last)
 {
-    if(parent.isValid())
-    {
+    if (parent.isValid())
         return;
-    }
 
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
+    d->checkForDirtyRemoval({}, {});
 }
 
-void WritableProxyModel::handleModelAboutToBeReset()
+void WritableProxyModel::onModelAboutToBeReset()
 {
     beginResetModel();
-    for(auto iter = d->cache.begin(); iter != d->cache.end();)
+    for (auto iter = d->cache.begin(); iter != d->cache.end();)
     {
         auto key = iter.key();
         iter++;
         d->moveFromCacheToInserted(key);
     }
+    d->alignInsertedRowsAtBeginning();
 }
 
-void WritableProxyModel::handleModelReset()
+void WritableProxyModel::onModelReset()
 {
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
@@ -808,31 +870,30 @@ void WritableProxyModel::handleModelReset()
     endResetModel();
 }
 
-void WritableProxyModel::handleRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
+void WritableProxyModel::onRowsMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow)
 {
     if(sourceParent.isValid() || destinationParent.isValid())
     {
         return;
     }
 
-    beginResetModel();
+    emit layoutAboutToBeChanged();
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
-    endResetModel();
+    emit layoutChanged();
 }
 
-void WritableProxyModel::handleLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &sourceParents, QAbstractItemModel::LayoutChangeHint hint)
+void WritableProxyModel::onLayoutAboutToBeChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint)
 {
-    if(!sourceParents.isEmpty())
-    {
+    if (!sourceParents.isEmpty())
         return;
-    }
-    beginResetModel();
+
+    emit layoutAboutToBeChanged();
 }
 
-void WritableProxyModel::handleLayoutChanged(const QList<QPersistentModelIndex> &sourceParents, QAbstractItemModel::LayoutChangeHint hint)
+void WritableProxyModel::onLayoutChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint)
 {
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
-    endResetModel();
+    emit layoutChanged();
 }
