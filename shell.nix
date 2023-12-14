@@ -18,6 +18,7 @@ let
 # checked
       qtwebchannel
       qtlocation
+      qtwebview
     ]);
 
   lddWrapped = pkgs.writeShellScriptBin "ldd" ''
