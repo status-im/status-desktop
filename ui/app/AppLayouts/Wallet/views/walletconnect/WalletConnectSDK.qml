@@ -44,6 +44,10 @@ Item {
         wcCalls.pair(pairLink)
     }
 
+    function getPairings(callback) {
+        wcCalls.getPairings(callback)
+    }
+
     function getActiveSessions(callback) {
         wcCalls.getActiveSessions(callback)
     }
