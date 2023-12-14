@@ -4,6 +4,7 @@ import backend/wallet as backend_wallet
 import backend/wallet_connect as backend_wallet_connect
 
 import app/global/global_singleton
+import app/global/app_signals
 import app/core/eventemitter
 import app/core/signals/types
 import app/global/app_signals
@@ -34,17 +35,18 @@ QtObject:
 
   ## Forward declarations
   proc invalidateData(self: Controller)
+  proc setHasActivePairings*(self: Controller, value: bool)
   proc onDataSigned(self: Controller, keyUid: string, path: string, r: string, s: string, v: string, pin: string, identifier: string)
   proc finishSessionRequest(self: Controller, signature: string)
   proc finishAuthRequest(self: Controller, signature: string)
 
   ## signals
+  proc checkPairings*(self: Controller) {.signal.}
   proc requestOpenWalletConnectPopup*(self: Controller, uri: string) {.signal.}
   proc hasActivePairingsChanged*(self: Controller) {.signal.}
   proc respondSessionProposal*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string, error: string) {.signal.}
   proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
   proc respondAuthRequest*(self: Controller, signature: string, error: bool) {.signal.}
-
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -60,6 +62,10 @@ QtObject:
       let (found, wcUri) = extractAndCheckUriParameter(args.url)
       if found:
         self.requestOpenWalletConnectPopup(wcUri)
+
+    self.events.on(WALLET_CONNECT_CHECK_PAIRINGS) do(e: Args):
+      self.setHasActivePairings(true)
+      self.checkPairings()
 
     self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
       let args = SharedKeycarModuleArgs(e)
@@ -121,12 +127,13 @@ QtObject:
   proc getHasActivePairings*(self: Controller): bool {.slot.} =
     return self.hasActivePairings
 
-  proc setHasActivePairings(self: Controller, value: bool) =
+  proc setHasActivePairings*(self: Controller, value: bool) {.slot.} =
     self.hasActivePairings = value
     self.hasActivePairingsChanged()
 
   QtProperty[bool] hasActivePairings:
     read = getHasActivePairings
+    write = setHasActivePairings
     notify = hasActivePairingsChanged
 
   proc sendTransactionAndRespond(self: Controller, signature: string) =

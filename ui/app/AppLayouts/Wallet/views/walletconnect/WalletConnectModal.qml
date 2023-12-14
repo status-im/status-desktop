@@ -274,6 +274,8 @@ Popup {
                 sdk.pair(d.pairModalUriWhenReady)
                 d.pairModalUriWhenReady = ""
             }
+
+            d.checkForPairings()
         }
 
         function onSdkInit(success, info) {
@@ -420,6 +422,7 @@ Popup {
     QtObject {
         id: d
 
+        property bool checkPairings: false
         property string selectedAddress: ""
         property var observedData: null
         property var authMessage: null
@@ -435,6 +438,24 @@ Popup {
         readonly property string waitingUserResponseToSessionRequest: "waiting_user_response_to_session_request"
         readonly property string waitingUserResponseToAuthRequest: "waiting_user_response_to_auth_request"
         readonly property string pairedState: "paired"
+
+        function checkForPairings() {
+            if (!d.checkPairings || !root.sdk.sdkReady) {
+                return
+            }
+
+            d.checkPairings = false;
+            root.sdk.getPairings((pairings) => {
+                                    for (let i = 0; i < pairings.length; i++) {
+                                        if (pairings[i].active) {
+                                            // if there is at least a single active pairing we leave wallet connect sdk loaded
+                                            return;
+                                        }
+                                    }
+                                    // if there are no active pairings, we unload loaded sdk
+                                    root.controller.hasActivePairings = false;
+                                 })
+        }
 
         function setStatusText(message, textColor) {
             statusText.text = message
@@ -505,6 +526,11 @@ Popup {
             }
 
             root.sdk.authApprove(d.observedData, d.selectedAddress, signature)
+        }
+
+        function onCheckPairings() {
+            d.checkPairings = true
+            d.checkForPairings()
         }
     }
 }
