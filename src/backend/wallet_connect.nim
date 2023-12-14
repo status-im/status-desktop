@@ -26,15 +26,12 @@ rpc(wCSendTransactionWithSignature, "wallet"):
 rpc(wCPairSessionProposal, "wallet"):
   sessionProposalJson: string
 
-rpc(wCRecordSuccessfulPairing, "wallet"):
-  sessionProposalJson: string
+rpc(wCSaveOrUpdateSession, "wallet"):
+  sessionJson: string
 
-rpc(wCChangePairingState, "wallet"):
+rpc(wCChangeSessionState, "wallet"):
   topic: string
   active: bool
-
-rpc(wCHasActivePairings, "wallet"):
-  discard
 
 rpc(wCSessionRequest, "wallet"):
   sessionRequestJson: string
@@ -63,28 +60,18 @@ proc pair*(res: var JsonNode, sessionProposalJson: string): string =
     warn e.msg
     return e.msg
 
-proc recordSuccessfulPairing*(sessionProposalJson: string): bool =
+proc saveOrUpdateSession*(sessionJson: string): bool =
   try:
-    let response = wCRecordSuccessfulPairing(sessionProposalJson)
+    let response = wCSaveOrUpdateSession(sessionJson)
     return not isErrorResponse(response)
   except Exception as e:
     warn e.msg
     return false
 
-proc deletePairing*(topic: string): bool =
+proc deleteSession*(topic: string): bool =
   try:
-    let response = wCChangePairingState(topic, false)
+    let response = wCChangeSessionState(topic, false)
     return not isErrorResponse(response)
-  except Exception as e:
-    warn e.msg
-    return false
-
-proc hasActivePairings*(): bool =
-  try:
-    let response = wCHasActivePairings()
-    if isErrorResponse(response):
-      return false
-    return response.result.getBool()
   except Exception as e:
     warn e.msg
     return false
