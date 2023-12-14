@@ -30,7 +30,7 @@ QtObject:
       walletAccountService: wallet_account_service.Service
       sessionRequestJson: JsonNode
       txResponseDto: TxResponseDto
-      hasActivePairings: Option[bool]
+      hasActivePairings: bool
 
   ## Forward declarations
   proc invalidateData(self: Controller)
@@ -38,7 +38,13 @@ QtObject:
   proc finishSessionRequest(self: Controller, signature: string)
   proc finishAuthRequest(self: Controller, signature: string)
 
+  ## signals
   proc requestOpenWalletConnectPopup*(self: Controller, uri: string) {.signal.}
+  proc hasActivePairingsChanged*(self: Controller) {.signal.}
+  proc respondSessionProposal*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string, error: string) {.signal.}
+  proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
+  proc respondAuthRequest*(self: Controller, signature: string, error: bool) {.signal.}
+
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -88,9 +94,6 @@ QtObject:
     else:
       error "Unknown identifier"
 
-  # supportedNamespaces is a Namespace as defined in status-go: services/wallet/walletconnect/walletconnect.go
-  proc respondSessionProposal*(self: Controller, sessionProposalJson: string, supportedNamespacesJson: string, error: string) {.signal.}
-
   proc sessionProposal(self: Controller, sessionProposalJson: string) {.slot.} =
     var
       supportedNamespacesJson: string
@@ -107,27 +110,24 @@ QtObject:
       error "pairing", msg=error
     self.respondSessionProposal(sessionProposalJson, supportedNamespacesJson, error)
 
-  proc recordSuccessfulPairing(self: Controller, sessionProposalJson: string) {.slot.} =
-    if backend_wallet_connect.recordSuccessfulPairing(sessionProposalJson):
-      if not self.hasActivePairings.get(false):
-        self.hasActivePairings = some(true)
+  proc saveOrUpdateSession(self: Controller, sessionJson: string) {.slot.} =
+    if not backend_wallet_connect.saveOrUpdateSession(sessionJson):
+      error "Failed to save/update session"
 
-  proc deletePairing(self: Controller, topic: string) {.slot.} =
-    if backend_wallet_connect.deletePairing(topic):
-      if self.hasActivePairings.get(false):
-        self.hasActivePairings = some(backend_wallet_connect.hasActivePairings())
-    else:
-      error "Failed to delete pairing"
+  proc deleteSession(self: Controller, topic: string) {.slot.} =
+    if not backend_wallet_connect.deleteSession(topic):
+      error "Failed to delete session"
 
   proc getHasActivePairings*(self: Controller): bool {.slot.} =
-    if self.hasActivePairings.isNone:
-      self.hasActivePairings = some(backend_wallet_connect.hasActivePairings())
-    return self.hasActivePairings.get(false)
+    return self.hasActivePairings
+
+  proc setHasActivePairings(self: Controller, value: bool) =
+    self.hasActivePairings = value
+    self.hasActivePairingsChanged()
 
   QtProperty[bool] hasActivePairings:
     read = getHasActivePairings
-
-  proc respondSessionRequest*(self: Controller, sessionRequestJson: string, signedJson: string, error: bool) {.signal.}
+    notify = hasActivePairingsChanged
 
   proc sendTransactionAndRespond(self: Controller, signature: string) =
     let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
@@ -212,8 +212,6 @@ QtObject:
   proc getWalletAccounts*(self: Controller): string {.slot.} =
     let jsonObj = % self.walletAccountService.getWalletAccounts()
     return $jsonObj
-
-  proc respondAuthRequest*(self: Controller, signature: string, error: bool) {.signal.}
 
   proc finishAuthRequest(self: Controller, signature: string) =
     if signature.len == 0:

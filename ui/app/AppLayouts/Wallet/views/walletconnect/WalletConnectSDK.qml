@@ -29,7 +29,7 @@ Item {
     signal sdkInit(bool success, var result)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
-    signal approveSessionResult(var sessionProposal, string error)
+    signal approveSessionResult(var session, string error)
     signal rejectSessionResult(string error)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(bool accept, string error)
@@ -38,14 +38,22 @@ Item {
     signal authMessageFormated(string formatedMessage, string address)
     signal authRequestUserAnswerResult(bool accept, string error)
 
-    signal sessionDelete(var deletePayload)
+    signal sessionDelete(var topic, string error)
 
     function pair(pairLink) {
         wcCalls.pair(pairLink)
     }
 
-    function disconnectTopic(topic) {
-        wcCalls.disconnectTopic(topic)
+    function getActiveSessions(callback) {
+        wcCalls.getActiveSessions(callback)
+    }
+
+    function disconnectSession(topic) {
+        wcCalls.disconnectSession(topic)
+    }
+
+    function disconnectPairing(topic) {
+        wcCalls.disconnectPairing(topic)
     }
 
     function ping(topic) {
@@ -184,7 +192,11 @@ Item {
             console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions;`)
 
             d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${JSON.stringify(result, null, 2)}`)
+                let allSessions = ""
+                for (var key of Object.keys(result)) {
+                    allSessions += `\nsessionTopic: ${key}  relatedPairingTopic: ${result[key].pairingTopic}`;
+                }
+                console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${allSessions}`)
 
                 if (callback && result) {
                     callback(result)
@@ -212,11 +224,11 @@ Item {
 
             d.engine.runJavaScript(`
                                     wc.approveSession(${JSON.stringify(sessionProposal)}, ${JSON.stringify(supportedNamespaces)})
-                                    .then((value) => {
-                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, "")
+                                    .then((session) => {
+                                        wc.statusObject.onApproveSessionResponse(session, "")
                                     })
                                     .catch((e) => {
-                                        wc.statusObject.onApproveSessionResponse(${JSON.stringify(sessionProposal)}, e.message)
+                                        wc.statusObject.onApproveSessionResponse("", e.message)
                                     })
                                    `
             )
@@ -267,16 +279,31 @@ Item {
             )
         }
 
-        function disconnectTopic(topic) {
-            console.debug(`WC WalletConnectSDK.wcCall.disconnectTopic; topic: "${topic}"`)
+        function disconnectSession(topic) {
+            console.debug(`WC WalletConnectSDK.wcCall.disconnectSession; topic: "${topic}"`)
 
             d.engine.runJavaScript(`
                                     wc.disconnect("${topic}")
-                                    .then((value) => {
-                                        wc.statusObject.onDisconnectResponse("")
+                                    .then(() => {
+                                        wc.statusObject.onDisconnectSessionResponse("${topic}", "")
                                     })
                                     .catch((e) => {
-                                        wc.statusObject.onDisconnectResponse(e.message)
+                                        wc.statusObject.onDisconnectSessionResponse("", e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function disconnectPairing(topic) {
+            console.debug(`WC WalletConnectSDK.wcCall.disconnectPairing; topic: "${topic}"`)
+
+            d.engine.runJavaScript(`
+                                    wc.disconnect("${topic}")
+                                    .then(() => {
+                                        wc.statusObject.onDisconnectPairingResponse("${topic}", "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onDisconnectPairingResponse("", e.message)
                                     })
                                    `
             )
@@ -384,23 +411,22 @@ Item {
             console.debug(`WC WalletConnectSDK.onPingResponse; error: ${error}`)
         }
 
-        function onDisconnectResponse(error) {
-            console.debug(`WC WalletConnectSDK.onDisconnectResponse; error: ${error}`)
-            d.resetPairingsModel()
+        function onDisconnectSessionResponse(topic, error) {
+            console.debug(`WC WalletConnectSDK.onDisconnectSessionResponse; topic: ${topic}, error: ${error}`)
             d.resetSessionsModel()
+            root.sessionDelete(topic, error)
         }
 
-        function onApproveSessionResponse(sessionProposal, error) {
-            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionProposal: ${JSON.stringify(sessionProposal, null, 2)}, error: ${error}`)
+        function onDisconnectPairingResponse(topic, error) {
+            console.debug(`WC WalletConnectSDK.onDisconnectPairingResponse; topic: ${topic}, error: ${error}`)
+            d.resetPairingsModel()
+        }
 
-            // Update the temporary expiry with the one from the pairing
-            d.resetPairingsModel((pairing) => {
-                if (pairing.topic === sessionProposal.params.pairingTopic) {
-                    sessionProposal.params.expiry = pairing.expiry
-                    root.approveSessionResult(sessionProposal, error)
-                }
-            })
+        function onApproveSessionResponse(session, error) {
+            console.debug(`WC WalletConnectSDK.onApproveSessionResponse; sessionTopic: ${JSON.stringify(session, null, 2)}, error: ${error}`)
+            d.resetPairingsModel()
             d.resetSessionsModel()
+            root.approveSessionResult(session, error)
         }
 
         function onRejectSessionResponse(error) {
@@ -443,7 +469,7 @@ Item {
 
         function onSessionDelete(details) {
             console.debug(`WC WalletConnectSDK.onSessionDelete; details: ${JSON.stringify(details, null, 2)}`)
-            root.sessionDelete(details)
+            root.sessionDelete(details.topic, "")
             d.resetPairingsModel()
             d.resetSessionsModel()
         }

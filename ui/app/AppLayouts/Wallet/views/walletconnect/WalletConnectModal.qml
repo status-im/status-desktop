@@ -208,7 +208,7 @@ Popup {
                         model: root.sdk.sessionsModel
 
                         onDisconnect: function (topic) {
-                            root.sdk.disconnectTopic(topic)
+                            root.sdk.disconnectSession(topic)
                         }
 
                         onPing: function (topic) {
@@ -227,7 +227,7 @@ Popup {
                         model: root.sdk.pairingsModel
 
                         onDisconnect: function (topic) {
-                            root.sdk.disconnectTopic(topic)
+                            root.sdk.disconnectPairing(topic)
                         }
                     }
                 }
@@ -292,6 +292,16 @@ Popup {
             root.controller.sessionProposal(JSON.stringify(sessionProposal))
         }
 
+        function onSessionDelete(topic, error) {
+            if (!!error) {
+                d.setStatusText(`Error deleting session: ${error}`, "red")
+                d.setDetailsText("")
+                return
+            }
+
+            root.controller.deleteSession(topic)
+        }
+
         function onSessionRequestEvent(sessionRequest) {
             d.setStatusText("Approve session request")
             d.setDetailsText(JSON.stringify(sessionRequest, null, 2))
@@ -299,12 +309,15 @@ Popup {
             root.state = d.waitingUserResponseToSessionRequest
         }
 
-        function onApproveSessionResult(sessionProposal, error) {
+        function onApproveSessionResult(session, error) {
             d.setDetailsText("")
             if (!error) {
                 d.setStatusText("Pairing OK")
                 d.state = d.pairedState
-                root.controller.recordSuccessfulPairing(JSON.stringify(sessionProposal))
+
+                root.sdk.getActiveSessions((activeSession) => {
+                                               root.controller.saveOrUpdateSession(JSON.stringify(session))
+                                           })
             } else {
                 d.setStatusText("Pairing error", "red")
                 d.state = ""
