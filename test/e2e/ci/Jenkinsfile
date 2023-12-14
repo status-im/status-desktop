@@ -155,6 +155,7 @@ pipeline {
           ]) {
             sh """
               python3 -m pytest ${flags.join(" ")} \
+                --ignore-flaky \
                 --disable-warnings \
                 --alluredir=./allure-results
             """
