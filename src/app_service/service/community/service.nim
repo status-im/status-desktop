@@ -234,8 +234,6 @@ const SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING* = "acceptRequestToJoinLoading"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED* = "acceptRequestToJoinFailed"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION* = "acceptRequestToJoinFailedNoPermission"
 
-const SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED* = "communityInfoAlreadyRequested"
-
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 const TOKEN_PERMISSIONS_REMOVED = "tokenPermissionsRemoved"
@@ -260,7 +258,6 @@ QtObject:
       communityTags: string # JSON string contraining tags map
       communities: Table[string, CommunityDto] # [community_id, CommunityDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
-      requestedCommunityIds*: HashSet[string]
       communityMetrics: Table[string, CommunityMetricsDto]
       communityInfoRequests: Table[string, Time]
 
@@ -296,7 +293,6 @@ QtObject:
     result.communityTags = newString(0)
     result.communities = initTable[string, CommunityDto]()
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
-    result.requestedCommunityIds = initHashSet[string]()
     result.communityMetrics = initTable[string, CommunityMetricsDto]()
     result.communityInfoRequests = initTable[string, Time]()
 
@@ -1498,7 +1494,6 @@ QtObject:
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
 
     let requestedCommunityId = rpcResponseObj{"communityId"}.getStr()
-    self.requestedCommunityIds.excl(requestedCommunityId)
 
     if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
       error "Error requesting community info", msg = rpcResponseObj{"error"}
@@ -1783,11 +1778,6 @@ QtObject:
   proc requestCommunityInfo*(self: Service, communityId: string, shard: Shard, importing = false, tryDatabase = true,
       requiredTimeSinceLastRequest = initDuration(0, 0)) =
 
-    if communityId in self.requestedCommunityIds:
-      info "requestCommunityInfo: skipping as already requested", communityId
-      self.events.emit(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED, Args())
-      return
-
     let now = now().toTime()
     if self.communityInfoRequests.hasKey(communityId):
       let lastRequestTime = self.communityInfoRequests[communityId]
@@ -1797,7 +1787,6 @@ QtObject:
         return
 
     self.communityInfoRequests[communityId] = now
-    self.requestedCommunityIds.incl(communityId)
 
     let arg = AsyncRequestCommunityInfoTaskArg(
       tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),

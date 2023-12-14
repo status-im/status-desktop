@@ -538,9 +538,6 @@ method requestCancelDiscordCommunityImport*(self: Module, id: string) =
 method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string) =
   self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
-method communityInfoAlreadyRequested*(self: Module) =
-  self.view.communityInfoAlreadyRequested()
-
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
     infiniteSupply: bool): TokenListItem =
   result = initTokenListItem(

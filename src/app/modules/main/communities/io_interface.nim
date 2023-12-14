@@ -194,9 +194,6 @@ method curatedCommunitiesLoadingFailed*(self: AccessInterface) {.base.} =
 method curatedCommunitiesLoaded*(self: AccessInterface, curatedCommunities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method communityInfoAlreadyRequested*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string, tokenMetadata: CommunityTokensMetadataDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
