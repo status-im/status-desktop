@@ -18,6 +18,8 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed_password',
                          [pytest.param(constants.user.user_account_one,
                                        constants.user.user_account_one_changed_password)])
+@pytest.mark.flaky
+# reason = 'https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings'):
         settings_scr = main_screen.left_panel.open_settings().left_panel.open_profile_settings()

@@ -37,5 +37,5 @@ class ChangePasswordPopup(BasePopup):
             assert driver.waitFor(lambda: self._quit_button.is_visible, 15000), \
                 f'Sign out and quit button is not visible within 15 seconds'
             self._quit_button.click()
-        except Exception as ex:
+        except (Exception, AssertionError) as ex:
             raise ex
