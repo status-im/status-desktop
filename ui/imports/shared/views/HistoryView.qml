@@ -39,7 +39,10 @@ ColumnLayout {
         }
     }
 
-    Component.onCompleted: {
+    onVisibleChanged: {
+        if (!visible)
+            return
+
         filterPanelLoader.active = true
         if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
