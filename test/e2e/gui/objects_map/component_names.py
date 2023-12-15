@@ -94,6 +94,7 @@ createCommunityNextBtn_StatusButton = {"container": statusDesktop_mainWindow_ove
 createCommunityIntroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityIntroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityOutroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityOutroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityFinalBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityFinalBtn", "type": "StatusButton", "visible": True}
+createOrEditCommunityCategoryChannelList_StatusListView = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryChannelList", "type": "StatusListView", "visible": True}
 
 # Community Channel Popup
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}
@@ -106,6 +107,8 @@ createOrEditCommunityCategoryNameInput_TextEdit = {"container": statusDesktop_ma
 category_item_name_general_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "category_item_name_general", "type": "StatusListItem", "visible": True}
 create_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryBtn", "type": "StatusButton", "visible": True}
 channelItemCheckbox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "channelItemCheckbox", "type": "StatusCheckBox", "unnamed": 1, "visible": True}
+delete_Category_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+save_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryBtn", "type": "StatusButton", "visible": True}
 
 # Invite Contacts Popup
 communityProfilePopupInviteFrindsPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteFrindsPanel_ColumnLayout", "type": "ProfilePopupInviteFriendsPanel", "visible": True}

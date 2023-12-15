@@ -8,7 +8,7 @@ import configs
 import driver
 from constants import UserChannel
 from driver.objects_access import walk_children
-from gui.components.community.community_category_popup import NewCategoryPopup
+from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
@@ -74,6 +74,12 @@ class CommunityScreen(QObject):
         self.left_panel.open_more_options()
         self.left_panel.open_delete_category_popup().delete()
 
+    @allure.step('Edit category')
+    def edit_category(self):
+        self.left_panel.open_more_options()
+        self.left_panel.open_edit_category_popup()
+        return EditCategoryPopup()
+
     @allure.step('Verify category in the list')
     def verify_category(self, category_name: str):
         category = self.left_panel.find_category_in_list(category_name)
@@ -92,7 +98,6 @@ class ToolBar(QObject):
         self._channel_description = TextLabel('statusToolBar_TruncatedTextWithTooltip')
         self._delete_channel_context_item = QObject('delete_Channel_StatusMenuItem')
         self._channel_header = QObject('statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton')
-
 
     @property
     @allure.step('Get channel emoji')
@@ -174,6 +179,7 @@ class LeftPanel(QObject):
         self._category_list_item = QObject('categoryItem_StatusChatListCategoryItem')
         self._create_category_button = Button('add_categories_StatusFlatButton')
         self._delete_category_item = QObject('delete_Category_StatusMenuItem')
+        self._edit_category_item = QObject('edit_Category_StatusMenuItem')
         self._add_channel_inside_category_item = QObject('scrollView_addButton_StatusChatListCategoryItemButton')
         self._more_button = Button('scrollView_menuButton_StatusChatListCategoryItemButton')
         self._arrow_button = Button('scrollView_toggleButton_StatusChatListCategoryItemButton')
@@ -251,7 +257,7 @@ class LeftPanel(QObject):
             return NewCategoryPopup().wait_until_appears()
         except Exception as ex:
             if attempts:
-                self.open_create_category_popup(attempts-1)
+                self.open_create_category_popup(attempts - 1)
             else:
                 raise ex
 
@@ -283,11 +289,22 @@ class LeftPanel(QObject):
         self._delete_category_item.click()
         return DeleteCategoryPopup().wait_until_appears()
 
+    @allure.step('Open edit category popup')
+    def open_edit_category_popup(self) -> EditCategoryPopup:
+        self._edit_category_item.click()
+        return CategoryPopup().wait_until_appears()
+
     @allure.step('Open new channel popup inside category')
     def open_new_channel_popup_in_category(self) -> NewChannelPopup:
         self._arrow_button.click()
         self._add_channel_inside_category_item.click()
         return NewChannelPopup().wait_until_appears()
+
+    @allure.step('Get channel or category index in the list')
+    def get_channel_or_category_index(self, name: str) -> int:
+        for child in walk_children(self._categories_items_list.object):
+            if child.objectName == name:
+                return child.visualIndex
 
 
 class Chat(QObject):
@@ -298,7 +315,6 @@ class Chat(QObject):
         self._channel_name_label = TextLabel('chatMessageViewDelegate_channelIdentifierNameText_StyledText')
         self._channel_welcome_label = TextLabel('chatMessageViewDelegate_Welcome')
         self._channel_identifier_view = QObject('chatMessageViewDelegate_ChannelIdentifierView')
-
 
     @property
     @allure.step('Get channel emoji')
