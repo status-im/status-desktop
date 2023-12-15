@@ -573,7 +573,6 @@ class LoginView(QObject):
 
         self._password_text_edit.text = account.password
         self._arrow_right_button.click()
-        self.wait_until_hidden()
 
     @allure.step('Select user')
     def select_user_name(self, user_name, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
