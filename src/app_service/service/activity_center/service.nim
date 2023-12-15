@@ -11,6 +11,8 @@ import ../../../backend/response_type
 import ./dto/notification
 
 import ../../common/activity_center
+import ../message/service
+import ../message/dto/seen_unseen_messages
 
 export notification
 
@@ -205,7 +207,23 @@ QtObject:
   proc markActivityCenterNotificationRead*(self: Service, notificationId: string) =
     try:
       let notificationIds = @[notificationId]
-      discard backend.markActivityCenterNotificationsRead(notificationIds)
+      let response = backend.markActivityCenterNotificationsRead(notificationIds)
+
+      var seenAndUnseenMessagesBatch: JsonNode = newJObject()
+      discard response.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
+
+      if seenAndUnseenMessagesBatch.len > 0:
+        for seenAndUnseenMessagesRaw in seenAndUnseenMessagesBatch:
+          let seenAndUnseenMessages = seenAndUnseenMessagesRaw.toSeenUnseenMessagesDto()
+
+          let data = MessagesMarkedAsReadArgs(
+            chatId: seenAndUnseenMessages.chatId,
+            allMessagesMarked: false,
+            messagesIds: notificationIds,
+            messagesCount: seenAndUnseenMessages.count,
+            messagesWithMentionsCount: seenAndUnseenMessages.countWithMentions)
+          self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_NOTIFICATIONS_AS_READ, ActivityCenterNotificationIdsArgs(notificationIds: notificationIds))
     except Exception as e:
       error "Error marking as read", msg = e.msg

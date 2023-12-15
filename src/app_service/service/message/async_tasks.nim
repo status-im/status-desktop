@@ -6,6 +6,20 @@ import ../../../backend/chat as status_go_chat
 
 import ../../../app/core/custom_urls/urls_manager
 
+import dto/seen_unseen_messages
+
+proc getCountAndCountWithMentionsFromResponse(chatId: string, seenAndUnseenMessagesBatch: JsonNode): (int, int) =
+  var count: int
+  var countWithMentions: int
+
+  if seenAndUnseenMessagesBatch.len > 0:
+    for seenAndUnseenMessagesRaw in seenAndUnseenMessagesBatch:
+      let seenAndUnseenMessages = seenAndUnseenMessagesRaw.toSeenUnseenMessagesDto()
+      if seenAndUnseenMessages.chatId == chatId:
+        count = seenAndUnseenMessages.count
+        countWithMentions = seenAndUnseenMessages.countWithMentions
+        break
+  return (count, countWithMentions)
 
 #################################################
 # Async load messages
@@ -149,11 +163,9 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
 
   let response = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
 
-  var count: int
-  discard response.result.getProp("count", count)
-
-  var countWithMentions: int
-  discard response.result.getProp("countWithMentions", countWithMentions)
+  var seenAndUnseenMessagesBatch: JsonNode = newJObject()
+  discard response.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
+  let (count, countWithMentions) = getCountAndCountWithMentionsFromResponse(arg.chatId, seenAndUnseenMessagesBatch)
 
   var activityCenterNotifications: JsonNode = newJObject()
   discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
@@ -319,10 +331,13 @@ const asyncMarkMessageAsUnreadTask: Task = proc(argEncoded: string) {.gcsafe, ni
 
     var activityCenterNotifications: JsonNode = newJObject()
     discard response.result.getProp("activityCenterNotifications", activityCenterNotifications)
-
-    responseJson["messagesCount"] = %response.result["count"]
     responseJson["activityCenterNotifications"] = activityCenterNotifications
-    responseJson["messagesWithMentionsCount"] = %response.result["countWithMentions"]
+
+    var seenAndUnseenMessagesBatch: JsonNode = newJObject()
+    discard response.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
+    let (count, countWithMentions) = getCountAndCountWithMentionsFromResponse(arg.chatId, seenAndUnseenMessagesBatch)
+    responseJson["messagesCount"] = %count
+    responseJson["messagesWithMentionsCount"] = %countWithMentions
 
     if response.error != nil:
       responseJson["error"] = %response.error

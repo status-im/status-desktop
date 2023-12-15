@@ -61,7 +61,7 @@ proc markAllMessagesFromChatWithIdAsRead*(chatId: string): RpcResponse[JsonNode]
 proc markCertainMessagesFromChatWithIdAsRead*(chatId: string, messageIds: seq[string]):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chatId, messageIds]
-  result = callPrivateRPC("markMessagesSeen".prefix, payload)
+  result = callPrivateRPC("markMessagesRead".prefix, payload)
 
 proc deleteMessageAndSend*(messageID: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("deleteMessageAndSend".prefix, %* [messageID])
