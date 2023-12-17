@@ -16,6 +16,7 @@ import (
 	"github.com/status-im/status-go/multiaccounts"
 	"github.com/status-im/status-go/services/wallet/walletevent"
 	"github.com/status-im/status-go/signal"
+	"github.com/stretchr/testify/require"
 )
 
 type StatusGoEventName string
@@ -88,6 +89,11 @@ func LoginToTestAccount(t *testing.T) (eventQueue chan GoEvent, config *Config, 
 	return
 }
 
+func Logout(t *testing.T) {
+	err := logout()
+	require.NoError(t, err)
+}
+
 func WaitForEvent(eventQueue chan GoEvent, eventName StatusGoEventName, timeout time.Duration) (event *GoEvent, err error) {
 	for {
 		select {
@@ -101,8 +107,14 @@ func WaitForEvent(eventQueue chan GoEvent, eventName StatusGoEventName, timeout 
 	}
 }
 
-func WaitForWalletEvent[T any](eventQueue chan GoEvent, eventName walletevent.EventType, timeout time.Duration) (payload *T, err error) {
+// WaitForWalletEvents returns payloads corresponding to the given eventNames in the order they are received for duplicate events
+func WaitForWalletEvents[T any](eventQueue chan GoEvent, eventNamesOrig []walletevent.EventType, timeout time.Duration) (payloads []*T, err error) {
 	var event *GoEvent
+
+	payloads = make([]*T, len(eventNamesOrig))
+	processed := make([]bool, len(eventNamesOrig))
+	processedCount := 0
+
 	for {
 		event, err = WaitForEvent(eventQueue, WalletEvent, timeout)
 		if err != nil {
@@ -115,17 +127,39 @@ func WaitForWalletEvent[T any](eventQueue chan GoEvent, eventName walletevent.Ev
 		}
 
 		var newPayload T
-		if walletEvent.Type == eventName {
+		foundIndex := -1
+		for i, eventName := range eventNamesOrig {
+			if walletEvent.Type == eventName && !processed[i] {
+				foundIndex = i
+				processed[i] = true
+				processedCount += 1
+				break
+			}
+		}
+
+		if foundIndex != -1 {
 			if walletEvent.Message != "" {
 				err = json.Unmarshal([]byte(walletEvent.Message), &newPayload)
 				if err != nil {
 					return nil, err
 				}
-				return &newPayload, nil
+				payloads[foundIndex] = &newPayload
+			} else {
+				payloads[foundIndex] = nil
 			}
-			return nil, nil
+			if processedCount == len(eventNamesOrig) {
+				return payloads, nil
+			}
 		}
 	}
+}
+
+func WaitForWalletEvent[T any](eventQueue chan GoEvent, eventName walletevent.EventType, timeout time.Duration) (payload *T, err error) {
+	res, err := WaitForWalletEvents[T](eventQueue, []walletevent.EventType{eventName}, timeout)
+	if err != nil {
+		return nil, err
+	}
+	return res[0], nil
 }
 
 func loginToAccount(hashedPassword, userFolder, nodeConfigJson string) error {
@@ -167,6 +201,20 @@ func loginToAccount(hashedPassword, userFolder, nodeConfigJson string) error {
 	return nil
 }
 
+func logout() error {
+	logoutJson := statusgo.Logout()
+	apiResponse := statusgo.APIResponse{}
+	err := GetCAPIResponse(logoutJson, &apiResponse)
+	if err != nil {
+		return err
+	}
+	if apiResponse.Error != "" {
+		return fmt.Errorf("API error: %s", apiResponse.Error)
+	}
+
+	return nil
+}
+
 type jsonrpcMessage struct {
 	Version string          `json:"jsonrpc"`
 	ID      json.RawMessage `json:"id"`
@@ -179,7 +227,7 @@ type jsonrpcRequest struct {
 	Params  json.RawMessage `json:"params,omitempty"`
 }
 
-func CallPrivateMethod(method string, params []interface{}) (string, error) {
+func CallPrivateMethodWithTimeout(method string, params []interface{}, timeout time.Duration) (string, error) {
 	var paramsJson json.RawMessage
 	var err error
 	if params != nil {
@@ -202,7 +250,31 @@ func CallPrivateMethod(method string, params []interface{}) (string, error) {
 		return "", err
 	}
 
-	return statusgo.CallPrivateRPC(string(msgJson)), nil
+	didTimeout := false
+	done := make(chan bool)
+	var responseJson string
+	go func() {
+		responseJson = statusgo.CallPrivateRPC(string(msgJson))
+		if didTimeout {
+			log.Warn("Call to CallPrivateRPC returned after timeout", "payload", string(msgJson))
+			return
+		}
+
+		done <- true
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(timeout):
+		didTimeout = true
+		return "", fmt.Errorf("timeout waiting for response to statusgo.CallPrivateRPC; payload \"%s\"", string(msgJson))
+	}
+
+	return responseJson, nil
+}
+
+func CallPrivateMethod(method string, params []interface{}) (string, error) {
+	return CallPrivateMethodWithTimeout(method, params, 60*time.Second)
 }
 
 type Config struct {
@@ -244,6 +316,7 @@ func processConfigArgs(configFilePath string) (config *Config, nodeConfigJson st
 	return
 }
 
+// GetCAPIResponse expects res to be a pointer to a struct, a pointer to a slice or a pointer to a map for marshaling
 func GetCAPIResponse[T any](responseJson string, res T) error {
 	apiResponse := statusgo.APIResponse{}
 	err := json.Unmarshal([]byte(responseJson), &apiResponse)

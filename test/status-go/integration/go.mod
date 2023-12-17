@@ -7,7 +7,9 @@ replace github.com/status-im/status-desktop/test/status-go/integration => ./
 replace github.com/status-im/status-go => ../../../vendor/status-go
 
 // Keep these in sync with status-go/go.mod aliases
-replace github.com/ethereum/go-ethereum v1.10.26 => github.com/status-im/go-ethereum v1.10.25-status.11
+replace github.com/ethereum/go-ethereum v1.10.26 => github.com/status-im/go-ethereum v1.10.25-status.13
+
+replace github.com/rjeczalik/notify => github.com/status-im/notify v1.0.2-status
 
 replace github.com/docker/docker => github.com/docker/engine v1.4.2-0.20190717161051-705d9623b7c1
 
@@ -25,6 +27,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1 // indirect
 	github.com/RoaringBitmap/roaring v0.9.4 // indirect
 	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
@@ -126,6 +129,8 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/koron/go-ssdp v0.0.4 // indirect
 	github.com/ladydascalie/currency v1.6.0 // indirect
+	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
+	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.4 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
@@ -222,6 +227,7 @@ require (
 	github.com/status-im/keycard-go v0.0.0-20200402102358-957c09536969 // indirect
 	github.com/status-im/markdown v0.0.0-20231114210825-6c2d15b5dc57 // indirect
 	github.com/status-im/migrate/v4 v4.6.2-status.3 // indirect
+	github.com/status-im/mvds v0.0.27-0.20240111144448-92d364e4be82 // indirect
 	github.com/status-im/rendezvous v1.3.7 // indirect
 	github.com/status-im/status-go/extkeys v1.1.2 // indirect
 	github.com/status-im/tcp-shaker v1.1.1-status // indirect
@@ -233,10 +239,9 @@ require (
 	github.com/tsenart/tb v0.0.0-20181025101425-0d2499c8b6e9 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0 // indirect
 	github.com/urfave/cli/v2 v2.24.4 // indirect
-	github.com/vacp2p/mvds v0.0.24-0.20201124060106-26d8e94130d8 // indirect
-	github.com/waku-org/go-discover v0.0.0-20221209174356-61c833f34d98 // indirect
+	github.com/waku-org/go-discover v0.0.0-20240129014929-85f2c00b96a3 // indirect
 	github.com/waku-org/go-libp2p-rendezvous v0.0.0-20230628220917-7b4e5ae4c0e7 // indirect
-	github.com/waku-org/go-waku v0.8.1-0.20240104144340-585648c4eefe // indirect
+	github.com/waku-org/go-waku v0.8.1-0.20240130093642-77ea359ef873 // indirect
 	github.com/waku-org/go-zerokit-rln v0.1.14-0.20240102145250-fa738c0bdf59 // indirect
 	github.com/waku-org/go-zerokit-rln-apple v0.0.0-20230916172309-ee0ee61dde2b // indirect
 	github.com/waku-org/go-zerokit-rln-arm v0.0.0-20230916171929-1dd9494ff065 // indirect
