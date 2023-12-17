@@ -20,11 +20,11 @@ Run wallet tests
 - once
 
   ```sh
-  (cd test/status-go/integration && go test -v ./wallet/... --tags=gowaku_no_rln,gowaku_skip_migrations)
+  (cd test/status-go/integration && go test -count=1 -v ./wallet/... --tags=gowaku_no_rln,gowaku_skip_migrations)
   ```
 
 - continuously on code changes
 
   ```sh
-  (cd test/status-go/integration && nodemon --watch ../../../vendor/status-go/ --watch .  --ext "*.go,*.sql" --exec 'go test -v ./wallet/... --tags=gowaku_no_rln,gowaku_skip_migrations 2>&1 | tee ~/proj/tmp/status-go-tests.log || exit 1')
+  (cd test/status-go/integration && nodemon --watch ../../../vendor/status-go/ --watch .  --ext "*.go,*.sql" --exec 'go test -count=1 -v ./wallet/... --tags=gowaku_no_rln,gowaku_skip_migrations 2>&1 | tee ~/proj/tmp/status-go-tests.log || exit 1')
   ```

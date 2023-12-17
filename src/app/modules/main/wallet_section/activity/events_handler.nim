@@ -96,6 +96,7 @@ QtObject:
 
       self.newDataAvailableFn()
 
+    # TODO #12120: Replace these specific events with incremental updates events
     self.walletEventHandlers[EventNewTransfers] = newDataAvailableCallback
     self.walletEventHandlers[EventPendingTransactionUpdate] = newDataAvailableCallback
     self.walletEventHandlers[EventMTTransactionUpdate] = newDataAvailableCallback
