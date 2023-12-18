@@ -1,8 +1,9 @@
 #pragma once
 
-#include <QIdentityProxyModel>
+#include <QAbstractListModel>
+#include <QPointer>
 
-class LeftJoinModel : public QIdentityProxyModel
+class LeftJoinModel : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -27,9 +28,9 @@ public:
     void setJoinRole(const QString& joinRole);
     const QString& joinRole() const;
 
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
     QVariant data(const QModelIndex& index, int role) const override;
-    void setSourceModel(QAbstractItemModel* newSourceModel) override;
 
 signals:
     void leftModelChanged();
@@ -37,10 +38,15 @@ signals:
     void joinRoleChanged();
 
 private:
-    void initializeIfReady();
-    void initialize();
+    void initializeIfReady(bool reset);
+    void initialize(bool reset);
+
+    void connectLeftModelSignals();
+    void connectRightModelSignals();
 
     int m_rightModelRolesOffset = 0;
+    QHash<int, QByteArray> m_leftRoleNames;
+    QHash<int, QByteArray> m_rightRoleNames;
     QHash<int, QByteArray> m_roleNames;
     QVector<int> m_joinedRoles;
 
@@ -48,11 +54,10 @@ private:
     int m_leftModelJoinRole = 0;
     int m_rightModelJoinRole = 0;
 
-    QAbstractItemModel* m_leftModel = nullptr;
-    QAbstractItemModel* m_rightModel = nullptr;
+    QPointer<QAbstractItemModel> m_leftModel;
+    QPointer<QAbstractItemModel> m_rightModel;
 
-    bool m_leftModelDestroyed = false;
-    bool m_rightModelDestroyed = false;
+    bool m_initialized = false;
 
     mutable QPersistentModelIndex m_lastUsedRightModelIndex;
 };

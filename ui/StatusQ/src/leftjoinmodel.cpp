@@ -5,19 +5,19 @@
 #include <algorithm>
 
 LeftJoinModel::LeftJoinModel(QObject* parent)
-    : QIdentityProxyModel{parent}
+    : QAbstractListModel{parent}
 {
 }
 
-void LeftJoinModel::initializeIfReady()
+void LeftJoinModel::initializeIfReady(bool reset)
 {
     if (m_leftModel && m_rightModel && !m_joinRole.isEmpty()
             && !m_leftModel->roleNames().empty()
             && !m_rightModel->roleNames().empty())
-        initialize();
+        initialize(reset);
 }
 
-void LeftJoinModel::initialize()
+void LeftJoinModel::initialize(bool reset)
 {
     auto leftRoleNames = m_leftModel->roleNames();
     auto rightRoleNames = m_rightModel->roleNames();
@@ -51,6 +51,9 @@ void LeftJoinModel::initialize()
         return;
     }
 
+    if (reset)
+        beginResetModel();
+
     auto leftRoles = leftRoleNames.keys();
     auto maxLeftRole = std::max_element(leftRoles.cbegin(), leftRoles.cend());
     auto rightRolesOffset = *maxLeftRole + 1;
@@ -73,6 +76,92 @@ void LeftJoinModel::initialize()
     m_rightModelJoinRole = rightRoleNames.key(m_joinRole.toUtf8());
     m_rightModelRolesOffset = rightRolesOffset;
 
+    m_leftRoleNames = std::move(leftRoleNames);
+    m_rightRoleNames = std::move(rightRoleNames);
+
+    disconnect(m_leftModel, nullptr, this, nullptr);
+    disconnect(m_rightModel, nullptr, this, nullptr);
+
+    connectRightModelSignals();
+    connectLeftModelSignals();
+
+    m_initialized = true;
+
+    if (reset)
+        endResetModel();
+}
+
+void LeftJoinModel::connectLeftModelSignals()
+{
+    connect(m_leftModel, &QAbstractItemModel::dataChanged, this,
+            [this](auto& topLeft, auto& bottomRight, auto& roles) {
+
+        auto tl = index(topLeft.row());
+        auto br = index(bottomRight.row());
+
+        if (roles.contains(m_leftModelJoinRole))
+            emit dataChanged(tl, br, m_joinedRoles + roles);
+        else
+            emit dataChanged(tl, br, roles);
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsAboutToBeInserted,
+            this, [this](const QModelIndex& parent, int first, int last) {
+        if (!parent.isValid())
+            beginInsertRows({}, first, last);
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsInserted,
+            this, [this](const QModelIndex& parent, int first, int last) {
+        if (!parent.isValid())
+            endInsertRows();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsAboutToBeRemoved,
+            this, [this](const QModelIndex& parent, int first, int last) {
+        if (!parent.isValid())
+            beginRemoveRows({}, first, last);
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsRemoved,
+            this, [this](const QModelIndex& parent, int first, int last) {
+        if (!parent.isValid())
+            endRemoveRows();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsAboutToBeMoved,
+            this, [this](const QModelIndex &sourceParent, int sourceStart,
+                int sourceEnd, const QModelIndex &destinationParent, int destinationRow) {
+        if (!sourceParent.isValid() && !destinationParent.isValid())
+            beginMoveRows({}, sourceStart, sourceEnd, {}, destinationRow);
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::rowsMoved,
+            this, [this](const QModelIndex &sourceParent, int sourceStart,
+                int sourceEnd, const QModelIndex &destinationParent, int destinationRow) {
+        if (!sourceParent.isValid() && !destinationParent.isValid())
+            endMoveRows();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::layoutAboutToBeChanged, this, [this]() {
+        emit layoutAboutToBeChanged();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::layoutChanged, this, [this]() {
+        emit layoutChanged();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::modelAboutToBeReset, this, [this]() {
+        beginResetModel();
+    });
+
+    connect(m_leftModel, &QAbstractItemModel::modelReset, this, [this]() {
+        endResetModel();
+    });
+}
+
+void LeftJoinModel::connectRightModelSignals()
+{
     connect(m_rightModel, &QAbstractItemModel::dataChanged, this,
             [this](auto& topLeft, auto& bottomRight, auto& roles) {
         QVector<int> rolesTranslated;
@@ -86,16 +175,11 @@ void LeftJoinModel::initialize()
                 role += m_rightModelRolesOffset;
         }
 
-        emit dataChanged(index(0, 0), index(rowCount() - 1, 0), rolesTranslated);
+        emit dataChanged(index(0), index(rowCount() - 1), rolesTranslated);
     });
 
-    disconnect(m_leftModel, &QAbstractItemModel::rowsInserted,
-               this, &LeftJoinModel::initializeIfReady);
-    disconnect(m_rightModel, &QAbstractItemModel::rowsInserted,
-               this, &LeftJoinModel::initializeIfReady);
-
     auto emitJoinedRolesChanged = [this] {
-        emit dataChanged(index(0, 0), index(rowCount() - 1, 0), m_joinedRoles);
+        emit dataChanged(index(0), index(rowCount() - 1), m_joinedRoles);
     };
 
     connect(m_rightModel, &QAbstractItemModel::rowsRemoved, this,
@@ -106,19 +190,11 @@ void LeftJoinModel::initialize()
             emitJoinedRolesChanged);
     connect(m_rightModel, &QAbstractItemModel::layoutChanged, this,
             emitJoinedRolesChanged);
-
-    connect(this, &QAbstractItemModel::dataChanged, this,
-            [this](auto& topLeft, auto& bottomRight, auto& roles) {
-        if (roles.contains(m_leftModelJoinRole))
-            emit dataChanged(topLeft, bottomRight, m_joinedRoles);
-    });
-
-    QIdentityProxyModel::setSourceModel(m_leftModel);
 }
 
 QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || m_leftModel == nullptr)
         return {};
 
     auto idx = m_leftModel->index(index.row(), index.column());
@@ -126,7 +202,7 @@ QVariant LeftJoinModel::data(const QModelIndex& index, int role) const
     if (role < m_rightModelRolesOffset)
         return m_leftModel->data(idx, role);
 
-    if (m_rightModelDestroyed)
+    if (m_rightModel == nullptr)
         return {};
 
     auto joinRoleLeftValue = m_leftModel->data(idx, m_leftModelJoinRole);
@@ -154,27 +230,29 @@ void LeftJoinModel::setLeftModel(QAbstractItemModel* model)
     if (m_leftModel == model)
         return;
 
-    if (m_leftModel != nullptr || m_leftModelDestroyed) {
-        qWarning("Changing left model is not supported!");
-        return;
-    }
+    if (m_leftModel)
+        disconnect(m_leftModel, nullptr, this, nullptr);
 
+    bool was_initialized = m_initialized;
+
+    if (was_initialized)
+        beginResetModel();
+
+    m_initialized = false;
     m_leftModel = model;
 
     // Some models may have roles undefined until first row is inserted,
     // like ListModel, therefore in such cases initialization must be deferred
     // until first insertion.
     connect(m_leftModel, &QAbstractItemModel::rowsInserted,
-            this, &LeftJoinModel::initializeIfReady);
-
-    connect(m_leftModel, &QObject::destroyed, this, [this] {
-        this->m_leftModel = nullptr;
-        this->m_leftModelDestroyed = true;
-    });
+            this, [this]() { initializeIfReady(true); });
 
     emit leftModelChanged();
 
-    initializeIfReady();
+    initializeIfReady(!was_initialized);
+
+    if (was_initialized)
+        endResetModel();
 }
 
 QAbstractItemModel* LeftJoinModel::leftModel() const
@@ -187,25 +265,41 @@ void LeftJoinModel::setRightModel(QAbstractItemModel* model)
     if (m_rightModel == model)
         return;
 
-    if (m_rightModel != nullptr || m_rightModelDestroyed) {
-        qWarning("Changing right model is not supported!");
+    if (m_rightModel)
+        disconnect(m_rightModel, nullptr, this, nullptr);
+
+    if (m_initialized &&
+            (model == nullptr || model->roleNames() == m_rightRoleNames)) {
+
+        m_rightModel = model;
+        emit rightModelChanged();
+
+        auto count = rowCount();
+
+        if (count > 0)
+            emit dataChanged(index(0), index(count - 1), m_joinedRoles);
+
         return;
     }
 
+    bool was_initialized = m_initialized;
+
+    if (was_initialized)
+        beginResetModel();
+
+    m_initialized = false;
     m_rightModel = model;
 
     // see: LeftJoinModel::setLeftModel
     connect(m_rightModel, &QAbstractItemModel::rowsInserted,
-            this, &LeftJoinModel::initializeIfReady);
-
-    connect(m_rightModel, &QObject::destroyed, this, [this] {
-        this->m_rightModel = nullptr;
-        this->m_rightModelDestroyed = true;
-    });
+            this, [this]() { initializeIfReady(true); });
 
     emit rightModelChanged();
 
-    initializeIfReady();
+    initializeIfReady(!was_initialized);
+
+    if (was_initialized)
+        endResetModel();
 }
 
 QAbstractItemModel* LeftJoinModel::rightModel() const
@@ -227,7 +321,7 @@ void LeftJoinModel::setJoinRole(const QString& joinRole)
 
     emit joinRoleChanged();
 
-    initializeIfReady();
+    initializeIfReady(true);
 }
 
 const QString& LeftJoinModel::joinRole() const
@@ -235,10 +329,13 @@ const QString& LeftJoinModel::joinRole() const
     return m_joinRole;
 }
 
-void LeftJoinModel::setSourceModel(QAbstractItemModel* newSourceModel)
+int LeftJoinModel::rowCount(const QModelIndex &parent) const
 {
-    qWarning() << "Source model is not intended to be set directly on this model."
-                  " Use setLeftModel and setRightModel instead!";
+    if (parent.isValid())
+        return 0;
+
+    return m_leftModel == nullptr || !m_initialized
+            ? 0 : m_leftModel->rowCount();
 }
 
 QHash<int, QByteArray> LeftJoinModel::roleNames() const
