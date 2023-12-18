@@ -4,6 +4,7 @@ import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/message/dto/message
 import ../../../app_service/service/message/dto/link_preview
 import ./link_preview_model as link_preview_model
+import ./emoji_reactions_model as emoji_reactions_model
 
 export types.ContentType
 import message_reaction_model, message_reaction_item, message_transaction_parameters_item
@@ -47,6 +48,7 @@ type
     deletedByContactDetails: ContactDetails
     links: seq[string]
     linkPreviewModel: link_preview_model.Model
+    emojiReactionsModel: emoji_reactions_model.Model
     transactionParameters: TransactionParametersItem
     mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
@@ -154,6 +156,7 @@ proc initItem*(
   result.deletedByContactDetails = deletedByContactDetails
   result.links = links
   result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
+  result.emojiReactionsModel = newEmojiReactionsModel()
   result.transactionParameters = transactionParameters
   result.mentionedUsersPks = mentionedUsersPks
   result.gapFrom = 0
@@ -458,9 +461,11 @@ proc getReactionId*(self: Item, emojiId: EmojiId, userPublicKey: string): string
 proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
   userDisplayName: string, reactionId: string) =
   self.reactionsModel.addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), didIReactWithThisEmoji)
 
 proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
   self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), not didIRemoveThisReaction)
 
 proc messageAttachments*(self: Item): seq[string] {.inline.} =
   self.messageAttachments
@@ -473,6 +478,9 @@ proc `links=`*(self: Item, links: seq[string]) {.inline.} =
 
 proc linkPreviewModel*(self: Item): link_preview_model.Model {.inline.} =
   return self.linkPreviewModel
+
+proc emojiReactionsModel*(self: Item): emoji_reactions_model.Model {.inline.} =
+  return self.emojiReactionsModel
 
 proc mentionedUsersPks*(self: Item): seq[string] {.inline.} =
   self.mentionedUsersPks

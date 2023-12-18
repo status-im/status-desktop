@@ -64,6 +64,7 @@ Loader {
     property var linkPreviewModel
     property string messageAttachments: ""
     property var transactionParams
+    property var emojiReactionsModel
 
     // These 2 properties can be dropped when the new unfurling flow supports GIFs
     property var links
@@ -1043,7 +1044,8 @@ Loader {
         id: addReactionContextMenu
 
         MessageAddReactionContextMenu {
-            reactionsModel: root.rootStore.emojiReactionsModel
+            reactionsModel: root.emojiReactionsModel
+            
             onToggleReaction: (emojiId) => {
                 root.messageStore.toggleReaction(root.messageId, emojiId)
             }
@@ -1094,7 +1096,7 @@ Loader {
 
         MessageContextMenuView {
             store: root.rootStore
-            reactionModel: root.rootStore.emojiReactionsModel
+            reactionModel: root.emojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
 
             onPinMessage: (messageId) => {

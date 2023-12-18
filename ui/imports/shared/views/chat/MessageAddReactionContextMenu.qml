@@ -6,7 +6,6 @@ StatusMenu {
     id: root
 
     property alias reactionsModel: emojiRow.reactionsModel
-    property alias messageReactionsModel: emojiRow.messageReactionsModel
 
     signal toggleReaction(int emojiId)
 

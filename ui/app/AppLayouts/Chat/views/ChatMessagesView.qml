@@ -297,6 +297,7 @@ Item {
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions
+            emojiReactionsModel: model.emojiReactionsModel
             sticker: model.sticker
             stickerPack: model.stickerPack
             editModeOn: model.editMode

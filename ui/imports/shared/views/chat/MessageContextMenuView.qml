@@ -18,7 +18,7 @@ StatusMenu {
     id: root
 
     property var store
-    property var reactionModel
+    property var reactionModel: []
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false

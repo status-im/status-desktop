@@ -4,6 +4,7 @@ import ./gif_column_model
 import ./preserved_properties
 import ./urls_model
 import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
+import ../../../../../../app/modules/shared_models/emoji_reactions_model as emoji_reactions_model
 import ../../../../../../app_service/service/gif/dto
 
 QtObject:
@@ -21,6 +22,8 @@ QtObject:
       urlsModel: urls_model.Model
       urlsModelVariant: QVariant
       askToEnableLinkPreview: bool
+      emojiReactionsModel: emoji_reactions_model.Model
+      emojiReactionsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -33,6 +36,8 @@ QtObject:
     self.linkPreviewModel.delete
     self.urlsModelVariant.delete
     self.urlsModel.delete
+    self.emojiReactionsModel.delete
+    self.emojiReactionsModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -49,6 +54,8 @@ QtObject:
     result.urlsModel = newUrlsModel()
     result.urlsModelVariant = newQVariant(result.urlsModel)
     result.askToEnableLinkPreview = false
+    result.emojiReactionsModel = newEmojiReactionsModel()
+    result.emojiReactionsModelVariant = newQVariant(result.emojiReactionsModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

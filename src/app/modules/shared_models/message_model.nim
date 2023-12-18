@@ -50,6 +50,7 @@ type
     DeletedByContactColorHash
     Links
     LinkPreviewModel
+    EmojiReactionsModel
     TransactionParameters
     MentionedUsersPks
     SenderTrustStatus
@@ -156,6 +157,7 @@ QtObject:
       ModelRole.DeletedByContactColorHash.int: "deletedByContactColorHash",
       ModelRole.Links.int: "links",
       ModelRole.LinkPreviewModel.int: "linkPreviewModel",
+      ModelRole.EmojiReactionsModel.int: "emojiReactionsModel",
       ModelRole.TransactionParameters.int: "transactionParameters",
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
@@ -325,6 +327,8 @@ QtObject:
       result = newQVariant(item.links.join(" "))
     of ModelRole.LinkPreviewModel:
       result = newQVariant(item.linkPreviewModel)
+    of ModelRole.EmojiReactionsModel:
+      result = newQVariant(item.emojiReactionsModel)
     of ModelRole.TransactionParameters:
       result = newQVariant($(%*{
         "id": item.transactionParameters.id,
