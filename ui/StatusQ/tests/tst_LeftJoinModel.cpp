@@ -103,25 +103,6 @@ private slots:
         QCOMPARE(model.roleNames(), {});
     }
 
-    void setSourceModelDirectlyTest()
-    {
-        TestSourceModel leftModel({
-           { "title", { "Token 1", "Token 2" }},
-           { "communityId", { "community_1", "community_2" }}
-        });
-
-        LeftJoinModel model;
-        QAbstractItemModelTester tester(&model);
-
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Source model is not intended to be set directly "
-                             "on this model. Use setLeftModel and setRightModel instead!");
-        model.setSourceModel(&leftModel);
-
-        QCOMPARE(model.rowCount(), 0);
-        QCOMPARE(model.roleNames(), {});
-    }
-
     void initializationTest()
     {
         TestSourceModel leftModel({
@@ -488,6 +469,64 @@ private slots:
         }
     }
 
+    // TODO: cover also move and layoutChanged
+    void insertRemovePropagationTest()
+    {
+        TestSourceModel leftModel({
+           { "title", { "Token 1", "Token 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        TestSourceModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }},
+           { "color", { "red", "green" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+        model.setJoinRole("communityId");
+
+        QSignalSpy rowsInsertedSpy(&model, &LeftJoinModel::rowsInserted);
+        QSignalSpy rowsRemovedSpy(&model, &LeftJoinModel::rowsRemoved);
+
+        leftModel.insert(1, {"Token 1_1", "community_2"});
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 1_1"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community 2"));
+
+        leftModel.remove(1);
+
+        QCOMPARE(model.rowCount(), 2);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+
+        QCOMPARE(rowsInsertedSpy.count(), 1);
+        QCOMPARE(rowsInsertedSpy.first().at(0), QModelIndex{});
+        QCOMPARE(rowsInsertedSpy.first().at(1), 1);
+        QCOMPARE(rowsInsertedSpy.first().at(2), 1);
+
+        QCOMPARE(rowsRemovedSpy.count(), 1);
+        QCOMPARE(rowsRemovedSpy.first().at(0), QModelIndex{});
+        QCOMPARE(rowsRemovedSpy.first().at(1), 1);
+        QCOMPARE(rowsRemovedSpy.first().at(2), 1);
+    }
+
     void rightModelJoinRoleChangesPropagationTest()
     {
         TestSourceModel leftModel({
@@ -624,15 +663,14 @@ private slots:
         QSignalSpy dataChangedSpy(&model, &LeftJoinModel::dataChanged);
 
         leftModel.update(1, 1, "community_1");
-        QCOMPARE(dataChangedSpy.count(), 2);
+        QCOMPARE(dataChangedSpy.count(), 1);
 
         QCOMPARE(dataChangedSpy.first().at(0), model.index(1, 0));
         QCOMPARE(dataChangedSpy.first().at(1), model.index(1, 0));
-        QCOMPARE(dataChangedSpy.first().at(2).value<QVector<int>>(), {2});
 
-        QCOMPARE(dataChangedSpy.at(1).at(0), model.index(1, 0));
-        QCOMPARE(dataChangedSpy.at(1).at(1), model.index(1, 0));
-        QCOMPARE(dataChangedSpy.at(1).at(2).value<QVector<int>>(), {1});
+        auto changedRoles = dataChangedSpy.first().at(2).value<QVector<int>>();
+        QVERIFY(changedRoles.contains(1));
+        QVERIFY(changedRoles.contains(2));
 
         QCOMPARE(model.rowCount(), 3);
         QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
@@ -649,19 +687,21 @@ private slots:
     void modelsDeletedBeforeInitializationTest()
     {
         auto leftModel = std::make_unique<TestSourceModel>(
-                    QList<QPair<QString, QVariantList>>{
-                        { "title", { "Token 1", "Token 2", "Token 3"}},
-                        { "communityId", { "community_1", "community_2", "community_1" }}
-                    });
+            QList<QPair<QString, QVariantList>>{
+                { "title", { "Token 1", "Token 2", "Token 3"}},
+                { "communityId", { "community_1", "community_2", "community_1" }}
+            });
 
         auto rightModel = std::make_unique<TestSourceModel>(
-                    QList<QPair<QString, QVariantList>>{
-                        { "name", { "Community 1", "Community 2" }},
-                        { "communityId", { "community_1", "community_2" }}
-                    });
+            QList<QPair<QString, QVariantList>>{
+                { "name", { "Community 1", "Community 2" }},
+                { "communityId", { "community_1", "community_2" }}
+            });
 
         LeftJoinModel model;
         QAbstractItemModelTester tester(&model);
+
+        QSignalSpy modelResetSpy(&model, &LeftJoinModel::modelReset);
 
         model.setLeftModel(leftModel.get());
         model.setRightModel(rightModel.get());
@@ -686,13 +726,21 @@ private slots:
            { "communityId", { "community_1", "community_2" }}
         });
 
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing left model is not supported!");
         model.setLeftModel(&newLeftModel);
-
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing right model is not supported!");
         model.setRightModel(&newRightModel);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community 1"));
+
+        QCOMPARE(modelResetSpy.count(), 1);
     }
 
     void modelsDeletedAfterInitializationTest()
@@ -712,10 +760,14 @@ private slots:
         LeftJoinModel model;
         QAbstractItemModelTester tester(&model);
 
+        QSignalSpy modelResetSpy(&model, &LeftJoinModel::modelReset);
+
         model.setLeftModel(leftModel.get());
         model.setRightModel(rightModel.get());
 
         model.setJoinRole("communityId");
+
+        QCOMPARE(modelResetSpy.count(), 1);
 
         leftModel.reset();
         rightModel.reset();
@@ -736,13 +788,25 @@ private slots:
            { "communityId", { "community_1", "community_2" }}
         });
 
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing left model is not supported!");
         model.setLeftModel(&newLeftModel);
 
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing right model is not supported!");
+        QCOMPARE(modelResetSpy.count(), 2);
+        QCOMPARE(model.rowCount(), 0);
+
         model.setRightModel(&newRightModel);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community 1"));
+
+        QCOMPARE(modelResetSpy.count(), 3);
     }
 
     void rightModelDeletedAfterInitializationTest()
@@ -786,13 +850,120 @@ private slots:
            { "communityId", { "community_1", "community_2" }}
         });
 
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing left model is not supported!");
-        model.setLeftModel(&newLeftModel);
-
-        QTest::ignoreMessage(QtWarningMsg,
-                             "Changing right model is not supported!");
         model.setRightModel(&newRightModel);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 2"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community 1"));
+    }
+
+    void rightModelChangedWithSameRolesAfterInitializationTest()
+    {
+        TestSourceModel leftModel({
+           { "title", { "Token 1", "Token 2", "Token 3"}},
+           { "communityId", { "community_1", "community_2", "community_1" }}
+        });
+
+        TestSourceModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+
+        model.setJoinRole("communityId");
+
+        TestSourceModel newRightModel({
+           { "name", { "Community A", "Community B" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        QSignalSpy modelResetSpy(&model, &LeftJoinModel::modelReset);
+        QSignalSpy dataChangedSpy(&model, &LeftJoinModel::dataChanged);
+
+        model.setRightModel(&newRightModel);
+
+        QHash<int, QByteArray> roles{{0, "title" }, {1, "communityId"}, {2, "name"}};
+        QCOMPARE(model.roleNames(), roles);
+        QCOMPARE(model.rowCount(), 3);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community A"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community B"));
+        QCOMPARE(model.data(model.index(2, 0), 2), QString("Community A"));
+
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(dataChangedSpy.count(), 1);
+
+        QCOMPARE(dataChangedSpy.first().at(0), model.index(0, 0));
+        QCOMPARE(dataChangedSpy.first().at(1), model.index(model.rowCount() - 1, 0));
+        QCOMPARE(dataChangedSpy.first().at(2).value<QVector<int>>(), {2});
+    }
+
+    void rightModelChangedWithDifferentRolesAfterInitializationTest()
+    {
+        TestSourceModel leftModel({
+           { "title", { "Token 1", "Token 2", "Token 3"}},
+           { "communityId", { "community_1", "community_2", "community_1" }}
+        });
+
+        TestSourceModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+
+        model.setJoinRole("communityId");
+
+        TestSourceModel newRightModel({
+           { "communityId", { "community_1", "community_2" }},
+           { "name", { "Community A", "Community B" }}
+        });
+
+        QSignalSpy modelResetSpy(&model, &LeftJoinModel::modelReset);
+        QSignalSpy dataChangedSpy(&model, &LeftJoinModel::dataChanged);
+
+        model.setRightModel(&newRightModel);
+
+        QHash<int, QByteArray> roles{{0, "title" }, {1, "communityId"}, {3, "name"}};
+        QCOMPARE(model.roleNames(), roles);
+        QCOMPARE(model.rowCount(), 3);
+
+        QCOMPARE(model.rowCount(), 3);
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(2, 0), 0), QString("Token 3"));
+        QCOMPARE(model.data(model.index(0, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(1, 0), 1), QString("community_2"));
+        QCOMPARE(model.data(model.index(2, 0), 1), QString("community_1"));
+        QCOMPARE(model.data(model.index(0, 0), 3), QString("Community A"));
+        QCOMPARE(model.data(model.index(1, 0), 3), QString("Community B"));
+        QCOMPARE(model.data(model.index(2, 0), 3), QString("Community A"));
+
+        QCOMPARE(modelResetSpy.count(), 1);
+        QCOMPARE(dataChangedSpy.count(), 0);
     }
 };
 

@@ -17,8 +17,9 @@
 #include <StatusQ/concatmodel.h>
 
 namespace {
-
-// Workaround for a bug in QIdentityProxyModel (returning roleNames improperly)
+// Workaround for https://bugreports.qt.io/browse/QTBUG-57971 (ListModel doesn't
+// emit modelReset when role names are initially set, therefore QIdentityProxyModel
+// doesn't update role names appropriately)
 class IdentityModel : public QIdentityProxyModel {
 public:
     QHash<int,QByteArray>  roleNames() const override {
