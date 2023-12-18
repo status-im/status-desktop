@@ -6,6 +6,7 @@
 ManageTokensController::ManageTokensController(QObject* parent)
     : QObject(parent)
     , m_regularTokensModel(new ManageTokensModel(this))
+    , m_regularTokenGroupsModel(new ManageTokensModel(this))
     , m_communityTokensModel(new ManageTokensModel(this))
     , m_communityTokenGroupsModel(new ManageTokensModel(this))
     , m_hiddenTokensModel(new ManageTokensModel(this))
@@ -33,6 +34,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
             m_communityTokensModel->setCommunityIds(m_communityIds);
             m_communityTokensModel->saveCustomSortOrder();
             rebuildCommunityTokenGroupsModel();
+            rebuildRegularTokenGroupsModel();
 #ifdef QT_DEBUG
             qCInfo(manageTokens) << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
 #endif
@@ -270,6 +272,8 @@ bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& r
 
 bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
 {
+    if (symbol.isEmpty()) return true;
+
     const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, true, QString()});
     return visible;
 }
@@ -344,6 +348,9 @@ void ManageTokensController::parseSourceModel()
     rebuildCommunityTokenGroupsModel();
     reloadCommunityIds();
     m_communityTokensModel->setCommunityIds(m_communityIds);
+
+    // build collections
+    rebuildRegularTokenGroupsModel();
 
     // (pre)sort
     for (auto model: m_allModels) {
@@ -476,6 +483,46 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
         m_communityTokenGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
+}
+
+void ManageTokensController::rebuildRegularTokenGroupsModel()
+{
+    QStringList collectionIds;
+    QList<TokenData> result;
+
+    const auto count = m_regularTokensModel->count();
+    for (auto i = 0; i < count; i++) {
+        const auto& collectionToken = m_regularTokensModel->itemAt(i);
+        const auto collectionId = collectionToken.collectionUid;
+        if (collectionId.isEmpty())
+            continue;
+        if (!collectionIds.contains(collectionId)) { // insert into groups
+            collectionIds.append(collectionId);
+
+            TokenData tokenGroup;
+            tokenGroup.collectionUid = collectionId;
+            tokenGroup.collectionName = collectionToken.collectionName;
+            tokenGroup.image = collectionToken.image;
+            tokenGroup.balance = 1;
+            result.append(tokenGroup);
+        } else { // update group's childCount
+            const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [collectionId](const auto& item) {
+                return collectionId == item.collectionUid;
+            });
+            if (tokenGroup != result.cend()) {
+                const auto row = std::distance(result.cbegin(), tokenGroup);
+                TokenData updTokenGroup = result.takeAt(row);
+                updTokenGroup.balance = updTokenGroup.balance.toInt() + 1;
+                result.insert(row, updTokenGroup);
+            }
+        }
+    }
+
+    m_regularTokenGroupsModel->clear();
+    for (const auto& group: result)
+        m_regularTokenGroupsModel->addItem(group);
+
+    qCDebug(manageTokens) << "!!! COLLECTION MODEL REBUILT WITH GROUPS:" << collectionIds;
 }
 
 QString ManageTokensController::settingsKey() const

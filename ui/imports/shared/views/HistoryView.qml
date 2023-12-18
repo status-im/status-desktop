@@ -30,6 +30,7 @@ ColumnLayout {
     property var overview
     property bool showAllAccounts: false
     property var sendModal
+    property bool filterVisible
 
     signal launchTransactionDetail(var transaction, int entryIndex)
 
@@ -43,7 +44,6 @@ ColumnLayout {
         if (!visible)
             return
 
-        filterPanelLoader.active = true
         if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
@@ -101,11 +101,11 @@ ColumnLayout {
 
     Loader {
         id: filterPanelLoader
-        active: false
+        active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet)
+        visible: active
         asynchronous: true
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
-            visible: d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet
             activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
             store: WalletStores.RootStore
             hideNoResults: newTransactions.visible

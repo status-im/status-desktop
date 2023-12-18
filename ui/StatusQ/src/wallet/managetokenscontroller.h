@@ -17,10 +17,11 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged FINAL)
     Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey NOTIFY settingsKeyChanged FINAL REQUIRED)
     Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL) // TODO persist in settings
+    // TODO arrangeByCollection for collectibles
 
     // output properties
     Q_PROPERTY(QAbstractItemModel* regularTokensModel READ regularTokensModel CONSTANT FINAL)
-    // TODO regularTokenGroupsModel for grouped (collections of) collectibles?
+    Q_PROPERTY(QAbstractItemModel* regularTokenGroupsModel READ regularTokenGroupsModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* communityTokensModel READ communityTokensModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* communityTokenGroupsModel READ communityTokenGroupsModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* hiddenTokensModel READ hiddenTokensModel CONSTANT FINAL)
@@ -68,6 +69,9 @@ private:
     ManageTokensModel* m_regularTokensModel{nullptr};
     QAbstractItemModel* regularTokensModel() const { return m_regularTokensModel; }
 
+    ManageTokensModel* m_regularTokenGroupsModel{nullptr};
+    QAbstractItemModel* regularTokenGroupsModel() const { return m_regularTokenGroupsModel; }
+
     ManageTokensModel* m_communityTokensModel{nullptr};
     QAbstractItemModel* communityTokensModel() const { return m_communityTokensModel; }
 
@@ -86,8 +90,9 @@ private:
     QStringList m_communityIds;
     void reloadCommunityIds();
     void rebuildCommunityTokenGroupsModel();
+    void rebuildRegularTokenGroupsModel();
 
-    const std::array<ManageTokensModel*, 4> m_allModels {m_regularTokensModel, m_communityTokensModel, m_communityTokenGroupsModel, m_hiddenTokensModel};
+    const std::array<ManageTokensModel*, 5> m_allModels {m_regularTokensModel, m_regularTokenGroupsModel, m_communityTokensModel, m_communityTokenGroupsModel, m_hiddenTokensModel};
 
     QString m_settingsKey;
     QString settingsKey() const;

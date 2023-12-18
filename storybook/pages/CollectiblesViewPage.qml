@@ -23,10 +23,8 @@ SplitView {
 
     ManageCollectiblesModel {
         id: collectiblesModel
-    }
-
-    ListModel {
-        id: emptyModel
+        includeRegularCollectibles: ctrlIncludeRegularCollectibles.checked
+        includeCommunityCollectibles: ctrlIncludeCommunityCollectibles.checked
     }
 
     Popups {
@@ -39,7 +37,7 @@ SplitView {
         id: assetsView
         SplitView.preferredWidth: 600
         SplitView.fillHeight: true
-        collectiblesModel: ctrlEmptyModel.checked ? emptyModel : collectiblesModel
+        collectiblesModel: collectiblesModel
         filterVisible: ctrlFilterVisible.checked
         onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid"], arguments)
         onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
@@ -63,8 +61,14 @@ SplitView {
                 checked: true
             }
             Switch {
-                id: ctrlEmptyModel
-                text: "Empty model"
+                id: ctrlIncludeRegularCollectibles
+                text: "Regular collectibles"
+                checked: true
+            }
+            Switch {
+                id: ctrlIncludeCommunityCollectibles
+                text: "Community collectibles"
+                checked: true
             }
         }
     }

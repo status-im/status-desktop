@@ -64,6 +64,7 @@ ColumnLayout {
 
         readonly property var controller: ManageTokensController {
             settingsKey: "WalletCollectibles"
+            sourceModel: d.renamedModel
         }
 
         function hideAllCommunityTokens(communityId) {
@@ -87,6 +88,16 @@ ColumnLayout {
                     d.controller.settingsDirty
                     return d.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
                 }
+            },
+            ExpressionFilter {
+                enabled: customFilter.isCommunity && cmbFilter.hasEnabledFilters
+                expression: cmbFilter.selectedFilterGroupIds.includes(model.communityId) ||
+                            (!model.communityId && cmbFilter.selectedFilterGroupIds.includes(""))
+            },
+            ExpressionFilter {
+                enabled: !customFilter.isCommunity && cmbFilter.hasEnabledFilters
+                expression: cmbFilter.selectedFilterGroupIds.includes(model.collectionUid) ||
+                            (!model.collectionUid && cmbFilter.selectedFilterGroupIds.includes(""))
             }
         ]
         sorters: [
@@ -109,13 +120,14 @@ ColumnLayout {
         category: "CollectiblesViewSortSettings"
         property alias currentSortField: cmbTokenOrder.currentIndex
         property alias currentSortOrder: cmbTokenOrder.currentSortOrder
+        property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
     }
 
     ColumnLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: root.filterVisible && (d.hasCollectibles || d.hasCommunityCollectibles) ? implicitHeight : 0
+        Layout.preferredHeight: root.filterVisible ? implicitHeight : 0
         spacing: 20
-        opacity: Layout.preferredHeight < implicitHeight ? 0 : 1
+        opacity: root.filterVisible ? 1 : 0
 
         Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
         Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
@@ -127,6 +139,22 @@ ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
             spacing: Style.current.halfPadding
+
+            FilterComboBox {
+                id: cmbFilter
+                regularTokensModel: d.controller.regularTokensModel
+                regularTokenGroupsModel: d.controller.regularTokenGroupsModel
+                communityTokenGroupsModel: d.controller.communityTokenGroupsModel
+                hasCommunityGroups: d.hasCommunityCollectibles
+            }
+
+            Rectangle {
+                Layout.preferredHeight: 34
+                Layout.preferredWidth: 1
+                Layout.leftMargin: 12
+                Layout.rightMargin: 12
+                color: Theme.palette.baseColor2
+            }
 
             StatusBaseText {
                 color: Theme.palette.baseColor1
@@ -150,6 +178,15 @@ ColumnLayout {
                     root.manageTokensRequested()
                 }
             }
+
+            Item { Layout.fillWidth: true }
+
+            StatusLinkText {
+                visible: cmbFilter.hasEnabledFilters
+                normalColor: Theme.palette.primaryColor1
+                text: qsTr("Clear filter")
+                onClicked: cmbFilter.clearFilter()
+            }
         }
 
         StatusDialogDivider {
@@ -159,6 +196,7 @@ ColumnLayout {
 
     ShapeRectangle {
         Layout.fillWidth: true
+        Layout.topMargin: Style.current.padding
         visible: !d.hasCollectibles && !d.hasCommunityCollectibles
         text: qsTr("Collectibles will appear here")
     }
@@ -185,7 +223,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: Style.current.padding
                 Layout.bottomMargin: Style.current.halfPadding
-                visible: d.hasCommunityCollectibles
+                visible: d.hasCollectibles && d.hasCommunityCollectibles
             }
 
             RowLayout {

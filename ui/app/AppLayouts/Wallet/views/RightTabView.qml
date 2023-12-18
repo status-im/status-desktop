@@ -189,6 +189,7 @@ Item {
                     overview: RootStore.overview
                     showAllAccounts: root.showAllAccounts
                     sendModal: root.sendModal
+                    filterVisible: filterButton.checked
                     onLaunchTransactionDetail: function (entry, entryIndex) {
                         transactionDetailView.transactionIndex = entryIndex
                         transactionDetailView.transaction = entry

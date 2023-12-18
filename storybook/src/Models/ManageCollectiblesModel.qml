@@ -4,23 +4,20 @@ import QtQml.Models 2.15
 import Models 1.0
 
 ListModel {
-    function randomizeData() {
-        // TODO
+    property bool includeRegularCollectibles: true
+    onIncludeRegularCollectiblesChanged: fillData()
+    property bool includeCommunityCollectibles: true
+    onIncludeCommunityCollectiblesChanged: fillData()
+
+    function fillData() {
+        clear()
+        if (includeRegularCollectibles)
+            append(data)
+        if (includeCommunityCollectibles)
+            append(communityData)
     }
 
     readonly property var data: [
-        {
-            uid: "fp#9140",
-            name: "Frenly Panda #9140",
-            collectionUid: "",
-            collectionName: "",
-            communityId: "fpan",
-            communityName: "Frenly Pandas",
-            communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
-            imageUrl: "https://i.seadn.io/gae/qPfQjj4P1w0xVQXAmQJLmQ4ZtLFAJU6oiH69Lsny82LFbipLAgXhHKrcLBx2U09SmRnzeHY0ygz-3NIb-JegE_hWrZquFeL-qUPXPdw",
-            isLoading: false,
-            backgroundColor: "pink"
-        },
         {
             uid: "123",
             name: "Punx not dead!",
@@ -28,6 +25,7 @@ ListModel {
             collectionName: "",
             communityId: "",
             communityName: "",
+            communityImage: "",
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
             backgroundColor: ""
@@ -39,6 +37,7 @@ ListModel {
             collectionName: "Pepepunks",
             communityId: "",
             communityName: "",
+            communityImage: "",
             imageUrl: "https://i.seadn.io/s/raw/files/ba2811bb5cd0bed67529d69fa92ef5aa.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
             backgroundColor: ""
@@ -50,6 +49,7 @@ ListModel {
             collectionName: "Kitties",
             communityId: "",
             communityName: "",
+            communityImage: "",
             imageUrl: ModelsData.collectibles.kitty1Big,
             isLoading: true,
             backgroundColor: ""
@@ -61,6 +61,7 @@ ListModel {
             collectionName: "Kitties",
             communityId: "",
             communityName: "",
+            communityImage: "",
             imageUrl: ModelsData.collectibles.kitty2Big,
             isLoading: false,
             backgroundColor: ""
@@ -72,9 +73,49 @@ ListModel {
             collectionName: "Kitties",
             communityId: "",
             communityName: "",
+            communityImage: "",
             imageUrl: ModelsData.collectibles.kitty3Big,
             isLoading: false,
             backgroundColor: ""
+        },
+        {
+            uid: "pp21",
+            name: "pepepunk#21",
+            collectionUid: "pepepunks",
+            collectionName: "Pepepunks",
+            communityId: "",
+            communityName: "",
+            communityImage: "",
+            imageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
+            isLoading: false,
+            backgroundColor: ""
+        },
+        {
+            uid: "lp#666a",
+            name: "Lonely Panda #666",
+            collectionUid: "lpan_collection",
+            collectionName: "Lonely Panda Collection",
+            communityId: "",
+            communityName: "",
+            communityImage: "",
+            imageUrl: "",
+            isLoading: false,
+            backgroundColor: "pink"
+        },
+    ]
+
+    readonly property var communityData: [
+        {
+            uid: "fp#9140",
+            name: "Frenly Panda #9140",
+            collectionUid: "",
+            collectionName: "",
+            communityId: "fpan",
+            communityName: "Frenly Pandas",
+            communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
+            imageUrl: "https://i.seadn.io/gae/qPfQjj4P1w0xVQXAmQJLmQ4ZtLFAJU6oiH69Lsny82LFbipLAgXhHKrcLBx2U09SmRnzeHY0ygz-3NIb-JegE_hWrZquFeL-qUPXPdw",
+            isLoading: false,
+            backgroundColor: "pink"
         },
         {
             uid: "691",
@@ -137,17 +178,20 @@ ListModel {
             backgroundColor: ""
         },
         {
-            uid: "pp21",
-            name: "pepepunk#21",
-            collectionUid: "pepepunks",
-            collectionName: "Pepepunks",
-            communityId: "",
-            communityName: "",
-            imageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
+            uid: "lb#666",
+            name: "Lonely Bear #666",
+            collectionUid: "",
+            collectionName: "",
+            communityId: "lbear",
+            communityName: "Lonely Bearz Community",
+            communityImage: "",
+            imageUrl: "",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "pink"
         },
     ]
 
-    Component.onCompleted: append(data)
+    Component.onCompleted: {
+        fillData()
+    }
 }

@@ -239,7 +239,7 @@ StatusMenu {
 
     StatusAction {
         id: blockMenuItem
-        objectName: blockUser_StatusItem
+        objectName: "blockUser_StatusItem"
         text: qsTr("Block User")
         icon.name: "cancel"
         type: StatusAction.Type.Danger

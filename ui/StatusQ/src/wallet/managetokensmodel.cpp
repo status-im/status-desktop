@@ -174,7 +174,8 @@ void ManageTokensModel::saveCustomSortOrder()
         }
         m_data[i] = newToken;
     }
-    emit dataChanged(index(0, 0), index(count - 1, 0), {TokenDataRoles::CustomSortOrderNoRole});
+    if (count > 0)
+        emit dataChanged(index(0, 0), index(count - 1, 0), {TokenDataRoles::CustomSortOrderNoRole});
 }
 
 void ManageTokensModel::applySort()
