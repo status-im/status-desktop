@@ -2,44 +2,47 @@ cmake_minimum_required(VERSION 3.5)
 
 project(TestStatusQ LANGUAGES CXX)
 
-enable_testing()
-
 set(CMAKE_AUTOMOC ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick WebChannel WebEngine REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick WebChannel WebEngine REQUIRED)
+find_package(Qt5 COMPONENTS QuickTest Qml Quick WebEngine REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+##############
+# Test Library
+##############
 
-# no need to copy around qml test files for shadow builds - just set the respective define
-add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
-
-add_executable(${PROJECT_NAME} main.cpp)
-
-add_test(NAME ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMAND ${PROJECT_NAME} -input "${CMAKE_CURRENT_SOURCE_DIR}")
-
-# TODO: move this to a test helpers library
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+add_library(StatusQTestLib
+    src/TestHelpers/MonitorQtOutput.cpp
+    src/TestHelpers/MonitorQtOutput.h
 )
 
-add_subdirectory(src)
+target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick)
+target_include_directories(StatusQTestLib PUBLIC src)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::QuickTest
-    Qt${QT_VERSION_MAJOR}::Qml
-    Qt${QT_VERSION_MAJOR}::Quick
-    Qt${QT_VERSION_MAJOR}::WebChannel
-    Qt${QT_VERSION_MAJOR}::WebEngine
-    StatusQ
+enable_testing()
+
+###########
+# QML Tests
+###########
+
+file(GLOB_RECURSE TEST_QML_FILES "*.qml")
+add_executable(QmlTests main.cpp "${TEST_QML_FILES}")
+
+target_compile_definitions(QmlTests PRIVATE
+    STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
+    STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+    # no need to copy around qml test files for shadow builds - just set the respective define
+    QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
+target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml Qt5::Quick
+    Qt5::WebEngine StatusQ StatusQTestLib
+)
+add_test(NAME QmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND QmlTests -input "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-        STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
-        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
-        )
+###########
+# C++ Tests
+###########
 
 add_executable(RolesRenamingModelTest tst_RolesRenamingModel.cpp)
 target_link_libraries(RolesRenamingModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
