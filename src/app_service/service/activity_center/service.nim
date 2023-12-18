@@ -238,7 +238,18 @@ QtObject:
 
   proc markAllActivityCenterNotificationsRead*(self: Service) =
     try:
-      discard backend.markAllActivityCenterNotificationsRead()
+      let response = backend.markAllActivityCenterNotificationsRead()
+
+      var seenAndUnseenMessagesBatch: JsonNode = newJObject()
+      discard response.result.getProp("seenAndUnseenMessages", seenAndUnseenMessagesBatch)
+
+      if seenAndUnseenMessagesBatch.len > 0:
+        for seenAndUnseenMessagesRaw in seenAndUnseenMessagesBatch:
+          let seenAndUnseenMessages = seenAndUnseenMessagesRaw.toSeenUnseenMessagesDto()
+
+          let data = MessagesMarkedAsReadArgs(chatId: seenAndUnseenMessages.chatId, allMessagesMarked: true)
+          self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
+
       self.events.emit(SIGNAL_ACTIVITY_CENTER_MARK_ALL_NOTIFICATIONS_AS_READ, Args())
     except Exception as e:
       error "Error marking all as read", msg = e.msg
