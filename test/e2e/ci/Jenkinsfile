@@ -32,8 +32,8 @@ pipeline {
     )
     string(
       name: 'TEST_SCOPE',
-      description: 'Paste tag to run specific scope of tests.',
-      defaultValue: ''
+      description: 'Paste a known mark to run tests labeled with this mark',
+      defaultValue: 'critical'
     )
     string(
       name: 'TESTRAIL_RUN_NAME',
