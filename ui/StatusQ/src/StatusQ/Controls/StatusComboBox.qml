@@ -43,6 +43,8 @@ Item {
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
+    opacity: enabled ? 1 : 0.3
+
     LayoutMirroring.childrenInherit: true
 
     ColumnLayout {
@@ -55,7 +57,6 @@ Item {
             id: labelItem
             Layout.fillWidth: true
             visible: !!text
-            font.pixelSize: 15
             color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
         }
 
@@ -69,7 +70,7 @@ Item {
             enabled: root.enabled
 
             font.family: Theme.palette.baseFont.name
-            font.pixelSize: 14
+            font.pixelSize: root.size === StatusComboBox.Size.Large ? Theme.secondaryTextFontSize : 13
 
             padding: 16
             spacing: 16
@@ -112,7 +113,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: comboBox.displayText
-                color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                color: root.type === StatusComboBox.Type.Secondary ? Theme.palette.baseColor1 : Theme.palette.directColor1
             }
 
             indicator: StatusIcon {
@@ -186,7 +187,7 @@ Item {
             Layout.fillWidth: true
             Layout.topMargin: 11
             visible: !!text
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
             horizontalAlignment: TextEdit.AlignRight
             wrapMode: Text.WordWrap

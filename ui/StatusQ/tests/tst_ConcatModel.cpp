@@ -1598,8 +1598,10 @@ private slots:
         QSignalSpy layoutChangedSpy(&model, &ConcatModel::layoutChanged);
 
         emit sourceModel1.model()->layoutAboutToBeChanged();
-        emit sourceModel1.model()->layoutChanged();
+        QCOMPARE(layoutAboutToBeChangedSpy.count(), 1);
+        QCOMPARE(layoutChangedSpy.count(), 0);
 
+        emit sourceModel1.model()->layoutChanged();
         QCOMPARE(layoutAboutToBeChangedSpy.count(), 1);
         QCOMPARE(layoutChangedSpy.count(), 1);
     }

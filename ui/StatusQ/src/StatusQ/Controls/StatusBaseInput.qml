@@ -278,7 +278,7 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: root.showBackground ? Theme.palette.baseColor2 : "transparent"
+        color: root.showBackground ? Theme.palette.statusAppNavBar.backgroundColor : "transparent"
         radius: 8
 
         clip: true

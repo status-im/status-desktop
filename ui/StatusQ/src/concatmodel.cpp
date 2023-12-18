@@ -434,7 +434,7 @@ void ConcatModel::initRoles()
 
     m_nameRoles.reserve(m_expectedRoles.size() + 1);
 
-    for (auto& expectedRoleName : qAsConst(m_expectedRoles))
+    for (const auto& expectedRoleName : qAsConst(m_expectedRoles))
         m_nameRoles.try_emplace(expectedRoleName.toUtf8(), m_nameRoles.size());
 
     for (auto sourceModel : qAsConst(m_sources)) {
@@ -455,7 +455,7 @@ void ConcatModel::initRoles()
 
     m_roleNames.reserve(m_nameRoles.size());
 
-    for (auto& [name, role] : m_nameRoles)
+    for (const auto& [name, role] : m_nameRoles)
         m_roleNames.insert(role, name);
 }
 
@@ -580,7 +580,7 @@ void ConcatModel::connectModelSlots(int index, QAbstractItemModel *model)
         emit this->layoutAboutToBeChanged();
     });
 
-    connect(model, &QAbstractItemModel::layoutAboutToBeChanged, this, [this]
+    connect(model, &QAbstractItemModel::layoutChanged, this, [this]
     {
         emit this->layoutChanged();
     });

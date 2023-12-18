@@ -31,16 +31,12 @@ Column {
 
         spacing: 8
 
-        StatusRoundButton {
-            id: filterButton
-            width: 32
-            height: 32
-            icon.name: "filter"
-            border.width: 1
-            border.color: Theme.palette.directColor8
-            type: StatusRoundButton.Type.Tertiary
-            icon.color: Theme.palette.primaryColor1
-            onClicked: {
+        StatusComboBox {
+            height: 34
+            size: StatusComboBox.Size.Small
+            type: StatusComboBox.Type.Secondary
+            control.displayText: qsTr("Filter")
+            control.popup.onOpened: {
                 activityFilterStore.updateStartTimestamp()
                 activityFilterMenu.popup(x, y + height + 4)
             }

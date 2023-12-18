@@ -127,6 +127,11 @@ ColumnLayout {
                     expectedRoles: ["marketDetails"]
                 },
                 FastExpressionRole {
+                    name: "changePct24hour"
+                    expression: model.marketDetails.changePct24hour
+                    expectedRoles: ["marketDetails"]
+                },
+                FastExpressionRole {
                     name: "isCommunityAsset"
                     expression: !!model.communityId
                     expectedRoles: ["communityId"]
@@ -170,7 +175,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: root.filterVisible ? implicitHeight : 0
         spacing: 20
-        opacity: Layout.preferredHeight < implicitHeight ? 0 : 1
+        opacity: root.filterVisible ? 1 : 0
 
         Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
         Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
@@ -214,38 +219,29 @@ ColumnLayout {
         }
     }
 
-    StatusScrollView {
+    StatusListView {
+        id: assetsListView
         Layout.fillWidth: true
-        Layout.fillHeight: true
         Layout.topMargin: Style.current.padding
-        leftPadding: 0
-        verticalPadding: 0
-        contentWidth: availableWidth
-
-        StatusListView {
-            id: assetsListView
-            Layout.fillWidth: true
-            Layout.preferredHeight: contentHeight
-            interactive: false
-            objectName: "assetViewStatusListView"
-            model: root.areAssetsLoading ? d.loadingItemsCount : d.customSFPM
-            delegate: delegateLoader
-            section {
-                property: "isCommunityAsset"
-                delegate: Loader {
-                    width: ListView.view.width
-                    required property string section
-                    sourceComponent: section === "true" ? sectionDelegate: null
-                }
+        Layout.preferredHeight: contentHeight
+        Layout.fillHeight: true
+        objectName: "assetViewStatusListView"
+        model: root.areAssetsLoading ? d.loadingItemsCount : d.customSFPM
+        delegate: delegateLoader
+        section {
+            property: "isCommunityAsset"
+            delegate: Loader {
+                width: ListView.view.width
+                required property string section
+                sourceComponent: section === "true" ? sectionDelegate : null
             }
-
         }
     }
 
     Component {
         id: sectionDelegate
         ColumnLayout {
-            width: ListView.view.width
+            width: parent.width
             spacing: 0
 
             StatusDialogDivider {
@@ -282,7 +278,7 @@ ColumnLayout {
             property var modelData: model
             property int delegateIndex: index
             width: ListView.view.width
-            sourceComponent: root.areAssetsLoading ? loadingTokenDelegate: tokenDelegate
+            sourceComponent: root.areAssetsLoading ? loadingTokenDelegate : tokenDelegate
         }
     }
 
@@ -297,7 +293,7 @@ ColumnLayout {
         id: tokenDelegate
         TokenDelegate {
             objectName: "AssetView_TokenListItem_" + (!!modelData ? modelData.symbol : "")
-            readonly property string balance: !!modelData && !!modelData.currentBalance? "%1".arg(modelData.currentBalance) : "" // Needed for the tests
+            readonly property string balance: !!modelData && !!modelData.currentBalance ? "%1".arg(modelData.currentBalance) : "" // Needed for the tests
             errorTooltipText_1: !!modelData && !!networkConnectionStore ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
             errorTooltipText_2: !!networkConnectionStore ? networkConnectionStore.getMarketNetworkDownText() : ""
             subTitle: {

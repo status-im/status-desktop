@@ -27,7 +27,7 @@ QtObject {
     //icon bg
     property real bgWidth
     property real bgHeight
-    property int bgRadius
+    property real bgRadius
     property color bgColor: "transparent"
     property color bgBorderColor: "transparent"
     property int bgBorderWidth: 0

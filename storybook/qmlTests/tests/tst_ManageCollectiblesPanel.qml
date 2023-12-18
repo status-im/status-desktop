@@ -77,7 +77,7 @@ Item {
             const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
             verify(!!lvRegular)
             const lvRegularCount = lvRegular.count
-            verify(lvRegularCount === 6)
+            verify(lvRegularCount === 7)
 
             const delegate0 = findChild(lvRegular, "manageTokensDelegate-0")
             verify(!!delegate0)
@@ -124,14 +124,14 @@ Item {
             verify(!!lvCommunityTokenGroups)
 
             // verify we have 2 community collectible groups
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            tryCompare(lvCommunityTokenGroups, "count", 3)
             triggerDelegateMenuAction(lvCommunityTokenGroups, 0, "miHideTokenGroup", true)
 
             verify(controlUnderTest.dirty)
 
             // verify we have one less group
             waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 1)
+            tryCompare(lvCommunityTokenGroups, "count", 2)
             const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
             verify(!!lvHidden)
             tryCompare(lvHidden, "count", 4) // we've just hidden 4 collectibles coming from this group
@@ -154,8 +154,8 @@ Item {
 
             verify(controlUnderTest.dirty)
 
-            // verify we again have 2 community groups, and one less hidden token
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            // verify we again have 3 community groups, and one less hidden token
+            tryCompare(lvCommunityTokenGroups, "count", 3)
             tryCompare(lvHidden, "count", 3)
 
             verify(controlUnderTest.dirty)
@@ -164,7 +164,7 @@ Item {
             triggerDelegateMenuAction(lvHidden, 0, "miShowTokenGroup")
             waitForItemPolished(lvHidden)
             tryCompare(lvHidden, "count", 0)
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            tryCompare(lvCommunityTokenGroups, "count", 3)
 
             verify(controlUnderTest.dirty)
         }
@@ -209,7 +209,7 @@ Item {
             const lvCommunityTokenGroups = findChild(loaderCommunityTokens, "lvCommunityTokenGroups")
             verify(!!lvCommunityTokenGroups)
             waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            tryCompare(lvCommunityTokenGroups, "count", 3)
 
             const group0 = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0")
             const title0 = group0.title
@@ -242,7 +242,7 @@ Item {
             const lvCommunityTokenGroups = findChild(loaderCommunityTokens, "lvCommunityTokenGroups")
             verify(!!lvCommunityTokenGroups)
             waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            tryCompare(lvCommunityTokenGroups, "count", 3)
 
             // get the "Bearz" group at index 1
             var bearzGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-1")

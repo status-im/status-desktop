@@ -110,7 +110,7 @@ StatusListItem {
                     font.pixelSize: 13
                     loading: modelData && modelData.marketDetailsLoading
                     text: modelData && modelData.marketDetails && modelData.marketDetails.changePct24hour !== undefined ? "%1 %2%".arg(root.upDownTriangle).arg(LocaleUtils.numberToLocaleString(modelData.marketDetails.changePct24hour, 2))
-                                                                               : "---"
+                                                                                                                        : "---"
                 }
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
@@ -124,7 +124,7 @@ StatusListItem {
                     customColor: root.textColor
                     font.pixelSize: 13
                     loading: modelData && modelData.marketDetailsLoading
-                                       text: modelData && modelData.marketDetails ? LocaleUtils.currencyAmountToLocaleString(modelData.marketDetails.currencyPrice) : ""
+                    text: modelData && modelData.marketDetails ? LocaleUtils.currencyAmountToLocaleString(modelData.marketDetails.currencyPrice) : ""
                 }
             }
             ManageTokensCommunityTag {

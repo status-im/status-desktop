@@ -12,6 +12,7 @@ import mainui 1.0
 import utils 1.0
 
 import shared.views 1.0
+import shared.stores 1.0
 
 import Storybook 1.0
 import Models 1.0
@@ -53,29 +54,11 @@ SplitView {
             return supportedAddresses
         }
 
-        readonly property var currencyStore: QtObject {
-            property string currentCurrency: "USD"
-            function getCurrencyAmount(amount, symbol) {
-                return ({
-                            amount: amount,
-                            symbol: symbol.toUpperCase(),
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
-            function getCurrentCurrencyAmount(amount) {
-                return ({
-                            amount: amount,
-                            symbol: "USD",
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
-        }
+        readonly property var currencyStore: CurrenciesStore {}
 
         readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
         readonly property var tokensBySymbolModel: TokensBySymbolModel {}
-        readonly property CommunitiesModel communityModel: CommunitiesModel{}
+        readonly property CommunitiesModel communityModel: CommunitiesModel {}
 
         // Added this here simply because the network and address filtering wont work in Storybook applied in AssetsView
         readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
@@ -88,7 +71,7 @@ SplitView {
                         d.networksChainsCurrentlySelected
                         d.addressesSelected
                         return d.networksChainsCurrentlySelected.split(":").includes(chainId+"") &&
-                                (!! d.addressesSelected ?  d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
+                                (!! d.addressesSelected ? d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
                     }
                 }
             }
@@ -185,7 +168,7 @@ SplitView {
 
             CheckBox {
                 id: loadingCheckbox
-                checked: true
+                checked: false
                 text: "loading"
             }
 
