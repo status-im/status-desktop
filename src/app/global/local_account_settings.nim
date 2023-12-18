@@ -13,6 +13,7 @@ const LS_VALUE_NEVER* = "never"
 QtObject:
   type LocalAccountSettings* = ref object of QObject
     settingsFileDir: string
+    currentFileName: string
     settings: QSettings
 
   proc setup(self: LocalAccountSettings) =
@@ -33,8 +34,16 @@ QtObject:
   proc setFileName*(self: LocalAccountSettings, fileName: string) =
     if(not self.settings.isNil):
       self.settings.delete
-    let filePath = os.joinPath(self.settingsFileDir, fileName)
-    self.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
+    let
+      currentFilePath = os.joinPath(self.settingsFileDir, self.currentFileName)
+      newFilePath = os.joinPath(self.settingsFileDir, fileName)
+    try:
+      if self.currentFileName.len > 0 and currentFilePath != newFilePath:
+        moveFile(currentFilePath, newFilePath)
+    except OSError:
+      discard
+    self.currentFileName = fileName
+    self.settings = newQSettings(newFilePath, QSettingsFormat.IniFormat)
 
   proc storeToKeychainValueChanged*(self: LocalAccountSettings) {.signal.}
 

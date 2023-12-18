@@ -86,6 +86,7 @@ QtObject:
   proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
     self.loggedInAccount.name = displayName
     self.loggedInAccount.images = images
+    singletonInstance.localAccountSettings.setFileName(displayName)
 
   proc getImportedAccount*(self: Service): GeneratedAccountDto =
     return self.importedAccount
@@ -103,8 +104,7 @@ QtObject:
   proc connectToFetchingFromWakuEvents*(self: Service) =
     self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
       var receivedData = WakuBackedUpProfileSignal(e)
-      self.loggedInAccount.name = receivedData.backedUpProfile.displayName
-      self.loggedInAccount.images = receivedData.backedUpProfile.images
+      self.updateLoggedInAccount(receivedData.backedUpProfile.displayName, receivedData.backedUpProfile.images)
 
   proc init*(self: Service) =
     try:
@@ -418,7 +418,7 @@ QtObject:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)
 
   proc setLocalAccountSettingsFile(self: Service) =
-    if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
+    if self.getLoggedInAccount.isValid():
       singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
 
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
@@ -778,6 +778,7 @@ QtObject:
           debug "Account logged in succesfully"
           # this should be fetched later from waku
           self.loggedInAccount = accToBeLoggedIn
+          self.setLocalAccountSettingsFile()
           return
     except Exception as e:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
