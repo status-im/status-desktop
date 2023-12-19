@@ -13,6 +13,8 @@ find_package(Qt5 COMPONENTS QuickTest Qml Quick WebEngine REQUIRED)
 add_library(StatusQTestLib
     src/TestHelpers/MonitorQtOutput.cpp
     src/TestHelpers/MonitorQtOutput.h
+    src/TestHelpers/modelaccessobserverproxy.cpp
+    src/TestHelpers/modelaccessobserverproxy.h
 )
 
 target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick)
