@@ -21,6 +21,7 @@ Control {
     property string tokenName
     property bool showRemotelyDestructMenuItem: true
     property alias isAirdropEnabled: infoBoxPanel.buttonEnabled
+    property int multiplierIndex: 0
 
     readonly property alias sortBy: holdersList.sortBy
     readonly property alias sorting: holdersList.sortOrder
@@ -121,6 +122,7 @@ Control {
             id: holdersList
 
             visible: !root.empty && proxyModel.count > 0
+            multiplierIndex: root.multiplierIndex
 
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight

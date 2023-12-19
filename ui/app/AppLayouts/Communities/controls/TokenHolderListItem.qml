@@ -32,7 +32,7 @@ ItemDelegate {
     property string walletAddress
     property string imageSource
     property int numberOfMessages: 0
-    property int amount: 0
+    property string amount: "0"
 
     property var contactDetails: null
 
@@ -109,7 +109,7 @@ ItemDelegate {
             pubKey: root.contactDetails.isEnsVerified ? "" : Utils.getCompressedPk(root.contactId)
             isContact: root.contactDetails.isContact
             isVerified: root.contactDetails.verificationStatus === Constants.verificationStatus.verified
-            isUntrustworthy: root.contactDetails.trustStatus == Constants.trustStatus.untrustworthy
+            isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
             isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
             status: root.contactDetails.onlineStatus
             asset.name: root.contactDetails.displayIcon
@@ -178,7 +178,7 @@ ItemDelegate {
 
                 TokenHolderNumberCell {
                     Layout.alignment: Qt.AlignRight
-                    text: LocaleUtils.numberToLocaleString(root.amount)
+                    text: root.amount
                 }
 
                 StatusLoadingIndicator {

@@ -22,6 +22,8 @@ import "../controls"
 StatusListView {
     id: root
 
+    property int multiplierIndex: 0
+
     readonly property alias sortBy: d.sortBy
     readonly property alias sortOrder: d.sorting
 
@@ -157,7 +159,7 @@ StatusListView {
         walletAddress: model.walletAddress
         imageSource: model.imageSource
         numberOfMessages: model.numberOfMessages
-        amount: model.amount
+        amount: LocaleUtils.numberToLocaleString(StatusQUtils.AmountsArithmetic.toNumber(model.amount, root.multiplierIndex))
 
         showSeparator: isFirstRowAddress && root.sortBy === TokenHoldersProxyModel.SortBy.Username
         isFirstRowAddress: {

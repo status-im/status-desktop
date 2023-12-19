@@ -1230,60 +1230,46 @@ QtObject:
       self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
   proc fetchCommunityOwners*(self: Service,  communityToken: CommunityTokenDto) =
-    if communityToken.tokenType != TokenType.ERC721:
-      # TODO we need a new implementation for ERC20
-      # we will be able to show only tokens hold by community members
+    if communityToken.tokenType == TokenType.ERC20:
+      let arg = FetchAssetOwnersArg(
+        tptr: cast[ByteAddress](fetchAssetOwnersTaskArg),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onCommunityTokenOwnersFetched",
+        chainId: communityToken.chainId,
+        contractAddress: communityToken.address,
+        communityId: communityToken.communityId
+      )
+      self.threadpool.start(arg)
       return
-    let arg = FetchCollectibleOwnersArg(
-      tptr: cast[ByteAddress](fetchCollectibleOwnersTaskArg),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onCommunityTokenOwnersFetched",
-      chainId: communityToken.chainId,
-      contractAddress: communityToken.address,
-      communityId: communityToken.communityId
-    )
-    self.threadpool.start(arg)
-
-  # get owners from cache
-  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
-    return self.tokenOwnersCache.getOrDefault((chainId: chainId, address: contractAddress))
+    elif communityToken.tokenType == TokenType.ERC721:
+      let arg = FetchCollectibleOwnersArg(
+        tptr: cast[ByteAddress](fetchCollectibleOwnersTaskArg),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onCommunityTokenOwnersFetched",
+        chainId: communityToken.chainId,
+        contractAddress: communityToken.address,
+        communityId: communityToken.communityId
+      )
+      self.threadpool.start(arg)
+      return
 
   proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
     let responseJson = response.parseJson()
     if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
       let errorMessage = responseJson["error"].getStr
-      error "Can't fetch community token owners", chainId=responseJson["chainId"], contractAddress=responseJson["contractAddress"], errorMsg=errorMessage
+      error "Can't fetch community token owners", chainId=responseJson{"chainId"}, contractAddress=responseJson{"contractAddress"}, errorMsg=errorMessage
       return
-    let chainId = responseJson["chainId"].getInt
-    let contractAddress = responseJson["contractAddress"].getStr
-    let communityId = responseJson["communityId"].getStr
-    let resultJson = responseJson["result"]
-    var owners = fromJson(resultJson, CollectibleContractOwnership).owners
-    owners = owners.filter(x => x.address != ZERO_ADDRESS)
-
-    let response = communities_backend.getCommunityMembersForWalletAddresses(communityId, chainId)
-    if response.error != nil:
-      let errorMessage = responseJson["error"].getStr
-      error "Can't get community members with addresses", errorMsg=errorMessage
-      return
-
-    let communityOwners = owners.map(proc(owner: CollectibleOwner): CommunityCollectibleOwner =
-      let ownerAddressUp = owner.address.toUpper()
-      for responseAddress in response.result.keys():
-        let responseAddressUp = responseAddress.toUpper()
-        if ownerAddressUp == responseAddressUp:
-          let member = response.result[responseAddress].toContactsDto()
-          return CommunityCollectibleOwner(
-            contactId: member.id,
-            name: member.displayName,
-            imageSource: member.image.thumbnail,
-            collectibleOwner: owner
-          )
-      return CommunityCollectibleOwner(collectibleOwner: owner)
-    )
-    self.tokenOwnersCache[(chainId, contractAddress)] = communityOwners
-    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityOwners)
+    let chainId = responseJson{"chainId"}.getInt
+    let contractAddress = responseJson{"contractAddress"}.getStr
+    let communityId = responseJson{"communityId"}.getStr
+    let communityTokenOwners = toCommunityCollectibleOwners(responseJson{"result"})
+    self.tokenOwnersCache[(chainId, contractAddress)] = communityTokenOwners
+    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityTokenOwners)
     self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
+
+  # get owners from cache
+  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
+    return self.tokenOwnersCache.getOrDefault((chainId: chainId, address: contractAddress))
 
   proc onRefreshTransferableTokenOwners*(self:Service) {.slot.} =
     let allTokens = self.getAllCommunityTokens()

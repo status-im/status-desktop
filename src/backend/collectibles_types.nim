@@ -93,6 +93,11 @@ proc `%`*(t: ContractID): JsonNode {.inline.} =
 proc `%`*(t: ref ContractID): JsonNode {.inline.} =
   return %(t[])
 
+proc `%`*(self: CollectibleBalance): JsonNode {.inline.} =
+  result = newJObject()
+  result["tokenId"] = %self.tokenId.toString()
+  result["balance"] = %self.balance.toString()
+
 proc fromJson*(t: JsonNode, T: typedesc[ContractID]): ContractID {.inline.} =
   result = ContractID()
   result.chainID = t["chainID"].getInt()
@@ -316,7 +321,7 @@ proc `$`*(self: CollectibleBalance): string =
     balance:{self.balance}
     """
 
-proc getCollectibleBalances(jsonAsset: JsonNode): seq[CollectibleBalance] =
+proc getCollectibleBalances*(jsonAsset: JsonNode): seq[CollectibleBalance] =
   var balanceList: seq[CollectibleBalance] = @[]
   for item in jsonAsset.items:
       balanceList.add(CollectibleBalance(
@@ -332,13 +337,21 @@ proc `$`*(self: CollectibleOwner): string =
     balances:{self.balances}
     """
 
+proc getCollectibleOwner*(jsonAsset: JsonNode): CollectibleOwner =
+  return CollectibleOwner(
+    address: jsonAsset{"ownerAddress"}.getStr,
+    balances: getCollectibleBalances(jsonAsset{"tokenBalances"})
+  )
+
+proc `%`*(self: CollectibleOwner): JsonNode {.inline.} =
+  result = newJObject()
+  result["ownerAddress"] = %(self.address)
+  result["tokenBalances"] = %(self.balances)
+
 proc getCollectibleOwners(jsonAsset: JsonNode): seq[CollectibleOwner] =
   var ownerList: seq[CollectibleOwner] = @[]
   for item in jsonAsset.items:
-      ownerList.add(CollectibleOwner(
-          address: item{"ownerAddress"}.getStr,
-          balances: getCollectibleBalances(item{"tokenBalances"})
-      ))
+      ownerList.add(getCollectibleOwner(item))
   return ownerList
 
 # CollectibleContractOwnership
