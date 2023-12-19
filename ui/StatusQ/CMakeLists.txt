@@ -89,33 +89,35 @@ endif()
 add_library(StatusQ SHARED
         ${STATUSQ_QRC_COMPILED}
         include/StatusQ/QClipboardProxy.h
+        include/StatusQ/aggregator.h
         include/StatusQ/concatmodel.h
+        include/StatusQ/fastexpressionrole.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
+        include/StatusQ/singleroleaggregator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
-        include/StatusQ/aggregator.h
-        include/StatusQ/singleroleaggregator.h
         include/StatusQ/sumaggregator.h
         src/QClipboardProxy.cpp
+        src/aggregator.cpp
         src/concatmodel.cpp
+        src/fastexpressionrole.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
         src/permissionutilsinternal.cpp
         src/plugin.cpp
         src/rolesrenamingmodel.cpp
         src/rxvalidator.cpp
+        src/singleroleaggregator.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
-        src/aggregator.cpp
-        src/singleroleaggregator.cpp
         src/sumaggregator.cpp
 
         # wallet
