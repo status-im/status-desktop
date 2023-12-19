@@ -80,7 +80,7 @@ class ContactItem:
                 self._open_canvas_button.click(attempt - 1)
                 return self
             else:
-                raise f"Popup didn't appear"
+                raise LookupError(f"Popup didn't appear")
 
 
 class ContactsSettingsView(QObject):

@@ -101,11 +101,11 @@ class LeftPanel(QObject):
         try:
             self._open_context_menu_for_account(account_name).select_edit_account_from_context_menu()
             return AccountPopup().wait_until_appears()
-        except:
+        except Exception as ex:
             if attempt:
                 return self.open_edit_account_popup_from_context_menu(account_name, attempt - 1)
             else:
-                raise
+                raise ex
 
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempt: int = 2):
@@ -128,11 +128,11 @@ class LeftPanel(QObject):
         try:
             self._open_context_menu_for_account(account_name).select_delete_account_from_context_menu()
             return RemoveWalletAccountPopup().wait_until_appears()
-        except:
+        except Exception as ex:
             if attempt:
                 return self.delete_account_from_context_menu(account_name, attempt - 1)
             else:
-                raise
+                raise ex
 
 
 class SavedAddressesView(QObject):

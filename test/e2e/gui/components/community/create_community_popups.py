@@ -76,12 +76,12 @@ class CreateCommunityPopup(BasePopup):
         self._add_logo_button.click()
         try:
             return OpenFileDialog().wait_until_appears()
-        except LookupError as err:
+        except Exception as err:
             if attempt:
                 LOG.debug(err)
                 return self._open_logo_file_dialog(attempt - 1)
             else:
-                raise
+                raise err
 
     @logo.setter
     @allure.step('Set community logo')

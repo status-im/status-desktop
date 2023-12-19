@@ -57,11 +57,11 @@ class LeftPanel(QObject):
         try:
             self._open_context_menu_for_chat(chat_name).select('Leave group')
             return LeaveGroupPopup().wait_until_appears()
-        except:
+        except Exception as ex:
             if attempt:
                 return self.open_leave_group_popup(chat_name, attempt - 1)
             else:
-                raise
+                raise ex
 
 
 class ToolBar(QObject):
