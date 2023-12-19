@@ -17,6 +17,15 @@ proc tableToJsonArray[A, B](t: var Table[A, B]): JsonNode =
     })
   return data
 
+proc balanceInfoToTable(jsonNode: JsonNode): Table[string, UInt256] =
+  for chainBalancesPair in jsonNode.pairs():
+    for addressTokenBalancesPair in chainBalancesPair.val.pairs():
+      for tokenBalancesPair in addressTokenBalancesPair.val.pairs():
+        let amount = fromHex(UInt256, tokenBalancesPair.val.getStr)
+        if amount != stint.u256(0):
+          result[addressTokenBalancesPair.key.toUpper] = amount
+        break
+
 type
   AsyncDeployOwnerContractsFeesArg = ref object of QObjectTaskArg
     chainId: int
@@ -227,20 +236,86 @@ type
 const fetchCollectibleOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchCollectibleOwnersArg](argEncoded)
   try:
-    let response = collectibles.getCollectibleOwnersByContractAddress(arg.chainId, arg.contractAddress)
+    var response = collectibles.getCollectibleOwnersByContractAddress(arg.chainId, arg.contractAddress)
 
-    if not response.error.isNil:
-      raise newException(ValueError, "Error getCollectibleOwnersByContractAddress" & response.error.message)
+    var owners = fromJson(response.result, CollectibleContractOwnership).owners
+    owners = owners.filter(x => x.address != ZERO_ADDRESS)
+
+    response = communities_backend.getCommunityMembersForWalletAddresses(arg.communityId, arg.chainId)
+
+    let communityCollectibleOwners = owners.map(proc(owner: CollectibleOwner): CommunityCollectibleOwner =
+      let ownerAddressUp = owner.address.toUpper()
+      for responseAddress in response.result.keys():
+        let responseAddressUp = responseAddress.toUpper()
+        if ownerAddressUp == responseAddressUp:
+          let member = response.result[responseAddress].toContactsDto()
+          return CommunityCollectibleOwner(
+            contactId: member.id,
+            name: member.displayName,
+            imageSource: member.image.thumbnail,
+            collectibleOwner: owner
+          )
+      return CommunityCollectibleOwner(collectibleOwner: owner)
+    )
 
     let output = %* {
       "chainId": arg.chainId,
       "contractAddress": arg.contractAddress,
       "communityId": arg.communityId,
-      "result": response.result,
+      "result": %communityCollectibleOwners,
       "error": ""
     }
     arg.finish(output)
   except Exception as e:
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
+      "communityId": arg.communityId,
+      "result": "",
+      "error": e.msg
+    }
+    arg.finish(output)
+
+type
+  FetchAssetOwnersArg = ref object of QObjectTaskArg
+    chainId*: int
+    contractAddress*: string
+    communityId*: string
+
+const fetchAssetOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchAssetOwnersArg](argEncoded)
+  try:
+    let addressesResponse = communities_backend.getCommunityMembersForWalletAddresses(arg.communityId, arg.chainId)
+    var allCommunityMembersAddresses: seq[string] = @[]
+    for address in addressesResponse.result.keys():
+      allCommunityMembersAddresses.add(address)
+
+    let balancesResponse = backend.getBalancesByChain(@[arg.chainId], allCommunityMembersAddresses, @[arg.contractAddress])
+
+    let walletBalanceTable = balanceInfoToTable(balancesResponse.result)
+
+    var collectibleOwners: seq[CommunityCollectibleOwner] = @[]
+    for wallet, balance in walletBalanceTable.pairs():
+      let member = addressesResponse.result[wallet].toContactsDto()
+      let collectibleBalance = CollectibleBalance(tokenId: stint.u256(0), balance: balance)
+      let collectibleOwner = CollectibleOwner(address: wallet, balances: @[collectibleBalance])
+      collectibleOwners.add(CommunityCollectibleOwner(
+        contactId: member.id,
+        name: member.displayName,
+        imageSource: member.image.thumbnail,
+        collectibleOwner: collectibleOwner
+      ))
+
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
+      "communityId": arg.communityId,
+      "result": %collectibleOwners,
+      "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    echo "Exception", e.msg
     let output = %* {
       "chainId": arg.chainId,
       "contractAddress": arg.contractAddress,

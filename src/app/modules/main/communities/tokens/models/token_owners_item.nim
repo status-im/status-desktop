@@ -9,7 +9,7 @@ type
     imageSource*: string
     numberOfMessages*: int
     ownerDetails*: CollectibleOwner
-    amount*: int
+    amount*: Uint256
     remotelyDestructState*: ContractTransactionStatus
 
 proc remoteDestructTransactionStatus*(remoteDestructedAddresses: seq[string], address: string): ContractTransactionStatus =
@@ -32,7 +32,7 @@ proc initTokenOwnersItem*(
   result.ownerDetails = ownerDetails
   result.remotelyDestructState = remoteDestructTransactionStatus(remoteDestructedAddresses, ownerDetails.address)
   for balance in ownerDetails.balances:
-    result.amount = result.amount + balance.balance.truncate(int)
+    result.amount = result.amount + balance.balance
 
 proc `$`*(self: TokenOwnersItem): string =
   result = fmt"""TokenOwnersItem(

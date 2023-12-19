@@ -49,6 +49,7 @@ StatusScrollView {
     readonly property bool transferable: token.transferable
     readonly property string chainIcon: token.chainIcon
     readonly property int decimals: token.decimals
+    readonly property int multiplierIndex: token.multiplierIndex
 
     readonly property bool deploymentCompleted:
         deployState === Constants.ContractTransactionStatus.Completed
@@ -203,6 +204,7 @@ StatusScrollView {
             showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
             isAirdropEnabled: root.deploymentCompleted &&
                               (token.infiniteSupply || token.remainingTokens > 0)
+            multiplierIndex: root.multiplierIndex
 
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true

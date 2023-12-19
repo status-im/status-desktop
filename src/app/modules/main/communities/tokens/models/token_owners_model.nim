@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, stint
 import token_owners_item
 
 type
@@ -83,7 +83,7 @@ QtObject:
       of ModelRole.WalletAddress:
         result = newQVariant(item.ownerDetails.address)
       of ModelRole.Amount:
-        result = newQVariant(item.amount)
+        result = newQVariant(item.amount.toString(10))
       of ModelRole.RemotelyDestructState:
         result = newQVariant(item.remotelyDestructState.int)
 

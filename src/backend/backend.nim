@@ -322,3 +322,8 @@ rpc(fetchAllCurrencyFormats, "wallet"):
 
 rpc(hasPairedDevices, "accounts"):
   discard
+
+rpc(getBalancesByChain, "wallet"):
+  chainIds: seq[int]
+  addresses: seq[string]
+  tokenAddresses: seq[string]
