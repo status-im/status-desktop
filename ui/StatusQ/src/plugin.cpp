@@ -5,6 +5,7 @@
 
 #include "StatusQ/QClipboardProxy.h"
 #include "StatusQ/concatmodel.h"
+#include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/permissionutilsinternal.h"
@@ -15,7 +16,6 @@
 #include "StatusQ/stringutilsinternal.h"
 #include "StatusQ/submodelproxymodel.h"
 #include "StatusQ/sumaggregator.h"
-
 
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
@@ -38,6 +38,9 @@ public:
 
         qmlRegisterType<SourceModel>("StatusQ", 0, 1, "SourceModel");
         qmlRegisterType<ConcatModel>("StatusQ", 0, 1, "ConcatModel");
+
+        qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");
+
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");
         qmlRegisterType<RoleRename>("StatusQ", 0, 1, "RoleRename");
