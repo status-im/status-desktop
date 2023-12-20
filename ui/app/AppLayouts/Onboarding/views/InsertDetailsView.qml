@@ -196,6 +196,7 @@ Item {
                     left: parent.left
                 }
                 publicKey: root.pubKey
+                objectName: "publicKeyEmojiHash"
             }
             StatusSmartIdenticon {
                 id: userImageCopy
