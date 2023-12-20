@@ -21,7 +21,7 @@ pytestmark = marks
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e',
                                           'GenAcc1edited', '#216266', 'thumbsup', '1f44d')
                          ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_plus_button_manage_generated_account(main_screen: MainWindow, user_account,
                                               color: str, emoji: str, emoji_unicode: str,
                                               name: str, new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):

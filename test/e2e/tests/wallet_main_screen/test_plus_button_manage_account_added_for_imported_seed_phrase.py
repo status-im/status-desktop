@@ -21,7 +21,7 @@ pytestmark = marks
                          'new_name, new_color, new_emoji, new_emoji_unicode, keypair_name', [
                              pytest.param('SPAcc', '#2a4af5', 'sunglasses', '1f60e',
                                           'SPAccedited', '#216266', 'thumbsup', '1f44d', 'SPKeyPair')])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_plus_button_manage_account_added_for_imported_seed_phrase(main_screen: MainWindow, user_account,
                                                                    name: str, color: str, emoji: str, emoji_unicode: str,
                                                                    new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str,

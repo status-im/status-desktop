@@ -12,7 +12,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703514',
                  'Choosing Use Keycard when adding account')
 @pytest.mark.case(703514)
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_use_keycard_when_adding_account(main_screen: MainWindow):
     with step('Choose continue in keycard settings'):
         wallet = main_screen.left_panel.open_wallet()

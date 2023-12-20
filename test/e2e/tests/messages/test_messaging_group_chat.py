@@ -18,7 +18,7 @@ pytestmark = marks
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
      configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12440")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12440")
 def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two

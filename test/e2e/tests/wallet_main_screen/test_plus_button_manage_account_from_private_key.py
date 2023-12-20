@@ -22,7 +22,7 @@ pytestmark = marks
                              pytest.param('PrivKeyAcc1', '#2a4af5', 'sunglasses', '1f60e',
                                           'PrivKeyAcc1edited', '#216266', 'thumbsup', '1f44d')
                          ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair,
                                                      name: str, color: str, emoji: str, emoji_unicode: str,
                                                      new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):

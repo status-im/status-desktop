@@ -21,3 +21,30 @@ for example `AUT_PATH = "/Users/anastasiya/status-desktop/bin/nim_status_client"
     **2.2** Mac **requires entitlements**  for Squish which we don't add by default, so please go here https://ci.status.im/job/status-desktop/job/systems/job/macos/
 and select architecture you need (arm or intel), click Build with parameters and select Squish entitlements. Select a branch if u like (master is default)
     ![img_1.png](img_1.png)
+
+## Pytest marks used
+
+You can run tests by mark, just use it like this in command line:
+
+```bash
+python3 -m pytest -m critical
+```
+
+or directly in pycharm terminal:
+
+```bash
+pytest -m critical
+```
+
+You can obtain the list of all marks we have by running this `pytest --markers`
+
+- `critical`, mark used to select the most important checks we do for PRs in desktop repository 
+(the same for our repo PRs)
+- `xfail`, used to link tests to existing tickets in desktop, so if test fails it will be marked as
+expected to fail in report with a reference to the ticket. At the same time, if such test is passing,
+it will be shown as XPASS (unexpectedly passing) in report, which will indicate the initial bug is gone
+- `skip`, used to just skip tests for various reasons, normally with a ticket linked
+- `flaky`, used to mark the tests that are normally passing but sometimes fail. If such test passes, then
+if will be shown as passed in report normally. If the test fails, then the total run wont be failed, but 
+the corresponding test will be marked as `xfail` in the report. It is done for a few tests that are not super
+stable yet, but passes most of the time. This mark should be used with caution and in case of real need only.

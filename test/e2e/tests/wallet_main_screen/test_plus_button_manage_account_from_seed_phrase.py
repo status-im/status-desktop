@@ -30,7 +30,7 @@ pytestmark = marks
                                           'SPAcc12edited', '#216266', 'thumbsup', '1f44d',
                                           'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial')
                          ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, user_account,
                                                      name: str, color: str, emoji: str, emoji_unicode: str,
                                                      new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str,

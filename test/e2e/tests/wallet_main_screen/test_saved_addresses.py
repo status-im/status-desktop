@@ -15,7 +15,7 @@ pytestmark = marks
     pytest.param('Saved address name before', '0x8397bc3c5a60a1883174f722403d63a8833312b7', 'Saved address name after'),
     pytest.param('Ens name before', 'nastya.stateofus.eth', 'Ens name after')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/12914")
+@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, new_name: str):
     with step('Add new address'):
         wallet = main_screen.left_panel.open_wallet()
