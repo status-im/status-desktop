@@ -10,6 +10,8 @@ import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet 1.0
+
 import utils 1.0
 
 import "../../stores"
@@ -92,7 +94,7 @@ ColumnLayout {
                 draggable: accountsList.count > 1
                 Drag.keys: [d.walletAccountDnDKey]
                 title: model.name
-                secondaryTitle: model.address
+                secondaryTitle: WalletUtils.addressToDisplay(model.address, "", true, containsMouse)
                 secondaryTitleIcon: model.walletType === Constants.watchWalletType? "show" :
                                                                                     model.keycardAccount ? "keycard" : ""
                 hasEmoji: true
