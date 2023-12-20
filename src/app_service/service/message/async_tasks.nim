@@ -9,17 +9,12 @@ import ../../../app/core/custom_urls/urls_manager
 import dto/seen_unseen_messages
 
 proc getCountAndCountWithMentionsFromResponse(chatId: string, seenAndUnseenMessagesBatch: JsonNode): (int, int) =
-  var count: int
-  var countWithMentions: int
-
   if seenAndUnseenMessagesBatch.len > 0:
     for seenAndUnseenMessagesRaw in seenAndUnseenMessagesBatch:
       let seenAndUnseenMessages = seenAndUnseenMessagesRaw.toSeenUnseenMessagesDto()
       if seenAndUnseenMessages.chatId == chatId:
-        count = seenAndUnseenMessages.count
-        countWithMentions = seenAndUnseenMessages.countWithMentions
-        break
-  return (count, countWithMentions)
+        return (seenAndUnseenMessages.count, seenAndUnseenMessages.countWithMentions)
+  return (0, 0)
 
 #################################################
 # Async load messages
