@@ -232,6 +232,9 @@ method getInstalledStickerPacks*(self: Module) =
 method clearStickerPacks*(self: Module) =
   self.view.clearStickerPacks()
 
+method clearStickers*(self: Module) =
+  self.view.clearStickers()
+
 method allPacksLoaded*(self: Module) =
   self.view.allPacksLoaded()
 

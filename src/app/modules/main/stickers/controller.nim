@@ -56,6 +56,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
 
   self.events.on(SIGNAL_LOAD_RECENT_STICKERS_DONE) do(e: Args):
+    self.delegate.clearStickers()
     let args = StickersArgs(e)
     for sticker in args.stickers:
       self.delegate.addRecentStickerToList(sticker)

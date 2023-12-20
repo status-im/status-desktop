@@ -45,6 +45,11 @@ QtObject:
       StickerRoles.PackId.int:"packId"
     }.toTable
 
+  proc clear*(self: StickerList) =
+    self.beginResetModel()
+    self.stickers = @[]
+    self.endResetModel()
+
   proc addStickerToList*(self: StickerList, sticker: Item) =
     if(self.stickers.any(proc(existingSticker: Item): bool = return existingSticker.getHash == sticker.getHash)):
       return
