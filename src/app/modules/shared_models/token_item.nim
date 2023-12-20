@@ -27,6 +27,10 @@ type
     change24hour: float64
     currencyPrice: CurrencyAmount
     decimals: int
+    image: string
+    communityId: string
+    communityName: string
+    communityImage: string
     loading: bool
 
 proc initItem*(
@@ -49,6 +53,10 @@ proc initItem*(
   change24hour: float64,
   currencyPrice: CurrencyAmount,
   decimals: int,
+  image: string,
+  communityId: string,
+  communityName: string,
+  communityImage: string,
   loading: bool = false
 ): Item =
   result.name = name
@@ -73,6 +81,10 @@ proc initItem*(
   result.change24hour = change24hour
   result.currencyPrice = currencyPrice
   result.decimals = decimals
+  result.image = image
+  result.communityId = communityId
+  result.communityName = communityName
+  result.communityImage = communityImage
   result.loading = loading
 
 proc `$`*(self: Item): string =
@@ -97,6 +109,10 @@ proc `$`*(self: Item): string =
     change24hour: {self.change24hour},
     currencyPrice: {self.currencyPrice},
     decimals: {self.decimals},
+    image: {self.image},
+    communityId: {self.communityId},
+    communityName: {self.communityName},
+    communityImage: {self.communityImage},
     loading: {self.loading},
     ]"""
 
@@ -123,6 +139,10 @@ proc initLoadingItem*(): Item =
     change24hour = 0,
     currencyPrice = newCurrencyAmount(),
     decimals = 0,
+    image = "",
+    communityId = "",
+    communityName = "",
+    communityImage = "",
     loading = true
   )
 
@@ -188,6 +208,18 @@ proc getCurrencyPrice*(self: Item): CurrencyAmount =
 
 proc getDecimals*(self: Item): int =
   return self.decimals
+
+proc getImage*(self: Item): string =
+  return self.image
+
+proc getCommunityId*(self: Item): string =
+  return self.communityId
+
+proc getCommunityName*(self: Item): string =
+  return self.communityName
+
+proc getCommunityImage*(self: Item): string =
+  return self.communityImage
 
 proc getLoading*(self: Item): bool =
   return self.loading

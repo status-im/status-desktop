@@ -27,6 +27,10 @@ type
     assetWebsiteUrl*: string
     builtOn*: string
     marketValuesPerCurrency*: Table[string, TokenMarketValuesDto]
+    image*: string
+    communityId*: string
+    communityName*: string
+    communityImage*: string
 
 proc newTokenMarketValuesDto*(
   marketCap: float64,
@@ -72,6 +76,13 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
   discard jsonObj.getProp("builtOn", result.builtOn)
+  discard jsonObj.getProp("image", result.image)
+
+  var communityDataObj: JsonNode
+  if(jsonObj.getProp("community_data", communityDataObj)):
+    discard communityDataObj.getProp("id", result.communityId)
+    discard communityDataObj.getProp("name", result.communityName)
+    discard communityDataObj.getProp("image", result.communityImage)
 
   var marketValuesPerCurrencyObj: JsonNode
   if(jsonObj.getProp("marketValuesPerCurrency", marketValuesPerCurrencyObj)):
@@ -105,6 +116,10 @@ proc `$`*(self: WalletTokenDto): string =
     description: {self.description},
     assetWebsiteUrl: {self.assetWebsiteUrl},
     builtOn: {self.builtOn},
+    image: {self.image},
+    communityId: {self.communityId},
+    communityName: {self.communityName},
+    communityImage: {self.communityImage},
     balancesPerChain:
     """
   for chain, balance in self.balancesPerChain:
@@ -131,6 +146,10 @@ proc copyToken*(self: WalletTokenDto): WalletTokenDto =
   result.description = self.description
   result.assetWebsiteUrl = self.assetWebsiteUrl
   result.builtOn = self.builtOn
+  result.image = self.image
+  result.communityId = self.communityId
+  result.communityName = self.communityName
+  result.communityImage = self.communityImage
 
   result.balancesPerChain = initTable[int, BalanceDto]()
   for chainId, balanceDto in self.balancesPerChain:

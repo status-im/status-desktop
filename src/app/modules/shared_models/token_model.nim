@@ -26,6 +26,10 @@ type
     Change24hour
     CurrencyPrice
     Decimals
+    CommunityId
+    CommunityName
+    CommunityImage
+    ImageUrl
     Loading
 
 QtObject:
@@ -83,6 +87,10 @@ QtObject:
       ModelRole.Change24hour.int:"change24hour",
       ModelRole.CurrencyPrice.int:"currencyPrice",
       ModelRole.Decimals.int:"decimals",
+      ModelRole.CommunityId.int:"communityId",
+      ModelRole.CommunityName.int:"communityName",
+      ModelRole.CommunityImage.int:"communityImage",
+      ModelRole.ImageUrl.int:"imageUrl",
       ModelRole.Loading.int:"loading",
     }.toTable
 
@@ -139,6 +147,14 @@ QtObject:
       result = newQVariant(item.getCurrencyPrice())
     of ModelRole.Decimals:
       result = newQVariant(item.getDecimals())
+    of ModelRole.CommunityId:
+      result = newQVariant(item.getCommunityId())
+    of ModelRole.CommunityName:
+      result = newQVariant(item.getCommunityName())
+    of ModelRole.CommunityImage:
+      result = newQVariant(item.getCommunityImage())
+    of ModelRole.ImageUrl:
+      result = newQVariant(item.getImage())
     of ModelRole.Loading:
       result = newQVariant(item.getLoading())
 
@@ -167,6 +183,10 @@ QtObject:
       of "change24hour": result = $item.getChange24hour()
       of "currencyPrice": result = $item.getCurrencyPrice()
       of "decimals": result = $item.getDecimals()
+      of "communityId": result = $item.getCommunityId()
+      of "communityName": result = $item.getCommunityName()
+      of "communityImage": result = $item.getCommunityImage()
+      of "ImageUrl": result = $item.getImage()
       of "loading": result = $item.getLoading()
 
   proc setItems*(self: Model, items: seq[Item]) =
