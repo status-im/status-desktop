@@ -5,6 +5,8 @@ import QtQuick 2.14
 import utils 1.0
 import StatusQ.Core.Theme 0.1
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 import "stores" as WalletStores
 
 QtObject {
@@ -46,5 +48,13 @@ QtObject {
             return timestamp + 12 * 64 // A block on layer1 is every 12s
         }
         return timestamp + Constants.time.secondsIn7Days
+    }
+
+    function addressToDisplay(address, chainShortNames, shortForm, hovered) {
+        let finalAddress = address
+        if (shortForm) {
+            finalAddress = StatusQUtils.Utils.elideText(address,6,4)
+        }
+        return hovered? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(finalAddress, Theme.palette.directColor1) : chainShortNames + finalAddress
     }
 }

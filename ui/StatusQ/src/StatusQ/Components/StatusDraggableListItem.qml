@@ -212,6 +212,12 @@ ItemDelegate {
     */
     property color assetBgColor: "transparent"
 
+    /*!
+       \qmlproperty alias StatusDraggableListItem::containsMouse
+       Used to read if the component cotains mouse
+    */
+    readonly property alias containsMouse: dragHandler.containsMouse
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
