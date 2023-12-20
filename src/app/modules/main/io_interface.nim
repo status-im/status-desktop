@@ -399,6 +399,12 @@ method onCommunityTokensDetailsLoaded*(self: AccessInterface, communityId: strin
     communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addressWasShown*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkIfAddressWasCopied*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

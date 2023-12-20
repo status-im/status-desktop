@@ -1,5 +1,6 @@
 import io_interface
 
+import app/global/app_signals
 import app/core/eventemitter
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
@@ -92,8 +93,9 @@ proc getBio*(self: Controller): string =
 proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
 
-proc storeProfileShowcasePreferences*(self: Controller, preferences: ProfileShowcasePreferencesDto) =
+proc storeProfileShowcasePreferences*(self: Controller, preferences: ProfileShowcasePreferencesDto, revealedAddresses: seq[string]) =
   self.profileService.setProfileShowcasePreferences(preferences)
+  self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: revealedAddresses))
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()

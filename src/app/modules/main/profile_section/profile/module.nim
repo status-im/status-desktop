@@ -113,12 +113,19 @@ method storeProfileShowcasePreferences(self: Module,
     error "Attempt to save preferences with wrong public key"
     return
 
+  var revealedAddresses: seq[string]
+  for acc in accounts:
+    if acc.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
+      revealedAddresses.add(acc.address)
+
   self.controller.storeProfileShowcasePreferences(ProfileShowcasePreferencesDto(
     communities: communities.map(item => item.toShowcasePreferenceItem()),
     accounts: accounts.map(item => item.toShowcasePreferenceItem()),
     collectibles: collectibles.map(item => item.toShowcasePreferenceItem()),
-    assets: assets.map(item => item.toShowcasePreferenceItem())
-  ))
+    assets: assets.map(item => item.toShowcasePreferenceItem()),
+    ),
+    revealedAddresses
+  )
 
 method requestProfileShowcasePreferences(self: Module) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()

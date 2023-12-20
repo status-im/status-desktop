@@ -39,6 +39,7 @@ QtObject {
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
     // "walletSection" is a context property slow to lookup, so we cache it here
+    property var mainModuleInst: mainModule
     property var walletSectionInst: walletSection
     property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
     property var activityController: walletSectionInst.activityController
@@ -401,4 +402,8 @@ QtObject {
     }
 
     property CurrenciesStore currencyStore: CurrenciesStore {}   
+
+    function addressWasShown(address) {
+        return root.mainModuleInst.addressWasShown(address)
+    }
 }

@@ -367,6 +367,10 @@ ColumnLayout {
             onTriggered: {
                 if (!delegateMenu.transactionDelegate)
                     return
+                WalletStores.RootStore.addressWasShown(delegateMenu.transaction.sender)
+                if (delegateMenu.transaction.sender !== delegateMenu.transaction.recipient) {
+                    WalletStores.RootStore.addressWasShown(delegateMenu.transaction.recipient)
+                }
                 RootStore.copyToClipboard(delegateMenu.transactionDelegate.getDetailsString())
             }
         }

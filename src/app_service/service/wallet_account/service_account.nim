@@ -782,3 +782,11 @@ proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: st
   if  keyUid != singletonInstance.userProfile.getKeyUid():
     return
   self.makePartiallyOperableAccoutsFullyOperable(password, not singletonInstance.userProfile.getIsKeycardUser())
+
+proc addressWasShown*(self: Service, address: string) =
+  try:
+    let response = status_go_accounts.addressWasShown(address)
+    if not response.error.isNil:
+      raise newException(CatchableError, response.error.message)
+  except Exception as e:
+    error "error: ", procName="addressWasShown", errName=e.name, errDesription=e.msg

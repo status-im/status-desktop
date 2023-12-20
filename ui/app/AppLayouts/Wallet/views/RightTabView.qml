@@ -229,8 +229,16 @@ Item {
         TransactionDetailView {
             id: transactionDetailView
             onVisibleChanged: {
-                if (!visible)
+                if (visible) {
+                    if (!!transaction) {
+                        RootStore.addressWasShown(transaction.sender)
+                        if (transaction.sender !== transaction.recipient) {
+                            RootStore.addressWasShown(transaction.recipient)
+                        }
+                    }
+                } else {
                     transaction = null
+                }
             }
             showAllAccounts: root.showAllAccounts
             sendModal: root.sendModal

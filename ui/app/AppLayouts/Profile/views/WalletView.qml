@@ -151,6 +151,9 @@ SettingsContentBase {
             }
 
             onGoToAccountView: {
+                if (!!account && !!account.address) {
+                    root.rootStore.addressWasShown(account.address)
+                }
                 root.walletStore.selectedAccount = account
                 accountView.keyPair = keypair
                 stackContainer.currentIndex = accountViewIndex

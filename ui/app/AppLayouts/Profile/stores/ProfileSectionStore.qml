@@ -197,4 +197,8 @@ QtObject {
 
         return ""
     }
+
+    function addressWasShown(address) {
+        return root.mainModuleInst.addressWasShown(address)
+    }
 }

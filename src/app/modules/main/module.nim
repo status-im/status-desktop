@@ -494,6 +494,11 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = TransactionSentArgs(e)
     self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error)
 
+  self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
+    let args = WalletAddressesArgs(e)
+    for address in args.addresses:
+      self.addressWasShown(address)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,
@@ -1587,5 +1592,16 @@ method removeMockedKeycardAction*[T](self: Module[T]) =
 
 method fakeLoadingScreenFinished*[T](self: Module[T]) =
   self.events.emit(FAKE_LOADING_SCREEN_FINISHED, Args())
+
+method addressWasShown*[T](self: Module[T], address: string) =
+  if address.len == 0:
+    return
+  self.walletAccountService.addressWasShown(address)
+
+method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
+  let walletAcc = self.walletAccountService.getAccountByAddress(value)
+  if walletAcc.isNil:
+    return
+  self.addressWasShown(value)
 
 {.pop.}

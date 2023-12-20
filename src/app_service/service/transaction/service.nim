@@ -10,10 +10,12 @@ import ../../common/conversion as common_conversion
 import ../../common/utils as common_utils
 import ../../common/types as common_types
 
-import ../../../app/core/[main]
-import ../../../app/core/signals/types
-import ../../../app/core/tasks/[qt, threadpool]
-import ../../../app/global/global_singleton
+import app/core/[main]
+import app/core/signals/types
+import app/core/tasks/[qt, threadpool]
+import app/global/global_singleton
+import app/global/app_signals
+
 import ../wallet_account/service as wallet_account_service
 import ../network/service as network_service
 import ../token/service as token_service
@@ -287,6 +289,11 @@ QtObject:
 
   proc sendTransactionSentSignal(self: Service, fromAddr: string, toAddr: string, uuid: string,
     routes: seq[TransactionPathDto], response: RpcResponse[JsonNode], err: string = "", tokenName = "", isOwnerToken=false) =
+    # While preparing the tx in the Send modal user cannot see the address, it's revealed once the tx is sent
+    # (there are few places where we display the toast from and link to the etherscan where the address can be seen)
+    # that's why we need to mark the addresses as shown here (safer).
+    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[fromAddr, toAddr]))
+
     if err.len > 0:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(uuid: uuid, error: err))
     elif response.result{"hashes"} != nil:
