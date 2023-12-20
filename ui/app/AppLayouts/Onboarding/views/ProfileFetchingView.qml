@@ -27,7 +27,7 @@ Item {
     }
 
     onStateChanged: {
-        if (root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching) {
+        if (root.state === Constants.startupState.profileFetching) {
             d.counter = Constants.onboarding.profileFetching.timeout
         }
     }
@@ -147,12 +147,12 @@ Item {
             id: button
             Layout.alignment: Qt.AlignHCenter
             focus: true
-            enabled: root.startupStore.currentStartupState.stateType !== Constants.startupState.profileFetching
+            enabled: root.state !== Constants.startupState.profileFetching
 
             Timer {
                 id: timer
                 interval: 1000
-                running: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching
+                running: root.state === Constants.startupState.profileFetching
                 repeat: true
                 onTriggered: {
                     d.counter = d.counter - 1000 // decrease 1000 ms
