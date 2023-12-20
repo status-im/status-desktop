@@ -16,6 +16,8 @@ QtObject:
       allTotalsSet: bool
       lastKnownBackedUpMsgClock: uint64
 
+  proc reevaluateAllTotals(self: Model)
+
   proc delete(self: Model) =
     self.items = @[]
     self.QAbstractListModel.delete
@@ -92,6 +94,7 @@ QtObject:
     if(ind == -1):
       return
     self.items[ind].receivedMessageAtPosition(position)
+    self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
