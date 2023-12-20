@@ -664,11 +664,14 @@ proc signRevealedAddressesThatBelongToRegularKeypairs(self: Module): bool =
       return false
     if keypair.migratedToKeycard():
       continue
+    var finalPassword = self.joiningCommunityDetails.profilePassword
+    if not singletonInstance.userProfile.getIsKeycardUser():
+      finalPassword = common_utils.hashPassword(self.joiningCommunityDetails.profilePassword)
     signingParams.add(
       SignParamsDto(
         address: address,
         data: details.messageToBeSigned,
-        password: common_utils.hashPassword(self.joiningCommunityDetails.profilePassword),
+        password: finalPassword,
       )
     )
   if signingParams.len == 0:
