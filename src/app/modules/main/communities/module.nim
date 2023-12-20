@@ -15,6 +15,7 @@ import ./models/discord_import_tasks_model
 import app/modules/shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
   token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model, keypair_model]
 import app/global/global_singleton
+import app/global/app_signals
 import app/core/eventemitter
 import app_service/common/types
 import app_service/common/utils as common_utils
@@ -83,6 +84,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    events: EventEmitter
     curatedCommunitiesLoaded: bool
     communityTokensModule: community_tokens_module.AccessInterface
     checkingPermissionToJoinInProgress: bool
@@ -125,6 +127,7 @@ proc newModule*(
   )
   result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService, communityService)
   result.moduleLoaded = false
+  result.events = events
   result.curatedCommunitiesLoaded = false
   result.checkingPermissionToJoinInProgress = false
   result.checkingAllChannelPermissionsInProgress = false
@@ -796,12 +799,16 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
       addressesToShare,
       airdropAddress,
       signatures)
+    # The user reveals address after sending join coummunity request, before that he sees only the name of the wallet account, not the address.
+    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
     return
   if self.joiningCommunityDetails.action == Action.EditSharedAddresses:
     self.controller.asyncEditSharedAddresses(self.joiningCommunityDetails.communityId,
       addressesToShare,
       airdropAddress,
       signatures)
+    # The user reveals address after sending edit coummunity request, before that he sees only the name of the wallet account, not the address.
+    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
     return
   self.communityAccessFailed(self.joiningCommunityDetails.communityId, "unexpected action")
 

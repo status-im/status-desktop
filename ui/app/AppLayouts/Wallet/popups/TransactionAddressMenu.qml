@@ -15,6 +15,18 @@ import shared.stores 1.0
 
 import "../stores" as WalletStores
 
+////////////////////////////////////////////////////////////////////////////////
+// NOTE:
+//
+// The address should be marked as shown (calling `mainModule.addressWasShown(address)`) if the user interacts with
+// actions in the menu that reveals the address.
+//
+// That call is not added now, just because the only place where this menu is used is in the transaction details view
+// and the address will be already marked as shown when the user opens the transaction details view.
+//
+// This note here is just to remember that if this menu is used in other places, the address should be marked as shown.
+////////////////////////////////////////////////////////////////////////////////
+
 StatusMenu {
     id: root
 

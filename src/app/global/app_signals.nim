@@ -42,4 +42,12 @@ type
 const SIGNAL_STATUS_URL_ACTIVATED* = "statusUrlActivated"
 const FAKE_LOADING_SCREEN_FINISHED* = "fakeLoadingScreenFinished"
 
+
+type
+  WalletAddressesArgs* = ref object of Args
+    addresses*: seq[string]
+
+const MARK_WALLET_ADDRESSES_AS_SHOWN* = "markWalletAddressesAsShown"
+
+
 const WALLET_CONNECT_CHECK_PAIRINGS* = "walletConnectCheckPairings"

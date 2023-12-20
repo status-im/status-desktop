@@ -1,12 +1,13 @@
 import NimQml, strutils
-import ../shared_models/section_model
-import ../shared_models/section_item
-import ../shared_models/section_details
+import app/global/global_singleton
+import app/modules/shared_models/section_model
+import app/modules/shared_models/section_item
+import app/modules/shared_models/section_details
 import io_interface
 import chat_search_model
 import ephemeral_notification_model
-from ../../../app_service/common/conversion import intToEnum
-from ../../../app_service/common/types import StatusType
+from app_service/common/conversion import intToEnum
+from app_service/common/types import StatusType
 
 QtObject:
   type
@@ -51,8 +52,9 @@ QtObject:
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
     result.ephemeralNotificationModel = ephemeralNotification_model.newModel()
     result.ephemeralNotificationModelVariant = newQVariant(result.ephemeralNotificationModel)
-    signalConnect(result.model, "notificationsCountChanged()", result,
-    "onNotificationsCountChanged()", 2)
+
+    signalConnect(result.model, "notificationsCountChanged()", result, "onNotificationsCountChanged()", 2)
+    signalConnect(singletonInstance.utils, "checkIfAddressWasCopied(QString)", result, "onCheckIfAddressWasCopied(QString)", 2)
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
@@ -326,3 +328,11 @@ QtObject:
 
   proc fakeLoadingScreenFinished*(self: View) {.slot.} =
     self.delegate.fakeLoadingScreenFinished()
+
+  ## Address was shown is added here because it will be used from many different parts of the app
+  ## and "mainModule" is accessible from everywhere
+  proc addressWasShown*(self: View, address: string) {.slot.} =
+    self.delegate.addressWasShown(address)
+
+  proc onCheckIfAddressWasCopied*(self: View, value: string) {.slot.} =
+    self.delegate.checkIfAddressWasCopied(value)

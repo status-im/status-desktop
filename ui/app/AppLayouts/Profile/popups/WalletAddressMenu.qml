@@ -6,6 +6,18 @@ import utils 1.0
 
 import AppLayouts.Wallet.popups 1.0
 
+////////////////////////////////////////////////////////////////////////////////
+// NOTE:
+//
+// The address should be marked as shown (calling `mainModule.addressWasShown(address)`) if the user interacts with any
+// of the current actions in the menu.
+//
+// That call is not added now, just because the only place where this menu is used is in the account view and the address
+// will be already marked as shown when the user opens the account view.
+//
+// This note here is just to remember that if this menu is used in other places, the address should be marked as shown.
+////////////////////////////////////////////////////////////////////////////////
+
 StatusMenu {
     id: root
 

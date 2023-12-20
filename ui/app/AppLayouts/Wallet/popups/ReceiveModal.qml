@@ -41,6 +41,10 @@ StatusModal {
         }
     }
 
+    onOpened: {
+        RootStore.addressWasShown(root.address)
+    }
+
     headerSettings.title: qsTr("Receive")
     contentHeight: layout.implicitHeight
     width: 556

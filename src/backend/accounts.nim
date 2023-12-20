@@ -483,3 +483,7 @@ proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exceptio
 
 proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)
+
+proc addressWasShown*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address]
+  return core.callPrivateRPC("accounts_addressWasShown", payload)
