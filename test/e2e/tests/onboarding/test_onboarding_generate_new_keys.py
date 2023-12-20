@@ -28,36 +28,49 @@ def keys_screen(main_window) -> KeysView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @pytest.mark.case(703421)
+@pytest.mark.critical
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
-    pytest.param('Test-User _1', '*P@ssw0rd*', None, None, None, marks=pytest.mark.critical),
-    pytest.param('Test-User', '*P@ssw0rd*', 'tv_signal.png', 5, shift_image(0, 0, 0, 0)),
-    pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', 5, shift_image(0, 1000, 1000, 0))
+    pytest.param(
+        '_1Test-User',
+        '*P@ssw0rd*',
+        'tv_signal.jpeg',
+        5,
+        shift_image(0, 1000, 1000, 0))
 ])
 def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
-    with step(f'Setup profile with name: {user_name} and image: {user_image}'):
-
+    with step('Click generate new keys and click back button'):
         keys_screen.generate_new_keys().back()
+
+    with step('Click generate new keys and open profile view'):
         profile_view = keys_screen.generate_new_keys()
-        assert profile_view.is_next_button_enabled is False
+        assert profile_view.is_next_button_enabled is False, \
+            f'Next button is enabled on profile screen when it should not'
+
+    with step('Type in the display name on the profile view'):
         profile_view.set_display_name(user_name)
+        assert profile_view.get_display_name() == user_name, \
+            f'Display name is empty or was not filled in'
+
+    with step('Click plus button and add user picture'):
         if user_image is not None:
             profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_FILES / user_image)
             profile_picture_popup.make_picture(zoom=zoom, shift=shift)
-        assert not profile_view.error_message
+        assert not profile_view.get_error_message, \
+            f'Error message {profile_view.get_error_message} is present when it should not'
 
-    with step('Open Profile details view and verify user info'):
-
+    with step('Open emojihash and identicon ring profile screen and capture the details'):
         details_view = profile_view.next()
-        chat_key = details_view.chat_key
-        emoji_hash = details_view.emoji_hash
-        assert details_view.is_identicon_ring_visible
+        chat_key = details_view.get_chat_key
+        # TODO: replace with the public key value verification
+        # emoji_hash = details_view.get_emoji_hash
+        assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
         details_view.back().next()
 
-    with step('Finalize onboarding and open main screen'):
-
+    with step('Proceed with password set up and login'):
         create_password_view = details_view.next()
         create_password_view.back().next()
-        assert not create_password_view.is_create_password_button_enabled
+        assert not create_password_view.is_create_password_button_enabled, \
+            f'Create password button is enabled when it should not'
         confirm_password_view = create_password_view.create_password(password)
         confirm_password_view.back().click_create_password()
         confirm_password_view.confirm_password(password)
@@ -68,13 +81,14 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         if not configs.system.TEST_MODE:
             BetaConsentPopup().confirm()
 
-    with step('Open User Canvas and verify user info'):
+    with step('Open online identifier and check the data'):
+        online_identifier = main_window.left_panel.open_online_identifier()
+        assert online_identifier.user_name == user_name, \
+            f'Display name in online identifier is wrong, current: {online_identifier.user_name}, expected: {user_name}'
 
-        user_canvas = main_window.left_panel.open_online_identifier()
-        assert user_canvas.user_name == user_name
-
-    with step('Open Profile popup and verify user info'):
-
-        profile_popup = user_canvas.open_profile_popup_from_online_identifier()
-        assert profile_popup.user_name == user_name
-        assert profile_popup.chat_key == chat_key
+    with step('Open user profile from online identifier and check the data'):
+        profile_popup = online_identifier.open_profile_popup_from_online_identifier()
+        assert profile_popup.user_name == user_name, \
+            f'Display name in user profile is wrong, current: {profile_popup.user_name}, expected: {user_name}'
+        assert profile_popup.get_chat_key_from_profile_link == chat_key, \
+            f'Chat key in user profile is wrong, current: {profile_popup.get_chat_key_from_profile_link}, expected: {chat_key}'

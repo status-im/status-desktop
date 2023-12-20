@@ -45,7 +45,7 @@ class ProfilePopup(BasePopup):
 
     @property
     @allure.step('Get chat key')
-    def chat_key(self) -> str:
+    def get_chat_key_from_profile_link(self) -> str:
         chat_key = self._chat_key_text_label.text.split('https://status.app/u/')[1].strip()
         if '#' in chat_key:
             chat_key = chat_key.split('#')[1]
@@ -57,8 +57,8 @@ class ProfilePopup(BasePopup):
         return self._emoji_hash.image
 
     @property
-    @allure.step('Get chat key')
-    def chat_key(self) -> str:
+    @allure.step('Copy chat key')
+    def copy_chat_key(self) -> str:
         self._chat_key_copy_button.click()
         return pyperclip.paste()
 

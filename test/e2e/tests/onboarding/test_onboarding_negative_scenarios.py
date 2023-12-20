@@ -80,7 +80,7 @@ def test_sign_up_with_wrong_name(keys_screen, user_name: str, error: str):
 
     with step('Verify that button Next is disabled and correct error appears'):
         assert profile_view.is_next_button_enabled is False
-        assert profile_view.error_message == error
+        assert profile_view.get_error_message == error
 
     with step('Clear content of disply name field and verify it is empty'):
         profile_view.clear_field()

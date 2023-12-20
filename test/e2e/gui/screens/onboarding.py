@@ -277,7 +277,7 @@ class YourProfileView(OnboardingView):
 
     @property
     @allure.step('Get error messages')
-    def error_message(self) -> str:
+    def get_error_message(self) -> str:
         return self._erros_text_label.text if self._erros_text_label.is_visible else ''
 
     @allure.step('Set user display name')
@@ -349,12 +349,12 @@ class EmojiAndIconView(OnboardingView):
 
     @property
     @allure.step('Get chat key')
-    def chat_key(self) -> str:
+    def get_chat_key(self) -> str:
         return self._chat_key_text_label.text.split(':')[1].strip()
 
     @property
     @allure.step('Get emoji hash image')
-    def emoji_hash(self) -> Image:
+    def get_emoji_hash(self) -> Image:
         return self._emoji_hash.image
 
     @property
