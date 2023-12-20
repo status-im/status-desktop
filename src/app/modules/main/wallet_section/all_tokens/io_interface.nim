@@ -65,6 +65,12 @@ method getTokenBySymbolModelDataSource*(self: AccessInterface): TokenBySymbolMod
 method getTokenMarketValuesDataSource*(self: AccessInterface): TokenMarketValuesDataSource {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateTokenPreferences*(self: AccessInterface, tokenPreferencesJson: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTokenPreferencesJson*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
@@ -72,4 +78,10 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method filterChanged*(self: AccessInterface, addresses: seq[string]) =
+  raise newException(ValueError, "No implementation available")
+
+method getTokenGroupByCommunity*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method toggleTokenGroupByCommunity*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")

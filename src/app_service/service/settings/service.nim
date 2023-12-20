@@ -498,6 +498,16 @@ QtObject:
       return true
     return false
 
+  proc tokenGroupByCommunity*(self: Service): bool =
+    return self.settings.tokenGroupByCommunity
+
+  proc toggleTokenGroupByCommunity*(self: Service): bool =
+    let newValue = not self.settings.tokenGroupByCommunity
+    if(self.saveSetting(KEY_TOKEN_GROUP_BY_COMMUNITY, newValue)):
+      self.settings.tokenGroupByCommunity = newValue
+      return true
+    return false
+
   proc urlUnfurlingMode*(self: Service): UrlUnfurlingMode =
     return self.settings.urlUnfurlingMode
 

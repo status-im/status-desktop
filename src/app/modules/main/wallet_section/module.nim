@@ -116,7 +116,7 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
-  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
+  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,

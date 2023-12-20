@@ -49,11 +49,11 @@ QtObject:
 
   proc isSepoliaEnabledChanged*(self: View) {.signal.}
 
-  proc getIsSepoliaEnalbled(self: View): bool {.slot.} =
+  proc getIsSepoliaEnabled(self: View): bool {.slot.} =
     return self.isSepoliaEnabled
 
   QtProperty[bool] isSepoliaEnabled:
-    read = getIsSepoliaEnalbled
+    read = getIsSepoliaEnabled
     notify = isSepoliaEnabledChanged
 
   proc setIsSepoliaEnabled*(self: View, isSepoliaEnabled: bool) =

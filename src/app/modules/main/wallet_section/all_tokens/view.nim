@@ -128,3 +128,28 @@ QtObject:
   proc currencyFormatsUpdated*(self: View) =
     self.flatTokensModel.currencyFormatsUpdated()
     self.tokensBySymbolModel.currencyFormatsUpdated()
+
+  proc tokenPreferencesUpdated*(self: View, result: bool) {.signal.}
+
+  proc updateTokenPreferences*(self: View, tokenPreferencesJson: string) {.slot.} =
+    self.delegate.updateTokenPreferences(tokenPreferencesJson)
+
+  proc getTokenPreferencesJson(self: View): QVariant {.slot.} =
+    let preferences = self.delegate.getTokenPreferencesJson()
+    return newQVariant(preferences)
+
+  QtProperty[QVariant] tokenPreferencesJson:
+    read = getTokenPreferencesJson
+
+  proc tokenGroupByCommunityChanged*(self: View) {.signal.}
+
+  proc getTokenGroupByCommunity(self: View): bool {.slot.} =
+    return self.delegate.getTokenGroupByCommunity()
+
+  QtProperty[bool] tokenGroupByCommunity:
+    read = getTokenGroupByCommunity
+    notify = tokenGroupByCommunityChanged
+
+  proc toggleTokenGroupByCommunity*(self: View) {.slot.} =
+    self.delegate.toggleTokenGroupByCommunity()
+    self.tokenGroupByCommunityChanged()
