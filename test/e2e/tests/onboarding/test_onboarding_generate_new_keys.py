@@ -1,5 +1,7 @@
 import logging
 import os
+import random
+import string
 
 import allure
 import pytest
@@ -31,7 +33,10 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.critical
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
-        '_1Test-User',
+        ''.join((random.choice(
+            string.ascii_letters + string.digits + string.whitespace + random.choice('_-'))
+                for i in range(5, 21))
+        ),
         '*P@ssw0rd*',
         'tv_signal.jpeg',
         5,
