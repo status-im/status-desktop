@@ -90,17 +90,10 @@ void SourceModel::setModel(QAbstractItemModel* model)
     if (m_model == model)
         return;
 
-    if (model)
-        connect(model, &QObject::destroyed, this, &SourceModel::onModelDestroyed);
-
-    if (m_model)
-        disconnect(m_model, &QObject::destroyed, this, &SourceModel::onModelDestroyed);
-
     emit modelAboutToBeChanged();
     m_model = model;
-    emit modelChanged(false);
+    emit modelChanged();
 }
-
 
 /*!
     \qmlproperty any StatusQ::SourceModel::model
@@ -131,12 +124,6 @@ void SourceModel::setMarkerRoleValue(const QString& markerRoleValue)
 const QString& SourceModel::markerRoleValue() const
 {
     return m_markerRoleValue;
-}
-
-void SourceModel::onModelDestroyed()
-{
-    m_model = nullptr;
-    emit modelChanged(true);
 }
 
 
@@ -350,14 +337,9 @@ void ConcatModel::componentComplete()
         });
 
         connect(source, &SourceModel::modelChanged, this,
-                [this, source, i](bool deleted)
+                [this, source, i]()
         {
             auto previousRowCount = m_rowCounts[i];
-
-            if (deleted) {
-                auto prefix = countPrefix(i);
-                beginRemoveRows({}, prefix, prefix + previousRowCount - 1);
-            }
 
             if (previousRowCount) {
                 m_rowCounts[i] = 0;

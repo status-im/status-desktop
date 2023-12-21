@@ -1379,43 +1379,26 @@ private slots:
         QSignalSpy rowsAboutToBeRemovedSpy(&model, &ConcatModel::rowsAboutToBeRemoved);
         QSignalSpy rowsRemovedSpy(&model, &ConcatModel::rowsRemoved);
 
-        // checking validity inside rowsAboutToBeRemoved signal
-        {
-            QObject context;
-            connect(&model, &ConcatModel::rowsAboutToBeRemoved, &context,
-                    [this, &model, &roles] {
-                QCOMPARE(model.rowCount(), 6);
+        sourceModel2.reset();
 
-                QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
-                QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
-                QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "key")), {});
-                QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "key")), {});
-                QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "key")), 5);
-                QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "key")), 6);
+        QCOMPARE(model.rowCount(), 6);
 
-                QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
-                QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
-                QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
-                QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
-                QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), "");
-                QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
-            });
+        QCOMPARE(rowsAboutToBeRemovedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
 
-            sourceModel2.reset();
-        }
+        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "key")), 1);
+        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "key")), 2);
+        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "key")), {});
+        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "key")), {});
+        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "key")), 5);
+        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "key")), 6);
 
-        QCOMPARE(model.rowCount(), 4);
-
-        QCOMPARE(rowsAboutToBeRemovedSpy.count(), 1);
-        QCOMPARE(rowsRemovedSpy.count(), 1);
-
-        QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(0), QModelIndex{});
-        QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(1), 2);
-        QCOMPARE(rowsAboutToBeRemovedSpy.at(0).at(2), 3);
-
-        QCOMPARE(rowsRemovedSpy.at(0).at(0), QModelIndex{});
-        QCOMPARE(rowsRemovedSpy.at(0).at(1), 2);
-        QCOMPARE(rowsRemovedSpy.at(0).at(2), 3);
+        QCOMPARE(model.data(model.index(0, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(1, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(2, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(4, 0), roleForName(roles, "whichModel")), "");
+        QCOMPARE(model.data(model.index(5, 0), roleForName(roles, "whichModel")), "");
     }
 
     void removalTest()
