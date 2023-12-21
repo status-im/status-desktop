@@ -74,6 +74,9 @@ QtObject:
 
   proc installedStickerPacksUpdated*(self: View) {.signal.}
 
+  proc clearStickers*(self: View) =
+    self.recentStickers.clear()
+
   proc clearStickerPacks*(self: View) =
     self.stickerPacks.clear()
 

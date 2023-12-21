@@ -42,6 +42,9 @@ method obtainMarketStickerPacks*(self: AccessInterface) {.base.} =
 method addRecentStickerToList*(self: AccessInterface, sticker: StickerDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method clearStickers*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method clearStickerPacks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
