@@ -22,6 +22,7 @@ StatusMenu {
         pubkey: root.store.userProfileInst.pubKey
         icon: root.store.userProfileInst.icon
         userIsEnsVerified: !!root.store.userProfileInst.preferredName
+        objectName: 'onlineIdentifierProfileHeader'
     }
 
     StatusMenuSeparator {
