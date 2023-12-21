@@ -5,89 +5,7 @@
 #include <memory>
 
 #include <StatusQ/leftjoinmodel.h>
-
-namespace {
-
-class TestSourceModel : public QAbstractListModel {
-
-public:
-    explicit TestSourceModel(QList<QPair<QString, QVariantList>> data)
-        : m_data(std::move(data))
-    {
-        m_roles.reserve(m_data.size());
-
-        for (auto i = 0; i < m_data.size(); i++)
-            m_roles.insert(i, m_data.at(i).first.toUtf8());
-    }
-
-    int rowCount(const QModelIndex& parent) const override
-    {
-        if(parent.isValid()) return 0; //no children
-
-        assert(m_data.size());
-        return m_data.first().second.size();
-    }
-
-    QVariant data(const QModelIndex& index, int role) const override
-    {
-        if (!index.isValid() || role < 0 || role >= m_data.size())
-            return {};
-
-        const auto row = index.row();
-
-        if (role >= m_data.length() || row >= m_data.at(0).second.length())
-            return {};
-
-        return m_data.at(role).second.at(row);
-    }
-
-    void insert(int index, QVariantList row)
-    {
-        beginInsertRows(QModelIndex{}, index, index);
-
-        assert(row.size() == m_data.size());
-
-        for (int i = 0; i < m_data.size(); i++) {
-            auto& roleVariantList = m_data[i].second;
-            assert(index <= roleVariantList.size());
-            roleVariantList.insert(index, row.at(i));
-        }
-
-        endInsertRows();
-    }
-
-    void update(int index, int role, QVariant value)
-    {
-        assert(role < m_data.size() && index < m_data[role].second.size());
-        m_data[role].second[index].setValue(std::move(value));
-
-        emit dataChanged(this->index(index, 0), this->index(index, 0), { role });
-    }
-
-    void remove(int index)
-    {
-        beginRemoveRows(QModelIndex{}, index, index);
-
-        for (int i = 0; i < m_data.size(); i++) {
-            auto& roleVariantList = m_data[i].second;
-            assert(index < roleVariantList.size());
-            roleVariantList.removeAt(index);
-        }
-
-        endRemoveRows();
-    }
-
-    QHash<int, QByteArray> roleNames() const override
-    {
-        return m_roles;
-    }
-
-private:
-    QList<QPair<QString, QVariantList>> m_data;
-    QHash<int, QByteArray> m_roles;
-};
-
-} // anonymous namespace
+#include <TestHelpers/testmodel.h>
 
 class TestLeftJoinModel: public QObject
 {
@@ -105,12 +23,12 @@ private slots:
 
     void initializationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -138,12 +56,12 @@ private slots:
 
     void collidingRolesTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "name", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -174,13 +92,13 @@ private slots:
     void duplicatedRolesTest()
     {
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "name", { "Token 1", "Token 2" }},
                { "name", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "title", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
@@ -208,13 +126,13 @@ private slots:
             QCOMPARE(model.roleNames(), {});
         }
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "name", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "title", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
@@ -242,12 +160,12 @@ private slots:
             QCOMPARE(model.roleNames(), {});
         }
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "name", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "title", { "Community 1", "Community 2" }},
                { "title", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
@@ -280,12 +198,12 @@ private slots:
     void noJoinRoleTest()
     {
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "title", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "name", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
@@ -313,12 +231,12 @@ private slots:
             QCOMPARE(model.roleNames(), {});
         }
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "title", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "name", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
@@ -346,12 +264,12 @@ private slots:
             QCOMPARE(model.roleNames(), {});
         }
         {
-            TestSourceModel leftModel({
+            TestModel leftModel({
                { "title", { "Token 1", "Token 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
 
-            TestSourceModel rightModel({
+            TestModel rightModel({
                { "name", { "Community 1", "Community 2" }},
                { "communityId", { "community_1", "community_2" }}
             });
@@ -382,12 +300,12 @@ private slots:
 
     void basicAccesTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "color", { "red", "blue" }},
            { "communityId", { "community_1", "community_2" }}
@@ -413,12 +331,12 @@ private slots:
 
     void changesPropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }},
            { "color", { "red", "green" }}
@@ -472,12 +390,12 @@ private slots:
     // TODO: cover also move and layoutChanged
     void insertRemovePropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }},
            { "color", { "red", "green" }}
@@ -529,12 +447,12 @@ private slots:
 
     void rightModelJoinRoleChangesPropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -566,12 +484,12 @@ private slots:
 
     void rightModelRemovalPropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -603,12 +521,12 @@ private slots:
 
     void rightModelAdditionPropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_3" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -643,12 +561,12 @@ private slots:
 
     void leftModelJoinRoleChangesPropagationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -686,13 +604,13 @@ private slots:
 
     void modelsDeletedBeforeInitializationTest()
     {
-        auto leftModel = std::make_unique<TestSourceModel>(
+        auto leftModel = std::make_unique<TestModel>(
             QList<QPair<QString, QVariantList>>{
                 { "title", { "Token 1", "Token 2", "Token 3"}},
                 { "communityId", { "community_1", "community_2", "community_1" }}
             });
 
-        auto rightModel = std::make_unique<TestSourceModel>(
+        auto rightModel = std::make_unique<TestModel>(
             QList<QPair<QString, QVariantList>>{
                 { "name", { "Community 1", "Community 2" }},
                 { "communityId", { "community_1", "community_2" }}
@@ -716,12 +634,12 @@ private slots:
         QCOMPARE(model.data(model.index(0, 0), 0), {});
         QCOMPARE(model.data(model.index(0, 0), 2), {});
 
-        TestSourceModel newLeftModel({
+        TestModel newLeftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel newRightModel({
+        TestModel newRightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -745,13 +663,13 @@ private slots:
 
     void modelsDeletedAfterInitializationTest()
     {
-        auto leftModel = std::make_unique<TestSourceModel>(
+        auto leftModel = std::make_unique<TestModel>(
                     QList<QPair<QString, QVariantList>>{
                         { "title", { "Token 1", "Token 2", "Token 3"}},
                         { "communityId", { "community_1", "community_2", "community_1" }}
                     });
 
-        auto rightModel = std::make_unique<TestSourceModel>(
+        auto rightModel = std::make_unique<TestModel>(
                     QList<QPair<QString, QVariantList>>{
                         { "name", { "Community 1", "Community 2" }},
                         { "communityId", { "community_1", "community_2" }}
@@ -778,12 +696,12 @@ private slots:
         QCOMPARE(model.data(model.index(0, 0), 0), {});
         QCOMPARE(model.data(model.index(0, 0), 2), {});
 
-        TestSourceModel newLeftModel({
+        TestModel newLeftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel newRightModel({
+        TestModel newRightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -811,13 +729,13 @@ private slots:
 
     void rightModelDeletedAfterInitializationTest()
     {
-        auto leftModel = std::make_unique<TestSourceModel>(
+        auto leftModel = std::make_unique<TestModel>(
                     QList<QPair<QString, QVariantList>>{
                         { "title", { "Token 1", "Token 2", "Token 3"}},
                         { "communityId", { "community_1", "community_2", "community_1" }}
                     });
 
-        auto rightModel = std::make_unique<TestSourceModel>(
+        auto rightModel = std::make_unique<TestModel>(
                     QList<QPair<QString, QVariantList>>{
                         { "name", { "Community 1", "Community 2" }},
                         { "communityId", { "community_1", "community_2" }}
@@ -840,12 +758,12 @@ private slots:
         QCOMPARE(model.data(model.index(0, 0), 1), "community_1");
         QCOMPARE(model.data(model.index(0, 0), 2), {});
 
-        TestSourceModel newLeftModel({
+        TestModel newLeftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel newRightModel({
+        TestModel newRightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -866,12 +784,12 @@ private slots:
 
     void rightModelChangedWithSameRolesAfterInitializationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -884,7 +802,7 @@ private slots:
 
         model.setJoinRole("communityId");
 
-        TestSourceModel newRightModel({
+        TestModel newRightModel({
            { "name", { "Community A", "Community B" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -919,12 +837,12 @@ private slots:
 
     void rightModelChangedWithDifferentRolesAfterInitializationTest()
     {
-        TestSourceModel leftModel({
+        TestModel leftModel({
            { "title", { "Token 1", "Token 2", "Token 3"}},
            { "communityId", { "community_1", "community_2", "community_1" }}
         });
 
-        TestSourceModel rightModel({
+        TestModel rightModel({
            { "name", { "Community 1", "Community 2" }},
            { "communityId", { "community_1", "community_2" }}
         });
@@ -937,7 +855,7 @@ private slots:
 
         model.setJoinRole("communityId");
 
-        TestSourceModel newRightModel({
+        TestModel newRightModel({
            { "communityId", { "community_1", "community_2" }},
            { "name", { "Community A", "Community B" }}
         });
