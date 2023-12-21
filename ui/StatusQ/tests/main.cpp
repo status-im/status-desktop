@@ -3,8 +3,8 @@
 
 #include <QtWebEngine>
 
-#include "TestHelpers/MonitorQtOutput.h"
-#include "TestHelpers/modelaccessobserverproxy.h"
+#include <TestHelpers/MonitorQtOutput.h>
+#include <TestHelpers/modelaccessobserverproxy.h>
 
 class RunBeforeQApplicationIsInitialized {
 public:

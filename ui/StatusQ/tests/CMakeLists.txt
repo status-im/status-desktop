@@ -13,6 +13,8 @@ find_package(Qt5 COMPONENTS QuickTest Qml Quick WebEngine REQUIRED)
 add_library(StatusQTestLib
     src/TestHelpers/MonitorQtOutput.cpp
     src/TestHelpers/MonitorQtOutput.h
+    src/TestHelpers/listmodelwrapper.cpp
+    src/TestHelpers/listmodelwrapper.h
     src/TestHelpers/modelaccessobserverproxy.cpp
     src/TestHelpers/modelaccessobserverproxy.h
 )
@@ -55,7 +57,7 @@ target_link_libraries(LeftJoinModelTest PRIVATE Qt5::Test StatusQ)
 add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 
 add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
-target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ StatusQTestLib)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
 
 add_executable(AggregatorTest tst_Aggregator.cpp)
@@ -71,5 +73,5 @@ target_link_libraries(SumAggregatorTest PRIVATE Qt5::Test StatusQ)
 add_test(NAME SumAggregatorTest COMMAND SumAggregatorTest)
 
 add_executable(ConcatModelTest tst_ConcatModel.cpp)
-target_link_libraries(ConcatModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+target_link_libraries(ConcatModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ StatusQTestLib)
 add_test(NAME ConcatModelTest COMMAND ConcatModelTest)
