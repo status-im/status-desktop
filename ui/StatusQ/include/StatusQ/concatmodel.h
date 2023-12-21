@@ -3,6 +3,7 @@
 #include <QAbstractListModel>
 #include <QQmlListProperty>
 #include <QQmlParserStatus>
+#include <QPointer>
 
 #include <unordered_map>
 
@@ -27,13 +28,11 @@ public:
 
 signals:
     void modelAboutToBeChanged();
-    void modelChanged(bool deleted);
+    void modelChanged();
     void markerRoleValueChanged();
 
 private:
-    void onModelDestroyed();
-
-    QAbstractItemModel* m_model = nullptr;
+    QPointer<QAbstractItemModel> m_model;
     QString m_markerRoleValue;
 };
 
