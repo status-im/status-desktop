@@ -55,7 +55,7 @@ Control {
        \qmlproperty var StatusImageSelector::acceptedImageExtensions.
        This property holds the list of possible image file extensions.
     */
-    property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".heif", ".tif", ".tiff"]
+    property var acceptedImageExtensions: [".png", ".jpg", ".jpeg"]
 
     /*!
        \qmlproperty bool StatusImageSelector::preview.

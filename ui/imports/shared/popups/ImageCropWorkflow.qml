@@ -39,7 +39,7 @@ Item {
 
         title: root.imageFileDialogTitle
         folder: root.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : shortcuts.pictures
-        nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg *.jpeg *.jfif *.webp *.png *.heif")]
+        nameFilters: [qsTr("Supported image formats (%1)").arg(Constants.acceptedDragNDropImageExtensions.map(img => "*" + img).join(" "))]
         onAccepted: {
             if (fileDialog.fileUrls.length > 0) {
                 cropImage(fileDialog.fileUrls[0])
