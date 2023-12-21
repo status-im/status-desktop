@@ -18,6 +18,7 @@ RESULTS: SystemPath = TEMP / 'results'
 RUN: SystemPath = RESULTS / RUN_ID
 VP: SystemPath = ROOT / 'ext' / 'vp'
 TEST_FILES: SystemPath = ROOT / 'ext' / 'test_files'
+TEST_IMAGES: SystemPath = ROOT / 'ext' / 'test_images'
 TEST_USER_DATA: SystemPath = ROOT / 'ext' / 'user_data'
 
 # Driver Directories

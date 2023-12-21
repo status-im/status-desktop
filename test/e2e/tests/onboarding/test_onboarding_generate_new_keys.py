@@ -1,7 +1,9 @@
 import logging
 import os
+import pathlib
 import random
 import string
+import glob
 
 import allure
 import pytest
@@ -41,7 +43,8 @@ def keys_screen(main_window) -> KeysView:
             string.ascii_letters + string.digits + string.punctuation)
                 for _ in range(10, 28))
         ),
-        'tv_signal.jpeg',
+        # TODO: add .tiff and .heif if https://github.com/status-im/status-desktop/issues/13077 is fixed
+        random.choice(['sample_JPEG_1920×1280.jpeg', 'file_example_PNG_3MB.png', 'file_example_JPG_2500kB.jpg']),
         5,
         shift_image(0, 1000, 1000, 0))
 ])
@@ -61,7 +64,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
     with step('Click plus button and add user picture'):
         if user_image is not None:
-            profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_FILES / user_image)
+            profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_IMAGES / user_image)
             profile_picture_popup.make_picture(zoom=zoom, shift=shift)
         assert not profile_view.get_error_message, \
             f'Error message {profile_view.get_error_message} is present when it should not'
