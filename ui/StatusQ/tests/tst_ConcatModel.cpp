@@ -1,20 +1,15 @@
 #include <QIdentityProxyModel>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QQmlEngine>
 #include <QSignalSpy>
 #include <QTest>
 
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QQmlComponent>
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QQmlExpression>
-
 #include <memory>
 #include <set>
-#include <string>
 
 #include <StatusQ/concatmodel.h>
+#include <TestHelpers/listmodelwrapper.h>
 
 namespace {
 // Workaround for https://bugreports.qt.io/browse/QTBUG-57971 (ListModel doesn't
@@ -27,116 +22,6 @@ public:
             return sourceModel()->roleNames();
         return {};
     }
-};
-
-class ListModelWrapper {
-
-public:
-    explicit ListModelWrapper(QQmlEngine& engine, const QString& content = "[]")
-    {
-        QQmlComponent component(&engine);
-        auto componentBody = QStringLiteral(R"(
-            import QtQml 2.15
-            import QtQml.Models 2.15
-
-            ListModel {
-                Component.onCompleted: {
-                    const content = %1
-
-                    if (content.length)
-                        append(content)
-                }
-            }
-        )").arg(content);
-
-        component.setData(componentBody.toUtf8(), {});
-
-        m_model.reset(qobject_cast<QAbstractItemModel*>(
-                          component.create(engine.rootContext())));
-    }
-
-    explicit ListModelWrapper(QQmlEngine& engine, const QJsonArray& content)
-        : ListModelWrapper(engine, QJsonDocument(content).toJson())
-    {
-    }
-
-    QAbstractItemModel* model() const
-    {
-        return m_model.get();
-    }
-
-    int count() const
-    {
-        return m_model->rowCount();
-    }
-
-    int role(const QString& roleName)
-    {
-        QHash<int, QByteArray> roleNames = m_model->roleNames();
-        QList<int> roles = roleNames.keys(roleName.toUtf8());
-
-        return roles.length() != 1 ? -1 : roles.first();
-    }
-
-    void set(int index, const QJsonObject& dict)
-    {
-        QString jsonDict = QJsonDocument(dict).toJson();
-        runExpression(QString("set(%1, %2)").arg(index).arg(jsonDict));
-    }
-
-    void setProperty(int index, const QString& property, const QVariant& value)
-    {
-        QString valueStr = value.type() == QVariant::String
-                ? QString("'%1'").arg(value.toString())
-                : value.toString();
-
-        runExpression(QString("setProperty(%1, '%2', %3)").arg(index)
-                      .arg(property, valueStr));
-    }
-
-    QVariant get(int index, const QString& roleName)
-    {
-        auto role = this->role(roleName);
-
-        if (role == -1)
-            return {};
-
-        return m_model->data(m_model->index(index, 0), role);
-    }
-
-    void insert(int index, const QJsonObject& dict) {
-        QString jsonDict = QJsonDocument(dict).toJson();
-        runExpression(QString("insert(%1, %2)").arg(index).arg(jsonDict));
-    }
-
-    void append(const QJsonArray& data) {
-        QString jsonData = QJsonDocument(data).toJson();
-        runExpression(QString("append(%1)").arg(jsonData));
-    }
-
-    void clear() {
-        runExpression(QString("clear()"));
-    }
-
-    void remove(int index, int count = 1) {
-        runExpression(QString("remove(%1, %2)").arg(QString::number(index),
-                                                    QString::number(count)));
-    }
-
-    void move(int from, int to, int n = 1) {
-        runExpression(QString("move(%1, %2, %3)").arg(QString::number(from),
-                                                      QString::number(to),
-                                                      QString::number(n)));
-    }
-
-private:
-    void runExpression(const QString& expression)
-    {
-        QQmlExpression(QQmlEngine::contextForObject(m_model.get()),
-                       m_model.get(), expression).evaluate();
-    }
-
-    std::unique_ptr<QAbstractItemModel> m_model;
 };
 
 } // unnamed namespace
@@ -181,16 +66,16 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1;
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         SourceModel source2;
-        source2.setModel(sourceModel2.model());
+        source2.setModel(sourceModel2);
 
         SourceModel source3;
-        source3.setModel(sourceModel3.model());
+        source3.setModel(sourceModel3);
 
         SourceModel source4;
-        source4.setModel(sourceModel4.model());
+        source4.setModel(sourceModel4);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -258,13 +143,13 @@ private slots:
         QCOMPARE(model.data(model.index(0, 0), roleOutOfRange), {});
 
         // getting source model and source model row
-        QCOMPARE(model.sourceModel(0), sourceModel1.model());
-        QCOMPARE(model.sourceModel(1), sourceModel1.model());
-        QCOMPARE(model.sourceModel(2), sourceModel1.model());
-        QCOMPARE(model.sourceModel(3), sourceModel3.model());
-        QCOMPARE(model.sourceModel(4), sourceModel3.model());
-        QCOMPARE(model.sourceModel(5), sourceModel3.model());
-        QCOMPARE(model.sourceModel(6), sourceModel3.model());
+        QCOMPARE(model.sourceModel(0), sourceModel1);
+        QCOMPARE(model.sourceModel(1), sourceModel1);
+        QCOMPARE(model.sourceModel(2), sourceModel1);
+        QCOMPARE(model.sourceModel(3), sourceModel3);
+        QCOMPARE(model.sourceModel(4), sourceModel3);
+        QCOMPARE(model.sourceModel(5), sourceModel3);
+        QCOMPARE(model.sourceModel(6), sourceModel3);
         QCOMPARE(model.sourceModel(7), nullptr);
         QCOMPARE(model.sourceModel(-1), nullptr);
 
@@ -281,17 +166,17 @@ private slots:
         // getting row by source model source model row
         QCOMPARE(model.fromSourceRow(nullptr, 0), -1);
 
-        QCOMPARE(model.fromSourceRow(sourceModel1.model(), 0), 0);
-        QCOMPARE(model.fromSourceRow(sourceModel1.model(), 1), 1);
-        QCOMPARE(model.fromSourceRow(sourceModel1.model(), 2), 2);
-        QCOMPARE(model.fromSourceRow(sourceModel1.model(), 3), -1);
-        QCOMPARE(model.fromSourceRow(sourceModel1.model(), -1), -1);
-        QCOMPARE(model.fromSourceRow(sourceModel2.model(), 0), -1);
-        QCOMPARE(model.fromSourceRow(sourceModel3.model(), 0), 3);
-        QCOMPARE(model.fromSourceRow(sourceModel3.model(), 1), 4);
-        QCOMPARE(model.fromSourceRow(sourceModel3.model(), 2), 5);
-        QCOMPARE(model.fromSourceRow(sourceModel3.model(), 3), 6);
-        QCOMPARE(model.fromSourceRow(sourceModel3.model(), 4), -1);
+        QCOMPARE(model.fromSourceRow(sourceModel1, 0), 0);
+        QCOMPARE(model.fromSourceRow(sourceModel1, 1), 1);
+        QCOMPARE(model.fromSourceRow(sourceModel1, 2), 2);
+        QCOMPARE(model.fromSourceRow(sourceModel1, 3), -1);
+        QCOMPARE(model.fromSourceRow(sourceModel1, -1), -1);
+        QCOMPARE(model.fromSourceRow(sourceModel2, 0), -1);
+        QCOMPARE(model.fromSourceRow(sourceModel3, 0), 3);
+        QCOMPARE(model.fromSourceRow(sourceModel3, 1), 4);
+        QCOMPARE(model.fromSourceRow(sourceModel3, 2), 5);
+        QCOMPARE(model.fromSourceRow(sourceModel3, 3), 6);
+        QCOMPARE(model.fromSourceRow(sourceModel3, 4), -1);
     }
 
     void dataChangeTest()
@@ -319,16 +204,16 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1;
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         SourceModel source2;
-        source2.setModel(sourceModel2.model());
+        source2.setModel(sourceModel2);
 
         SourceModel source3;
-        source3.setModel(sourceModel3.model());
+        source3.setModel(sourceModel3);
 
         SourceModel source4;
-        source4.setModel(sourceModel4.model());
+        source4.setModel(sourceModel4);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -470,8 +355,8 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1, source2;
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -521,16 +406,16 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1;
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         SourceModel source2;
-        source2.setModel(sourceModel2.model());
+        source2.setModel(sourceModel2);
 
         SourceModel source3;
-        source3.setModel(sourceModel3.model());
+        source3.setModel(sourceModel3);
 
         SourceModel source4;
-        source4.setModel(sourceModel4.model());
+        source4.setModel(sourceModel4);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -690,10 +575,10 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1;
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         SourceModel source2;
-        source2.setModel(sourceModel2.model());
+        source2.setModel(sourceModel2);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -814,7 +699,7 @@ private slots:
                 connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                         [&model] { QCOMPARE(model.rowCount(), 0); });
 
-                source1.setModel(sourceModel1.model());
+                source1.setModel(sourceModel1);
             }
 
             QCOMPARE(rowsAboutToBeInsertedSpy.count(), 1);
@@ -846,7 +731,7 @@ private slots:
                 connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                         [&model] { QCOMPARE(model.rowCount(), 2); });
 
-                source2.setModel(sourceModel2.model());
+                source2.setModel(sourceModel2);
             }
 
             QCOMPARE(rowsInsertedSpy.count(), 1);
@@ -888,8 +773,8 @@ private slots:
 
         model.componentComplete();
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
 
         QCOMPARE(model.rowCount(), 0);
         QCOMPARE(model.roleNames(), {});
@@ -986,7 +871,7 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1012,7 +897,7 @@ private slots:
                 connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                         [&model] { QCOMPARE(model.rowCount(), 2); });
 
-                source2.setModel(sourceModel2.model());
+                source2.setModel(sourceModel2);
             }
 
             QCOMPARE(rowsAboutToBeInsertedSpy.count(), 1);
@@ -1048,7 +933,7 @@ private slots:
                 connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                         [&model] { QCOMPARE(model.rowCount(), 4); });
 
-                source3.setModel(sourceModel3.model());
+                source3.setModel(sourceModel3);
             }
 
             QCOMPARE(rowsAboutToBeInsertedSpy.count(), 1);
@@ -1096,9 +981,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1235,9 +1120,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1271,7 +1156,7 @@ private slots:
             connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                     [&model] { QCOMPARE(model.rowCount(), 4); });
 
-            source2.setModel(sourceModel4.model());
+            source2.setModel(sourceModel4);
         }
 
         QCOMPARE(model.rowCount(), 7);
@@ -1358,9 +1243,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2->model());
-        source3.setModel(sourceModel3.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(*sourceModel2);
+        source3.setModel(sourceModel3);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1425,9 +1310,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1502,9 +1387,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1573,8 +1458,8 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -1624,9 +1509,9 @@ private slots:
 
         IdentityModel proxy1, proxy2, proxy3;
 
-        proxy1.setSourceModel(sourceModel1.model());
-        proxy2.setSourceModel(sourceModel2.model());
-        proxy3.setSourceModel(sourceModel3.model());
+        proxy1.setSourceModel(sourceModel1);
+        proxy2.setSourceModel(sourceModel2);
+        proxy3.setSourceModel(sourceModel3);
 
         source1.setModel(&proxy1);
         source2.setModel(&proxy2);
@@ -1652,7 +1537,7 @@ private slots:
             QSignalSpy rowsAboutToBeInsertedSpy(&model, &ConcatModel::rowsAboutToBeInserted);
             QSignalSpy rowsInsertedSpy(&model, &ConcatModel::rowsInserted);
 
-            proxy2.setSourceModel(sourceModel4.model());
+            proxy2.setSourceModel(sourceModel4);
 
             QCOMPARE(modelAboutToBeResetSpy.count(), 0);
             QCOMPARE(modelResetSpy.count(), 0);
@@ -1676,7 +1561,7 @@ private slots:
                 connect(&model, &ConcatModel::rowsAboutToBeInserted, &context,
                         [&model] { QCOMPARE(model.rowCount(), 0); });
 
-                proxy2.setSourceModel(sourceModel5.model());
+                proxy2.setSourceModel(sourceModel5);
             }
 
             QCOMPARE(modelAboutToBeResetSpy.count(), 0);
@@ -1733,9 +1618,9 @@ private slots:
 
         IdentityModel proxy1, proxy2, proxy3;
 
-        proxy1.setSourceModel(sourceModel1.model());
-        proxy2.setSourceModel(sourceModel2.model());
-        proxy3.setSourceModel(sourceModel3.model());
+        proxy1.setSourceModel(sourceModel1);
+        proxy2.setSourceModel(sourceModel2);
+        proxy3.setSourceModel(sourceModel3);
 
         source1.setModel(&proxy1);
         source2.setModel(&proxy2);
@@ -1778,7 +1663,7 @@ private slots:
                     QCOMPARE(model.data(model.index(3, 0), roleForName(roles, "color")), {});
                 });
 
-                proxy2.setSourceModel(sourceModel4.model());
+                proxy2.setSourceModel(sourceModel4);
             }
 
             QCOMPARE(modelAboutToBeResetSpy.count(), 0);
@@ -1854,7 +1739,7 @@ private slots:
                     QCOMPARE(model.rowCount(), 0);
                 });
 
-                proxy1.setSourceModel(sourceModel5.model());
+                proxy1.setSourceModel(sourceModel5);
             }
 
             QCOMPARE(modelAboutToBeResetSpy.count(), 0);
@@ -1899,9 +1784,9 @@ private slots:
 
         SourceModel source1, source2, source3;
 
-        source1.setModel(sourceModel.model());
-        source2.setModel(sourceModel.model());
-        source3.setModel(sourceModel.model());
+        source1.setModel(sourceModel);
+        source2.setModel(sourceModel);
+        source3.setModel(sourceModel);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -2002,7 +1887,7 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1, source2, source3;
-        source1.setModel(sourceModel1.model());
+        source1.setModel(sourceModel1);
 
         sources.append(&sources, &source1);
         sources.append(&sources, &source2);
@@ -2025,8 +1910,8 @@ private slots:
         std::set<QByteArray> expectedRoleNamesSet({"key", "color", "value", "whichModel"});
         QCOMPARE(roleNamesSet, expectedRoleNamesSet);
 
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
 
         QCOMPARE(model.rowCount(), 7);
     }
@@ -2056,10 +1941,10 @@ private slots:
         QQmlListProperty<SourceModel> sources = model.sources();
 
         SourceModel source1, source2, source3, source4;
-        source1.setModel(sourceModel1.model());
-        source2.setModel(sourceModel2.model());
-        source3.setModel(sourceModel3.model());
-        source4.setModel(sourceModel4.model());
+        source1.setModel(sourceModel1);
+        source2.setModel(sourceModel2);
+        source3.setModel(sourceModel3);
+        source4.setModel(sourceModel4);
 
         source1.setMarkerRoleValue("model 1");
         source2.setMarkerRoleValue("model 2");
