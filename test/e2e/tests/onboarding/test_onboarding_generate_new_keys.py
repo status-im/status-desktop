@@ -43,14 +43,11 @@ def keys_screen(main_window) -> KeysView:
             string.ascii_letters + string.digits + string.punctuation)
                 for _ in range(10, 28))
         ),
-        # TODO: add .tiff and .heif if https://github.com/status-im/status-desktop/issues/13077 is fixed
         random.choice(['sample_JPEG_1920×1280.jpeg', 'file_example_PNG_3MB.png', 'file_example_JPG_2500kB.jpg']),
         5,
         shift_image(0, 1000, 1000, 0))
 ])
 def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
-    with step('Click generate new keys and click back button'):
-        keys_screen.generate_new_keys().back()
 
     with step('Click generate new keys and open profile view'):
         profile_view = keys_screen.generate_new_keys()
@@ -61,13 +58,16 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         profile_view.set_display_name(user_name)
         assert profile_view.get_display_name() == user_name, \
             f'Display name is empty or was not filled in'
+        assert not profile_view.get_error_message, \
+            f'Error message {profile_view.get_error_message} is present when it should not'
 
     with step('Click plus button and add user picture'):
         if user_image is not None:
             profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_IMAGES / user_image)
             profile_picture_popup.make_picture(zoom=zoom, shift=shift)
-        assert not profile_view.get_error_message, \
-            f'Error message {profile_view.get_error_message} is present when it should not'
+        # TODO: find a way to verify the picture is there (changed to the custom one)
+        assert profile_view.get_profile_image is not None, f'Profile picture was not set / applied'
+        assert profile_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
 
     with step('Open emojihash and identicon ring profile screen and capture the details'):
         details_view = profile_view.next()

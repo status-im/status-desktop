@@ -264,6 +264,7 @@ class YourProfileView(OnboardingView):
         self._next_button = Button('mainWindow_Next_StatusButton')
         self._login_input_object = QObject('mainWindow_nameInput_StatusInput')
         self._clear_icon = QObject('mainWindow_clear_icon_StatusIcon')
+        self._identicon_ring = QObject('mainWindow_IdenticonRing')
 
     @property
     @allure.step('Get next button enabled state')
@@ -272,8 +273,13 @@ class YourProfileView(OnboardingView):
 
     @property
     @allure.step('Get profile image')
-    def profile_image(self) -> Image:
+    def get_profile_image(self) -> Image:
         return self._profile_image.image
+
+    @property
+    @allure.step('Check identicon ring visiblity')
+    def is_identicon_ring_visible(self):
+        return self._identicon_ring.is_visible
 
     @property
     @allure.step('Get error messages')
@@ -304,10 +310,10 @@ class YourProfileView(OnboardingView):
         return PictureEditPopup().wait_until_appears()
 
     @allure.step('Open Emoji and Icon view')
-    def next(self, attempts: int = 2) -> 'EmojiAndIconView':
+    def next(self, attempts: int = 2) -> 'YourEmojihashAndIdenticonRingView':
         self._next_button.click()
         try:
-            return EmojiAndIconView().wait_until_appears()
+            return YourEmojihashAndIdenticonRingView().wait_until_appears()
         except AssertionError as err:
             if attempts:
                 return self.next(attempts - 1)
@@ -320,10 +326,10 @@ class YourProfileView(OnboardingView):
         return KeysView().wait_until_appears()
 
 
-class EmojiAndIconView(OnboardingView):
+class YourEmojihashAndIdenticonRingView(OnboardingView):
 
     def __init__(self):
-        super(EmojiAndIconView, self).__init__('mainWindow_InsertDetailsView')
+        super(YourEmojihashAndIdenticonRingView, self).__init__('mainWindow_InsertDetailsView')
         self._profile_image = QObject('mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon')
         self._chat_key_text_label = TextLabel('mainWindow_insertDetailsViewChatKeyTxt_StyledText')
         self._next_button = Button('mainWindow_Next_StatusButton')
@@ -483,7 +489,7 @@ class CreatePasswordView(OnboardingView):
     @allure.step('Go back')
     def back(self):
         self._back_button.click()
-        return EmojiAndIconView().wait_until_appears()
+        return YourEmojihashAndIdenticonRingView().wait_until_appears()
 
 
 class ConfirmPasswordView(OnboardingView):
