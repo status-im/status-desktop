@@ -4,47 +4,7 @@
 #include <memory>
 
 #include <StatusQ/rolesrenamingmodel.h>
-
-namespace {
-
-class TestSourceModel : public QAbstractListModel {
-
-public:
-    explicit TestSourceModel(QList<QString> roles)
-        : m_roles(std::move(roles))
-    {
-    }
-
-    QVariant data(const QModelIndex& index, int role) const override
-    {
-        if(!index.isValid() || index.row() >= capacity)
-            return {};
-
-        return 42;
-    }
-
-    int rowCount(const QModelIndex& parent) const override
-    {
-        return capacity;
-    }
-
-    QHash<int, QByteArray> roleNames() const override
-    {
-        QHash<int, QByteArray> roles;
-        roles.remove(m_roles.size());
-
-        for (auto i = 0; i < m_roles.size(); i++)
-            roles.insert(i, m_roles.at(i).toUtf8());
-
-        return roles;
-    }
-
-private:
-    static constexpr auto capacity = 5;
-    QList<QString> m_roles;
-};
-
-}
+#include <TestHelpers/testmodel.h>
 
 class TestRolesRenamingModel: public QObject
 {
@@ -53,7 +13,7 @@ class TestRolesRenamingModel: public QObject
 private slots:
     void initializationWithBrokenMappingTest()
     {
-        TestSourceModel sourceModel({"id", "name", "color"});
+        TestModel sourceModel({"id", "name", "color"});
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -78,7 +38,7 @@ private slots:
 
     void remappingTest()
     {
-        TestSourceModel sourceModel({"id", "name", "color"});
+        TestModel sourceModel({"id", "name", "color"});
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -103,7 +63,7 @@ private slots:
 
     void addMappingAfterFetchingRoleNamesTest()
     {
-        TestSourceModel sourceModel({"id", "name", "color"});
+        TestModel sourceModel({"id", "name", "color"});
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -134,7 +94,7 @@ private slots:
 
     void duplicatedNamesTest()
     {
-        TestSourceModel sourceModel({"id", "name", "color"});
+        TestModel sourceModel({"id", "name", "color"});
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -182,8 +142,13 @@ private slots:
 
     void sourceModelDeletedTest()
     {
-        auto sourceModel = std::make_unique<TestSourceModel>(
-                    QList<QString>{"id", "name", "color"});
+        auto sourceModel = std::make_unique<TestModel>(
+            QList<QPair<QString, QVariantList>> {
+               { "id", { 1, 2, 3 }},
+               { "name", { "a", "b", "c" }},
+               { "color", { "red", "green", "blue" }}
+            });
+
         RolesRenamingModel model;
 
         QQmlListProperty<RoleRename> mapping = model.mapping();
@@ -204,12 +169,12 @@ private slots:
             {0, "tokenId"}, {1, "tokenName"}, {2, "color"}
         };
         QCOMPARE(model.roleNames(), expectedRoles);
-        QCOMPARE(model.rowCount(), 5);
+        QCOMPARE(model.rowCount(), 3);
 
-        QCOMPARE(model.data(model.index(0, 0), 0), 42);
-        QCOMPARE(model.data(model.index(0, 0), 1), 42);
-        QCOMPARE(model.data(model.index(5, 0), 0), {});
-        QCOMPARE(model.data(model.index(5, 0), 1), {});
+        QCOMPARE(model.data(model.index(0, 0), 0), 1);
+        QCOMPARE(model.data(model.index(0, 0), 1), "a");
+        QCOMPARE(model.data(model.index(2, 0), 0), 3);
+        QCOMPARE(model.data(model.index(2, 0), 1), "c");
 
         QSignalSpy destroyedSpy(sourceModel.get(), &QObject::destroyed);
         sourceModel.reset();
@@ -222,8 +187,8 @@ private slots:
         QCOMPARE(model.roleNames(), {});
         QCOMPARE(model.data(model.index(0, 0), 0), {});
         QCOMPARE(model.data(model.index(0, 0), 1), {});
-        QCOMPARE(model.data(model.index(5, 0), 0), {});
-        QCOMPARE(model.data(model.index(5, 0), 1), {});
+        QCOMPARE(model.data(model.index(2, 0), 0), {});
+        QCOMPARE(model.data(model.index(2, 0), 1), {});
     }
 };
 
