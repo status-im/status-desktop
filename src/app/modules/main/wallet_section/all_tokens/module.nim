@@ -9,7 +9,7 @@ import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/dto
 import app_service/service/currency/service
-import app_service/service/settings/service
+import app_service/service/settings/service as settings_service
 
 export io_interface
 
@@ -27,12 +27,13 @@ proc newModule*(
   events: EventEmitter,
   tokenService: token_service.Service,
   walletAccountService: wallet_account_service.Service,
+  settingsService: settings_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController(result, events, tokenService, walletAccountService)
+  result.controller = controller.newController(result, events, tokenService, walletAccountService, settingsService)
   result.moduleLoaded = false
   result.addresses = @[]
 
@@ -59,6 +60,9 @@ method load*(self: Module) =
     self.view.tokensMarketValuesUpdated()
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
     self.view.tokensMarketValuesUpdated()
+  self.events.on(SIGNAL_TOKEN_PREFERENCES_UPDATED) do(e: Args):
+    let args = ResultArgs(e)
+    self.view.tokenPreferencesUpdated(args.success)
 
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.view.currencyFormatsUpdated()
@@ -127,3 +131,15 @@ method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:
       return
   self.addresses = addresses
+
+method updateTokenPreferences*(self: Module, tokenPreferencesJson: string) {.slot.} =
+  self.controller.updateTokenPreferences(tokenPreferencesJson)
+
+method getTokenPreferencesJson*(self: Module): string =
+  return self.controller.getTokenPreferencesJson()
+
+method getTokenGroupByCommunity*(self: Module): bool =
+  return self.controller.getTokenGroupByCommunity()
+
+method toggleTokenGroupByCommunity*(self: Module) =
+  self.controller.toggleTokenGroupByCommunity()

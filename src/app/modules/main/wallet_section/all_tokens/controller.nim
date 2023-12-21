@@ -1,9 +1,12 @@
+import json
+
 import ./io_interface
 
 import app/core/eventemitter
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/currency/dto
+import app_service/service/settings/service as settings_service
 
 type
   Controller* = ref object of RootObj
@@ -11,18 +14,21 @@ type
     events: EventEmitter
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
+    settingsService: settings_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
-  walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  settingsService: settings_service.Service
 ): Controller =
   result = Controller()
   result.events = events
   result.delegate = delegate
   result.tokenService = tokenService
   result.walletAccountService = walletAccountService
+  result.settingsService = settingsService
 
 proc delete*(self: Controller) =
   discard
@@ -74,3 +80,18 @@ proc getTokensDetailsLoading*(self: Controller): bool =
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   self.tokenService.getTokensMarketValuesLoading()
+
+proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
+  self.tokenService.updateTokenPreferences(tokenPreferencesJson)
+
+proc getTokenPreferencesJson*(self: Controller): string =
+  let data = self.tokenService.getTokenPreferences()
+  if data.isNil:
+    return "[]"
+  return $data
+
+proc getTokenGroupByCommunity*(self: Controller): bool =
+  return self.settingsService.tokenGroupByCommunity()
+
+proc toggleTokenGroupByCommunity*(self: Controller) =
+  discard self.settingsService.toggleTokenGroupByCommunity()

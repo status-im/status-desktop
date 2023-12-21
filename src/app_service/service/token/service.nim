@@ -38,6 +38,11 @@ const SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED* = "tokensListAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
 const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
 const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
+const SIGNAL_TOKEN_PREFERENCES_UPDATED* = "tokenPreferencesUpdated"
+
+type 
+  ResultArgs* = ref object of Args
+    success*: bool
 
 type
   TokenHistoricalDataArgs* = ref object of Args
@@ -604,3 +609,30 @@ QtObject:
     )
     self.threadpool.start(arg)
     return
+
+  proc getTokenPreferences*(self: Service): JsonNode =
+    try:
+      let response = backend.getTokenPreferences()
+      if not response.error.isNil:
+        error "status-go error", procName="getTokenPreferences", errCode=response.error.code, errDesription=response.error.message
+        return
+      return response.result
+    except Exception as e:
+      error "error: ", procName="getTokenPreferences", errName=e.name, errDesription=e.msg
+
+  proc updateTokenPreferences*(self: Service, tokenPreferencesJson: string) =
+    var updated = false
+    try:
+      let preferencesJson = parseJson(tokenPreferencesJson)
+      var tokenPreferences: seq[TokenPreferences]
+      if preferencesJson.kind == JArray:
+        for preferences in preferencesJson:
+          add(tokenPreferences, fromJson(preferences, TokenPreferences))
+      let response = backend.updateTokenPreferences(tokenPreferences)
+      if not response.error.isNil:
+        raise newException(CatchableError, response.error.message)
+      updated = true
+    except Exception as e:
+      error "error: ", procName="updateTokenPreferences", errName=e.name, errDesription=e.msg
+
+    self.events.emit(SIGNAL_TOKEN_PREFERENCES_UPDATED, ResultArgs(success: updated))

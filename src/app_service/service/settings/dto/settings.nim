@@ -45,6 +45,7 @@ const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 const KEY_IS_SEPOLIA_ENABLED* = "is-sepolia-enabled?"
+const KEY_TOKEN_GROUP_BY_COMMUNITY* = "token-group-by-community?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
 
@@ -152,6 +153,7 @@ type
     notificationsMessagePreview*: int
     profileMigrationNeeded*: bool
     isSepoliaEnabled*: bool
+    tokenGroupByCommunity*: bool
     urlUnfurlingMode*: UrlUnfurlingMode
 
 
@@ -209,6 +211,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
   discard jsonObj.getProp(KEY_IS_SEPOLIA_ENABLED, result.isSepoliaEnabled)
+  discard jsonObj.getProp(KEY_TOKEN_GROUP_BY_COMMUNITY, result.tokenGroupByCommunity)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 
   var urlUnfurlingMode: int
