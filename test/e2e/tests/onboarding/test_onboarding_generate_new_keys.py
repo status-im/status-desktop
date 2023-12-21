@@ -77,25 +77,39 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
         details_view.back().next()
 
-    with step('Proceed with password set up and login'):
+    with step('Open password set up view, fill in the form and click back'):
         create_password_view = details_view.next()
-        create_password_view.back().next()
         assert not create_password_view.is_create_password_button_enabled, \
             f'Create password button is enabled when it should not'
         confirm_password_view = create_password_view.create_password(password)
-        confirm_password_view.back().click_create_password()
+        confirm_password_view.back()
+        assert create_password_view.get_password_from_first_field is not None, \
+            f'Password field lost its value when clicking back button'
+        assert create_password_view.get_password_from_confirmation_field is not None, \
+            f'Password confirmation field lost its value when clicking back button'
+
+    with step('Click create password and open password confirmation screen'):
+        confirm_password_view = create_password_view.click_create_password()
+        assert not confirm_password_view.is_confirm_password_button_enabled, \
+            f'Finalise Status password creation button is enabled when it should not'
+
+    with step('Confirm password and login'):
         confirm_password_view.confirm_password(password)
         if configs.system.IS_MAC:
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE:
-            BetaConsentPopup().confirm()
+        #if not configs.system.TEST_MODE:
+        #    BetaConsentPopup().confirm()
 
     with step('Open online identifier and check the data'):
         online_identifier = main_window.left_panel.open_online_identifier()
-        assert online_identifier.user_name == user_name, \
-            f'Display name in online identifier is wrong, current: {online_identifier.user_name}, expected: {user_name}'
+        assert online_identifier.get_user_name == user_name, \
+            f'Display name in online identifier is wrong, current: {online_identifier.get_user_name}, expected: {user_name}'
+        assert online_identifier.is_identicon_ring_visible, \
+            f'Identicon ring is not present when it should'
+        assert online_identifier.object.pubkey is not None, \
+            f'Public key is not present'
 
     with step('Open user profile from online identifier and check the data'):
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()

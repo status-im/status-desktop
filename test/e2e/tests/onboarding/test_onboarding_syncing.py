@@ -89,7 +89,7 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
 
         with step('Verify user details are the same with user in first instance'):
             user_canvas = main_window.left_panel.open_online_identifier()
-            user_canvas_name = user_canvas.user_name
+            user_canvas_name = user_canvas.get_user_name
             assert user_canvas_name == user.name
             # TODO: temp removing tesseract usage because it is not stable
             # assert driver.waitFor(

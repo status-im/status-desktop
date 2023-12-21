@@ -277,7 +277,7 @@ class YourProfileView(OnboardingView):
         return self._profile_image.image
 
     @property
-    @allure.step('Check identicon ring visiblity')
+    @allure.step('Check identicon ring visibility')
     def is_identicon_ring_visible(self):
         return self._identicon_ring.is_visible
 

@@ -14,13 +14,13 @@ from gui.elements.text_label import TextLabel
 class OnlineIdentifier(QObject):
 
     def __init__(self):
-        super(OnlineIdentifier, self).__init__('o_StatusListView')
+        super(OnlineIdentifier, self).__init__('onlineIdentifierProfileHeader')
         self._always_active_button = Button('userContextmenu_AlwaysActiveButton')
         self._inactive_button = Button('userContextmenu_InActiveButton')
         self._automatic_button = Button('userContextmenu_AutomaticButton')
         self._view_my_profile_button = Button('userContextMenu_ViewMyProfileAction')
         self._user_name_text_label = TextLabel('userLabel_StyledText')
-        self._profile_image = QObject('o_StatusIdenticonRing')
+        self._identicon_ring = QObject('o_StatusIdenticonRing')
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -28,13 +28,13 @@ class OnlineIdentifier(QObject):
         return self
 
     @property
-    @allure.step('Get profile image')
-    def profile_image(self):
-        return self._profile_image.image
+    @allure.step('Check identicon ring visibility')
+    def is_identicon_ring_visible(self):
+        return self._identicon_ring.is_visible
 
     @property
     @allure.step('Get user name')
-    def user_name(self) -> str:
+    def get_user_name(self) -> str:
         return self._user_name_text_label.text
 
     @allure.step('Set user state online')
@@ -64,10 +64,3 @@ class OnlineIdentifier(QObject):
             else:
                 raise ex
 
-    @allure.step('Verify: User image contains text')
-    def is_user_image_contains(self, text: str):
-        # To remove all artifacts, the image cropped.
-        crop = driver.UiTypes.ScreenRectangle(
-            5, 5, self._profile_image.image.width - 10, self._profile_image.image.height - 10
-        )
-        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)
