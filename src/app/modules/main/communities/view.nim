@@ -132,7 +132,6 @@ QtObject:
   proc communityAccessFailed*(self: View, communityId: string, error: string) {.signal.}
   proc communityEditSharedAddressesSucceeded*(self: View, communityId: string) {.signal.}
   proc communityEditSharedAddressesFailed*(self: View, communityId: string, error: string) {.signal.}
-  proc communityInfoAlreadyRequested*(self: View) {.signal.}
 
   proc communityTagsChanged*(self: View) {.signal.}
 

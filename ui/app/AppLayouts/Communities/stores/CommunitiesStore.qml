@@ -60,8 +60,6 @@ QtObject {
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
-    signal communityInfoAlreadyRequested()
-
     signal communityInfoRequestCompleted(string communityId, string errorMsg)
 
     function createCommunity(args = {
@@ -249,10 +247,6 @@ QtObject {
         target: communitiesModuleInst
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
             root.importingCommunityStateChanged(communityId, state, errorMsg)
-        }
-
-        function onCommunityInfoAlreadyRequested() {
-          root.communityInfoAlreadyRequested()
         }
 
         function onCommunityInfoRequestCompleted(communityId, erorrMsg) {
