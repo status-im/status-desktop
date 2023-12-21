@@ -34,10 +34,13 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(
-            string.ascii_letters + string.digits + string.whitespace + random.choice('_-'))
+            string.ascii_letters + string.digits + random.choice('_- '))
                 for i in range(5, 21))
+        ).strip(' '),
+        ''.join((random.choice(
+            string.ascii_letters + string.digits + string.punctuation)
+                for _ in range(10, 28))
         ),
-        '*P@ssw0rd*',
         'tv_signal.jpeg',
         5,
         shift_image(0, 1000, 1000, 0))
