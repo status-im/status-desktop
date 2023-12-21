@@ -714,24 +714,21 @@ QtObject:
           if (not self.communities.contains(membershipRequest.communityId)):
             error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
             continue
-          var community = self.communities[membershipRequest.communityId]
 
           let requestToJoinState = RequestToJoinType(membershipRequest.state)
           let noAwaitingIndex = self.getWaitingForSharedAddressesRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1
           if requestToJoinState == RequestToJoinType.AwaitingAddress and noAwaitingIndex:
-            community.waitingForSharedAddressesRequestsToJoin.add(membershipRequest)
-            self.communities[membershipRequest.communityId] = community
+            self.communities[membershipRequest.communityId].waitingForSharedAddressesRequestsToJoin.add(membershipRequest)
             let myPublicKey = singletonInstance.userProfile.getPubKey()
             if myPublicKey == membershipRequest.publicKey:
               self.events.emit(SIGNAL_WAITING_ON_NEW_COMMUNITY_OWNER_TO_CONFIRM_REQUEST_TO_REJOIN, CommunityIdArgs(communityId: membershipRequest.communityId))
-          elif (requestToJoinState != RequestToJoinType.AwaitingAddress and noAwaitingIndex) and self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
-            community.pendingRequestsToJoin.add(membershipRequest)
-            self.communities[membershipRequest.communityId] = community
+          elif RequestToJoinType.Pending == requestToJoinState and self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
+            self.communities[membershipRequest.communityId].pendingRequestsToJoin.add(membershipRequest)
             self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
               CommunityRequestArgs(communityRequest: membershipRequest))
           else:
             try:
-              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
+              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, self.communities[membershipRequest.communityId],
                 requestToJoinState)
             except Exception as e:
               error "Unknown request", msg = e.msg
