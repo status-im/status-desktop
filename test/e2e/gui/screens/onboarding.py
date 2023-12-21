@@ -360,8 +360,8 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
 
     @property
     @allure.step('Get emoji hash image')
-    def get_emoji_hash(self) -> Image:
-        return self._emoji_hash.image
+    def get_emoji_hash(self) -> str:
+        return str(getattr(self._emoji_hash.object, 'publicKey'))
 
     @property
     @allure.step('Verify: Identicon ring visible')

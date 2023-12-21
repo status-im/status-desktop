@@ -1,9 +1,6 @@
 import logging
-import os
-import pathlib
 import random
 import string
-import glob
 
 import allure
 import pytest
@@ -73,7 +70,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         details_view = profile_view.next()
         chat_key = details_view.get_chat_key
         # TODO: replace with the public key value verification
-        # emoji_hash = details_view.get_emoji_hash
+        emoji_hash_public_key = details_view.get_emoji_hash
         assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
         details_view.back().next()
 
@@ -99,8 +96,8 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        #if not configs.system.TEST_MODE:
-        #    BetaConsentPopup().confirm()
+        if not configs.system.TEST_MODE:
+            BetaConsentPopup().confirm()
 
     with step('Open online identifier and check the data'):
         online_identifier = main_window.left_panel.open_online_identifier()
@@ -110,6 +107,7 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             f'Identicon ring is not present when it should'
         assert online_identifier.object.pubkey is not None, \
             f'Public key is not present'
+        assert online_identifier.object.pubkey == emoji_hash_public_key, f'Public keys should match when they dont'
 
     with step('Open user profile from online identifier and check the data'):
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
@@ -117,3 +115,5 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             f'Display name in user profile is wrong, current: {profile_popup.user_name}, expected: {user_name}'
         assert profile_popup.get_chat_key_from_profile_link == chat_key, \
             f'Chat key in user profile is wrong, current: {profile_popup.get_chat_key_from_profile_link}, expected: {chat_key}'
+        assert profile_popup.get_emoji_hash == emoji_hash_public_key, \
+            f'Public keys should match when they dont'
