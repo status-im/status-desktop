@@ -31,9 +31,9 @@ pipeline {
       defaultValue: ''
     )
     string(
-      name: 'TEST_SCOPE',
+      name: 'TEST_SCOPE_FLAG',
       description: 'Paste a known mark to run tests labeled with this mark',
-      defaultValue: 'critical'
+      defaultValue: getDefaultTestScopeFlag()
     )
     string(
       name: 'TESTRAIL_RUN_NAME',
@@ -82,7 +82,10 @@ pipeline {
   stages {
     stage('Prep') {
       steps { script {
+        sh 'env | grep nightly'
+        sh 'env | grep BUILD_'
         setNewBuildName()
+        sh 'echo $BUILD_DISPLAY_NAME'
         updateGitHubStatus()
       } }
     }
@@ -135,7 +138,7 @@ pipeline {
       steps { timeout(90) { script {
         def flags = []
         if (params.TEST_NAME)  { flags.add("-k=${params.TEST_NAME}") }
-        if (params.TEST_SCOPE) { flags.add("-m=${params.TEST_SCOPE}") }
+        if (params.TEST_SCOPE_FLAG) { flags.add(params.TEST_SCOPE_FLAG) }
         if (params.LOG_LEVEL)  { flags.addAll(["--log-level=${params.LOG_LEVEL}", "--log-cli-level=${params.LOG_LEVEL}"]) }
         dir ('configs') { sh 'ln -s _local.ci.py _local.py' }
         wrap([
@@ -225,4 +228,12 @@ def getDefaultBuildSource() {
     return 'status-desktop/nightly'
   }
   return ''
+}
+
+def getDefaultTestScopeFlag() {
+  if (JOB_NAME == "status-desktop/systems/linux/x86_64/tests-e2e-new") {
+    return ''
+  } else {
+    return '-m=critical'
+  }
 }
