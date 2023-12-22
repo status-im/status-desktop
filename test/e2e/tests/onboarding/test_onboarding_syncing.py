@@ -22,6 +22,7 @@ from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, 
 
 pytestmark = marks
 
+
 @pytest.fixture
 def sync_screen(main_window) -> SyncCodeView:
     with step('Open Syncing view'):
@@ -35,7 +36,7 @@ def sync_screen(main_window) -> SyncCodeView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
 @pytest.mark.case(703592)
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'user_account_one'])
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/12972')
+@pytest.mark.critical
 def test_sync_device_during_onboarding(multiple_instance, user_data):
     user: UserAccount = constants.user_account_one
     main_window = MainWindow()
@@ -76,7 +77,12 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
             sync_device_found = SyncDeviceFoundView()
             assert driver.waitFor(
                 lambda: 'Device found!' in sync_device_found.device_found_notifications, 15000)
-            sync_result = SyncResultView().wait_until_appears()
+            try:
+                assert driver.waitForObjectExists(SyncResultView().real_name, 15000), \
+                    f'Sync result view is not shown within 15 seconds'
+            except (Exception, AssertionError) as ex:
+                raise ex
+            sync_result = SyncResultView()
             assert driver.waitFor(
                 lambda: 'Device synced!' in sync_result.device_synced_notifications, 15000)
             assert user.name in sync_device_found.device_found_notifications
@@ -88,14 +94,9 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
                 BetaConsentPopup().confirm()
 
         with step('Verify user details are the same with user in first instance'):
-            user_canvas = main_window.left_panel.open_online_identifier()
-            user_canvas_name = user_canvas.get_user_name
-            assert user_canvas_name == user.name
-            # TODO: temp removing tesseract usage because it is not stable
-            # assert driver.waitFor(
-            #    lambda: user_canvas.is_user_image_contains(user.name[:2]),
-            #    configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-            # )
+            online_identifier = main_window.left_panel.open_online_identifier()
+            assert online_identifier.get_user_name == user.name, \
+                f'Name in online identifier and display do not match'
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')
