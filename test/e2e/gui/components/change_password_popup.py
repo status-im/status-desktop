@@ -28,14 +28,16 @@ class ChangePasswordPopup(BasePopup):
     def click_sign_out_and_quit_button(self):
         """
         Timeout is set as rough estimation of 15 seconds. What is happening when changing password is
-        the process of re-hasing DB initiated. Taking into account the user is new , so DB is relatively small
+        the process of re-hashing DB initiated. Taking into account the user is new , so DB is relatively small
         I assume, 15 seconds should be enough to finish re-hashing and show the Sign-out and quit button
         This time is not really predictable, especially for huge DBs. We might implement other solution, but since
-        this wait_until_appears method is barely working, I suggest this solution for now
+        this is_visible method is barely working, I suggest this solution for now
         """
         try:
-            assert driver.waitFor(lambda: self._quit_button.is_visible, 15000), \
-                f'Sign out and quit button is not visible within 15 seconds'
+            assert driver.waitForObjectExists(self._quit_button.real_name, 15000), \
+                f'Sign out and quit button is not present within 15 seconds'
             self._quit_button.click()
         except (Exception, AssertionError) as ex:
             raise ex
+
+
