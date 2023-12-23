@@ -130,15 +130,6 @@ method toggleCommunitiesPortalSection*(self: Module) =
 method toggleNodeManagementSection*(self: Module) =
   self.controller.toggleNodeManagementSection()
 
-method onWakuV2StoreToggled*(self: Module) =
-  self.view.emitWakuV2StoreEnabledSignal()
-
-method toggleWakuV2Store*(self: Module) =
-  self.controller.toggleWakuV2Store()
-
-method isWakuV2StoreEnabled*(self: Module): bool =
-  self.controller.isWakuV2StoreEnabled()
-
 method getLogMaxBackups*(self: Module): int =
   self.controller.getLogMaxBackups()
 
