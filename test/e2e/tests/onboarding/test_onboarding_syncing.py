@@ -96,7 +96,7 @@ def test_sync_device_during_onboarding(multiple_instance, user_data):
         with step('Verify user details are the same with user in first instance'):
             online_identifier = main_window.left_panel.open_online_identifier()
             assert online_identifier.get_user_name == user.name, \
-                f'Name in online identifier and display do not match'
+                f'Name in online identifier and display name do not match'
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703631', 'Wrong sync code')

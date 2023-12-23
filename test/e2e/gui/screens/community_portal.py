@@ -1,5 +1,6 @@
 import allure
 
+import driver
 from gui.components.community.create_community_popups import CreateCommunitiesBanner, CreateCommunityPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -14,4 +15,9 @@ class CommunitiesPortal(QObject):
     @allure.step('Open create community popup')
     def open_create_community_popup(self) -> CreateCommunityPopup:
         self._create_community_button.click()
-        return CreateCommunitiesBanner().wait_until_appears().open_create_community_popup()
+        try:
+            assert driver.waitForObjectExists(CreateCommunitiesBanner().real_name, 5000), \
+                f'Create community banner is not present within 5 seconds'
+        except (Exception, AssertionError) as ex:
+            raise ex
+        return CreateCommunitiesBanner().open_create_community_popup()
