@@ -828,7 +828,7 @@ QtObject:
     discard responseObj.getProp("countWithMentions", countWithMentions)
 
     let data = MessagesMarkedAsReadArgs(
-      chatId: chatId, 
+      chatId: chatId,
       allMessagesMarked: false,
       messagesIds: messagesIds,
       messagesCount: count,
