@@ -82,10 +82,7 @@ pipeline {
   stages {
     stage('Prep') {
       steps { script {
-        sh 'env | grep nightly'
-        sh 'env | grep BUILD_'
         setNewBuildName()
-        sh 'echo $BUILD_DISPLAY_NAME'
         updateGitHubStatus()
       } }
     }
