@@ -81,8 +81,8 @@ proc getCommunityById*(self: Controller, id: string): CommunityDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
-proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddresses(addresses)
+proc getBalancesByChain*(self: Controller, accountAddresses: seq[string], tokenAddresses: seq[string]): seq[WalletTokenDto] =
+  return self.walletAccountService.getBalancesByChain(accountAddresses, tokenAddresses)
 
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)

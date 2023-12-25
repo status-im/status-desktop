@@ -53,6 +53,7 @@ proc toShowcasePreferenceItem*(self: ProfileShowcaseAssetItem): ProfileShowcaseA
   result = ProfileShowcaseAssetPreference()
 
   result.symbol = self.symbol
+  # TODO: result.contractAddress = self.contractAddress
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

@@ -19,6 +19,7 @@ type ProfileShowcaseCollectible* = ref object of RootObj
 
 type ProfileShowcaseAsset* = ref object of RootObj
   symbol*: string
+  contractAddress*: string
   order*: int
 
 type ProfileShowcaseDto* = ref object of RootObj
@@ -49,6 +50,7 @@ proc toProfileShowcaseCollectible*(jsonObj: JsonNode): ProfileShowcaseCollectibl
 proc toProfileShowcaseAsset*(jsonObj: JsonNode): ProfileShowcaseAsset =
   result = ProfileShowcaseAsset()
   discard jsonObj.getProp("symbol", result.symbol)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
   discard jsonObj.getProp("order", result.order)
 
 proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =

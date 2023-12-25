@@ -29,6 +29,7 @@ type ProfileShowcaseCollectiblePreference* = ref object of RootObj
 
 type ProfileShowcaseAssetPreference* = ref object of RootObj
   symbol*: string
+  contractAddress*: string
   showcaseVisibility*: ProfileShowcaseVisibility
   order*: int
 
@@ -94,12 +95,14 @@ proc toJsonNode*(self: ProfileShowcaseCollectiblePreference): JsonNode =
 proc toProfileShowcaseAssetPreference*(jsonObj: JsonNode): ProfileShowcaseAssetPreference =
   result = ProfileShowcaseAssetPreference()
   discard jsonObj.getProp("symbol", result.symbol)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
   discard jsonObj.getProp("order", result.order)
   result.showcaseVisibility = jsonObj.toProfileShowcaseVisibility()
 
 proc toJsonNode*(self: ProfileShowcaseAssetPreference): JsonNode =
   %* {
     "symbol": self.symbol,
+    "contractAddress": self.contractAddress,
     "showcaseVisibility": self.showcaseVisibility.int,
     "order": self.order,
   }

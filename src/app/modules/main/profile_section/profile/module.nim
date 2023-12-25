@@ -166,7 +166,7 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
         community, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
-  var addresses: seq[string] = @[]
+  var accountAddresses: seq[string] = @[]
   for account in profileShowcase.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address,
@@ -176,12 +176,12 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
       ProfileShowcaseVisibility.ToEveryone,
       account.order
     ))
-    addresses.add(account.address)
+    accountAddresses.add(account.address)
 
   for assetEntry in profileShowcase.assets:
-    for token in self.controller.getTokensByAddresses(addresses):
-      if assetEntry.symbol == token.symbol:
-        profileAssetItems.add(initProfileShowcaseAssetItem(token, ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
+    let tokens = self.controller.getBalancesByChain(accountAddresses, @[assetEntry.contractAddress])
+    if len(tokens) == 1:
+      profileAssetItems.add(initProfileShowcaseAssetItem(tokens[0], ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
 
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
   self.view.updateProfileShowcaseAssets(profileAssetItems)
@@ -204,7 +204,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
         community, communityEntry.showcaseVisibility, communityEntry.order))
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
-  var addresses: seq[string] = @[]
+  var accountAddresses: seq[string] = @[]
   for account in preferences.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address,
@@ -214,12 +214,12 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       account.showcaseVisibility,
       account.order
     ))
-    addresses.add(account.address)
+    accountAddresses.add(account.address)
 
-  for assetEntry in preferences.assets:
-    for token in self.controller.getTokensByAddresses(addresses):
-      if assetEntry.symbol == token.symbol:
-        profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry.showcaseVisibility, assetEntry.order))
+  for asset in preferences.assets:
+    let tokens = self.controller.getBalancesByChain(accountAddresses, @[asset.contractAddress])
+    if len(tokens) == 1:
+      profileAssetItems.add(initProfileShowcaseAssetItem(tokens[0], asset.showcaseVisibility, asset.order))
 
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
   self.view.updateProfileShowcaseAssets(profileAssetItems)

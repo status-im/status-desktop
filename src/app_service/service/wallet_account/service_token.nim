@@ -45,6 +45,21 @@ proc getTokensByAddresses*(self: Service, addresses: seq[string]): seq[WalletTok
   result = toSeq(tokens.values)
   result.sort(priorityTokenCmp)
 
+proc getBalancesByChain*(self: Service, accountAddresses: seq[string], tokenAddresses: seq[string]): seq[WalletTokenDto] =
+  try:
+    # NOTE: profile showcase networks should be always all networks
+    let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+
+    let balancesResponse = backend.getBalancesByChain(chainIds, accountAddresses, tokenAddresses)
+    let walletBalanceTable = balanceInfoToTable(balancesResponse.result)
+
+    var result: seq[WalletTokenDto] = @[]
+    # TODO: replace balanceInfoToTable with wallet tokens parsing
+    return result
+
+  except Exception as e:
+    error "error: ", procName="getBalancesByChain", errName = e.name, errDesription = e.msg
+
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   try:
     let chainIds = self.networkService.getNetworks().map(n => n.chainId)
