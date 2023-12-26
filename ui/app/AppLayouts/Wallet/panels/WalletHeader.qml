@@ -36,7 +36,7 @@ Item {
         RowLayout {
             spacing: Style.current.halfPadding
             StatusBaseText {
-                objectName: "accountName"
+                objectName: "walletHeaderTitle"
                 Layout.alignment: Qt.AlignVCenter
                 verticalAlignment: Text.AlignVCenter
                 color: {
@@ -73,6 +73,7 @@ Item {
 
             StatusButton {
                 id: headerButton
+                objectName: "walletHeaderButton"
                 Layout.preferredHeight: 38
                 Layout.alignment: Qt.AlignTop
 

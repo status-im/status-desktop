@@ -22,7 +22,7 @@ mainWallet_AddWatchOnlyAccount_MenuItem = {"container": contextMenu_PopupItem, "
 
 # Saved Address View
 mainWindow_SavedAddressesView = {"container": mainWindow_WalletLayout, "type": "SavedAddressesView", "unnamed": 1, "visible": True}
-mainWallet_Saved_Addreses_Add_Buttton = {"container": mainWindow_SavedAddressesView, "objectName": "addNewAddressBtn", "type": "StatusButton"}
+mainWallet_Saved_Addreses_Add_Buttton = {"container": mainWindow_SavedAddressesView, "objectName": "walletHeaderButton", "type": "StatusButton", "visible": True}
 mainWallet_Saved_Addreses_List = {"container": mainWindow_SavedAddressesView, "objectName": "SavedAddressesView_savedAddresses", "type": "StatusListView"}
 savedAddressView_Delegate = {"container": mainWallet_Saved_Addreses_List, "objectName": RegularExpression("savedAddressView_Delegate*"), "type": "SavedAddressesDelegate", "visible": True}
 send_StatusRoundButton = {"container": "", "type": "StatusRoundButton", "unnamed": 1, "visible": True}
@@ -30,7 +30,7 @@ savedAddressView_Delegate_menuButton = {"container": "", "objectName": RegularEx
 
 # Wallet Account View
 mainWindow_StatusSectionLayout_ContentItem = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
-mainWallet_Account_Name = {"container": mainWindow_StatusSectionLayout_ContentItem, "objectName": "accountName", "type": "StatusBaseText", "visible": True}
+mainWallet_Account_Name = {"container": mainWindow_StatusSectionLayout_ContentItem, "objectName": "walletHeaderTitle", "type": "StatusBaseText", "visible": True}
 
 
 # Wallet Account Popup
