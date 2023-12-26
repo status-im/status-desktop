@@ -15,6 +15,7 @@ import shared.popups 1.0
 import shared.popups.keypairimport 1.0
 import shared.status 1.0
 
+import "../stores"
 import "../controls"
 import "../popups"
 import "../panels"
@@ -26,8 +27,8 @@ SettingsContentBase {
     id: root
 
     property var emojiPopup
-    property var rootStore
-    property var walletStore
+    property ProfileSectionStore rootStore
+    property var walletStore: rootStore.walletStore
     required property TokensStore tokensStore
 
     readonly property int mainViewIndex: 0
@@ -36,6 +37,7 @@ SettingsContentBase {
     readonly property int accountOrderViewIndex: 3
     readonly property int accountViewIndex: 4
     readonly property int manageTokensViewIndex: 5
+    readonly property int savedAddressesViewIndex: 6
 
     readonly property string walletSectionTitle: qsTr("Wallet")
     readonly property string networksSectionTitle: qsTr("Networks")
@@ -86,6 +88,7 @@ SettingsContentBase {
                 stackContainer.currentIndex === root.editNetworksViewIndex ? editNetwork.height:
                 stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height:
                 stackContainer.currentIndex === root.manageTokensViewIndex ? manageTokensView.implicitHeight :
+                stackContainer.currentIndex === root.savedAddressesViewIndex ? savedAddressesView.height:
                                                                              accountView.height
         currentIndex: mainViewIndex
 
@@ -134,6 +137,12 @@ SettingsContentBase {
                 root.rootStore.backButtonName = root.walletSectionTitle
                 root.titleRowLeftComponentLoader.visible = false
                 root.sectionTitle = qsTr("Manage tokens")
+            } else if(currentIndex == root.savedAddressesViewIndex) {
+                root.rootStore.backButtonName = root.walletSectionTitle
+                root.titleRowLeftComponentLoader.visible = false
+                root.sectionTitle = qsTr("Saved addresses")
+
+                root.titleRowComponentLoader.sourceComponent = addNewSavedAddressButtonComponent
             }
         }
 
@@ -179,6 +188,9 @@ SettingsContentBase {
             }
             onGoToManageTokensView: {
                 stackContainer.currentIndex = manageTokensViewIndex
+            }
+            onGoToSavedAddressesView: {
+                stackContainer.currentIndex = root.savedAddressesViewIndex
             }
         }
 
@@ -285,6 +297,12 @@ SettingsContentBase {
             }
         }
 
+        SavedAddressesView {
+            id: savedAddressesView
+            contactsStore: root.rootStore.contactsStore
+            sendModal: root.rootStore.sendModalPopup
+        }
+
         DappPermissionsView {
             walletStore: root.walletStore
         }
@@ -295,6 +313,17 @@ SettingsContentBase {
                 objectName: "settings_Wallet_MainView_AddNewAccountButton"
                 text: qsTr("Add new account")
                 onClicked: root.walletStore.runAddAccountPopup()
+            }
+        }
+
+        Component {
+            id: addNewSavedAddressButtonComponent
+
+            StatusButton {
+                text: qsTr("Add new address")
+                onClicked: {
+                    Global.openAddEditSavedAddressesPopup({})
+                }
             }
         }
 

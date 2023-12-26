@@ -7,3 +7,4 @@ MainView 1.0 MainView.qml
 ManageTokensView 1.0 ManageTokensView.qml
 NetworksView 1.0 NetworksView.qml
 PermissionsListView 1.0 PermissionsListView.qml
+SavedAddressesView 1.0 SavedAddressesView.qml

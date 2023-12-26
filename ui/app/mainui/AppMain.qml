@@ -54,7 +54,9 @@ Item {
     id: appMain
 
     property alias appLayout: appLayout
-    property RootStore rootStore: RootStore {}
+    property RootStore rootStore: RootStore {
+        profileSectionStore.sendModalPopup: sendModal
+    }
     property var rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
         communityTokensStore: appMain.communityTokensStore

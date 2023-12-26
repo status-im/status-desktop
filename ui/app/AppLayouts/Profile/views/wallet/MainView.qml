@@ -25,11 +25,13 @@ Column {
     signal goToAccountOrderView()
     signal goToAccountView(var account, var keypair)
     signal goToDappPermissionsView()
+    signal goToManageTokensView()
+    signal goToSavedAddressesView()
+
     signal runRenameKeypairFlow(var model)
     signal runRemoveKeypairFlow(var model)
     signal runMoveKeypairToKeycardFlow(var model)
     signal runStopUsingKeycardFlow(var model)
-    signal goToManageTokensView()
 
     spacing: 8
 
@@ -145,6 +147,21 @@ Column {
         height: 64
         width: parent.width
         onClicked: goToManageTokensView()
+        components: [
+            StatusIcon {
+                icon: "next"
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    Separator {}
+
+    StatusListItem {
+        title: qsTr("Saved Addresses")
+        height: 64
+        width: parent.width
+        onClicked: goToSavedAddressesView()
         components: [
             StatusIcon {
                 icon: "next"
