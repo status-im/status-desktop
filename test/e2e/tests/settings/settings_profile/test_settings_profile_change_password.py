@@ -11,6 +11,7 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
+@pytest.mark.timeout(timeout=180, method="thread")
 @pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')

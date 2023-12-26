@@ -48,3 +48,5 @@ it will be shown as XPASS (unexpectedly passing) in report, which will indicate 
 if will be shown as passed in report normally. If the test fails, then the total run wont be failed, but 
 the corresponding test will be marked as `xfail` in the report. It is done for a few tests that are not super
 stable yet, but passes most of the time. This mark should be used with caution and in case of real need only.
+- `timeout(timeout=180, method="thread")`, to catch excessively long test durations like deadlocked or hanging tests.
+This is done by `pytest-timeout` plugin
