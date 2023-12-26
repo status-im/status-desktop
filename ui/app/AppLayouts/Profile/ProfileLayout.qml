@@ -185,7 +185,6 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 rootStore: root.store
-                walletStore: root.store.walletStore
                 tokensStore: root.tokensStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
