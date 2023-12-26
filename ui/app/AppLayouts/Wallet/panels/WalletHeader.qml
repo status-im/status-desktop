@@ -20,8 +20,10 @@ Item {
     property var store
     property var walletStore
 
-    signal launchShareAddressModal()
-    signal switchHideWatchOnlyAccounts()
+    property alias headerButton: headerButton
+    property alias networkFilter: networkFilter
+
+    signal buttonClicked()
 
     implicitHeight: 88
 
@@ -37,19 +39,30 @@ Item {
                 objectName: "accountName"
                 Layout.alignment: Qt.AlignVCenter
                 verticalAlignment: Text.AlignVCenter
-                color: overview.isAllAccounts ? Theme.palette.directColor5 : Utils.getColorForId(overview.colorId)
+                color: {
+                    if (root.walletStore.showSavedAddresses)
+                        return Theme.palette.directColor1
+
+                    return overview.isAllAccounts ? Theme.palette.directColor5 : Utils.getColorForId(overview.colorId)
+                }
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
                 font.bold: true
                 font.pixelSize: 28
-                text: overview.isAllAccounts ? qsTr("All Accounts") : overview.name
+                text: {
+                    if (root.walletStore.showSavedAddresses)
+                        return qsTr("Saved addresses")
+
+                    return overview.isAllAccounts ? qsTr("All Accounts") : overview.name
+                }
             }
             StatusEmoji {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                emojiId: StatusQUtils.Emoji.iconId(overview.emoji ?? "", StatusQUtils.Emoji.size.big) || ""
-                visible: !overview.isAllAccounts
+                emojiId: !!root.overview && StatusQUtils.Emoji.iconId(root.overview.emoji ?? "", StatusQUtils.Emoji.size.big) || ""
+                visible: !root.walletStore.showSavedAddresses &&
+                         !!root.overview && !root.overview.isAllAccounts
             }
         }
 
@@ -59,27 +72,24 @@ Item {
             Layout.topMargin: 5
 
             StatusButton {
+                id: headerButton
                 Layout.preferredHeight: 38
                 Layout.alignment: Qt.AlignTop
 
                 spacing: 8
                 size: StatusBaseButton.Size.Small
-                borderColor: Theme.palette.directColor7
-                normalColor: Theme.palette.transparent
-                hoverColor: Theme.palette.baseColor2
+                borderColor: root.walletStore.showSavedAddresses? "transparent" : Theme.palette.directColor7
+                normalColor: root.walletStore.showSavedAddresses? Theme.palette.primaryColor3 : Theme.palette.transparent
+                hoverColor: root.walletStore.showSavedAddresses? Theme.palette.primaryColor2 : Theme.palette.baseColor2
 
-                font.weight: Font.Normal
+                font.weight: root.walletStore.showSavedAddresses? Font.Medium : Font.Normal
                 textPosition: StatusBaseButton.TextPosition.Left
-                textColor: Theme.palette.baseColor1
-                text: overview.ens ||  StatusQUtils.Utils.elideText(overview.mixedcaseAddress, 6, 4)
+                textColor: root.walletStore.showSavedAddresses? Theme.palette.primaryColor1 : Theme.palette.baseColor1
 
-                icon.name: "invite-users"
+                icon.name: root.walletStore.showSavedAddresses? "" : "invite-users"
                 icon.height: 16
                 icon.width: 16
                 icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
-
-                onClicked: launchShareAddressModal()
-                visible: !overview.isAllAccounts
             }
 
             // network filter
@@ -101,13 +111,18 @@ Item {
 
         RowLayout {
             spacing: 4
-            visible: !networkConnectionStore.accountBalanceNotAvailable
+            visible: !root.walletStore.showSavedAddresses &&
+                     !!root.networkConnectionStore &&
+                     !networkConnectionStore.accountBalanceNotAvailable
             StatusTextWithLoadingState {
                 font.pixelSize: 28
                 font.bold: true
                 customColor: Theme.palette.directColor1
-                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance)
-                loading: root.overview.balanceLoading
+                text: loading ?
+                            Constants.dummyText :
+                            !!root.overview?
+                                LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance) : ""
+                loading: !!root.overview && root.overview.balanceLoading
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
             }

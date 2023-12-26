@@ -215,7 +215,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)
-  result.savedAddressService = saved_address_service.newService(statusFoundation.events, result.networkService, result.settingsService)
+  result.savedAddressService = saved_address_service.newService(statusFoundation.threadpool, statusFoundation.events,
+    result.networkService, result.settingsService)
   result.devicesService = devices_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.accountsService, result.walletAccountService)
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,

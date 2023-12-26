@@ -299,8 +299,7 @@ StatusMenu {
         }
         icon.name: "star-icon-outline"
         onTriggered: {
-            Global.openPopup(addEditSavedAddress,
-                             {
+            Global.openAddEditSavedAddressesPopup({
                                  addAddress: true,
                                  address: d.selectedAddress,
                                  ens: d.addressEns,
@@ -313,8 +312,7 @@ StatusMenu {
         enabled: false
         text: qsTr("Edit saved address")
         icon.name: "pencil-outline"
-        onTriggered: Global.openPopup(addEditSavedAddress,
-                                      {
+        onTriggered: Global.openAddEditSavedAddressesPopup({
                                           edit: true,
                                           name: d.addressName,
                                           address: d.selectedAddress,
@@ -337,21 +335,6 @@ StatusMenu {
         }
         icon.name: "send"
         onTriggered: root.openSendModal(d.selectedAddress)
-    }
-
-    Component {
-        id: addEditSavedAddress
-        AddEditSavedAddressPopup {
-            id: addEditModal
-            anchors.centerIn: parent
-            onClosed: destroy()
-            contactsStore: root.contactsStore
-            store: WalletStores.RootStore
-            onSave: {
-                RootStore.createOrUpdateSavedAddress(name, address, false, chainShortNames, ens)
-                close()
-            }
-        }
     }
 
     Component {

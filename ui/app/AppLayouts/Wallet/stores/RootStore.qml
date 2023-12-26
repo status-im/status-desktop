@@ -13,6 +13,14 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 QtObject {
     id: root
 
+    property bool showSavedAddresses: false
+    property string selectedAddress: ""
+    readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
+
+    property var lastCreatedSavedAddress
+    property bool addingSavedAddress: false
+    property bool deletingSavedAddress: false
+
     readonly property TokensStore tokensStore: TokensStore {}
     readonly property WalletAssetsStore walletAssetsStore: WalletAssetsStore {
         walletTokensStore: tokensStore
@@ -40,6 +48,7 @@ QtObject {
 
     // "walletSection" is a context property slow to lookup, so we cache it here
     property var walletSectionInst: walletSection
+    property var walletSectionSavedAddressesInst: walletSectionSavedAddresses
     property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
     property var activityController: walletSectionInst.activityController
     property var tmpActivityController: walletSectionInst.tmpActivityController
@@ -321,11 +330,13 @@ QtObject {
     }
 
     function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+        root.addingSavedAddress = true
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
     }
 
     function deleteSavedAddress(address, ens) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
+        root.deletingSavedAddress = true
+        walletSectionSavedAddresses.deleteSavedAddress(address, ens)
     }
 
     function toggleNetwork(chainId) {

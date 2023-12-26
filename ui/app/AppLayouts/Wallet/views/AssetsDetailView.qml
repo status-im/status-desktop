@@ -35,9 +35,9 @@ Item {
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
-        readonly property string symbol: root.token ? root.token.symbol : ""
-        property bool marketDetailsLoading: token && token.marketDetailsLoading ? token.marketDetailsLoading: false
-        property bool tokenDetailsLoading: token && token.detailsLoading? token.detailsLoading: false
+        readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
+        property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
+        property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
 
         readonly property LeftJoinModel addressPerChainModel: LeftJoinModel {
             leftModel: token && token.addressPerChain ? token.addressPerChain: null

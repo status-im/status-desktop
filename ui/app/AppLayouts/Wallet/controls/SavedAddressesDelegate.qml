@@ -27,7 +27,6 @@ StatusListItem {
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
     property var saveAddress: function (name, address, favourite, chainShortNames, ens) {}
-    property var deleteSavedAddress: function (address, ens) {}
 
     signal openSendModal(string recipient)
 
@@ -100,12 +99,11 @@ StatusListItem {
             type: StatusRoundButton.Type.Tertiary
             icon.name: "add"
             onClicked: {
-                Global.openPopup(addEditSavedAddress,
-                                 {
-                                     addAddress: true,
-                                     address: d.visibleAddress,
-                                     ens: root.ens
-                                 })
+                Global.openAddEditSavedAddressesPopup({
+                                                          addAddress: true,
+                                                          address: d.visibleAddress,
+                                                          ens: root.ens
+                                                      })
             }
         }
     ]
@@ -142,15 +140,14 @@ StatusListItem {
             objectName: "editroot"
             assetSettings.name: "pencil-outline"
             onTriggered: {
-                Global.openPopup(addEditSavedAddress,
-                                 {
-                                     edit: true,
-                                     address: editDeleteMenu.contactAddress,
-                                     name: editDeleteMenu.contactName,
-                                     favourite: editDeleteMenu.storeFavourite,
-                                     chainShortNames: editDeleteMenu.contactChainShortNames,
-                                     ens: editDeleteMenu.contactEns
-                                 })
+                Global.openAddEditSavedAddressesPopup({
+                                                          edit: true,
+                                                          address: editDeleteMenu.contactAddress,
+                                                          name: editDeleteMenu.contactName,
+                                                          favourite: editDeleteMenu.storeFavourite,
+                                                          chainShortNames: editDeleteMenu.contactChainShortNames,
+                                                          ens: editDeleteMenu.contactEns
+                                                      })
             }
         }
         StatusAction {
@@ -214,65 +211,13 @@ StatusListItem {
             assetSettings.name: "delete"
             objectName: "deleteSavedAddress"
             onTriggered: {
-                deleteAddressConfirm.name = editDeleteMenu.contactName;
-                deleteAddressConfirm.address = editDeleteMenu.contactAddress;
-                deleteAddressConfirm.favourite = editDeleteMenu.storeFavourite;
-                deleteAddressConfirm.ens = editDeleteMenu.contactEns
-                deleteAddressConfirm.open()
+                Global.openDeleteSavedAddressesPopup({
+                                                         name: editDeleteMenu.contactName,
+                                                         address: editDeleteMenu.contactAddress,
+                                                         favourite: editDeleteMenu.storeFavourite,
+                                                         ens: editDeleteMenu.contactEns
+                                                     })
             }
         }
-    }
-
-    Component {
-        id: addEditSavedAddress
-        AddEditSavedAddressPopup {
-            id: addEditModal
-            anchors.centerIn: parent
-            onClosed: destroy()
-            contactsStore: root.contactsStore
-            store: root.store
-            onSave: {
-                root.saveAddress(name, address, favourite, chainShortNames, ens)
-                close()
-            }
-        }
-    }
-
-    StatusModal {
-        id: deleteAddressConfirm
-        property string address
-        property string ens
-        property string name
-        property bool favourite
-        anchors.centerIn: parent
-        headerSettings.title: qsTr("Are you sure?")
-        headerSettings.subTitle: name
-        contentItem: StatusBaseText {
-            anchors.centerIn: parent
-            height: contentHeight + topPadding + bottomPadding
-            text: qsTr("Are you sure you want to remove '%1' from your saved addresses?").arg(name)
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-            wrapMode: Text.Wrap
-            topPadding: Style.current.padding
-            rightPadding: Style.current.padding
-            bottomPadding: Style.current.padding
-            leftPadding: Style.current.padding
-        }
-        rightButtons: [
-            StatusButton {
-                text: qsTr("Cancel")
-                onClicked: deleteAddressConfirm.close()
-            },
-            StatusButton {
-                type: StatusBaseButton.Type.Danger
-                objectName: "confirmDeleteSavedAddress"
-                text: qsTr("Delete")
-                onClicked: {
-                    root.deleteSavedAddress(deleteAddressConfirm.address, deleteAddressConfirm.ens)
-                    deleteAddressConfirm.close()
-                }
-            }
-        ]
     }
 }
