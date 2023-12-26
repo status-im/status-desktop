@@ -1,6 +1,6 @@
 import io_interface
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/saved_address/service as saved_address_service
+import app/core/eventemitter
+import app_service/service/saved_address/service as saved_address_service
 
 type
   Controller* = ref object of RootObj
@@ -22,14 +22,22 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_SAVED_ADDRESS_CHANGED) do(e:Args):
+  self.events.on(SIGNAL_SAVED_ADDRESSES_UPDATED) do(e:Args):
     self.delegate.loadSavedAddresses()
+
+  self.events.on(SIGNAL_SAVED_ADDRESS_UPDATED) do(e:Args):
+    let args = SavedAddressArgs(e)
+    self.delegate.savedAddressUpdated(args.address, args.ens, args.errorMsg)
+
+  self.events.on(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):
+    let args = SavedAddressArgs(e)
+    self.delegate.savedAddressDeleted(args.address, args.ens, args.errorMsg)
 
 proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
 
-proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, favourite: bool, chainShortNames: string, ens: string): string =
-  return self.savedAddressService.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, favourite: bool, chainShortNames: string, ens: string) =
+  self.savedAddressService.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
 
-proc deleteSavedAddress*(self: Controller, address: string, ens: string): string =
-  return self.savedAddressService.deleteSavedAddress(address, ens)
+proc deleteSavedAddress*(self: Controller, address: string, ens: string) =
+  self.savedAddressService.deleteSavedAddress(address, ens)

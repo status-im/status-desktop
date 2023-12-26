@@ -25,7 +25,7 @@ import ".."
 StatusDialog {
     id: root
 
-    closePolicy: Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     property bool edit: false
     property bool addAddress: false
@@ -35,10 +35,18 @@ StatusDialog {
 
     property alias name: nameInput.text
     property bool favourite: false
-    property var contactsStore
-    property var store
 
-    signal save(string name, string address, string chainShortNames, string ens)
+    property var allNetworks
+
+    function applyParams(params = {}) {
+        root.addAddress = params.addAddress?? false
+        root.address = params.address?? Constants.zeroAddress
+        root.ens = params.ens?? ""
+        root.edit = params.edit?? false
+        root.name = params.name?? ""
+        root.favourite = params.favourite?? false
+        root.chainShortNames = params.chainShortNames?? ""
+    }
 
     QtObject {
         id: d
@@ -339,7 +347,10 @@ StatusDialog {
             StatusButton {
                 text: root.edit ? qsTr("Save") : qsTr("Add address")
                 enabled: d.valid && d.dirty
-                onClicked: root.save(name, address, chainShortNames, ens)
+                onClicked: {
+                    RootStore.createOrUpdateSavedAddress(name, address, root.favourite, chainShortNames, ens)
+                    root.close()
+                }
                 objectName: "addSavedAddress"
             }
         }
@@ -348,7 +359,7 @@ StatusDialog {
     CloneModel {
         id: allNetworksModelCopy
 
-        sourceModel: store.allNetworks
+        sourceModel: root.allNetworks
         roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl"]
         rolesOverride: [{ role: "isEnabled", transform: (modelData) => Boolean(false) }]
 

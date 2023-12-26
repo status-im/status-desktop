@@ -1,18 +1,17 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.13
 
 import utils 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 
 Item {
-    id: addEditError
-    anchors.left: parent.left
-    anchors.right: parent.right
+    id: root
 
     property alias text: label.text
+
+    implicitHeight: childrenRect.height
+    implicitWidth: childrenRect.width
 
     StatusIcon {
         id: errorIcon
@@ -21,6 +20,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
     }
+
     StatusBaseText {
         id: label
         anchors.verticalCenter: parent.verticalCenter

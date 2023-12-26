@@ -30,31 +30,7 @@ Rectangle {
     property var networkConnectionStore
     property var selectAllAccounts: function(){}
     property var changeSelectedAccount: function(){}
-    property bool showSavedAddresses: false
-    property bool showAllAccounts: true
-    property string currentAddress: ""
-
-    onCurrentAddressChanged: {
-        if (!currentAddress)
-            return
-        root.showAllAccounts = false
-        root.showSavedAddresses = false
-    }
-    
-    onShowSavedAddressesChanged: {
-        if (!showSavedAddresses)
-            return
-        root.currentAddress = ""
-        root.showAllAccounts = false
-    }
-
-    onShowAllAccountsChanged: {
-        if (!showAllAccounts)
-            return
-        root.currentAddress = ""
-        root.showSavedAddresses = false
-    }
-
+    property var selectSavedAddresses: function(){}
     property var emojiPopup: null
 
     color: Style.current.secondaryMenuBackground
@@ -169,10 +145,6 @@ Rectangle {
         function onDestroyAddAccountPopup() {
             addAccount.active = false
         }
-        function onFilterChanged(address, allAddresses) {
-            root.currentAddress = allAddresses ? "" : address
-            root.showAllAccounts = allAddresses
-        }
     }
 
     MouseArea {
@@ -273,7 +245,7 @@ Rectangle {
                     objectName: "walletAccount-" + model.name
                     readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                     width: ListView.view.width - Style.current.padding * 2
-                    highlighted: root.currentAddress.toLowerCase() === model.address.toLowerCase()
+                    highlighted: RootStore.selectedAddress.toLowerCase() === model.address.toLowerCase()
                     onHighlightedChanged: {
                         if (highlighted)
                             ListView.view.currentIndex = index
@@ -324,7 +296,7 @@ Rectangle {
                     id: header
                     verticalPadding: Style.current.padding
                     horizontalPadding: Style.current.padding
-                    highlighted: root.showAllAccounts
+                    highlighted: RootStore.showAllAccounts
                     objectName: "allAccountsBtn"
 
                     leftInset: Style.current.padding
@@ -442,7 +414,7 @@ Rectangle {
 
                 contentItem: StatusFlatButton {
                     objectName: "savedAddressesBtn"
-                    highlighted: root.showSavedAddresses
+                    highlighted: RootStore.showSavedAddresses
                     hoverColor: Style.current.backgroundHover
                     asset.bgColor: Theme.palette.primaryColor3
                     text: qsTr("Saved addresses")
@@ -454,7 +426,7 @@ Rectangle {
                     textColor: Theme.palette.directColor1
                     textFillWidth: true
                     spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
-                    onClicked: root.showSavedAddresses = true
+                    onClicked: root.selectSavedAddresses()
 
                     MouseArea {
                         anchors.fill: parent

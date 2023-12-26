@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Layout 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 import shared.controls 1.0
@@ -18,7 +19,6 @@ Item {
     id: root
 
     property bool hideSignPhraseModal: false
-    property bool showAllAccounts: true
     property var store
     property var contactsStore
     property var emojiPopup: null
@@ -26,7 +26,9 @@ Item {
     property var networkConnectionStore
     property bool appMainVisible
 
-    onAppMainVisibleChanged: showSigningPhrasePopup()
+    onAppMainVisibleChanged: {
+        resetView()
+    }
 
     onVisibleChanged: {
         resetView()
@@ -36,7 +38,7 @@ Item {
         target: walletSection
 
         function onFilterChanged(address, allAddresses) {
-            root.showAllAccounts = allAddresses
+            RootStore.selectedAddress = allAddresses ? "" : address
         }
 
         function onDisplayKeypairImportPopup() {
@@ -49,14 +51,54 @@ Item {
     }
     
     function showSigningPhrasePopup(){
-        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal && visible && appMainVisible){
+
+    }
+
+    function resetView() {
+        if (!visible || !appMainVisible) {
+            return
+        }
+
+        d.displayAllAddresses()
+
+        if (!!rightPanelStackView.currentItem.resetView) {
+            rightPanelStackView.currentItem.resetView()
+        }
+
+        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
         }
     }
 
-    function resetView() {
-        if (!!rightPanelStackView.currentItem.resetView)
-            rightPanelStackView.currentItem.resetView()
+    QtObject {
+        id: d
+
+        readonly property bool showSavedAddresses: RootStore.showSavedAddresses
+        onShowSavedAddressesChanged: {
+            if(showSavedAddresses) {
+                rightPanelStackView.replace(cmpSavedAddresses)
+            } else {
+                rightPanelStackView.replace(walletContainer)
+            }
+            RootStore.backButtonName = ""
+        }
+
+        function displayAllAddresses() {
+            RootStore.showSavedAddresses = false
+            RootStore.selectedAddress = ""
+            RootStore.setFillterAllAddresses()
+        }
+
+        function displayAddress(address) {
+            RootStore.showSavedAddresses = false
+            RootStore.selectedAddress = address
+            RootStore.setFilterAddress(address)
+        }
+
+        function displaySavedAddresses() {
+            RootStore.showSavedAddresses = true
+            RootStore.selectedAddress = ""
+        }
     }
 
     SignPhraseModal {
@@ -74,11 +116,15 @@ Item {
     Component {
         id: cmpSavedAddresses
         SavedAddressesView {
-            anchors.top: parent ? parent.top: undefined
-            anchors.left: parent ? parent.left: undefined
-            anchors.right: parent ? parent.right: undefined
+            store: root.store
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
+
+            networkFilter.visible: false
+            headerButton.text: qsTr("Add new address")
+            headerButton.onClicked: {
+                Global.openAddEditSavedAddressesPopup({})
+            }
         }
     }
 
@@ -89,7 +135,9 @@ Item {
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
-            showAllAccounts: leftTab.showAllAccounts
+
+            headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideText(RootStore.overview.mixedcaseAddress, 6, 4)
+            headerButton.visible: !RootStore.overview.isAllAccounts
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent);
         }
     }
@@ -110,24 +158,18 @@ Item {
         leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent
-            changeSelectedAccount: function(address) {
-                root.resetView()
-                RootStore.setFilterAddress(address)
-            }
-            selectAllAccounts: function() {
-                root.resetView()
-                RootStore.setFillterAllAddresses()
-            }
-            onCurrentAddressChanged: root.resetView()
-            onShowSavedAddressesChanged: {
-                if(showSavedAddresses)
-                    rightPanelStackView.replace(cmpSavedAddresses)
-                else
-                    rightPanelStackView.replace(walletContainer)
-                RootStore.backButtonName = ""
-            }
             emojiPopup: root.emojiPopup
             networkConnectionStore: root.networkConnectionStore
+
+            changeSelectedAccount: function(address) {
+                d.displayAddress(address)
+            }
+            selectAllAccounts: function() {
+                d.displayAllAddresses()
+            }
+            selectSavedAddresses: function() {
+                d.displaySavedAddresses()
+            }
         }
 
         centerPanel: StackView {
@@ -155,9 +197,9 @@ Item {
             readonly property bool isCommunityCollectible: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityId !== "" : false
             readonly property bool isOwnerCommunityCollectible: isCommunityCollectible ? (walletStore.currentViewedCollectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
 
-            visible: !root.showAllAccounts
+            visible: !RootStore.showAllAccounts
             width: parent.width
-            height: root.showAllAccounts ? implicitHeight : 61
+            height: RootStore.showAllAccounts ? implicitHeight : 61
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible

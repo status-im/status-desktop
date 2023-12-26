@@ -191,14 +191,6 @@ QtObject {
         return walletSectionSavedAddresses.getEnsForAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
-    }
-
-    function deleteSavedAddress(addresse, ens) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
-    }
-
     function getCurrencyAmount(amount, symbol) {
         return currencyStore.getCurrencyAmount(amount, symbol)
     }

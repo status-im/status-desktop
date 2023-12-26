@@ -16,17 +16,16 @@ import "../stores"
 import "../panels"
 import "../views/collectibles"
 
-Item {
+RightTabBaseView {
     id: root
 
     property alias currentTabIndex: walletTabBar.currentIndex
-    property var store
-    property var contactsStore
-    property var sendModal
-    property var networkConnectionStore
-    property bool showAllAccounts: false
 
     signal launchShareAddressModal()
+
+    headerButton.onClicked: {
+        root.launchShareAddressModal()
+    }
 
     function resetView() {
         stack.currentIndex = 0
@@ -38,48 +37,42 @@ Item {
         stack.currentIndex = 0;
     }
 
-    Connections {
-        target: walletSection
-
-        function onFilterChanged() {
-            root.resetStack()
-        }
-    }
-
-    QtObject {
-        id: d
-        function getBackButtonText(index) {
-            switch(index) {
-            case 1:
-                return qsTr("Collectibles")
-            case 2:
-                return qsTr("Assets")
-            case 3:
-                return qsTr("Activity")
-            default:
-                return ""
-            }
-        }
-    }
-
     StackLayout {
         id: stack
-        anchors.fill: parent
+        width: parent.width
+
+        Connections {
+            target: walletSection
+
+            function onFilterChanged() {
+                root.resetStack()
+            }
+        }
+
         onCurrentIndexChanged: {
             RootStore.backButtonName = d.getBackButtonText(currentIndex)
         }
 
-        ColumnLayout {
-            spacing: 0
-            WalletHeader {
-                Layout.fillWidth: true
-                overview: RootStore.overview
-                store: root.store
-                walletStore: RootStore
-                networkConnectionStore: root.networkConnectionStore
-                onLaunchShareAddressModal: root.launchShareAddressModal()
-                onSwitchHideWatchOnlyAccounts: RootStore.toggleWatchOnlyAccounts()
+        QtObject {
+            id: d
+            function getBackButtonText(index) {
+                switch(index) {
+                case 1:
+                    return qsTr("Collectibles")
+                case 2:
+                    return qsTr("Assets")
+                case 3:
+                    return qsTr("Activity")
+                default:
+                    return ""
+                }
             }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 0
 
             ImportKeypairInfo {
                 Layout.fillWidth: true
@@ -187,7 +180,7 @@ Item {
                 HistoryView {
                     id: historyView
                     overview: RootStore.overview
-                    showAllAccounts: root.showAllAccounts
+                    showAllAccounts: RootStore.showAllAccounts
                     sendModal: root.sendModal
                     filterVisible: filterButton.checked
                     onLaunchTransactionDetail: function (entry, entryIndex) {
@@ -214,7 +207,7 @@ Item {
 
             allNetworksModel: RootStore.allNetworks
             address: RootStore.overview.mixedcaseAddress
-            showAllAccounts: root.showAllAccounts
+            showAllAccounts: RootStore.showAllAccounts
             currencyStore: RootStore.currencyStore
             networkFilters: RootStore.networkFilters
 
@@ -240,7 +233,7 @@ Item {
                     transaction = null
                 }
             }
-            showAllAccounts: root.showAllAccounts
+            showAllAccounts: RootStore.showAllAccounts
             sendModal: root.sendModal
             contactsStore: root.contactsStore
             visible: (stack.currentIndex === 3)

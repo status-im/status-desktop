@@ -1,9 +1,9 @@
 import NimQml, sugar, sequtils
 import ../io_interface as delegate_interface
 
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/saved_address/service as saved_address_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/saved_address/service as saved_address_service
 
 import ./io_interface, ./view, ./controller, ./item
 
@@ -57,8 +57,16 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string, favourite: bool, chainShortNames: string, ens: string): string =
-  return self.controller.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string, favourite: bool, chainShortNames: string, ens: string) =
+  self.controller.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
 
-method deleteSavedAddress*(self: Module, address: string, ens: string): string =
-  return self.controller.deleteSavedAddress(address, ens)
+method deleteSavedAddress*(self: Module, address: string, ens: string) =
+  self.controller.deleteSavedAddress(address, ens)
+
+method savedAddressUpdated*(self: Module, address: string, ens: string, errorMsg: string) =
+  self.loadSavedAddresses()
+  self.view.savedAddressUpdated(address, ens, errorMsg)
+
+method savedAddressDeleted*(self: Module, address: string, ens: string, errorMsg: string) =
+  self.loadSavedAddresses()
+  self.view.savedAddressDeleted(address, ens, errorMsg)
