@@ -21,7 +21,7 @@ import "../shared"
 
 Item {
     id: root
-
+    objectName: "onboardingInsertDetailsView"
     property StartupStore startupStore
 
     property string pubKey
