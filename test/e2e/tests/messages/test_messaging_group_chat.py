@@ -12,13 +12,14 @@ from gui.screens.messages import MessagesScreen
 
 pytestmark = marks
 
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014)
+@pytest.mark.timeout(timeout=240)
 @pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
      configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12440")
 def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
