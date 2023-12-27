@@ -62,7 +62,7 @@ mainWindow_Plug_in_Keycard_reader_StatusBaseText = {"container": mainWindow_Keyc
                                                     "unnamed": 1, "visible": True}
 
 # Your Profile View
-mainWindow_InsertDetailsView = {"container": statusDesktop_mainWindow, "type": "InsertDetailsView", "unnamed": 1, "visible": True}
+mainWindow_InsertDetailsView = {"container": statusDesktop_mainWindow, "objectName": "onboardingInsertDetailsView", "type": "InsertDetailsView", "visible": True}
 updatePicButton_StatusRoundButton = {"container": mainWindow_InsertDetailsView, "id": "updatePicButton", "type": "StatusRoundButton", "unnamed": 1, "visible": True}
 mainWindow_CanvasItem = {"container": mainWindow_InsertDetailsView, "type": "CanvasItem", "unnamed": 1, "visible": True}
 mainWindow_IdenticonRing = {"container": statusDesktop_mainWindow, "type": "StatusIdenticonRing", "unnamed": 1, "visible": True}

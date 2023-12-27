@@ -69,7 +69,6 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
     with step('Open emojihash and identicon ring profile screen and capture the details'):
         details_view = profile_view.next()
         chat_key = details_view.get_chat_key
-        # TODO: replace with the public key value verification
         emoji_hash_public_key = details_view.get_emoji_hash
         assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
         details_view.back().next()
