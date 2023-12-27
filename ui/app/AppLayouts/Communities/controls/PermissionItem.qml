@@ -11,6 +11,8 @@ import StatusQ.Core.Utils 0.1
 Control{
     id: root
 
+    objectName: "communityPermissionItem"
+
     property var holdingsListModel
     property var channelsListModel
 
