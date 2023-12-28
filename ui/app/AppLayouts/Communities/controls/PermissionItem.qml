@@ -129,6 +129,7 @@ Control{
                 model: root.holdingsListModel
 
                 StatusListItemTag {
+                    objectName: "whoHoldsStatusListItem"
                     height: d.flowRowHeight
                     width: (implicitWidth > content.width) ? content.width : implicitWidth
                     leftPadding: 2
@@ -188,6 +189,7 @@ Control{
                     spacing: 6
 
                     StatusListItemTag {
+                        objectName: "isAllowedStatusListItem"
                         height: d.flowRowHeight
                         title: PermissionTypes.getName(model.permissionType === PermissionTypes.Type.None
                                                        ? root.permissionType : model.permissionType)
@@ -221,6 +223,7 @@ Control{
                 model: root.channelsListModel
 
                 StatusListItemTag {
+                    objectName: "inCommunityStatusListItem"
                     readonly property bool isLetterIdenticon: !model.imageSource
 
                     asset.isLetterIdenticon: isLetterIdenticon

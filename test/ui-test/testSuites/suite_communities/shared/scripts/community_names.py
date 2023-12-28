@@ -113,4 +113,4 @@ communityItem_CommunityListItem = {"container": statusDesktop_mainWindow_overlay
 editPermissionView_switchItem_StatusSwitch = {"checkable": True, "container": mainWindow_editPermissionView_EditPermissionView, "id": "switchItem", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 editPermissionView_Create_permission_StatusButton = {"checkable": False, "container": mainWindow_editPermissionView_EditPermissionView, "text": "Create permission", "type": "StatusButton", "unnamed": 1, "visible": True}
 mainWindow_PermissionsView = {"container": mainWindow_StatusWindow, "type": "PermissionsView", "unnamed": 1, "visible": True}
-o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
+o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "visible": True}
