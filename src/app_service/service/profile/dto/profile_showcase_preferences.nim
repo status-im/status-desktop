@@ -23,13 +23,22 @@ type ProfileShowcaseAccountPreference* = ref object of RootObj
   order*: int
 
 type ProfileShowcaseCollectiblePreference* = ref object of RootObj
-  uid*: string
+  chainId*: string
+  tokenId*: string
+  contractAddress*: string
+  communityId*: string
+  accountAddress*: string
   showcaseVisibility*: ProfileShowcaseVisibility
   order*: int
 
-type ProfileShowcaseAssetPreference* = ref object of RootObj
+type ProfileShowcaseVerifiedTokenPreference* = ref object of RootObj
   symbol*: string
+  showcaseVisibility*: ProfileShowcaseVisibility
+  order*: int
+
+type ProfileShowcaseUnverifiedTokenPreference* = ref object of RootObj
   contractAddress*: string
+  chainId*: string
   showcaseVisibility*: ProfileShowcaseVisibility
   order*: int
 
@@ -37,7 +46,8 @@ type ProfileShowcasePreferencesDto* = ref object of RootObj
   communities*: seq[ProfileShowcaseCommunityPreference]
   accounts*: seq[ProfileShowcaseAccountPreference]
   collectibles*: seq[ProfileShowcaseCollectiblePreference]
-  assets*: seq[ProfileShowcaseAssetPreference]
+  verifiedTokens*: seq[ProfileShowcaseVerifiedTokenPreference]
+  unverifiedTokens*: seq[ProfileShowcaseUnverifiedTokenPreference]
 
 proc toProfileShowcaseVisibility*(jsonObj: JsonNode): ProfileShowcaseVisibility =
   var visibilityInt: int
@@ -81,28 +91,49 @@ proc toJsonNode*(self: ProfileShowcaseAccountPreference): JsonNode =
 
 proc toProfileShowcaseCollectiblePreference*(jsonObj: JsonNode): ProfileShowcaseCollectiblePreference =
   result = ProfileShowcaseCollectiblePreference()
-  discard jsonObj.getProp("uid", result.uid)
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("tokenId", result.tokenId)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("accountAddress", result.accountAddress)
   discard jsonObj.getProp("order", result.order)
   result.showcaseVisibility = jsonObj.toProfileShowcaseVisibility()
 
 proc toJsonNode*(self: ProfileShowcaseCollectiblePreference): JsonNode =
   %* {
-    "uid": self.uid,
+    "chainId": self.chainId,
+    "tokenId": self.tokenId,
+    "contractAddress": self.contractAddress,
+    "communityId": self.communityId,
+    "accountAddress": self.accountAddress,
     "showcaseVisibility": self.showcaseVisibility.int,
     "order": self.order,
   }
 
-proc toProfileShowcaseAssetPreference*(jsonObj: JsonNode): ProfileShowcaseAssetPreference =
-  result = ProfileShowcaseAssetPreference()
+proc toProfileShowcaseVerifiedTokenPreference*(jsonObj: JsonNode): ProfileShowcaseVerifiedTokenPreference =
+  result = ProfileShowcaseVerifiedTokenPreference()
   discard jsonObj.getProp("symbol", result.symbol)
-  discard jsonObj.getProp("contractAddress", result.contractAddress)
   discard jsonObj.getProp("order", result.order)
   result.showcaseVisibility = jsonObj.toProfileShowcaseVisibility()
 
-proc toJsonNode*(self: ProfileShowcaseAssetPreference): JsonNode =
+proc toJsonNode*(self: ProfileShowcaseVerifiedTokenPreference): JsonNode =
   %* {
     "symbol": self.symbol,
+    "showcaseVisibility": self.showcaseVisibility.int,
+    "order": self.order,
+  }
+
+proc toProfileShowcaseUnverifiedTokenPreference*(jsonObj: JsonNode): ProfileShowcaseUnverifiedTokenPreference =
+  result = ProfileShowcaseUnverifiedTokenPreference()
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("order", result.order)
+  result.showcaseVisibility = jsonObj.toProfileShowcaseVisibility()
+
+proc toJsonNode*(self: ProfileShowcaseUnverifiedTokenPreference): JsonNode =
+  %* {
     "contractAddress": self.contractAddress,
+    "chainId": self.chainId,
     "showcaseVisibility": self.showcaseVisibility.int,
     "order": self.order,
   }
@@ -116,18 +147,22 @@ proc toProfileShowcasePreferencesDto*(jsonObj: JsonNode): ProfileShowcasePrefere
     result.accounts.add(jsonMsg.toProfileShowcaseAccountPreference())
   for jsonMsg in jsonObj["collectibles"]:
     result.collectibles.add(jsonMsg.toProfileShowcaseCollectiblePreference())
-  for jsonMsg in jsonObj["assets"]:
-    result.assets.add(jsonMsg.toProfileShowcaseAssetPreference())
+  for jsonMsg in jsonObj["verifiedTokens"]:
+    result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedTokenPreference())
+  for jsonMsg in jsonObj["unverifiedTokens"]:
+    result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedTokenPreference())
 
 proc toJsonNode*(self: ProfileShowcasePreferencesDto): JsonNode =
   let communities = self.communities.map(entry => entry.toJsonNode())
   let accounts = self.accounts.map(entry => entry.toJsonNode())
   let collectibles = self.collectibles.map(entry => entry.toJsonNode())
-  let assets = self.assets.map(entry => entry.toJsonNode())
+  let verifiedTokens = self.verifiedTokens.map(entry => entry.toJsonNode())
+  let unverifiedTokens = self.unverifiedTokens.map(entry => entry.toJsonNode())
 
   return %*[{
     "communities": communities,
     "accounts": accounts,
     "collectibles": collectibles,
-    "assets": assets,
+    "verifiedTokens": verifiedTokens,
+    "unverifiedTokens": unverifiedTokens
   }]

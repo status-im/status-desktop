@@ -8,7 +8,7 @@ ProfileShowcasePanel {
     id: root
 
     keyRole: "uid"
-    roleNames: ["uid", "name", "collectionName", "backgroundColor", "imageUrl"].concat(showcaseRoles)
+    roleNames: ["uid", "chainId", "tokenId", "contractAddress", "communityId", "name", "collectionName", "backgroundColor", "imageUrl"].concat(showcaseRoles)
     filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.uid)
     hiddenPlaceholderBanner: qsTr("Collectibles here will show on your profile")
     showcasePlaceholderBanner: qsTr("Collectibles here will be hidden from your profile")

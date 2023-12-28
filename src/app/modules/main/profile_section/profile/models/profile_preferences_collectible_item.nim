@@ -1,4 +1,4 @@
-import json, strutils, stint, json_serialization, tables
+import json, strutils, strformat, stint, json_serialization, tables
 
 import profile_preferences_base_item
 
@@ -9,7 +9,10 @@ include app_service/common/utils
 
 type
   ProfileShowcaseCollectibleItem* = ref object of ProfileShowcaseBaseItem
-    uid*: string
+    chainId*: string
+    tokenId*: string
+    contractAddress*: string
+    communityId*: string
     name*: string
     collectionName*: string
     imageUrl*: string
@@ -25,7 +28,10 @@ proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollec
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
-  discard jsonObj.getProp("uid", result.uid)
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("tokenId", result.tokenId)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("collectionName", result.collectionName)
   discard jsonObj.getProp("imageUrl", result.imageUrl)
@@ -34,18 +40,13 @@ proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollec
 proc toShowcasePreferenceItem*(self: ProfileShowcaseCollectibleItem): ProfileShowcaseCollectiblePreference =
   result = ProfileShowcaseCollectiblePreference()
 
-  result.uid = self.uid
+  result.chainId = self.chainId
+  result.tokenId = self.tokenId
+  result.contractAddress = self.contractAddress
+  result.communityId = self.communityId
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 
-proc name*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
-  self.name
-
-proc collectionName*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
-  self.collectionName
-
-proc imageUrl*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
-  self.imageUrl
-
-proc backgroundColor*(self: ProfileShowcaseCollectibleItem): string {.inline.} =
-  self.backgroundColor
+# NOTE: should be same as CollectiblesEntry::getID
+proc getID*(self: ProfileShowcaseCollectibleItem): string =
+  return fmt"{self.chainId}+{self.contractAddress}+{self.tokenId}"

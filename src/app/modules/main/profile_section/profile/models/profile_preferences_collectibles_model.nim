@@ -8,7 +8,10 @@ type
     ShowcaseVisibility = UserRole + 1
     Order
 
-    Uid
+    ChainId
+    TokenId
+    ContractAddress
+    CommunityId
     Name
     CollectionName
     ImageUrl
@@ -52,7 +55,10 @@ QtObject:
       ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
       ModelRole.Order.int: "order",
 
-      ModelRole.Uid.int: "uid",
+      ChainId.int: "chainId",
+      TokenId.int: "tokenId",
+      ContractAddress.int: "contractAddress",
+      CommunityId.int: "communityId",
       ModelRole.Name.int: "name",
       ModelRole.CollectionName.int: "collectionName",
       ModelRole.ImageUrl.int: "imageUrl",
@@ -74,8 +80,14 @@ QtObject:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
-    of ModelRole.Uid:
-      result = newQVariant(item.uid)
+    of ModelRole.ChainId:
+      result = newQVariant(item.chainId)
+    of ModelRole.TokenId:
+      result = newQVariant(item.tokenId)
+    of ModelRole.ContractAddress:
+      result = newQVariant(item.contractAddress)
+    of ModelRole.CommunityId:
+      result = newQVariant(item.communityId)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.CollectionName:
@@ -87,7 +99,7 @@ QtObject:
 
   proc findIndexForCollectible(self: ProfileShowcaseCollectiblesModel, uid: string): int =
     for i in 0 ..< self.items.len:
-      if (self.items[i].uid == uid):
+      if (self.items[i].getID() == uid):
         return i
     return -1
 
@@ -109,7 +121,7 @@ QtObject:
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
-    let ind = self.findIndexForCollectible(item.uid)
+    let ind = self.findIndexForCollectible(item.getID())
     if ind == -1:
       self.appendItem(item)
     else:
@@ -120,7 +132,10 @@ QtObject:
       self.dataChanged(index, index, @[
         ModelRole.ShowcaseVisibility.int,
         ModelRole.Order.int,
-        ModelRole.Uid.int,
+        ModelRole.ChainId.int,
+        ModelRole.TokenId.int,
+        ModelRole.ContractAddress.int,
+        ModelRole.CommunityId.int,
         ModelRole.Name.int,
         ModelRole.CollectionName.int,
         ModelRole.ImageUrl.int,

@@ -8,6 +8,8 @@ type
     ShowcaseVisibility = UserRole + 1
     Order
 
+    Address
+    CommunityId
     Symbol
     Name
     EnabledNetworkBalance
@@ -52,6 +54,8 @@ QtObject:
       ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
       ModelRole.Order.int: "order",
 
+      ModelRole.Address.int: "address",
+      ModelRole.CommunityId.int: "communityId",
       ModelRole.Symbol.int: "symbol",
       ModelRole.Name.int: "name",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
@@ -74,6 +78,10 @@ QtObject:
       result = newQVariant(item.showcaseVisibility.int)
     of ModelRole.Order:
       result = newQVariant(item.order)
+    of ModelRole.Address:
+      result = newQVariant(item.contractAddress)
+    of ModelRole.CommunityId:
+      result = newQVariant(item.communityId)
     of ModelRole.Symbol:
       result = newQVariant(item.symbol)
     of ModelRole.Name:
@@ -120,6 +128,8 @@ QtObject:
       self.dataChanged(index, index, @[
         ModelRole.ShowcaseVisibility.int,
         ModelRole.Order.int,
+        ModelRole.Address.int,
+        ModelRole.CommunityId.int,
         ModelRole.Symbol.int,
         ModelRole.Name.int,
         ModelRole.EnabledNetworkBalance.int,

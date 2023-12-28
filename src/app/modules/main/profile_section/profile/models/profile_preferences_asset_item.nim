@@ -14,18 +14,24 @@ import backend/helpers/token
 
 type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem
+    contractAddress*: string
+    communityId*: string
+    chainId*: string
     symbol*: string
     name*: string
     enabledNetworkBalance*: CurrencyAmount
     color*: string
     decimals*: int
 
-proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
+proc initProfileShowcaseAssetItem*(token: WalletTokenDto, contractAddress: string, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
   result.showcaseVisibility = visibility
   result.order = order
 
+  result.contractAddress = contractAddress
+  # TODO: result.chainId = token.chainId
+  result.communityId = token.communityId
   result.symbol = token.symbol
   result.name = token.name
   result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
@@ -42,6 +48,8 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
+  discard jsonObj.getProp("address", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("color", result.color)
@@ -49,22 +57,17 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
   result.enabledNetworkBalance = newCurrencyAmount(jsonObj{"enabledNetworkBalance"}.getFloat, result.symbol, result.decimals, false)
 
-proc toShowcasePreferenceItem*(self: ProfileShowcaseAssetItem): ProfileShowcaseAssetPreference =
-  result = ProfileShowcaseAssetPreference()
+proc toShowcaseVerifiedTokenPreference*(self: ProfileShowcaseAssetItem): ProfileShowcaseVerifiedTokenPreference =
+  result = ProfileShowcaseVerifiedTokenPreference()
 
   result.symbol = self.symbol
-  # TODO: result.contractAddress = self.contractAddress
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 
-proc symbol*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.symbol
+proc toShowcaseUnverifiedTokenPreference*(self: ProfileShowcaseAssetItem): ProfileShowcaseUnverifiedTokenPreference =
+  result = ProfileShowcaseUnverifiedTokenPreference()
 
-proc name*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.name
-
-proc enabledNetworkBalance*(self: ProfileShowcaseAssetItem): CurrencyAmount {.inline.} =
-  self.enabledNetworkBalance
-
-proc color*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.color
+  result.contractAddress = self.contractAddress
+  result.chainId = self.chainId
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order

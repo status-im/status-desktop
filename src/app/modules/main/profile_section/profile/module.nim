@@ -118,11 +118,17 @@ method storeProfileShowcasePreferences(self: Module,
     if acc.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
       revealedAddresses.add(acc.address)
 
+  var verifiedTokens: seq[ProfileShowcaseVerifiedTokenPreference] = @[]
+  var unverifiedTokens: seq[ProfileShowcaseUnverifiedTokenPreference] = @[]
+
+  # TODO: run through assets and collect verified/unverified tokens
+
   self.controller.storeProfileShowcasePreferences(ProfileShowcasePreferencesDto(
     communities: communities.map(item => item.toShowcasePreferenceItem()),
     accounts: accounts.map(item => item.toShowcasePreferenceItem()),
     collectibles: collectibles.map(item => item.toShowcasePreferenceItem()),
-    assets: assets.map(item => item.toShowcasePreferenceItem()),
+    verifiedTokens: verifiedTokens,
+    unverifiedTokens: unverifiedTokens
     ),
     revealedAddresses
   )
@@ -153,6 +159,7 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
 
   for communityEntry in profileShowcase.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
@@ -177,15 +184,10 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
       account.order
     ))
     accountAddresses.add(account.address)
-
-  for assetEntry in profileShowcase.assets:
-    let tokens = self.controller.getBalancesByChain(accountAddresses, @[assetEntry.contractAddress])
-    if len(tokens) == 1:
-      profileAssetItems.add(initProfileShowcaseAssetItem(tokens[0], ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
-
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
-  self.view.updateProfileShowcaseAssets(profileAssetItems)
-  # TODO: collectibles, need wallet api to fetch collectible by uid
+
+  # TODO: verified and unverified tokens
+  # TODO: collectibles
 
 method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
   if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
@@ -194,6 +196,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
 
   for communityEntry in preferences.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
@@ -215,15 +218,10 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
       account.order
     ))
     accountAddresses.add(account.address)
-
-  for asset in preferences.assets:
-    let tokens = self.controller.getBalancesByChain(accountAddresses, @[asset.contractAddress])
-    if len(tokens) == 1:
-      profileAssetItems.add(initProfileShowcaseAssetItem(tokens[0], asset.showcaseVisibility, asset.order))
-
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
-  self.view.updateProfileShowcaseAssets(profileAssetItems)
-  # TODO: collectibles, need wallet api to fetch collectible by uid
+
+  # TODO: verified and unverified tokens
+  # TODO: collectibles
 
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
   var profileCommunityItems = self.view.getProfileShowcaseCommunities()
