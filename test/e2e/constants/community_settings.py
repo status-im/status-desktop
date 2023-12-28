@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class PermissionsElements(Enum):
     WELCOME_TITLE = "Permissions"
     WELCOME_SUBTITLE = 'You can manage your community by creating and issuing membership and access permissions'
@@ -26,3 +27,7 @@ class AirdropsElements(Enum):
     WELCOME_CHECKLIST_ELEMENT_3 = 'Require holding a token or NFT to obtain exclusive membership rights'
     INFOBOX_TITLE = 'Get started'
     INFOBOX_TEXT = 'In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.'
+
+
+class ToastMessages(Enum):
+    CREATE_PERMISSION_TOAST = 'Community permission created'

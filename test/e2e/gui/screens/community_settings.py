@@ -94,9 +94,10 @@ class OverviewView(QObject):
             return EditCommunityView()
         except Exception as ex:
             if attempts:
-                self.open_edit_community_view(attempts-1)
+                self.open_edit_community_view(attempts - 1)
             else:
                 raise ex
+
 
 class EditCommunityView(QObject):
 
@@ -399,12 +400,24 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_to_list_item = QObject('editPermissionView_Is_allowed_to_StatusFlowSelector')
         self._in_list_item = QObject('editPermissionView_In_StatusItemSelector')
         self._tag_item = QObject('o_StatusListItemTag')
+        self._who_holds_tag = QObject('whoHoldsTagListItem')
+        self._is_allowed_tag = QObject('isAllowedTagListItem')
+        self._in_community_in_channel_tag = QObject('inCommunityTagListItem')
 
-    @property
-    @allure.step('Get permission tags')
-    def tags(self) -> typing.List[str]:
-        _tags = driver.findAllObjects(self._tag_item.real_name)
-        return [str(getattr(tag, 'title', '')) for tag in _tags]
+    @allure.step('Get titles of Who holds tags')
+    def get_who_holds_tags_titles(self) -> typing.List[str]:
+        who_holds_tags = [str(tag.title) for tag in driver.findAllObjects(self._who_holds_tag.real_name)]
+        return who_holds_tags
+
+    @allure.step('Get titles of Is Allowed tags')
+    def get_is_allowed_tags_titles(self) -> typing.List[str]:
+        is_allowed_tags = [str(tag.title) for tag in driver.findAllObjects(self._is_allowed_tag.real_name)]
+        return is_allowed_tags
+
+    @allure.step('Get title of inCommunity tag')
+    def get_in_community_in_channel_tags_titles(self) -> typing.List[str]:
+        in_community_in_channel_tags = [str(tag.title) for tag in driver.findAllObjects(self._in_community_in_channel_tag.real_name)]
+        return in_community_in_channel_tags
 
     @allure.step('Set state of who holds checkbox')
     def set_who_holds_checkbox_state(self, state):
@@ -420,7 +433,6 @@ class PermissionsSettingsView(QObject):
             self._who_holds_asset_field.wait_until_hidden()
             self._who_holds_amount_field.text = amount
             self._add_button.click()
-            self._who_holds_amount_field.wait_until_hidden()
 
     @allure.step('Choose option from Is allowed to context menu')
     def set_is_allowed_to(self, name):
@@ -428,7 +440,6 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_to_option_button.real_name['objectName'] = name
         self._is_allowed_to_option_button.wait_until_appears().click()
         self._add_button.click()
-        self._add_button.wait_until_hidden()
 
     @allure.step('Choose channel from In context menu')
     def set_in(self, in_general):
@@ -436,7 +447,6 @@ class PermissionsSettingsView(QObject):
             self.open_in_context_menu()
             self._in_general_button.wait_until_appears().click()
             self._add_button.click()
-            self._add_button.wait_until_hidden()
 
     @allure.step('Click create permission')
     def create_permission(self):

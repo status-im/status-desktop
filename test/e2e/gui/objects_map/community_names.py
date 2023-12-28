@@ -122,9 +122,12 @@ communityItem_CommunityListItem = {"container": statusDesktop_mainWindow_overlay
 editPermissionView_switchItem_StatusSwitch = {"checkable": True, "container": mainWindow_editPermissionView_EditPermissionView, "id": "switchItem", "type": "StatusSwitch", "unnamed": 1, "visible": True}
 editPermissionView_Create_permission_StatusButton = {"checkable": False, "container": mainWindow_editPermissionView_EditPermissionView, "text": "Create permission", "type": "StatusButton", "unnamed": 1, "visible": True}
 mainWindow_PermissionsView = {"container": statusDesktop_mainWindow, "type": "PermissionsView", "unnamed": 1, "visible": True}
-o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
+o_StatusListItemTag = {"container": mainWindow_PermissionsView, "type": "StatusListItemTag", "visible": True}
 o_IntroPanel = {"container": mainWindow_PermissionsView, "type": "IntroPanel", "unnamed": 1, "visible": True}
 mainWindow_PermissionsSettingsPanel = {"container": statusDesktop_mainWindow, "type": "PermissionsSettingsPanel", "unnamed": 1, "visible": True}
+whoHoldsTagListItem = {"container": mainWindow_PermissionsView, "objectName": "whoHoldsStatusListItem", "type": "StatusListItemTag", "visible": True}
+isAllowedTagListItem = {"container": mainWindow_PermissionsView, "objectName": "isAllowedStatusListItem", "type": "StatusListItemTag", "visible": True}
+inCommunityTagListItem = {"container": mainWindow_PermissionsView, "objectName": "inCommunityStatusListItem", "type": "StatusListItemTag", "visible": True}
 
 # Edit Community
 mainWindow_communityEditPanelScrollView_EditSettingsPanel = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "EditSettingsPanel", "visible": True}
