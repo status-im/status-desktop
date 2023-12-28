@@ -79,7 +79,7 @@ class Message:
         self.icon: typing.Optional[Image] = None
         self.from_user: typing.Optional[str] = None
         self.text: typing.Optional[str] = None
-        self._join_community_button: typing.Optional[Button] = None
+        self.banner_image: typing.Optional[Button] = None
         self.community_invitation: dict = {}
         self.init_ui()
 
@@ -87,12 +87,10 @@ class Message:
         for child in walk_children(self.object):
             if getattr(child, 'objectName', '') == 'StatusDateGroupLabel':
                 self.date = str(child.text)
-            elif getattr(child, 'objectName', '') == 'communityName':
+            elif getattr(child, 'id', '') == 'title':
                 self.community_invitation['name'] = str(child.text)
-            elif getattr(child, 'objectName', '') == 'communityDescription':
+            elif getattr(child, 'id', '') == 'description':
                 self.community_invitation['description'] = str(child.text)
-            elif getattr(child, 'objectName', '') == 'communityMembers':
-                self.community_invitation['members'] = str(child.text)
             else:
                 match getattr(child, 'id', ''):
                     case 'profileImage':
@@ -103,13 +101,12 @@ class Message:
                         self.time = str(child.text)
                     case 'chatText':
                         self.text = str(child.text)
-                    case 'joinBtn':
-                        self._join_community_button = Button(name='', real_name=driver.objectMap.realName(child))
+                    case 'bannerImage':
+                        self.banner_image = Button(name='', real_name=driver.objectMap.realName(child))
 
-    @allure.step('Join community')
-    def join_community(self):
-        assert self._join_community_button is not None, 'Join button not found'
-        self._join_community_button.click()
+    @allure.step('Open community invitation')
+    def open_community_invitation(self):
+        self.banner_image.click()
         return CommunityScreen().wait_until_appears()
 
 
@@ -140,7 +137,7 @@ class ChatView(QObject):
             if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
                 raise LookupError(f'Invitation not found')
 
-        return message.join_community()
+        return message.open_community_invitation()
 
 
 class CreateChatView(QObject):
