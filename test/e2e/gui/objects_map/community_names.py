@@ -31,6 +31,8 @@ edit_Category_StatusMenuItem = {"checkable": False, "container": statusDesktop_m
 scrollView_menuButton_StatusChatListCategoryItemButton = {"container": mainWindow_scrollView_StatusScrollView, "id": "menuButton", "type": "StatusChatListCategoryItemButton", "unnamed": 1, "visible": True}
 scrollView_toggleButton_StatusChatListCategoryItemButton = {"container": mainWindow_scrollView_StatusScrollView, "id": "toggleButton", "type": "StatusChatListCategoryItemButton", "unnamed": 1, "visible": True}
 scrollView_addButton_StatusChatListCategoryItemButton = {"container": mainWindow_scrollView_StatusScrollView, "id": "addButton", "type": "StatusChatListCategoryItemButton", "unnamed": 1, "visible": True}
+add_channels_StatusButton = {"checkable": False, "container": mainWindow_scrollView_StatusScrollView, "id": "addMembersBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
+scrollView_general_StatusChatListItem = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "general", "type": "StatusChatListItem", "visible": True}
 
 # Tool Bar
 mainWindow_statusToolBar_StatusToolBar = {"container": mainWindow_communityLoader_Loader, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}

@@ -2,8 +2,10 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import configs
 import constants
 from gui.components.community.community_category_popup import EditCategoryPopup, CategoryPopup
+from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from . import marks
 
@@ -100,3 +102,43 @@ def test_edit_community_category(main_screen: MainWindow, category_name, general
 
     with step('Verify that selected channel is now listed outside of category'):
         assert community_screen.left_panel.get_channel_or_category_index(second_channel_name) == 0
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703272', 'Member role cannot add category')
+@pytest.mark.case(703272)
+@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+def test_member_role_cannot_add_categories(main_screen: MainWindow):
+    with step('Choose community user is not owner of'):
+        community_screen = main_screen.left_panel.select_community('Super community')
+    with step('Verify that create channel or category button is not present'):
+        assert not community_screen.left_panel.is_create_channel_or_category_button_visible()
+    with step('Verify that add category button is not present'):
+        assert not community_screen.left_panel.is_add_category_button_visible()
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703273', 'Member role cannot edit category')
+@pytest.mark.case(703273)
+@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+def test_member_role_cannot_edit_category(main_screen: MainWindow):
+    with step('Choose community user is not owner of'):
+        community_screen = main_screen.left_panel.select_community('Super community')
+    with step('Right-click on category in the left navigation bar'):
+        community_screen.left_panel.open_category_context_menu()
+    with step('Verify that context menu does not appear'):
+        assert not ContextMenu().is_visible
+    with step('Verify that delete item is not present in more options context menu'):
+        assert not community_screen.left_panel.open_more_options().is_edit_item_visible()
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot delete category')
+@pytest.mark.case(703274)
+@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
+def test_member_role_cannot_delete_category(main_screen: MainWindow):
+    with step('Choose community user is not owner of'):
+        community_screen = main_screen.left_panel.select_community('Super community')
+    with step('Right-click on category in the left navigation bar'):
+        community_screen.left_panel.open_category_context_menu()
+    with step('Verify that context menu does not appear'):
+        assert not ContextMenu().is_visible
+    with step('Verify that delete item is not present in more options context menu'):
+        assert not community_screen.left_panel.open_more_options().is_delete_item_visible()

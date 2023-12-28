@@ -11,13 +11,13 @@ from driver.objects_access import walk_children
 from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
+from gui.components.context_menu import ContextMenu
 from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
 from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.screens.community_settings import CommunitySettingsScreen
-from scripts.tools import image
 from scripts.tools.image import Image
 
 
@@ -121,15 +121,28 @@ class ToolBar(QObject):
 
     @allure.step('Open edit channel popup')
     def open_edit_channel_popup(self):
-        self._more_options_button.click()
+        self.open_more_options_dropdown()
         self._edit_channel_context_item.click()
         return EditChannelPopup().wait_until_appears()
 
     @allure.step('Open delete channel popup')
     def open_delete_channel_popup(self):
-        self._more_options_button.click()
+        self.open_more_options_dropdown()
         self._delete_channel_context_item.click()
         return DeletePopup().wait_until_appears()
+
+    @allure.step('Open more options dropdown')
+    def open_more_options_dropdown(self):
+        self._more_options_button.click()
+        return self
+
+    @allure.step('Get visibility state of edit item')
+    def is_edit_item_visible(self) -> bool:
+        return self._edit_channel_context_item.is_visible
+
+    @allure.step('Get visibility state of delete item')
+    def is_delete_item_visible(self) -> bool:
+        return self._delete_channel_context_item.is_visible
 
 
 class CategoryItem:
@@ -169,6 +182,8 @@ class LeftPanel(QObject):
         self._community_logo = QObject('mainWindow_identicon_StatusSmartIdenticon')
         self._name_text_label = TextLabel('mainWindow_statusChatInfoButtonNameText_TruncatedTextWithTooltip')
         self._members_text_label = TextLabel('mainWindow_Members_TruncatedTextWithTooltip')
+        self._general_channel_item = QObject('scrollView_general_StatusChatListItem')
+        self._add_channels_button = Button('add_channels_StatusButton')
         self._channel_list_item = QObject('channel_listItem')
         self._channel_icon_template = QObject('channel_identicon_StatusSmartIdenticon')
         self._channel_or_category_button = Button('mainWindow_createChannelOrCategoryBtn_StatusBaseText')
@@ -241,13 +256,34 @@ class LeftPanel(QObject):
         self._create_channel_menu_item.click()
         return NewChannelPopup().wait_until_appears()
 
+    @allure.step('Get visibility state of create channel or category button')
+    def is_create_channel_or_category_button_visible(self) -> bool:
+        return self._channel_or_category_button.is_visible
+
+    @allure.step('Get visibility state of add channels button')
+    def is_add_channels_button_visible(self) -> bool:
+        return self._add_channels_button.is_visible
+
+    @allure.step('Get visibility state of add category button')
+    def is_add_category_button_visible(self) -> bool:
+        return self._create_category_button.is_visible
+
     @allure.step('Select channel')
     def select_channel(self, name: str):
         for obj in driver.findAllObjects(self._channel_list_item.real_name):
             if str(obj.objectName) == name:
                 driver.mouseClick(obj)
-                return
+                return obj
         raise LookupError('Channel not found')
+
+    @allure.step('Open general channel context menu')
+    def open_general_channel_context_menu(self):
+        self._general_channel_item.open_context_menu()
+        ContextMenu().wait_until_appears()
+
+    @allure.step('Open category context menu')
+    def open_category_context_menu(self):
+        self._category_list_item.open_context_menu()
 
     @allure.step('Open create category popup')
     def open_create_category_popup(self, attempts: int = 2) -> NewCategoryPopup:
@@ -283,6 +319,15 @@ class LeftPanel(QObject):
     def open_more_options(self):
         self._arrow_button.click()
         self._more_button.click()
+        return self
+
+    @allure.step('Get visibility state of delete item')
+    def is_delete_item_visible(self) -> bool:
+        return self._delete_category_item.is_visible
+
+    @allure.step('Get visibility state of edit item')
+    def is_edit_item_visible(self) -> bool:
+        return self._edit_category_item.is_visible
 
     @allure.step('Open delete category popup')
     def open_delete_category_popup(self) -> DeleteCategoryPopup:
@@ -305,6 +350,10 @@ class LeftPanel(QObject):
         for child in walk_children(self._categories_items_list.object):
             if child.objectName == name:
                 return child.visualIndex
+
+    @allure.step('Right click on left panel')
+    def right_click_on_panel(self):
+        super(LeftPanel, self).open_context_menu()
 
 
 class Chat(QObject):

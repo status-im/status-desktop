@@ -10,6 +10,7 @@ import constants
 import driver
 from constants import UserAccount
 from gui.components.community.invite_contacts import InviteContactsPopup
+from gui.components.context_menu import ContextMenu
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
@@ -122,6 +123,12 @@ class LeftPanel(QObject):
     @allure.step('Get community logo')
     def get_community_logo(self, name: str) -> Image:
         return Image(driver.objectMap.realName(self._get_community(name)))
+
+    @allure.step('Open context menu for community')
+    def open_community_context_menu(self, name: str) -> ContextMenu:
+        driver.objectMap.realName(self._get_community(name))['name'] = name
+        self._get_community(name).open_context_menu()
+        return ContextMenu().wait_until_appears()
 
     @allure.step('Invite people in community')
     def invite_people_in_community(self, contacts: typing.List[str], message: str, community_name: str):
