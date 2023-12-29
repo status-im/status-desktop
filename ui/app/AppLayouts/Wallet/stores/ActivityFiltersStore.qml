@@ -228,14 +228,6 @@ QtObject {
             activityController.updateFilter()
     }
 
-    function getChainShortNamesForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getChainShortNamesForAddress(address)
-    }
-
-    function getEnsForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getEnsForAddress(address)
-    }
-
     property var savedAddressesModel: walletSectionSavedAddresses.model
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var savedAddressList: SortFilterProxyModel {

@@ -1,6 +1,7 @@
 import json, json_serialization, strformat
 import hashes
 import ./core, ./response_type
+import app_service/service/saved_address/dto as saved_address_dto
 from ./gen import rpc
 
 export response_type
@@ -25,14 +26,6 @@ type
     dapp* {.serializedFieldName("dapp").}: string
     address* {.serializedFieldName("address").}: string
     permissions* {.serializedFieldName("permissions").}: seq[string]
-
-  SavedAddress* = ref object of RootObj
-    name* {.serializedFieldName("name").}: string
-    address* {.serializedFieldName("address").}: string
-    favourite* {.serializedFieldName("favourite").}: bool
-    chainShortNames* {.serializedFieldName("chainShortNames").}: string
-    ens* {.serializedFieldName("ens").}: string
-    isTest* {.serializedFieldName("isTest").}: bool
 
   Network* = ref object of RootObj
     chainId* {.serializedFieldName("chainId").}: int
@@ -94,7 +87,7 @@ rpc(fetchChainIDForURL, "wallet"):
   url: string
 
 rpc(upsertSavedAddress, "wakuext"):
-  savedAddress: SavedAddress
+  savedAddress: SavedAddressDto
 
 rpc(deleteSavedAddress, "wakuext"):
   address: string

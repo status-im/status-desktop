@@ -1,7 +1,7 @@
 import NimQml
 
-import ./model, ./item
-import ./io_interface
+import model
+import io_interface
 
 QtObject:
   type
@@ -27,31 +27,32 @@ QtObject:
 
   proc modelChanged*(self: View) {.signal.}
 
-  proc getModel(self: View): QVariant {.slot.} =
+  proc getModel*(self: View): Model =
+    return self.model
+
+  proc getModelVariant(self: View): QVariant {.slot.} =
     return self.modelVariant
 
   QtProperty[QVariant] model:
-    read = getModel
+    read = getModelVariant
     notify = modelChanged
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc savedAddressUpdated*(self: View, address: string, ens: string, errorMsg: string) {.signal.}
+  proc savedAddressUpdated*(self: View, name: string, address: string, ens: string, errorMsg: string) {.signal.}
 
-  proc createOrUpdateSavedAddress*(self: View, name: string, address: string, favourite: bool, chainShortNames: string, ens: string) {.slot.} =
-    self.delegate.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+  proc createOrUpdateSavedAddress*(self: View, name: string, address: string, ens: string, colorId: string,
+    favourite: bool, chainShortNames: string) {.slot.} =
+    self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
 
   proc savedAddressDeleted*(self: View, address: string, ens: string, errorMsg: string) {.signal.}
 
   proc deleteSavedAddress*(self: View, address: string, ens: string) {.slot.} =
     self.delegate.deleteSavedAddress(address, ens)
 
-  proc getNameByAddress*(self: View, address: string): string {.slot.} =
-    return self.model.getNameByAddress(address)
+  proc savedAddressNameExists*(self: View, name: string): bool {.slot.} =
+    return self.delegate.savedAddressNameExists(name)
 
-  proc getChainShortNamesForAddress*(self: View, address: string): string {.slot.} =
-    return self.model.getChainShortNamesForAddress(address)
-
-  proc getEnsForAddress*(self: View, address: string): string {.slot.} =
-    return self.model.getEnsForAddress(address)
+  proc getSavedAddressAsJson*(self: View, address: string): string {.slot.} =
+    return self.delegate.getSavedAddressAsJson(address)

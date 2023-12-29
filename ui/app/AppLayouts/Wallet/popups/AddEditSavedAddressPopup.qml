@@ -25,41 +25,80 @@ import ".."
 StatusDialog {
     id: root
 
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-    property bool edit: false
-    property bool addAddress: false
-    property string address: Constants.zeroAddress // Setting as zero address since we don't have the address yet
-    property string chainShortNames
-    property string ens
-
-    property alias name: nameInput.text
-    property bool favourite: false
-
     property var allNetworks
 
-    function applyParams(params = {}) {
-        root.addAddress = params.addAddress?? false
-        root.address = params.address?? Constants.zeroAddress
-        root.ens = params.ens?? ""
-        root.edit = params.edit?? false
-        root.name = params.name?? ""
-        root.favourite = params.favourite?? false
-        root.chainShortNames = params.chainShortNames?? ""
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside    
+
+    width: 477
+    topPadding: 24 // (16 + 8 for Name, until we add it to the StatusInput component)
+    bottomPadding: 28
+
+    header: StatusDialogHeader {
+        headline.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
+        headline.subtitle: d.editMode? d.name : ""
+        actions.closeButton.onClicked: root.close()
+    }
+
+    function initWithParams(params = {}) {
+        d.storedName = params.name?? ""
+        d.storedColorId = params.colorId?? ""
+        d.storedChainShortNames = params.chainShortNames?? ""
+
+        d.editMode = params.edit?? false
+        d.addAddress = params.addAddress?? false
+        d.name = d.storedName
+        nameInput.input.dirty = false
+        d.address = params.address?? Constants.zeroAddress
+        d.ens = params.ens?? ""
+        d.colorId = d.storedColorId
+        d.chainShortNames = d.storedChainShortNames
+        d.favourite = params.favourite?? false
+
+        d.initialized = true
+
+        if (d.colorId === "") {
+            colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
+        }
+        else {
+            let ind = Utils.getColorIndexForId(d.colorId)
+            colorSelection.selectedColorIndex = ind
+        }
+
+        if (!!d.ens)
+            addressInput.setPlainText(d.ens)
+        else
+            addressInput.setPlainText("%1%2"
+                                      .arg(d.chainShortNames)
+                                      .arg(d.address == Constants.zeroAddress? "" : d.address))
+
+        nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     QtObject {
         id: d
-        readonly property int validationMode: root.edit ?
-                                         StatusInput.ValidationMode.Always
-                                       : StatusInput.ValidationMode.OnlyWhenDirty
-        readonly property bool valid: addressInput.valid && nameInput.valid
+
+        property bool editMode: false
+        property bool addAddress: false
+        property alias name: nameInput.text
+        property string address: Constants.zeroAddress // Setting as zero address since we don't have the address yet
+        property string ens: ""
+        property string colorId: ""
+        property string chainShortNames: ""
+        property bool favourite: false
+
+        property string storedName: ""
+        property string storedColorId: ""
+        property string storedChainShortNames: ""
+
         property bool chainShortNamesDirty: false
-        readonly property bool dirty: nameInput.input.dirty || chainShortNamesDirty
+        readonly property bool valid: addressInput.valid && nameInput.valid
+        readonly property bool dirty: nameInput.input.dirty && (!d.editMode || d.storedName !== d.name)
+                                      || chainShortNamesDirty && (!d.editMode || d.storedChainShortNames !== d.chainShortNames)
+                                      || d.colorId.toUpperCase() !== d.storedColorId.toUpperCase()
+
 
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
-        readonly property string visibleAddress: root.address == Constants.zeroAddress ? "" : root.address
-        readonly property bool addressInputIsENS: !!root.ens
+        readonly property bool addressInputIsENS: !!d.ens
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
@@ -69,60 +108,53 @@ StatusDialog {
         }
 
         function resetAddressValues() {
-            root.ens = ""
-            root.address = Constants.zeroAddress
-            root.chainShortNames = ""
+            d.ens = ""
+            d.address = Constants.zeroAddress
+            d.chainShortNames = ""
             allNetworksModelCopy.setEnabledNetworks([])
         }
-    }
-
-    width: 574
-    height: 490
-
-    header: StatusDialogHeader {
-        headline.title: edit ? qsTr("Edit saved address") : qsTr("Add saved address")
-        headline.subtitle: edit ? name : ""
-        actions.closeButton.onClicked: root.close()
-    }
-
-    onOpened: {
-        d.initialized = true
-
-        if(edit || addAddress) {
-            if (root.ens)
-                addressInput.setPlainText(root.ens)
-            else
-                addressInput.setPlainText(root.chainShortNames + d.visibleAddress)
-        }
-        nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     Column {
         width: parent.width
         height: childrenRect.height
-        topPadding: Style.current.bigPadding
 
-        spacing: Style.current.bigPadding
+        spacing: Style.current.xlPadding
 
         StatusInput {
             id: nameInput
             implicitWidth: parent.width
+            charLimit: 24
             input.edit.objectName: "savedAddressNameInput"
             placeholderText: qsTr("Address name")
             label: qsTr("Name")
             validators: [
                 StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: qsTr("Name must not be blank")
+                    errorMessage: qsTr("Please name your saved address")
+                },
+                StatusValidator {
+                    name: "check-for-no-emojis"
+                    validate: (value) => {
+                                  return !Constants.regularExpressions.emoji.test(value)
+                              }
+                    errorMessage: Constants.errorMessages.emojRegExp
                 },
                 StatusRegularExpressionValidator {
-                    regularExpression: /^[^<>]+$/
-                    errorMessage: qsTr("This is not a valid account name")
+                    regularExpression: Constants.regularExpressions.alphanumericalExpanded1
+                    errorMessage: Constants.errorMessages.alphanumericalExpanded1RegExp
+                },
+                StatusValidator {
+                    name: "check-saved-address-existence"
+                    validate: (value) => {
+                                  return !RootStore.savedAddressNameExists(value)
+                                         || d.editMode && d.storedName == value
+                              }
+                    errorMessage: qsTr("Name already in use")
                 }
             ]
             input.clearable: true
             input.rightPadding: 16
-            validationMode: d.validationMode
         }
 
         StatusInput {
@@ -134,7 +166,7 @@ StatusDialog {
             placeholderText: qsTr("Ethereum address")
             maximumHeight: 66
             input.implicitHeight: Math.min(Math.max(input.edit.contentHeight + topPadding + bottomPadding, minimumHeight), maximumHeight) // setting height instead does not work
-            enabled: !(root.edit || root.addAddress)
+            enabled: !(d.editMode || d.addAddress)
             validators: [
                 StatusMinLengthValidator {
                     minLength: 1
@@ -148,10 +180,9 @@ StatusDialog {
                     }
                 }
             ]
-            validationMode: d.validationMode
 
             input.edit.textFormat: TextEdit.RichText
-            input.asset.name: addressInput.valid && !root.edit ? "checkbox" : ""
+            input.asset.name: addressInput.valid && !d.editMode ? "checkbox" : ""
             input.asset.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             input.rightPadding: 16
             input.leftIcon: false
@@ -185,14 +216,14 @@ StatusDialog {
 
                     // Update root values
                     if (Utils.isLikelyEnsName(plainText)) {
-                        root.ens = plainText
-                        root.address = Constants.zeroAddress
-                        root.chainShortNames = ""
+                        d.ens = plainText
+                        d.address = Constants.zeroAddress
+                        d.chainShortNames = ""
                     }
                     else {
-                        root.ens = ""
-                        root.address = prefixAndAddress.address
-                        root.chainShortNames = prefixAndAddress.prefix
+                        d.ens = ""
+                        d.address = prefixAndAddress.address
+                        d.chainShortNames = prefixAndAddress.prefix
 
                         let prefixArrWithColumn = d.getPrefixArrayWithColumns(prefixAndAddress.prefix)
                         if (!prefixArrWithColumn)
@@ -253,10 +284,26 @@ StatusDialog {
             }
         }
 
+        StatusColorSelectorGrid {
+            id: colorSelection
+            objectName: "addSavedAddressColor"
+            width: parent.width
+            model: Theme.palette.customisationColorsArray
+            title.color: Theme.palette.directColor1
+            title.font.pixelSize: Constants.addAccountPopup.labelFontSize1
+            title.text: qsTr("Colour")
+            selectedColorIndex: -1
+
+            onSelectedColorChanged: {
+                d.colorId = Utils.getIdForColor(selectedColor)
+            }
+        }
+
         StatusNetworkSelector {
             id: networkSelector
             objectName: "addSavedAddressNetworkSelector"
             title: "Network preference"
+            implicitWidth: parent.width
             enabled: addressInput.valid && !d.addressInputIsENS
             defaultItemText: "Add networks"
             defaultItemImageSource: "add"
@@ -278,11 +325,11 @@ StatusDialog {
                 onCountChanged: {
                     if (!networkSelector.modelUpdateBlocked && d.initialized) {
                         // Initially source model is empty, filter proxy is also empty, but does
-                        // extra work and mistakenly overwrites root.chainShortNames property
+                        // extra work and mistakenly overwrites d.chainShortNames property
                         if (sourceModel.count != 0) {
                             const prefixAndAddress = Utils.splitToChainPrefixAndAddress(addressInput.plainText)
                             const syncedPrefix = addressInput.syncChainPrefixWithModel(prefixAndAddress.prefix, this)
-                            root.chainShortNames = syncedPrefix
+                            d.chainShortNames = syncedPrefix
                             addressInput.setPlainText(syncedPrefix + prefixAndAddress.address)
                         }
                     }
@@ -345,10 +392,10 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons:  ObjectModel {
             StatusButton {
-                text: root.edit ? qsTr("Save") : qsTr("Add address")
+                text: d.editMode? qsTr("Save") : qsTr("Add address")
                 enabled: d.valid && d.dirty
                 onClicked: {
-                    RootStore.createOrUpdateSavedAddress(name, address, root.favourite, chainShortNames, ens)
+                    RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.favourite, d.chainShortNames)
                     root.close()
                 }
                 objectName: "addSavedAddress"

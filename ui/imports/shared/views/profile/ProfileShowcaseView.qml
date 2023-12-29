@@ -159,7 +159,19 @@ Control {
                 }
                 delegate: StatusListItem {
                     id: accountDelegate
-                    property bool saved: root.walletStore.getNameForSavedWalletAddress(model.address) !== ""
+                    property bool saved: {
+                        let savedAddress = root.walletStore.getSavedAddress(model.address)
+                        if (savedAddress.name !== "")
+                            return true
+
+                        if (!!root.walletStore.lastCreatedSavedAddress) {
+                            if (root.walletStore.lastCreatedSavedAddress.address.toLowerCase() === model.address.toLowerCase()) {
+                                return !!root.walletStore.lastCreatedSavedAddress.error
+                            }
+                        }
+
+                        return false
+                    }
                     border.width: 1
                     border.color: Theme.palette.baseColor2
                     width: ListView.view.width
@@ -184,14 +196,11 @@ Control {
                             enabled: !accountDelegate.saved
                             text: accountDelegate.saved ? qsTr("Address saved") : qsTr("Save Address")
                             onClicked: {
-                                accountDelegate.saved = root.walletStore.createOrUpdateSavedAddress(model.name, model.address, false) === ""
-                                Global.displayToastMessage(qsTr("%1 saved to your wallet").arg(accountDelegate.subTitle),
-                                                           qsTr("Go to your wallet"),
-                                                           "wallet",
-                                                           false,
-                                                           Constants.ephemeralNotificationType.normal,
-                                                           `#${Constants.appSection.wallet}` // internal link to wallet section
-                                                           )
+                                // From here, we should just run add saved address popup
+                                Global.openAddEditSavedAddressesPopup({
+                                                                          addAddress: true,
+                                                                          address: model.address
+                                                                      })
                             }
                         },
                         StatusFlatRoundButton {

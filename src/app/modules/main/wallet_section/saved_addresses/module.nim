@@ -1,11 +1,11 @@
-import NimQml, sugar, sequtils
+import NimQml, json, sugar, sequtils
 import ../io_interface as delegate_interface
 
 import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/saved_address/service as saved_address_service
 
-import ./io_interface, ./view, ./controller, ./item
+import io_interface, view, controller, model
 
 export io_interface
 
@@ -36,8 +36,9 @@ method loadSavedAddresses*(self: Module) =
     savedAddresses.map(s => initItem(
       s.name,
       s.address,
-      s.favourite,
       s.ens,
+      s.colorId,
+      s.favourite,
       s.chainShortNames,
       s.isTest,
     ))
@@ -57,16 +58,33 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string, favourite: bool, chainShortNames: string, ens: string) =
-  self.controller.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string, ens: string, colorId: string,
+  favourite: bool, chainShortNames: string) =
+  self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
 
 method deleteSavedAddress*(self: Module, address: string, ens: string) =
   self.controller.deleteSavedAddress(address, ens)
 
-method savedAddressUpdated*(self: Module, address: string, ens: string, errorMsg: string) =
+method savedAddressUpdated*(self: Module, name: string, address: string, ens: string, errorMsg: string) =
   self.loadSavedAddresses()
-  self.view.savedAddressUpdated(address, ens, errorMsg)
+  self.view.savedAddressUpdated(name, address, ens, errorMsg)
 
 method savedAddressDeleted*(self: Module, address: string, ens: string, errorMsg: string) =
   self.loadSavedAddresses()
   self.view.savedAddressDeleted(address, ens, errorMsg)
+
+method savedAddressNameExists*(self: Module, name: string): bool =
+  return self.view.getModel().nameExists(name)
+
+method getSavedAddressAsJson*(self: Module, address: string): string =
+  let item = self.view.getModel().getItemByAddress(address)
+  let jsonObj = %* {
+    "name": item.getName(),
+    "address": item.getAddress(),
+    "ens": item.getEns(),
+    "colorId": item.getColorId(),
+    "favourite": item.getFavourite(),
+    "chainShortNames": item.getChainShortNames(),
+    "isTest": item.getIsTest(),
+  }
+  return $jsonObj

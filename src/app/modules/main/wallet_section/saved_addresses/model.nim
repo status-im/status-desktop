@@ -1,13 +1,16 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item
+import item
+
+export item
 
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Address
-    Favourite
     Ens
+    ColorId
+    Favourite
     ChainShortNames
     IsTest
 
@@ -48,8 +51,9 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
-      ModelRole.Favourite.int:"favourite",
       ModelRole.Ens.int:"ens",
+      ModelRole.ColorId.int:"colorId",
+      ModelRole.Favourite.int:"favourite",
       ModelRole.ChainShortNames.int:"chainShortNames",
       ModelRole.IsTest.int:"isTest",
     }.toTable
@@ -69,10 +73,12 @@ QtObject:
       result = newQVariant(item.getName())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())
-    of ModelRole.Favourite:
-      result = newQVariant(item.getFavourite())
     of ModelRole.Ens:
       result = newQVariant(item.getEns())
+    of ModelRole.ColorId:
+      result = newQVariant(item.getColorId())
+    of ModelRole.Favourite:
+      result = newQVariant(item.getFavourite())
     of ModelRole.ChainShortNames:
       result = newQVariant(item.getChainShortNames())
     of ModelRole.IsTest:
@@ -85,8 +91,9 @@ QtObject:
     case column:
       of "name": result = $item.getName()
       of "address": result = $item.getAddress()
-      of "favourite": result = $item.getFavourite()
       of "ens": result = $item.getEns()
+      of "colorId": result = $item.getColorId()
+      of "favourite": result = $item.getFavourite()
       of "chainShortNames": result = $item.getChainShortNames()
       of "isTest": result = $item.getIsTest()
 
@@ -99,20 +106,13 @@ QtObject:
     for item in items:
         self.itemChanged(item.getAddress())
 
-  proc getNameByAddress*(self: Model, address: string): string =
+  proc getItemByAddress*(self: Model, address: string): Item =
     for item in self.items:
-      if(cmpIgnoreCase(item.getAddress(), address) == 0):
-        return item.getName()
-    return ""
+      if cmpIgnoreCase(item.getAddress(), address) == 0:
+        return item
 
-  proc getChainShortNamesForAddress*(self: Model, address: string): string =
+  proc nameExists*(self: Model, name: string): bool =
     for item in self.items:
-      if(cmpIgnoreCase(item.getAddress(), address) == 0):
-        return item.getChainShortNames()
-    return ""
-
-  proc getEnsForAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(cmpIgnoreCase(item.getAddress(), address) == 0):
-        return item.getEns()
-    return ""
+      if item.getName() == name:
+        return true
+    return false

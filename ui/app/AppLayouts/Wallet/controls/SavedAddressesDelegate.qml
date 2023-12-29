@@ -22,6 +22,7 @@ StatusListItem {
     property string name
     property string address
     property string ens
+    property string colorId
     property string chainShortNames
     property bool favourite: false
     property bool areTestNetworksEnabled: false
@@ -88,6 +89,7 @@ StatusListItem {
                         favourite: root.favourite,
                         chainShortNames: root.chainShortNames,
                         ens: root.ens,
+                        colorId: root.colorId,
                     }
                 );
             }
@@ -115,6 +117,7 @@ StatusListItem {
         property bool storeFavourite
         property string contactChainShortNames
         property string contactEns
+        property string colorId
 
         readonly property int maxHeight: 341
         height: implicitHeight > maxHeight ? maxHeight : implicitHeight
@@ -126,6 +129,7 @@ StatusListItem {
             storeFavourite = model.favourite;
             contactChainShortNames = model.chainShortNames;
             contactEns = model.ens;
+            colorId = model.colorId;
             popup(parent, x, y);
         }
         onClosed: {
@@ -146,7 +150,8 @@ StatusListItem {
                                                           name: editDeleteMenu.contactName,
                                                           favourite: editDeleteMenu.storeFavourite,
                                                           chainShortNames: editDeleteMenu.contactChainShortNames,
-                                                          ens: editDeleteMenu.contactEns
+                                                          ens: editDeleteMenu.contactEns,
+                                                          colorId: editDeleteMenu.colorId
                                                       })
             }
         }
