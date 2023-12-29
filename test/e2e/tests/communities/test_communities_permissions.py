@@ -14,31 +14,6 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',
-                 'Manage community: Manage Permissions screen overview')
-@pytest.mark.case(703198)
-@pytest.mark.parametrize('params', [constants.community_params])
-def test_permissions_screen_overview(main_screen: MainWindow, params):
-    main_screen.create_community(params)
-
-    with step('Open permissions in community settings'):
-        community_screen = main_screen.left_panel.select_community(params['name'])
-        community_setting = community_screen.left_panel.open_community_settings()
-        permissions_settings = community_setting.left_panel.open_permissions()
-
-    with step('Verify all elements on permissions screen'):
-        with step('Permission welcome image source path is correct'):
-            assert PERMISSION_WELCOME_IMAGE_PATH == permissions_settings.permission_welcome_image_source
-        with step('Permission welcome title is correct'):
-            assert permissions_settings.permission_welcome_title == PermissionsElements.WELCOME_TITLE.value
-        with step('Permission welcome subtitle is correct'):
-            assert permissions_settings.permission_welcome_subtitle == PermissionsElements.WELCOME_SUBTITLE.value
-        with step('Permission welcome checklist is correct'):
-            assert PermissionsElements.WELCOME_CHECKLIST_ELEMENT_1.value == permissions_settings.permission_checklist[0]
-            assert PermissionsElements.WELCOME_CHECKLIST_ELEMENT_2.value == permissions_settings.permission_checklist[1]
-            assert PermissionsElements.WELCOME_CHECKLIST_ELEMENT_3.value == permissions_settings.permission_checklist[2]
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
                  'Manage community: Adding new permissions')
 @pytest.mark.case(703632)

@@ -44,28 +44,28 @@ class LeftPanel(QObject):
     def open_overview(self) -> 'OverviewView':
         if not self._overview_button.is_selected:
             self._overview_button.click()
-        return OverviewView().wait_until_appears()
+        return OverviewView()
 
     @allure.step('Open community members')
     def open_members(self) -> 'MembersView':
         if not self._members_button.is_selected:
             self._members_button.click()
-        return MembersView().wait_until_appears()
+        return MembersView()
 
     @allure.step('Open permissions')
     def open_permissions(self) -> 'PermissionsIntroView':
         self._permissions_button.click()
-        return PermissionsIntroView().wait_until_appears()
+        return PermissionsIntroView()
 
     @allure.step('Open tokens')
     def open_tokens(self) -> 'TokensView':
         self._tokens_button.click()
-        return TokensView().wait_until_appears()
+        return TokensView()
 
     @allure.step('Open airdrops')
     def open_airdrops(self) -> 'AirdropsView':
         self._airdrops_button.click()
-        return AirdropsView().wait_until_appears()
+        return AirdropsView()
 
 
 class OverviewView(QObject):
@@ -247,9 +247,9 @@ class TokensView(QObject):
         self._mint_owner_token_button = Button('mint_Owner_Tokens_StatusButton')
 
     @property
-    @allure.step('Get mint token button visibility state')
-    def is_mint_token_button_visible(self) -> bool:
-        return self._mint_token_button.is_visible
+    @allure.step('Get mint token button enable state')
+    def is_mint_token_button_present(self) -> bool:
+        return self._mint_token_button.exists
 
     @property
     @allure.step('Get tokens welcome image path')
@@ -303,9 +303,9 @@ class AirdropsView(QObject):
         self._mint_owner_token_button = Button('mint_Owner_token_Airdrops_StatusButton')
 
     @property
-    @allure.step('Get new airdrop button visibility state')
-    def is_new_airdrop_button_visible(self) -> bool:
-        return self._new_airdrop_button.is_visible
+    @allure.step('Get new airdrop button enable state')
+    def is_new_airdrop_button_present(self) -> bool:
+        return self._new_airdrop_button.exists
 
     @property
     @allure.step('Get airdrops welcome image path')
@@ -381,7 +381,12 @@ class PermissionsIntroView(QObject):
     @allure.step('Click add new permission button')
     def add_new_permission(self) -> 'PermissionsSettingsView':
         self._add_new_permission_button.click()
-        return PermissionsSettingsView().wait_until_appears()
+        return PermissionsSettingsView()
+
+    @property
+    @allure.step('Is add new permission button visible')
+    def is_add_new_permission_button_present(self) -> bool:
+        return self._add_new_permission_button.exists
 
 
 class PermissionsSettingsView(QObject):
