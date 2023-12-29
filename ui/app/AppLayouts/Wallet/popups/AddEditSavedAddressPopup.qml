@@ -113,6 +113,16 @@ StatusDialog {
             d.chainShortNames = ""
             allNetworksModelCopy.setEnabledNetworks([])
         }
+
+        function submit(event) {
+            if (!d.valid
+                || !d.dirty
+                || event !== undefined && event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
+                return
+
+            RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.favourite, d.chainShortNames)
+            root.close()
+        }
     }
 
     Column {
@@ -155,6 +165,10 @@ StatusDialog {
             ]
             input.clearable: true
             input.rightPadding: 16
+
+            onKeyPressed: {
+                d.submit(event)
+            }
         }
 
         StatusInput {
@@ -232,6 +246,10 @@ StatusDialog {
                         allNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
                     }
                 }
+            }
+
+            onKeyPressed: {
+                d.submit(event)
             }
 
             property bool skipTextUpdate: false
@@ -395,8 +413,7 @@ StatusDialog {
                 text: d.editMode? qsTr("Save") : qsTr("Add address")
                 enabled: d.valid && d.dirty
                 onClicked: {
-                    RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.favourite, d.chainShortNames)
-                    root.close()
+                    d.submit()
                 }
                 objectName: "addSavedAddress"
             }

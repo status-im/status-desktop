@@ -12,8 +12,16 @@ Rectangle {
     property string emojiSize: Emoji.size.small
     property int letterSize: 21
     property int charactersLen: 1
+    property color letterIdenticonColor: Theme.palette.miscColor5
+    property bool useAcronymForLetterIdenticon: false
 
-    color: Theme.palette.miscColor5
+    color: {
+        if (root.useAcronymForLetterIdenticon) {
+            return Qt.rgba(root.letterIdenticonColor.r, root.letterIdenticonColor.g, root.letterIdenticonColor.b, 0.2)
+        }
+        return root.letterIdenticonColor
+    }
+
     width: 40
     height: 40
     radius: width / 2
@@ -38,9 +46,30 @@ Rectangle {
 
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
-        color: d.luminance(root.color) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(1, 1, 1, 0.7)
+        color: {
+            if (root.useAcronymForLetterIdenticon) {
+                return root.letterIdenticonColor
+            }
+            return d.luminance(root.letterIdenticonColor) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(1, 1, 1, 0.7)
+        }
 
         text: {
+            let parts = root.name.split(" ")
+            if (root.useAcronymForLetterIdenticon && parts.length > 1) {
+                let word = ""
+                for (let i=0; i<root.charactersLen; i++) {
+                    if (i >= parts.length) {
+                        return word
+                    }
+
+                    let shift = (parts[i].charAt(0) === "#") ||
+                                (parts[i].charAt(0) === "@")
+
+                    word += parts[i].substring(shift, shift + 1).toUpperCase()
+                }
+                return word
+            }
+
             const shift = (root.name.charAt(0) === "#") ||
                           (root.name.charAt(0) === "@")
             return root.name.substring(shift, shift + charactersLen).toUpperCase()

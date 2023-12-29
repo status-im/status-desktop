@@ -109,12 +109,13 @@ Loader {
             objectName: "statusSmartIdenticonLetter"
             width: root.asset.width
             height: root.asset.height
-            color: root.asset.color
+            letterIdenticonColor: root.asset.color
             name: root.name
             emoji: root.asset.emoji
             emojiSize: root.asset.emojiSize
             letterSize: root.asset.letterSize
             charactersLen: root.asset.charactersLen
+            useAcronymForLetterIdenticon: root.asset.useAcronymForLetterIdenticon
         }
     }
 

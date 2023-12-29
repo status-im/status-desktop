@@ -14,6 +14,7 @@ QtObject {
     property color disabledColor
     property int rotation
     property bool isLetterIdenticon
+    property bool useAcronymForLetterIdenticon
     property int letterSize: emoji ? 11 : (charactersLen == 1 ? _oneLetterSize : _twoLettersSize)
     property int charactersLen: 1
     property string emoji

@@ -52,7 +52,7 @@ ColumnLayout {
             model: 12
             StatusLetterIdenticon {
                 name: "A"
-                color: Theme.palette.userCustomizationColors[index]
+                letterIdenticonColor: Theme.palette.userCustomizationColors[index]
                 letterSize: 16
             }
         }
