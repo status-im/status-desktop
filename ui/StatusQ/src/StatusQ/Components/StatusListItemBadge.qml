@@ -50,7 +50,7 @@ Control {
                 implicitHeight: root.asset.width
                 letterSize: 11
                 visible: root.asset.isLetterIdenticon
-                color: root.asset.color
+                letterIdenticonColor: root.asset.color
                 name: root.primaryText
                 emoji: root.asset.emoji
                 emojiSize: root.asset.emojiSize

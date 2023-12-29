@@ -394,7 +394,7 @@ ItemDelegate {
             height: root.icon.height
             emoji: root.hasEmoji ? root.icon.name : ""
             name: !root.hasEmoji ? root.icon.name : ""
-            color: root.icon.color
+            letterIdenticonColor: root.icon.color
         }
     }
 }

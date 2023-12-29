@@ -47,17 +47,40 @@ ColumnLayout {
         Layout.fillHeight: true
     }
 
+    SearchBox {
+        Layout.fillWidth: true
+        visible: listView.visible
+        placeholderText: qsTr("Search for name, ENS or address")
+    }
+
     StatusListView {
         id: listView
         objectName: "SavedAddressesView_savedAddresses"
         Layout.fillWidth: true
         Layout.fillHeight: true
-        spacing: 5
+        Layout.topMargin: 16
+        spacing: 8
         visible: count > 0
+
         model: SortFilterProxyModel {
             sourceModel: RootStore.savedAddresses
-            sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.DescendingOrder }
+            sorters: RoleSorter { roleName: "name"; sortOrder: Qt.AscendingOrder }
         }
+
+        section.property: "name"
+        section.criteria: ViewSection.FirstCharacter
+        section.delegate: Item {
+            height: 34
+            width: children.width
+            StatusBaseText {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                text: section.toUpperCase()
+                color: Theme.palette.baseColor1
+                font.pixelSize: 15
+            }
+        }
+
         delegate: SavedAddressesDelegate {
             id: savedAddressDelegate
             objectName: "savedAddressView_Delegate_" + name

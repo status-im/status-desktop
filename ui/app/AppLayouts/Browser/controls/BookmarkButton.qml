@@ -41,7 +41,7 @@ Item {
     StatusQ.StatusLetterIdenticon {
         id: identicon
         anchors.horizontalCenter: parent.horizontalCenter
-        color: Theme.palette.baseColor2
+        letterIdenticonColor: Theme.palette.baseColor2
         identiconText.text: text.charAt(0)
         identiconText.color: Theme.palette.baseColor1
         visible: !bookmarkImage.visible && !addButton.visible

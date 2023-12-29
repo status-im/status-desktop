@@ -45,7 +45,7 @@ Row {
         StatusLetterIdenticon {
             width: statusImageWithTitle.asset.width
             height: statusImageWithTitle.asset.height
-            color: statusImageWithTitle.asset.bgColor
+            letterIdenticonColor: statusImageWithTitle.asset.bgColor
             name: statusImageWithTitle.title
         }
     }
