@@ -52,6 +52,7 @@ StatusMenu {
 
         property string addressName: ""
         property string addressEns: ""
+        property string colorId: ""
         property string addressChains: ""
 
         property string contractName: ""
@@ -136,16 +137,18 @@ StatusMenu {
         if (isContact) {
             d.addressName = contactData.name
         } else {
+            // Revisit here after this issue (resolving source for preferred chains...):
+            // https://github.com/status-im/status-desktop/issues/13109
             d.addressName = WalletStores.RootStore.getNameForWalletAddress(address)
             isWalletAccount = d.addressName.length > 0
             if (!isWalletAccount) {
-                d.addressName = WalletStores.RootStore.getNameForSavedWalletAddress(address)
+                let savedAddress = WalletStores.RootStore.getSavedAddress(address)
+                d.addressName = savedAddress.name
+                d.addressEns = savedAddress.ens
+                d.colorId = savedAddress.colorId
+                d.addressChains = savedAddress.chainShortNames
             }
         }
-
-        d.addressName = contactData.isContact ? contactData.name : WalletStores.RootStore.getNameForAddress(address)
-        d.addressEns = RootStore.getEnsForSavedWalletAddress(address)
-        d.addressChains = RootStore.getChainShortNamesForSavedWalletAddress(address)
 
         showOnEtherscanAction.enabled = true
         showOnArbiscanAction.enabled = address.includes(Constants.networkShortChainNames.arbiscan + ":")
@@ -329,6 +332,7 @@ StatusMenu {
                                           name: d.addressName,
                                           address: d.selectedAddress,
                                           ens: d.addressEns,
+                                          colorId: d.colorId,
                                           chainShortNames: d.addressChains
                                       })
     }

@@ -24,6 +24,7 @@ const SIGNAL_SAVED_ADDRESS_DELETED* = "savedAddressDeleted"
 
 type
   SavedAddressArgs* = ref object of Args
+    name*: string
     address*: string
     ens*: string
     errorMsg*: string
@@ -83,14 +84,15 @@ QtObject:
   proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
     return self.savedAddresses
 
-  proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, favourite: bool, chainShortNames: string,
-    ens: string) =
+  proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string,
+    favourite: bool, chainShortNames: string) =
     let arg = SavedAddressTaskArg(
       name: name,
       address: address,
+      ens: ens,
+      colorId: colorId,
       favourite: favourite,
       chainShortNames: chainShortNames,
-      ens: ens,
       isTestAddress: self.settingsService.areTestNetworksEnabled(),
       tptr: cast[ByteAddress](upsertSavedAddressTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -107,6 +109,7 @@ QtObject:
       if rpcResponseObj{"response"}.kind != JNull and rpcResponseObj{"response"}.getStr != "ok":
         raise newException(CatchableError, "invalid response")
 
+      arg.name = rpcResponseObj{"name"}.getStr
       arg.address = rpcResponseObj{"address"}.getStr
       arg.ens = rpcResponseObj{"ens"}.getStr
     except Exception as e:

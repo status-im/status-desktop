@@ -1700,7 +1700,7 @@ Item {
         }
 
         onLoaded: {
-            addEditSavedAddress.item.applyParams(addEditSavedAddress.params)
+            addEditSavedAddress.item.initWithParams(addEditSavedAddress.params)
             addEditSavedAddress.item.open()
         }
 
@@ -1715,15 +1715,29 @@ Item {
         Connections {
             target: WalletStore.RootStore.walletSectionSavedAddressesInst
 
-            function onSavedAddressUpdated(address: string, ens: string, errorMsg: string) {
+            function onSavedAddressUpdated(name: string, address: string, ens: string, errorMsg: string) {
                 WalletStore.RootStore.addingSavedAddress = false
+                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, ens: ens, error: errorMsg }
 
                 if (!!errorMsg) {
-                    WalletStore.RootStore.lastCreatedSavedAddress = { error: errorMsg }
+                    Global.displayToastMessage(qsTr("An error occurred while adding %1 addresses").arg(name),
+                                               "",
+                                               "warning",
+                                               false,
+                                               Constants.ephemeralNotificationType.danger,
+                                               ""
+                                               )
                     return
                 }
 
-                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, ens: ens }
+                Global.displayToastMessage(qsTr("%1 successfully added to your saved addresses").arg(name),
+                                           "",
+                                           "checkmark-circle",
+                                           false,
+                                           Constants.ephemeralNotificationType.success,
+                                           ""
+                                           )
+
             }
         }
     }
@@ -1804,7 +1818,7 @@ Item {
 
             function onSavedAddressDeleted(address: string, ens: string, errorMsg: string) {
                 WalletStore.RootStore.deletingSavedAddress = false
-                WalletStore.RootStore.lastCreatedSavedAddress = { error: errorMsg }
+                WalletStore.RootStore.lastDeletedSavedAddress = { address: address, ens: ens, error: errorMsg }
             }
         }
     }

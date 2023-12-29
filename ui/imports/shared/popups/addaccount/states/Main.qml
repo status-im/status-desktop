@@ -26,7 +26,7 @@ Item {
             colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
         }
         else {
-            let ind = d.evaluateColorIndex(Utils.getColorForId(root.store.addAccountModule.selectedColorId))
+            let ind = Utils.getColorIndexForId(root.store.addAccountModule.selectedColorId)
             colorSelection.selectedColorIndex = ind
         }
 
@@ -47,15 +47,6 @@ Item {
     QtObject {
         id: d
         readonly property bool isEdit: root.store.editMode
-
-        function evaluateColorIndex(color) {
-            for (let i = 0; i < Theme.palette.customisationColorsArray.length; i++) {
-                if(Theme.palette.customisationColorsArray[i] === color) {
-                    return i
-                }
-            }
-            return 0
-        }
 
         function openEmojiPopup(showLeft) {
             if (!root.store.emojiPopup) {

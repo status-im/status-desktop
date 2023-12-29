@@ -90,7 +90,11 @@ Item {
         }
 
         function refreshSavedAddressName() {
-            d.savedAddressName = !!root.rootStore ? root.rootStore.getNameForSavedWalletAddress(root.address) : ""
+            if (!root.rootStore) {
+                return
+            }
+            let savedAddress = root.rootStore.getSavedAddress(root.address)
+            d.savedAddressName = savedAddress.name
         }
 
         function refreshWalletAddress() {
