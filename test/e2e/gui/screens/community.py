@@ -290,7 +290,7 @@ class LeftPanel(QObject):
         self._channel_or_category_button.click()
         try:
             self._create_category_menu_item.click()
-            return NewCategoryPopup().wait_until_appears()
+            return NewCategoryPopup()
         except Exception as ex:
             if attempts:
                 self.open_create_category_popup(attempts - 1)

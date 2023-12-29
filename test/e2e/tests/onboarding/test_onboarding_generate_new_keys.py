@@ -65,13 +65,14 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
         # TODO: find a way to verify the picture is there (changed to the custom one)
         assert profile_view.get_profile_image is not None, f'Profile picture was not set / applied'
         assert profile_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
+        assert profile_view.is_next_button_enabled is True, \
+            f'Next button is not enabled on profile screen'
 
     with step('Open emojihash and identicon ring profile screen and capture the details'):
         details_view = profile_view.next()
         chat_key = details_view.get_chat_key
         emoji_hash_public_key = details_view.get_emoji_hash
         assert details_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'
-        details_view.back().next()
 
     with step('Open password set up view, fill in the form and click back'):
         create_password_view = details_view.next()

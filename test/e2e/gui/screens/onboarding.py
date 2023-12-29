@@ -313,8 +313,8 @@ class YourProfileView(OnboardingView):
     def next(self, attempts: int = 2) -> 'YourEmojihashAndIdenticonRingView':
         self._next_button.click()
         try:
-            return YourEmojihashAndIdenticonRingView().wait_until_appears()
-        except AssertionError as err:
+            return YourEmojihashAndIdenticonRingView()
+        except Exception as err:
             if attempts:
                 return self.next(attempts - 1)
             else:
