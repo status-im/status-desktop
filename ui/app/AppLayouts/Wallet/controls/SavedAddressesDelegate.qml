@@ -27,7 +27,6 @@ StatusListItem {
     property bool favourite: false
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
-    property var saveAddress: function (name, address, favourite, chainShortNames, ens) {}
 
     signal openSendModal(string recipient)
 
@@ -38,24 +37,36 @@ StatusListItem {
     subTitle: {
         if (ens.length > 0)
             return ens
-        else
-            return WalletUtils.colorizedChainPrefix(chainShortNames) + address
+        else {
+            return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(root.chainShortNames) +
+                                          Utils.richColorText(root.address, Theme.palette.directColor1)
+                                        : root.chainShortNames + root.address
+        }
     }
+
     border.color: Theme.palette.baseColor5
-    asset.name: d.favouriteEnabled ? (root.favourite ? "star-icon" : "favourite") : ""
-    asset.color: root.favourite ? Theme.palette.pinColor1 : (showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1) // star icon color default
-    asset.hoverColor: root.favourite ? "transparent": Theme.palette.directColor1 // star icon color on hover
-    asset.bgColor: statusListItemIcon.hovered ? Theme.palette.primaryColor3 : "transparent" // icon outer background color
-    asset.bgRadius: 8
+
+    asset {
+        width: 40
+        height: 40
+        color: Utils.getColorForId(root.colorId)
+        charactersLen: {
+            let parts = root.name.split(" ")
+            if (parts.length > 1) {
+                return 2
+            }
+            return 1
+        }
+        isLetterIdenticon: true
+        useAcronymForLetterIdenticon: true
+    }
 
     statusListItemIcon.hoverEnabled: true
 
-    onIconClicked: {
-        root.saveAddress(root.name, root.address, !root.favourite, root.chainShortNames, root.ens)
+    onClicked: {
+        root.openSendModal(d.visibleAddress)
     }
 
-    statusListItemSubTitle.font.pixelSize: 13
-    statusListItemSubTitle.customColor: !enabled ? Theme.palette.baseColor1 : Theme.palette.directColor1
     statusListItemComponentsSlot.spacing: 0
     property bool showButtons: sensor.containsMouse
 
@@ -67,13 +78,6 @@ StatusListItem {
     }
 
     components: [
-        StatusRoundButton {
-            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            type: StatusRoundButton.Type.Quinary
-            radius: 8
-            icon.name: "send"
-            onClicked: openSendModal(d.visibleAddress)
-        },
         StatusRoundButton {
             objectName: "savedAddressView_Delegate_menuButton_" + root.name
             visible: !!root.name
@@ -94,19 +98,6 @@ StatusListItem {
                 );
             }
 
-        },
-        StatusRoundButton {
-            visible: !root.name
-            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            type: StatusRoundButton.Type.Tertiary
-            icon.name: "add"
-            onClicked: {
-                Global.openAddEditSavedAddressesPopup({
-                                                          addAddress: true,
-                                                          address: d.visibleAddress,
-                                                          ens: root.ens
-                                                      })
-            }
         }
     ]
 
@@ -140,7 +131,7 @@ StatusListItem {
             contactEns = ""
         }
         StatusAction {
-            text: qsTr("Edit")
+            text: qsTr("Edit saved address")
             objectName: "editroot"
             assetSettings.name: "pencil-outline"
             onTriggered: {
@@ -156,7 +147,7 @@ StatusListItem {
             }
         }
         StatusAction {
-            text: qsTr("Copy")
+            text: qsTr("Copy address")
             objectName: "copySavedAddressAction"
             assetSettings.name: "copy"
             onTriggered: {
@@ -164,6 +155,14 @@ StatusListItem {
                     store.copyToClipboard(d.visibleAddress)
                 else
                     store.copyToClipboard(root.ens)
+            }
+        }
+        StatusAction {
+            text: qsTr("Show address QR")
+            objectName: "showQrSavedAddressAction"
+            assetSettings.name: "qr"
+            onTriggered: {
+                console.warn("TODO: open qr popup...")
             }
         }
         StatusMenuSeparator { }
@@ -211,7 +210,7 @@ StatusListItem {
         }
         StatusMenuSeparator { }
         StatusAction {
-            text: qsTr("Delete")
+            text: qsTr("Remove saved address")
             type: StatusAction.Type.Danger
             assetSettings.name: "delete"
             objectName: "deleteSavedAddress"
