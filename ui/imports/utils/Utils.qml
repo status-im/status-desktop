@@ -836,6 +836,16 @@ QtObject {
         return Theme.palette.customisationColors.blue
     }
 
+    function getColorIndexForId(colorId) {
+        let color = getColorForId(colorId)
+        for (let i = 0; i < Theme.palette.customisationColorsArray.length; i++) {
+            if(Theme.palette.customisationColorsArray[i] === color) {
+                return i
+            }
+        }
+        return 0
+    }
+
     function getPathForDisplay(path) {
         return path.split("/").join(" / ")
     }

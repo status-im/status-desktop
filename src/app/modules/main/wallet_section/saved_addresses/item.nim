@@ -5,6 +5,7 @@ type
     name: string
     address: string
     ens: string
+    colorId: string
     favourite: bool
     chainShortNames: string
     isTest: bool
@@ -12,8 +13,9 @@ type
 proc initItem*(
   name: string,
   address: string,
-  favourite: bool,
   ens: string,
+  colorId: string,
+  favourite: bool,
   chainShortNames: string,
   isTest: bool
 ): Item =
@@ -21,6 +23,7 @@ proc initItem*(
   result.address = address
   result.favourite = favourite
   result.ens = ens
+  result.colorId = colorId
   result.chainShortNames = chainShortNames
   result.isTest = isTest
 
@@ -28,8 +31,9 @@ proc `$`*(self: Item): string =
   result = fmt"""SavedAddressItem(
     name: {self.name},
     address: {self.address},
-    favourite: {self.favourite},
     ens: {self.ens},
+    colorId: {self.colorId},
+    favourite: {self.favourite},
     chainShortNames: {self.chainShortNames},
     isTest: {self.isTest},
     ]"""
@@ -42,6 +46,9 @@ proc getEns*(self: Item): string =
 
 proc getAddress*(self: Item): string =
   return self.address
+
+proc getColorId*(self: Item): string =
+  return self.colorId
 
 proc getFavourite*(self: Item): bool =
   return self.favourite

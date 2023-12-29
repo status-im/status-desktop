@@ -22,21 +22,9 @@ ColumnLayout {
     QtObject {
         id: d
 
-        function saveAddress(name, address, favourite, chainShortNames, ens) {
-            RootStore.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
-        }
-
         function reset() {
             RootStore.lastCreatedSavedAddress = undefined
         }
-    }
-
-    SavedAddressesError {
-        id: error
-        Layout.alignment: Qt.AlignHCenter
-        text: RootStore.lastCreatedSavedAddress? RootStore.lastCreatedSavedAddress.error?? "" : ""
-        visible: !!text
-        height: visible ? 36 : 0
     }
 
     ShapeRectangle {
@@ -54,7 +42,7 @@ ColumnLayout {
     }
 
     Item {
-        visible: error.visible || noSavedAddresses.visible || loadingIndicator.visible
+        visible: noSavedAddresses.visible || loadingIndicator.visible
         Layout.fillWidth: true
         Layout.fillHeight: true
     }
@@ -77,6 +65,7 @@ ColumnLayout {
             address: model.address
             chainShortNames: model.chainShortNames
             ens: model.ens
+            colorId: model.colorId
             favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore
@@ -84,15 +73,12 @@ ColumnLayout {
             isSepoliaEnabled: RootStore.isSepoliaEnabled
             onOpenSendModal: root.sendModal.open(recipient);
 
-            saveAddress: function(name, address, favourite, chainShortNames, ens) {
-                d.saveAddress(name, address, favourite, chainShortNames, ens)
-            }
-
             states: [
                 State {
                     name: "highlighted"
-                    when: RootStore.lastCreatedSavedAddress ? (RootStore.lastCreatedSavedAddress.address.toLowerCase() === address.toLowerCase() &&
-                          RootStore.lastCreatedSavedAddress.ens === ens) : false
+                    when: RootStore.lastCreatedSavedAddress ? (!RootStore.lastCreatedSavedAddress.error &&
+                                                               RootStore.lastCreatedSavedAddress.address.toLowerCase() === address.toLowerCase() &&
+                                                               RootStore.lastCreatedSavedAddress.ens === ens) : false
                     PropertyChanges { target: savedAddressDelegate; color: Theme.palette.baseColor2 }
                     StateChangeScript {
                         script: Qt.callLater(d.reset)

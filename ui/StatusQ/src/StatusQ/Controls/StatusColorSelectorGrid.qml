@@ -27,7 +27,7 @@ Column {
         id: title
         width: parent.width
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 13
+        font.pixelSize: 15
         color: Theme.palette.baseColor1
     }
 

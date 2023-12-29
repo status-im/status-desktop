@@ -7,6 +7,7 @@ type
   SavedAddressTaskArg = ref object of QObjectTaskArg
     name: string
     address: string
+    colorId: string
     favourite: bool
     chainShortNames: string
     ens: string
@@ -16,14 +17,16 @@ const upsertSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
   let arg = decode[SavedAddressTaskArg](argEncoded)
   var response = %* {
     "response": "",
+    "name": %* arg.name,
     "address": %* arg.address,
     "ens": %* arg.ens,
     "error": "",
   }
   try:
-    let rpcResponse = backend.upsertSavedAddress(backend.SavedAddress(
+    let rpcResponse = backend.upsertSavedAddress(SavedAddressDto(
       name: arg.name,
       address: arg.address,
+      colorId: arg.colorId,
       favourite: arg.favourite,
       chainShortNames: arg.chainShortNames,
       ens: arg.ens,

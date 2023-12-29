@@ -205,8 +205,14 @@ Column {
         Repeater {
             model: activityFilterStore.savedAddressFilters
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: activityFilterStore.getEnsForSavedWalletAddress(modelData)
-                                      || activityFilterStore.getChainShortNamesForSavedWalletAddress(modelData) + StatusQUtils.Utils.elideText(modelData,6,4)
+                tagPrimaryLabel.text: {
+                    let savedAddress = root.store.getSavedAddress(modelData)
+                     if (!!savedAddress.ens) {
+                         return savedAddress.ens
+                     }
+
+                     return savedAddress.chainShortNames + StatusQUtils.Utils.elideText(modelData,6,4)
+                }
                 onClosed: activityFilterStore.toggleSavedAddress(modelData)
             }
         }

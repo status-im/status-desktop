@@ -189,7 +189,7 @@ Rectangle {
                 StatusNetworkListItemTag {
                     id: networkTag
 
-                    title: model.chainName
+                    title: model.shortName
 
                     asset.height: root.asset.height
                     asset.width: root.asset.width

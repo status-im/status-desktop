@@ -18,6 +18,7 @@ QtObject {
     readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
 
     property var lastCreatedSavedAddress
+    property var lastDeletedSavedAddress
     property bool addingSavedAddress: false
     property bool deletingSavedAddress: false
 
@@ -248,18 +249,37 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function getNameForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getNameByAddress(address)
-    }
-
     function getNameForWalletAddress(address) {
         return walletSectionAccounts.getNameByAddress(address)
+    }
+
+    function getSavedAddress(address) {
+        const defaultValue = {
+            name: "",
+            address: "",
+            ens: "",
+            colorId: Constants.walletAccountColors.primary,
+            favourite: false,
+            chainShortNames: "",
+            isTest: false,
+        }
+
+        const jsonObj = root.walletSectionSavedAddressesInst.getSavedAddressAsJson(address)
+
+        try {
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            console.warn("error parsing saved address for address: ", address, " error: ", e.message)
+            return defaultValue
+        }
     }
 
     function getNameForAddress(address) {
         var name = getNameForWalletAddress(address)
         if (name.length === 0) {
-            name = getNameForSavedWalletAddress(address)
+            let savedAddress = getSavedAddress(address)
+            name = savedAddress.name
         }
         return name
     }
@@ -329,14 +349,18 @@ QtObject {
         return walletSectionAccounts.getColorByAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
+    function createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames) {
         root.addingSavedAddress = true
-        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
     }
 
     function deleteSavedAddress(address, ens) {
         root.deletingSavedAddress = true
         walletSectionSavedAddresses.deleteSavedAddress(address, ens)
+    }
+
+    function savedAddressNameExists(name) {
+        return walletSectionSavedAddresses.savedAddressNameExists(name)
     }
 
     function toggleNetwork(chainId) {

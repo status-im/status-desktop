@@ -179,18 +179,6 @@ QtObject {
         return ""
     }
 
-    function getNameForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getNameByAddress(address)
-    }
-
-    function getChainShortNamesForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getChainShortNamesForAddress(address)
-    }
-
-    function getEnsForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getEnsForAddress(address)
-    }
-
     function getCurrencyAmount(amount, symbol) {
         return currencyStore.getCurrencyAmount(amount, symbol)
     }
