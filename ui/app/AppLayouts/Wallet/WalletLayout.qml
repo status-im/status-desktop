@@ -24,8 +24,13 @@ Item {
     property var emojiPopup: null
     property var sendModalPopup
     property var networkConnectionStore
+    property bool appMainVisible
 
-    onVisibleChanged: resetView()
+    onAppMainVisibleChanged: showSigningPhrasePopup()
+
+    onVisibleChanged: {
+        resetView()
+    }
 
     Connections {
         target: walletSection
@@ -44,7 +49,7 @@ Item {
     }
     
     function showSigningPhrasePopup(){
-        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
+        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal && visible && appMainVisible){
             signPhrasePopup.open();
         }
     }
