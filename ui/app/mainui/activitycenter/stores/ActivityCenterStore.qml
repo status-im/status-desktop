@@ -36,7 +36,8 @@ QtObject {
         OwnershipLost = 15,
         OwnershipFailed = 16,
         OwnershipDeclined = 17,
-        ShareAccounts = 18
+        ShareAccounts = 18,
+        CommunityTokenReceived = 19
     }
 
     enum ActivityCenterReadType {

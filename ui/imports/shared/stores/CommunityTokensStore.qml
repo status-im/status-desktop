@@ -34,6 +34,7 @@ QtObject {
     signal communityOwnershipDeclined(string communityName)
     signal sendOwnerTokenStateChanged(string tokenName, int status, string url)
     signal ownerTokenReceived(string communityId, string communityName)
+    signal communityTokenReceived(string name, string image, string communityId, string communityName, string communityColor, string balance, int chainId, string txHash)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -129,6 +130,10 @@ QtObject {
 
         function onOwnerTokenReceived(communityId, communityName, chainId, communityAddress) {
             root.ownerTokenReceived(communityId, communityName)
+        }
+
+        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor, balance, chainId, txHash) {
+            root.communityTokenReceived(name, image, communityId, communityName, communityColor, balance, chainId, txHash)
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {

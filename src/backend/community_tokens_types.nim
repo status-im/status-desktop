@@ -1,4 +1,40 @@
+import json
+include app_service/common/json_utils
+import web3/conversions
+import web3/ethtypes as eth
+
 type
   # see protocol/communities/token/community_token.go PrivilegesLevel
   PrivilegesLevel* {.pure.} = enum
     Owner, Master, Community
+
+  CommunityTokenReceivedPayload* = object
+    address*: eth.Address
+    name*: string
+    symbol*: string
+    image*: string
+    chainId*: int
+    communityId*: string
+    communityName*: string
+    communityColor*: string
+    communityImage*: string
+    balance*: int
+    txHash*: string
+
+proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): CommunityTokenReceivedPayload {.inline.}=
+  let addressField = "address"
+  discard t.getProp("name", result.name)
+  discard t.getProp("symbol", result.symbol)
+  discard t.getProp("image", result.image)
+  discard t.getProp("chainId", result.chainId)
+  discard t.getProp("txHash", result.txHash)
+  result.balance = t{"balance"}.getInt()
+
+  fromJson(t[addressField], addressField, result.address)
+
+  var communityDataObj: JsonNode
+  if(t.getProp("community_data", communityDataObj)):
+    discard communityDataObj.getProp("id", result.communityId)
+    discard communityDataObj.getProp("name", result.communityName)
+    discard communityDataObj.getProp("color", result.communityColor)
+    discard communityDataObj.getProp("image", result.communityImage)

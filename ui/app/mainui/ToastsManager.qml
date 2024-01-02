@@ -20,7 +20,8 @@ QtObject {
         None = 0,
         NavigateToCommunityAdmin = 1,
         OpenFinaliseOwnershipPopup = 2,
-        OpenSendModalPopup = 3
+        OpenSendModalPopup = 3,
+        ViewTransactionDetails = 4
     }
 
     // Stores:
@@ -51,6 +52,22 @@ QtObject {
                                                  Constants.ephemeralNotificationType.normal,
                                                  ToastsManager.ActionType.OpenFinaliseOwnershipPopup,
                                                  communityId)
+        }
+
+        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor, balance, chainId, txHash) {
+            var data = {
+                communityId: communityId,
+                chainId: chainId,
+                txHash: txHash
+            }
+            Global.displayToastWithActionMessage(qsTr("You were airdropped %1 %2 asset from %3").arg(balance).arg(name).arg(communityName),
+                                                 qsTr("View transaction details"),
+                                                 image,
+                                                 communityColor,
+                                                 false,
+                                                 Constants.ephemeralNotificationType.normal,
+                                                 ToastsManager.ActionType.ViewTransactionDetails,
+                                                 JSON.stringify(data))
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {
