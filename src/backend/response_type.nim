@@ -18,7 +18,11 @@ type
     error*: RpcError
 
 proc `$`*(self: RpcError): string =
-  result = fmt"""RpcError(
-    code: {self.code},
-    message: {self.message},
-    ]"""
+  try:
+    fmt"""RpcError(
+      code: {self.code},
+      message: {self.message},
+      )"""
+  except ValueError:
+    raiseAssert "static fmt"
+
