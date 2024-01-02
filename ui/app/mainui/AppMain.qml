@@ -67,6 +67,7 @@ Item {
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
+    
 
     // set from main.qml
     property var sysPalette
@@ -1229,8 +1230,11 @@ Item {
                             emojiPopup: statusEmojiPopup.item
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
+                            appMainVisible: appMain.visible
                         }
-                        onLoaded: item.showSigningPhrasePopup()
+                        onLoaded: {
+                            item.showSigningPhrasePopup()
+                        }
                     }
 
                     Loader {
