@@ -84,12 +84,15 @@ type
     success*: bool
 
 proc `$`*(self: TransactionMinedArgs): string =
-  result = fmt"""TransactionMinedArgs(
-    transactionHash: {$self.transactionHash},
-    chainId: {$self.chainId},
-    success: {$self.success},
-    data: {self.data},
-    ]"""
+  try:
+    fmt"""TransactionMinedArgs(
+      transactionHash: {$self.transactionHash},
+      chainId: {$self.chainId},
+      success: {$self.success},
+      data: {self.data},
+      )"""
+  except ValueError:
+    raiseAssert "static fmt"
 
 type
   TransactionSentArgs* = ref object of Args
