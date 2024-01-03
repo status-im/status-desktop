@@ -79,7 +79,7 @@ proc newBuildAllTokens*(self: Service, accounts: seq[string], store: bool) =
   self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED, Args())
 
   let arg = BuildTokensTaskArg(
-    tptr: cast[ByteAddress](prepareTokensTask),
+    tptr: cast[ByteAddress](newPrepareTokensTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: "onNewAllTokensBuilt",
     accounts: accounts,
