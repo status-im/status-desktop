@@ -59,10 +59,10 @@ StatusDialog {
             CustomHeaderDelegate {}
         }
         delegate: CustomDelegate {}
-        /* This late binding has been added here because without it all
+        /* This onCompleted has been added here because without it all
         the items in the list get initialised before the popup is launched
         creating a delay */
-        Component.onCompleted: model = Qt.binding(() => root.tokensListModel)
+        Component.onCompleted: model = root.tokensListModel
     }
 
     header: StatusDialogHeader {
@@ -205,7 +205,6 @@ StatusDialog {
             id: sensor
 
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
         }
 
