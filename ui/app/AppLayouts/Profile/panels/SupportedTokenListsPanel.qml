@@ -28,6 +28,7 @@ StatusListView {
         height: 76
         width: ListView.view.width
         title: model.name
+        sensor.enabled: false
         subTitle: qsTr("%n token(s) · Last updated %1 @%2",
                        "",
                        model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
