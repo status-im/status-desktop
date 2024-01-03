@@ -84,6 +84,7 @@ type
     accounts: seq[string]
     storeResult: bool
 
+# TODO:: Clean up once all dependencies are removed
 const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
   var output = %*{
@@ -92,6 +93,20 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   }
   try:
     let response = backend.getWalletToken(arg.accounts)
+    output["result"] = response.result
+    output["storeResult"] = %* arg.storeResult
+  except Exception as e:
+    let err = fmt"Error getting wallet tokens"
+  arg.finish(output) 
+
+const newPrepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[BuildTokensTaskArg](argEncoded)
+  var output = %*{
+    "result": "",
+    "storeResult": false
+  }
+  try:
+    let response = backend.getWalletTokenBalances(arg.accounts)
     output["result"] = response.result
     output["storeResult"] = %* arg.storeResult
   except Exception as e:

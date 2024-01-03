@@ -141,6 +141,9 @@ rpc(getTransfersForIdentities, "wallet"):
 rpc(getWalletToken, "wallet"):
   accounts: seq[string]
 
+rpc(getWalletTokenBalances, "wallet"):
+  accounts: seq[string]
+
 rpc(fetchMarketValues, "wallet"):
   symbols: seq[string]
   currency: string
