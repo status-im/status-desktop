@@ -132,7 +132,7 @@ StatusListItem {
         }
         StatusAction {
             text: qsTr("Edit saved address")
-            objectName: "editroot"
+            objectName: "editSavedAddress"
             assetSettings.name: "pencil-outline"
             onTriggered: {
                 Global.openAddEditSavedAddressesPopup({
