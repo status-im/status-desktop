@@ -32,12 +32,13 @@ StatusListView {
         subTitle: qsTr("%n token(s) · Last updated %1 @%2",
                        "",
                        model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
+        statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
         asset.name: model.image
         asset.isImage: true
         border.width: 1
         border.color: Theme.palette.baseColor5
         components: [
-            StatusButton {
+            StatusFlatButton {
                 text: qsTr("View")
 
                 onClicked: keyFilter.value = model.key
@@ -56,7 +57,7 @@ StatusListView {
             width: parent.width - 4 // The rectangular path is rendered outside
 
             icon: "add"
-            text: qsTr("Add Token List (coming soon)")
+            text: qsTr("Add a Token List (coming soon)")
         }
     }
 

@@ -63,7 +63,7 @@ ComboBox {
             ]
 
             markerRoleName: "sourceGroup"
-            onRowsRemoved: root.clearFilter() // different underlying model -> uncheck all groups
+            onRowsRemoved: root.clearFilter() // different underlying model -> uncheck all
         }
 
         readonly property var combinedProxyModel: SortFilterProxyModel {
@@ -81,12 +81,13 @@ ComboBox {
                 }
             ]
             filters: [
-                ExpressionFilter {
+                FastExpressionFilter {
                     enabled: d.searchTextLowerCase !== ""
                     expression: {
                         d.searchTextLowerCase // ensure expression is reevaluated when searchString changes
                         return model.groupName.toLowerCase().includes(d.searchTextLowerCase) || model.groupId.toLowerCase().includes(d.searchTextLowerCase)
                     }
+                    expectedRoles: ["groupName", "groupId"]
                 }
             ]
         }

@@ -1,9 +1,15 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import AppLayouts.Profile.panels 1.0
@@ -25,6 +31,7 @@ ColumnLayout {
             return false
         if (tabBar.currentIndex > d.collectiblesTabIndex)
             return false
+        // FIXME take advanced settings into account here too (#13178)
         if (tabBar.currentIndex === d.collectiblesTabIndex && baseWalletCollectiblesModel.isFetching)
             return false
         return loader.item && loader.item.dirty
@@ -33,6 +40,7 @@ ColumnLayout {
     function saveChanges() {
         if (tabBar.currentIndex > d.collectiblesTabIndex)
             return
+        // FIXME save advanced settings (#13178)
         loader.item.saveSettings()
     }
 
@@ -47,7 +55,7 @@ ColumnLayout {
 
         readonly property int assetsTabIndex: 0
         readonly property int collectiblesTabIndex: 1
-        readonly property int tokenSourcesTabIndex: 2
+        readonly property int advancedTabIndex: 2
 
         function checkLoadMoreCollectibles() {
             if (tabBar.currentIndex !== collectiblesTabIndex)
@@ -88,7 +96,7 @@ ColumnLayout {
 
         StatusTabButton {
             width: implicitWidth
-            text: qsTr("Token lists")
+            text: qsTr("Advanced")
         }
     }
 
@@ -105,8 +113,8 @@ ColumnLayout {
                 return tokensPanel
             case d.collectiblesTabIndex:
                 return collectiblesPanel
-            case d.tokenSourcesTabIndex:
-                return supportedTokensListPanel
+            case d.advancedTabIndex:
+                return advancedTab
             }
         }
     }
@@ -116,7 +124,6 @@ ColumnLayout {
         ManageAssetsPanel {
             baseModel: root.baseWalletAssetsModel
         }
-        // TODO #12611 add Advanced section
     }
 
     Component {
@@ -128,10 +135,74 @@ ColumnLayout {
     }
 
     Component {
-        id: supportedTokensListPanel
-        SupportedTokenListsPanel {
-            sourcesOfTokensModel: root.sourcesOfTokensModel
-            tokensListModel: root.tokensListModel
+        id: advancedTab
+        ColumnLayout {
+            spacing: 0
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: 18
+                Layout.bottomMargin: 18
+                text: qsTr("Token lists")
+                color: Theme.palette.baseColor1
+            }
+            SupportedTokenListsPanel {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                sourcesOfTokensModel: root.sourcesOfTokensModel
+                tokensListModel: root.tokensListModel
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: 40 + 18
+                Layout.bottomMargin: 26
+                text: qsTr("Asset settings")
+                color: Theme.palette.baseColor1
+            }
+            StatusDialogDivider {
+                Layout.fillWidth: true
+            }
+            StatusListItem {
+                Layout.fillWidth: true
+                title: qsTr("Show community assets when sending tokens")
+
+                components: [
+                    StatusSwitch {
+                        id: showCommunityAssetsSwitch
+                        checked: true // FIXME integrate with backend (#13178)
+                        onCheckedChanged: {
+                            // FIXME integrate with backend (#13178)
+                        }
+                    }
+                ]
+                onClicked: {
+                    showCommunityAssetsSwitch.checked = !showCommunityAssetsSwitch.checked
+                }
+            }
+            StatusDialogDivider {
+                Layout.fillWidth: true
+            }
+            StatusListItem {
+                Layout.fillWidth: true
+                title: qsTr("Don’t display assets with balance lower than")
+
+                components: [
+                    CurrencyAmountInput {
+                        enabled: displayThresholdSwitch.checked
+                        currencySymbol: SharedStores.RootStore.currencyStore.currentCurrency
+                        value: 0.10 // FIXME integrate with backend (#13178)
+                    },
+                    StatusSwitch {
+                        id: displayThresholdSwitch
+                        checked: false // FIXME integrate with backend (#13178)
+                        onCheckedChanged: {
+                            // FIXME integrate with backend (#13178)
+                        }
+                    }
+                ]
+                onClicked: {
+                    displayThresholdSwitch.checked = !displayThresholdSwitch.checked
+                }
+            }
         }
     }
 }

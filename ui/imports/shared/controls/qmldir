@@ -7,6 +7,7 @@ ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyButton 1.0 CopyButton.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
+CurrencyAmountInput 1.0 CurrencyAmountInput.qml
 DisabledTooltipButton 1.0 DisabledTooltipButton.qml
 EmojiHash 1.0 EmojiHash.qml
 ErrorDetails 1.0 ErrorDetails.qml
