@@ -1,5 +1,7 @@
 import strformat
 
+import app_service/common/account_constants
+
 type
   Item* = object
     name: string
@@ -37,6 +39,9 @@ proc `$`*(self: Item): string =
     chainShortNames: {self.chainShortNames},
     isTest: {self.isTest},
     ]"""
+
+proc isEmpty*(self: Item): bool =
+  return (self.address.len == 0 or self.address == ZERO_ADDRESS) and self.ens.len == 0
 
 proc getName*(self: Item): string =
   return self.name

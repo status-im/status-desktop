@@ -40,7 +40,7 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc savedAddressUpdated*(self: View, name: string, address: string, ens: string, errorMsg: string) {.signal.}
+  proc savedAddressAddedOrUpdated*(self: View, added: bool, name: string, address: string, ens: string, errorMsg: string) {.signal.}
 
   proc createOrUpdateSavedAddress*(self: View, name: string, address: string, ens: string, colorId: string,
     favourite: bool, chainShortNames: string) {.slot.} =

@@ -66,8 +66,11 @@ method deleteSavedAddress*(self: Module, address: string, ens: string) =
   self.controller.deleteSavedAddress(address, ens)
 
 method savedAddressUpdated*(self: Module, name: string, address: string, ens: string, errorMsg: string) =
+  var item = self.view.getModel().getItemByEnsOrAddress(address)
+  if item.isEmpty():
+    item = self.view.getModel().getItemByEnsOrAddress(ens)
   self.loadSavedAddresses()
-  self.view.savedAddressUpdated(name, address, ens, errorMsg)
+  self.view.savedAddressAddedOrUpdated(item.isEmpty(), name, address, ens, errorMsg)
 
 method savedAddressDeleted*(self: Module, address: string, ens: string, errorMsg: string) =
   self.loadSavedAddresses()
