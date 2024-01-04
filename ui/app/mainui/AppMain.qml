@@ -1715,12 +1715,17 @@ Item {
         Connections {
             target: WalletStore.RootStore.walletSectionSavedAddressesInst
 
-            function onSavedAddressUpdated(name: string, address: string, ens: string, errorMsg: string) {
+            function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, ens: string, errorMsg: string) {
                 WalletStore.RootStore.addingSavedAddress = false
                 WalletStore.RootStore.lastCreatedSavedAddress = { address: address, ens: ens, error: errorMsg }
 
                 if (!!errorMsg) {
-                    Global.displayToastMessage(qsTr("An error occurred while adding %1 addresses").arg(name),
+                    let mode = qsTr("adding")
+                    if (!added) {
+                        mode = qsTr("editing")
+                    }
+
+                    Global.displayToastMessage(qsTr("An error occurred while %1 %2 addresses").arg(mode).arg(name),
                                                "",
                                                "warning",
                                                false,
@@ -1730,7 +1735,11 @@ Item {
                     return
                 }
 
-                Global.displayToastMessage(qsTr("%1 successfully added to your saved addresses").arg(name),
+                let msg = qsTr("%1 successfully added to your saved addresses")
+                if (!added) {
+                    msg = qsTr("%1 saved address successfully edited")
+                }
+                Global.displayToastMessage(msg.arg(name),
                                            "",
                                            "checkmark-circle",
                                            false,
