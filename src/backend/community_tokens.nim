@@ -6,6 +6,11 @@ import ./core, ./response_type
 import ../app_service/service/community_tokens/dto/community_token
 import interpret/cropped_image
 
+from ./gen import rpc
+
+# Mirrors the transfer event from status-go, services/wallet/transfer/commands.go
+const eventCommunityTokenReceived*: string = "wallet-community-token-received"
+
 proc deployCollectibles*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, deploymentParams, txData, hashedPassword]
   return core.callPrivateRPC("communitytokens_deployCollectibles", payload)
@@ -142,3 +147,6 @@ proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.rai
 proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_ownerTokenOwnerAddress", payload)
+
+rpc(registerReceivedCommunityTokenNotification, "wakuext"):
+  communityId: string

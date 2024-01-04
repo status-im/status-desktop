@@ -169,6 +169,17 @@ type
     chainId*: int
     contractAddress*: string
 
+type 
+  CommunityTokenReceivedArgs* =  ref object of Args
+    name*: string
+    image*: string
+    communityId*: string
+    communityName*: string
+    communityColor*: string
+    chainId*: int
+    balance*: int
+    txHash*: string
+
 type
   FinaliseOwnershipStatusArgs* =  ref object of Args
     isPending*: bool
@@ -214,6 +225,7 @@ const SIGNAL_OWNER_TOKEN_RECEIVED* = "communityTokens-ownerTokenReceived"
 const SIGNAL_SET_SIGNER_STATUS* = "communityTokens-setSignerStatus"
 const SIGNAL_FINALISE_OWNERSHIP_STATUS* = "communityTokens-finaliseOwnershipStatus"
 const SIGNAL_OWNER_TOKEN_OWNER_ADDRESS* = "communityTokens-ownerTokenOwnerAddress"
+const SIGNAL_COMMUNITY_TOKEN_RECEIVED* = "communityTokens-communityTokenReceived"
 
 QtObject:
   type
@@ -304,6 +316,31 @@ QtObject:
     except Exception as e:
       error "Error registering owner token received notification", msg=e.msg
 
+  proc processReceivedCommunityTokenWalletEvent(self: Service, jsonMessage: string) =
+    try:
+      let dataMessageJson = parseJson(jsonMessage)
+      let tokenDataPayload = fromJson(dataMessageJson, CommunityTokenReceivedPayload)
+      if len(tokenDataPayload.communityId) == 0:
+        return
+
+      let communityId = tokenDataPayload.communityId
+      let tokenReceivedArgs = CommunityTokenReceivedArgs(
+        communityId: communityId, 
+        communityName: tokenDataPayload.communityName, 
+        communityColor: tokenDataPayload.communityColor,
+        chainId: tokenDataPayload.chainId, 
+        txHash: tokenDataPayload.txHash, 
+        name: tokenDataPayload.name, 
+        balance: tokenDataPayload.balance,
+        image: tokenDataPayload.image
+      )
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
+      
+      let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId)
+      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+    except Exception as e:
+      error "Error registering community token received notification", msg=e.msg
+
   proc processSetSignerTransactionEvent(self: Service, transactionArgs: TransactionMinedArgs) =
     try:
       if not transactionArgs.success:
@@ -338,6 +375,8 @@ QtObject:
       var data = WalletSignal(e)
       if data.eventType == collectibles_backend.eventCommunityCollectiblesReceived:
         self.processReceivedCollectiblesWalletEvent(data.message)
+      elif data.eventType == tokens_backend.eventCommunityTokenReceived:
+        self.processReceivedCommunityTokenWalletEvent(data.message)
 
     self.events.on(PendingTransactionTypeDto.SetSignerPublicKey.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)

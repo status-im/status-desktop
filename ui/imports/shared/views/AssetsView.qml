@@ -55,14 +55,11 @@ ColumnLayout {
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
         function tokenIsVisible(symbol, currencyBalance) {
-            if (symbol === "ETH") // always visible
-                return true
+            // NOTE Backend returns ETH, SNT, STT and DAI by default
             if (!d.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
-            if (symbol === "SNT" || symbol === "STT" || symbol === "DAI") // visible by default
-                return true
-            // We'll receive the tokens only with non zero balance except for Eth, Dai or SNT/STT
-            return !!currencyBalance // TODO handle UI threshold (#12611)
+            // Received tokens can have 0 balance, which indicate previosuly owned token
+            return true // TODO handle UI threshold (#12611)
         }
 
         readonly property var controller: ManageTokensController {

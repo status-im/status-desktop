@@ -86,6 +86,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_OWNER_TOKEN_RECEIVED) do(e: Args):
     let args = OwnerTokenReceivedArgs(e)
     self.communityTokensModule.onOwnerTokenReceived(args.communityId, args.communityName, args.chainId, args.contractAddress)
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_RECEIVED) do(e: Args):
+    let args = CommunityTokenReceivedArgs(e)
+    self.communityTokensModule.onCommunityTokenReceived(args.name, args.image, args.communityId, args.communityName, args.communityColor, $args.balance, args.chainId, args.txHash)
   self.events.on(SIGNAL_SET_SIGNER_STATUS) do(e: Args):
     let args = SetSignerArgs(e)
     self.communityTokensModule.onSetSignerStateChanged(args.communityId, args.chainId, args.transactionHash, args.status)

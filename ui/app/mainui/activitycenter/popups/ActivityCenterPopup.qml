@@ -129,6 +129,8 @@ Popup {
                     return contactRemovedComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
                     return newKeypairFromPairedDeviceComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityTokenReceived:
+                    return communityTokenReceivedComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipLost:
@@ -279,6 +281,25 @@ Popup {
     }
 
     Component {
+        id: communityTokenReceivedComponent
+
+        ActivityNotificationCommunityTokenReceived {
+
+            readonly property var community : notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
+
+            communityName: community ? community.name : ""
+            communityColor: community ? community.color : "black"
+            communityImage: community ? community.image : ""
+
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
         id: shareAccountsNotificationComponent
 
         ActivityNotificationCommunityShareAddresses {
@@ -286,7 +307,7 @@ Popup {
             readonly property var community : notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
             communityName: community ? community.name : ""
-            communityColor: community ? community.color : "black"
+            communityColor: community ? community.color : "transparent"
             communityImage: community ? community.image : ""
 
             filteredIndex: parent.filteredIndex
