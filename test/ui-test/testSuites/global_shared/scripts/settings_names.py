@@ -88,7 +88,7 @@ linksView = {"container": statusDesktop_mainWindow, "id": "linksView", "type": "
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
 
 # Wallet Settings:
-mainWallet_Saved_Addreses_More_Edit = {"container": statusDesktop_mainWindow, "objectName": "editroot", "type": "StatusMenuItem"}
+mainWallet_Saved_Addreses_More_Edit = {"container": statusDesktop_mainWindow, "objectName": "editSavedAddress", "type": "StatusMenuItem"}
 mainWallet_Saved_Addreses_More_Delete = {"container": statusDesktop_mainWindow, "objectName": "deleteSavedAddress", "type": "StatusMenuItem"}
 mainWallet_Saved_Addreses_More_Confirm_Delete = {"container": statusDesktop_mainWindow, "objectName": "confirmDeleteSavedAddress", "type": "StatusButton"}
 settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName": 'generatedAccounts', "type": 'Repeater'}

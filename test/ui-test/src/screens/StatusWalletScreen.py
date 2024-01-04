@@ -196,6 +196,8 @@ class AddressesView(BaseElement):
         super(AddressesView, self).__init__('mainWindow_SavedAddressesView')
         self._add_new_address_button = Button('mainWallet_Saved_Addreses_Add_Buttton')
         self._address_list_item = BaseElement('savedAddressView_Delegate')
+        self._edit_saved_address_menu_item = BaseElement('mainWallet_Saved_Addreses_More_Edit')
+        self._delete_saved_address_menu_item = BaseElement('mainWallet_Saved_Addreses_More_Delete')
 
     @property
     def saved_addresses(self):
@@ -226,12 +228,18 @@ class AddressesView(BaseElement):
 
     def open_edit_address_popup(self, address_name: str) -> 'EditSavedAddressPopup':
         address = self._get_saved_address_by_name(address_name)
-        address.open_context_menu().select('Edit')
+        address.open_context_menu()
+        self._edit_saved_address_menu_item.wait_until_appears()
+        self._edit_saved_address_menu_item.click()
+        self._edit_saved_address_menu_item.wait_until_hidden()
         return EditSavedAddressPopup().wait_until_appears()
 
     def delete_saved_address(self, address_name):
         address = self._get_saved_address_by_name(address_name)
-        address.open_context_menu().select('Delete')
+        address.open_context_menu()
+        self._delete_saved_address_menu_item.wait_until_appears()
+        self._delete_saved_address_menu_item.click()
+        self._delete_saved_address_menu_item.wait_until_hidden()
         ConfirmationPopup().wait_until_appears().confirm()
 
 
