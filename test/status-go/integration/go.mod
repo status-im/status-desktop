@@ -1,8 +1,10 @@
-module main
+module github.com/status-im/status-desktop/test/status-go/integration
 
 go 1.20
 
-replace github.com/status-im/status-go => ../../../../vendor/status-go
+replace github.com/status-im/status-desktop/test/status-go/integration => ./
+
+replace github.com/status-im/status-go => ../../../vendor/status-go
 
 // Keep these in sync with status-go/go.mod aliases
 replace github.com/ethereum/go-ethereum v1.10.26 => github.com/status-im/go-ethereum v1.10.25-status.11
@@ -18,14 +20,13 @@ replace github.com/mutecomm/go-sqlcipher/v4 v4.4.2 => github.com/status-im/go-sq
 require (
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/status-im/status-go v0.171.7
-	github.com/webview/webview_go v0.0.0-20230901181450-5a14030a9070
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1 // indirect
 	github.com/RoaringBitmap/roaring v0.9.4 // indirect
-	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5 // indirect
 	github.com/anacrolix/chansync v0.3.0 // indirect
@@ -46,6 +47,7 @@ require (
 	github.com/anacrolix/utp v0.1.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/andybalholm/cascadia v1.2.0 // indirect
+	github.com/avast/retry-go/v4 v4.5.1 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/beevik/ntp v0.3.0 // indirect
 	github.com/benbjohnson/clock v1.3.5 // indirect
@@ -70,7 +72,7 @@ require (
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
 	github.com/elastic/gosigar v0.14.2 // indirect
 	github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5 // indirect
@@ -79,7 +81,7 @@ require (
 	github.com/forPelevin/gomoji v1.1.2 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/gballet/go-libpcsclite v0.0.0-20191108122812-4678299bea08 // indirect
-	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
@@ -211,7 +213,7 @@ require (
 	github.com/russolsen/transit v0.0.0-20180705123435-0794b4c4505a // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/schollz/peerdiscovery v1.7.0 // indirect
-	github.com/shirou/gopsutil v3.21.5+incompatible // indirect
+	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/siphiuel/lc-proxy-wrapper v0.0.0-20230516150924-246507cee8c7 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
@@ -222,9 +224,9 @@ require (
 	github.com/status-im/migrate/v4 v4.6.2-status.3 // indirect
 	github.com/status-im/rendezvous v1.3.7 // indirect
 	github.com/status-im/status-go/extkeys v1.1.2 // indirect
-	github.com/status-im/tcp-shaker v0.0.0-20191114194237-215893130501 // indirect
+	github.com/status-im/tcp-shaker v1.1.1-status // indirect
 	github.com/status-im/zxcvbn-go v0.0.0-20220311183720-5e8676676857 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220614013038-64ee5596c38a // indirect
 	github.com/tklauser/go-sysconf v0.3.6 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
@@ -234,8 +236,8 @@ require (
 	github.com/vacp2p/mvds v0.0.24-0.20201124060106-26d8e94130d8 // indirect
 	github.com/waku-org/go-discover v0.0.0-20221209174356-61c833f34d98 // indirect
 	github.com/waku-org/go-libp2p-rendezvous v0.0.0-20230628220917-7b4e5ae4c0e7 // indirect
-	github.com/waku-org/go-waku v0.8.1-0.20231103161423-351dd55a1498 // indirect
-	github.com/waku-org/go-zerokit-rln v0.1.14-0.20230916173259-d284a3d8f2fd // indirect
+	github.com/waku-org/go-waku v0.8.1-0.20240104144340-585648c4eefe // indirect
+	github.com/waku-org/go-zerokit-rln v0.1.14-0.20240102145250-fa738c0bdf59 // indirect
 	github.com/waku-org/go-zerokit-rln-apple v0.0.0-20230916172309-ee0ee61dde2b // indirect
 	github.com/waku-org/go-zerokit-rln-arm v0.0.0-20230916171929-1dd9494ff065 // indirect
 	github.com/waku-org/go-zerokit-rln-x86_64 v0.0.0-20230916171518-2a77c3734dd1 // indirect
@@ -250,6 +252,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.2.1 // indirect
 	github.com/yeqown/go-qrcode/writer/standard v1.2.1 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
+	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	github.com/zenthangplus/goccm v0.0.0-20211005163543-2f2e522aca15 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	go.uber.org/atomic v1.11.0 // indirect

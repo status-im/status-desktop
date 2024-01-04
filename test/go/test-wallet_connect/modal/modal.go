@@ -11,6 +11,9 @@ import (
 	webview "github.com/webview/webview_go"
 )
 
+// main simulates a wallet connect client session with status registered as a wallet connect provider
+// this is used as an alternative for testing the deep link integration until the status desktop app goes in production
+// and we can register it as a wallet connect provider
 func main() {
 	// Serve files from the ./generated directory
 	fileServer := http.FileServer(http.Dir("./generated"))
