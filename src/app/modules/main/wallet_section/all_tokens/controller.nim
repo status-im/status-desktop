@@ -5,6 +5,7 @@ import ./io_interface
 import app/core/eventemitter
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app/modules/shared_models/currency_amount
 import app_service/service/currency/dto
 import app_service/service/settings/service as settings_service
 
@@ -95,5 +96,24 @@ proc getTokenPreferencesJson*(self: Controller): string =
 proc getTokenGroupByCommunity*(self: Controller): bool =
   return self.settingsService.tokenGroupByCommunity()
 
-proc toggleTokenGroupByCommunity*(self: Controller) =
-  discard self.settingsService.toggleTokenGroupByCommunity()
+proc toggleTokenGroupByCommunity*(self: Controller): bool =
+  return self.settingsService.toggleTokenGroupByCommunity()
+
+proc getShowCommunityAssetWhenSendingTokens*(self: Controller): bool =
+  return self.settingsService.showCommunityAssetWhenSendingTokens()
+
+proc toggleShowCommunityAssetWhenSendingTokens*(self: Controller): bool =
+  return self.settingsService.toggleShowCommunityAssetWhenSendingTokens()
+
+proc getDisplayAssetsBelowBalance*(self: Controller): bool =
+  return self.settingsService.displayAssetsBelowBalance()
+
+proc toggleDisplayAssetsBelowBalance*(self: Controller): bool =
+  return self.settingsService.toggleDisplayAssetsBelowBalance()
+
+proc getDisplayAssetsBelowBalanceThreshold*(self: Controller): CurrencyAmount =
+  let amount = float64(self.settingsService.displayAssetsBelowBalanceThreshold())
+  return newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
+
+proc setDisplayAssetsBelowBalanceThreshold*(self: Controller, threshold: int64): bool =
+  return self.settingsService.setDisplayAssetsBelowBalanceThreshold(threshold)

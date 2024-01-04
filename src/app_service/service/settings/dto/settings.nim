@@ -46,6 +46,9 @@ const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 const KEY_IS_SEPOLIA_ENABLED* = "is-sepolia-enabled?"
 const KEY_TOKEN_GROUP_BY_COMMUNITY* = "token-group-by-community?"
+const KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS* = "show-community-asset-when-sending-tokens?"
+const KEY_DISPLAY_ASSETS_BELOW_BALANCE* = "display-assets-below-balance?"
+const KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD* = "display-assets-below-balance-threshold"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
 
@@ -154,6 +157,9 @@ type
     profileMigrationNeeded*: bool
     isSepoliaEnabled*: bool
     tokenGroupByCommunity*: bool
+    showCommunityAssetWhenSendingTokens*: bool
+    displayAssetsBelowBalance*: bool
+    displayAssetsBelowBalanceThreshold*: int64
     urlUnfurlingMode*: UrlUnfurlingMode
 
 
@@ -212,6 +218,9 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
   discard jsonObj.getProp(KEY_IS_SEPOLIA_ENABLED, result.isSepoliaEnabled)
   discard jsonObj.getProp(KEY_TOKEN_GROUP_BY_COMMUNITY, result.tokenGroupByCommunity)
+  discard jsonObj.getProp(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, result.showCommunityAssetWhenSendingTokens)
+  discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE, result.displayAssetsBelowBalance)
+  discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, result.displayAssetsBelowBalanceThreshold)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 
   var urlUnfurlingMode: int
