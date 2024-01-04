@@ -19,6 +19,7 @@
 #include "StatusQ/submodelproxymodel.h"
 #include "StatusQ/sumaggregator.h"
 #include "StatusQ/writableproxymodel.h"
+#include "StatusQ/formatteddoubleproperty.h"
 
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
@@ -52,6 +53,7 @@ public:
         qmlRegisterType<RolesRenamingModel>("StatusQ", 0, 1, "RolesRenamingModel");
         qmlRegisterType<SumAggregator>("StatusQ", 0, 1, "SumAggregator");
         qmlRegisterType<WritableProxyModel>("StatusQ", 0, 1, "WritableProxyModel");
+        qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
         qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0, 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
 

@@ -24,6 +24,8 @@ public slots:
         qmlRegisterSingletonType<TextUtils>("TextUtils", 1, 0, "TextUtils", &TextUtils::qmlInstance);
 
         QStandardPaths::setTestModeEnabled(true);
+
+        QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
     }
 };
 

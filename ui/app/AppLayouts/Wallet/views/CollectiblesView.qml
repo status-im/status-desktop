@@ -83,30 +83,34 @@ ColumnLayout {
             roleNames: ["collectionName", "communityName"]
         }
         filters: [
-            ExpressionFilter {
+            FastExpressionFilter {
                 expression: {
                     d.controller.settingsDirty
                     return d.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
                 }
+                expectedRoles: ["symbol", "communityId"]
             },
-            ExpressionFilter {
+            FastExpressionFilter {
                 enabled: customFilter.isCommunity && cmbFilter.hasEnabledFilters
                 expression: cmbFilter.selectedFilterGroupIds.includes(model.communityId) ||
                             (!model.communityId && cmbFilter.selectedFilterGroupIds.includes(""))
+                expectedRoles: ["communityId"]
             },
-            ExpressionFilter {
+            FastExpressionFilter {
                 enabled: !customFilter.isCommunity && cmbFilter.hasEnabledFilters
                 expression: cmbFilter.selectedFilterGroupIds.includes(model.collectionUid) ||
                             (!model.collectionUid && cmbFilter.selectedFilterGroupIds.includes(""))
+                expectedRoles: ["collectionUid"]
             }
         ]
         sorters: [
-            ExpressionSorter {
+            FastExpressionSorter {
                 expression: {
                     d.controller.settingsDirty
                     return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
                 }
                 enabled: d.isCustomView
+                expectedRoles: ["symbol"]
             },
             RoleSorter {
                 roleName: cmbTokenOrder.currentSortRoleName
