@@ -5,6 +5,7 @@ import ../io_interface as delegate_interface
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app/modules/shared_models/currency_amount
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/dto
@@ -146,5 +147,23 @@ method getTokenPreferencesJson*(self: Module): string =
 method getTokenGroupByCommunity*(self: Module): bool =
   return self.controller.getTokenGroupByCommunity()
 
-method toggleTokenGroupByCommunity*(self: Module) =
-  self.controller.toggleTokenGroupByCommunity()
+method toggleTokenGroupByCommunity*(self: Module): bool =
+  return self.controller.toggleTokenGroupByCommunity()
+
+method getShowCommunityAssetWhenSendingTokens*(self: Module): bool =
+  return self.controller.getShowCommunityAssetWhenSendingTokens()
+
+method toggleShowCommunityAssetWhenSendingTokens*(self: Module): bool =
+  return self.controller.toggleShowCommunityAssetWhenSendingTokens()
+
+method getDisplayAssetsBelowBalance*(self: Module): bool =
+  return self.controller.getDisplayAssetsBelowBalance()
+
+method toggleDisplayAssetsBelowBalance*(self: Module): bool =
+  return self.controller.toggleDisplayAssetsBelowBalance()
+
+method getDisplayAssetsBelowBalanceThreshold*(self: Module): CurrencyAmount =
+  return self.controller.getDisplayAssetsBelowBalanceThreshold()
+
+method setDisplayAssetsBelowBalanceThreshold*(self: Module, threshold: int64): bool =
+  return self.controller.setDisplayAssetsBelowBalanceThreshold(threshold)

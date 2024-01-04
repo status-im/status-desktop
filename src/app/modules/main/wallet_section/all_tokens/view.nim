@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils
+import NimQml, sequtils, strutils, chronicles
 
 import ./io_interface, ./sources_of_tokens_model, ./flat_tokens_model, ./token_by_symbol_model
 
@@ -158,6 +158,53 @@ QtObject:
     read = getTokenGroupByCommunity
     notify = tokenGroupByCommunityChanged
 
-  proc toggleTokenGroupByCommunity*(self: View) {.slot.} =
-    self.delegate.toggleTokenGroupByCommunity()
+  proc toggleTokenGroupByCommunity*(self: View): bool {.slot.} =
+    if not self.delegate.toggleTokenGroupByCommunity():
+      error "Failed to toggle tokenGroupByCommunity"
+      return
     self.tokenGroupByCommunityChanged()
+
+  proc showCommunityAssetWhenSendingTokensChanged*(self: View) {.signal.}
+
+  proc getShowCommunityAssetWhenSendingTokens(self: View): bool {.slot.} =
+    return self.delegate.getShowCommunityAssetWhenSendingTokens()
+
+  QtProperty[bool] showCommunityAssetWhenSendingTokens:
+    read = getShowCommunityAssetWhenSendingTokens
+    notify = showCommunityAssetWhenSendingTokensChanged
+
+  proc toggleShowCommunityAssetWhenSendingTokens*(self: View) {.slot.} =
+    if not self.delegate.toggleShowCommunityAssetWhenSendingTokens():
+      error "Failed to toggle showCommunityAssetWhenSendingTokens"
+      return
+    self.showCommunityAssetWhenSendingTokensChanged()
+
+  proc displayAssetsBelowBalanceChanged*(self: View) {.signal.}
+
+  proc getDisplayAssetsBelowBalance(self: View): bool {.slot.} =
+    return self.delegate.getDisplayAssetsBelowBalance()
+
+  QtProperty[bool] displayAssetsBelowBalance:
+    read = getDisplayAssetsBelowBalance
+    notify = displayAssetsBelowBalanceChanged
+
+  proc toggleDisplayAssetsBelowBalance*(self: View) {.slot.} =
+    if not self.delegate.toggleDisplayAssetsBelowBalance():
+      error "Failed to toggle displayAssetsBelowBalance"
+      return
+    self.displayAssetsBelowBalanceChanged()
+
+  proc displayAssetsBelowBalanceThresholdChanged*(self: View) {.signal.}
+
+  proc getDisplayAssetsBelowBalanceThreshold(self: View): QVariant {.slot.} =
+    return newQVariant(self.delegate.getDisplayAssetsBelowBalanceThreshold())
+
+  proc setDisplayAssetsBelowBalanceThreshold(self: View, threshold: QVariant) {.slot.} =
+    if not self.delegate.setDisplayAssetsBelowBalanceThreshold(threshold.int64Val()):
+      error "Failed to set displayAssetsBelowBalanceThreshold"
+      return
+    self.displayAssetsBelowBalanceThresholdChanged()
+
+  QtProperty[QVariant] displayAssetsBelowBalanceThreshold:
+    read = getDisplayAssetsBelowBalanceThreshold
+    notify = displayAssetsBelowBalanceThresholdChanged

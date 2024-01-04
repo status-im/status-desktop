@@ -1,5 +1,6 @@
 import app_service/service/token/service_items
 import app_service/service/currency/dto
+import app/modules/shared_models/currency_amount
 
 type
   SourcesOfTokensModelDataSource* = tuple[
@@ -84,5 +85,23 @@ method filterChanged*(self: AccessInterface, addresses: seq[string]) =
 method getTokenGroupByCommunity*(self: AccessInterface): bool =
   raise newException(ValueError, "No implementation available")
 
-method toggleTokenGroupByCommunity*(self: AccessInterface) =
+method toggleTokenGroupByCommunity*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method getShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method toggleShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method getDisplayAssetsBelowBalance*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method toggleDisplayAssetsBelowBalance*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method getDisplayAssetsBelowBalanceThreshold*(self: AccessInterface): CurrencyAmount =
+  raise newException(ValueError, "No implementation available")
+
+method setDisplayAssetsBelowBalanceThreshold*(self: AccessInterface, threshold: int64): bool =
   raise newException(ValueError, "No implementation available")

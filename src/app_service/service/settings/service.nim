@@ -143,7 +143,7 @@ QtObject:
     discard self.getNotificationMessagePreview()
 
 
-  proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
+  proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int | int64): bool =
     try:
       let response = status_settings.saveSettings(attribute, value)
       if(not response.error.isNil):
@@ -505,6 +505,35 @@ QtObject:
     let newValue = not self.settings.tokenGroupByCommunity
     if(self.saveSetting(KEY_TOKEN_GROUP_BY_COMMUNITY, newValue)):
       self.settings.tokenGroupByCommunity = newValue
+      return true
+    return false
+
+  proc showCommunityAssetWhenSendingTokens*(self: Service): bool =
+    return self.settings.showCommunityAssetWhenSendingTokens
+
+  proc toggleShowCommunityAssetWhenSendingTokens*(self: Service): bool =
+    let newValue = not self.settings.showCommunityAssetWhenSendingTokens
+    if(self.saveSetting(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, newValue)):
+      self.settings.showCommunityAssetWhenSendingTokens = newValue
+      return true
+    return false
+
+  proc displayAssetsBelowBalance*(self: Service): bool =
+    return self.settings.displayAssetsBelowBalance
+
+  proc toggleDisplayAssetsBelowBalance*(self: Service): bool =
+    let newValue = not self.settings.displayAssetsBelowBalance
+    if(self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE, newValue)):
+      self.settings.displayAssetsBelowBalance = newValue
+      return true
+    return false
+
+  proc displayAssetsBelowBalanceThreshold*(self: Service): int64 =
+    return self.settings.displayAssetsBelowBalanceThreshold
+
+  proc setDisplayAssetsBelowBalanceThreshold*(self: Service, value: int64): bool =
+    if(self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, value)):
+      self.settings.displayAssetsBelowBalanceThreshold = value
       return true
     return false
 
