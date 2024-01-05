@@ -127,6 +127,7 @@ RightTabBaseView {
                 Layout.fillHeight: true
                 currentIndex: walletTabBar.currentIndex
 
+
                 AssetsView {
                     areAssetsLoading: RootStore.assetsLoading
                     assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
