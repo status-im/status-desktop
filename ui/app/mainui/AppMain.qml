@@ -1725,7 +1725,7 @@ Item {
                         mode = qsTr("editing")
                     }
 
-                    Global.displayToastMessage(qsTr("An error occurred while %1 %2 addresses").arg(mode).arg(name),
+                    Global.displayToastMessage(qsTr("An error occurred while %1 %2 address").arg(mode).arg(name),
                                                "",
                                                "warning",
                                                false,
@@ -1771,63 +1771,49 @@ Item {
             deleteSavedAddress.item.address = deleteSavedAddress.params.address?? ""
             deleteSavedAddress.item.ens = deleteSavedAddress.params.ens?? ""
             deleteSavedAddress.item.name = deleteSavedAddress.params.name?? ""
-            deleteSavedAddress.item.favourite = deleteSavedAddress.params.favourite?? false
+            deleteSavedAddress.item.colorId = deleteSavedAddress.params.colorId?? "blue"
+            deleteSavedAddress.item.chainShortNames = deleteSavedAddress.params.chainShortNames?? ""
 
             deleteSavedAddress.item.open()
         }
 
-        sourceComponent: StatusModal {
-
-            property string address
-            property string ens
-            property string name
-            property bool favourite
-
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-            headerSettings.title: qsTr("Are you sure?")
-            headerSettings.subTitle: name
-
-
-            contentItem: StatusBaseText {
-                anchors.centerIn: parent
-                height: contentHeight + topPadding + bottomPadding
-                text: qsTr("Are you sure you want to remove '%1' from your saved addresses?").arg(name)
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-                wrapMode: Text.Wrap
-                topPadding: Style.current.padding
-                rightPadding: Style.current.padding
-                bottomPadding: Style.current.padding
-                leftPadding: Style.current.padding
-            }
-
+        sourceComponent: WalletPopups.RemoveSavedAddressPopup {
             onClosed: {
                 deleteSavedAddress.close()
             }
 
-            rightButtons: [
-                StatusButton {
-                    text: qsTr("Cancel")
-                    onClicked: close()
-                },
-                StatusButton {
-                    type: StatusBaseButton.Type.Danger
-                    objectName: "confirmDeleteSavedAddress"
-                    text: qsTr("Delete")
-                    onClicked: {
-                        WalletStore.RootStore.deleteSavedAddress(address, ens)
-                        close()
-                    }
-                }
-            ]
+            onRemoveSavedAddress: {
+                WalletStore.RootStore.deleteSavedAddress(address, ens)
+                close()
+            }
         }
 
         Connections {
             target: WalletStore.RootStore.walletSectionSavedAddressesInst
 
-            function onSavedAddressDeleted(address: string, ens: string, errorMsg: string) {
+            function onSavedAddressDeleted(name: string, address: string, ens: string, errorMsg: string) {
                 WalletStore.RootStore.deletingSavedAddress = false
                 WalletStore.RootStore.lastDeletedSavedAddress = { address: address, ens: ens, error: errorMsg }
+
+                if (!!errorMsg) {
+
+                    Global.displayToastMessage(qsTr("An error occurred while removing %1 address").arg(name),
+                                               "",
+                                               "warning",
+                                               false,
+                                               Constants.ephemeralNotificationType.danger,
+                                               ""
+                                               )
+                    return
+                }
+
+                Global.displayToastMessage(qsTr("%1 was successfully removed from your saved addresses").arg(name),
+                                           "",
+                                           "checkmark-circle",
+                                           false,
+                                           Constants.ephemeralNotificationType.success,
+                                           ""
+                                           )
             }
         }
     }

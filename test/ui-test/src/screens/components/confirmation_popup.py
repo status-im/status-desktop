@@ -10,3 +10,7 @@ class ConfirmationPopup(BaseElement):
     def confirm(self):
         self._confirm_button.click()
         self.wait_until_hidden()
+        
+    def confirmWithButton(self, button):
+        button.click()
+        self.wait_until_hidden()
