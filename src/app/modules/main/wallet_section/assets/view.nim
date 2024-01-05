@@ -11,7 +11,6 @@ QtObject:
       delegate: io_interface.AccessInterface
       assets: token_model.Model
       groupedAccountAssetsModel: grouped_account_assets_model.Model
-      assetsLoading: bool
       hasBalanceCache: bool
       hasMarketValuesCache: bool
 
@@ -48,18 +47,6 @@ QtObject:
   QtProperty[QVariant] groupedAccountAssetsModel:
     read = getGroupedAccountAssetsModel
     notify = groupedAccountAssetsModelChanged
-
-  proc getAssetsLoading(self: View): QVariant {.slot.} =
-    return newQVariant(self.assetsLoading)
-  proc assetsLoadingChanged(self: View) {.signal.}
-  QtProperty[QVariant] assetsLoading:
-    read = getAssetsLoading
-    notify = assetsLoadingChanged
-
-  proc setAssetsLoading*(self:View, assetLoading: bool) =
-    if assetLoading != self.assetsLoading:
-      self.assetsLoading = assetLoading
-      self.assetsLoadingChanged()
 
   proc getHasBalanceCache(self: View): QVariant {.slot.} =
     return newQVariant(self.hasBalanceCache)

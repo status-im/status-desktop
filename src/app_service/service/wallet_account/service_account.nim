@@ -173,10 +173,16 @@ proc init*(self: Service) =
       of "wallet-tick-reload":
         let addresses = self.getWalletAddresses()
         self.buildAllTokens(addresses, store = true)
+        # TODO: Only the newBuildAllTokens will remain after task -
+        # https://github.com/status-im/status-desktop/issues/13142
+        self.newBuildAllTokens(addresses, store = true)
         self.checkRecentHistory(addresses)
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+    # TODO: Only the newBuildAllTokens will remain after task -
+    # https://github.com/status-im/status-desktop/issues/13142
     self.buildAllTokens(self.getWalletAddresses(), store = true)
+    self.newBuildAllTokens(self.getWalletAddresses(), store = true)
 
   self.events.on(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS) do(e: Args):
     let args = ImportAccountsArgs(e)
@@ -197,7 +203,10 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
       continue
     woAccDb.ens = getEnsName(woAccDb.address, chainId)
     self.storeWatchOnlyAccount(woAccDb)
+    # TODO: Only the newBuildAllTokens will remain after task -
+    # https://github.com/status-im/status-desktop/issues/13142
     self.buildAllTokens(@[woAccDb.address], store = true)
+    self.newBuildAllTokens(@[woAccDb.address], store = true)
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: woAccDb))
   # check if there is new keypair or any account added to an existing keypair
@@ -207,7 +216,10 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
     if localKp.isNil:
       self.storeKeypair(kpDb)
       let addresses = kpDb.accounts.map(a => a.address)
+      # TODO: Only the newBuildAllTokens will remain after task -
+      # https://github.com/status-im/status-desktop/issues/13142
       self.buildAllTokens(addresses, store = true)
+      self.newBuildAllTokens(addresses, store = true)
       for acc in kpDb.accounts:
         acc.ens = getEnsName(acc.address, chainId)
         if acc.isChat:
@@ -227,7 +239,10 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
         self.storeAccountToKeypair(accDb)
         if accDb.isChat:
           continue
+        # TODO: Only the newBuildAllTokens will remain after task -
+        # https://github.com/status-im/status-desktop/issues/13142
         self.buildAllTokens(@[accDb.address], store = true)
+        self.newBuildAllTokens(@[accDb.address], store = true)
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: accDb))
 
@@ -525,7 +540,10 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 proc toggleTestNetworksEnabled*(self: Service) =
   discard self.settingsService.toggleTestNetworksEnabled()
   let addresses = self.getWalletAddresses()
+  # TODO: Only the newBuildAllTokens will remain after task -
+  # https://github.com/status-im/status-desktop/issues/13142
   self.buildAllTokens(addresses, store = true)
+  self.newBuildAllTokens(addresses, store = true)
   self.tokenService.loadData()
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
@@ -534,7 +552,10 @@ proc toggleIsSepoliaEnabled*(self: Service) =
   discard self.settingsService.toggleIsSepoliaEnabled()
   self.networkService.resetNetworks()
   let addresses = self.getWalletAddresses()
+  # TODO: Only the newBuildAllTokens will remain after task -
+  # https://github.com/status-im/status-desktop/issues/13142
   self.buildAllTokens(addresses, store = true)
+  self.newBuildAllTokens(addresses, store = true)
   self.tokenService.loadData()
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())

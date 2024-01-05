@@ -1,24 +1,6 @@
-import stint,strformat
+import stint, strformat
 
-type
-  AccountTokenItem* = object
-    key*: string
-    flatTokensKey*: string
-    symbol*: string
-    account*: string
-    chainId*: int
-    balance*: Uint256
-
-proc `$`*(self: AccountTokenItem): string =
-  result = fmt"""AccountTokenItem[
-    key: {self.key},
-    flatTokensKey: {self.flatTokensKey},
-    symbol: {self.symbol},
-    account: {self.account},
-    chainId: {self.chainId},
-    balance: {self.balance}]"""
-
-type BalanceItem* = object
+type BalanceItem* = ref object of RootObj
   account*: string
   chainId*: int
   balance*: Uint256
@@ -30,7 +12,7 @@ proc `$`*(self: BalanceItem): string =
     balance: {self.balance}]"""
 
 type
-  GroupedTokenItem* = object
+  GroupedTokenItem* = ref object of RootObj
     tokensKey*: string
     symbol*: string
     balancesPerAccount*: seq[BalanceItem]

@@ -100,7 +100,10 @@ proc checkRecentHistory*(self: Service, addresses: seq[string]) =
 
 proc reloadAccountTokens*(self: Service) =
   let addresses = self.getWalletAddresses()
+  # TODO: Only the newBuildAllTokens will remain after task -
+  # https://github.com/status-im/status-desktop/issues/13142
   self.buildAllTokens(addresses, store = true)
+  self.newBuildAllTokens(addresses, store = true)
   self.checkRecentHistory(addresses)
 
 proc getCurrency*(self: Service): string =

@@ -59,10 +59,16 @@ QtObject:
       result = newQVariant(self.balancesPerChain[index.row])
 
   proc modelsAboutToUpdate*(self: Model) =
-    self.balancesPerChain = @[]
     self.beginResetModel()
 
   proc modelsUpdated*(self: Model) =
-    for i in countup(0, (self.delegate.getGroupedAccountsAssetsList().len-1)):
-      self.balancesPerChain.add(newBalancesModel(self.delegate, i))
+    let lengthOfGroupedAssets = self.delegate.getGroupedAccountsAssetsList().len
+    let balancesPerChainLen = self.balancesPerChain.len
+    let diff = abs(lengthOfGroupedAssets - balancesPerChainLen)
+    if lengthOfGroupedAssets > balancesPerChainLen:
+      for i in countup(0, diff-1):
+        self.balancesPerChain.add(newBalancesModel(self.delegate, balancesPerChainLen+i))
+    elif lengthOfGroupedAssets <  balancesPerChainLen:
+      self.balancesPerChain.delete(balancesPerChainLen - diff, balancesPerChainLen-1)
     self.endResetModel()
+    self.countChanged()
