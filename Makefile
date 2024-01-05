@@ -645,7 +645,9 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client nim-status.desktop $(FCITX5_QT)
 	# TODO: temporary disable glibc check
 	# TODO cleanup non-nix linuxdeployqt
 	#$(LINUXDEPLOYQT_TOOL) tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
+
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
@@ -654,7 +656,10 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client nim-status.desktop $(FCITX5_QT)
 	cp AppRun tmp/linux/dist/.
 
 	mkdir -p pkg
-	appimagetool tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+	appimagetool --verbose tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $(STATUS_CLIENT_APPIMAGE)
+
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	echo here
