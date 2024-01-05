@@ -46,7 +46,7 @@ QtObject:
     favourite: bool, chainShortNames: string) {.slot.} =
     self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
 
-  proc savedAddressDeleted*(self: View, address: string, ens: string, errorMsg: string) {.signal.}
+  proc savedAddressDeleted*(self: View, name: string, address: string, ens: string, errorMsg: string) {.signal.}
 
   proc deleteSavedAddress*(self: View, address: string, ens: string) {.slot.} =
     self.delegate.deleteSavedAddress(address, ens)

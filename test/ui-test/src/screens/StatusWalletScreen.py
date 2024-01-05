@@ -240,7 +240,7 @@ class AddressesView(BaseElement):
         self._delete_saved_address_menu_item.wait_until_appears()
         self._delete_saved_address_menu_item.click()
         self._delete_saved_address_menu_item.wait_until_hidden()
-        ConfirmationPopup().wait_until_appears().confirm()
+        ConfirmationPopup().wait_until_appears().confirmWithButton(Button('mainWallet_Saved_Addreses_More_Confirm_Delete'))
 
 
 class WalletAccountView(BaseElement):
