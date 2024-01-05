@@ -40,6 +40,7 @@ Item {
     property bool editButtonVisible: displayNamePlusIconsVisible
     property bool loading: false
     readonly property bool compact: root.imageSize === ProfileHeader.ImageSize.Compact
+    property bool isBridgedAccount: false
 
     signal clicked()
     signal editClicked()
@@ -119,6 +120,7 @@ Item {
                 imageHeight: imageWidth
                 ensVerified: root.userIsEnsVerified
                 loading: root.loading
+                isBridgedAccount: root.isBridgedAccount
             }
 
             StatusRoundButton {
@@ -206,7 +208,7 @@ Item {
 
             StatusContactVerificationIcons {
                 Layout.alignment: Qt.AlignVCenter
-                visible: !root.isCurrentUser
+                visible: !root.isCurrentUser && !root.isBridgedAccount
                 isContact: root.isContact
                 trustIndicator: root.trustStatus
             }
@@ -235,7 +237,7 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.pubkeyVisible
-            text: Utils.getElidedCompressedPk(pubkey)
+            text: root.isBridgedAccount ? qsTr("Bridged from Discord") : Utils.getElidedCompressedPk(pubkey)
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 13
             color: Style.current.secondaryText
@@ -243,7 +245,7 @@ Item {
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            visible: root.pubkeyVisibleWithCopy
+            visible: root.pubkeyVisibleWithCopy && !root.isBridgedAccount
             StyledText {
                 id: txtChatKey
                 text: qsTr("Chatkey:%1...").arg(pubkey.substring(0, 32))
@@ -265,7 +267,7 @@ Item {
         EmojiHash {
             id: emojiHash
             Layout.alignment: Qt.AlignHCenter
-            visible: root.emojiHashVisible
+            visible: root.emojiHashVisible && !root.isBridgedAccount
             compact: root.compact
             publicKey: root.pubkey
         }

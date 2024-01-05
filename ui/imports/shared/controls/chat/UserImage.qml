@@ -16,11 +16,12 @@ Loader {
     property string name
     property string pubkey
     property string image
-    property bool showRing: !ensVerified
+    property bool showRing: !ensVerified && !root.isBridgedAccount
     property bool interactive: true
     property bool disabled: false
     property bool ensVerified: false
     property bool loading: false
+    property bool isBridgedAccount: false
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey, ensVerified)
@@ -41,6 +42,8 @@ Loader {
             ringSpecModel: root.showRing ? root.colorHash : undefined
         }
         loading: root.loading
+        bridgeBadge.visible: root.isBridgedAccount
+        bridgeBadge.image.source: Style.svg("discord-bridge")
 
         Loader {
             anchors.fill: parent

@@ -73,6 +73,7 @@ type
     QuotedMessageAlbumImagesCount
     AlbumMessageImages
     AlbumImagesCount
+    BridgeName
 
 QtObject:
   type
@@ -178,6 +179,7 @@ QtObject:
       ModelRole.QuotedMessageAlbumImagesCount.int: "quotedMessageAlbumImagesCount",
       ModelRole.AlbumMessageImages.int: "albumMessageImages",
       ModelRole.AlbumImagesCount.int: "albumImagesCount",
+      ModelRole.BridgeName.int: "bridgeName",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -350,6 +352,8 @@ QtObject:
       result = newQVariant(item.albumMessageImages.join(" "))
     of ModelRole.AlbumImagesCount:
       result = newQVariant(item.albumImagesCount)
+    of ModelRole.BridgeName:
+      result = newQVariant(item.bridgeName)
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)

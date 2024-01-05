@@ -111,6 +111,7 @@ StatusDialog {
                     quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
                     quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
                     quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
+                    bridgeName: model.bridgeName
 
                     // This is possible since we have all data loaded before we load qml.
                     // When we fetch messages to fulfill a gap we have to set them at once.
