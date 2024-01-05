@@ -645,7 +645,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client nim-status.desktop $(FCITX5_QT)
 	# TODO: temporary disable glibc check
 	# TODO cleanup non-nix linuxdeployqt
 	#$(LINUXDEPLOYQT_TOOL) tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=1
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-bundle-everything -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
 
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
 
