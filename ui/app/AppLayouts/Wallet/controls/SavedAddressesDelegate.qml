@@ -86,7 +86,7 @@ StatusListItem {
             radius: 8
             icon.name: "more"
             onClicked: {
-                editDeleteMenu.openMenu(this, x - editDeleteMenu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
+                menu.openMenu(this, x - menu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
                     {
                         name: root.name,
                         address: root.address,
@@ -102,12 +102,12 @@ StatusListItem {
     ]
 
     StatusMenu {
-        id: editDeleteMenu
-        property string contactName
-        property string contactAddress
+        id: menu
+        property string name
+        property string address
         property bool storeFavourite
-        property string contactChainShortNames
-        property string contactEns
+        property string chainShortNames
+        property string ens
         property string colorId
 
         readonly property int maxHeight: 341
@@ -115,20 +115,21 @@ StatusListItem {
         contentWidth: 216
 
         function openMenu(parent, x, y, model) {
-            contactName = model.name;
-            contactAddress = model.address;
-            storeFavourite = model.favourite;
-            contactChainShortNames = model.chainShortNames;
-            contactEns = model.ens;
-            colorId = model.colorId;
+            menu.name = model.name;
+            menu.address = model.address;
+            menu.storeFavourite = model.favourite;
+            menu.chainShortNames = model.chainShortNames;
+            menu.ens = model.ens;
+            menu.colorId = model.colorId;
             popup(parent, x, y);
         }
         onClosed: {
-            contactName = "";
-            contactAddress = "";
-            storeFavourite = false;
-            contactChainShortNames = ""
-            contactEns = ""
+            menu.name = "";
+            menu.address = "";
+            menu.storeFavourite = false;
+            menu.chainShortNames = ""
+            menu.ens = ""
+            menu.colorId = ""
         }
         StatusAction {
             text: qsTr("Edit saved address")
@@ -137,12 +138,12 @@ StatusListItem {
             onTriggered: {
                 Global.openAddEditSavedAddressesPopup({
                                                           edit: true,
-                                                          address: editDeleteMenu.contactAddress,
-                                                          name: editDeleteMenu.contactName,
-                                                          favourite: editDeleteMenu.storeFavourite,
-                                                          chainShortNames: editDeleteMenu.contactChainShortNames,
-                                                          ens: editDeleteMenu.contactEns,
-                                                          colorId: editDeleteMenu.colorId
+                                                          address: menu.address,
+                                                          name: menu.name,
+                                                          favourite: menu.storeFavourite,
+                                                          chainShortNames: menu.chainShortNames,
+                                                          ens: menu.ens,
+                                                          colorId: menu.colorId
                                                       })
             }
         }
@@ -216,10 +217,11 @@ StatusListItem {
             objectName: "deleteSavedAddress"
             onTriggered: {
                 Global.openDeleteSavedAddressesPopup({
-                                                         name: editDeleteMenu.contactName,
-                                                         address: editDeleteMenu.contactAddress,
-                                                         favourite: editDeleteMenu.storeFavourite,
-                                                         ens: editDeleteMenu.contactEns
+                                                         name: menu.name,
+                                                         address: menu.address,
+                                                         ens: menu.ens,
+                                                         colorId: menu.colorId,
+                                                         chainShortNames: menu.chainShortNames
                                                      })
             }
         }
