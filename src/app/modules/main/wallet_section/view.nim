@@ -25,6 +25,7 @@ QtObject:
       wcController: wcc.Controller
       walletReady: bool
       addressFilters: string
+      currentCurrency: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -46,12 +47,17 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc currentCurrencyChanged*(self: View) {.signal.}
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
+  proc setCurrentCurrency*(self: View, currency: string) =
+    self.currentCurrency = currency
+    self.currentCurrencyChanged()
   proc getCurrentCurrency(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
   QtProperty[string] currentCurrency:
     read = getCurrentCurrency
+    notify = currentCurrencyChanged
 
   proc filterChanged*(self: View, addresses: string, allAddresses: bool)  {.signal.}
 
@@ -77,7 +83,7 @@ QtObject:
     read = getIsMnemonicBackedUp
 
   proc addressFiltersChanged*(self: View) {.signal.}
-  proc setAddressFilters(self: View, address: string) =
+  proc setAddressFilters*(self: View, address: string) =
     self.addressFilters = address
     self.addressFiltersChanged()
   proc getAddressFilters(self: View): string {.slot.} =
@@ -87,11 +93,9 @@ QtObject:
     notify = addressFiltersChanged
 
   proc setFilterAddress(self: View, address: string) {.slot.} =
-    self.setAddressFilters(address)
     self.delegate.setFilterAddress(address)
 
   proc setFillterAllAddresses(self: View) {.slot.} =
-    self.setAddressFilters("")
     self.delegate.setFillterAllAddresses()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =

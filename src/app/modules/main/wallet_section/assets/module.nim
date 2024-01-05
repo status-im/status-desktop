@@ -60,7 +60,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
     self.view.modelsUpdated()
-    self.view.setAssetsLoading(false)
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
     self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
@@ -105,7 +104,6 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
 
   if walletAccounts[0].assetsLoading:
-    self.view.setAssetsLoading(true)
     self.setLoadingAssets()
   else:
     let walletTokens = self.controller.getWalletTokensByAddresses(addresses)

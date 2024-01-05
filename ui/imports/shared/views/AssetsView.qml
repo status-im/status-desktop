@@ -82,7 +82,7 @@ ColumnLayout {
                         root.networkFilters
                         root.addressFilters
                         return root.networkFilters.split(":").includes(model.chainId+"") &&
-                                (!!root.addressFilters ? root.addressFilters.toUpperCase() === model.account.toUpperCase() : true)
+                                root.addressFilters.split(":").includes(model.account)
                     }
                     expectedRoles: ["chainId", "account"]
                 }
@@ -110,7 +110,10 @@ ColumnLayout {
                     name: "currentCurrencyBalance"
                     expression: {
                         if(!model.communityId) {
-                            return model.currentBalance * model.marketDetails.currencyPrice.amount
+                            if (!!model.marketDetails) {
+                            	return model.currentBalance * model.marketDetails.currencyPrice.amount
+ 			      }
+                            return 0
                         }
                         else {
                             return model.currentBalance

@@ -185,6 +185,7 @@ proc notifyFilterChanged(self: Module) =
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
   self.collectiblesController.setFilterAddressesAndChains(self.filter.addresses, self.filter.chainIds)
   self.allTokensModule.filterChanged(self.filter.addresses)
+  self.view.setAddressFilters(self.filter.addresses.join(":"))
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], self.filter.allAddresses)
 
@@ -272,6 +273,10 @@ method load*(self: Module) =
     self.filter.setFillterAllAddresses()
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
+
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+    let args = SettingsTextValueArgs(e)
+    self.view.setCurrentCurrency(args.value)
 
   self.controller.init()
   self.view.load()

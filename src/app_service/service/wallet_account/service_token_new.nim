@@ -8,11 +8,22 @@ proc onNewAllTokensBuilt*(self: Service, response: string) {.slot.} =
     discard responseObj.getProp("storeResult", storeResult)
     discard responseObj.getProp("result", resultObj)
 
-    var accountsTokensBalances: seq[AccountTokenItem] = @[]
-    var groupedAccountsTokensBalances: Table[string, GroupedTokenItem] = initTable[string, GroupedTokenItem]()
+    var groupedAccountsTokensBalances = self.groupedAccountsTokensTable
     var allTokensHaveError: bool = true
     if resultObj.kind == JObject:
       for accountAddress, tokensDetailsObj in resultObj:
+
+        # Delete all existing entries for the account for whom assets were requested,
+        # for a new account the balances per address per chain will simply be appended later
+        var tokensToBeDeleted: seq[string] = @[]        
+        for tokenkey, token in groupedAccountsTokensBalances:
+          token.balancesPerAccount = token.balancesPerAccount.filter(balanceItem => balanceItem.account != accountAddress)
+          if token.balancesPerAccount.len == 0:
+            tokensToBeDeleted.add(tokenkey)
+
+        for t in tokensToBeDeleted:
+          groupedAccountsTokensBalances.del(t)
+
         if tokensDetailsObj.kind == JArray:
           for token in tokensDetailsObj.getElems():
 
@@ -47,22 +58,12 @@ proc onNewAllTokensBuilt*(self: Service, response: string) {.slot.} =
                     balancesPerAccount: @[BalanceItem(account:accountAddress, chainId: chainId, balance: rawBalance)]
                     )
 
-                accountsTokensBalances.add(AccountTokenItem(
-                  key: flatTokensKey & accountAddress,
-                  symbol: symbol,
-                  flatTokensKey: flatTokensKey,
-                  account: accountAddress,
-                  chainId: chainId,
-                  balance: rawBalance
-                ))
-
         # set assetsLoading to false once the tokens are loaded
         self.updateAssetsLoadingState(accountAddress, false)
     if storeResult and not allTokensHaveError:
       self.hasBalanceCache = true
-      self.flatAccountTokensList = accountsTokensBalances
+      self.groupedAccountsTokensTable = groupedAccountsTokensBalances
       self.groupedAccountsTokensList = toSeq(groupedAccountsTokensBalances.values)
-
   except Exception as e:
     error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
@@ -89,7 +90,7 @@ proc newBuildAllTokens*(self: Service, accounts: seq[string], store: bool) =
 
 proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: seq[int]): float64 =
   var totalBalance: float64 = 0.0
-  for token in self.groupedAccountsTokensList:
+  for tokensKey, token in self.groupedAccountsTokensList:
     let price = self.tokenService.getPriceBySymbol(token.symbol)
     let balances = token.balancesPerAccount.filter(a => addresses.contains(a.account) and chainIds.contains(a.chainId))
     for balance in balances:

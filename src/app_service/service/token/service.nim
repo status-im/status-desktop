@@ -450,7 +450,6 @@ QtObject:
     if symbols.len > 0:
       self.fetchTokensMarketValues(symbols)
       self.fetchTokensPrices(symbols)
-      self.fetchTokensDetails(symbols)
 
   proc getTokenByFlatTokensKey*(self: Service, key: string): TokenItem =
     for t in self.flatTokenList:

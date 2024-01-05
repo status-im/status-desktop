@@ -47,7 +47,7 @@ QtObject:
     keypairs: Table[string, KeypairDto] ## [keyUid, KeypairDto]
     accountsTokens*: Table[string, seq[WalletTokenDto]] ## [address, seq[WalletTokenDto]]
 
-    flatAccountTokensList: seq[AccountTokenItem]
+    groupedAccountsTokensTable: Table[string, GroupedTokenItem]
     groupedAccountsTokensList: seq[GroupedTokenItem]
     hasBalanceCache: bool
 

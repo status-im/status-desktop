@@ -38,7 +38,6 @@ QtObject {
     property string backButtonName: ""
     property var overview: walletSectionOverview
     property var assets: walletSectionAssets.assets
-    property bool assetsLoading: walletSectionAssets.assetsLoading
     property bool balanceLoading: overview.balanceLoading
     property var accounts: walletSectionAccounts.accounts
     property var receiveAccounts: walletSectionSend.accounts

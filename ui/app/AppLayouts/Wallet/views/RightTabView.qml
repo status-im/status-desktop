@@ -128,7 +128,7 @@ RightTabBaseView {
                 currentIndex: walletTabBar.currentIndex
 
                 AssetsView {
-                    areAssetsLoading: RootStore.assetsLoading
+                    areAssetsLoading: RootStore.overview.balanceLoading
                     assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
                     networkFilters: RootStore.networkFilters
                     addressFilters: RootStore.addressFilters
