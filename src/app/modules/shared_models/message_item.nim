@@ -70,6 +70,7 @@ type
     albumMessageImages: seq[string]
     albumMessageIds: seq[string]
     albumImagesCount: int
+    bridgeName: string
 
 proc initItem*(
     id,
@@ -121,6 +122,7 @@ proc initItem*(
     albumMessageImages: seq[string],
     albumMessageIds: seq[string],
     albumImagesCount: int,
+    bridgeMessage: BridgeMessage,
     ): Item =
   result = Item()
   result.id = id
@@ -208,6 +210,13 @@ proc initItem*(
       if attachment.contentType.contains("image"):
         result.messageAttachments.add(attachment.localUrl)
 
+  if contentType == ContentType.BridgeMessage:
+    result.messageText = bridgeMessage.content
+    result.unparsedText = bridgeMessage.content
+    result.senderDisplayName = bridgeMessage.userName
+    result.senderIcon = bridgeMessage.userAvatar
+    result.bridgeName = bridgeMessage.bridgeName
+
 proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   return initItem(
     id = "",
@@ -259,6 +268,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     albumMessageImages = @[],
     albumMessageIds = @[],
     albumImagesCount = 0,
+    bridgeMessage = BridgeMessage(),
   )
 
 proc `$`*(self: Item): string =
@@ -404,6 +414,9 @@ proc `albumMessageIds=`*(self: Item, value: seq[string]) {.inline.} =
 proc albumImagesCount*(self: Item): int {.inline.} = 
   self.albumImagesCount
 
+proc bridgeName*(self: Item): string {.inline.} =
+  self.bridgeName
+
 proc messageContainsMentions*(self: Item): bool {.inline.} =
   self.messageContainsMentions
 
@@ -542,6 +555,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "albumMessageImages": self.albumMessageImages,
     "albumMessageIds": self.albumMessageIds,
     "albumImagesCount": self.albumImagesCount,
+    "bridgeName": self.bridgeName
   }
 
 proc editMode*(self: Item): bool {.inline.} =

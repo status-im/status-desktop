@@ -128,13 +128,15 @@ Loader {
     property bool stickersLoaded: false
     property string sticker
     property int stickerPack: -1
+    property string bridgeName: ""
 
     property bool isEmoji: messageContentType === Constants.messageContentType.emojiType
     property bool isImage: messageContentType === Constants.messageContentType.imageType || (isDiscordMessage && messageImage != "")
     property bool isAudio: messageContentType === Constants.messageContentType.audioType
     property bool isSticker: messageContentType === Constants.messageContentType.stickerType
     property bool isDiscordMessage: messageContentType === Constants.messageContentType.discordMessageType
-    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage
+    property bool isBridgeMessage: messageContentType === Constants.messageContentType.bridgeMessageType
+    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage || isBridgeMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
@@ -152,6 +154,7 @@ Loader {
             selectedUserPublicKey: isReply ? quotedMessageFrom : root.senderId,
             selectedUserDisplayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             selectedUserIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
+            isBridgedAccount: root.isBridgeMessage
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -239,6 +242,7 @@ Loader {
         case Constants.messageContentType.communityInviteType:
         case Constants.messageContentType.discordMessageType:
         case Constants.messageContentType.contactRequestType:
+        case Constants.messageContentType.bridgeMessageType:
             return messageComponent
         case Constants.messageContentType.unknownContentType:
             // NOTE: We could display smth like "unknown message type, please upgrade Status to see it".
@@ -296,6 +300,8 @@ Loader {
                 return StatusMessage.ContentType.Invitation;
             case Constants.messageContentType.discordMessageType:
                 return StatusMessage.ContentType.DiscordMessage;
+            case Constants.messageContentType.bridgeMessageType:
+                return StatusMessage.ContentType.BridgeMessage;
             case Constants.messageContentType.systemMessagePinnedMessage:
                 return StatusMessage.ContentType.SystemMessagePinnedMessage;
             case Constants.messageContentType.systemMessageMutualEventSent:
@@ -332,6 +338,11 @@ Loader {
                 Global.openMenu(imageContextMenuComponent, image, { imageSource, url })
                 break;
             }
+        }
+
+
+        function correctBridgeNameCapitalization(bridgeName) {
+            return (bridgeName === "discord") ? "Discord" : bridgeName
         }
     }
 
@@ -724,7 +735,14 @@ Loader {
 
                 messageDetails: StatusMessageDetails {
                     contentType: delegate.contentType
-                    messageOriginInfo: isDiscordMessage ? qsTr("Imported from discord") : ""
+                    messageOriginInfo: {
+                        if (isDiscordMessage)  {
+                            return qsTr("Imported from discord")
+                        } else if (isBridgeMessage) {
+                            return qsTr("Bridged from %1").arg(d.correctBridgeNameCapitalization(root.bridgeName))
+                        }
+                        return ""
+                    }
                     messageText: root.messageText
                     messageContent: {
                         switch (delegate.contentType)
@@ -747,9 +765,9 @@ Loader {
                     sender.id: root.senderIsEnsVerified ? "" :  Utils.getCompressedPk(root.senderId)
                     sender.displayName: root.senderDisplayName
                     sender.secondaryName: root.senderOptionalName
-                    sender.isEnsVerified: root.senderIsEnsVerified
-                    sender.isContact: root.senderIsAdded
-                    sender.trustIndicator: root.senderTrustStatus
+                    sender.isEnsVerified: root.isBridgeMessage ? false : root.senderIsEnsVerified
+                    sender.isContact: root.isBridgeMessage ? false : root.senderIsAdded
+                    sender.trustIndicator: root.isBridgeMessage ? StatusContactVerificationIcons.TrustedType.None: root.senderTrustStatus
                     sender.profileImage {
                         width: 40
                         height: 40
@@ -757,8 +775,9 @@ Loader {
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
                         colorHash: root.senderColorHash
-                        showRing: !root.isDiscordMessage && !root.senderIsEnsVerified
+                        showRing: !root.isDiscordMessage && !root.senderIsEnsVerified && !root.isBridgeMessage
                     }
+                    sender.badgeImage: Style.svg("discord-bridge")
                 }
 
                 replyDetails: StatusMessageDetails {

@@ -25,6 +25,8 @@ StatusMenu {
     property string selectedUserDisplayName: ""
     property string selectedUserIcon: ""
 
+    property bool isBridgedAccount: false
+
     readonly property bool isMe: {
         return root.selectedUserPublicKey === root.store.contactsStore.myPublicKey;
     }
@@ -104,15 +106,18 @@ StatusMenu {
         isContact: root.isContact
         isCurrentUser: root.isMe
         userIsEnsVerified: (!!contactDetails && contactDetails.ensVerified) || false
+        isBridgedAccount: root.isBridgedAccount
     }
 
     StatusMenuSeparator {
         topPadding: root.topPadding
+        visible: !root.isBridgedAccount
     }
 
     ViewProfileMenuItem {
         id: viewProfileAction
         objectName: "viewProfile_StatusItem"
+        enabled: !root.isBridgedAccount
         onTriggered: {
             root.openProfileClicked(root.selectedUserPublicKey)
             root.close()
@@ -122,7 +127,7 @@ StatusMenu {
     SendMessageMenuItem {
         id: sendMessageMenuItem
         objectName: "sendMessage_StatusItem"
-        enabled: root.isContact && !root.isBlockedContact
+        enabled: root.isContact && !root.isBlockedContact && !root.isBridgedAccount
         onTriggered: {
             root.createOneToOneChat("", root.selectedUserPublicKey, "")
             root.close()
@@ -133,7 +138,7 @@ StatusMenu {
         id: sendContactRequestMenuItem
         objectName: "sendContactRequest_StatusItem"
         enabled: !root.isMe && !root.isContact
-                                && !root.isBlockedContact && !root.hasPendingContactRequest
+                                && !root.isBlockedContact && !root.hasPendingContactRequest && !root.isBridgedAccount
         onTriggered: {
             Global.openContactRequestPopup(root.selectedUserPublicKey, null)
             root.close()
@@ -149,6 +154,7 @@ StatusMenu {
                                 && !root.isBlockedContact
                                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
                                 && !root.hasActiveReceivedVerificationRequestFrom
+                                && !root.isBridgedAccount
         onTriggered: {
             Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
             root.close()
@@ -167,6 +173,7 @@ StatusMenu {
                                 && !root.isBlockedContact && !root.isTrusted
                                 && (root.hasActiveReceivedVerificationRequestFrom
                                     || root.isVerificationRequestSent)
+                                && !root.isBridgedAccount
         onTriggered: {
             if (hasActiveReceivedVerificationRequestFrom) {
                 Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
@@ -183,7 +190,7 @@ StatusMenu {
         objectName: "rename_StatusItem"
         text: qsTr("Rename")
         icon.name: "edit_pencil"
-        enabled: !root.isMe
+        enabled: !root.isMe && !root.isBridgedAccount
         onTriggered: {
             Global.openNicknamePopupRequested(root.selectedUserPublicKey, contactDetails.localNickname,
                                               "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
@@ -196,7 +203,7 @@ StatusMenu {
         objectName: "unblock_StatusItem"
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
-        enabled: !root.isMe && root.isBlockedContact
+        enabled: !root.isMe && root.isBlockedContact && !root.isBridgedAccount
         onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
 
@@ -212,7 +219,7 @@ StatusMenu {
         text: qsTr("Mark as Untrustworthy")
         icon.name: "warning"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && root.userTrustIsUnknown
+        enabled: !root.isMe && root.userTrustIsUnknown && !root.isBridgedAccount
         onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
     }
 
@@ -221,7 +228,7 @@ StatusMenu {
         objectName: "removeUntrustworthy_StatusItem"
         text: qsTr("Remove Untrustworthy Mark")
         icon.name: "warning"
-        enabled: !root.isMe && root.userIsUntrustworthy
+        enabled: !root.isMe && root.userIsUntrustworthy && !root.isBridgedAccount
         onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
     }
 
@@ -230,7 +237,7 @@ StatusMenu {
         objectName: "removeContact_StatusItem"
         icon.name: "remove-contact"
         type: StatusAction.Type.Danger
-        enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest
+        enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest && !root.isBridgedAccount
         onTriggered: {
             Global.removeContactRequested(root.selectedUserDisplayName, root.selectedUserPublicKey)
             root.close()
@@ -243,7 +250,7 @@ StatusMenu {
         text: qsTr("Block User")
         icon.name: "cancel"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && !root.isBlockedContact
+        enabled: !root.isMe && !root.isBlockedContact && !root.isBridgedAccount
         onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
 

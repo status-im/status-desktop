@@ -457,6 +457,7 @@ QtObject {
         readonly property int systemMessageMutualEventSent: 15
         readonly property int systemMessageMutualEventAccepted: 16
         readonly property int systemMessageMutualEventRemoved: 17
+        readonly property int bridgeMessageType: 18
     }
 
     readonly property QtObject messageModelRoles: QtObject {

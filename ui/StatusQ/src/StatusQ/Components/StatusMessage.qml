@@ -25,7 +25,8 @@ Control {
         SystemMessagePinnedMessage = 14,
         SystemMessageMutualEventSent = 15,
         SystemMessageMutualEventAccepted = 16,
-        SystemMessageMutualEventRemoved = 17
+        SystemMessageMutualEventRemoved = 17,
+        BridgeMessage = 18
     }
 
     property list<Item> quickActions
@@ -221,6 +222,8 @@ Control {
                     name: root.messageDetails.sender.displayName
                     asset: root.messageDetails.sender.profileImage.assetSettings
                     ringSettings: root.messageDetails.sender.profileImage.ringSettings
+                    bridgeBadge.visible: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
+                    bridgeBadge.image.source: root.messageDetails.sender.badgeImage
 
                     MouseArea {
                         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -267,7 +270,8 @@ Control {
                                  && ((root.messageDetails.contentType === StatusMessage.ContentType.Text) ||
                                      (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
                                      (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage) ||
-                                     (root.messageDetails.contentType === StatusMessage.ContentType.Invitation)))
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.Invitation) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage)))
                         visible: active
                         sourceComponent: StatusTextMessage {
                             objectName: "StatusMessage_textMessage"

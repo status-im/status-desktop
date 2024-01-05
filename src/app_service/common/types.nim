@@ -22,6 +22,7 @@ type
     SystemMessageMutualEventSent = 15
     SystemMessageMutualEventAccepted = 16
     SystemMessageMutualEventRemoved = 17
+    BridgeMessage = 18
 
 proc toContentType*(value: int): ContentType =
   try:

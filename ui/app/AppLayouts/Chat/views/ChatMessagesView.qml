@@ -325,6 +325,7 @@ Item {
             quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
             quotedMessageAlbumMessageImages: model.quotedMessageAlbumMessageImages.split(" ")
             quotedMessageAlbumImagesCount: model.quotedMessageAlbumImagesCount
+            bridgeName: model.bridgeName
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

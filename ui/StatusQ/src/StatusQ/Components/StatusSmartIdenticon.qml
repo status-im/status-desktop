@@ -12,6 +12,8 @@ Loader {
     // Badge color properties must be set if badgeItem.visible = true
     property alias badge: statusBadge
 
+    property alias bridgeBadge: bridgeBadge
+
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
@@ -33,7 +35,7 @@ Loader {
 
     property bool loading: false
     property bool hoverEnabled: false
-    readonly property bool hovered: (sourceComponent == roundedIcon && item) ?
+    readonly property bool hovered: (sourceComponent === roundedIcon && item) ?
                      item.hovered : false
     signal clicked(var mouse)
 
@@ -137,6 +139,20 @@ Loader {
         border.width: 3
         implicitHeight: 15
         implicitWidth: 15
+        z: root.dZ
+    }
+
+    StatusRoundedImage {
+        id: bridgeBadge
+        visible: false
+        anchors.bottom: root.bottom
+        anchors.right: root.right
+        anchors.rightMargin: -border.width
+        anchors.bottomMargin: -border.width
+        implicitHeight: 20
+        implicitWidth: 20
+        border.width: 3
+        border.color: Theme.palette.statusBadge.foregroundColor
         z: root.dZ
     }
 

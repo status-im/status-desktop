@@ -56,6 +56,14 @@ type DiscordMessage* = object
   author*: DiscordMessageAuthor
   attachments*: seq[DiscordMessageAttachment]
 
+type BridgeMessage* = object
+  bridgeName*: string
+  userName*: string
+  userAvatar*: string
+  userId*: string
+  content*: string
+  messageId*: string
+  parentMessageId*: string
 
 type QuotedMessage* = object
   `from`*: string
@@ -95,6 +103,7 @@ type MessageDto* = object
   outgoingStatus*: string
   quotedMessage*: QuotedMessage
   discordMessage*: DiscordMessage
+  bridgeMessage*: BridgeMessage
   rtl*: bool
   parsedText*: seq[ParsedText]
   lineCount*: int
@@ -169,6 +178,16 @@ proc toDiscordMessage*(jsonObj: JsonNode): DiscordMessage =
   if(jsonObj.getProp("attachments", attachmentsArr) and attachmentsArr.kind == JArray):
     for attachment in attachmentsArr:
       result.attachments.add(toDiscordMessageAttachment(attachment))
+
+proc toBridgeMessage*(jsonObj: JsonNode): BridgeMessage =
+  result = BridgeMessage()
+  discard jsonObj.getProp("userName", result.userName)
+  discard jsonObj.getProp("bridgeName", result.bridgeName)
+  discard jsonObj.getProp("userAvatar", result.userAvatar)
+  discard jsonObj.getProp("userID", result.userId)
+  discard jsonObj.getProp("content", result.content)
+  discard jsonObj.getProp("messageID", result.messageId)
+  discard jsonObj.getProp("parentMessageID", result.parentMessageId)
 
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
@@ -262,6 +281,10 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   var discordMessageObj: JsonNode
   if(jsonObj.getProp("discordMessage", discordMessageObj)):
     result.discordMessage = toDiscordMessage(discordMessageObj)
+
+  var bridgeMessageObj: JsonNode
+  if(jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
+    result.bridgeMessage = toBridgeMessage(bridgeMessageObj)
 
   var stickerObj: JsonNode
   if(jsonObj.getProp("sticker", stickerObj)):

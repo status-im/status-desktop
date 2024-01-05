@@ -12,6 +12,8 @@ QtObject {
     property bool isContact: false
     property int trustIndicator: StatusContactVerificationIcons.TrustedType.None
 
+    property string badgeImage: ""
+
     property StatusProfileImageSettings profileImage: StatusProfileImageSettings {
         pubkey: root.id
         showRing: !root.isEnsVerified
