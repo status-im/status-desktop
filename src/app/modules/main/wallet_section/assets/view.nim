@@ -37,7 +37,7 @@ QtObject:
 
   proc assetsChanged(self: View) {.signal.}
   proc getAssets*(self: View): QVariant {.slot.} =
-    return newQVariant(self.groupedAccountAssetsModel)
+    return newQVariant(self.assets)
   QtProperty[QVariant] assets:
     read = getAssets
     notify = assetsChanged   

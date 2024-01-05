@@ -77,13 +77,14 @@ ColumnLayout {
             submodelRoleName: "balances"
             delegateModel: SortFilterProxyModel {
                 sourceModel: submodel
-                filters: ExpressionFilter {
+                filters: FastExpressionFilter {
                     expression: {
                         root.networkFilters
                         root.addressFilters
-                        return root.networkFilters.split(":").includes(chainId+"") &&
-                                (!!root.addressFilters ? root.addressFilters.toUpperCase() === account.toUpperCase() : true)
+                        return root.networkFilters.split(":").includes(model.chainId+"") &&
+                                (!!root.addressFilters ? root.addressFilters.toUpperCase() === model.account.toUpperCase() : true)
                     }
+                    expectedRoles: ["chainId", "account"]
                 }
             }
         }
@@ -108,15 +109,14 @@ ColumnLayout {
                 FastExpressionRole {
                     name: "currentCurrencyBalance"
                     expression: {
-                        let totalBalance = d.getTotalBalance(model.balances, model.decimals, root.addressFilters, root.networkFilters)
                         if(!model.communityId) {
-                            return totalBalance * model.marketDetails.currencyPrice.amount
+                            return model.currentBalance * model.marketDetails.currencyPrice.amount
                         }
                         else {
-                            return totalBalance
+                            return model.currentBalance
                         }
                     }
-                    expectedRoles: ["balances", "marketDetails", "decimals", "communityId"]
+                    expectedRoles: ["marketDetails", "communityId", "currentBalance"]
                 },
                 FastExpressionRole {
                     name: "tokenPrice"
@@ -135,23 +135,25 @@ ColumnLayout {
                 }
             ]
             filters: [
-                ExpressionFilter {
+                FastExpressionFilter {
                     expression: {
                         d.controller.settingsDirty
                         return d.tokenIsVisible(model.symbol, model.currentCurrencyBalance)
                     }
+                    expectedRoles: ["symbol", "currentCurrencyBalance"]
                 }
             ]
             sorters: [
                 RoleSorter {
                     roleName: "isCommunityAsset"
                 },
-                ExpressionSorter {
+                FastExpressionSorter {
                     expression: {
                         d.controller.settingsDirty
                         return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
                     }
                     enabled: d.isCustomView
+                    expectedRoles: ["symbol"]
                 },
                 RoleSorter {
                     roleName: cmbTokenOrder.currentSortRoleName
