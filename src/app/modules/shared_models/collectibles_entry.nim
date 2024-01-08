@@ -70,7 +70,7 @@ QtObject:
       traits:{self.traits}
     )"""
 
-  proc getCollectiblUniqueID*(self: CollectiblesEntry): backend.CollectibleUniqueID =
+  proc getCollectibleUniqueID*(self: CollectiblesEntry): backend.CollectibleUniqueID =
     return self.id
 
   proc hasCollectibleData(self: CollectiblesEntry): bool =
@@ -122,9 +122,10 @@ QtObject:
 
   proc nameChanged*(self: CollectiblesEntry) {.signal.}
   proc getName*(self: CollectiblesEntry): string {.slot.} =
-    if not self.hasCollectibleData():
-      return ""
-    return self.data.collectibleData.get().name
+    if self.hasCollectibleData():
+      result = self.data.collectibleData.get().name
+    if result == "":
+      result = "#" & self.getTokenIDAsString() 
 
   QtProperty[string] name:
     read = getName
@@ -205,9 +206,10 @@ QtObject:
 
   proc collectionNameChanged*(self: CollectiblesEntry) {.signal.}
   proc getCollectionName*(self: CollectiblesEntry): string {.slot.} =
-    if not self.hasCollectionData():
-      return ""
-    return self.getCollectionData().name
+    if self.hasCollectionData():
+      result = self.getCollectionData().name
+    if result == "":
+      result = self.getContractAddress()
 
   QtProperty[string] collectionName:
     read = getCollectionName
@@ -244,9 +246,10 @@ QtObject:
 
   proc communityNameChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityName*(self: CollectiblesEntry): string {.slot.} =
-    if not self.hasCommunityData():
-      return ""
-    return self.getCommunityData().name
+    if self.hasCommunityData():
+      result = self.getCommunityData().name
+    if result == "":
+      result = self.getCommunityID()
 
   QtProperty[string] communityName:
     read = getCommunityName
