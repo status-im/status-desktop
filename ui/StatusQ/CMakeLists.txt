@@ -91,6 +91,7 @@ add_library(StatusQ SHARED
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/aggregator.h
         include/StatusQ/concatmodel.h
+        include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
@@ -106,6 +107,7 @@ add_library(StatusQ SHARED
         src/QClipboardProxy.cpp
         src/aggregator.cpp
         src/concatmodel.cpp
+        src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp

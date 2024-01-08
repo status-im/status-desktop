@@ -1,49 +1,47 @@
-#include "StatusQ/fastexpressionrole.h"
+#include "StatusQ/fastexpressionfilter.h"
 
 #include <qqmlsortfilterproxymodel.h>
 
 using namespace qqsfpm;
 
 /*!
-    \qmltype FastExpressionRole
-    \inherits SingleRole
+    \qmltype FastExpressionFilter
+    \inherits Filter
     \inqmlmodule StatusQ
-    \brief A custom role similar to (and based on) SFPM's ExpressionRole but
+    \brief A custom filter similar to (and based on) SFPM's ExpressionFilter but
     optimized to access only explicitly indicated roles.
 
-    A FastExpressionRole, similarly as \l ExpressionRole, is a \l ProxyRole
-    allowing to implement a custom role based on a javascript expression.
-    However in FastExpressionRole's expression context there are available only
-    roles explicitly listed in \l expectedRoles property:
+    A FastExpressionFilter, similarly as \l ExpressionFilter, is a \l Filter
+    allowing to implement a filtering based on a javascript expression.
+    However in FastExpressionFilter's expression context there are available
+    only roles explicitly listed in \l expectedRoles property:
 
     \code
     SortFilterProxyModel {
-       sourceModel: numberModel
-       proxyRoles: FastExpressionRole {
-           name: "c"
-           expression: model.a + model.b
+       sourceModel: mySourceModel
+       filters: FastExpressionFilter {
+           expression: model.a < 4 && model.b < 10
            expectedRoles: ["a", "b"]
       }
     }
     \endcode
 
     By accessing only needed roles, the performance is significantly better in
-    comparison to ExpressionRole, especially when the model has multiple
-    FastExpressionRole's.
+    comparison to ExpressionFilter.
 */
 
 /*!
-    \qmlproperty expression FastExpressionRole::expression
+    \qmlproperty expression FastExpressionFilter::expression
 
-    See ExpressionRole::expression for details. Unlike the original
-    ExpressionRole only roles explicitly declared via expectedRoles are accessible.
+    See ExpressionFilter::expression for details. Unlike the original
+    ExpressionFilter only roles explicitly declared via expectedRoles are accessible.
 */
-const QQmlScriptString& FastExpressionRole::expression() const
+const QQmlScriptString& FastExpressionFilter::expression() const
 {
     return m_scriptString;
 }
 
-void FastExpressionRole::setExpression(const QQmlScriptString& scriptString)
+void FastExpressionFilter::setExpression(const QQmlScriptString& scriptString)
 {
     if (m_scriptString == scriptString)
         return;
@@ -55,12 +53,17 @@ void FastExpressionRole::setExpression(const QQmlScriptString& scriptString)
     invalidate();
 }
 
-void FastExpressionRole::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+void FastExpressionFilter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
 {
     updateContext(proxyModel);
 }
 
-void FastExpressionRole::setExpectedRoles(const QStringList& expectedRoles)
+/*!
+    \qmlproperty list<string> FastExpressionFilter::expectedRoles
+
+    List of role names intended to be available in the expression's context.
+*/
+void FastExpressionFilter::setExpectedRoles(const QStringList& expectedRoles)
 {
     if (m_expectedRoles == expectedRoles)
         return;
@@ -71,21 +74,16 @@ void FastExpressionRole::setExpectedRoles(const QStringList& expectedRoles)
     invalidate();
 }
 
-/*!
-    \qmlproperty list<string> FastExpressionRole::expectedRoles
-
-    List of role names intended to be available in the expression's context.
-*/
-const QStringList& FastExpressionRole::expectedRoles() const
+const QStringList &FastExpressionFilter::expectedRoles() const
 {
     return m_expectedRoles;
 }
 
-QVariant FastExpressionRole::data(const QModelIndex& sourceIndex,
-                                  const QQmlSortFilterProxyModel& proxyModel)
+bool FastExpressionFilter::filterRow(const QModelIndex& sourceIndex,
+                                 const QQmlSortFilterProxyModel& proxyModel) const
 {
     if (m_scriptString.isEmpty())
-        return {};
+        return true;
 
     QVariantMap modelMap;
     auto roles = proxyModel.roleNames();
@@ -102,23 +100,32 @@ QVariant FastExpressionRole::data(const QModelIndex& sourceIndex,
         if (!m_expectedRoles.contains(name))
             continue;
 
-        addToContext(name, proxyModel.sourceData(sourceIndex, it.key()));
+        addToContext(it.value(), proxyModel.sourceData(sourceIndex, it.key()));
     }
 
     addToContext(QStringLiteral("index"), sourceIndex.row());
-
     context.setContextProperty(QStringLiteral("model"), modelMap);
 
     QQmlExpression expression(m_scriptString, &context);
     QVariant result = expression.evaluate();
 
-    if (expression.hasError())
+    if (expression.hasError()) {
         qWarning() << expression.error();
+        return true;
+    }
 
-    return result;
+    if (result.canConvert<bool>()) {
+        return result.toBool();
+    } else {
+        qWarning("%s:%i:%i : Can't convert result to bool",
+                 expression.sourceFile().toUtf8().data(),
+                 expression.lineNumber(),
+                 expression.columnNumber());
+        return true;
+    }
 }
 
-void FastExpressionRole::updateContext(const QQmlSortFilterProxyModel& proxyModel)
+void FastExpressionFilter::updateContext(const QQmlSortFilterProxyModel& proxyModel)
 {
     m_context = std::make_unique<QQmlContext>(qmlContext(this));
 
@@ -146,7 +153,7 @@ void FastExpressionRole::updateContext(const QQmlSortFilterProxyModel& proxyMode
     updateExpression();
 }
 
-void FastExpressionRole::updateExpression()
+void FastExpressionFilter::updateExpression()
 {
     if (!m_context)
         return;
@@ -154,8 +161,7 @@ void FastExpressionRole::updateExpression()
     m_expression = std::make_unique<QQmlExpression>(m_scriptString,
                                                     m_context.get());
     connect(m_expression.get(), &QQmlExpression::valueChanged, this,
-            &FastExpressionRole::invalidate);
+            &FastExpressionFilter::invalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }
-
