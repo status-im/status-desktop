@@ -95,9 +95,6 @@ method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: strin
 method getStatusToken*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChainIdForEns*(self: AccessInterface): int {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setPrefferedEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

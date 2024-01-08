@@ -72,11 +72,8 @@ proc init*(self: Controller) =
       return
     self.delegate.onKeypairAuthenticated(args.password,  args.pin)
 
-proc getChainId*(self: Controller): int =
-  return self.networkService.getChainIdForEns()
-
-proc getNetwork*(self: Controller): NetworkDto =
-  return self.networkService.getNetworkForEns()
+proc getAppNetwork*(self: Controller): NetworkDto =
+  return self.networkService.getAppNetwork()
 
 proc checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =
   self.ensService.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
@@ -121,7 +118,7 @@ proc fixPreferredName*(self: Controller, ignoreCurrentValue: bool = false) =
   if (not ignoreCurrentValue and singletonInstance.userProfile.getPreferredName().len > 0):
     return
   let ensUsernames = self.getAllMyEnsUsernames(false)
-  let currentChainId = self.getNetwork().chainId
+  let currentChainId = self.getAppNetwork().chainId
   var firstEnsName = ""
   for ensUsername in ensUsernames:
     if ensUsername.chainId == currentChainId:

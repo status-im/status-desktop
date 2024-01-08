@@ -260,31 +260,31 @@ QtObject:
     var contacts: seq[ContactsDto] = @[]
     for cd in self.contacts.values:
       let dto = cd.dto
-      if dto.id == myPubKey: 
+      if dto.id == myPubKey:
         continue
       case group
       of ContactsGroup.AllKnownContacts:
         contacts.add(dto)
       of ContactsGroup.IncomingPendingContactRequests:
-        if dto.isContactRequestReceived() and 
+        if dto.isContactRequestReceived() and
            not dto.isContactRequestSent() and
            not dto.isContactRemoved() and
            not dto.isReceivedContactRequestRejected() and
            not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.OutgoingPendingContactRequests:
-        if dto.isContactRequestSent() and 
-           not dto.isContactRequestReceived() and 
+        if dto.isContactRequestSent() and
+           not dto.isContactRequestReceived() and
            not dto.isContactRemoved() and
            not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.IncomingRejectedContactRequests:
-        if dto.isContactRequestReceived() and 
+        if dto.isContactRequestReceived() and
            dto.isReceivedContactRequestRejected() and
            not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.OutgoingRejectedContactRequests:
-        # if dto.isContactRequestSent() and 
+        # if dto.isContactRequestSent() and
         #    dto.isSentContactRequestRejected() and
         #    not dto.isBlocked():
         #   contacts.add(dto)
@@ -505,7 +505,7 @@ QtObject:
         else:
           status_contacts.dismissLatestContactRequestForContact(publicKey)
 
-      if not response.error.isNil: 
+      if not response.error.isNil:
         error "error dismissing contact ", msg = response.error.message
         return
 
@@ -577,7 +577,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "ensResolved",
       value: value,
-      chainId: self.networkService.getNetworkForEns().chainId,
+      chainId: self.networkService.getAppNetwork().chainId,
       uuid: uuid,
       reason: reason
     )
@@ -818,7 +818,7 @@ QtObject:
       self.threadpool.start(arg)
     except Exception as e:
       error "Error requesting contact info", msg = e.msg, pubkey
-  
+
   proc shareUserUrlWithData*(self: Service, pubkey: string): string =
     try:
       let response = status_contacts.shareUserUrlWithData(pubkey)

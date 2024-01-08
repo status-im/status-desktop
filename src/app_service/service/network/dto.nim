@@ -3,6 +3,8 @@ import hashes, strformat, json_serialization
 
 import ./types
 
+export types
+
 type NetworkDto* = ref object
   chainId* {.serializedFieldName("chainId").}: int
   nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int

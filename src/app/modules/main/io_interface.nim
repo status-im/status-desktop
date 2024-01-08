@@ -14,6 +14,7 @@ import app_service/service/token/service as token_service
 import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
+import app_service/service/network/dto as network_dto
 from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard
 
 import app/global/app_signals
@@ -40,6 +41,12 @@ method load*(
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
   {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAppNetwork*(self: AccessInterface): NetworkDto =
+  raise newException(ValueError, "No implementation available")
+
+method onAppNetworkChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method calculateProfileSectionHasNotification*(self: AccessInterface): bool {.base.} =

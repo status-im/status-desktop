@@ -256,6 +256,12 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
 
+method getAppNetwork*[T](self: Module[T]): NetworkDto =
+  return self.controller.getAppNetwork()
+
+method onAppNetworkChanged*[T](self: Module[T]) =
+  self.view.emitAppNetworkChangedSignal()
+
 proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : token_item.TokenItem =
   let network = self.controller.getNetwork(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)

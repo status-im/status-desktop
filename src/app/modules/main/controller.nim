@@ -480,6 +480,9 @@ proc init*(self: Controller) =
     let args = CommunityTokensDetailsArgs(e)
     self.delegate.onCommunityTokensDetailsLoaded(args.communityId, args.communityTokens, args.communityTokenJsonItems)
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
+    self.delegate.onAppNetworkChanged()
+
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
@@ -566,6 +569,9 @@ proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress:
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
 
+proc getAppNetwork*(self:Controller): NetworkDto =
+  self.networksService.getAppNetwork()
+
 proc slowdownArchivesImport*(self:Controller) =
   communityService.slowdownArchivesImport()
 
@@ -583,4 +589,4 @@ proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: strin
 
 proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)
-  
+

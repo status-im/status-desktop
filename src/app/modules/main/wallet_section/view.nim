@@ -160,9 +160,6 @@ QtObject:
   QtProperty[QVariant] tmpActivityController:
     read = getTmpActivityController
 
-  proc getChainIdForChat*(self: View): int {.slot.} =
-    return self.delegate.getChainIdForChat()
-
   proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
     return self.delegate.getLatestBlockNumber(chainId)
 

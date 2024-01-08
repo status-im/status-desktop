@@ -105,7 +105,7 @@ QtObject:
     result.tokenService = tokenService
 
   proc getChainId(self: Service): int =
-    return self.networkService.getNetworkForEns().chainId
+    return self.networkService.getAppNetwork().chainId
 
   proc confirmTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string) =
     let dto = EnsUsernameDto(chainId: self.getChainId(), username: ensUsername)
@@ -307,7 +307,7 @@ QtObject:
       error "error occurred", procName="registerENSGasEstimate", msg = e.msg
 
   proc getStatusToken*(self: Service): TokenDto =
-    let networkDto = self.networkService.getNetworkForEns()
+    let networkDto = self.networkService.getAppNetwork()
     return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
   proc getSNTBalance*(self: Service): string =

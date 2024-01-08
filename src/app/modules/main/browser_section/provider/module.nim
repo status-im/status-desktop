@@ -49,7 +49,7 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("providerModule", self.viewVariant)
   self.view.dappsAddress = self.controller.getDappsAddress()
-  let network = self.controller.getNetwork()
+  let network = self.controller.getAppNetwork()
   self.view.chainId = network.chainId
   self.view.chainName = network.chainName
   self.view.load()
