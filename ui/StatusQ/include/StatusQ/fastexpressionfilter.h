@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxyroles/singlerole.h>
+#include <filters/filter.h>
 
 #include <QQmlContext>
 #include <QQmlExpression>
@@ -8,7 +8,7 @@
 
 #include <memory>
 
-class FastExpressionRole : public qqsfpm::SingleRole
+class FastExpressionFilter : public qqsfpm::Filter
 {
     Q_OBJECT
     Q_PROPERTY(QQmlScriptString expression READ expression WRITE setExpression
@@ -16,9 +16,8 @@ class FastExpressionRole : public qqsfpm::SingleRole
 
     Q_PROPERTY(QStringList expectedRoles READ expectedRoles
                WRITE setExpectedRoles NOTIFY expectedRolesChanged)
-
 public:
-    using SingleRole::SingleRole;
+    using Filter::Filter;
 
     const QQmlScriptString& expression() const;
     void setExpression(const QQmlScriptString& scriptString);
@@ -29,13 +28,16 @@ public:
     void setExpectedRoles(const QStringList& expectedRoles);
     const QStringList& expectedRoles() const;
 
+protected:
+    bool filterRow(
+            const QModelIndex& sourceIndex,
+            const qqsfpm::QQmlSortFilterProxyModel& proxyModel) const override;
+
 Q_SIGNALS:
     void expressionChanged();
     void expectedRolesChanged();
 
 private:
-    QVariant data(const QModelIndex& sourceIndex,
-                  const qqsfpm::QQmlSortFilterProxyModel& proxyModel) override;
     void updateContext(const qqsfpm::QQmlSortFilterProxyModel& proxyModel);
     void updateExpression();
 

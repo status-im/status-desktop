@@ -64,6 +64,11 @@ Item {
                     property string expressionRole: model.expressionRole
                 }
             }
+
+            readonly property SignalSpy modelSignalSpy: SignalSpy {
+                target: testModel
+                signalName: "dataChanged"
+            }
         }
     }
 
@@ -107,8 +112,11 @@ Item {
             const instantiator = obj.instantiator
 
             observerProxy.accessCounter = 0
+            compare(obj.modelSignalSpy.count, 0)
+
             obj.d = 1
 
+            compare(obj.modelSignalSpy.count, 1)
             compare(observerProxy.accessCounter, 4)
         }
 

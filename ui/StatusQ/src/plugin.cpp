@@ -5,6 +5,7 @@
 
 #include "StatusQ/QClipboardProxy.h"
 #include "StatusQ/concatmodel.h"
+#include "StatusQ/fastexpressionfilter.h"
 #include "StatusQ/fastexpressionrole.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
@@ -39,6 +40,7 @@ public:
         qmlRegisterType<SourceModel>("StatusQ", 0, 1, "SourceModel");
         qmlRegisterType<ConcatModel>("StatusQ", 0, 1, "ConcatModel");
 
+        qmlRegisterType<FastExpressionFilter>("StatusQ", 0, 1, "FastExpressionFilter");
         qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");
 
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
