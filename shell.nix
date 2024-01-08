@@ -19,6 +19,7 @@ let
       qtwebchannel
       qtlocation
       qtwebview
+      qtgraphicaleffects
     ]);
 
   lddWrapped = pkgs.writeShellScriptBin "ldd" ''
