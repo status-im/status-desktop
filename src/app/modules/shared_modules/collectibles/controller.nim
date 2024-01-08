@@ -131,7 +131,7 @@ QtObject:
     return getExtraData(network)
 
   proc processGetOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
-    defer: self.model.setIsFetching(false)
+    self.model.setIsFetching(false)
 
     let res = fromJson(response, backend_collectibles.GetOwnedCollectiblesResponse)
 
