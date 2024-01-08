@@ -56,7 +56,7 @@ QtObject:
         response.result.getElems(),
         proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x)
       )
-      let chainId = self.networkService.getNetworkForEns().chainId
+      let chainId = self.networkService.getAppNetwork().chainId
       for savedAddress in self.savedAddresses:
         if savedAddress.ens != "":
           try:

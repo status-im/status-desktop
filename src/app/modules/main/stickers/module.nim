@@ -111,7 +111,7 @@ proc sendBuyingStickersTxWithSignatureAndWatch(self: Module, signature: string) 
     return
 
   let response = self.controller.sendBuyingStickersTxWithSignatureAndWatch(
-    self.getChainIdForStickers(),
+    self.controller.getAppNetwork().chainId,
     self.tmpBuyStickersTransactionDetails.txData,
     self.tmpBuyStickersTransactionDetails.packId,
     signature
@@ -130,9 +130,8 @@ method onKeypairAuthenticated*(self: Module, password: string, pin: string) =
     self.finish(chainId = 0, txHash =  "", error = cancelledRequest)
     return
 
-  let chainId = self.getChainIdForStickers()
   let txDataJson = self.controller.prepareTxForBuyingStickers(
-    chainId,
+    self.controller.getAppNetwork().chainId,
     self.tmpBuyStickersTransactionDetails.packId,
     self.tmpBuyStickersTransactionDetails.address,
     self.tmpBuyStickersTransactionDetails.gas,
@@ -310,9 +309,6 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
 
 method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
-
-method getChainIdForStickers*(self: Module): int =
-  return self.controller.getChainIdForStickers()
 
 method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, installed = true, pending = false)

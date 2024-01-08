@@ -386,9 +386,6 @@ method onAddAccountModuleLoaded*(self: Module) =
 method getNetworkLayer*(self: Module, chainId: int): string =
   return self.networksModule.getNetworkLayer(chainId)
 
-method getChainIdForChat*(self: Module): int =
-  return self.networksService.getNetworkForChat().chainId
-
 method getLatestBlockNumber*(self: Module, chainId: int): string =
   return self.transactionService.getLatestBlockNumber(chainId)
 

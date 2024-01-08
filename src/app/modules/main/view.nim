@@ -8,6 +8,7 @@ import chat_search_model
 import ephemeral_notification_model
 from app_service/common/conversion import intToEnum
 from app_service/common/types import StatusType
+import app_service/service/network/dto as network_dto
 
 QtObject:
   type
@@ -59,6 +60,16 @@ QtObject:
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
+
+  proc appNetworkChanged*(self: View) {.signal.}
+  proc getAppNetworkId*(self: View): int {.slot.} =
+    return self.delegate.getAppNetwork().chainId
+  QtProperty[int] appNetworkId:
+    read = getAppNetworkId
+    notify = appNetworkChanged
+
+  proc emitAppNetworkChangedSignal*(self: View) =
+    self.appNetworkChanged()
 
   proc editItem*(self: View, item: SectionItem) =
     self.model.editItem(item)

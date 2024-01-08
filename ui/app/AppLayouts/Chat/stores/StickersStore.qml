@@ -65,9 +65,5 @@ QtObject {
             return ""
         return stickersModule.authenticateAndBuy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled)
     }
-
-    function getChainIdForStickers() {
-        return stickersModule.getChainIdForStickers()
-    }
 }
 

@@ -177,8 +177,8 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.tokenService.getTokenPrice(crypto, fiat)
 
-proc getChainIdForStickers*(self: Controller): int =
-  return self.networkService.getNetworkForStickers().chainId
+proc getAppNetwork*(self: Controller): NetworkDto =
+  return self.networkService.getAppNetwork()
 
 proc getStatusToken*(self: Controller): string =
   let token = self.stickerService.getStatusToken()

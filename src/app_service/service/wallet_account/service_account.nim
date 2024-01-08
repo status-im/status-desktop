@@ -135,7 +135,7 @@ proc startWallet(self: Service) =
 
 proc init*(self: Service) =
   try:
-    let chainId = self.networkService.getNetworkForEns().chainId
+    let chainId = self.networkService.getAppNetwork().chainId
     let woAccounts = getWatchOnlyAccountsFromDb()
     for acc in woAccounts:
       acc.ens = getEnsName(acc.address, chainId)
@@ -183,7 +183,7 @@ proc init*(self: Service) =
     self.importPartiallyOperableAccounts(args.keyUid, args.password)
 
 proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = true) =
-  let chainId = self.networkService.getNetworkForEns().chainId
+  let chainId = self.networkService.getAppNetwork().chainId
   let allLocalAaccounts = self.getWalletAccounts()
   # check if there is new watch only account
   let woAccountsDb = getWatchOnlyAccountsFromDb()
@@ -684,7 +684,7 @@ proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.
   ))
 
 proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
-  let network = self.networkService.getNetworkForActivityCheck()
+  let network = self.networkService.getAppNetwork()
   let arg = FetchDetailsForAddressesTaskArg(
     uniqueId: uniqueId,
     chainId: network.chainId,

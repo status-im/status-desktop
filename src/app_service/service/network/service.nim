@@ -18,7 +18,7 @@ type NetworkEndpointUpdatedArgs* = ref object of Args
   networkName*: string
   revertedToDefault*: bool
 
-type 
+type
   Service* = ref object of RootObj
     events: EventEmitter
     networks: seq[CombinedNetworkDto]
@@ -66,9 +66,9 @@ proc getFlatNetworks*(self: Service): seq[NetworkDto] =
       result.add(network.test)
       result.add(network.prod)
 
-proc getNetworks*(self: Service): seq[NetworkDto] = 
+proc getNetworks*(self: Service): seq[NetworkDto] =
   let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
-    
+
   for network in self.fetchNetworks():
     if testNetworksEnabled:
       result.add(network.test)
@@ -143,45 +143,28 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
     network.enabled = enabled
     discard self.upsertNetwork(network)
 
-proc getChainIdForEns*(self: Service): int =
+## This procedure retuns the network to be used based on the app mode (testnet/mainnet).
+## We don't need to check if retuned network is nil cause it should never be, but if somehow it is, the app will be closed.
+##
+## Should be used for:
+## - Stickers
+## - Chat
+## - Activity check
+## - Collectibles
+## - ENS names
+## - Browser
+proc getAppNetwork*(self: Service): NetworkDto =
+  var networkId = Mainnet
   if self.settingsService.areTestNetworksEnabled():
+    networkId = Goerli
     if self.settingsService.isSepoliaEnabled():
-      return Sepolia
-
-    return Goerli
-
-  return Mainnet
-
-proc getNetworkForEns*(self: Service): NetworkDto =
-  let chainId = self.getChainIdForEns()
-  return self.getNetwork(chainId)
-
-proc getNetworkForStickers*(self: Service): NetworkDto =
-  if self.settingsService.areTestNetworksEnabled():
-    if self.settingsService.isSepoliaEnabled():
-      return self.getNetwork(Sepolia)
-
-    return self.getNetwork(Goerli)
-
-  return self.getNetwork(Mainnet)
-
-proc getNetworkForBrowser*(self: Service): NetworkDto =
-  return self.getNetworkForStickers()
-
-proc getNetworkForChat*(self: Service): NetworkDto =
-  return self.getNetworkForStickers()
-
-proc getNetworkForActivityCheck*(self: Service): NetworkDto =
-  return self.getNetworkForStickers()
-
-proc getNetworkForCollectibles*(self: Service): NetworkDto =
-  if self.settingsService.areTestNetworksEnabled():
-    if self.settingsService.isSepoliaEnabled():
-      return self.getNetwork(Sepolia)
-
-    return self.getNetwork(Goerli)
-
-  return self.getNetwork(Mainnet)
+      networkId = Sepolia
+  let network = self.getNetwork(networkId)
+  if network.isNil:
+    # we should not be here ever
+    error "the app network cannot be resolved"
+    quit() # quit the app
+  return network
 
 proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
   let network = self.getNetworkByChainId(chainId)

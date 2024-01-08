@@ -406,10 +406,6 @@ QtObject {
         communitiesModuleInst.joinCommunityOrEditSharedAddresses()
     }
 
-    function getChainIdForChat() {
-        return walletSection.getChainIdForChat()
-    }
-
     function getLatestBlockNumber(chainId) {
         return walletSection.getChainIdForSend(chainId)
     }

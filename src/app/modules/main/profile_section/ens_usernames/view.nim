@@ -39,16 +39,6 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc chainIdChanged*(self: View) {.signal.}
-  proc chainId(self: View): int {.slot.} =
-    return self.delegate.getChainIdForEns()
-  QtProperty[int] chainId:
-    read = chainId
-    notify = chainIdChanged
-
-  proc emitChainIdChanged*(self: View) =
-    self.chainIdChanged()
-
   proc getEnsRegistry(self: View): string {.slot.} =
     return ENS_REGISTRY
 
@@ -142,9 +132,6 @@ QtObject:
 
   proc getStatusToken*(self: View): string {.slot.} =
     return self.delegate.getStatusToken()
-
-  proc getChainIdForEns*(self: View): int {.slot.} =
-    return self.delegate.getChainIdForEns()
 
   proc setPrefferedEnsUsername*(self: View, ensUsername: string) {.slot.} =
     self.delegate.setPrefferedEnsUsername(ensUsername)

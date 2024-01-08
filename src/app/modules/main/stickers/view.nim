@@ -176,9 +176,6 @@ QtObject:
   proc getSNTBalance*(self: View): string {.slot.} =
     return self.delegate.getSNTBalance()
 
-  proc getChainIdForStickers*(self: View): int {.slot.} =
-    return self.delegate.getChainIdForStickers()
-  
   proc getWalletDefaultAddress*(self: View): string {.slot.} =
     return self.delegate.getWalletDefaultAddress()
 

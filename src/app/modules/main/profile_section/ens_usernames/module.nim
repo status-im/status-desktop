@@ -85,11 +85,10 @@ method load*(self: Module) =
   self.controller.init()
 
   let signingPhrase = self.controller.getSigningPhrase()
-  let link = self.controller.getNetwork().blockExplorerUrl & "/tx/"
+  let link = self.controller.getAppNetwork().blockExplorerUrl & "/tx/"
   self.view.load(link, signingPhrase)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
-    self.view.emitChainIdChanged()
     self.controller.fixPreferredName(true)
 
 method isLoaded*(self: Module): bool =
@@ -204,7 +203,7 @@ proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
     result = ensUsername & ens_utils.STATUS_DOMAIN
 
 method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) =
-  let chainId = self.getChainIdForEns()
+  let chainId = self.controller.getAppNetwork().chainId
   var ensUsername = self.formatUsername(ensUsername, isStatus)
   if(not self.controller.addEnsUsername(chainId, ensUsername)):
     info "an error occurred saving ens username", methodName="connectOwnedUsername"
@@ -214,7 +213,7 @@ method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) 
   self.view.model().addItem(Item(chainId: chainId, ensUsername: ensUsername, isPending: false))
 
 method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
-  let chainId = self.getChainIdForEns()
+  let chainId = self.controller.getAppNetwork().chainId
   self.controller.fixPreferredName()
   if(self.view.model().containsEnsUsername(chainId, ensUsername)):
     self.view.model().updatePendingStatus(chainId, ensUsername, false)
@@ -223,7 +222,7 @@ method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: stri
   self.view.emitTransactionCompletedSignal(true, transactionHash, ensUsername, trxType)
 
 method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
-  let chainId = self.getChainIdForEns()
+  let chainId = self.controller.getAppNetwork().chainId
   self.view.model().removeItemByEnsUsername(chainId, ensUsername)
   self.view.emitTransactionCompletedSignal(false, transactionHash, ensUsername, trxType)
 
@@ -308,9 +307,6 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
 
 method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
-
-method getChainIdForEns*(self: Module): int =
-  return self.controller.getChainId()
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

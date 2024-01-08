@@ -106,9 +106,6 @@ method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: strin
 method getStatusToken*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChainIdForStickers*(self: AccessInterface): int {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

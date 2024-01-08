@@ -20,7 +20,7 @@ QtObject {
     property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
     property string icon: !!Global.userProfile? Global.userProfile.icon : ""
     property string preferredUsername: !!Global.userProfile? Global.userProfile.preferredName : ""
-    readonly property string chainId: ensUsernamesModule.chainId
+    readonly property string chainId: mainModule.appNetworkId
 
     property string username: !!Global.userProfile? Global.userProfile.username : ""
 

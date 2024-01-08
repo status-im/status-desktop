@@ -127,7 +127,7 @@ QtObject:
 
   proc getStickerMarketAddress*(self: Service): string =
     try:
-      let chainId = self.networkService.getNetworkForStickers().chainId
+      let chainId = self.networkService.getAppNetwork().chainId
       let response = status_stickers.stickerMarketAddress(chainId)
       return response.result.getStr()
     except RpcException:
@@ -185,7 +185,7 @@ QtObject:
         self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
 
   proc getStatusToken*(self: Service): TokenDto =
-    let networkDto = self.networkService.getNetworkForStickers()
+    let networkDto = self.networkService.getAppNetwork()
     return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
@@ -221,7 +221,7 @@ QtObject:
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
   proc obtainMarketStickerPacks*(self: Service) =
-    let chainId = self.networkService.getNetworkForStickers().chainId
+    let chainId = self.networkService.getAppNetwork().chainId
 
     let arg = ObtainMarketStickerPacksTaskArg(
       tptr: cast[ByteAddress](obtainMarketStickerPacksTask),
@@ -239,7 +239,7 @@ QtObject:
   # definition so we'll need to setup the type, task, and helper outside of body
   # passed to `QtObject:`
   proc estimate*(self: Service, packId: string, address: string, price: string, uuid: string) =
-    let chainId = self.networkService.getNetworkForStickers().chainId
+    let chainId = self.networkService.getAppNetwork().chainId
 
     let arg = EstimateTaskArg(
       tptr: cast[ByteAddress](estimateTask),
@@ -340,7 +340,7 @@ QtObject:
       tptr: cast[ByteAddress](installStickerPackTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onStickerPackInstalled",
-      chainId: self.networkService.getNetworkForStickers().chainId,
+      chainId: self.networkService.getAppNetwork().chainId,
       packId: packId,
     )
     self.threadpool.start(arg)
@@ -393,7 +393,7 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let network = self.networkService.getNetworkForStickers()
+    let network = self.networkService.getAppNetwork()
 
     let info = getTokenBalanceForAccount(network.chainId, account, token.address)
     if info.isNone:
