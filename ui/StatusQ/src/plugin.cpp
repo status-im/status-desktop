@@ -7,6 +7,7 @@
 #include "StatusQ/concatmodel.h"
 #include "StatusQ/fastexpressionfilter.h"
 #include "StatusQ/fastexpressionrole.h"
+#include "StatusQ/fastexpressionsorter.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/permissionutilsinternal.h"
@@ -42,6 +43,7 @@ public:
 
         qmlRegisterType<FastExpressionFilter>("StatusQ", 0, 1, "FastExpressionFilter");
         qmlRegisterType<FastExpressionRole>("StatusQ", 0, 1, "FastExpressionRole");
+        qmlRegisterType<FastExpressionSorter>("StatusQ", 0, 1, "FastExpressionSorter");
 
         qmlRegisterType<LeftJoinModel>("StatusQ", 0, 1, "LeftJoinModel");
         qmlRegisterType<SubmodelProxyModel>("StatusQ", 0, 1, "SubmodelProxyModel");

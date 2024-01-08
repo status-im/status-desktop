@@ -93,6 +93,7 @@ add_library(StatusQ SHARED
         include/StatusQ/concatmodel.h
         include/StatusQ/fastexpressionfilter.h
         include/StatusQ/fastexpressionrole.h
+        include/StatusQ/fastexpressionsorter.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/permissionutilsinternal.h
@@ -109,6 +110,7 @@ add_library(StatusQ SHARED
         src/concatmodel.cpp
         src/fastexpressionfilter.cpp
         src/fastexpressionrole.cpp
+        src/fastexpressionsorter.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
         src/permissionutilsinternal.cpp
