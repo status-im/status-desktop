@@ -187,6 +187,15 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   var discordMessageObj: JsonNode
   if(jsonObj.getProp("discordMessage", discordMessageObj)):
     result.discordMessage = toDiscordMessage(discordMessageObj)
+  
+  var quotedImagesArr: JsonNode
+  if jsonObj.getProp("albumImages", quotedImagesArr):
+    for element in quotedImagesArr.getElems():
+      if element.getStr() == "":
+        continue
+      result.albumImages.add(element.getStr())
+
+  discard jsonObj.getProp("albumImagesCount", result.albumImagesCount)
 
 proc toSticker*(jsonObj: JsonNode): Sticker =
   result = Sticker()

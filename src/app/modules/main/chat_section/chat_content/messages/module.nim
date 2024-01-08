@@ -68,6 +68,7 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
 proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool)
 proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool)
 proc currentUserWalletContainsAddress(self: Module, address: string): bool
+proc updateQuotedImages(self: Module, items: var seq[Item], message: MessageDto)
 
 method delete*(self: Module) =
   self.controller.delete
@@ -95,38 +96,7 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-# TODO: Fetch the message from status-go. The generated albumIdToImagesMap is built on the messages received and does not account for
-#       older messages for which the images would not be found. Ticket https://github.com/status-im/status-desktop/issues/12821
-proc generateAlbumIdToImageMap(self: Module, messages: seq[MessageDto]): Table[string, seq[string]] =
-  var albumIdToImagesMap = initTable[string, seq[string]]()
-
-  for message in messages:
-    if message.albumId in albumIdToImagesMap:
-      albumIdToImagesMap[message.albumId].add(message.image)
-    else:
-      albumIdToImagesMap[message.albumId] = @[message.image]
-
-  return albumIdToImagesMap
-
-
-proc setQuotedMessageImages(self: Module, message: MessageDto, items: var seq[Item], albumIdToImagesMap: Table[string, seq[string]]) =
-  for i in 0 ..< items.len:
-    let item = items[i]
-
-    var quotedMessageAlbumMessageImages = item.quotedMessageAlbumMessageImages
-
-    if message.id != item.responseToMessageWithId:
-      continue
-    if message.albumId notin albumIdToImagesMap:
-      continue
-
-    quotedMessageAlbumMessageImages = albumIdToImagesMap[message.albumId]
-    item.quotedMessageAlbumMessageImages = quotedMessageAlbumMessageImages
-    item.quotedMessageAlbumImagesCount = quotedMessageAlbumMessageImages.len
-    items[i] = item
-
 proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto] = @[]): seq[Item] =
-  var albumIdToImagesMap = self.generateAlbumIdToImageMap(messages)
   for message in messages:
     # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
@@ -138,7 +108,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
       if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
         continue
 
-      self.setQuotedMessageImages(message, result, albumIdToImagesMap)
+      self.updateQuotedImages(result, message)
 
       if (self.updateItemsByAlbum(result, message)):
         continue
@@ -735,6 +705,15 @@ proc setChatDetails(self: Module, chatDetails: ChatDto) =
   self.view.setChatColor(chatDetails.color)
   self.view.setChatIcon(chatDetails.icon)
   self.view.setChatType(chatDetails.chatType.int)
+
+proc updateQuotedImages(self: Module, items: var seq[Item], message: MessageDto) =
+  for i in 0 ..< items.len:
+    let item = items[i]
+
+    if len(message.quotedMessage.albumImages) > 0 and not message.deleted:
+      var quotedAlbumImages = item.quotedMessageAlbumMessageImages
+      quotedAlbumImages.add(message.quotedMessage.albumImages)
+      item.quotedMessageAlbumMessageImages = quotedAlbumImages
 
 proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool =
   for i in 0 ..< items.len:
