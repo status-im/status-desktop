@@ -1715,9 +1715,9 @@ Item {
         Connections {
             target: WalletStore.RootStore.walletSectionSavedAddressesInst
 
-            function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, ens: string, errorMsg: string) {
+            function onSavedAddressAddedOrUpdated(added: bool, name: string, address: string, errorMsg: string) {
                 WalletStore.RootStore.addingSavedAddress = false
-                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, ens: ens, error: errorMsg }
+                WalletStore.RootStore.lastCreatedSavedAddress = { address: address, error: errorMsg }
 
                 if (!!errorMsg) {
                     let mode = qsTr("adding")
@@ -1783,7 +1783,7 @@ Item {
             }
 
             onRemoveSavedAddress: {
-                WalletStore.RootStore.deleteSavedAddress(address, ens)
+                WalletStore.RootStore.deleteSavedAddress(address)
                 close()
             }
         }
@@ -1791,9 +1791,8 @@ Item {
         Connections {
             target: WalletStore.RootStore.walletSectionSavedAddressesInst
 
-            function onSavedAddressDeleted(name: string, address: string, ens: string, errorMsg: string) {
+            function onSavedAddressDeleted(name: string, address: string, errorMsg: string) {
                 WalletStore.RootStore.deletingSavedAddress = false
-                WalletStore.RootStore.lastDeletedSavedAddress = { address: address, ens: ens, error: errorMsg }
 
                 if (!!errorMsg) {
 

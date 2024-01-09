@@ -26,7 +26,6 @@ type
   SavedAddressArgs* = ref object of Args
     name*: string
     address*: string
-    ens*: string
     errorMsg*: string
 
 QtObject:
@@ -49,57 +48,74 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
 
-  proc fetchAddresses(self: Service) =
-    try:
-      let response = backend.getSavedAddresses()
-      self.savedAddresses = map(
-        response.result.getElems(),
-        proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x)
-      )
-      let chainId = self.networkService.getAppNetwork().chainId
-      for savedAddress in self.savedAddresses:
-        if savedAddress.ens != "":
-          try:
-            let nameResponse = backend.getName(chainId, savedAddress.address)
-            savedAddress.ens = nameResponse.result.getStr
-          except:
-            continue
-
-    except Exception as e:
-      error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
-
-  proc updateAddresses(self: Service) =
-    self.fetchAddresses()
-    self.events.emit(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
+  ## Forward declaration
+  proc fetchSavedAddressesAndResolveEnsNames(self: Service)
+  proc updateAddresses(self: Service, signal: string, arg: Args)
 
   proc init*(self: Service) =
-    # Subscribe to sync events and check for changes
     self.events.on(SignalType.Message.event) do(e:Args):
       var data = MessageSignal(e)
       if(len(data.savedAddresses) > 0):
-        self.updateAddresses()
+        self.updateAddresses(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
 
-    self.fetchAddresses()
+    self.fetchSavedAddressesAndResolveEnsNames()
+
+  proc areTestNetworksEnabled*(self: Service): bool =
+    return self.settingsService.areTestNetworksEnabled()
+
+  proc getAddresses(self: Service): seq[SavedAddressDto] =
+    try:
+      let response = backend.getSavedAddresses()
+      return map(response.result.getElems(), proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x))
+    except Exception as e:
+      error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
 
   proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
     return self.savedAddresses
 
+  proc updateAddresses(self: Service, signal: string, arg: Args) =
+    self.savedAddresses = self.getAddresses()
+    self.events.emit(signal, arg)
+
+  proc fetchSavedAddressesAndResolveEnsNames(self: Service) =
+    let arg = SavedAddressTaskArg(
+      chainId: self.networkService.getAppNetwork().chainId,
+      tptr: cast[ByteAddress](fetchSavedAddressesAndResolveEnsNamesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onSavedAddressesFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onSavedAddressesFetched(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+      if rpcResponseObj{"response"}.kind != JArray:
+        raise newException(CatchableError, "invalid response")
+
+      self.savedAddresses = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x))
+    except Exception as e:
+      error "onSavedAddressesFetched", msg = e.msg
+    self.events.emit(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
+
   proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string,
     chainShortNames: string) =
     let arg = SavedAddressTaskArg(
+      chainId: self.networkService.getAppNetwork().chainId,
       name: name,
       address: address,
       ens: ens,
       colorId: colorId,
       chainShortNames: chainShortNames,
-      isTestAddress: self.settingsService.areTestNetworksEnabled(),
+      isTestAddress: self.areTestNetworksEnabled(),
       tptr: cast[ByteAddress](upsertSavedAddressTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onSavedAddressCreatedOrUpdated",
     )
     self.threadpool.start(arg)
 
-  proc onSavedAddressCreatedOrUpdated*(self: Service, rpcResponse: string) {.slot.} =
+  proc onSavedAddressCreatedOrUpdated(self: Service, rpcResponse: string) {.slot.} =
     var arg = SavedAddressArgs()
     try:
       let rpcResponseObj = rpcResponse.parseJson
@@ -110,25 +126,22 @@ QtObject:
 
       arg.name = rpcResponseObj{"name"}.getStr
       arg.address = rpcResponseObj{"address"}.getStr
-      arg.ens = rpcResponseObj{"ens"}.getStr
     except Exception as e:
       error "onSavedAddressCreatedOrUpdated", msg = e.msg
       arg.errorMsg = e.msg
-    self.fetchAddresses()
-    self.events.emit(SIGNAL_SAVED_ADDRESS_UPDATED, arg)
+    self.updateAddresses(SIGNAL_SAVED_ADDRESS_UPDATED, arg)
 
-  proc deleteSavedAddress*(self: Service, address: string, ens: string) =
+  proc deleteSavedAddress*(self: Service, address: string) =
     let arg = SavedAddressTaskArg(
       address: address,
-      ens: ens,
-      isTestAddress: self.settingsService.areTestNetworksEnabled(),
+      isTestAddress: self.areTestNetworksEnabled(),
       tptr: cast[ByteAddress](deleteSavedAddressTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onDeleteSavedAddress",
     )
     self.threadpool.start(arg)
 
-  proc onDeleteSavedAddress*(self: Service, rpcResponse: string) {.slot.} =
+  proc onDeleteSavedAddress(self: Service, rpcResponse: string) {.slot.} =
     var arg = SavedAddressArgs()
     try:
       let rpcResponseObj = rpcResponse.parseJson
@@ -138,9 +151,7 @@ QtObject:
         raise newException(CatchableError, "invalid response")
 
       arg.address = rpcResponseObj{"address"}.getStr
-      arg.ens = rpcResponseObj{"ens"}.getStr
     except Exception as e:
       error "onDeleteSavedAddress", msg = e.msg
       arg.errorMsg = e.msg
-    self.fetchAddresses()
-    self.events.emit(SIGNAL_SAVED_ADDRESS_DELETED, arg)
+    self.updateAddresses(SIGNAL_SAVED_ADDRESS_DELETED, arg)

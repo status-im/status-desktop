@@ -62,7 +62,7 @@ class AddSavedAddressPopup(SavedAddressPopup):
             self.verify_ethereum_mainnet_network_tag_present() 
             self.verify_otimism_mainnet_network_tag_present()
             self.verify_arbitrum_mainnet_network_tag_present(), 
-        self._save_add_address_button.click()
+        self._save_add_address_button.wait_until_enabled().click()
         self.wait_until_hidden()
 
 

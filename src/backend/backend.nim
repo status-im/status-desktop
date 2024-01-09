@@ -91,10 +91,9 @@ rpc(upsertSavedAddress, "wakuext"):
 
 rpc(deleteSavedAddress, "wakuext"):
   address: string
-  ens: string
   isTest: bool
 
-rpc(getSavedAddresses, "wallet"):
+rpc(getSavedAddresses, "wakuext"):
   discard
 
 rpc(checkConnected, "wallet"):

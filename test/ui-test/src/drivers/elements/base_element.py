@@ -108,3 +108,7 @@ class BaseElement:
 
     def wait_until_hidden(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
         assert squish.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
+        
+    def wait_until_enabled(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
+        assert squish.waitFor(lambda: self.is_enabled, timeout_msec), f'Object {self} is not enabled'
+        return self

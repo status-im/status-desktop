@@ -99,8 +99,7 @@ ColumnLayout {
                 State {
                     name: "highlighted"
                     when: RootStore.lastCreatedSavedAddress ? (!RootStore.lastCreatedSavedAddress.error &&
-                                                               RootStore.lastCreatedSavedAddress.address.toLowerCase() === address.toLowerCase() &&
-                                                               RootStore.lastCreatedSavedAddress.ens === ens) : false
+                                                               RootStore.lastCreatedSavedAddress.address.toLowerCase() === address.toLowerCase()) : false
                     PropertyChanges { target: savedAddressDelegate; color: Theme.palette.baseColor2 }
                     StateChangeScript {
                         script: Qt.callLater(d.reset)

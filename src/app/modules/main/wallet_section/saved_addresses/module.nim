@@ -61,28 +61,24 @@ method createOrUpdateSavedAddress*(self: Module, name: string, address: string, 
   chainShortNames: string) =
   self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
-method deleteSavedAddress*(self: Module, address: string, ens: string) =
-  self.controller.deleteSavedAddress(address, ens)
+method deleteSavedAddress*(self: Module, address: string) =
+  self.controller.deleteSavedAddress(address)
 
-method savedAddressUpdated*(self: Module, name: string, address: string, ens: string, errorMsg: string) =
-  var item = self.view.getModel().getItemByEnsOrAddress(address)
-  if item.isEmpty():
-    item = self.view.getModel().getItemByEnsOrAddress(ens)
+method savedAddressUpdated*(self: Module, name: string, address: string, errorMsg: string) =
+  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
   self.loadSavedAddresses()
-  self.view.savedAddressAddedOrUpdated(item.isEmpty(), name, address, ens, errorMsg)
+  self.view.savedAddressAddedOrUpdated(item.isEmpty(), name, address, errorMsg)
 
-method savedAddressDeleted*(self: Module, address: string, ens: string, errorMsg: string) =
-  var item = self.view.getModel().getItemByEnsOrAddress(address)
-  if item.isEmpty():
-    item = self.view.getModel().getItemByEnsOrAddress(ens)
+method savedAddressDeleted*(self: Module, address: string, errorMsg: string) =
+  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
   self.loadSavedAddresses()
-  self.view.savedAddressDeleted(item.getName(), address, ens, errorMsg)
+  self.view.savedAddressDeleted(item.getName(), address, errorMsg)
 
 method savedAddressNameExists*(self: Module, name: string): bool =
-  return self.view.getModel().nameExists(name)
+  return self.view.getModel().nameExists(name, self.controller.areTestNetworksEnabled())
 
 method getSavedAddressAsJson*(self: Module, address: string): string =
-  let item = self.view.getModel().getItemByAddress(address)
+  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
   let jsonObj = %* {
     "name": item.getName(),
     "address": item.getAddress(),
