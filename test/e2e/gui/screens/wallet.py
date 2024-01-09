@@ -163,13 +163,14 @@ class SavedAddressesView(QObject):
 
     @allure.step('Open edit address popup for saved address')
     def open_edit_address_popup(self, name: str) -> 'EditSavedAddressPopup':
-        self.open_context_menu(name).select('Edit')
-        return EditSavedAddressPopup().wait_until_appears()
+        self.open_context_menu(name).select_edit_saved_address()
+        return EditSavedAddressPopup()
 
     @allure.step('Delete saved address from the list')
     def delete_saved_address(self, address_name):
-        self.open_context_menu(address_name).select('Delete')
-        ConfirmationPopup().wait_until_appears().confirm()
+        self.open_context_menu(address_name).select_delete_saved_address()
+        assert ConfirmationPopup().get_confirmation_text().startswith('Are you sure you want to remove')
+        ConfirmationPopup().confirm()
 
     @allure.step('Open context menu in saved address')
     def open_context_menu(self, name) -> ContextMenu:

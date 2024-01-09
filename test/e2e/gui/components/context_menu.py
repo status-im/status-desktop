@@ -12,11 +12,21 @@ class ContextMenu(QObject):
         self._context_delete_account_option = QObject('contextMenuItem_Delete')
         self._context_edit_account_option = QObject('contextMenuItem_Edit')
         self._context_hide_include_in_total_balance = QObject('contextMenuItem_HideInclude')
+        self._context_edit_saved_address_option = QObject('contextSavedAddressEdit')
+        self._context_delete_saved_address_option = QObject('contextSavedAddressDelete')
 
     @allure.step('Select in context menu')
     def select(self, value: str):
         self._menu_item.real_name['text'] = value
         self._menu_item.click()
+
+    @allure.step('Click Edit saved address option')
+    def select_edit_saved_address(self):
+        self._context_edit_saved_address_option.click()
+
+    @allure.step('Click Delete saved address option')
+    def select_delete_saved_address(self):
+        self._context_delete_saved_address_option.click()
 
     @allure.step('Select add watched address option from context menu')
     def select_add_watched_address_from_context_menu(self):

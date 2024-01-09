@@ -170,9 +170,9 @@ mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag = {"container": statusD
 mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Mainnet", "type": "StatusCheckBox", "visible": True}
 mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Optimism", "type": "StatusCheckBox", "visible": True}
 mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Arbitrum", "type": "StatusCheckBox", "visible": True}
-mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Mainnet", "type": "Rectangle", "visible": True}
-mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Optimism", "type": "Rectangle", "visible": True}
-mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Arbitrum", "type": "Rectangle", "visible": True}
+mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_eth", "type": "Rectangle", "visible": True}
+mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_opt", "type": "Rectangle", "visible": True}
+mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_arb", "type": "Rectangle", "visible": True}
 
 # Context Menu
 contextMenu_PopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
@@ -181,9 +181,14 @@ contextMenuItem_AddWatchOnly = {"container": statusDesktop_mainWindow_overlay, "
 contextMenuItem_Delete = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-DeleteAction*"), "type": "StatusMenuItem"}
 contextMenuItem_Edit = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-EditAction*"), "type": "StatusMenuItem"}
 contextMenuItem_HideInclude = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": RegularExpression("AccountMenu-HideFromTotalBalance*"), "type": "StatusMenuItem"}
+contextSavedAddressEdit = {"container": statusDesktop_mainWindow, "objectName": "editSavedAddress", "type": "StatusMenuItem"}
+contextSavedAddressDelete = {"container": statusDesktop_mainWindow, "objectName": "deleteSavedAddress", "type": "StatusMenuItem"}
 
 # Confirmation Popup
 confirmButton = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("confirm*"), "type": "StatusButton"}
+mainWallet_Saved_Addresses_More_Confirm_Delete = {"container": statusDesktop_mainWindow, "objectName": "RemoveSavedAddressPopup-ConfirmButton", "type": "StatusButton"}
+mainWallet_Saved_Addresses_More_Confirm_Cancel = {"container": statusDesktop_mainWindow, "objectName": "RemoveSavedAddressPopup-CancelButton", "type": "StatusFlatButton"}
+mainWallet_Saved_Addresses_More_Confirm_Notification = {"container": statusDesktop_mainWindow, "objectName": "RemoveSavedAddressPopup-Notification", "type": "StatusBaseText"}
 
 # Picture Edit Popup
 o_StatusSlider = {"container": statusDesktop_mainWindow_overlay, "type": "StatusSlider", "unnamed": 1, "visible": True}
