@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, sets
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
@@ -238,6 +238,11 @@ QtObject:
   proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
+    
+    for contactId in self.linkPreviewModel.getContactIds().items:
+      let contact = self.delegate.getContactDetails(contactId)
+      if contact.dto.displayName != "":
+        self.linkPreviewModel.setContactInfo(contact)
 
   proc setLinkPreviewUrls*(self: View, urls: seq[string]) =
     self.linkPreviewModel.setUrls(urls)
