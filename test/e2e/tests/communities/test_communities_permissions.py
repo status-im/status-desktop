@@ -29,7 +29,6 @@ pytestmark = marks
         pytest.param(True, 'Ether', 'Dai Stablecoin', '10', 'viewOnly', '#general', '10 ETH', '10 DAI', 'View only'),
         pytest.param(False, False, False, False, 'becomeAdmin', False, False, False, 'Become an admin')
     ])
-
 def test_adding_permissions(main_screen: MainWindow, params, checkbox_state: bool, first_asset, second_asset, amount,
                             allowed_to: str, in_channel, asset_title, second_asset_title, allowed_to_title: str):
     main_screen.create_community(params)
@@ -62,8 +61,7 @@ def test_adding_permissions(main_screen: MainWindow, params, checkbox_state: boo
         if allowed_to_title is not False:
             assert driver.waitFor(lambda: allowed_to_title in permissions_settings.get_is_allowed_tags_titles())
         if in_channel is False:
-            assert driver.waitFor(lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles())
+            assert driver.waitFor(
+                lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles())
         if in_channel:
             assert driver.waitFor(lambda: in_channel in permissions_settings.get_in_community_in_channel_tags_titles())
-
-

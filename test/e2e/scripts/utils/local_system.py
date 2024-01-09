@@ -28,8 +28,9 @@ def find_process_by_port(port: int) -> typing.List[int]:
 
 def find_free_port(start: int, step: int):
     while find_process_by_port(start):
-        start+=step
+        start += step
     return start
+
 
 @allure.step('Kill process')
 def kill_process(pid, sig: signal.Signals = signal.SIGKILL):
@@ -39,6 +40,7 @@ def kill_process(pid, sig: signal.Signals = signal.SIGKILL):
     except ProcessLookupError as err:
         LOG.error('Failed to find process %d: %s', pid, err)
         raise err
+
 
 @allure.step('Kill process with retries')
 def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGTERM, attempts: int = 3):
@@ -61,7 +63,8 @@ def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGTERM, attempt
         else:
             return
 
-    raise RuntimeError('Failed to kill proicess: %d' % pid)
+    raise RuntimeError('Failed to kill process: %d' % pid)
+
 
 @allure.step('System execute command')
 def execute(
@@ -73,6 +76,7 @@ def execute(
     LOG.info('Executing: %s', command)
     process = subprocess.Popen(command, shell=shell, stderr=stderr, stdout=stdout)
     return process.pid
+
 
 @allure.step('System run command')
 def run(
