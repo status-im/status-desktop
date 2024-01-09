@@ -11,7 +11,6 @@ type
     Address
     Ens
     ColorId
-    Favourite
     ChainShortNames
     IsTest
 
@@ -54,7 +53,6 @@ QtObject:
       ModelRole.Address.int:"address",
       ModelRole.Ens.int:"ens",
       ModelRole.ColorId.int:"colorId",
-      ModelRole.Favourite.int:"favourite",
       ModelRole.ChainShortNames.int:"chainShortNames",
       ModelRole.IsTest.int:"isTest",
     }.toTable
@@ -78,8 +76,6 @@ QtObject:
       result = newQVariant(item.getEns())
     of ModelRole.ColorId:
       result = newQVariant(item.getColorId())
-    of ModelRole.Favourite:
-      result = newQVariant(item.getFavourite())
     of ModelRole.ChainShortNames:
       result = newQVariant(item.getChainShortNames())
     of ModelRole.IsTest:
@@ -94,7 +90,6 @@ QtObject:
       of "address": result = $item.getAddress()
       of "ens": result = $item.getEns()
       of "colorId": result = $item.getColorId()
-      of "favourite": result = $item.getFavourite()
       of "chainShortNames": result = $item.getChainShortNames()
       of "isTest": result = $item.getIsTest()
 

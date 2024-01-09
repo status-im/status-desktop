@@ -260,7 +260,6 @@ QtObject {
             address: "",
             ens: "",
             colorId: Constants.walletAccountColors.primary,
-            favourite: false,
             chainShortNames: "",
             isTest: false,
         }
@@ -350,9 +349,9 @@ QtObject {
         return walletSectionAccounts.getColorByAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames) {
+    function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
         root.addingSavedAddress = true
-        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
+        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
     }
 
     function deleteSavedAddress(address, ens) {

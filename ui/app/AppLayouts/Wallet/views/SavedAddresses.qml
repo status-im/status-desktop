@@ -89,7 +89,6 @@ ColumnLayout {
             chainShortNames: model.chainShortNames
             ens: model.ens
             colorId: model.colorId
-            favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled

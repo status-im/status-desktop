@@ -85,13 +85,12 @@ QtObject:
     return self.savedAddresses
 
   proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string,
-    favourite: bool, chainShortNames: string) =
+    chainShortNames: string) =
     let arg = SavedAddressTaskArg(
       name: name,
       address: address,
       ens: ens,
       colorId: colorId,
-      favourite: favourite,
       chainShortNames: chainShortNames,
       isTestAddress: self.settingsService.areTestNetworksEnabled(),
       tptr: cast[ByteAddress](upsertSavedAddressTask),

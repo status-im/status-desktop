@@ -8,7 +8,6 @@ type
     name: string
     address: string
     colorId: string
-    favourite: bool
     chainShortNames: string
     ens: string
     isTestAddress: bool
@@ -27,7 +26,6 @@ const upsertSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
       name: arg.name,
       address: arg.address,
       colorId: arg.colorId,
-      favourite: arg.favourite,
       chainShortNames: arg.chainShortNames,
       ens: arg.ens,
       isTest: arg.isTestAddress)
