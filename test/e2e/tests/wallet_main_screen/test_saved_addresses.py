@@ -1,6 +1,8 @@
 import allure
 import pytest
 from allure import step
+
+from gui.components.toast_message import ToastMessage
 from . import marks
 
 import configs
@@ -22,6 +24,11 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         wallet.left_panel.open_saved_addresses().open_add_address_popup().add_saved_address(name, address)
 
+    with step('Verify toast message when adding saved address'):
+        messages = ToastMessage().get_toast_messages
+        assert f'{name} successfully added to your saved addresses' in messages, \
+            f"Toast message about adding saved address is not correct or not present. Current list of messages: {messages}"
+
     with step('Verify that saved address is in the list of saved addresses'):
         assert driver.waitFor(
             lambda: name in wallet.left_panel.open_saved_addresses().address_names,
@@ -30,6 +37,11 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
     with step('Edit saved address to new name'):
         wallet.left_panel.open_saved_addresses().open_edit_address_popup(name).edit_saved_address(new_name, address)
 
+    with step('Verify toast message when editing saved address'):
+        messages = ToastMessage().get_toast_messages
+        assert f'{new_name} saved address successfully edited' in messages, \
+            f"Toast message about editing saved address is not correct or not present. Current list of messages: {messages}"
+
     with step('Verify that saved address with new name is in the list of saved addresses'):
         assert driver.waitFor(
             lambda: new_name in wallet.left_panel.open_saved_addresses().address_names,
@@ -37,6 +49,11 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
 
     with step('Delete address with new name'):
         wallet.left_panel.open_saved_addresses().delete_saved_address(new_name)
+
+    with step('Verify toast message when deleting saved address'):
+        messages = ToastMessage().get_toast_messages
+        assert f'{new_name} was successfully removed from your saved addresses' in messages, \
+            f"Toast message about deleting saved address is not correct or not present. Current list of messages: {messages}"
 
     with step('Verify that saved address with new name is not in the list of saved addresses'):
         assert not driver.waitFor(
