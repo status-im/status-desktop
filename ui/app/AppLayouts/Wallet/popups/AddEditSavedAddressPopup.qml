@@ -52,7 +52,6 @@ StatusDialog {
         d.ens = params.ens?? ""
         d.colorId = d.storedColorId
         d.chainShortNames = d.storedChainShortNames
-        d.favourite = params.favourite?? false
 
         d.initialized = true
 
@@ -84,7 +83,6 @@ StatusDialog {
         property string ens: ""
         property string colorId: ""
         property string chainShortNames: ""
-        property bool favourite: false
 
         property string storedName: ""
         property string storedColorId: ""
@@ -120,7 +118,7 @@ StatusDialog {
                 || event !== undefined && event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
                 return
 
-            RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.favourite, d.chainShortNames)
+            RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
     }

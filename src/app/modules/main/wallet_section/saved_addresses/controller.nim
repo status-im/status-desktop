@@ -37,8 +37,8 @@ proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddres
   return self.savedAddressService.getSavedAddresses()
 
 proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, ens: string, colorId: string,
-  favourite: bool, chainShortNames: string) =
-  self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
+  chainShortNames: string) =
+  self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
 proc deleteSavedAddress*(self: Controller, address: string, ens: string) =
   self.savedAddressService.deleteSavedAddress(address, ens)

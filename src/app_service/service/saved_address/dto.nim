@@ -8,7 +8,6 @@ type
     address*: string
     ens*: string
     colorId*: string
-    favourite*: bool
     chainShortNames*: string
     isTest*: bool
     createdAt*: int64
@@ -20,7 +19,6 @@ proc toSavedAddressDto*(jsonObj: JsonNode): SavedAddressDto =
   discard jsonObj.getProp("ens", result.ens)
   discard jsonObj.getProp("colorId", result.colorId)
   result.colorId = result.colorId.toUpper() # to match `preDefinedWalletAccountColors` on the qml side
-  discard jsonObj.getProp("favourite", result.favourite)
   discard jsonObj.getProp("chainShortNames", result.chainShortNames)
   discard jsonObj.getProp("isTest", result.isTest)
   discard jsonObj.getProp("createdAt", result.createdAt)

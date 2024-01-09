@@ -38,7 +38,6 @@ method loadSavedAddresses*(self: Module) =
       s.address,
       s.ens,
       s.colorId,
-      s.favourite,
       s.chainShortNames,
       s.isTest,
     ))
@@ -59,8 +58,8 @@ method viewDidLoad*(self: Module) =
   self.delegate.savedAddressesModuleDidLoad()
 
 method createOrUpdateSavedAddress*(self: Module, name: string, address: string, ens: string, colorId: string,
-  favourite: bool, chainShortNames: string) =
-  self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
+  chainShortNames: string) =
+  self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
 method deleteSavedAddress*(self: Module, address: string, ens: string) =
   self.controller.deleteSavedAddress(address, ens)
@@ -89,7 +88,6 @@ method getSavedAddressAsJson*(self: Module, address: string): string =
     "address": item.getAddress(),
     "ens": item.getEns(),
     "colorId": item.getColorId(),
-    "favourite": item.getFavourite(),
     "chainShortNames": item.getChainShortNames(),
     "isTest": item.getIsTest(),
   }

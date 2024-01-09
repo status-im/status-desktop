@@ -24,7 +24,6 @@ StatusListItem {
     property string ens
     property string colorId
     property string chainShortNames
-    property bool favourite: false
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
 
@@ -70,7 +69,6 @@ StatusListItem {
         id: d
 
         readonly property string visibleAddress: root.address == Constants.zeroAddress ? root.ens : root.address
-        readonly property bool favouriteEnabled: false // Disabling favourite functionality until good times
     }
 
     components: [
@@ -93,7 +91,6 @@ StatusListItem {
                     {
                         name: root.name,
                         address: root.address,
-                        favourite: root.favourite,
                         chainShortNames: root.chainShortNames,
                         ens: root.ens,
                         colorId: root.colorId,
@@ -108,7 +105,6 @@ StatusListItem {
         id: menu
         property string name
         property string address
-        property bool storeFavourite
         property string chainShortNames
         property string ens
         property string colorId
@@ -120,7 +116,6 @@ StatusListItem {
         function openMenu(parent, x, y, model) {
             menu.name = model.name;
             menu.address = model.address;
-            menu.storeFavourite = model.favourite;
             menu.chainShortNames = model.chainShortNames;
             menu.ens = model.ens;
             menu.colorId = model.colorId;
@@ -129,7 +124,6 @@ StatusListItem {
         onClosed: {
             menu.name = "";
             menu.address = "";
-            menu.storeFavourite = false;
             menu.chainShortNames = ""
             menu.ens = ""
             menu.colorId = ""
@@ -143,7 +137,6 @@ StatusListItem {
                                                           edit: true,
                                                           address: menu.address,
                                                           name: menu.name,
-                                                          favourite: menu.storeFavourite,
                                                           chainShortNames: menu.chainShortNames,
                                                           ens: menu.ens,
                                                           colorId: menu.colorId

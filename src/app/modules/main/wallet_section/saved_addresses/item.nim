@@ -8,7 +8,6 @@ type
     address: string
     ens: string
     colorId: string
-    favourite: bool
     chainShortNames: string
     isTest: bool
 
@@ -17,13 +16,11 @@ proc initItem*(
   address: string,
   ens: string,
   colorId: string,
-  favourite: bool,
   chainShortNames: string,
   isTest: bool
 ): Item =
   result.name = name
   result.address = address
-  result.favourite = favourite
   result.ens = ens
   result.colorId = colorId
   result.chainShortNames = chainShortNames
@@ -35,7 +32,6 @@ proc `$`*(self: Item): string =
     address: {self.address},
     ens: {self.ens},
     colorId: {self.colorId},
-    favourite: {self.favourite},
     chainShortNames: {self.chainShortNames},
     isTest: {self.isTest},
     ]"""
@@ -54,9 +50,6 @@ proc getAddress*(self: Item): string =
 
 proc getColorId*(self: Item): string =
   return self.colorId
-
-proc getFavourite*(self: Item): bool =
-  return self.favourite
 
 proc getChainShortNames*(self: Item): string =
   return self.chainShortNames

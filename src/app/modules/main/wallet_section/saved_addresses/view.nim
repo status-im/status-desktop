@@ -43,8 +43,8 @@ QtObject:
   proc savedAddressAddedOrUpdated*(self: View, added: bool, name: string, address: string, ens: string, errorMsg: string) {.signal.}
 
   proc createOrUpdateSavedAddress*(self: View, name: string, address: string, ens: string, colorId: string,
-    favourite: bool, chainShortNames: string) {.slot.} =
-    self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId, favourite, chainShortNames)
+    chainShortNames: string) {.slot.} =
+    self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
   proc savedAddressDeleted*(self: View, name: string, address: string, ens: string, errorMsg: string) {.signal.}
 
