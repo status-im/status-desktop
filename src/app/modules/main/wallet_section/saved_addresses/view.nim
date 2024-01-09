@@ -40,16 +40,16 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc savedAddressAddedOrUpdated*(self: View, added: bool, name: string, address: string, ens: string, errorMsg: string) {.signal.}
+  proc savedAddressAddedOrUpdated*(self: View, added: bool, name: string, address: string, errorMsg: string) {.signal.}
 
   proc createOrUpdateSavedAddress*(self: View, name: string, address: string, ens: string, colorId: string,
     chainShortNames: string) {.slot.} =
     self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
-  proc savedAddressDeleted*(self: View, name: string, address: string, ens: string, errorMsg: string) {.signal.}
+  proc savedAddressDeleted*(self: View, name: string, address: string, errorMsg: string) {.signal.}
 
-  proc deleteSavedAddress*(self: View, address: string, ens: string) {.slot.} =
-    self.delegate.deleteSavedAddress(address, ens)
+  proc deleteSavedAddress*(self: View, address: string) {.slot.} =
+    self.delegate.deleteSavedAddress(address)
 
   proc savedAddressNameExists*(self: View, name: string): bool {.slot.} =
     return self.delegate.savedAddressNameExists(name)

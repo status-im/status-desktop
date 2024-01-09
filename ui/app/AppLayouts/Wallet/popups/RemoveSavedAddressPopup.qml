@@ -24,7 +24,7 @@ StatusDialog {
     property string colorId
     property string chainShortNames
 
-    signal removeSavedAddress(string address, string ens)
+    signal removeSavedAddress(string address)
 
     width: 521
     focus: visible
@@ -36,7 +36,7 @@ StatusDialog {
         readonly property real lineHeight: 1.2
 
         function confirm() {
-            root.removeSavedAddress(root.address, root.ens)
+            root.removeSavedAddress(root.address)
         }
     }
 

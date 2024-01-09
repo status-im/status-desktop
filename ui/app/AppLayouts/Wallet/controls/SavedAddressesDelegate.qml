@@ -87,7 +87,7 @@ StatusListItem {
             radius: 8
             icon.name: "more"
             onClicked: {
-                menu.openMenu(this, x - menu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
+                menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
                     {
                         name: root.name,
                         address: root.address,

@@ -27,11 +27,14 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SAVED_ADDRESS_UPDATED) do(e:Args):
     let args = SavedAddressArgs(e)
-    self.delegate.savedAddressUpdated(args.name, args.address, args.ens, args.errorMsg)
+    self.delegate.savedAddressUpdated(args.name, args.address, args.errorMsg)
 
   self.events.on(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):
     let args = SavedAddressArgs(e)
-    self.delegate.savedAddressDeleted(args.address, args.ens, args.errorMsg)
+    self.delegate.savedAddressDeleted(args.address, args.errorMsg)
+
+proc areTestNetworksEnabled*(self: Controller): bool =
+  return self.savedAddressService.areTestNetworksEnabled()
 
 proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
@@ -40,5 +43,5 @@ proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string
   chainShortNames: string) =
   self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
-proc deleteSavedAddress*(self: Controller, address: string, ens: string) =
-  self.savedAddressService.deleteSavedAddress(address, ens)
+proc deleteSavedAddress*(self: Controller, address: string) =
+  self.savedAddressService.deleteSavedAddress(address)

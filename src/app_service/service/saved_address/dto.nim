@@ -22,3 +22,14 @@ proc toSavedAddressDto*(jsonObj: JsonNode): SavedAddressDto =
   discard jsonObj.getProp("chainShortNames", result.chainShortNames)
   discard jsonObj.getProp("isTest", result.isTest)
   discard jsonObj.getProp("createdAt", result.createdAt)
+
+proc toJsonNode*(self: SavedAddressDto): JsonNode =
+  result = %* {
+    "name": self.name,
+    "address": self.address,
+    "ens": self.ens,
+    "colorId": self.colorId,
+    "chainShortNames": self.chainShortNames,
+    "isTest": self.isTest,
+    "createdAt": self.createdAt,
+  }

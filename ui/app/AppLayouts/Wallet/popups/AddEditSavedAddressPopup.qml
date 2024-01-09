@@ -98,6 +98,13 @@ StatusDialog {
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
         readonly property bool addressInputIsENS: !!d.ens
 
+        property bool addressAlreadyAdded: false
+        function checkIfAddressIsAlreadyAddded(address) {
+            let details = RootStore.getSavedAddress(address)
+            d.addressAlreadyAdded = !!details.address
+            return !d.addressAlreadyAdded
+        }
+
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
 
@@ -121,6 +128,13 @@ StatusDialog {
             RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
+
+        property bool resolvingEnsName: false
+        readonly property string uuid: Utils.uuid()
+        readonly property var validateEnsAsync: Backpressure.debounce(root, 500, function (value) {
+            var name = value.startsWith("@") ? value.substring(1) : value
+            mainModule.resolveENS(name, d.uuid)
+        });
     }
 
     Column {
@@ -182,13 +196,61 @@ StatusDialog {
             validators: [
                 StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: qsTr("Address must not be blank")
+                    errorMessage: qsTr("Please enter an ethereum address")
                 },
                 StatusValidator {
-                    errorMessage: addressInput.plainText ? qsTr("Please enter a valid address or ENS name.") : ""
-                    validate: function (t) {
-                        return t !== Constants.zeroAddress && (Utils.isValidAddressWithChainPrefix(t) || Utils.isValidEns(t))
-                            ? true : { actual: t }
+                    errorMessage: d.addressAlreadyAdded? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
+                    validate: function (value) {
+                        if (value !== Constants.zeroAddress) {
+                            if (Utils.isValidEns(value)) {
+                                return true
+                            }
+                            if (Utils.isValidAddressWithChainPrefix(value)) {
+                                if (d.editMode) {
+                                    return true
+                                }
+                                const prefixAndAddress = Utils.splitToChainPrefixAndAddress(value)
+                                return d.checkIfAddressIsAlreadyAddded(prefixAndAddress.address)
+                            }
+                        }
+
+                        return false
+                    }
+                }
+            ]
+            asyncValidators: [
+                StatusAsyncValidator {
+                    id: resolvingEnsName
+                    name: "resolving-ens-name"
+                    errorMessage: d.addressAlreadyAdded? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
+                    asyncOperation: (value) => {
+                                        if (!Utils.isValidEns(value)) {
+                                            resolvingEnsName.asyncComplete("not-ens")
+                                            return
+                                        }
+                                        d.resolvingEnsName = true
+                                        d.validateEnsAsync(value)
+                                    }
+                    validate: (value) => {
+                                  if (d.editMode || value === "not-ens") {
+                                      return true
+                                  }
+                                  if (!!value) {
+                                      return d.checkIfAddressIsAlreadyAddded(value)
+                                  }
+                                  return false
+                              }
+
+                    Connections {
+                        target: mainModule
+                        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
+                            if (uuid !== d.uuid) {
+                                return
+                            }
+                            d.resolvingEnsName = false
+                            d.address = resolvedAddress
+                            resolvingEnsName.asyncComplete(resolvedAddress)
+                        }
                     }
                 }
             ]
@@ -207,6 +269,7 @@ StatusDialog {
                 if (skipTextUpdate || !d.initialized)
                     return
 
+                d.addressAlreadyAdded = false
                 plainText = input.edit.getText(0, text.length)
 
                 if (input.edit.previousText != plainText) {
@@ -228,11 +291,13 @@ StatusDialog {
 
                     // Update root values
                     if (Utils.isLikelyEnsName(plainText)) {
+                        d.resolvingEnsName = true
                         d.ens = plainText
                         d.address = Constants.zeroAddress
                         d.chainShortNames = ""
                     }
                     else {
+                        d.resolvingEnsName = false
                         d.ens = ""
                         d.address = prefixAndAddress.address
                         d.chainShortNames = prefixAndAddress.prefix
@@ -409,7 +474,8 @@ StatusDialog {
         rightButtons:  ObjectModel {
             StatusButton {
                 text: d.editMode? qsTr("Save") : qsTr("Add address")
-                enabled: d.valid && d.dirty
+                enabled: d.valid && d.dirty && !d.resolvingEnsName
+                loading: d.resolvingEnsName
                 onClicked: {
                     d.submit()
                 }

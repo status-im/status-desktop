@@ -18,7 +18,6 @@ QtObject {
     readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
 
     property var lastCreatedSavedAddress
-    property var lastDeletedSavedAddress
     property bool addingSavedAddress: false
     property bool deletingSavedAddress: false
 
@@ -354,9 +353,9 @@ QtObject {
         walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
     }
 
-    function deleteSavedAddress(address, ens) {
+    function deleteSavedAddress(address) {
         root.deletingSavedAddress = true
-        walletSectionSavedAddresses.deleteSavedAddress(address, ens)
+        walletSectionSavedAddresses.deleteSavedAddress(address)
     }
 
     function savedAddressNameExists(name) {

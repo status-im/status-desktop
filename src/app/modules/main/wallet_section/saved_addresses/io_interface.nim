@@ -21,13 +21,13 @@ method createOrUpdateSavedAddress*(self: AccessInterface, name: string, address:
   chainShortNames: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteSavedAddress*(self: AccessInterface, address: string, ens: string) {.base.} =
+method deleteSavedAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressUpdated*(self: AccessInterface, name: string, address: string, ens: string, errorMsg: string) {.base.} =
+method savedAddressUpdated*(self: AccessInterface, name: string, address: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressDeleted*(self: AccessInterface, address: string, ens: string, errorMsg: string) {.base.} =
+method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method savedAddressNameExists*(self: AccessInterface, name: string): bool {.base.} =

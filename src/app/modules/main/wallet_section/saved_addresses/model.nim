@@ -102,25 +102,17 @@ QtObject:
     for item in items:
         self.itemChanged(item.getAddress())
 
-  proc getItemByAddress*(self: Model, address: string): Item =
+  proc getItemByAddress*(self: Model, address: string, isTest: bool): Item =
     if address.len == 0 or address == ZERO_ADDRESS:
       return
     for item in self.items:
-      if cmpIgnoreCase(item.getAddress(), address) == 0:
-        return item
-
-  proc getItemByEnsOrAddress*(self: Model, addrOrEns: string): Item =
-    if addrOrEns.len == 0:
-      return
-    for item in self.items:
-      if item.getEns().len > 0:
-        if item.getEns() == addrOrEns:
+      if cmpIgnoreCase(item.getAddress(), address) == 0 and
+        (item.getIsTest() == isTest):
           return item
-      if addrOrEns != ZERO_ADDRESS and cmpIgnoreCase(item.getAddress(), addrOrEns) == 0:
-        return item
 
-  proc nameExists*(self: Model, name: string): bool =
+  proc nameExists*(self: Model, name: string, isTest: bool): bool =
     for item in self.items:
-      if item.getName() == name:
-        return true
+      if item.getName() == name and
+        (item.getIsTest() == isTest):
+          return true
     return false
