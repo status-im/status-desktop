@@ -10,6 +10,7 @@ import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/message/dto/link_preview
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
+import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/gif/service as gif_service
 import ../../../../../../app_service/service/gif/dto
 
@@ -31,6 +32,7 @@ proc newModule*(
     belongsToCommunity: bool,
     chatService: chat_service.Service,
     communityService: community_service.Service,
+    contactService: contact_service.Service,
     gifService: gif_service.Service,
     messageService: message_service.Service,
     settingsService: settings_service.Service
@@ -40,7 +42,7 @@ proc newModule*(
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService, messageService, settingsService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, contactService, gifService, messageService, settingsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -192,3 +194,6 @@ method setLinkPreviewEnabledForThisMessage*(self: Module, value: bool) =
 
 method setUrls*(self: Module, urls: seq[string]) =
   self.view.setUrls(urls)
+
+method getContactDetails*(self: Module, contactId: string): ContactDetails =
+  return self.controller.getContactDetails(contactId)

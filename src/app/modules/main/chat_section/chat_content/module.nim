@@ -59,7 +59,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity, 
-    chatService, communityService, gifService, messageService, settingsService)
+    chatService, communityService, contactService, gifService, messageService, settingsService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
     contactService, communityService, chatService, messageService, mailserversService, sharedUrlsService)
   result.usersModule = users_module.newModule(events, sectionId, chatId, belongsToCommunity,

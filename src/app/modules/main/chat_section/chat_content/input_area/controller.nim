@@ -3,6 +3,7 @@ import io_interface, tables, sets
 
 import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/gif/service as gif_service
@@ -22,6 +23,7 @@ type
     chatId: string
     belongsToCommunity: bool
     communityService: community_service.Service
+    contactService: contact_service.Service
     chatService: chat_service.Service
     gifService: gif_service.Service
     messageService: message_service.Service
@@ -42,6 +44,7 @@ proc newController*(
     belongsToCommunity: bool,
     chatService: chat_service.Service,
     communityService: community_service.Service,
+    contactService: contact_service.Service,
     gifService: gif_service.Service,
     messageService: message_service.Service,
     settingsService: settings_service.Service
@@ -54,6 +57,7 @@ proc newController*(
   result.belongsToCommunity = belongsToCommunity
   result.chatService = chatService
   result.communityService = communityService
+  result.contactService = contactService
   result.gifService = gifService
   result.messageService = messageService
   result.settingsService = settingsService
@@ -306,3 +310,6 @@ proc setLinkPreviewEnabled*(self: Controller, enabled: bool) =
 proc onUnfurlingModeChanged(self: Controller, value: UrlUnfurlingMode) =
   self.linkPreviewPersistentSetting = value
   self.reloadUnfurlingPlan()
+
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactService.getContactDetails(contactId)

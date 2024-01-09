@@ -2,6 +2,7 @@ import NimQml, tables
 
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/contacts/dto/contact_details
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -133,4 +134,7 @@ method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool
   raise newException(ValueError, "No implementation available")
 
 method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
