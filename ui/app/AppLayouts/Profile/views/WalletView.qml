@@ -323,6 +323,7 @@ SettingsContentBase {
             id: addNewSavedAddressButtonComponent
 
             StatusButton {
+                objectName: "addNewSavedAddressButton"
                 text: qsTr("Add new address")
                 onClicked: {
                     Global.openAddEditSavedAddressesPopup({})
