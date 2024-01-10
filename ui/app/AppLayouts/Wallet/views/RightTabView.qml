@@ -39,7 +39,7 @@ RightTabBaseView {
 
     StackLayout {
         id: stack
-        width: parent.width
+        anchors.fill: parent
 
         Connections {
             target: walletSection
