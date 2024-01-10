@@ -228,6 +228,7 @@ class AddressesView(BaseElement):
 
     def open_edit_address_popup(self, address_name: str) -> 'EditSavedAddressPopup':
         address = self._get_saved_address_by_name(address_name)
+        address.hover()
         address.open_context_menu()
         self._edit_saved_address_menu_item.wait_until_appears()
         self._edit_saved_address_menu_item.click()
@@ -236,6 +237,7 @@ class AddressesView(BaseElement):
 
     def delete_saved_address(self, address_name):
         address = self._get_saved_address_by_name(address_name)
+        address.hover()
         address.open_context_menu()
         self._delete_saved_address_menu_item.wait_until_appears()
         self._delete_saved_address_menu_item.click()
