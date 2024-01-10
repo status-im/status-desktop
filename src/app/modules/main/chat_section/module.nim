@@ -778,7 +778,8 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
 
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
-  singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
+  if tokenPermission.state == TokenPermissionState.Approved:
+    singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto) =
   for id, criteriaResult in permissions:
@@ -863,7 +864,8 @@ method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tok
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
 
-  singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
+  if tokenPermission.state == TokenPermissionState.Approved:
+    singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
 
 method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
   singletonInstance.globalEvents.showCommunityTokenPermissionCreationFailedNotification(communityId, "Failed to create community permission", "Something went wrong")
