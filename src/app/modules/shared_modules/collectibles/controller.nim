@@ -14,6 +14,18 @@ import app_service/service/network/service as network_service
 
 const FETCH_BATCH_COUNT_DEFAULT = 50
 
+type
+  LoadType* {.pure.} = enum
+    AutoLoadSingleUpdate, # load all items and update the model once with full list
+    AutoLoadPaginated,    # load items in batches (keep loading until the end of the list) and update the model appending each batch.
+    OnDemand              # load items in batches (on demand when loadMoreItems is called) and update the model appending each batch.
+
+proc isAutoLoad(self: LoadType): bool =
+  return self == LoadType.AutoLoadSingleUpdate or self == LoadType.AutoLoadPaginated
+
+proc isPaginated(self: LoadType): bool =
+  return self == LoadType.AutoLoadPaginated or self == LoadType.OnDemand
+
 QtObject:
   type
     Controller* = ref object of QObject
@@ -21,6 +33,7 @@ QtObject:
 
       model: Model
       fetchFromStart: bool
+      tempItems: seq[CollectiblesEntry]
 
       eventsHandler: EventsHandler
 
@@ -31,7 +44,7 @@ QtObject:
       ownershipStatus: Table[string, Table[int, OwnershipStatus]] # Table[address][chainID] -> OwnershipStatus
 
       requestId: int32
-      autofetch: bool
+      loadType: LoadType
 
       dataType: backend_collectibles.CollectibleDataType
       fetchCriteria: backend_collectibles.FetchCriteria
@@ -116,7 +129,10 @@ QtObject:
 
     var offset = 0
     if not self.fetchFromStart:
-      offset = self.model.getCollectiblesCount()
+      if self.loadType.isPaginated():
+        offset = self.model.getCollectiblesCount()
+      else:
+        offset = self.tempItems.len
     self.fetchFromStart = false
 
     let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
@@ -130,9 +146,15 @@ QtObject:
     let network = self.networkService.getNetwork(chainID)
     return getExtraData(network)
 
-  proc processGetOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
-    self.model.setIsFetching(false)
+  proc setTempItems(self: Controller, newItems: seq[CollectiblesEntry], offset: int) =
+    if offset == 0:
+      self.tempItems = @[]
+    elif offset != self.tempItems.len:
+      error "invalid offset"
+      return
+    self.tempItems.add(newItems)
 
+  proc processGetOwnedCollectiblesResponse(self: Controller, response: JsonNode) =
     let res = fromJson(response, backend_collectibles.GetOwnedCollectiblesResponse)
 
     let isError = res.errorCode != backend_collectibles.ErrorCodeSuccess
@@ -140,6 +162,7 @@ QtObject:
     if isError:
       error "error fetching collectibles entries: ", res.errorCode
       self.model.setIsError(true)
+      self.model.setIsFetching(false)
       return
 
     try: 
@@ -147,14 +170,29 @@ QtObject:
         let extradata = self.getExtraData(header.id.contractID.chainID)
         newCollectibleDetailsFullEntry(header, extradata)
       ))
-      self.model.setItems(items, res.offset, res.hasMore)
+      if self.loadType.isPaginated():
+        self.model.setItems(items, res.offset, res.hasMore)
+      else:
+        self.setTempItems(items, res.offset)
+        # If we reached the end of the list, commit the items to the model
+        if not res.hasMore:
+          self.model.setItems(self.tempItems, 0, false)
+          self.tempItems = @[]
     except Exception as e:
       error "Error converting activity entries: ", e.msg
 
+    self.model.setIsFetching(false)
     self.setOwnershipStatus(res.ownershipStatus)
 
-    if self.autofetch and res.hasMore:
+    if self.loadType.isAutoLoad() and res.hasMore:
       self.loadMoreItems()
+
+  proc updateTempItems(self: Controller, updates: seq[backend_collectibles.Collectible]) =
+    for i in countdown(self.tempItems.high, 0):
+      let entry = self.tempItems[i]
+      for j in countdown(updates.high, 0):
+        if entry.updateDataIfSameID(updates[j]):
+          break
 
   proc processCollectiblesDataUpdate(self: Controller, jsonObj: JsonNode) =
       if jsonObj.kind != JArray:
@@ -165,12 +203,15 @@ QtObject:
         let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
         collectibles.add(collectible)
       self.model.updateItems(collectibles)
+      if not self.loadType.isPaginated():
+        self.updateTempItems(collectibles)
 
   proc resetModel(self: Controller) {.slot.} =
+    self.tempItems = @[]
     self.model.setItems(@[], 0, true)
     self.fetchFromStart = true
-    if self.autofetch:
-      self.loadMoreItems()
+    if self.loadType.isAutoLoad():
+      self.loadMoreItems() 
 
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
@@ -205,7 +246,7 @@ QtObject:
     requestId: int32,
     networkService: network_service.Service,
     events: EventEmitter,
-    autofetch: bool = true,
+    loadType: LoadType,
     dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
     fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
       fetchType: backend_collectibles.FetchType.NeverFetch,
@@ -213,7 +254,7 @@ QtObject:
     new(result, delete)
 
     result.requestId = requestId
-    result.autofetch = autofetch
+    result.loadType = loadType
     result.dataType = dataType
     result.fetchCriteria = fetchCriteria
 

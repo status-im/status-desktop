@@ -45,7 +45,7 @@ proc newModule*(
   result.controller = accountsc.newController(result, walletAccountService)
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
-    autofetch = false,
+    loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
     networkService = networkService,
     events = events
   )

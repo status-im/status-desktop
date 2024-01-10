@@ -350,8 +350,7 @@ QtObject:
       let entry = self.items[i]
       for j in countdown(updates.high, 0):
         let update = updates[j]
-        if entry.getCollectibleUniqueID() == update.id:
-          entry.updateData(update)
+        if entry.updateDataIfSameID(update):
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.dataChanged(index, index)

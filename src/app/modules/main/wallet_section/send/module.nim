@@ -76,7 +76,7 @@ proc newModule*(
     transactionService, keycardService)
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.WalletSend),
-    autofetch = true,
+    loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
     networkService = networkService,
     events = events
   )

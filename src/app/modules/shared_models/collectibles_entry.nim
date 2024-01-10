@@ -338,9 +338,9 @@ QtObject:
   QtProperty[string] networkIconUrl:
     read = getNetworkIconURL
 
-  proc updateData*(self: CollectiblesEntry, update: backend.Collectible) =
+  proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.Collectible): bool =
     if self.id != update.id:
-      return
+      return false
     
     self.setData(update)
 
@@ -362,3 +362,4 @@ QtObject:
     self.communityColorChanged()
     self.communityPrivilegesLevelChanged()
     self.communityImageChanged()
+    return true
