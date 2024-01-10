@@ -151,13 +151,13 @@ class SavedAddressesView(QObject):
         return names
 
     @allure.step('Open add new address popup')
-    def open_add_address_popup(self, attempt=2) -> 'AddressPopup':
+    def open_add_saved_address_popup(self, attempt=2) -> 'AddressPopup':
         self._add_new_address_button.click()
         try:
             return AddressPopup().wait_until_appears()
         except AssertionError as err:
             if attempt:
-                self.open_add_address_popup(attempt - 1)
+                self.open_add_saved_address_popup(attempt - 1)
             else:
                 raise err
 

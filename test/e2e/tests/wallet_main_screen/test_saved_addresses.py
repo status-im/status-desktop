@@ -33,7 +33,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
     with step('Add new address'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().confirm_phrase()
-        wallet.left_panel.open_saved_addresses().open_add_address_popup().add_saved_address(name, address)
+        wallet.left_panel.open_saved_addresses().open_add_saved_address_popup().add_saved_address(name, address)
 
     with step('Verify toast message when adding saved address'):
         messages = ToastMessage().get_toast_messages

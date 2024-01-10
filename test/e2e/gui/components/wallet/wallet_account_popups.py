@@ -16,6 +16,7 @@ from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
+from gui.elements.text_label import TextLabel
 
 
 GENERATED_PAGES_LIMIT = 20
@@ -28,6 +29,7 @@ class AccountPopup(BasePopup):
         self._name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountName')
         self._emoji_button = Button('mainWallet_AddEditAccountPopup_AccountEmojiPopupButton')
         self._color_radiobutton = QObject('color_StatusColorRadioButton')
+        self._popup_header_title = TextLabel('mainWallet_AddEditAccountPopup_HeaderTitle')
         # origin
         self._origin_combobox = QObject('mainWallet_AddEditAccountPopup_SelectedOrigin')
         self._watched_address_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
@@ -44,6 +46,10 @@ class AccountPopup(BasePopup):
         self._derivation_path_text_edit = TextEdit('mainWallet_AddEditAccountPopup_DerivationPathInput')
         self._address_combobox_button = Button('mainWallet_AddEditAccountPopup_GeneratedAddressComponent')
         self._non_eth_checkbox = CheckBox('mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox')
+
+    def verify_account_popup_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        driver.waitFor(lambda: self._popup_header_title.exists, timeout_msec)
+        return self
 
     @allure.step('Set name for account')
     def set_name(self, value: str):

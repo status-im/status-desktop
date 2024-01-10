@@ -9,6 +9,7 @@ import driver
 from constants import wallet_account_list_item
 from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
+from gui.components.wallet.add_saved_address_popup import AddressPopup
 from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountConfirmationSettings
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
 
@@ -29,6 +30,7 @@ class WalletSettingsView(QObject):
         self._wallet_settings_add_new_account_button = Button('settings_Wallet_MainView_AddNewAccountButton')
         self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
         self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
+        self._saved_addresses_button = Button('settingsContentBaseScrollView_savedAddressesItem_StatusListItem')
         self._status_account_in_keypair = QObject('settingsWalletAccountDelegate_Status_account')
         self._wallet_account_from_keypair = QObject('settingsWalletAccountDelegate')
         self._wallet_settings_keypair_item = QObject('settingsWalletKeyPairDelegate')
@@ -36,16 +38,33 @@ class WalletSettingsView(QObject):
         self._wallet_settings_total_balance_toggle = CheckBox('settingsWalletAccountTotalBalanceToggle')
 
     @allure.step('Open add account pop up in wallet settings')
-    def open_add_account_pop_up(self):
+    def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
         self._wallet_settings_add_new_account_button.click()
-        return AccountPopup().wait_until_appears()
+        try:
+            return AccountPopup()
+        except Exception as ex:
+            if attempts:
+                return self.open_add_account_pop_up(attempts - 1)
+            else:
+                raise ex
+
+    @allure.step('Open saved addresses in wallet settings')
+    def open_saved_addresses(self, attempts: int = 2) -> 'SavedAddressesWalletSettings':
+        self._saved_addresses_button.click()
+        try:
+            return SavedAddressesWalletSettings()
+        except Exception as ex:
+            if attempts:
+                return self.open_saved_addresses(attempts - 1)
+            else:
+                raise ex
 
     @allure.step('Open networks in wallet settings')
     def open_networks(self, attempts: int = 2) -> 'NetworkWalletSettings':
         self._wallet_network_button.click()
         try:
             return NetworkWalletSettings().wait_until_appears()
-        except AssertionError as err:
+        except Exception as err:
             if attempts:
                 return self.open_networks(attempts - 1)
             else:
@@ -170,11 +189,34 @@ class AccountDetailsView(WalletSettingsView):
         self._back_button.click()
 
 
+class SavedAddressesWalletSettings(WalletSettingsView):
+    def __init__(self):
+        super(SavedAddressesWalletSettings, self).__init__()
+        self.add_new_address_button = Button('settings_Wallet_SavedAddresses_AddAddressButton')
+        self.saved_address_item = QObject('settings_Wallet_SavedAddress_ItemDelegate')
+
+    @allure.step('Click add new address button')
+    def open_add_saved_address_popup(self, attempt: int = 2) -> 'AddressPopup':
+        self.add_new_address_button.click()
+        try:
+            return AddressPopup()
+        except AssertionError as err:
+            if attempt:
+                self.open_add_saved_address_popup(attempt - 1)
+            else:
+                raise err
+
+    @allure.step('Get saved addresses names list')
+    def get_saved_address_names_list(self):
+        names = [str(address.name) for address in driver.findAllObjects(self.saved_address_item.real_name)]
+        return names
+
+
 class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
         super(NetworkWalletSettings, self).__init__()
-        self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
+        self._testnet_text_item = QObject('s')
         self._testnet_mode_toggle = Button('settings_Wallet_NetworksView_TestNet_Toggle')
         self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
         self._back_button = Button('main_toolBar_back_button')
