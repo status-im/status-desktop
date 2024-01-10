@@ -63,10 +63,6 @@ StatusListItem {
 
     statusListItemIcon.hoverEnabled: true
 
-    onClicked: {
-        root.openSendModal(d.visibleAddress)
-    }
-
     statusListItemComponentsSlot.spacing: 0
     property bool showButtons: sensor.containsMouse
 
@@ -79,9 +75,16 @@ StatusListItem {
 
     components: [
         StatusRoundButton {
+            visible: !!root.name && root.showButtons
+            type: StatusRoundButton.Type.Quinary
+            radius: 8
+            icon.name: "send"
+            onClicked: root.openSendModal(d.visibleAddress)
+        },
+        StatusRoundButton {
             objectName: "savedAddressView_Delegate_menuButton_" + root.name
             visible: !!root.name
-            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            enabled: root.showButtons
             type: StatusRoundButton.Type.Quinary
             radius: 8
             icon.name: "more"
