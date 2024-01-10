@@ -19,15 +19,10 @@ FocusScope {
     property alias headerButton: header.headerButton
     property alias networkFilter: header.networkFilter
 
-    default property Item content
-
-    Component.onCompleted: {
-        content.parent = contentWrapper
-    }
+    default property alias content: contentWrapper.children
 
     ColumnLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.fill: parent
         spacing: 0
 
         WalletHeader {
@@ -42,6 +37,7 @@ FocusScope {
         Column {
             id: contentWrapper
             Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 }
