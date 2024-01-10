@@ -68,7 +68,7 @@ StatusListItem {
     QtObject {
         id: d
 
-        readonly property string visibleAddress: root.address == Constants.zeroAddress ? root.ens : root.address
+        readonly property string visibleAddress: !!root.ens? root.ens : root.address
     }
 
     components: [
@@ -143,15 +143,16 @@ StatusListItem {
                                                       })
             }
         }
-        StatusAction {
-            text: qsTr("Copy address")
+        StatusSuccessAction {
+            id: copyAddressAction
             objectName: "copySavedAddressAction"
-            assetSettings.name: "copy"
+            successText: qsTr("Address copied")
+            text: qsTr("Copy address")
+            icon.name: "copy"
+            timeout: 1500
+            autoDismissMenu: true
             onTriggered: {
-                if (d.visibleAddress)
-                    store.copyToClipboard(d.visibleAddress)
-                else
-                    store.copyToClipboard(root.ens)
+                store.copyToClipboard(d.visibleAddress)
             }
         }
         StatusAction {
