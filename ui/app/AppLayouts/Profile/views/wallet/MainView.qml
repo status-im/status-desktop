@@ -143,6 +143,7 @@ Column {
     Separator {}
 
     StatusListItem {
+        objectName: "manageTokensItem"
         title: qsTr("Manage Tokens")
         height: 64
         width: parent.width
@@ -158,6 +159,7 @@ Column {
     Separator {}
 
     StatusListItem {
+        objectName: "savedAddressesItem"
         title: qsTr("Saved Addresses")
         height: 64
         width: parent.width
