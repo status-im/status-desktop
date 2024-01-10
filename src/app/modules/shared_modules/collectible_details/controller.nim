@@ -82,7 +82,8 @@ QtObject:
 
       for jsonCollectible in jsonObj.getElems():
         let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
-        self.detailedEntry.updateData(collectible) # Will only update if UniqueID matches
+        if self.detailedEntry.updateDataIfSameID(collectible):
+          break
 
   proc getDetailedCollectible*(self: Controller, chainId: int, contractAddress: string, tokenId: string) {.slot.} =
     self.setIsDetailedEntryLoading(true)
