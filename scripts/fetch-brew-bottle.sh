@@ -10,10 +10,7 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
-    brew info --json=v1 "${1}" | jq "
-        .[0].bottle.stable.files | to_entries
-        | map(select(.key | test(\"${2}\") | not))
-        | first.value"
+    brew info --json=v1 "${1}" | jq ".[0].bottle.stable.files[\"${2}\"]"
 }
 
 function fetch_bottle() {
@@ -50,7 +47,7 @@ else
 fi
 
 echo "${BOTTLE_NAME} - Finding bottle URL"
-echo "Excluding: ${BOTTLE_FILTER}"
+echo "${BOTTLE_NAME} - Selecting: ${BOTTLE_FILTER}"
 
 BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}" "${BOTTLE_FILTER}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
@@ -61,7 +58,7 @@ if [[ -z "${BOTTLE_URL}" ]] || [[ -z "${BOTTLE_SHA}" ]]; then
     exit 1
 fi
 
-echo "${BOTTLE_NAME} - Fetching bottle for macOS"
+echo "${BOTTLE_NAME} - Fetching bottle for macOS, bottle sha256: ${BOTTLE_SHA}"
 fetch_bottle "${BOTTLE_PATH}" "${BOTTLE_URL}"
 trap "rm -fr ${BOTTLE_PATH}" EXIT ERR INT QUIT
 
