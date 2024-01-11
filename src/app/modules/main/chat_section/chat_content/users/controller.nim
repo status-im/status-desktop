@@ -46,19 +46,6 @@ proc newController*(
 proc delete*(self: Controller) =
   self.events.disconnect()
 
-proc handleCommunityOnlyConnections(self: Controller) =
-  self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
-    let args = CommunityMemberArgs(e)
-    if (args.communityId == self.sectionId):
-      self.delegate.onChatMembersAdded(@[args.pubKey])
-
-  self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e:Args):
-    let args = CommunityMembersArgs(e)
-    if args.communityId != self.sectionId:
-      return
-
-    self.delegate.onMembersChanged(args.members)
-
 proc init*(self: Controller) =
   # Events that are needed for all chats because of mentions
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
@@ -124,10 +111,6 @@ proc init*(self: Controller) =
       let args = ChatMemberUpdatedArgs(e)
       if (args.chatId == self.chatId):
         self.delegate.onChatMemberUpdated(args.id, args.role, args.joined)
-
-    # Events only for community channel
-    if (self.belongsToCommunity):
-      self.handleCommunityOnlyConnections()
 
 proc belongsToCommunity*(self: Controller): bool =
   self.belongsToCommunity
