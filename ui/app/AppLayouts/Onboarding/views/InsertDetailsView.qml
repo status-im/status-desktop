@@ -82,6 +82,7 @@ Item {
 
         StyledText {
             id: usernameText
+            objectName: "onboardingHeaderText"
             text: qsTr("Your profile")
             font.weight: Font.Bold
             font.pixelSize: 22
