@@ -5,7 +5,7 @@ var NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Mainnet",
-    "rpcUrl": "https://eth-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://eth-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
@@ -22,7 +22,7 @@ var NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Mainnet",
-    "rpcUrl": "https://goerli-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://goerli-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
@@ -39,7 +39,7 @@ var NETWORKS* = %* [
   {
     "chainId": 10,
     "chainName": "Optimism",
-    "rpcUrl": "https://optimism-mainnet.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://optimism-mainnet.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://optimistic.etherscan.io",
     "iconUrl": "network/Network=Optimism",
@@ -73,7 +73,7 @@ var NETWORKS* = %* [
   {
     "chainId": 42161,
     "chainName": "Arbitrum",
-    "rpcUrl": "https://arbitrum-one.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://arbitrum-one.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://arbitrum-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://arbiscan.io/",
     "iconUrl": "network/Network=Arbitrum",
@@ -107,7 +107,7 @@ var NETWORKS* = %* [
   {
     "chainId": 11155111,
     "chainName": "Mainnet",
-    "rpcUrl": "https://sepolia-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://sepolia-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
