@@ -976,7 +976,7 @@ Item {
                             else
                                 return ""
                         case Constants.ConnectionStatus.Retrying:
-                            return qsTr("Retrying connection to Pocket Network (POKT).")
+                            return qsTr("Retrying connection to POKT Network (grove.city).")
                         default:
                             return ""
                         }
