@@ -116,7 +116,10 @@ DropArea {
                     isCollectible: root.isCollectible
                     groupId: model.communityId
                     onMoveRequested: (from, to) => root.controller.communityTokenGroupsModel.moveItem(from, to) // TODO collection
-                    onShowHideGroupRequested: (groupId, flag) => root.controller.showHideGroup(groupId, flag)
+                    onShowHideGroupRequested: function(groupId, flag) {
+                        root.controller.showHideGroup(groupId, flag)
+                        root.controller.saveSettings()
+                    }
                 }
             }
 

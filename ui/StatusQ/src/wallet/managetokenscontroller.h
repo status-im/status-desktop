@@ -16,7 +16,7 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     // input properties
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged FINAL)
     Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey NOTIFY settingsKeyChanged FINAL REQUIRED)
-    Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL) // TODO persist in settings
+    Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL) // TODO persist in settings?
     // TODO arrangeByCollection for collectibles
 
     // output properties
@@ -57,6 +57,12 @@ signals:
     void arrangeByCommunityChanged();
     void settingsKeyChanged();
     void settingsDirtyChanged(bool dirty);
+
+    void tokenHidden(const QString& symbol, const QString& name);
+    void tokenShown(const QString& symbol, const QString& name);
+    void communityTokenGroupHidden(const QString& communityName);
+    void communityTokenGroupShown(const QString& communityName);
+    // TODO collectionTokenGroupHidden(const QString& collectionName);
 
 private:
     QAbstractItemModel* m_sourceModel{nullptr};

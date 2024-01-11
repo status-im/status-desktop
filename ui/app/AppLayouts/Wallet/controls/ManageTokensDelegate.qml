@@ -94,9 +94,17 @@ DropArea {
                 isCommunityAsset: !!model.communityId
                 isCollectible: root.isCollectible
                 onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
-                onShowHideRequested: (index, flag) => isCommunityAsset ? root.controller.showHideCommunityToken(index, flag)
-                                                                       : root.controller.showHideRegularToken(index, flag)
-                onShowHideGroupRequested: (groupId, flag) => root.controller.showHideGroup(groupId, flag)
+                onShowHideRequested: function(index, flag) {
+                    if (isCommunityAsset)
+                        root.controller.showHideCommunityToken(index, flag)
+                    else
+                        root.controller.showHideRegularToken(index, flag)
+                    root.controller.saveSettings()
+                }
+                onShowHideGroupRequested: function(groupId, flag) {
+                    root.controller.showHideGroup(groupId, flag)
+                    root.controller.saveSettings()
+                }
             }
         ]
     }

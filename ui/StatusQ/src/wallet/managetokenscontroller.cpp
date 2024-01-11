@@ -26,7 +26,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
 #ifdef QT_DEBUG
             QElapsedTimer t;
             t.start();
-            qCInfo(manageTokens) << "!!! ADDING" << last-first+1 << "NEW TOKENS";
+            qCDebug(manageTokens) << "!!! ADDING" << last-first+1 << "NEW TOKENS";
 #endif
             for (int i = first; i <= last; i++)
                 addItem(i);
@@ -36,7 +36,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
             rebuildCommunityTokenGroupsModel();
             rebuildRegularTokenGroupsModel();
 #ifdef QT_DEBUG
-            qCInfo(manageTokens) << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
+            qCDebug(manageTokens) << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
 #endif
         });
         connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::parseSourceModel);
@@ -50,7 +50,6 @@ ManageTokensController::ManageTokensController(QObject* parent)
         });
         connect(m_communityTokenGroupsModel, &ManageTokensModel::rowsMoved, this, [this](const QModelIndex &parent, int start, int end, const QModelIndex &destination, int toRow) {
             qCDebug(manageTokens) << "!!! GROUP MOVED FROM" << start << "TO" << toRow;
-            // FIXME swap toRow<->start instead of reloadCommunityIds()?
             reloadCommunityIds();
             m_communityTokensModel->setCommunityIds(m_communityIds);
             m_communityTokensModel->saveCustomSortOrder();
@@ -64,12 +63,16 @@ void ManageTokensController::showHideRegularToken(int row, bool flag)
 {
     if (flag) { // show
         auto hiddenItem = m_hiddenTokensModel->takeItem(row);
-        if (hiddenItem)
+        if (hiddenItem) {
             m_regularTokensModel->addItem(*hiddenItem);
+            emit tokenShown(hiddenItem->symbol, hiddenItem->name);
+        }
     } else { // hide
         auto shownItem = m_regularTokensModel->takeItem(row);
-        if (shownItem)
+        if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
+            emit tokenHidden(shownItem->symbol, shownItem->name);
+        }
     }
 }
 
@@ -81,6 +84,7 @@ void ManageTokensController::showHideCommunityToken(int row, bool flag)
             m_communityTokensModel->addItem(*hiddenItem);
             if (!m_communityIds.contains(hiddenItem->communityId))
                 m_communityIds.append(hiddenItem->communityId);
+            emit tokenShown(hiddenItem->symbol, hiddenItem->name);
         }
     } else { // hide
         auto shownItem = m_communityTokensModel->takeItem(row);
@@ -88,6 +92,7 @@ void ManageTokensController::showHideCommunityToken(int row, bool flag)
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
             if (!m_communityTokensModel->hasCommunityIdToken(shownItem->communityId))
                 m_communityIds.removeAll(shownItem->communityId);
+            emit tokenHidden(shownItem->symbol, shownItem->name);
         }
     }
     m_communityTokensModel->setCommunityIds(m_communityIds);
@@ -99,14 +104,20 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
 {
     if (flag) { // show
         const auto tokens = m_hiddenTokensModel->takeAllItems(groupId);
-        for (const auto& token: tokens) {
-            m_communityTokensModel->addItem(token);
+        if (!tokens.isEmpty()) {
+            for (const auto& token: tokens) {
+                m_communityTokensModel->addItem(token);
+            }
+            emit communityTokenGroupShown(tokens.constFirst().communityName);
         }
         m_communityIds.append(groupId);
     } else { // hide
         const auto tokens = m_communityTokensModel->takeAllItems(groupId);
-        for (const auto& token: tokens) {
-            m_hiddenTokensModel->addItem(token, false /*prepend*/);
+        if (!tokens.isEmpty()) {
+            for (const auto& token: tokens) {
+                m_hiddenTokensModel->addItem(token, false /*prepend*/);
+            }
+            emit communityTokenGroupHidden(tokens.constFirst().communityName);
         }
         m_communityIds.removeAll(groupId);
     }
@@ -228,7 +239,7 @@ void ManageTokensController::settingsHideToken(const QString& symbol)
         m_settingsData.remove(symbol); // remove all
         m_settingsData.insert(symbol, {pos, false, group});
     } else {
-        m_settingsData.insert(symbol, {0, false, QString()});
+        m_settingsData.insert(symbol, {0, false, {}});
     }
 
     saveSettings(true);
