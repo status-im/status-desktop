@@ -153,6 +153,7 @@ class CategoryItem:
         self._add_category_button: typing.Optional[Button] = None
         self._more_button: typing.Optional[Button] = None
         self._arrow_button: typing.Optional[Button] = None
+        self._arrow_icon: typing.Optional[QObject] = None
         self.init_ui()
 
     def __repr__(self):
@@ -168,10 +169,16 @@ class CategoryItem:
                 self._more_button = Button(name='', real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'id', '')) == 'toggleButton':
                 self._arrow_button = Button(name='', real_name=driver.objectMap.realName(child))
+            elif str(getattr(child, 'objectName', '')) == 'chevron-down-icon':
+                self._arrow_icon = QObject(name='', real_name=driver.objectMap.realName(child))
 
     @allure.step('Click arrow button')
     def click_arrow_button(self):
         self._arrow_button.click()
+
+    @allure.step('Get arrow button rotation value')
+    def get_arrow_icon_rotation_value(self) -> int:
+        return self._arrow_icon.object.rotation
 
 
 class LeftPanel(QObject):
@@ -229,7 +236,8 @@ class LeftPanel(QObject):
             self._channel_icon_template.real_name['container'] = container
             channels_list.append(UserChannel(
                 str(obj.objectName),
-                obj.item.selected
+                obj.item.selected,
+                obj.item.visible
             ))
         return channels_list
 
@@ -237,6 +245,11 @@ class LeftPanel(QObject):
     @allure.step('Get categories')
     def categories_items(self) -> typing.List[CategoryItem]:
         return [CategoryItem(item) for item in self._categories_items_list.items]
+
+    @allure.step('Get arrow button rotation value')
+    def get_arrow_icon_rotation_value(self, category_name) -> int:
+        category = self.find_category_in_list(category_name)
+        return int(category.get_arrow_icon_rotation_value())
 
     @allure.step('Get channel params')
     def get_channel_parameters(self, name) -> UserChannel:
@@ -314,6 +327,9 @@ class LeftPanel(QObject):
                     category = _category
             assert time.monotonic() - started_at < timeout_sec, f'Category: {category_name} not found in {categories}'
         return category
+
+    def click_category(self, category_name: str):
+        driver.mouseClick(self.find_category_in_list(category_name).object)
 
     @allure.step('Open more options')
     def open_more_options(self):

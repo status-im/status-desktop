@@ -4,7 +4,6 @@ from allure_commons._allure import step
 
 import configs
 import constants
-from gui.components.community.community_category_popup import EditCategoryPopup, CategoryPopup
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from . import marks
@@ -142,3 +141,43 @@ def test_member_role_cannot_delete_category(main_screen: MainWindow):
         assert not ContextMenu().is_visible
     with step('Verify that delete item is not present in more options context menu'):
         assert not community_screen.left_panel.open_more_options().is_delete_item_visible()
+
+
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704622', 'Community category clicking')
+@pytest.mark.case(704622)
+@pytest.mark.parametrize('category_name, general_checkbox',
+                         [pytest.param('Category in general', True)])
+def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
+    with step('Create community and select it'):
+        main_screen.create_community(constants.community_params)
+        community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
+
+    with step('Create community category and verify that it displays correctly'):
+        community_screen.create_category(category_name, general_checkbox)
+        community_screen.verify_category(category_name)
+
+    with step('Verify that general channel is listed inside category'):
+        assert community_screen.left_panel.get_channel_or_category_index('general') == 1
+
+    with step('Verify that general channel is visible and toggle button has down direction'):
+        general_channel = community_screen.left_panel.get_channel_parameters('general')
+        assert general_channel.visible
+        assert community_screen.left_panel.get_arrow_icon_rotation_value(category_name) == 0
+
+    with step('Click added category'):
+        community_screen.left_panel.click_category(category_name)
+
+    with step('Verify that general channel is not visible and toggle button has right direction'):
+        general_channel = community_screen.left_panel.get_channel_parameters('general')
+        assert not general_channel.visible
+        assert community_screen.left_panel.get_arrow_icon_rotation_value(category_name) == 270
+
+    with step(
+            'Click open more options button and verify that toggle button has down direction'):
+        community_screen.left_panel.open_more_options()
+        # rotation should be 0 here, because we click arrow button before open more options, otherwise it doesn't see it
+        assert community_screen.left_panel.get_arrow_icon_rotation_value(category_name) == 0
+
+    with step('Click plus button and verify that toggle button has down direction'):
+        community_screen.left_panel._add_channel_inside_category_item.click()
+        assert community_screen.left_panel.get_arrow_icon_rotation_value(category_name) == 0
