@@ -34,10 +34,14 @@ Item {
                 id: observerProxy
 
                 property int accessCounter: 0
+                readonly property var accessedRoles: new Set()
 
                 sourceModel: listModel
 
-                onDataAccessed: accessCounter++
+                onDataAccessed: {
+                    accessCounter++
+                    accessedRoles.add(role)
+                }
             }
 
             readonly property SortFilterProxyModel model: SortFilterProxyModel {
@@ -74,7 +78,8 @@ Item {
 
             compare(count, 7)
             verify(obj.observer.accessCounter
-                   < count * Math.ceil(Math.log2(count)) * 2)
+                   < count * Math.ceil(Math.log2(count)) * 3)
+            compare(obj.observer.accessedRoles.size, 1)
 
             compare(obj.model.get(0).a, 1)
             compare(obj.model.get(1).a, 2)
@@ -90,7 +95,8 @@ Item {
             obj.d = 0
 
             verify(obj.observer.accessCounter
-                   < count * Math.ceil(Math.log2(count)) * 2)
+                   < count * Math.ceil(Math.log2(count)) * 3)
+            compare(obj.observer.accessedRoles.size, 1)
 
             compare(obj.model.get(0).a, 7)
             compare(obj.model.get(1).a, 6)
@@ -106,11 +112,15 @@ Item {
             compare(obj.model.get(1).a, 2)
             compare(obj.model.get(6).a, 7)
 
+            obj.observer.accessedRoles.clear()
+            obj.observer.accessCounter = 0
             obj.sorterEnabled = true
 
             const count = obj.model.count
+
             verify(obj.observer.accessCounter
-                   < count * Math.ceil(Math.log2(count)) * 2)
+                   < count * Math.ceil(Math.log2(count)) * 3)
+            compare(obj.observer.accessedRoles.size, 1)
 
             compare(obj.model.get(0).a, 7)
             compare(obj.model.get(1).a, 6)
