@@ -18,11 +18,14 @@ QtObject:
     self.QObject.delete
 
   proc newMarketDetailsItem*(
-    delegate: io_interface.TokenMarketValuesDataSource, symbol: string): MarketDetailsItem =
+    delegate: io_interface.TokenMarketValuesDataSource, symbol: string
+  ): MarketDetailsItem =
     new(result)
     result.setup()
     result.delegate = delegate
     result.symbol = symbol
+    result.currencyFormat = delegate.getCurrentCurrencyFormat()
+
 
   proc updateCurrencyFormat*(self: MarketDetailsItem) =
     self.currencyFormat = self.delegate.getCurrentCurrencyFormat()
