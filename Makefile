@@ -655,7 +655,7 @@ ifdef IN_NIX_SHELL
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $(STATUS_CLIENT_APPIMAGE)
 else
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
-end
+endif
 
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
