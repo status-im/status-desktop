@@ -6,6 +6,7 @@ import AppLayouts.Wallet.panels 1.0
 
 import Storybook 1.0
 import Models 1.0
+import utils 1.0
 
 Item {
     id: root
@@ -23,6 +24,12 @@ Item {
             width: 500
             baseModel: collectiblesModel
         }
+    }
+
+    SignalSpy {
+        id: notificationSpy
+        target: Global
+        signalName: "displayToastMessage"
     }
 
     TestCase {
@@ -65,6 +72,8 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
+            controlUnderTest.clearSettings()
+            notificationSpy.clear()
         }
 
         function test_showHideToken() {
@@ -82,9 +91,10 @@ Item {
             const delegate0 = findChild(lvRegular, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title = delegate0.title
+            tryCompare(notificationSpy, "count", 0)
             triggerDelegateMenuAction(lvRegular, 0, "miHideToken")
-
-            verify(controlUnderTest.dirty)
+            // verify the signal to show the notification toast got fired
+            tryCompare(notificationSpy, "count", 1)
 
             // verify we now have +1 hidden and -1 regular tokens after the "hide" operation
             waitForItemPolished(lvHidden)
@@ -107,8 +117,6 @@ Item {
             verify(!!delegateN)
             const titleN = delegateN.title
             compare(title, titleN)
-
-            verify(controlUnderTest.dirty)
         }
 
         function test_showHideCommunityGroup() {
@@ -125,9 +133,10 @@ Item {
 
             // verify we have 2 community collectible groups
             tryCompare(lvCommunityTokenGroups, "count", 3)
+            tryCompare(notificationSpy, "count", 0)
             triggerDelegateMenuAction(lvCommunityTokenGroups, 0, "miHideTokenGroup", true)
-
-            verify(controlUnderTest.dirty)
+            // verify the signal to show the notification toast got fired
+            tryCompare(notificationSpy, "count", 1)
 
             // verify we have one less group
             waitForItemPolished(lvCommunityTokenGroups)
@@ -135,8 +144,6 @@ Item {
             const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
             verify(!!lvHidden)
             tryCompare(lvHidden, "count", 4) // we've just hidden 4 collectibles coming from this group
-
-            verify(controlUnderTest.dirty)
 
             // verify hidden items are not draggable
             const hiddenToken = findChild(lvHidden, "manageTokensDelegate-0")
@@ -152,21 +159,15 @@ Item {
             waitForItemPolished(lvHidden)
             triggerDelegateMenuAction(lvHidden, 0, "miShowToken")
 
-            verify(controlUnderTest.dirty)
-
             // verify we again have 3 community groups, and one less hidden token
             tryCompare(lvCommunityTokenGroups, "count", 3)
             tryCompare(lvHidden, "count", 3)
-
-            verify(controlUnderTest.dirty)
 
             // now mass show tokens from this group, verify we have 0 hidden tokens and 2 visible groups
             triggerDelegateMenuAction(lvHidden, 0, "miShowTokenGroup")
             waitForItemPolished(lvHidden)
             tryCompare(lvHidden, "count", 0)
             tryCompare(lvCommunityTokenGroups, "count", 3)
-
-            verify(controlUnderTest.dirty)
         }
 
         function test_dnd() {
@@ -258,8 +259,10 @@ Item {
             // find the 2385 delegate from the Bearz group and hide it
             const bear2385DelegateIdx = findDelegateIndexWithTitle(bearzChildLV, "KILLABEAR #2385")
             verify(bear2385DelegateIdx !== -1)
+            tryCompare(notificationSpy, "count", 0)
             triggerDelegateMenuAction(bearzChildLV, bear2385DelegateIdx, "miHideCommunityToken")
-            verify(controlUnderTest.dirty)
+            // verify the signal to show the notification toast got fired
+            tryCompare(notificationSpy, "count", 1)
 
             // verify the hidden section now has 1 item and it's the one we just hid
             const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
@@ -282,7 +285,8 @@ Item {
             verify(!!pandasChildLV)
             const panda909DelegateIdx = findDelegateIndexWithTitle(pandasChildLV, "Frenly Panda #909")
             triggerDelegateMenuAction(pandasChildLV, panda909DelegateIdx, "miHideCommunityToken")
-            verify(controlUnderTest.dirty)
+            // verify the signal to show the notification toast got fired
+            tryCompare(notificationSpy, "count", 2)
 
             // finally verify that the Bearz group is still at top
             waitForItemPolished(lvCommunityTokenGroups)

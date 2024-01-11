@@ -44,6 +44,12 @@ Control {
             sourceModel: root.baseModel
             arrangeByCommunity: switchArrangeByCommunity.checked
             settingsKey: "WalletAssets"
+            onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                               qsTr("%1 (%2) was successfully hidden.").arg(name).arg(symbol), "", "checkmark-circle",
+                               false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                             qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
+                                             false, Constants.ephemeralNotificationType.success, "")
         }
     }
 

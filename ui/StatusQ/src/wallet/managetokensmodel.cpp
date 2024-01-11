@@ -36,7 +36,6 @@ void ManageTokensModel::addItem(const TokenData& item, bool append)
     beginInsertRows({}, destRow, destRow);
     append ? m_data.append(item) : m_data.prepend(item);
     endInsertRows();
-    setDirty(true);
 }
 
 std::optional<TokenData> ManageTokensModel::takeItem(int row)
@@ -47,7 +46,6 @@ std::optional<TokenData> ManageTokensModel::takeItem(int row)
     beginRemoveRows({}, row, row);
     auto res = m_data.takeAt(row);
     endRemoveRows();
-    setDirty(true);
     return res;
 }
 
@@ -72,7 +70,6 @@ QList<TokenData> ManageTokensModel::takeAllItems(const QString& communityId)
         endRemoveRows();
     }
 
-    setDirty(true);
     return result;
 }
 
