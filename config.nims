@@ -23,8 +23,8 @@ if defined(macosx):
   switch("passL", "bottles/pcre/lib/libpcre.a")
   # https://code.videolan.org/videolan/VLCKit/-/issues/232
   switch("passL", "-Wl,-no_compact_unwind")
-  # set the minimum supported macOS version to 10.14
-  switch("passC", "-mmacosx-version-min=10.14")
+  # set the minimum supported macOS version to 11.0
+  switch("passC", "-mmacosx-version-min=11.0")
 elif defined(windows):
   --app:gui
   --tlsEmulation:off
