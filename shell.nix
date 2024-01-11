@@ -1,11 +1,11 @@
 {
-  pkgs ? import ./pkgs.nix
+  pkgs ? import ./nix/pkgs.nix
 }:
 
 let
-  qtCustom = with pkgs.qt515; /* 5.15.8 */
+  qtCustom = (with pkgs.qt515; /* 5.15.8 */
     env "qt-custom-${qtbase.version}" ([
-# TODO: double check
+# TODO: to check
       qtbase
       qtdeclarative
       qtlottie
@@ -20,19 +20,10 @@ let
       qtlocation
       qtwebview
       qtgraphicaleffects
-    ]);
+      ]));
 
-  lddWrapped = pkgs.writeShellScriptBin "ldd" ''
-    "${pkgs.bash}/bin/sh" "${pkgs.glibc.bin}/bin/ldd" "$@"
-  '';
 in pkgs.mkShell {
   name = "status-desktop-build-shell";
-
-  shellHook = ''
-    export PATH="${lddWrapped}/bin:$PATH"
-    '';
-    #export PATH=${pkgs.bashInteractive}/bin:$PATH
-    #export SHELL=${pkgs.bashInteractive}/bin
 
   buildInputs = with pkgs; [
     linuxdeployqt
@@ -84,8 +75,5 @@ in pkgs.mkShell {
     xorg.xcbutilrenderutil
     xorg.xcbutilwm
     zlib
-# TODO why not glibc? nix build shell issue?
-#glibc
-#stdenv.cc.cc.lib
  ];
 }
