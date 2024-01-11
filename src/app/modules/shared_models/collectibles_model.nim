@@ -23,6 +23,8 @@ type
     CollectionName
     CollectionSlug
     IsLoading
+    Balance
+    LastTxTimestamp
     # Community-related roles
     CommunityId
     CommunityName
@@ -160,6 +162,8 @@ QtObject:
       CollectibleRole.CollectionName.int:"collectionName",
       CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
+      CollectibleRole.Balance.int:"balance",
+      CollectibleRole.LastTxTimestamp.int:"lastTxTimestamp",
       CollectibleRole.CommunityId.int:"communityId",
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
@@ -204,6 +208,10 @@ QtObject:
         result = newQVariant(item.getCollectionSlug())
       of CollectibleRole.IsLoading:
         result = newQVariant(false)
+      of CollectibleRole.Balance:
+        result = newQVariant(item.getBalanceAsString())
+      of CollectibleRole.LastTxTimestamp:
+        result = newQVariant(item.getLastTxTimestamp())
       of CollectibleRole.CommunityId:
         result = newQVariant(item.getCommunityId())
       of CollectibleRole.CommunityName:
@@ -239,6 +247,8 @@ QtObject:
       of "collectionName": result = item.getCollectionName()
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
+      of "balance": result = item.getBalanceAsString()
+      of "lastTxTimestamp": result = $item.getLastTxTimestamp()
       of "communityId": result = item.getCommunityID()
       of "communityName": result = item.getCommunityName()
       of "communityColor": result = item.getCommunityColor()

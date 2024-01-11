@@ -45,12 +45,19 @@ type
     privilegesLevel*: PrivilegesLevel
     imageUrl*: Option[string]
 
+  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleOwner
+  AccountBalance* = ref object
+    address*: string
+    balance*: UInt256
+    txTimestamp*: int
+
   Collectible* = ref object of RootObj
     dataType*: CollectibleDataType
     id* : CollectibleUniqueID
     collectibleData*: Option[CollectibleData]
     collectionData*: Option[CollectionData]
     communityData*: Option[CommunityData]
+    ownership*: Option[seq[AccountBalance]]
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -243,6 +250,24 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CommunityData]): ref CommunityData {
   result = new(CommunityData)
   result[] = fromJson(t, CommunityData)
 
+# AccountBalance
+proc `$`*(self: AccountBalance): string =
+  return fmt"""AccountBalance(
+    address:{self.address},
+    balance:{self.balance},
+    txTimestamp:{self.txTimestamp}
+  )"""
+
+proc getAccountBalances(jsonAsset: JsonNode): seq[AccountBalance] =
+  var balanceList: seq[AccountBalance] = @[]
+  for item in jsonAsset.getElems():
+      balanceList.add(AccountBalance(
+          address: item{"address"}.getStr,
+          balance: stint.parse(item{"balance"}.getStr, Uint256),
+          txTimestamp: item{"txTimestamp"}.getInt
+      ))
+  return balanceList
+
 # Collectible
 proc `$`*(self: Collectible): string =
   return fmt"""Collectible(
@@ -250,7 +275,8 @@ proc `$`*(self: Collectible): string =
     id:{self.id},
     collectibleData:{self.collectibleData},
     collectionData:{self.collectionData},
-    communityData:{self.communityData}
+    communityData:{self.communityData},
+    ownership:{self.ownership}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
@@ -272,6 +298,11 @@ proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
     result.communityData = some(fromJson(communityDataNode, CommunityData))
   else:
     result.communityData = none(CommunityData)
+  let ownershipNode = t{"ownership"}
+  if ownershipNode != nil and ownershipNode.kind != JNull:
+    result.ownership = some(getAccountBalances(ownershipNode))
+  else:
+    result.ownership = none(seq[AccountBalance])
 
 proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
   result = @[]

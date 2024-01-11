@@ -85,7 +85,7 @@ QtObject:
       for chainID in self.chainIds:
         self.ownershipStatus[address][chainID] = OwnershipStatus(
           state: OwnershipStateUpdating,
-          timestamp: invalidTimestamp
+          timestamp: backend_collectibles.invalidTimestamp
         )
     self.model.setIsUpdating(true)
 
@@ -141,7 +141,7 @@ QtObject:
       error "error fetching collectibles entries: ", res.errorCode
       self.model.setIsError(true)
       return
-    
+
     try: 
       let items = res.collectibles.map(header => (block:
         let extradata = self.getExtraData(header.id.contractID.chainID)
@@ -185,14 +185,16 @@ QtObject:
       self.setOwnershipState(address, chainID, OwnershipStateUpdating)
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdatePartial(proc (address: string, chainID: int) =
+    self.eventsHandler.onCollectiblesOwnershipUpdatePartial(proc (address: string, chainID: int, changes: backend_collectibles.OwnershipUpdateMessage) =
       self.setOwnershipState(address, chainID, OwnershipStateUpdating)
-      self.resetModel()
+      if changes.hasChanges():
+        self.resetModel() 
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc (address: string, chainID: int) =
+    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc (address: string, chainID: int, changes: backend_collectibles.OwnershipUpdateMessage) =
       self.setOwnershipState(address, chainID, OwnershipStateIdle)
-      self.resetModel()
+      if changes.hasChanges():
+        self.resetModel()
     )
 
     self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(proc (address: string, chainID: int) =

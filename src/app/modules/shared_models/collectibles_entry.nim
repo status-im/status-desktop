@@ -5,6 +5,8 @@ import backend/collectibles as backend
 import collectible_trait_model
 import ../../../app_service/service/community_tokens/dto/community_token 
 
+const invalidTimestamp* = high(int)
+
 # Additional data needed to build an Entry, which is
 # not included in the backend data and needs to be
 # fetched from a different source.
@@ -90,6 +92,12 @@ QtObject:
 
   proc getCommunityData(self: CollectiblesEntry): backend.CommunityData =
     return self.data.communityData.get()
+
+  proc hasOwnership(self: CollectiblesEntry): bool =
+    return self.data != nil and isSome(self.data.ownership)
+
+  proc getOwnership(self: CollectiblesEntry): seq[backend.AccountBalance] =
+    return self.data.ownership.get()
 
   proc getChainID*(self: CollectiblesEntry): int {.slot.} =
     return self.id.contractID.chainID
@@ -233,6 +241,33 @@ QtObject:
     read = getTraits
     notify = traitsChanged
 
+  proc balanceChanged*(self: CollectiblesEntry) {.signal.}
+  proc getBalance*(self: CollectiblesEntry): UInt256  =
+    var balance: UInt256 = stint.u256(0)
+    if self.hasOwnership():
+      for item in self.getOwnership():
+        balance += item.balance
+    return balance
+  proc getBalanceAsString*(self: CollectiblesEntry): string {.slot.} =
+    return $self.getBalance()
+  
+  QtProperty[string] balance:
+    read = getBalanceAsString
+    notify = balanceChanged
+  
+  proc lastTxTimestampChanged*(self: CollectiblesEntry) {.signal.}
+  proc getLastTxTimestamp*(self: CollectiblesEntry): int =
+    var lastTxTimestamp = -1
+    if self.hasOwnership():
+      for item in self.getOwnership():
+        lastTxTimestamp = max(lastTxTimestamp, item.txTimestamp)
+    if lastTxTimestamp < 0:
+      lastTxTimestamp = invalidTimestamp
+    return lastTxTimestamp
+  
+  QtProperty[int] lastTxTimestamp:
+    read = getLastTxTimestamp
+    notify = lastTxTimestampChanged
 
   proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityID*(self: CollectiblesEntry): string {.slot.} =
@@ -320,6 +355,8 @@ QtObject:
     self.collectionNameChanged()
     self.collectionImageUrlChanged()
     self.traitsChanged()
+    self.balanceChanged()
+    self.lastTxTimestampChanged()
     self.communityIdChanged()
     self.communityNameChanged()
     self.communityColorChanged()
