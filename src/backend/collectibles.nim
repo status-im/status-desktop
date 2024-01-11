@@ -46,6 +46,12 @@ type
     state*: OwnershipState
     timestamp*: int
 
+  # Mirrors services/wallet/collectibles/service.go OwnershipUpdateMessage
+  OwnershipUpdateMessage* = ref object
+    added*: seq[CollectibleUniqueID]
+    updated*: seq[CollectibleUniqueID]
+    removed*: seq[CollectibleUniqueID]
+
   # Mirrors services/wallet/collectibles/service.go GetOwnedCollectiblesResponse
   GetOwnedCollectiblesResponse* = object
     collectibles*: seq[Collectible]
@@ -94,6 +100,35 @@ proc fromJson*(t: JsonNode, T: typedesc[OwnershipStatus]): OwnershipStatus {.inl
         state: OwnershipState(t{"state"}.getInt),
         timestamp: t{"timestamp"}.getInt
     )
+
+# OwnershipUpdateMessage
+proc `$`*(self: OwnershipUpdateMessage): string =
+  return fmt"""OwnershipUpdateMessage(
+    added:{self.added}, 
+    updated:{self.updated}, 
+    removed:{self.removed}
+    """
+
+proc hasChanges*(self: OwnershipUpdateMessage): bool {.inline.} =
+  return self.added.len != 0 or self.updated.len != 0 or self.removed.len != 0
+
+proc fromJson*(t: JsonNode, T: typedesc[OwnershipUpdateMessage]): OwnershipUpdateMessage {.inline.} =
+  var added: seq[CollectibleUniqueID]
+  var updated: seq[CollectibleUniqueID]
+  var removed: seq[CollectibleUniqueID]
+
+  for item in t["added"].getElems():
+    added.add(fromJson(item, CollectibleUniqueID))
+  for item in t["updated"].getElems():
+    updated.add(fromJson(item, CollectibleUniqueID))
+  for item in t["removed"].getElems():
+    removed.add(fromJson(item, CollectibleUniqueID))
+
+  return OwnershipUpdateMessage(
+      added: added,
+      updated: updated,
+      removed: removed
+  )
 
 # CollectibleFilter
 proc newCollectibleFilterAllCommunityIds*(): seq[string] {.inline.} =
