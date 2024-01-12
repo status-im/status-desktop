@@ -50,30 +50,31 @@ in pkgs.mkShell {
   # https://github.com/NixOS/nixpkgs/pull/109649
   QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515.qtbase.qtPluginPrefix}";
 
-  LD_LIBRARY_PATH = with pkgs; lib.makeLibraryPath [
-    alsa-lib
-    expat
-    fontconfig
-    freetype
-    gcc-unwrapped
-    glib
-    gmp
-    gst_all_1.gst-plugins-base
-    gst_all_1.gstreamer
-    harfbuzz
-    libglvnd
-    libkrb5
-    libpng
-    libpulseaudio
-    libxkbcommon
-    p11-kit
-    xorg.libICE
-    xorg.libSM
-    xorg.libXrender
-    xorg.xcbutilimage
-    xorg.xcbutilkeysyms
-    xorg.xcbutilrenderutil
-    xorg.xcbutilwm
-    zlib
- ];
+  #LD_LIBRARY_PATH = with pkgs; lib.makeLibraryPath [
+  #  #alsa-lib
+  #  #expat
+  #  #fontconfig
+  #  #freetype
+  #  #gcc-unwrapped
+  #  #glib
+  #  #gmp
+  #  #gst_all_1.gst-plugins-base
+  #  #gst_all_1.gstreamer
+  #  #harfbuzz
+  #  #libglvnd
+  #  #libkrb5
+  #  #libpng
+  #  #libpulseaudio
+  #  #libxkbcommon
+  #  #p11-kit
+  #  #xorg.libICE
+  #  #xorg.libSM
+  #  #xorg.libXrender
+  #  #xorg.xcbutilimage
+  #  #xorg.xcbutilkeysyms
+  #  #xorg.xcbutilrenderutil
+  #  #xorg.xcbutilwm
+  #  #zlib
+  #  #xorg.libX11
+ #];
 }
