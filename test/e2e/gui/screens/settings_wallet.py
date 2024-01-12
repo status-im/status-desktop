@@ -216,7 +216,7 @@ class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
         super(NetworkWalletSettings, self).__init__()
-        self._testnet_text_item = QObject('s')
+        self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
         self._testnet_mode_toggle = Button('settings_Wallet_NetworksView_TestNet_Toggle')
         self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
         self._back_button = Button('main_toolBar_back_button')
