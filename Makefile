@@ -640,12 +640,14 @@ ifdef IN_NIX_SHELL
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-bundle-everything -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3 || true
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-bundle-everything -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
 
+
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
 else
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
 endif
 
 	# Qt plugins
+	mkdir -p tmp/linux/dist/usr/plugins/platforminputcontexts/
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
 
 	rm tmp/linux/dist/AppRun
