@@ -18,6 +18,7 @@ pytestmark = marks
 ])
 @pytest.mark.flaky
 # reason='https://github.com/status-im/desktop-qa-automation/issues/346'
+@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/13199')
 def test_messaging_settings_accepting_request(multiple_instance, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
