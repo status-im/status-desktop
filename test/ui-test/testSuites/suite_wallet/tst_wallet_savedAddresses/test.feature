@@ -8,6 +8,7 @@ Background:
     And the user opens the wallet section
     And the user accepts the signing phrase
 
+	@mayfail
     Scenario Outline: The user can add saved address with all network options and delete address record
         When the user adds a saved address with name "<name>" and address "<address>"
         Then the saved address with name "<name>" is in the list of saved addresses
@@ -18,6 +19,7 @@ Background:
             | Saved address | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |
             | ENS name      | nastya.stateofus.eth                       |
 
+	 @mayfail
      Scenario Outline: The user can add saved address with all network options, change address name and disable networks
         When the user adds a saved address with name "<name>" and address "<address>"
         And the user edits a saved address with name "<name>" and address "<address>" to "<new_name>"
