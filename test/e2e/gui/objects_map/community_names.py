@@ -50,7 +50,9 @@ mainWindow_ChatColumnView = {"container": mainWindow_communityLoader_Loader, "ty
 chatMessageViewDelegate_channelIdentifierNameText_StyledText = {"container": mainWindow_ChatColumnView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
 chatMessageViewDelegate_Welcome = {"container": mainWindow_ChatColumnView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon = {"container": mainWindow_ChatMessagesView, "objectName": "channelIdentifierSmartIdenticon", "type": "StatusSmartIdenticon", "visible": True}
-chatMessageViewDelegate_ChannelIdentifierView = {"container": mainWindow_ChatMessagesView, "type": "ChannelIdentifierView", "unnamed": 1, "visible": True}
+chatView_log = {"container": mainWindow_ChatMessagesView, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
+chatLogView_chatMessageViewDelegate_MessageView = {"container": chatView_log, "index": 1, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
+chatMessageViewDelegate_ChannelIdentifierView = {"container": chatLogView_chatMessageViewDelegate_MessageView, "type": "ChannelIdentifierView", "unnamed": 1, "visible": True}
 
 # Community Settings
 mainWindow_communitySettingsBackToCommunityButton_StatusBaseText = {"container": mainWindow_communityLoader_Loader, "objectName": "communitySettingsBackToCommunityButton", "type": "StatusBaseText", "visible": True}
