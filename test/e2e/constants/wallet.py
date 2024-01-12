@@ -62,3 +62,7 @@ class WalletOrigin(Enum):
 
 class WalletTransactions(Enum):
     TRANSACTION_PENDING_TOAST_MESSAGE = 'Transaction pending'
+
+
+class WalletScreensHeaders(Enum):
+    WALLET_ADD_ACCOUNT_POPUP_TITLE = 'Add a new account'

@@ -18,7 +18,6 @@ from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
 
-
 GENERATED_PAGES_LIMIT = 20
 
 
@@ -49,6 +48,10 @@ class AccountPopup(BasePopup):
 
     def verify_account_popup_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._popup_header_title.exists, timeout_msec)
+        assert (getattr(self._popup_header_title.object, 'text')
+                == WalletScreensHeaders.WALLET_ADD_ACCOUNT_POPUP_TITLE.value), \
+            f"AccountPopup is not shown or has wrong title, \
+                    current screen title is {getattr(self._popup_header_title.object, 'text')}"
         return self
 
     @allure.step('Set name for account')
@@ -160,7 +163,7 @@ class EditAccountFromSettingsPopup(BasePopup):
         if 'radioButtonColor' in self._color_radiobutton.real_name.keys():
             del self._color_radiobutton.real_name['radioButtonColor']
         colors = [str(item.radioButtonColor) for item in driver.findAllObjects(self._color_radiobutton.real_name)]
-        self._color_radiobutton.real_name['radioButtonColor'] =\
+        self._color_radiobutton.real_name['radioButtonColor'] = \
             random.choice([color for color in colors if color != '#2a4af5'])  # exclude status default color
         self._color_radiobutton.click()
         return self

@@ -10,6 +10,11 @@ class OnboardingMessages(Enum):
     PASSWORD_INCORRECT = 'Password incorrect'
 
 
+class OnboardingScreensHeaders(Enum):
+    YOUR_EMOJIHASH_AND_IDENTICON_RING_SCREEN_TITLE = 'Your emojihash and identicon ring'
+    YOUR_PROFILE_SCREEN_TITLE = 'Your profile'
+
+
 password_strength_elements = namedtuple('Password_Strength_Elements',
                                         ['strength_indicator', 'strength_color', 'strength_messages'])
 very_weak_lower_elements = password_strength_elements('Very weak', '#ff2d55', ['• Lower case'])

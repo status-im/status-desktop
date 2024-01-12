@@ -18,7 +18,7 @@ pytestmark = marks
     pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                  'sunglasses', '1f60e')
 ])
-@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
+#@pytest.mark.xfail(reason="https://github.com/status-im/status-desktop/issues/12914")
 def test_plus_button_add_watched_address(
         main_screen: MainWindow, address: str, color: str, emoji: str, emoji_unicode: str,
         name: str):

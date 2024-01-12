@@ -77,6 +77,7 @@ mainWindow_clear_icon_StatusIcon = {"container": mainWindow_StatusWindow, "objec
 mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon = {"container": mainWindow_InsertDetailsView, "objectName": "welcomeScreenUserProfileImage", "type": "StatusSmartIdenticon", "visible": True}
 mainWindow_insertDetailsViewChatKeyTxt_StyledText = {"container": mainWindow_InsertDetailsView, "objectName": "insertDetailsViewChatKeyTxt", "type": "StyledText", "visible": True}
 mainWindow_EmojiHash = {"container": statusDesktop_mainWindow, "objectName": "publicKeyEmojiHash", "type": "EmojiHash", "visible": True}
+mainWindow_Header_Title = {"container": statusDesktop_mainWindow, "objectName": "onboardingHeaderText", "type": "StyledText", "visible": True}
 mainWindow_userImageCopy_StatusSmartIdenticon = {"container": mainWindow_InsertDetailsView, "id": "userImageCopy", "type": "StatusSmartIdenticon", "unnamed": 1, "visible": True}
 
 

@@ -7,6 +7,7 @@ import allure
 
 import configs
 import constants.tesseract
+from constants.onboarding import OnboardingScreensHeaders
 import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
@@ -77,7 +78,7 @@ class KeysView(OnboardingView):
     @allure.step('Open Profile view')
     def generate_new_keys(self) -> 'YourProfileView':
         self._generate_key_button.click()
-        return YourProfileView().wait_until_appears()
+        return YourProfileView().verify_profile_view_present()
 
     @allure.step('Open Keycard Init view')
     def generate_key_for_new_keycard(self) -> 'KeycardInitView':
@@ -265,6 +266,15 @@ class YourProfileView(OnboardingView):
         self._login_input_object = QObject('mainWindow_nameInput_StatusInput')
         self._clear_icon = QObject('mainWindow_clear_icon_StatusIcon')
         self._identicon_ring = QObject('mainWindow_IdenticonRing')
+        self._view_header_title = TextLabel('mainWindow_Header_Title')
+
+    def verify_profile_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
+        assert (getattr(self._view_header_title.object, 'text') ==
+                OnboardingScreensHeaders.YOUR_PROFILE_SCREEN_TITLE.value) , \
+            f"YourProfileView is not shown or has wrong title, \
+            current screen title is {getattr(self._view_header_title.object, 'text')}"
+        return self
 
     @property
     @allure.step('Get next button enabled state')
@@ -309,11 +319,11 @@ class YourProfileView(OnboardingView):
         file_dialog.open_file(fp)
         return PictureEditPopup().wait_until_appears()
 
-    @allure.step('Open Emoji and Icon view')
+    @allure.step('Open Your Emoji hash and Identicon Ring View')
     def next(self, attempts: int = 2) -> 'YourEmojihashAndIdenticonRingView':
         self._next_button.click()
         try:
-            return YourEmojihashAndIdenticonRingView()
+            return YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
         except Exception as err:
             if attempts:
                 return self.next(attempts - 1)
@@ -335,6 +345,15 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
         self._next_button = Button('mainWindow_Next_StatusButton')
         self._emoji_hash = QObject('mainWindow_EmojiHash')
         self._identicon_ring = QObject('mainWindow_userImageCopy_StatusSmartIdenticon')
+        self._view_header_title = TextLabel('mainWindow_Header_Title')
+
+    def verify_emojihash_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
+        driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
+        assert (getattr(self._view_header_title.object, 'text') ==
+                OnboardingScreensHeaders.YOUR_EMOJIHASH_AND_IDENTICON_RING_SCREEN_TITLE.value) , \
+            f"YourEmojihashAndIdenticonRingView is not shown or has wrong title, \
+            current screen title is {getattr(self._view_header_title.object, 'text')}"
+        return self
 
     @property
     @allure.step('Get profile image icon')
