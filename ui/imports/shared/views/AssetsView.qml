@@ -54,7 +54,7 @@ ColumnLayout {
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
-        function tokenIsVisible(symbol, currencyBalance) {
+        function tokenIsVisible(symbol) {
             // NOTE Backend returns ETH, SNT, STT and DAI by default
             if (!d.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
@@ -71,34 +71,22 @@ ColumnLayout {
             d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
         }
 
-        readonly property SubmodelProxyModel assetsWithFilteredBalances: SubmodelProxyModel {
-            id: assetsWithFilteredBalances
-            sourceModel: root.assets
-            submodelRoleName: "balances"
-            delegateModel: SortFilterProxyModel {
-                sourceModel: submodel
-                filters: FastExpressionFilter {
-                    expression: {
-                        root.networkFilters
-                        root.addressFilters
-                        return root.networkFilters.split(":").includes(model.chainId+"") &&
-                                root.addressFilters.split(":").includes(model.account)
-                    }
-                    expectedRoles: ["chainId", "account"]
-                }
-            }
-        }
-
         function getTotalBalance(balances, decimals) {
             let totalBalance = 0
+            let nwFilters = root.networkFilters.split(":")
+            let addrFilters = root.addressFilters.split(":")
             for(let i=0; i<balances.count; i++) {
-                totalBalance+=SQUtils.AmountsArithmetic.toNumber(ModelUtils.get(balances, i, "balance"), decimals)
+                let balancePerAddressPerChain = ModelUtils.get(balances, i)
+                if (nwFilters.includes(balancePerAddressPerChain.chainId+"") &&
+                        addrFilters.includes(balancePerAddressPerChain.account)) {
+                    totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+                }
             }
             return totalBalance
         }
 
         property SortFilterProxyModel customSFPM: SortFilterProxyModel {
-            sourceModel: d.assetsWithFilteredBalances
+            sourceModel: root.assets
             proxyRoles: [
                 FastExpressionRole {
                     id: filter
@@ -141,9 +129,9 @@ ColumnLayout {
                 FastExpressionFilter {
                     expression: {
                         d.controller.settingsDirty
-                        return d.tokenIsVisible(model.symbol, model.currentCurrencyBalance)
+                        return d.tokenIsVisible(model.symbol)
                     }
-                    expectedRoles: ["symbol", "currentCurrencyBalance"]
+                    expectedRoles: ["symbol"]
                 }
             ]
             sorters: [

@@ -1,6 +1,7 @@
 import QtQuick 2.13
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
@@ -59,7 +60,7 @@ QtObject {
         if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
             let chainIdsDown = []
             for (var i =0; i<balances.count; i++) {
-                let chainId = balances.get(i, "chainId")
+                let chainId = ModelUtils.get(i, "chainId")
                 if(blockchainNetworksDown.includes(chainId))
                     chainIdsDown.push(chainId)
             }
