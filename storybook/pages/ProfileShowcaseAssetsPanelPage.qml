@@ -13,6 +13,8 @@ import utils 1.0
 import Storybook 1.0
 import Models 1.0
 
+import AppLayouts.Wallet.stores 1.0
+
 SplitView {
     id: root
 
@@ -26,63 +28,8 @@ SplitView {
         communityTokensStore: CommunityTokensStore {}
     }
 
-    ListModel {
-        id: assetsModel
-
-        readonly property var data: [
-            {
-                name: "Decentraland",
-                symbol: "MANA",
-                enabledNetworkBalance: {
-                    amount: 301,
-                    symbol: "MANA"
-                },
-                changePct24hour: -2.1,
-            },
-            {
-                name: "Ave Maria",
-                symbol: "AAVE",
-                enabledNetworkBalance: {
-                    amount: 23.3,
-                    symbol: "AAVE"
-                },
-                changePct24hour: 4.56,
-            },
-            {
-                name: "Polymorphism",
-                symbol: "POLY",
-                enabledNetworkBalance: {
-                    amount: 3590,
-                    symbol: "POLY"
-                },
-                changePct24hour: -11.6789,
-            },
-            {
-                name: "Common DDT",
-                symbol: "CDT",
-                enabledNetworkBalance: {
-                    amount: 1000,
-                    symbol: "CDT"
-                },
-                changePct24hour: 0,
-            },
-            {
-                name: "Makers' choice",
-                symbol: "MKR",
-                enabledNetworkBalance: {
-                    amount: 1.3,
-                    symbol: "MKR"
-                },
-                changePct24hour: -1,
-            },
-            {
-                name: "GetOuttaHere",
-                symbol: "InvisibleHere",
-                enabledNetworkBalance: {},
-                changePct24hour: 0,
-            }
-        ]
-        Component.onCompleted: append(data)
+    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
     }
 
     ListModel {
@@ -126,8 +73,14 @@ SplitView {
         ProfileShowcaseAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: assetsModel
+            baseModel: walletAssetStore.groupedAccountAssetsModel
             showcaseModel: inShowcaseAssetsModel
+            formatCurrencyAmount: function (amount, symbol) {
+                return ({amount: amount,
+                                     symbol: symbol.toUpperCase(),
+                                     displayDecimals: 4,
+                                     stripTrailingZeroes: false})
+            }
         }
     }
 

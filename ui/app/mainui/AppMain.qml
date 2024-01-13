@@ -1301,6 +1301,8 @@ Item {
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
                             transactionStore: appMain.transactionStore
+                            walletAssetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
                         }
                     }
 

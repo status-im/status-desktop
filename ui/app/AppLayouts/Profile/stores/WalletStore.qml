@@ -25,7 +25,6 @@ QtObject {
     }
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
-    property var assets: walletSectionAssets.assets
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     property var originModel: accountsModule.keyPairModel
 

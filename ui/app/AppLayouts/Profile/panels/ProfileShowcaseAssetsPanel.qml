@@ -7,8 +7,10 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
+    property var formatCurrencyAmount: function(amount, symbol){}
+
     keyRole: "symbol"
-    roleNames: ["symbol", "name", "enabledNetworkBalance"].concat(showcaseRoles)
+    roleNames: ["symbol", "name", "enabledNetworkBalance", "decimals"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
@@ -18,6 +20,9 @@ ProfileShowcasePanel {
         showcaseObj: modelData
         dragParent: dragParentData
         visualIndex: visualIndexData
+        formatCurrencyAmount: function(amount, symbol) {
+            return root.formatCurrencyAmount(amount, symbol)
+        }
         onShowcaseVisibilityRequested: {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
