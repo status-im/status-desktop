@@ -80,6 +80,11 @@ Control {
                 onDropped: function(drop) {
                     var showcaseObj = drop.source.showcaseObj
 
+                    // need to set total balance for an asset
+                    if (drop.source.totalValue !== undefined) {
+                        showcaseObj.enabledNetworkBalance = drop.source.totalValue
+                    }
+
                     var tmpObj = Object()
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility

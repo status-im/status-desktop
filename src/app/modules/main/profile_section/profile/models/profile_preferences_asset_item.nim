@@ -18,6 +18,7 @@ type
     name*: string
     enabledNetworkBalance*: CurrencyAmount
     color*: string
+    decimals*: int
 
 proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
@@ -29,6 +30,7 @@ proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileSho
   result.name = token.name
   result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
   result.color = token.color
+  result.decimals = token.decimals
 
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
@@ -43,8 +45,9 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("color", result.color)
+  discard jsonObj.getProp("decimals", result.decimals)
 
-  result.enabledNetworkBalance = jsonObj{"enabledNetworkBalance"}.toCurrencyAmount()
+  result.enabledNetworkBalance = newCurrencyAmount(jsonObj{"enabledNetworkBalance"}.getFloat, result.symbol, result.decimals, false)
 
 proc toShowcasePreferenceItem*(self: ProfileShowcaseAssetItem): ProfileShowcaseAssetPreference =
   result = ProfileShowcaseAssetPreference()

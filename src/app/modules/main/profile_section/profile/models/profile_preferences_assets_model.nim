@@ -12,6 +12,7 @@ type
     Name
     EnabledNetworkBalance
     Color
+    Decimals
 
 QtObject:
   type
@@ -55,6 +56,7 @@ QtObject:
       ModelRole.Name.int: "name",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
       ModelRole.Color.int: "color",
+      ModelRole.Decimals.int: "decimals",
     }.toTable
 
   method data(self: ProfileShowcaseAssetsModel, index: QModelIndex, role: int): QVariant =
@@ -80,6 +82,8 @@ QtObject:
       result = newQVariant(item.enabledNetworkBalance)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Decimals:
+      result = newQVariant(item.decimals)
 
   proc findIndexForAsset(self: ProfileShowcaseAssetsModel, symbol: string): int =
     for i in 0 ..< self.items.len:
@@ -120,6 +124,7 @@ QtObject:
         ModelRole.Name.int,
         ModelRole.EnabledNetworkBalance.int,
         ModelRole.Color.int,
+        ModelRole.Decimals.int,
       ])
 
   proc upsertItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
