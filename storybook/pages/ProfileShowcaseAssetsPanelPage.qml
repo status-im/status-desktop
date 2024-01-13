@@ -13,8 +13,6 @@ import utils 1.0
 import Storybook 1.0
 import Models 1.0
 
-import AppLayouts.Wallet.stores 1.0
-
 SplitView {
     id: root
 
@@ -27,8 +25,6 @@ SplitView {
         rootStore: QtObject {}
         communityTokensStore: CommunityTokensStore {}
     }
-
-    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore{}
 
     ListModel {
         id: assetsModel
@@ -130,14 +126,8 @@ SplitView {
         ProfileShowcaseAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: walletAssetStore.builtAccountAssetsModel
+            baseModel: assetsModel
             showcaseModel: inShowcaseAssetsModel
-            getCurrencyAmount: function (amount, symbol) {
-                return ({amount: amount,
-                                     symbol: symbol.toUpperCase(),
-                                     displayDecimals: 4,
-                                     stripTrailingZeroes: false})
-            }
         }
     }
 

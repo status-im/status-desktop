@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import shared 1.0
-import shared.stores 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls.chat 1.0
@@ -19,8 +18,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import AppLayouts.Wallet.stores 1.0
-
 ColumnLayout {
     id: root
 
@@ -29,8 +26,6 @@ ColumnLayout {
     property PrivacyStore privacyStore
     property ProfileStore profileStore
     property WalletStore walletStore
-    required property WalletAssetsStore walletAssetsStore
-    required property CurrenciesStore currencyStore
     property var communitiesModel
 
     property bool hasAnyProfileShowcaseChanges: false
@@ -249,12 +244,9 @@ ColumnLayout {
             id: profileShowcaseAssetsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletAssetsStore.groupedAccountAssetsModel
+            baseModel: root.walletStore.assets
             showcaseModel: root.profileStore.profileShowcaseAssetsModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
-            getCurrencyAmount: function(amount, symbol) {
-                return root.currencyStore.getCurrencyAmount(amount, symbol)
-            }
         }
     }
 }

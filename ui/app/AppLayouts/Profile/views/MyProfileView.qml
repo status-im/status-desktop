@@ -6,7 +6,6 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.stores 1.0
 import shared.controls.chat 1.0
 
 import "../popups"
@@ -19,8 +18,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import AppLayouts.Wallet.stores 1.0
-
 SettingsContentBase {
     id: root
 
@@ -28,9 +25,6 @@ SettingsContentBase {
     property ProfileStore profileStore
     property PrivacyStore privacyStore
     property ContactsStore contactsStore
-    required property WalletAssetsStore walletAssetsStore
-    required property CurrenciesStore currencyStore
-
     property var communitiesModel
 
     titleRowComponentLoader.sourceComponent: StatusButton {
@@ -81,8 +75,6 @@ SettingsContentBase {
                 privacyStore: root.privacyStore
                 walletStore: root.walletStore
                 communitiesModel: root.communitiesModel
-                walletAssetsStore: root.walletAssetsStore
-                currencyStore: root.currencyStore
 
                 onVisibleChanged: if (visible) stackLayout.Layout.preferredHeight = settingsView.implicitHeight
                 Component.onCompleted: stackLayout.Layout.preferredHeight = Qt.binding(() => settingsView.implicitHeight)

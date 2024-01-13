@@ -7,8 +7,6 @@ import AppLayouts.Profile.controls 1.0
 ProfileShowcasePanel {
     id: root
 
-    property var getCurrencyAmount: function(){}
-
     keyRole: "symbol"
     roleNames: ["symbol", "name", "enabledNetworkBalance"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
@@ -20,7 +18,6 @@ ProfileShowcasePanel {
         showcaseObj: modelData
         dragParent: dragParentData
         visualIndex: visualIndexData
-        getCurrencyAmount: root.getCurrencyAmount()
         onShowcaseVisibilityRequested: {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
