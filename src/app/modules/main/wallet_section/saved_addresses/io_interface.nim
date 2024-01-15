@@ -21,6 +21,9 @@ method createOrUpdateSavedAddress*(self: AccessInterface, name: string, address:
   chainShortNames: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updatePreferredChains*(self: AccessInterface, address: string, chainShortNames: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method deleteSavedAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

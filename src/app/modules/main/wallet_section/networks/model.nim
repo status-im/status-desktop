@@ -252,5 +252,15 @@ QtObject:
           break
     return networkString
 
+  proc getNetworkIds*(self: Model, shortNames: string): string =
+    var networkIds = ""
+    let networksNames = shortNames.split(":")
+    for name in networksNames:
+      for item in self.items:
+        if item.getShortName() == name:
+          networkIds = networkIds & $item.getChainId() & ':'
+          break
+    return networkIds
+
   proc getAllNetworksChainIds*(self: Model): string =
     return self.items.map(x => x.getChainId()).join(":")

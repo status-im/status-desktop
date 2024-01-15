@@ -342,7 +342,7 @@ ColumnLayout {
 
     WalletAddressMenu {
         id: addressMenu
-        selectedAddress: !!root.account ? root.account.address: ""
+        selectedAccount: root.account
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         isSepoliaEnabled: root.walletStore.isSepoliaEnabled
         preferredSharingNetworks: d.preferredSharingNetworkShortNames

@@ -138,7 +138,11 @@ Item {
 
             headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideText(RootStore.overview.mixedcaseAddress, 6, 4)
             headerButton.visible: !RootStore.overview.isAllAccounts
-            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent);
+            onLaunchShareAddressModal: Global.openShowQRPopup({
+                                                                  switchingAccounsEnabled: true,
+                                                                  changingPreferredChainsEnabled: true,
+                                                                  hasFloatingButtons: true
+                                                              })
         }
     }
 
@@ -204,7 +208,11 @@ Item {
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: !!walletStore.currentViewedCollectible ? walletStore.currentViewedCollectible.communityName : ""
-            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
+            onLaunchShareAddressModal: Global.openShowQRPopup({
+                                                                  switchingAccounsEnabled: true,
+                                                                  changingPreferredChainsEnabled: true,
+                                                                  hasFloatingButtons: true
+                                                              })
             onLaunchSendModal: {
                 if(isCommunityOwnershipTransfer) {
                     let tokenItem = walletStore.currentViewedCollectible
@@ -238,14 +246,6 @@ Item {
                 root.sendModalPopup.onlyAssets = true
                 root.sendModalPopup.open()
             }
-        }
-    }
-
-    Component {
-        id: receiveModalComponent
-        ReceiveModal {
-            destroyOnClose: true
-            anchors.centerIn: parent
         }
     }
 

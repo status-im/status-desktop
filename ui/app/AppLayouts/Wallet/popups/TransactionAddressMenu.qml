@@ -292,11 +292,15 @@ StatusMenu {
         }
         icon.name: "qr"
         onTriggered: {
-            Global.openPopup(addressQr,
-                             {
-                                 address: d.selectedAddress,
-                                 chainShortNames: d.addressChains
-                             })
+            onTriggered: Global.openShowQRPopup({
+                                                    showSingleAccount: true,
+                                                    switchingAccounsEnabled: false,
+                                                    changingPreferredChainsEnabled: false,
+                                                    hasFloatingButtons: false,
+                                                    name: d.addressName,
+                                                    address: d.selectedAddress,
+                                                    colorId: d.colorId,
+                                                })
         }
     }
     StatusAction {
@@ -351,16 +355,5 @@ StatusMenu {
         }
         icon.name: "send"
         onTriggered: root.openSendModal(d.selectedAddress)
-    }
-
-    Component {
-        id: addressQr
-        ReceiveModal {
-            anchors.centerIn: parent
-            readOnly: true
-            hasFloatingButtons: false
-            advancedHeaderComponent: Item {}
-            description: qsTr("Address")
-        }
     }
 }

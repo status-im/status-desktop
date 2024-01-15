@@ -86,6 +86,7 @@ QtObject {
 
     signal openAddEditSavedAddressesPopup(var params)
     signal openDeleteSavedAddressesPopup(var params)
+    signal openShowQRPopup(var params)
 
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)
