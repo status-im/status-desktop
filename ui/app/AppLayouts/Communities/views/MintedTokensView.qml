@@ -61,9 +61,13 @@ StatusScrollView {
 
         function getRemainingInfo(isOwnerToken, isTMasterToken,
                                   remainingSupply, supply, isInfiniteSupply) {
-            // Owner token use case:
-            if(isOwnerToken)
+            // Owner token and owner profile use case:
+            if(isOwnerToken && root.isOwner)
                 return qsTr("1 of 1 (you hodl)")
+
+            // Owner token but no owner profile use case:
+            if(isOwnerToken && !root.isOwner)
+                return qsTr("1 of 1")
 
             // TMaster token use case:
             if(isTMasterToken)
