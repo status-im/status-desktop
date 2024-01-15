@@ -35,13 +35,13 @@ def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str
     with step('Fill in the form and preferred networks and add the address'):
         add_saved_address_popup.add_saved_address(name, address)
 
+    with step('Verify recently added saved address is present in the list'):
+        assert driver.waitFor(
+            lambda: name in settings_saved_addresses.get_saved_address_names_list(),
+            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'
+
     with step('Verify toast message when adding saved address'):
         messages = ToastMessage().get_toast_messages
         assert f'{name} successfully added to your saved addresses' in messages, \
             f"Toast message about adding saved address is not correct or not present. \
                 Current list of messages: {messages}"
-
-    with step('Verify recently added saved address is present in the list'):
-        assert driver.waitFor(
-            lambda: name in settings_saved_addresses.get_saved_address_names_list(),
-            configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'

@@ -141,14 +141,18 @@ class SavedAddressesView(QObject):
         super(SavedAddressesView, self).__init__('mainWindow_SavedAddressesView')
         self._add_new_address_button = Button('mainWallet_Saved_Addreses_Add_Buttton')
         self._address_list_item = QObject('savedAddressView_Delegate')
+        self._addresses_area = QObject('savedAddresses_area')
         self._send_button = Button('send_StatusRoundButton')
         self._open_menu_button = Button('savedAddressView_Delegate_menuButton')
 
     @property
     @allure.step('Get saved addresses names')
     def address_names(self):
-        names = [str(address.name) for address in driver.findAllObjects(self._address_list_item.real_name)]
-        return names
+        address_names = []
+        for child in walk_children(self._addresses_area.object):
+            if getattr(child, 'id', '') == 'savedAddressDelegate':
+                address_names.append(str(child.name))
+        return address_names
 
     @allure.step('Open add new address popup')
     def open_add_saved_address_popup(self, attempt=2) -> 'AddressPopup':
@@ -175,6 +179,8 @@ class SavedAddressesView(QObject):
     @allure.step('Open context menu in saved address')
     def open_context_menu(self, name) -> ContextMenu:
         self._open_menu_button.real_name['objectName'] = 'savedAddressView_Delegate_menuButton' + '_' + name
+        self._address_list_item.real_name['objectName'] = 'savedAddressView_Delegate' + '_' + name
+        self._address_list_item.hover()
         self._open_menu_button.click()
         return ContextMenu().wait_until_appears()
 
