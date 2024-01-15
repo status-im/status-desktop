@@ -729,7 +729,7 @@ StackView {
 
             communityName: root.communityName
             visible: {
-                if(tokenViewPage.isTMasterTokenItem)
+                if(tokenViewPage.isOwnerTokenItem || tokenViewPage.isTMasterTokenItem)
                     // Only footer if owner profile
                     return root.isOwner
                 // Always present
@@ -746,7 +746,7 @@ StackView {
             burnEnabled: deployStateCompleted            
             sendOwnershipEnabled: deployStateCompleted
 
-            sendOwnershipVisible: tokenViewPage.isOwnerTokenItem
+            sendOwnershipVisible: root.isOwner && tokenViewPage.isOwnerTokenItem
             airdropVisible: !tokenViewPage.isOwnerTokenItem
             remotelyDestructVisible: !tokenViewPage.isOwnerTokenItem && token.remotelyDestruct
             burnVisible: !tokenViewPage.isOwnerTokenItem && !token.infiniteSupply
