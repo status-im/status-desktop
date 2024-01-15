@@ -61,6 +61,12 @@ method createOrUpdateSavedAddress*(self: Module, name: string, address: string, 
   chainShortNames: string) =
   self.controller.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
 
+method updatePreferredChains*(self: Module, address: string, chainShortNames: string) =
+  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
+  if item.getAddress().len == 0:
+    return
+  self.controller.createOrUpdateSavedAddress(item.getName(), address, item.getEns(), item.getColorId(), chainShortNames)
+
 method deleteSavedAddress*(self: Module, address: string) =
   self.controller.deleteSavedAddress(address)
 

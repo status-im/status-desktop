@@ -43,11 +43,17 @@ StatusComboBox {
         anchors.verticalCenter: parent.verticalCenter
         width: childrenRect.width
         spacing: 8
+        component Padding: Item {
+            width: 12
+            height: 16
+        }
+        Padding {}
         StatusEmoji {
             anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: 16
             emojiId: StatusQUtils.Emoji.iconId(selectedAccount.emoji ?? "", StatusQUtils.Emoji.size.verySmall) || ""
+            visible: !!emojiId
         }
         StatusBaseText {
             anchors.verticalCenter: parent.verticalCenter
@@ -59,9 +65,11 @@ StatusComboBox {
             anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: width
+            visible: !!root.model && root.model.count > 1
             icon: "chevron-down"
             color: Theme.palette.indirectColor1
         }
+        Padding {}
     }
 
     delegate: WalletAccountListItem {

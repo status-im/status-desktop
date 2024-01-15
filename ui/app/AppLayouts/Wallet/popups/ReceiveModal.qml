@@ -18,63 +18,127 @@ import shared.popups 1.0
 import shared.popups.send.controls 1.0
 
 import AppLayouts.stores 1.0
+import ".."
 import "../stores"
 
 StatusModal {
     id: root
 
-    property string address: RootStore.selectedReceiveAccount.address
-    property string chainShortNames: RootStore.getNetworkShortNames(d.preferredSharingNetworksString)
-    property var preferredSharingNetworksArray: d.preferredSharingNetworksString.split(":").filter(Boolean)
+    property var accounts
+    property var selectedAccount
 
-    property string description: qsTr("Your Address")
+    property bool switchingAccounsEnabled: true
+    property bool changingPreferredChainsEnabled: true
 
-    property bool readOnly: false
+    signal selectedAccountIndexChanged(int selectedIndex)
+    signal updatePreferredChains(string address, string preferredChains)
 
-    QtObject {
-        id: d
-        property string completeAddressWithNetworkPrefix: root.chainShortNames + root.address
-        property string preferredSharingNetworksString: !!RootStore.selectedReceiveAccount ? RootStore.selectedReceiveAccount.preferredSharingChainIds : ""
-        onPreferredSharingNetworksStringChanged: {
-            root.preferredSharingNetworksArray = d.preferredSharingNetworksString.split(":").filter(Boolean)
-            root.chainShortNames = RootStore.getNetworkShortNames(d.preferredSharingNetworksString)
+    onSelectedAccountChanged: {
+        d.preferredChainIdsArray = root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean)
+    }
+
+    width: 556
+    contentHeight: content.implicitHeight + d.advanceFooterHeight
+
+    hasFloatingButtons: true
+
+    showHeader: false
+    showAdvancedHeader: hasFloatingButtons
+    advancedHeaderComponent: AccountsModalHeader {
+        control.enabled: root.switchingAccounsEnabled && model.count > 1
+        model: SortFilterProxyModel {
+            sourceModel: root.accounts
+
+            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+        }
+
+        selectedAccount: root.selectedAccount
+        getNetworkShortNames: RootStore.getNetworkShortNames
+        onSelectedIndexChanged: {
+            root.selectedAccountIndexChanged(selectedIndex)
+        }
+    }
+
+    showFooter: false
+    showAdvancedFooter: true
+    advancedFooterComponent: Rectangle {
+        width: parent.width
+        height: d.advanceFooterHeight
+        color: Theme.palette.baseColor4
+        radius: 16
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.radius
+            color: parent.color
+        }
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: parent.width
+            height: 1
+            color: Theme.palette.baseColor2
+        }
+
+        StatusBaseText {
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.bigPadding
+            anchors.verticalCenter: parent.verticalCenter
+            text: WalletUtils.colorizedChainPrefix(d.preferredChainShortNames) + root.selectedAccount.address
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        StatusRoundButton {
+            width: 32
+            height: 32
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.bigPadding
+            anchors.verticalCenter: parent.verticalCenter
+            icon.name: "copy"
+            type: StatusRoundButton.Type.Tertiary
+            onClicked: RootStore.copyToClipboard(d.visibleAddress)
         }
     }
 
     onOpened: {
-        RootStore.addressWasShown(root.address)
+        RootStore.addressWasShown(root.selectedAccount.address)
     }
 
-    headerSettings.title: qsTr("Receive")
-    contentHeight: layout.implicitHeight
-    width: 556
+    QtObject {
+        id: d
 
-    showHeader: false
-    showAdvancedHeader: true
+        readonly property bool multiChainView: tabBar.currentIndex === 1
+        readonly property int advanceFooterHeight: 88
 
-    hasFloatingButtons: true
-    advancedHeaderComponent: AccountsModalHeader {
-        model: SortFilterProxyModel {
-            sourceModel: RootStore.receiveAccounts
+        property var preferredChainIdsArray: root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean)
+        property var preferredChainIds: d.preferredChainIdsArray.join(":")
 
-            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-        }
-        selectedAccount: RootStore.selectedReceiveAccount
-        getNetworkShortNames: RootStore.getNetworkShortNames
-        onSelectedIndexChanged: RootStore.switchReceiveAccount(selectedIndex)
+        readonly property string preferredChainShortNames: d.multiChainView? RootStore.getNetworkShortNames(d.preferredChainIds) : ""
+        readonly property string visibleAddress: "%1%2".arg(d.preferredChainShortNames).arg(root.selectedAccount.address)
+
+        readonly property var networkProxies: [layer1NetworksClone, layer2NetworksClone]
+
+
     }
 
-    contentItem: Column {
-        id: layout
-        width: root.width
+    Column {
+        id: content
+        width: parent.width
+        height: childrenRect.height
 
         topPadding: Style.current.xlPadding
+        bottomPadding: Style.current.xlPadding
         spacing: Style.current.bigPadding
 
         StatusSwitchTabBar {
             id: tabBar
             anchors.horizontalCenter: parent.horizontalCenter
             currentIndex: 1
+
             StatusSwitchTabButton {
                 text: qsTr("Legacy")
             }
@@ -84,275 +148,167 @@ StatusModal {
         }
 
         Item {
+            id: qrCode
+            height: 320
+            width: 320
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: Item {
+                    width: qrCode.width
+                    height: qrCode.height
+                    Rectangle {
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        width: qrCode.width
+                        height: qrCode.height
+                        radius: Style.current.bigPadding
+                        border.width: 1
+                        border.color: Style.current.border
+                    }
+                    Rectangle {
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        width: Style.current.bigPadding
+                        height: Style.current.bigPadding
+                    }
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        width: Style.current.bigPadding
+                        height: Style.current.bigPadding
+                    }
+                }
+            }
+
+            Image {
+                id: qrCodeImage
+                anchors.centerIn: parent
+                height: parent.height
+                width: parent.width
+                asynchronous: true
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                smooth: false
+                source: RootStore.getQrCode(d.visibleAddress)
+            }
+
+            Rectangle {
+                anchors.centerIn: qrCodeImage
+                width: 78
+                height: 78
+                color: "white"
+                StatusSmartIdenticon {
+                    anchors.centerIn: parent
+                    anchors.margins: 2
+                    width: 78
+                    height: 78
+                    name: root.selectedAccount.name
+                    asset {
+                        width: 78
+                        height: 78
+                        name: !root.selectedAccount.name && !root.selectedAccount.emoji? "status-logo-icon" : ""
+                        color: !root.selectedAccount.name && !root.selectedAccount.emoji? "transparent" : Utils.getColorForId(root.selectedAccount.colorId)
+                        emoji: root.selectedAccount.emoji
+                        charactersLen: {
+                            let parts = root.selectedAccount.name.split(" ")
+                            if (parts.length > 1) {
+                                return 2
+                            }
+                            return 1
+                        }
+                        isLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
+                        useAcronymForLetterIdenticon: root.selectedAccount.name && !root.selectedAccount.emoji
+                    }
+                }
+            }
+        }
+
+
+        Item {
             width: parent.width
-            height: qrCodeBox.height
-            id: centralLayout
+            height: Math.max(flow.height, editButton.height)
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: d.multiChainView && d.preferredChainIdsArray.length > 0
 
-            Grid {
-                id: multiChainList
-                property bool need2Columns: RootStore.enabledNetworks.count >= 9
-
-                anchors.left: need2Columns ? undefined: qrCodeBox.right
-                anchors.leftMargin: need2Columns ?undefined : Style.current.halfPadding
-                anchors.centerIn: need2Columns ? parent : undefined
-                height: qrCodeBox.height
-
-                columnSpacing: need2Columns ? qrCodeBox.width + Style.current.bigPadding : 0
-                flow: Grid.TopToBottom
-                columns: need2Columns ? 2 : 1
+            Flow {
+                id: flow
+                anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 5
-                property var networkProxies: [layer1NetworksClone, layer2NetworksClone]
+
                 Repeater {
-                    model: multiChainList.networkProxies.length
+                    model: d.networkProxies.length
                     delegate: Repeater {
-                        model: multiChainList.networkProxies[index]
+                        model: d.networkProxies[index]
                         delegate: InformationTag {
                             tagPrimaryLabel.text: model.shortName
                             tagPrimaryLabel.color: model.chainColor
                             image.source: Style.svg("tiny/" + model.iconUrl)
-                            visible: root.preferredSharingNetworksArray.includes(model.chainId.toString())
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: root.readOnly ? Qt.ArrowCursor : Qt.PointingHandCursor
-                                enabled: !root.readOnly
-                                onClicked: selectPopup.open()
-                            }
+                            visible: d.preferredChainIdsArray.includes(model.chainId.toString())
                         }
                     }
-                }
-                StatusRoundButton {
-                    id: editButton
-                    width: 32
-                    height: 32
-                    icon.name: "edit_pencil"
-                    color: Theme.palette.primaryColor3
-                    visible: !root.readOnly
-                    onClicked: selectPopup.open()
                 }
             }
 
-            Rectangle {
-                id: qrCodeBox
-                height: 339
-                width: 339
-                anchors.centerIn: parent
-                anchors.horizontalCenter: parent.horizontalCenter
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Item {
-                        width: qrCodeBox.width
-                        height: qrCodeBox.height
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            width: qrCodeBox.width
-                            height: qrCodeBox.height
-                            radius: Style.current.bigPadding
-                            border.width: 1
-                            border.color: Style.current.border
-                        }
-                        Rectangle {
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            width: Style.current.bigPadding
-                            height: Style.current.bigPadding
-                        }
-                        Rectangle {
-                            anchors.bottom: parent.bottom
-                            anchors.left: parent.left
-                            width: Style.current.bigPadding
-                            height: Style.current.bigPadding
-                        }
-                    }
-                }
-
-                Image {
-                    id: qrCodeImage
-                    anchors.centerIn: parent
-                    height: parent.height
-                    width: parent.width
-                    asynchronous: true
-                    fillMode: Image.PreserveAspectFit
-                    mipmap: true
-                    smooth: false
-                    source: RootStore.getQrCode(d.completeAddressWithNetworkPrefix)
-                }
-
-                Rectangle {
-                    anchors.centerIn: qrCodeImage
-                    width: 78
-                    height: 78
-                    color: "white"
-                    StatusIcon {
-                        anchors.centerIn: parent
-                        anchors.margins: 2
-                        width: 78
-                        height: 78
-                        icon: "status-logo-icon"
-                    }
-                }
-            }
-        }
-
-        Item  {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            height: addressLabel.height + copyButton.height
-            Column {
-                id: addressLabel
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.bigPadding
-                StatusBaseText {
-                    id: contactsLabel
-                    font.pixelSize: 15
-                    color: Theme.palette.baseColor1
-                    text: root.description
-                }
-                RowLayout {
-                    id: networksLabel
-                    spacing: -1
-                    Repeater {
-                        model: multiChainList.networkProxies.length
-                        delegate: Repeater {
-                            model: multiChainList.networkProxies[index]
-                            delegate: StatusBaseText {
-                                font.pixelSize: 15
-                                color: chainColor
-                                text: shortName + ":"
-                                visible: root.preferredSharingNetworksArray.includes(model.chainId.toString())
-                                onVisibleChanged: {
-                                    if (root.readOnly)
-                                        return
-                                    if (visible) {
-                                        root.chainShortNames += text
-                                    } else {
-                                        root.chainShortNames = root.chainShortNames.replace(text, "")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                StatusAddress {
-                    id: txtWalletAddress
-                    color: Theme.palette.directColor1
-                    font.pixelSize: 15
-                    text: root.address
-                }
-            }
-            Column {
-                id: copyButton
-                anchors.verticalCenter: parent.verticalCenter
+            StatusRoundButton {
+                id: editButton
+                width: 32
+                height: 32
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.bigPadding
-                spacing: 5
-                CopyToClipBoardButton {
-                    id: copyToClipBoard
-                    textToCopy: txtWalletAddress.text
-                    onCopyClicked: RootStore.copyToClipboard(textToCopy)
-                }
-                StatusBaseText {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.pixelSize: 13
-                    color: Theme.palette.primaryColor1
-                    text: qsTr("Copy")
+                anchors.verticalCenter: parent.verticalCenter
+                icon.name: "edit_pencil"
+                type: StatusRoundButton.Type.Tertiary
+                visible: root.changingPreferredChainsEnabled
+                highlighted: selectPopup.visible
+                onClicked: selectPopup.open()
+
+                NetworkSelectPopup {
+                    id: selectPopup
+
+                    x: editButton.width - width
+                    y: editButton.height + 8
+
+                    layer1Networks: layer1NetworksClone
+                    layer2Networks: layer2NetworksClone
+                    preferredNetworksMode: true
+                    preferredSharingNetworks: d.preferredChainIdsArray
+
+                    useEnabledRole: false
+
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+                    onToggleNetwork: (network, networkModel, index) => {
+                                         d.preferredChainIdsArray = RootStore.processPreferredSharingNetworkToggle(d.preferredChainIdsArray, network)
+                                     }
+
+                    onClosed: {
+                        root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)
+                    }
+
+                    CloneModel {
+                        id: layer1NetworksClone
+
+                        sourceModel: RootStore.layer1Networks
+                        roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl", "isEnabled"]
+                        // rowData used to clone returns string. Convert it to bool for bool arithmetics
+                        rolesOverride: [{
+                            role: "isEnabled",
+                            transform: (modelData) => root.readOnly ? root.chainShortNames.includes(modelData.shortName) : Boolean(modelData.isEnabled)
+                        }]
+                    }
+
+                    CloneModel {
+                        id: layer2NetworksClone
+
+                        sourceModel: RootStore.layer2Networks
+                        roles: layer1NetworksClone.roles
+                        rolesOverride: layer1NetworksClone.rolesOverride
+                    }
                 }
             }
         }
-
-        NetworkSelectPopup {
-            id: selectPopup
-
-            x: multiChainList.x + editButton.width + 9
-            y: tabBar.y + tabBar.height
-
-            layer1Networks: layer1NetworksClone
-            layer2Networks: layer2NetworksClone
-            preferredNetworksMode: true
-            preferredSharingNetworks: root.preferredSharingNetworksArray
-
-            useEnabledRole: false
-
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-            onToggleNetwork: (network, networkModel, index) => {
-                                 root.preferredSharingNetworksArray = RootStore.processPreferredSharingNetworkToggle(root.preferredSharingNetworksArray, network)
-                             }
-
-            onClosed: RootStore.updateWalletAccountPreferredChains(root.address, root.preferredSharingNetworksArray.join(":"))
-
-            CloneModel {
-                id: layer1NetworksClone
-
-                sourceModel: RootStore.layer1Networks
-                roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl", "isEnabled"]
-                // rowData used to clone returns string. Convert it to bool for bool arithmetics
-                rolesOverride: [{
-                    role: "isEnabled",
-                    transform: (modelData) => root.readOnly ? root.chainShortNames.includes(modelData.shortName) : Boolean(modelData.isEnabled)
-                }]
-            }
-
-            CloneModel {
-                id: layer2NetworksClone
-
-                sourceModel: RootStore.layer2Networks
-                roles: layer1NetworksClone.roles
-                rolesOverride: layer1NetworksClone.rolesOverride
-            }
-        }
-
-        states: [
-            State {
-                name: "legacy"
-                when: tabBar.currentIndex === 0
-                PropertyChanges {
-                    target: multiChainList
-                    visible: false
-                }
-                PropertyChanges {
-                    target: contactsLabel
-                    visible: true
-                }
-                PropertyChanges {
-                    target: networksLabel
-                    visible: false
-                }
-                PropertyChanges {
-                    target: copyToClipBoard
-                    textToCopy: txtWalletAddress.text
-                }
-                PropertyChanges {
-                    target: d
-                    completeAddressWithNetworkPrefix: root.address
-                }
-            },
-            State {
-                name: "multichain"
-                when: tabBar.currentIndex === 1
-                PropertyChanges {
-                    target: multiChainList
-                    visible: true
-                }
-                PropertyChanges {
-                    target: contactsLabel
-                    visible: false
-                }
-                PropertyChanges {
-                    target: networksLabel
-                    visible: true
-                }
-                PropertyChanges {
-                    target: copyToClipBoard
-                    textToCopy: root.chainShortNames + txtWalletAddress.text
-                }
-                PropertyChanges {
-                    target: d
-                    completeAddressWithNetworkPrefix: root.chainShortNames + root.address
-                }
-            }
-        ]
     }
 }
 

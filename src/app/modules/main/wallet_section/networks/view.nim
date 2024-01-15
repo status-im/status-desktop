@@ -100,7 +100,7 @@ QtObject:
   QtProperty[QVariant] enabledChainIds:
     read = getEnabledChainIds
     notify = enabledChainIdsChanged
-  
+
   proc setItems*(self: View, networks: seq[NetworkDto]) =
     var items: seq[Item] = @[]
     let allEnabled = areAllEnabled(networks)
@@ -149,6 +149,9 @@ QtObject:
 
   proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
     return self.all.getNetworkShortNames(preferredNetworks)
+
+  proc getNetworkIds*(self: View, shortNames: string): string {.slot.} =
+    return self.all.getNetworkIds(shortNames)
 
   proc getAllNetworksChainIds*(self: View): string {.slot.} =
     return self.all.getAllNetworksChainIds()

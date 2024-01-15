@@ -21,7 +21,13 @@ import AppLayouts.Wallet.popups 1.0
 StatusMenu {
     id: root
 
-    property string selectedAddress
+    property var selectedAccount: ({
+                                       address: "",
+                                       name: "",
+                                       emoji: "",
+                                       colorId: "",
+                                       preferredSharingChainIds: ""
+                                   })
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
     property string preferredSharingNetworks
@@ -49,7 +55,7 @@ StatusMenu {
                 }
             }
             
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAddress))
+            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
         }
     }
     StatusAction {
@@ -58,7 +64,7 @@ StatusMenu {
         icon.name: "link"
         onTriggered: {
             const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliArbiscan : Constants.networkExplorerLinks.arbiscan
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAddress))
+            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
         }
     }
     StatusAction {
@@ -67,7 +73,7 @@ StatusMenu {
         icon.name: "link"
         onTriggered: {
             const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliOptimistic : Constants.networkExplorerLinks.optimistic
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAddress))
+            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
         }
     }
     StatusSuccessAction {
@@ -75,27 +81,22 @@ StatusMenu {
         successText:  qsTr("Address copied")
         text: qsTr("Copy address")
         icon.name: "copy"
-        onTriggered: root.copyToClipboard(root.selectedAddress)
+        onTriggered: root.copyToClipboard(root.selectedAccount.address?? "")
     }
     StatusAction {
         id: showQrAction
         text: qsTr("Show address QR")
         icon.name: "qr"
-        onTriggered: Global.openPopup(addressQr)
-    }
-
-    Component {
-        id: addressQr
-        ReceiveModal {
-            anchors.centerIn: parent
-            address: root.selectedAddress
-            chainShortNames: root.preferredSharingNetworks
-            preferredSharingNetworksArray: root.preferredSharingNetworksArray
-            readOnly: true
-            hasFloatingButtons: false
-            advancedHeaderComponent: null
-            description: qsTr("Address")
-            onClosed: destroy()
-        }
+        onTriggered: Global.openShowQRPopup({
+                                                showSingleAccount: true,
+                                                switchingAccounsEnabled: false,
+                                                changingPreferredChainsEnabled: false,
+                                                hasFloatingButtons: false,
+                                                name: root.selectedAccount.name?? "",
+                                                address: root.selectedAccount.address?? "",
+                                                emoji: root.selectedAccount.emoji?? "",
+                                                colorId: root.selectedAccount.colorId?? "",
+                                                preferredSharingChainIds: root.selectedAccount.preferredSharingChainIds?? ""
+                                            })
     }
 }

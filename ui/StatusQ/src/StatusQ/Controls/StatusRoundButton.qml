@@ -134,7 +134,7 @@ Rectangle {
     QtObject {
         id: d
         readonly property color iconColor: !statusRoundButton.enabled ? statusRoundButton.icon.disabledColor :
-                                                                        (statusRoundButton.enabled && statusRoundButton.hovered) ? statusRoundButton.icon.hoverColor :
+                                                                        (statusRoundButton.enabled && (statusRoundButton.hovered || statusRoundButton.highlighted)) ? statusRoundButton.icon.hoverColor :
                                                                                                                                    statusRoundButton.icon.color
     }
 

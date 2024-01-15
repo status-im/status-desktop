@@ -352,6 +352,10 @@ QtObject {
         walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)
     }
 
+    function updatePreferredChains(address, chainShortNames) {
+        walletSectionSavedAddresses.updatePreferredChains(address, chainShortNames)
+    }
+
     function deleteSavedAddress(address) {
         root.deletingSavedAddress = true
         walletSectionSavedAddresses.deleteSavedAddress(address)
@@ -395,6 +399,10 @@ QtObject {
 
     function getNetworkShortNames(chainIds) {
         return networksModule.getNetworkShortNames(chainIds)
+    }
+
+    function getNetworkIds(shortNames) {
+        return networksModule.getNetworkIds(shortNames)
     }
 
     function updateWalletAccountPreferredChains(address, preferredChainIds) {

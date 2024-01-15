@@ -356,6 +356,10 @@ Item {
         function onOpenDeleteSavedAddressesPopup(params) {
             deleteSavedAddress.open(params)
         }
+
+        function onOpenShowQRPopup(params) {
+            showQR.open(params)
+        }
     }
 
     Connections {
@@ -1813,6 +1817,88 @@ Item {
                                            Constants.ephemeralNotificationType.success,
                                            ""
                                            )
+            }
+        }
+    }
+
+    Loader {
+        id: showQR
+
+        active: false
+
+        property bool showSingleAccount: false
+        property bool showForSavedAddress: false
+        property var params
+        property var selectedAccount: ({
+                                           name: "",
+                                           address: "",
+                                           preferredSharingChainIds: "",
+                                           colorId: "",
+                                           emoji: ""
+                                       })
+
+        function open(params = {}) {
+            showQR.showSingleAccount = params.showSingleAccount?? false
+            showQR.showForSavedAddress = params.showForSavedAddress?? false
+            showQR.params = params
+
+            if (showQR.showSingleAccount || showQR.showForSavedAddress) {
+                showQR.selectedAccount.name = params.name?? ""
+                showQR.selectedAccount.address = params.address?? ""
+                showQR.selectedAccount.preferredSharingChainIds = params.preferredSharingChainIds?? ""
+                showQR.selectedAccount.colorId = params.colorId?? ""
+                showQR.selectedAccount.emoji = params.emoji?? ""
+            }
+
+            showQR.active = true
+        }
+
+        function close() {
+            showQR.active = false
+        }
+
+        onLoaded: {
+            showQR.item.switchingAccounsEnabled = showQR.params.switchingAccounsEnabled?? true
+            showQR.item.changingPreferredChainsEnabled = showQR.params.changingPreferredChainsEnabled?? true
+            showQR.item.hasFloatingButtons = showQR.params.hasFloatingButtons?? true
+
+            showQR.item.open()
+        }
+
+        sourceComponent: WalletPopups.ReceiveModal {
+
+            accounts: {
+                if (showQR.showSingleAccount || showQR.showForSavedAddress) {
+                    return null
+                }
+                return WalletStore.RootStore.receiveAccounts
+            }
+
+            selectedAccount: {
+                if (showQR.showSingleAccount || showQR.showForSavedAddress) {
+                    return showQR.selectedAccount
+                }
+                return WalletStore.RootStore.selectedReceiveAccount
+            }
+
+            onSelectedAccountIndexChanged: {
+                if (showQR.showSingleAccount || showQR.showForSavedAddress) {
+                    return
+                }
+                WalletStore.RootStore.switchReceiveAccount(selectedIndex)
+            }
+
+            onUpdatePreferredChains: {
+                if (showQR.showForSavedAddress) {
+                    let shortNames = WalletStore.RootStore.getNetworkShortNames(preferredChains)
+                    WalletStore.RootStore.updatePreferredChains(address, shortNames)
+                    return
+                }
+                WalletStore.RootStore.updateWalletAccountPreferredChains(address, preferredChains)
+            }
+
+            onClosed: {
+                showQR.close()
             }
         }
     }
