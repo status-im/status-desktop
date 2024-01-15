@@ -890,6 +890,50 @@ QtObject {
         return ""
     }
 
+    function getActionNameForDisplayingAddressOnNetwork(networkShortName)  {
+        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+            return qsTr("View on Arbiscan")
+        }
+        if (networkShortName === Constants.networkShortChainNames.optimism) {
+            return qsTr("View on Optimism Explorer")
+        }
+
+        return qsTr("View on Etherscan")
+    }
+
+    function getUrlForAddressOnNetwork(networkShortName, testnetMode, sepoliaEnabled, address)  {
+        let link = Constants.networkExplorerLinks.etherscan
+        if (testnetMode) {
+            if (sepoliaEnabled) {
+                link = Constants.networkExplorerLinks.sepoliaEtherscan
+            } else {
+                link = Constants.networkExplorerLinks.goerliEtherscan
+            }
+        }
+
+        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+            link = Constants.networkExplorerLinks.arbiscan
+            if (testnetMode) {
+                if (sepoliaEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaArbiscan
+                } else {
+                    link = Constants.networkExplorerLinks.goerliArbiscan
+                }
+            }
+        } else if (networkShortName === Constants.networkShortChainNames.optimism) {
+            link = Constants.networkExplorerLinks.optimism
+            if (testnetMode) {
+                if (sepoliaEnabled) {
+                    link = Constants.networkExplorerLinks.sepoliaOptimism
+                } else {
+                    link = Constants.networkExplorerLinks.goerliOptimism
+                }
+            }
+        }
+
+        return "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(address)
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

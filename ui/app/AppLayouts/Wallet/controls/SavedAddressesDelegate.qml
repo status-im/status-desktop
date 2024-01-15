@@ -70,6 +70,7 @@ StatusListItem {
         id: d
 
         readonly property string visibleAddress: !!root.ens? root.ens : root.address
+        readonly property var preferredSharedNetworkNamesArray: root.chainShortNames.split(":").filter(Boolean)
     }
 
     components: [
@@ -174,50 +175,43 @@ StatusListItem {
                                        })
             }
         }
-        StatusMenuSeparator { }
+
+        StatusMenuSeparator {
+            visible: d.preferredSharedNetworkNamesArray.length > 0
+        }
 
         StatusAction {
-            text: qsTr("View on Etherscan")
-            objectName: "viewOnEtherscanAction"
-            assetSettings.name: "external"
+            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.mainnet)
+            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
+            icon.name: "link"
             onTriggered: {
-                var baseUrl = Constants.networkExplorerLinks.etherscan
-                if (root.areTestNetworksEnabled) {
-                    if (root.isSepoliaEnabled) {
-                        baseUrl = Constants.networkExplorerLinks.sepoliaEtherscan
-                    } else {
-                        baseUrl = Constants.networkExplorerLinks.goerliEtherscan
-                    }
-                }
-                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                Global.openLink(link)
             }
         }
 
         StatusAction {
-            text: qsTr("View on Arbiscan")
-            objectName: "viewOnArbiscanAction"
-            assetSettings.name: "external"
+            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbiscan)
+            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
+            icon.name: "link"
             onTriggered: {
-                var baseUrl = Constants.networkExplorerLinks.arbiscan
-                if (root.areTestNetworksEnabled) {
-                    baseUrl = Constants.networkExplorerLinks.goerliArbiscan
-                }
-                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                Global.openLink(link)
             }
         }
+
         StatusAction {
-            text: qsTr("View on Optimism Explorer")
-            objectName: "viewOnOptimismExplorerAction"
-            assetSettings.name: "external"
+            text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.optimism)
+            enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
+            icon.name: "link"
             onTriggered: {
-                var baseUrl = Constants.networkExplorerLinks.optimistic
-                if (root.areTestNetworksEnabled) {
-                    baseUrl = Constants.networkExplorerLinks.goerliOptimistic
-                }
-                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                Global.openLink(link)
             }
         }
+
         StatusMenuSeparator { }
+
         StatusAction {
             text: qsTr("Remove saved address")
             type: StatusAction.Type.Danger

@@ -345,8 +345,7 @@ ColumnLayout {
         selectedAccount: root.account
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         isSepoliaEnabled: root.walletStore.isSepoliaEnabled
-        preferredSharingNetworks: d.preferredSharingNetworkShortNames
-        preferredSharingNetworksArray: d.preferredSharingNetworksArray
+        preferredSharedNetworkNamesArray: d.preferredSharingNetworkShortNames.split(":").filter(Boolean)
         onCopyToClipboard: root.walletStore.copyToClipboard(address)
     }
 

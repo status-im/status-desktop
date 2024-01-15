@@ -236,7 +236,7 @@ StatusMenu {
         icon.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliOptimistic : Constants.networkExplorerLinks.optimistic
+            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliOptimism : Constants.networkExplorerLinks.optimism
             Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }
