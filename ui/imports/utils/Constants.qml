@@ -908,11 +908,15 @@ QtObject {
     readonly property QtObject networkExplorerLinks: QtObject {
         readonly property string etherscan: "https://etherscan.io"
         readonly property string arbiscan: "https://arbiscan.io"
-        readonly property string optimistic: "https://optimistic.etherscan.io"
+        readonly property string optimism: "https://optimistic.etherscan.io"
+
         readonly property string goerliEtherscan: "https://goerli.etherscan.io"
         readonly property string goerliArbiscan: "https://goerli.arbiscan.io"
-        readonly property string goerliOptimistic: "https://goerli-optimism.etherscan.io"
+        readonly property string goerliOptimism: "https://goerli-optimism.etherscan.io"
+
         readonly property string sepoliaEtherscan: "https://sepolia.etherscan.io/"
+        readonly property string sepoliaArbiscan: "https://sepolia.arbiscan.io/"
+        readonly property string sepoliaOptimism: "https://sepolia-optimism.etherscan.io/"
 
         readonly property string addressPath: "address"
         readonly property string txPath: "tx"

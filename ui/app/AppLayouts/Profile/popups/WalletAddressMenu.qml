@@ -30,8 +30,7 @@ StatusMenu {
                                    })
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
-    property string preferredSharingNetworks
-    property var preferredSharingNetworksArray
+    property var preferredSharedNetworkNamesArray
 
     signal copyToClipboard(string address)
 
@@ -42,40 +41,35 @@ StatusMenu {
     }
 
     StatusAction {
-        id: showOnEtherscanAction
-        text: qsTr("View address on Etherscan")
+        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.mainnet)
+        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
         icon.name: "link"
         onTriggered: {
-            let link = Constants.networkExplorerLinks.etherscan
-            if (areTestNetworksEnabled) {
-                if (root.isSepoliaEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaEtherscan
-                } else {
-                    link = Constants.networkExplorerLinks.goerliEtherscan
-                }
-            }
-            
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            Global.openLink(link)
         }
     }
+
     StatusAction {
-        id: showOnArbiscanAction
-        text: qsTr("View address on Arbiscan")
+        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.arbiscan)
+        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
         icon.name: "link"
         onTriggered: {
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliArbiscan : Constants.networkExplorerLinks.arbiscan
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            Global.openLink(link)
         }
     }
+
     StatusAction {
-        id: showOnOptimismAction
-        text: qsTr("View address on Optimism Explorer")
+        text: Utils.getActionNameForDisplayingAddressOnNetwork(Constants.networkShortChainNames.optimism)
+        enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
         icon.name: "link"
         onTriggered: {
-            const link = areTestNetworksEnabled ? Constants.networkExplorerLinks.goerliOptimistic : Constants.networkExplorerLinks.optimistic
-            Global.openLink("%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.selectedAccount.address?? ""))
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            Global.openLink(link)
         }
     }
+
     StatusSuccessAction {
         id: copyAddressAction
         successText:  qsTr("Address copied")

@@ -230,7 +230,7 @@ StatusModal {
             width: parent.width
             height: Math.max(flow.height, editButton.height)
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: d.multiChainView && d.preferredChainIdsArray.length > 0
+            visible: d.multiChainView && (d.preferredChainIdsArray.length > 0 || root.changingPreferredChainsEnabled)
 
             Flow {
                 id: flow
