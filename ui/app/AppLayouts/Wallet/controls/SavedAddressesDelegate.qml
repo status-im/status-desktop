@@ -12,6 +12,7 @@ import shared.controls 1.0
 
 import "../popups"
 import "../controls"
+import "../stores"
 import ".."
 
 StatusListItem {
@@ -160,7 +161,17 @@ StatusListItem {
             objectName: "showQrSavedAddressAction"
             assetSettings.name: "qr"
             onTriggered: {
-                console.warn("TODO: open qr popup...")
+                Global.openShowQRPopup({
+                                           showSingleAccount: true,
+                                           showForSavedAddress: true,
+                                           switchingAccounsEnabled: false,
+                                           changingPreferredChainsEnabled: true,
+                                           hasFloatingButtons: true,
+                                           name: menu.name,
+                                           address: menu.address,
+                                           colorId: menu.colorId,
+                                           preferredSharingChainIds: RootStore.getNetworkIds(menu.chainShortNames)
+                                       })
             }
         }
         StatusMenuSeparator { }
