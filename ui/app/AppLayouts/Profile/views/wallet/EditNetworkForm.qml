@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -96,6 +97,19 @@ ColumnLayout {
                 return p1 + p2.replace(/./g, '*');
             });
         }
+
+        function save() {
+            let main = mainRpcInput.text
+            let fallback = failoverRpcUrlInput.text
+            if (main === d.mask(network.originalRpcURL)) {
+                main = network.originalRpcURL
+            }
+
+            if (fallback === d.mask(network.originalFallbackURL)) {
+                fallback = network.originalFallbackURL
+            }
+            root.updateNetworkValues(network.chainId, main, fallback, false)
+        }
     }
 
     Connections {
@@ -163,7 +177,7 @@ ColumnLayout {
             anchors.topMargin: 4
             anchors.right: parent.right
             elide: Text.ElideRight
-            text: qsTr("Required")
+            text: qsTr("Required (changes require restart)")
             font.pixelSize: 12
             color: Theme.palette.baseColor1
         }
@@ -210,27 +224,40 @@ ColumnLayout {
         }
     }
 
-    StatusInput {
-        id: failoverRpcUrlInput
-        objectName: "failoverRpcUrlInputObject"
-        input.edit.objectName: "editNetworkFailoverRpcUrlInput"
+    Item {
         Layout.fillWidth: true
-        label: qsTr("Failover JSON RPC URL")
-        text: {
-            if (!network) {
-                return ""
-            }
-            if (network.originalFallbackURL === network.fallbackURL) {
-                return d.mask(network.fallbackURL)
-            }
-            return network.fallbackURL
+        Layout.preferredHeight: childrenRect.height
+        StatusBaseText {
+            id: optionalText
+            anchors.top: parent.top
+            anchors.topMargin: 4
+            anchors.right: parent.right
+            elide: Text.ElideRight
+            text: qsTr("Optional (changes require restart)")
+            font.pixelSize: 12
+            color: Theme.palette.baseColor1
         }
-        onTextChanged: {
-            if (text === "") {
-                d.evaluationStatusFallBackRpc = EditNetworkForm.Empty
-                return
+        StatusInput {
+            id: failoverRpcUrlInput
+            objectName: "failoverRpcUrlInputObject"
+            input.edit.objectName: "editNetworkFailoverRpcUrlInput"
+            width: parent.width
+            label: qsTr("Failover JSON RPC URL")
+            text: {
+                if (!network) {
+                    return ""
+                }
+                if (network.originalFallbackURL === network.fallbackURL) {
+                    return d.mask(network.fallbackURL)
+                }
+                return network.fallbackURL
             }
-            else {
+            onTextChanged: {
+                if (text === "") {
+                    d.evaluationStatusFallBackRpc = EditNetworkForm.Empty
+                    return
+                }
+
                 if ((d.mask(network.originalFallbackURL) === text) ||
                         (network.fallbackURL === text)) {
                     d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
@@ -239,11 +266,11 @@ ColumnLayout {
                     Qt.callLater(d.evaluateRpcEndPoint, text, false);
                 }
             }
+            errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusFallBackRpc)
+            errorMessageCmp.visible: d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
+            errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusFallBackRpc, text)
+            errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusFallBackRpc)
         }
-        errorMessageCmp.horizontalAlignment: d.getErrorMessageAlignment(d.evaluationStatusFallBackRpc)
-        errorMessageCmp.visible: d.evaluationStatusFallBackRpc !== EditNetworkForm.UnTouched
-        errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusFallBackRpc, text)
-        errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusFallBackRpc)
     }
 
     StatusInput {
@@ -291,17 +318,69 @@ ColumnLayout {
                 ) && warningCheckbox.checked
 
             onClicked: {
-                let main = mainRpcInput.text
-                let fallback = failoverRpcUrlInput.text
-                if (main === d.mask(network.originalRpcURL)) {
-                    main = network.originalRpcURL
-                }
-
-                if (fallback === d.mask(network.originalFallbackURL)) {
-                    fallback = network.originalFallbackURL
-                }
-                root.updateNetworkValues(network.chainId, main, fallback, false)
+                Global.openPopup(confirmationDialogComponent)
             }
         }
+    }
+
+    Component {
+        id: confirmationDialogComponent
+        StatusModal {
+            headerSettings.title: qsTr("RPC URL change requires app restart")
+            contentItem: Item {
+                width: parent.width
+                implicitHeight: childrenRect.height
+                Column {
+                    width: parent.width - 32
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Item {
+                        width: parent.width
+                        height: 16
+                    }
+
+                    StatusBaseText {
+                        text: qsTr("For new JSON RPC URLs to take effect, Status must be restarted. Are you ready to do this now?")
+                        font.pixelSize: 15
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        wrapMode: Text.WordWrap
+                        color: Theme.palette.directColor1
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: 16
+                    }
+                }
+            }
+
+            rightButtons: [
+                StatusFlatButton {
+                    id: laterButton
+                    text: qsTr("Save and restart later")
+                    type: StatusBaseButton.Type.Normal
+                    onClicked: {
+                        close()
+                        d.save()
+                    }
+                },
+                StatusButton {
+                    id: saveButton
+                    type: StatusBaseButton.Type.Normal
+                    text: qsTr("Save and restart Status")
+                    focus: true
+                    Keys.onReturnPressed: function(event) {
+                        saveButton.clicked()
+                    }
+                    onClicked: {
+                        close()
+                        d.save()
+                        Qt.quit()
+                    }
+                }
+            ]
+        }
+
     }
 }
