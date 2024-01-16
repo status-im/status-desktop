@@ -101,6 +101,7 @@ add_library(StatusQ SHARED
         include/StatusQ/formatteddoubleproperty.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelutilsinternal.h
+        include/StatusQ/movablemodel.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rolesrenamingmodel.h
         include/StatusQ/rxvalidator.h
@@ -120,6 +121,7 @@ add_library(StatusQ SHARED
         src/formatteddoubleproperty.cpp
         src/leftjoinmodel.cpp
         src/modelutilsinternal.cpp
+        src/movablemodel.cpp
         src/permissionutilsinternal.cpp
         src/plugin.cpp
         src/rolesrenamingmodel.cpp

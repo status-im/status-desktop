@@ -85,5 +85,9 @@ target_link_libraries(ConcatModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME ConcatModelTest COMMAND ConcatModelTest)
 
 add_executable(WritableProxyModelTest tst_WritableProxyModel.cpp)
-target_link_libraries(WritableProxyModelTest PRIVATE Qt5::Qml Qt5::Test StatusQ)
+target_link_libraries(WritableProxyModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME WritableProxyModelTest COMMAND WritableProxyModelTest)
+
+add_executable(MovableModelTest tst_MovableModel.cpp)
+target_link_libraries(MovableModelTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME MovableModelTest COMMAND MovableModelTest)
