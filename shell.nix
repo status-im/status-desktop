@@ -17,8 +17,8 @@ let
       qttools
       qtwebchannel
       qtgraphicaleffects
+      qtwebengine
 #      qtlottie # return after qt upgrade ?
-#      qtwebengine
 #      qtlocation
 
   ]));
