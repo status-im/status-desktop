@@ -8,9 +8,10 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+
 import utils 1.0
 import shared.popups 1.0
-import shared.stores 1.0 as SharedStore
 
 import "../helpers"
 
@@ -163,16 +164,7 @@ Item {
 
                 ColumnLayout {
                     StatusBaseText {
-                        text: {
-                            return qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString(
-                                                               {
-                                                                   amount: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
-                                                                               parseFloat(root.sharedKeycardModule.keyPairHelper.observedAccount.balance) :
-                                                                               0,
-                                                                   symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
-                                                                   displayDecimals: 2
-                                                               }))
-                        }
+                        text: qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance))
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2
                         color: Theme.palette.baseColor1
@@ -195,7 +187,11 @@ Item {
                             icon.width: 16
                             icon.height: 16
                             onClicked: {
-                                Qt.openUrlExternally("https://etherscan.io/address/%1".arg(root.sharedKeycardModule.keyPairHelper.observedAccount.address))
+                                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
+                                                                           WalletStore.RootStore.areTestNetworksEnabled,
+                                                                           WalletStore.RootStore.isSepoliaEnabled,
+                                                                           root.sharedKeycardModule.keyPairHelper.observedAccount.address)
+                                Global.openLink(link)
                             }
                         }
                     }

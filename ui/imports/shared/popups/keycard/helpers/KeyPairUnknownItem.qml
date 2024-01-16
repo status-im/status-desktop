@@ -9,8 +9,9 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+
 import utils 1.0
-import shared.stores 1.0 as SharedStore
 
 Rectangle {
     id: root
@@ -98,13 +99,7 @@ Rectangle {
                         Component {
                             id: balance
                             StatusBaseText {
-
-                                text: {
-                                    return LocaleUtils.currencyAmountToLocaleString({
-                                                                                        amount: parseFloat(model.account.balance),
-                                                                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
-                                                                                        displayDecimals: 2})
-                                }
+                                text: LocaleUtils.currencyAmountToLocaleString(model.account.balance)
                                 wrapMode: Text.WordWrap
                                 font.pixelSize: Constants.keycard.general.fontSize2
                                 color: Theme.palette.baseColor1
@@ -147,7 +142,11 @@ Rectangle {
                                 icon.width: 16
                                 icon.height: 16
                                 onClicked: {
-                                    Qt.openUrlExternally("https://etherscan.io/address/%1".arg(model.account.address))
+                                    let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
+                                                                               WalletStore.RootStore.areTestNetworksEnabled,
+                                                                               WalletStore.RootStore.isSepoliaEnabled,
+                                                                               model.account.address)
+                                    Global.openLink(link)
                                 }
                             }
                         }

@@ -165,12 +165,11 @@ QtObject:
     write = setBalance
     notify = balanceChanged
 
-  proc balanceFetchedChanged*(self: KeyPairAccountItem) {.signal.}
   proc getBalanceFetched*(self: KeyPairAccountItem): bool {.slot.} =
     return self.balanceFetched
   QtProperty[bool] balanceFetched:
     read = getBalanceFetched
-    notify = balanceFetchedChanged
+    notify = balanceChanged
 
   proc isDefaultAccountChanged*(self: KeyPairAccountItem) {.signal.}
   proc getIsDefaultAccount*(self: KeyPairAccountItem): bool {.slot.} =
