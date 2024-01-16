@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     sha256 = hashes.${platform} or (throw "Missing Go bootstrap hash for platform ${platform}");
   };
 
-  nativeBuildInputs = lib.optionals stdenv.isLinux [ autoPatchelfHook ];
+  #nativeBuildInputs = lib.optionals stdenv.isLinux [ autoPatchelfHook ];
 
   # We must preserve the signature on Darwin
   dontStrip = stdenv.hostPlatform.isDarwin;
