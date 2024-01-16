@@ -49,4 +49,8 @@ in rec {
   binutils_2_33 = prev.wrapBintoolsWith {
     bintools = binutils_2_33-unwrapped;
   };
+
+  lddWrapped = prev.writeShellScriptBin "ldd" ''
+    "${final.bash}/bin/sh" "${final.glibc.bin}/bin/ldd" "$@"
+  '';
 }
