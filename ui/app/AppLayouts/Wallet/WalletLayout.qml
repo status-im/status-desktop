@@ -49,9 +49,17 @@ Item {
             keypairImport.active = false
         }
     }
-    
-    function showSigningPhrasePopup(){
 
+    enum LeftPanelSelection {
+        AllAddresses,
+        Address,
+        SavedAddresses
+    }
+
+    enum RightPanelSelection {
+        Collectibles,
+        Assets,
+        Activity
     }
 
     function resetView() {
@@ -67,6 +75,41 @@ Item {
 
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
+        }
+    }
+
+    function openDesiredView(leftPanelSelection, rightPanelSelection, data) {
+        if (leftPanelSelection !== WalletLayout.LeftPanelSelection.AllAddresses &&
+                leftPanelSelection !== WalletLayout.LeftPanelSelection.SavedAddresses &&
+                leftPanelSelection !== WalletLayout.LeftPanelSelection.Address) {
+            console.warn("not supported left selection", leftPanelSelection)
+            return
+        }
+
+        if (leftPanelSelection === WalletLayout.LeftPanelSelection.SavedAddresses) {
+            d.displaySavedAddresses()
+        } else {
+            if (leftPanelSelection === WalletLayout.LeftPanelSelection.AllAddresses) {
+                d.displayAllAddresses()
+            } else if (leftPanelSelection === WalletLayout.LeftPanelSelection.Address) {
+                d.displayAddress(address)
+            }
+
+            if (rightPanelSelection !== WalletLayout.RightPanelSelection.Collectibles &&
+                    rightPanelSelection !== WalletLayout.RightPanelSelection.Assets &&
+                    rightPanelSelection !== WalletLayout.RightPanelSelection.Activity) {
+                console.warn("not supported right selection", rightPanelSelection)
+                return
+            }
+
+            rightPanelStackView.currentItem.resetView()
+            rightPanelStackView.currentItem.currentTabIndex = rightPanelSelection
+
+            let savedAddress = data.savedAddress?? ""
+            if (!!savedAddress) {
+                RootStore.currentActivityFiltersStore.resetAllFilters()
+                RootStore.currentActivityFiltersStore.toggleSavedAddress(savedAddress)
+            }
         }
     }
 

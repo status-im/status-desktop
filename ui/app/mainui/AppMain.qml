@@ -330,7 +330,7 @@ Item {
             appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
         }
 
-        function onAppSectionBySectionTypeChanged(sectionType, subsection, settingsSubsection = -1) {
+        function onAppSectionBySectionTypeChanged(sectionType, subsection, subSubsection = -1, data = {}) {
             if(!appMain.rootStore.mainModuleInst)
                 return
 
@@ -338,6 +338,15 @@ Item {
             if (sectionType === Constants.appSection.profile) {
                 Global.settingsSubsection = subsection;
                 Global.settingsSubSubsection = settingsSubsection;
+                return
+            }
+
+            if (sectionType === Constants.appSection.wallet) {
+                appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(
+                            WalletLayout.LeftPanelSelection.AllAddresses,
+                            WalletLayout.RightPanelSelection.Activity,
+                            data
+                            )
             }
         }
 
@@ -1237,9 +1246,11 @@ Item {
                     }
 
                     Loader {
+                        id: walletLoader
                         active: appView.currentIndex === Constants.appViewStackIndex.wallet
                         asynchronous: true
                         sourceComponent: WalletLayout {
+                            objectName: "walletLayoutReal"
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             emojiPopup: statusEmojiPopup.item

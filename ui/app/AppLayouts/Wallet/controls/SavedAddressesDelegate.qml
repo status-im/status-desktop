@@ -130,6 +130,7 @@ StatusListItem {
             menu.ens = ""
             menu.colorId = ""
         }
+
         StatusAction {
             text: qsTr("Edit saved address")
             objectName: "editSavedAddress"
@@ -145,6 +146,7 @@ StatusListItem {
                                                       })
             }
         }
+
         StatusSuccessAction {
             id: copyAddressAction
             objectName: "copySavedAddressAction"
@@ -157,6 +159,7 @@ StatusListItem {
                 store.copyToClipboard(d.visibleAddress)
             }
         }
+
         StatusAction {
             text: qsTr("Show address QR")
             objectName: "showQrSavedAddressAction"
@@ -173,6 +176,18 @@ StatusListItem {
                                            colorId: menu.colorId,
                                            preferredSharingChainIds: RootStore.getNetworkIds(menu.chainShortNames)
                                        })
+            }
+        }
+
+        StatusAction {
+            text: qsTr("View activity")
+            objectName: "viewActivitySavedAddressAction"
+            assetSettings.name: "wallet"
+            onTriggered: {
+                Global.changeAppSectionBySectionType(Constants.appSection.wallet,
+                                                     WalletLayout.LeftPanelSelection.AllAddresses,
+                                                     WalletLayout.RightPanelSelection.Activity,
+                                                     {savedAddress: menu.address})
             }
         }
 
