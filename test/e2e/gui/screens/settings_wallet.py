@@ -461,14 +461,12 @@ class EditNetworkSettings(WalletSettingsView):
                 self._live_network_tab.click()
                 current_value = self.get_edit_network_main_json_rpc_url_value()
                 return True if current_value.startswith(
-                    WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value) and current_value.endswith("****") \
-                    else False
+                    WalletNetworkDefaultValues.ETHEREUM_LIVE_MAIN.value) and current_value.endswith("****") else False
             case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
                 self._test_network_tab.click()
                 current_value = self.get_edit_network_main_json_rpc_url_value()
                 return True if current_value.startswith(
-                    WalletNetworkDefaultValues.ETHEREUM_TEST_MAIN.value) and current_value.endswith("****") \
-                    else False
+                    WalletNetworkDefaultValues.ETHEREUM_TEST_MAIN.value) and current_value.endswith("****") else False
 
     @allure.step('Verify value in Failover JSON RPC input')
     def verify_edit_network_failover_json_rpc_url_value(self, network_tab):
@@ -477,14 +475,14 @@ class EditNetworkSettings(WalletSettingsView):
                 self._live_network_tab.click()
                 current_value = self.get_edit_network_failover_json_rpc_url_value()
                 return True if current_value.startswith(
-                    WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value) and current_value.endswith("****") \
-                    else False
+                    WalletNetworkDefaultValues.ETHEREUM_LIVE_FAILOVER.value) and current_value.endswith(
+                    "****") else False
             case WalletNetworkSettings.EDIT_NETWORK_TEST_TAB.value:
                 self._test_network_tab.click()
                 current_value = self.get_edit_network_failover_json_rpc_url_value()
                 return True if current_value.startswith(
-                    WalletNetworkDefaultValues.ETHEREUM_TEST_FAILOVER.value) and current_value.endswith("****") \
-                    else False
+                    WalletNetworkDefaultValues.ETHEREUM_TEST_FAILOVER.value) and current_value.endswith(
+                    "****") else False
 
 
 class EditAccountOrderSettings(WalletSettingsView):

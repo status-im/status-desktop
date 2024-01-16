@@ -45,8 +45,8 @@ class WalletNetworkNaming(Enum):
 
 
 class WalletNetworkDefaultValues(Enum):
-    ETHEREUM_LIVE_MAIN = 'https://eth-archival.gateway.pokt.network'
-    ETHEREUM_TEST_MAIN = 'https://goerli-archival.gateway.pokt.network'
+    ETHEREUM_LIVE_MAIN = 'https://eth-archival.rpc.grove.city'
+    ETHEREUM_TEST_MAIN = 'https://goerli-archival.rpc.grove.city'
     ETHEREUM_LIVE_FAILOVER = 'https://mainnet.infura.io'
     ETHEREUM_TEST_FAILOVER = 'https://goerli.infura.io'
 
