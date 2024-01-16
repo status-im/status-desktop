@@ -671,7 +671,16 @@ QMap<int, QVariant> WritableProxyModel::itemData(const QModelIndex& index) const
     if (!index.isValid())
         return {};
 
-    return QAbstractProxyModel::itemData(index);
+    QMap<int, QVariant> result;
+    
+    auto keysList = roleNames().keys();
+    for (auto& role : keysList)
+    {
+        auto data = this->data(index, role);
+        result[role] = data;
+    }
+    
+    return result;
 }
 
 bool WritableProxyModel::setItemData(const QModelIndex& index, const QMap<int, QVariant>& roles)
@@ -679,11 +688,13 @@ bool WritableProxyModel::setItemData(const QModelIndex& index, const QMap<int, Q
     if (!index.isValid())
         return false;
 
-    if (QAbstractProxyModel::itemData(index) == roles)
+    if (itemData(index) == roles)
         return false;
 
-    setDirty(true);
-    return QAbstractProxyModel::setItemData(index, roles);
+    for (auto it = roles.begin(); it != roles.end(); ++it)
+        setData(index, it.value(), it.key());
+    
+    return true;
 }
 
 bool WritableProxyModel::removeRows(int row, int count, const QModelIndex& parent)
@@ -798,7 +809,10 @@ void WritableProxyModel::onRowsInserted(const QModelIndex& parent, int first, in
     {
         if (d->insertedRows.contains(index(rowToRemove, 0)))
         {
-            if (itemData(index(rowToRemove, 0)) == sourceModel()->itemData(sourceModel()->index(row, 0)))
+            auto insertedRowIndex = index(rowToRemove, 0);
+            auto sourceRowIndex = index(d->sourceToProxyRow(row), 0);
+
+            if (itemData(insertedRowIndex) == itemData(sourceRowIndex))
             {
                 //rowToRemove remains in place if the proxy row is removed
                 d->removeRows(rowToRemove, 1, {});
