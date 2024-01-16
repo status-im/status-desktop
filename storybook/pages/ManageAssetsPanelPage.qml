@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Models 0.1
 
 import AppLayouts.Wallet.panels 1.0
 
@@ -29,7 +30,10 @@ SplitView {
         ManageAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: ctrlEmptyModel.checked ? null : assetsModel
+            controller: ManageTokensController {
+                sourceModel: ctrlEmptyModel.checked ? null : assetsModel
+                settingsKey: "WalletAssets"
+            }
         }
     }
 

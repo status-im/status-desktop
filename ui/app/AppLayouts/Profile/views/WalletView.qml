@@ -276,9 +276,7 @@ SettingsContentBase {
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
             baseWalletAssetsModel: RootStore.assets
-            baseWalletCollectiblesModel: {
-                return RootStore.collectiblesStore.allCollectiblesModel
-            }
+            baseWalletCollectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
 
             Binding on currentIndex {
                 value: {

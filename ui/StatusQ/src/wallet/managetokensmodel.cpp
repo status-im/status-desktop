@@ -38,8 +38,13 @@ void ManageTokensModel::addItem(const TokenData& item, bool append)
     endInsertRows();
 }
 
-std::optional<TokenData> ManageTokensModel::takeItem(int row)
+std::optional<TokenData> ManageTokensModel::takeItem(const QString& symbol)
 {
+    const auto token = std::find_if(m_data.cbegin(), m_data.cend(), [symbol](const auto& item) {
+        return symbol == item.symbol;
+    });
+    const auto row = std::distance(m_data.cbegin(), token);
+
     if (row < 0 || row >= rowCount())
         return {};
 

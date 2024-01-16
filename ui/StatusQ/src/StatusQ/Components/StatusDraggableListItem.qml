@@ -380,7 +380,6 @@ ItemDelegate {
             width: root.icon.width
             height: root.icon.height
             image.source: root.icon.source
-            image.sourceSize: Qt.size(width, height)
             showLoadingIndicator: true
             image.fillMode: Image.PreserveAspectCrop
         }

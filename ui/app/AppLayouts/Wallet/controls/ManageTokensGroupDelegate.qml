@@ -21,6 +21,7 @@ DropArea {
     property var dragParent
     property alias dragEnabled: groupedCommunityTokenDelegate.dragEnabled
     property bool isCollectible
+    property bool isHidden // inside the "Hidden" section
 
     readonly property string communityId: model.communityId
     readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in m_communityTokenGroupsModel
@@ -33,8 +34,8 @@ DropArea {
     }
 
     keys: ["x-status-draggable-community-group-item"]
-    width: ListView.view.width
-    height: groupedCommunityTokenDelegate.implicitHeight
+    width: ListView.view ? ListView.view.width : 0
+    height: visible ? groupedCommunityTokenDelegate.implicitHeight : 0
 
     onEntered: function(drag) {
         const from = drag.source.visualIndex
@@ -49,10 +50,7 @@ DropArea {
         id: groupedCommunityTokenDelegate
         width: parent.width
         height: dragActive ? implicitHeight : parent.height
-        leftPadding: Style.current.halfPadding
-        rightPadding: Style.current.halfPadding
-        bottomPadding: Style.current.halfPadding
-        topPadding: 22
+        horizontalPadding: root.isHidden ? 0 : Style.current.halfPadding
         draggable: true
         spacing: 12
         bgColor: Theme.palette.baseColor4
@@ -65,13 +63,12 @@ DropArea {
         Drag.hotSpot.y: root.height/2
 
         contentItem: ColumnLayout {
-            spacing: 0
+            spacing: 12
 
             RowLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
-                Layout.bottomMargin: 14
                 spacing: groupedCommunityTokenDelegate.spacing
 
                 StatusIcon {
@@ -97,25 +94,25 @@ DropArea {
                     font.weight: Font.Medium
                 }
 
-                StatusBaseText {
-                    Layout.leftMargin: -parent.spacing/2
-                    text: "• %1".arg(root.isCollectible ? qsTr("%n collectible(s)", "", root.childCount) : qsTr("%n asset(s)", "", root.childCount))
-                    elide: Text.ElideRight
-                    color: Theme.palette.baseColor1
-                    maximumLineCount: 1
-                    visible: !root.communityGroupsExpanded
-                }
-
                 Item { Layout.fillWidth: true }
+
+                ManageTokensCommunityTag {
+                    text: root.childCount
+                    asset.name: root.isCollectible ? "image" : "token"
+                    asset.isImage: false
+                    asset.color: Theme.palette.baseColor1
+                    enabled: false
+                }
 
                 ManageTokenMenuButton {
                     objectName: "btnManageTokenMenu-%1".arg(currentIndex)
                     currentIndex: visualIndex
-                    count: root.controller.communityTokenGroupsModel.count
+                    count: root.controller.communityTokenGroupsModel.count // FIXME collection
                     isGroup: true
                     isCollectible: root.isCollectible
                     groupId: model.communityId
-                    onMoveRequested: (from, to) => root.controller.communityTokenGroupsModel.moveItem(from, to) // TODO collection
+                    inHidden: root.isHidden
+                    onMoveRequested: (from, to) => root.controller.communityTokenGroupsModel.moveItem(from, to) // FIXME collection
                     onShowHideGroupRequested: function(groupId, flag) {
                         root.controller.showHideGroup(groupId, flag)
                         root.controller.saveSettings()
@@ -129,7 +126,7 @@ DropArea {
                 Layout.preferredHeight: contentHeight
                 model: root.controller.communityTokensModel
                 interactive: false
-                visible: root.communityGroupsExpanded
+                visible: root.communityGroupsExpanded && !root.isHidden
 
                 displaced: Transition {
                     NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }

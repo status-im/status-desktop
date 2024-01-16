@@ -18,53 +18,36 @@ import AppLayouts.Wallet.controls 1.0
 Control {
     id: root
 
-    required property var baseModel
+    required property var controller
 
-    readonly property bool dirty: d.controller.dirty
-    readonly property bool hasSettings: d.controller.hasSettings
+    readonly property bool dirty: root.controller.dirty
+    readonly property bool hasSettings: root.controller.hasSettings
 
     background: null
 
     function saveSettings() {
-        d.controller.saveSettings();
+        root.controller.saveSettings();
     }
 
     function revert() {
-        d.controller.revert();
+        root.controller.revert();
     }
 
     function clearSettings() {
-        d.controller.clearSettings();
+        root.controller.clearSettings();
     }
 
     QtObject {
         id: d
 
-        property bool collectionGroupsExpanded: true
+        //property bool collectionGroupsExpanded: true
         property bool communityGroupsExpanded: true
+    }
 
-        readonly property var renamedModel: RolesRenamingModel {
-            sourceModel: root.baseModel
-
-            mapping: [
-                RoleRename {
-                    from: "uid"
-                    to: "symbol"
-                }
-            ]
-        }
-
-        readonly property var controller: ManageTokensController {
-            sourceModel: d.renamedModel
-            arrangeByCommunity: switchArrangeByCommunity.checked
-            settingsKey: "WalletCollectibles"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 was successfully hidden.").arg(name), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-        }
+    Binding {
+        target: controller
+        property: "arrangeByCommunity"
+        value: switchArrangeByCommunity.checked
     }
 
     contentItem: ColumnLayout {
@@ -73,7 +56,7 @@ Control {
         ShapeRectangle {
             Layout.fillWidth: true
             Layout.margins: 2
-            visible: !d.controller.regularTokensModel.count
+            visible: !root.controller.regularTokensModel.count
             text: qsTr("You’ll be able to manage the display of your collectibles here")
         }
 
@@ -85,7 +68,7 @@ Control {
 //            id: switchArrangeByCollection
 //            textColor: Theme.palette.baseColor1
 //            text: qsTr("Arrange by collection")
-//            visible: d.controller.regularTokensModel.count
+//            visible: root.controller.regularTokensModel.count
 //        }
 
 //        StatusModalDivider {
@@ -106,7 +89,7 @@ Control {
         StatusListView {
             objectName: "lvRegularTokens"
             Layout.fillWidth: true
-            model: d.controller.regularTokensModel
+            model: root.controller.regularTokensModel
             implicitHeight: contentHeight
             interactive: false
 
@@ -116,9 +99,9 @@ Control {
 
             delegate: ManageTokensDelegate {
                 isCollectible: true
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                count: d.controller.regularTokensModel.count
+                count: root.controller.regularTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-token-item"]
             }
@@ -128,7 +111,7 @@ Control {
             id: communityTokensHeader
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
-            visible: d.controller.communityTokensModel.count
+            visible: root.controller.communityTokensModel.count
             StatusBaseText {
                 color: Theme.palette.baseColor1
                 text: qsTr("Community")
@@ -163,38 +146,9 @@ Control {
         Loader {
             objectName: "loaderCommunityTokens"
             Layout.fillWidth: true
-            active: d.controller.communityTokensModel.count
+            active: root.controller.communityTokensModel.count
             visible: active
             sourceComponent: switchArrangeByCommunity.checked ? cmpCommunityTokenGroups : cmpCommunityTokens
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            color: Theme.palette.baseColor1
-            text: qsTr("Hidden")
-            visible: d.controller.hiddenTokensModel.count
-        }
-
-        StatusListView {
-            objectName: "lvHiddenTokens"
-            Layout.fillWidth: true
-            model: d.controller.hiddenTokensModel
-            implicitHeight: contentHeight
-            interactive: false
-
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
-
-            delegate: ManageTokensDelegate {
-                isCollectible: true
-                controller: d.controller
-                dragParent: root
-                dragEnabled: false
-                keys: ["x-status-draggable-none"]
-                isHidden: true
-            }
         }
     }
 
@@ -202,7 +156,7 @@ Control {
         id: cmpCommunityTokens
         StatusListView {
             objectName: "lvCommunityTokens"
-            model: d.controller.communityTokensModel
+            model: root.controller.communityTokensModel
             implicitHeight: contentHeight
             interactive: false
 
@@ -212,9 +166,9 @@ Control {
 
             delegate: ManageTokensDelegate {
                 isCollectible: true
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                count: d.controller.communityTokensModel.count
+                count: root.controller.communityTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-community-token-item"]
             }
@@ -225,7 +179,7 @@ Control {
         id: cmpCommunityTokenGroups
         StatusListView {
             objectName: "lvCommunityTokenGroups"
-            model: d.controller.communityTokenGroupsModel
+            model: root.controller.communityTokenGroupsModel
             implicitHeight: contentHeight
             interactive: false
             spacing: Style.current.halfPadding
@@ -236,9 +190,9 @@ Control {
 
             delegate: ManageTokensGroupDelegate {
                 isCollectible: true
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                dragEnabled: d.controller.communityTokenGroupsModel.count > 1
+                dragEnabled: root.controller.communityTokenGroupsModel.count > 1
                 communityGroupsExpanded: d.communityGroupsExpanded
             }
         }

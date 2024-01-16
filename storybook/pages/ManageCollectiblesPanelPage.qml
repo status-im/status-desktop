@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core 0.1
 
 import AppLayouts.Wallet.panels 1.0
@@ -23,16 +24,28 @@ SplitView {
         id: collectiblesModel
     }
 
+    RolesRenamingModel {
+        id: renamedModel
+        sourceModel: ctrlEmptyModel.checked ? null : collectiblesModel
+        mapping: [
+            RoleRename {
+                from: "uid"
+                to: "symbol"
+            }
+        ]
+    }
+
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-
         Component.onCompleted: forceActiveFocus()
-
         ManageCollectiblesPanel {
             id: showcasePanel
             width: 500
-            baseModel: ctrlEmptyModel.checked ? null : collectiblesModel
+            controller: ManageTokensController {
+                sourceModel: renamedModel
+                settingsKey: "WalletCollectibles"
+            }
         }
     }
 
