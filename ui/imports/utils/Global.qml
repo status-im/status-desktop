@@ -63,7 +63,7 @@ QtObject {
     signal activateDeepLink(string link)
 
     signal setNthEnabledSectionActive(int nthSection)
-    signal appSectionBySectionTypeChanged(int sectionType, int subsection, int settingsSubsection)
+    signal appSectionBySectionTypeChanged(int sectionType, int subsection, int subSubsection, var data)
 
     signal openSendModal(string address)
     signal switchToCommunity(string communityId)
@@ -108,8 +108,8 @@ QtObject {
         root.openDownloadModalRequested(available, version, url);
     }
 
-    function changeAppSectionBySectionType(sectionType, subsection = 0, settingsSubsection = -1) {
-        root.appSectionBySectionTypeChanged(sectionType, subsection, settingsSubsection)
+    function changeAppSectionBySectionType(sectionType, subsection = 0, subSubsection = -1, data = {}) {
+        root.appSectionBySectionTypeChanged(sectionType, subsection, subSubsection, data)
     }
 
     function openMenu(menuComponent, menuParent, params = {}, point = undefined) {
