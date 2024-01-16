@@ -4,6 +4,7 @@ RightTabBaseView {
     id: root
 
     SavedAddresses {
+        objectName: "savedAddressesArea"
         width: root.width
         height: root.height - header.height
 
