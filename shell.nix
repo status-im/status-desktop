@@ -52,16 +52,16 @@ in pkgs.mkShell {
 # https://github.com/NixOS/nixpkgs/pull/109649
   QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515.qtbase.qtPluginPrefix}";
 
-
   shellHook = ''
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
     '';
 
-# Used to workaround missin lib links in qt-custom
+# Used to workaround missing lib links in qt-custom
 # TODO:check again after Qt upgrade
   LIBRARY_PATH = with pkgs.qt515; pkgs.lib.makeLibraryPath [
     qtdeclarative
     qtquickcontrols
+    qtquickcontrols2
     qtsvg
     qtmultimedia
     qtwebview
