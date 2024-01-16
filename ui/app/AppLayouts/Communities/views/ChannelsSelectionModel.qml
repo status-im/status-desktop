@@ -3,71 +3,60 @@ import SortFilterProxyModel 0.2
 
 import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ 0.1
 
 import utils 1.0
 
 SortFilterProxyModel {
-    property var channelsModel
+    id: root
+    
+    property var selectedChannels
+    property var allChannels
 
-    readonly property QtObject _d: QtObject {
-        id: d
-
-        readonly property ModelChangeTracker tracker: ModelChangeTracker {
-            model: channelsModel
-
-            onRevisionChanged: {
-                const metadata = new Map()
-                const count = channelsModel.rowCount()
-
-                for (let i = 0; i < count; i++) {
-                    const item = ModelUtils.get(channelsModel, i)
-
-                    const text = "#" + item.name
-                    const imageSource = item.icon
-                    const emoji = item.emoji
-                    const color = !!item.color ? item.color
-                                               : Theme.palette.userCustomizationColors[item.colorId]
-                    metadata.set(item.itemId, { text, imageSource, emoji, color })
+    sourceModel: LeftJoinModel {
+        readonly property var channelsModelAlignedKey: SortFilterProxyModel {
+            sourceModel: root.allChannels
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "key"
+                    expression: model.itemId ?? ""
+                    expectedRoles: ["itemId"]
                 }
-
-                d.metadata = metadata
-            }
-
-            onModelChanged: revisionChanged()
+            ]
         }
-
-        property var metadata: new Map()
-
-        function get(key, role) {
-            const item = metadata.get(key)
-            return !!item ? item[role] : ""
-        }
+        leftModel: root.selectedChannels
+        rightModel: channelsModelAlignedKey
+        joinRole: "key"
     }
 
     proxyRoles: [
-        ExpressionRole {
+        FastExpressionRole {
             name: "text"
-            expression: d.get(model.key, name)
+            expression: "#" + model.name
+            expectedRoles: ["name"]
         },
-        ExpressionRole {
+        FastExpressionRole {
             name: "imageSource"
-            expression: d.get(model.key, name)
+            expression: model.icon
+            expectedRoles: ["icon"]
         },
-        ExpressionRole {
-            name: "emoji"
-            expression: d.get(model.key, name)
-        },
-        ExpressionRole {
+        FastExpressionRole {
+            function getColor(color, colorId) {
+                return !!color ? color
+                                : Theme.palette.userCustomizationColors[colorId]
+            }
             name: "color"
-            expression: d.get(model.key, name)
+            expression: getColor(model.color, model.colorId)
+            expectedRoles: ["color", "colorId"]
         },
-        ExpressionRole {
+        FastExpressionRole {
             name: "operator"
 
             // Direct call for singleton enum is not handled properly by SortFilterProxyModel.
             readonly property int none: OperatorsUtils.Operators.None
 
             expression: none
+            expectedRoles: []
         }
     ]
 }

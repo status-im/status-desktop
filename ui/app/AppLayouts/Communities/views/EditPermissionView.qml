@@ -513,9 +513,8 @@ StatusScrollView {
             ChannelsSelectionModel {
                 id: channelsSelectionModel
 
-                sourceModel: d.dirtyValues.selectedChannelsModel
-
-                channelsModel: root.channelsModel
+                selectedChannels: d.dirtyValues.selectedChannelsModel
+                allChannels: root.channelsModel
             }
 
             InDropdown {
