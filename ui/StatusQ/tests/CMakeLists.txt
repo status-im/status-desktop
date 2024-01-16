@@ -17,11 +17,13 @@ add_library(StatusQTestLib
     src/TestHelpers/listmodelwrapper.h
     src/TestHelpers/modelaccessobserverproxy.cpp
     src/TestHelpers/modelaccessobserverproxy.h
+    src/TestHelpers/modelsignalsspy.cpp
+    src/TestHelpers/modelsignalsspy.h
     src/TestHelpers/testmodel.cpp
     src/TestHelpers/testmodel.h
 )
 
-target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick)
+target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test)
 target_include_directories(StatusQTestLib PUBLIC src)
 
 enable_testing()
@@ -51,31 +53,31 @@ add_test(NAME QmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 ###########
 
 add_executable(RolesRenamingModelTest tst_RolesRenamingModel.cpp)
-target_link_libraries(RolesRenamingModelTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(RolesRenamingModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME RolesRenamingModelTest COMMAND RolesRenamingModelTest)
 
 add_executable(LeftJoinModelTest tst_LeftJoinModel.cpp)
-target_link_libraries(LeftJoinModelTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(LeftJoinModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME LeftJoinModelTest COMMAND LeftJoinModelTest)
 
 add_executable(SubmodelProxyModelTest tst_SubmodelProxyModel.cpp)
-target_link_libraries(SubmodelProxyModelTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(SubmodelProxyModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SubmodelProxyModelTest COMMAND SubmodelProxyModelTest)
 
 add_executable(AggregatorTest tst_Aggregator.cpp)
-target_link_libraries(AggregatorTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(AggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME AggregatorTest COMMAND AggregatorTest)
 
 add_executable(SingleRoleAggregatorTest tst_SingleRoleAggregator.cpp)
-target_link_libraries(SingleRoleAggregatorTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(SingleRoleAggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SingleRoleAggregatorTest COMMAND SingleRoleAggregatorTest)
 
 add_executable(SumAggregatorTest tst_SumAggregator.cpp)
-target_link_libraries(SumAggregatorTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(SumAggregatorTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SumAggregatorTest COMMAND SumAggregatorTest)
 
 add_executable(ConcatModelTest tst_ConcatModel.cpp)
-target_link_libraries(ConcatModelTest PRIVATE Qt5::Test StatusQ StatusQTestLib)
+target_link_libraries(ConcatModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME ConcatModelTest COMMAND ConcatModelTest)
 
 add_executable(WritableProxyModelTest tst_WritableProxyModel.cpp)
