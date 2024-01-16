@@ -25,6 +25,11 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_PROPERTY(QAbstractItemModel* communityTokensModel READ communityTokensModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* communityTokenGroupsModel READ communityTokenGroupsModel CONSTANT FINAL)
     Q_PROPERTY(QAbstractItemModel* hiddenTokensModel READ hiddenTokensModel CONSTANT FINAL)
+
+    // TODO track hidden collection groups
+    Q_PROPERTY(QStringList hiddenCommunityGroups READ hiddenCommunityGroups NOTIFY hiddenCommunityGroupsChanged FINAL)
+    Q_PROPERTY(QAbstractItemModel* hiddenCommunityTokenGroupsModel READ hiddenCommunityTokenGroupsModel CONSTANT FINAL)
+
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged FINAL)
     Q_PROPERTY(bool hasSettings READ hasSettings NOTIFY settingsDirtyChanged FINAL)
     Q_PROPERTY(bool settingsDirty READ settingsDirty NOTIFY settingsDirtyChanged FINAL)
@@ -32,8 +37,8 @@ class ManageTokensController : public QObject, public QQmlParserStatus
 public:
     explicit ManageTokensController(QObject* parent = nullptr);
 
-    Q_INVOKABLE void showHideRegularToken(int row, bool flag);
-    Q_INVOKABLE void showHideCommunityToken(int row, bool flag);
+    Q_INVOKABLE void showHideRegularToken(const QString& symbol, bool flag);
+    Q_INVOKABLE void showHideCommunityToken(const QString& symbol, bool flag);
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
 
     Q_INVOKABLE void loadSettings();
@@ -43,6 +48,7 @@ public:
 
     Q_INVOKABLE void settingsHideToken(const QString& symbol);
     Q_INVOKABLE void settingsHideCommunityTokens(const QString& communityId, const QStringList& symbols);
+    // TODO settingHideCollectionTokens
 
     Q_INVOKABLE bool lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
@@ -63,6 +69,8 @@ signals:
     void communityTokenGroupHidden(const QString& communityName);
     void communityTokenGroupShown(const QString& communityName);
     // TODO collectionTokenGroupHidden(const QString& collectionName);
+
+    void hiddenCommunityGroupsChanged();
 
 private:
     QAbstractItemModel* m_sourceModel{nullptr};
@@ -87,6 +95,9 @@ private:
     ManageTokensModel* m_hiddenTokensModel{nullptr};
     QAbstractItemModel* hiddenTokensModel() const { return m_hiddenTokensModel; }
 
+    ManageTokensModel* m_hiddenCommunityTokenGroupsModel{nullptr};
+    QAbstractItemModel* hiddenCommunityTokenGroupsModel() const { return m_hiddenCommunityTokenGroupsModel; }
+
     bool dirty() const;
 
     bool m_arrangeByCommunity{false};
@@ -96,9 +107,11 @@ private:
     QStringList m_communityIds;
     void reloadCommunityIds();
     void rebuildCommunityTokenGroupsModel();
+    void rebuildHiddenCommunityTokenGroupsModel();
     void rebuildRegularTokenGroupsModel();
 
-    const std::array<ManageTokensModel*, 5> m_allModels {m_regularTokensModel, m_regularTokenGroupsModel, m_communityTokensModel, m_communityTokenGroupsModel, m_hiddenTokensModel};
+    const std::array<ManageTokensModel*, 6> m_allModels {m_regularTokensModel, m_regularTokenGroupsModel, m_communityTokensModel, m_communityTokenGroupsModel, m_hiddenTokensModel,
+                                                        m_hiddenCommunityTokenGroupsModel};
 
     QString m_settingsKey;
     QString settingsKey() const;
@@ -113,4 +126,8 @@ private:
     void setSettingsDirty(bool dirty);
 
     bool m_modelConnectionsInitialized{false};
+
+    // explicitely mass-hidden community asset/collectible groups
+    QSet<QString> m_hiddenCommunityGroups;
+    QStringList hiddenCommunityGroups() const;
 };

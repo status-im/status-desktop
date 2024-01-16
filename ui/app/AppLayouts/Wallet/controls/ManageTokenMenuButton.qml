@@ -23,7 +23,7 @@ StatusFlatButton {
     readonly property bool menuVisible: menuLoader.active
 
     signal moveRequested(int from, int to)
-    signal showHideRequested(int index, bool flag)
+    signal showHideRequested(string symbol, bool flag)
     signal showHideGroupRequested(string groupId, bool flag)
 
     icon.name: "more"
@@ -82,14 +82,14 @@ StatusFlatButton {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: root.isCollectible ? qsTr("Hide collectible") : qsTr("Hide asset")
-                onTriggered: root.showHideRequested(root.currentIndex, false)
+                onTriggered: root.showHideRequested(model.symbol, false)
             }
             StatusAction {
                 objectName: "miShowToken"
-                enabled: root.inHidden
+                enabled: root.inHidden && !root.isGroup
                 icon.name: "show"
                 text: root.isCollectible ? qsTr("Show collectible") : qsTr("Show asset")
-                onTriggered: root.showHideRequested(root.currentIndex, true)
+                onTriggered: root.showHideRequested(model.symbol, true)
             }
 
             // (hide) community tokens
@@ -104,7 +104,7 @@ StatusFlatButton {
                     objectName: "miHideCommunityToken"
                     text: root.isCollectible ? qsTr("This collectible") : qsTr("This asset")
                     onTriggered: {
-                        root.showHideRequested(root.currentIndex, false)
+                        root.showHideRequested(model.symbol, false)
                         communitySubmenu.dismiss()
                     }
                 }

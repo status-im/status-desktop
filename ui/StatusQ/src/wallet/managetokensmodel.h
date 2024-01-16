@@ -64,7 +64,7 @@ public:
     Q_INVOKABLE void moveItem(int fromRow, int toRow);
 
     void addItem(const TokenData& item, bool append = true);
-    std::optional<TokenData> takeItem(int row);
+    std::optional<TokenData> takeItem(const QString& symbol);
     QList<TokenData> takeAllItems(const QString& communityId);
     void clear();
 
@@ -78,6 +78,7 @@ public:
 
     int count() const { return rowCount(); }
     const TokenData& itemAt(int row) const { return m_data.at(row); }
+    TokenData& itemAt(int row) { return m_data[row]; }
 
     void setCommunityIds(const QStringList& ids) { m_communityIds = ids; };
     bool hasCommunityIdToken(const QString& communityId) const;

@@ -278,7 +278,6 @@ SettingsContentBase {
             baseWalletAssetsModel: RootStore.assets
             baseWalletCollectiblesModel: {
                 RootStore.setFillterAllAddresses() // FIXME no other way to get _all_ collectibles?
-                // TODO concat proxy model to include community collectibles (#12519)
                 return RootStore.collectiblesStore.ownedCollectibles
             }
 
