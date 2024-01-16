@@ -25,6 +25,7 @@ public:
     QVariant get(int index, const QString& roleName);
 
     void insert(int index, const QJsonObject& dict);
+    void insert(int index, const QJsonArray& data);
     void append(const QJsonArray& data);
     void clear();
     void remove(int index, int count = 1);

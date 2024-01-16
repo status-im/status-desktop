@@ -91,6 +91,11 @@ void ListModelWrapper::insert(int index, const QJsonObject& dict) {
     runExpression(QString("insert(%1, %2)").arg(index).arg(jsonDict));
 }
 
+void ListModelWrapper::insert(int index, const QJsonArray& data) {
+    QString jsonData = QJsonDocument(data).toJson();
+    runExpression(QString("insert(%1, %2)").arg(index).arg(jsonData));
+}
+
 void ListModelWrapper::append(const QJsonArray& data) {
     QString jsonData = QJsonDocument(data).toJson();
     runExpression(QString("append(%1)").arg(jsonData));
