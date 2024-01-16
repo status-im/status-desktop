@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Models 0.1
 
 import utils 1.0
 
@@ -30,7 +31,6 @@ SplitView {
         ManageAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
             getCurrencyAmount: function (balance, symbol) {
                 return ({
                             amount: balance,
@@ -46,6 +46,10 @@ SplitView {
                             displayDecimals: 2,
                             stripTrailingZeroes: false
                         })
+            }
+            controller: ManageTokensController {
+                sourceModel: ctrlEmptyModel.checked ? null : assetsModel
+                settingsKey: "WalletAssets"
             }
         }
     }

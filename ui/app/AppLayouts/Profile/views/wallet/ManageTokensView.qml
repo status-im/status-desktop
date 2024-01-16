@@ -2,9 +2,11 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -32,7 +34,7 @@ ColumnLayout {
     readonly property bool dirty: {
         if (!loader.item)
             return false
-        if (tabBar.currentIndex > d.collectiblesTabIndex)
+        if (tabBar.currentIndex > d.hiddenTabIndex)
             return false
         // FIXME take advanced settings into account here too (#13178)
         if (tabBar.currentIndex === d.collectiblesTabIndex && baseWalletCollectiblesModel.isFetching)
@@ -41,14 +43,14 @@ ColumnLayout {
     }
 
     function saveChanges() {
-        if (tabBar.currentIndex > d.collectiblesTabIndex)
+        if (tabBar.currentIndex > d.hiddenTabIndex)
             return
         // FIXME save advanced settings (#13178)
         loader.item.saveSettings()
     }
 
     function resetChanges() {
-        if (tabBar.currentIndex > d.collectiblesTabIndex)
+        if (tabBar.currentIndex > d.hiddenTabIndex)
             return
         loader.item.revert()
     }
@@ -58,7 +60,52 @@ ColumnLayout {
 
         readonly property int assetsTabIndex: 0
         readonly property int collectiblesTabIndex: 1
-        readonly property int advancedTabIndex: 2
+        readonly property int hiddenTabIndex: 2
+        readonly property int advancedTabIndex: 3
+
+        // assets
+        readonly property var assetsController: ManageTokensController {
+            sourceModel: root.baseWalletAssetsModel
+            settingsKey: "WalletAssets"
+            onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                               qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
+                               false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                             qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
+                                             false, Constants.ephemeralNotificationType.success, "")
+            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                       false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                            qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
+                                            false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        // collectibles
+        readonly property var renamedCollectiblesModel: RolesRenamingModel {
+            sourceModel: root.baseWalletCollectiblesModel
+            mapping: [
+                RoleRename {
+                    from: "uid"
+                    to: "symbol"
+                }
+            ]
+        }
+
+        readonly property var collectiblesController: ManageTokensController {
+            sourceModel: d.renamedCollectiblesModel
+            settingsKey: "WalletCollectibles"
+            onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                               qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
+                               false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
+                                             false, Constants.ephemeralNotificationType.success, "")
+            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                       false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                            qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
+                                            false, Constants.ephemeralNotificationType.success, "")
+        }
 
         function checkLoadMoreCollectibles() {
             if (tabBar.currentIndex !== collectiblesTabIndex)
@@ -91,12 +138,14 @@ ColumnLayout {
             width: implicitWidth
             text: qsTr("Assets")
         }
-
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Collectibles")
         }
-
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Hidden")
+        }
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Advanced")
@@ -116,6 +165,8 @@ ColumnLayout {
                 return tokensPanel
             case d.collectiblesTabIndex:
                 return collectiblesPanel
+            case d.hiddenTabIndex:
+                return hiddenPanel
             case d.advancedTabIndex:
                 return advancedTab
             }
@@ -125,21 +176,29 @@ ColumnLayout {
     Component {
         id: tokensPanel
         ManageAssetsPanel {
-            baseModel: root.baseWalletAssetsModel
             getCurrencyAmount: function (balance, symbol) {
                 return root.getCurrencyAmount(balance, symbol)
             }
             getCurrentCurrencyAmount: function (balance) {
                 return root.getCurrentCurrencyAmount(balance)
             }
+            controller: d.assetsController
         }
     }
 
     Component {
         id: collectiblesPanel
         ManageCollectiblesPanel {
-            baseModel: root.baseWalletCollectiblesModel
+            controller: d.collectiblesController
             Component.onCompleted: d.checkLoadMoreCollectibles()
+        }
+    }
+
+    Component {
+        id: hiddenPanel
+        ManageHiddenPanel {
+            assetsController: d.assetsController
+            collectiblesController: d.collectiblesController
         }
     }
 

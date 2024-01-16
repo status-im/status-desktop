@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ 0.1
@@ -24,9 +25,8 @@ DropArea {
     property alias topInset: delegate.topInset
     property alias bottomInset: delegate.bottomInset
     property bool isGrouped
-    property bool isHidden
+    property bool isHidden // inside the "Hidden" section
     property int count
-
     property bool isCollectible
 
     readonly property alias title: delegate.title
@@ -47,7 +47,7 @@ DropArea {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
-    width: ListView.view.width
+    width: ListView.view ? ListView.view.width : 0
     height: visible ? delegate.height : 0
 
     onEntered: function(drag) {
@@ -87,6 +87,7 @@ DropArea {
 
         actions: [
             ManageTokensCommunityTag {
+                Layout.maximumWidth: delegate.width *.4
                 visible: !!model.communityId && !root.isGrouped
                 text: model.communityName
                 asset.name: model && !!model.communityImage ? model.communityImage : ""
@@ -101,11 +102,11 @@ DropArea {
                 isCommunityAsset: !!model.communityId
                 isCollectible: root.isCollectible
                 onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
-                onShowHideRequested: function(index, flag) {
+                onShowHideRequested: function(symbol, flag) {
                     if (isCommunityAsset)
-                        root.controller.showHideCommunityToken(index, flag)
+                        root.controller.showHideCommunityToken(symbol, flag)
                     else
-                        root.controller.showHideRegularToken(index, flag)
+                        root.controller.showHideRegularToken(symbol, flag)
                     root.controller.saveSettings()
                 }
                 onShowHideGroupRequested: function(groupId, flag) {

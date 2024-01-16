@@ -20,7 +20,7 @@ Control {
         Rectangle {
             border.width: 1
             border.color: Theme.palette.baseColor2
-            color: Theme.palette.baseColor4
+            color: enabled ? Theme.palette.baseColor4 : Theme.palette.baseColor3
             radius: 20
         }
     }
@@ -43,8 +43,10 @@ Control {
         visible: !root.loading
         StatusSmartIdenticon {
             id: identicon
-            Layout.maximumWidth: visible ? 16 : 0
-            Layout.maximumHeight: visible ? 16 : 0
+            Layout.preferredWidth: visible ? 16 : 0
+            Layout.preferredHeight: visible ? 16 : 0
+            asset.width: 16
+            asset.height: 16
             asset.isImage: true
             visible: !!asset.source
         }
