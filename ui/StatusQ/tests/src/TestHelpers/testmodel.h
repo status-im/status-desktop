@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QAbstractListModel>
 
 class TestModel : public QAbstractListModel {

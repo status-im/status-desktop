@@ -19,6 +19,10 @@ add_library(StatusQTestLib
     src/TestHelpers/modelaccessobserverproxy.h
     src/TestHelpers/modelsignalsspy.cpp
     src/TestHelpers/modelsignalsspy.h
+    src/TestHelpers/modeltestutils.cpp
+    src/TestHelpers/modeltestutils.h
+    src/TestHelpers/snapshotmodel.cpp
+    src/TestHelpers/snapshotmodel.h
     src/TestHelpers/testmodel.cpp
     src/TestHelpers/testmodel.h
 )
