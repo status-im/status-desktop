@@ -11,6 +11,7 @@ in rec {
   linuxdeployqt = callPackage ./pkgs/linuxdeployqt/default.nix { inherit (prev.qt515) qmake; };
 
   # Copyied from d9424d2191d6439a276b69ae1fd0a800586135ca
+  # 2018-07-27 -> 2020-12-31
   appimagekit = callPackage ./pkgs/appimagekit/default.nix { };
 
   # Requirement from Makefile - 3.19
@@ -50,6 +51,7 @@ in rec {
     bintools = binutils_2_33-unwrapped;
   };
 
+  # Fix for linuxdeployqt so it's not upset shell interpreter from host system
   lddWrapped = prev.writeShellScriptBin "ldd" ''
     "${final.bash}/bin/sh" "${final.glibc.bin}/bin/ldd" "$@"
   '';
