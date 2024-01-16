@@ -635,15 +635,10 @@ endif
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
+
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
 ifdef IN_NIX_SHELL
-	# WARN: unsupported new glibc and bundle everything
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-bundle-everything -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3 || true
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -unsupported-bundle-everything -unsupported-allow-new-glibc -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -verbose=3
-
-
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
-else
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
 endif
 
 	# Qt plugins
