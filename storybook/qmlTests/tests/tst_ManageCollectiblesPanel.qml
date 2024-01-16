@@ -2,6 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtTest 1.15
 
+import StatusQ 0.1
+import StatusQ.Models 0.1
+
 import AppLayouts.Wallet.panels 1.0
 
 import Storybook 1.0
@@ -17,12 +20,32 @@ Item {
         id: collectiblesModel
     }
 
+    RolesRenamingModel {
+        id: renamedModel
+        sourceModel: collectiblesModel
+        mapping: [
+            RoleRename {
+                from: "uid"
+                to: "symbol"
+            }
+        ]
+    }
+
     Component {
         id: componentUnderTest
         ManageCollectiblesPanel {
             id: showcasePanel
             width: 500
-            baseModel: collectiblesModel
+            controller: ManageTokensController {
+                sourceModel: renamedModel
+                settingsKey: "WalletCollectibles"
+                onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                                   qsTr("%1 was successfully hidden.").arg(name), "", "checkmark-circle",
+                                   false, Constants.ephemeralNotificationType.success, "")
+                onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                                 qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
+                                                 false, Constants.ephemeralNotificationType.success, "")
+            }
         }
     }
 
@@ -79,10 +102,6 @@ Item {
         function test_showHideToken() {
             verify(!controlUnderTest.dirty)
 
-            const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
-            verify(!!lvHidden)
-            verify(lvHidden.count === 0)
-
             const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
             verify(!!lvRegular)
             const lvRegularCount = lvRegular.count
@@ -96,27 +115,8 @@ Item {
             // verify the signal to show the notification toast got fired
             tryCompare(notificationSpy, "count", 1)
 
-            // verify we now have +1 hidden and -1 regular tokens after the "hide" operation
-            waitForItemPolished(lvHidden)
-            tryCompare(lvHidden, "count", 1)
+            // verify we now have -1 regular tokens after the "hide" operation
             tryCompare(lvRegular, "count", lvRegularCount-1)
-            // verify it's the same item we've just hidden
-            const hiddenToken = findChild(lvHidden, "manageTokensDelegate-0")
-            compare(hiddenToken.title, title)
-
-            // trigger the "show" action
-            triggerDelegateMenuAction(lvHidden, 0, "miShowToken")
-
-            // verify the counts are back to original
-            waitForItemPolished(lvHidden)
-            compare(lvHidden.count, 0)
-            compare(lvRegular.count, lvRegularCount)
-
-            // verify we got appended to the regular list by checking we have the same title of the delegate
-            const delegateN = findChild(lvRegular, "manageTokensDelegate-%1".arg(lvRegular.count-1))
-            verify(!!delegateN)
-            const titleN = delegateN.title
-            compare(title, titleN)
         }
 
         function test_showHideCommunityGroup() {
@@ -141,33 +141,6 @@ Item {
             // verify we have one less group
             waitForItemPolished(lvCommunityTokenGroups)
             tryCompare(lvCommunityTokenGroups, "count", 2)
-            const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
-            verify(!!lvHidden)
-            tryCompare(lvHidden, "count", 4) // we've just hidden 4 collectibles coming from this group
-
-            // verify hidden items are not draggable
-            const hiddenToken = findChild(lvHidden, "manageTokensDelegate-0")
-            verify(!!hiddenToken)
-            compare(hiddenToken.dragEnabled, false)
-            const hiddenDraggable = findChild(hiddenToken, "draggableDelegate")
-            verify(!!hiddenDraggable)
-            mousePress(hiddenToken)
-            tryCompare(hiddenDraggable, "dragActive", false)
-            mouseRelease(hiddenToken)
-
-            // now show one of the 4 hidden tokens
-            waitForItemPolished(lvHidden)
-            triggerDelegateMenuAction(lvHidden, 0, "miShowToken")
-
-            // verify we again have 3 community groups, and one less hidden token
-            tryCompare(lvCommunityTokenGroups, "count", 3)
-            tryCompare(lvHidden, "count", 3)
-
-            // now mass show tokens from this group, verify we have 0 hidden tokens and 2 visible groups
-            triggerDelegateMenuAction(lvHidden, 0, "miShowTokenGroup")
-            waitForItemPolished(lvHidden)
-            tryCompare(lvHidden, "count", 0)
-            tryCompare(lvCommunityTokenGroups, "count", 3)
         }
 
         function test_dnd() {
@@ -264,15 +237,8 @@ Item {
             // verify the signal to show the notification toast got fired
             tryCompare(notificationSpy, "count", 1)
 
-            // verify the hidden section now has 1 item and it's the one we just hid
-            const lvHidden = findChild(controlUnderTest, "lvHiddenTokens")
-            verify(!!lvHidden)
-            waitForItemPolished(lvHidden)
-            verify(lvHidden.count === 1)
-            tryCompare(findChild(lvHidden, "manageTokensDelegate-0"), "title", "KILLABEAR #2385")
-
             // now move the Bearz group up so that it's first (ends up at index 0)
-            waitForItemPolished(controlUnderTest)
+            waitForItemPolished(lvCommunityTokenGroups)
             triggerDelegateMenuAction(lvCommunityTokenGroups, 1, "miMoveUp", true)
             verify(controlUnderTest.dirty)
             bearzGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0")

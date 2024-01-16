@@ -10,6 +10,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
     , m_communityTokensModel(new ManageTokensModel(this))
     , m_communityTokenGroupsModel(new ManageTokensModel(this))
     , m_hiddenTokensModel(new ManageTokensModel(this))
+    , m_hiddenCommunityTokenGroupsModel(new ManageTokensModel(this))
 {
     for (auto model : m_allModels) {
         connect(model, &ManageTokensModel::dirtyChanged, this, &ManageTokensController::dirtyChanged);
@@ -34,6 +35,7 @@ ManageTokensController::ManageTokensController(QObject* parent)
             m_communityTokensModel->setCommunityIds(m_communityIds);
             m_communityTokensModel->saveCustomSortOrder();
             rebuildCommunityTokenGroupsModel();
+            rebuildHiddenCommunityTokenGroupsModel();
             rebuildRegularTokenGroupsModel();
 #ifdef QT_DEBUG
             qCDebug(manageTokens) << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
@@ -59,16 +61,16 @@ ManageTokensController::ManageTokensController(QObject* parent)
     });
 }
 
-void ManageTokensController::showHideRegularToken(int row, bool flag)
+void ManageTokensController::showHideRegularToken(const QString& symbol, bool flag)
 {
     if (flag) { // show
-        auto hiddenItem = m_hiddenTokensModel->takeItem(row);
+        auto hiddenItem = m_hiddenTokensModel->takeItem(symbol);
         if (hiddenItem) {
             m_regularTokensModel->addItem(*hiddenItem);
             emit tokenShown(hiddenItem->symbol, hiddenItem->name);
         }
     } else { // hide
-        auto shownItem = m_regularTokensModel->takeItem(row);
+        auto shownItem = m_regularTokensModel->takeItem(symbol);
         if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
             emit tokenHidden(shownItem->symbol, shownItem->name);
@@ -76,10 +78,10 @@ void ManageTokensController::showHideRegularToken(int row, bool flag)
     }
 }
 
-void ManageTokensController::showHideCommunityToken(int row, bool flag)
+void ManageTokensController::showHideCommunityToken(const QString& symbol, bool flag)
 {
     if (flag) { // show
-        auto hiddenItem = m_hiddenTokensModel->takeItem(row);
+        auto hiddenItem = m_hiddenTokensModel->takeItem(symbol);
         if (hiddenItem) {
             m_communityTokensModel->addItem(*hiddenItem);
             if (!m_communityIds.contains(hiddenItem->communityId))
@@ -87,7 +89,7 @@ void ManageTokensController::showHideCommunityToken(int row, bool flag)
             emit tokenShown(hiddenItem->symbol, hiddenItem->name);
         }
     } else { // hide
-        auto shownItem = m_communityTokensModel->takeItem(row);
+        auto shownItem = m_communityTokensModel->takeItem(symbol);
         if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
             if (!m_communityTokensModel->hasCommunityIdToken(shownItem->communityId))
@@ -98,6 +100,7 @@ void ManageTokensController::showHideCommunityToken(int row, bool flag)
     m_communityTokensModel->setCommunityIds(m_communityIds);
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
+    rebuildHiddenCommunityTokenGroupsModel();
 }
 
 void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
@@ -111,6 +114,9 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
             emit communityTokenGroupShown(tokens.constFirst().communityName);
         }
         m_communityIds.append(groupId);
+        if (m_hiddenCommunityGroups.remove(groupId)) {
+            emit hiddenCommunityGroupsChanged();
+        }
     } else { // hide
         const auto tokens = m_communityTokensModel->takeAllItems(groupId);
         if (!tokens.isEmpty()) {
@@ -120,10 +126,15 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
             emit communityTokenGroupHidden(tokens.constFirst().communityName);
         }
         m_communityIds.removeAll(groupId);
+        if (!m_hiddenCommunityGroups.contains(groupId)) {
+            m_hiddenCommunityGroups.insert(groupId);
+            emit hiddenCommunityGroupsChanged();
+        }
     }
     m_communityTokensModel->setCommunityIds(m_communityIds);
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
+    rebuildHiddenCommunityTokenGroupsModel();
 }
 
 void ManageTokensController::saveSettings(bool reuseCurrent)
@@ -147,6 +158,7 @@ void ManageTokensController::saveSettings(bool reuseCurrent)
 
     // save to QSettings
     m_settings.beginGroup(settingsGroupName());
+
     m_settings.beginWriteArray(m_settingsKey);
     SerializedTokenData::const_key_value_iterator it = result.constKeyValueBegin();
     for (auto i = 0; it != result.constKeyValueEnd() && i < result.size(); it++, i++) {
@@ -158,6 +170,10 @@ void ManageTokensController::saveSettings(bool reuseCurrent)
         m_settings.setValue(QStringLiteral("groupId"), groupId);
     }
     m_settings.endArray();
+
+    // hidden community groups
+    m_settings.setValue(QStringLiteral("HiddenCommunityGroups"), hiddenCommunityGroups());
+
     m_settings.endGroup();
     m_settings.sync();
 
@@ -204,6 +220,14 @@ void ManageTokensController::loadSettings()
         m_settingsData.insert(symbol, {pos, visible, groupId});
     }
     m_settings.endArray();
+
+    // hidden community groups
+    const auto groups = m_settings.value(QStringLiteral("HiddenCommunityGroups")).toStringList();
+    if (!groups.isEmpty()) {
+        m_hiddenCommunityGroups = {groups.constBegin(), groups.constEnd()};
+        emit hiddenCommunityGroupsChanged();
+    }
+
     m_settings.endGroup();
     setSettingsDirty(false);
 }
@@ -213,6 +237,11 @@ void ManageTokensController::setSettingsDirty(bool dirty)
     if (m_settingsDirty == dirty) return;
     m_settingsDirty = dirty;
     emit settingsDirtyChanged(m_settingsDirty);
+}
+
+QStringList ManageTokensController::hiddenCommunityGroups() const
+{
+    return {m_hiddenCommunityGroups.constBegin(), m_hiddenCommunityGroups.constEnd()};
 }
 
 void ManageTokensController::revert()
@@ -344,6 +373,7 @@ void ManageTokensController::parseSourceModel()
     for (auto model: m_allModels)
         model->clear();
     m_communityIds.clear();
+    m_hiddenCommunityGroups.clear();
 
     // load settings
     loadSettings();
@@ -357,6 +387,7 @@ void ManageTokensController::parseSourceModel()
 
     // build community groups model
     rebuildCommunityTokenGroupsModel();
+    rebuildHiddenCommunityTokenGroupsModel();
     reloadCommunityIds();
     m_communityTokensModel->setCommunityIds(m_communityIds);
 
@@ -485,18 +516,56 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
             });
             if (tokenGroup != result.cend()) {
                 const auto row = std::distance(result.cbegin(), tokenGroup);
-                TokenData updTokenGroup = result.takeAt(row);
+                TokenData& updTokenGroup = result[row];
                 updTokenGroup.balance = updTokenGroup.balance.toInt() + 1;
-                result.insert(row, updTokenGroup);
             }
         }
     }
 
     m_communityTokenGroupsModel->clear();
-    for (const auto& group: result)
+    for (const auto& group: std::as_const(result))
         m_communityTokenGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
+}
+
+void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
+{
+    QStringList communityIds;
+    QList<TokenData> result;
+
+    const auto count = m_hiddenTokensModel->count();
+    for (auto i = 0; i < count; i++) {
+        const auto& communityToken = m_hiddenTokensModel->itemAt(i);
+        const auto communityId = communityToken.communityId;
+        if (communityId.isEmpty())
+            continue;
+        if (!communityIds.contains(communityId) && m_hiddenCommunityGroups.contains(communityId)) { // insert into groups
+            communityIds.append(communityId);
+
+            TokenData tokenGroup;
+            tokenGroup.communityId = communityId;
+            tokenGroup.communityName = communityToken.communityName;
+            tokenGroup.communityImage = communityToken.communityImage;
+            tokenGroup.balance = 1;
+            result.append(tokenGroup);
+        } else { // update group's childCount
+            const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [communityId](const auto& item) {
+                return communityId == item.communityId;
+            });
+            if (tokenGroup != result.cend()) {
+                const auto row = std::distance(result.cbegin(), tokenGroup);
+                TokenData& updTokenGroup = result[row];
+                updTokenGroup.balance = updTokenGroup.balance.toInt() + 1;
+            }
+        }
+    }
+
+    m_hiddenCommunityTokenGroupsModel->clear();
+    for (const auto& group: std::as_const(result))
+        m_hiddenCommunityTokenGroupsModel->addItem(group);
+
+    qCDebug(manageTokens) << "!!! HIDDEN GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
 }
 
 void ManageTokensController::rebuildRegularTokenGroupsModel()
@@ -525,15 +594,14 @@ void ManageTokensController::rebuildRegularTokenGroupsModel()
             });
             if (tokenGroup != result.cend()) {
                 const auto row = std::distance(result.cbegin(), tokenGroup);
-                TokenData updTokenGroup = result.takeAt(row);
+                TokenData& updTokenGroup = result[row];
                 updTokenGroup.balance = updTokenGroup.balance.toInt() + 1;
-                result.insert(row, updTokenGroup);
             }
         }
     }
 
     m_regularTokenGroupsModel->clear();
-    for (const auto& group: result)
+    for (const auto& group: std::as_const(result))
         m_regularTokenGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! COLLECTION MODEL REBUILT WITH GROUPS:" << collectionIds;

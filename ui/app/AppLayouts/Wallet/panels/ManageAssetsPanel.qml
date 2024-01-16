@@ -16,10 +16,10 @@ import AppLayouts.Wallet.controls 1.0
 Control {
     id: root
 
-    required property var baseModel
+    required property var controller
 
-    readonly property bool dirty: d.controller.dirty
-    readonly property bool hasSettings: d.controller.hasSettings
+    readonly property bool dirty: root.controller.dirty
+    readonly property bool hasSettings: root.controller.hasSettings
 
     property var getCurrencyAmount: function (balance, symbol) {}
     property var getCurrentCurrencyAmount: function(balance){}
@@ -27,33 +27,27 @@ Control {
     background: null
 
     function saveSettings() {
-        d.controller.saveSettings();
+        root.controller.saveSettings();
     }
 
     function revert() {
-        d.controller.revert();
+        root.controller.revert();
     }
 
     function clearSettings() {
-        d.controller.clearSettings();
+        root.controller.clearSettings();
     }
 
     QtObject {
         id: d
 
         property bool communityGroupsExpanded: true
+    }
 
-        readonly property var controller: ManageTokensController {
-            sourceModel: root.baseModel
-            arrangeByCommunity: switchArrangeByCommunity.checked
-            settingsKey: "WalletAssets"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 (%2) was successfully hidden.").arg(name).arg(symbol), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-        }
+    Binding {
+        target: controller
+        property: "arrangeByCommunity"
+        value: switchArrangeByCommunity.checked
     }
 
     contentItem: ColumnLayout {
@@ -61,7 +55,7 @@ Control {
 
         StatusListView {
             Layout.fillWidth: true
-            model: d.controller.regularTokensModel
+            model: root.controller.regularTokensModel
             implicitHeight: contentHeight
             interactive: false
 
@@ -70,9 +64,9 @@ Control {
             }
 
             delegate: ManageTokensDelegate {
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                count: d.controller.regularTokensModel.count
+                count: root.controller.regularTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-token-item"]
                 getCurrencyAmount: function (balance, symbol) {
@@ -88,7 +82,7 @@ Control {
             id: communityTokensHeader
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
-            visible: d.controller.communityTokensModel.count
+            visible: root.controller.communityTokensModel.count
             StatusBaseText {
                 color: Theme.palette.baseColor1
                 text: qsTr("Community")
@@ -120,49 +114,16 @@ Control {
 
         Loader {
             Layout.fillWidth: true
-            active: d.controller.communityTokensModel.count
+            active: root.controller.communityTokensModel.count
             visible: active
             sourceComponent: switchArrangeByCommunity.checked ? cmpCommunityTokenGroups : cmpCommunityTokens
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            color: Theme.palette.baseColor1
-            text: qsTr("Hidden")
-            visible: d.controller.hiddenTokensModel.count
-        }
-
-        StatusListView {
-            Layout.fillWidth: true
-            model: d.controller.hiddenTokensModel
-            implicitHeight: contentHeight
-            interactive: false
-
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
-
-            delegate: ManageTokensDelegate {
-                controller: d.controller
-                dragParent: root
-                dragEnabled: false
-                keys: ["x-status-draggable-none"]
-                isHidden: true
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
-                }
-                getCurrentCurrencyAmount: function (balance) {
-                    return root.getCurrentCurrencyAmount(balance)
-                }
-            }
         }
     }
 
     Component {
         id: cmpCommunityTokens
         StatusListView {
-            model: d.controller.communityTokensModel
+            model: root.controller.communityTokensModel
             implicitHeight: contentHeight
             interactive: false
 
@@ -171,9 +132,9 @@ Control {
             }
 
             delegate: ManageTokensDelegate {
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                count: d.controller.communityTokensModel.count
+                count: root.controller.communityTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-community-token-item"]
                 getCurrencyAmount: function (balance, symbol) {
@@ -189,7 +150,7 @@ Control {
     Component {
         id: cmpCommunityTokenGroups
         StatusListView {
-            model: d.controller.communityTokenGroupsModel
+            model: root.controller.communityTokenGroupsModel
             implicitHeight: contentHeight
             interactive: false
             spacing: Style.current.halfPadding
@@ -199,9 +160,9 @@ Control {
             }
 
             delegate: ManageTokensGroupDelegate {
-                controller: d.controller
+                controller: root.controller
                 dragParent: root
-                dragEnabled: d.controller.communityTokenGroupsModel.count > 1
+                dragEnabled: root.controller.communityTokenGroupsModel.count > 1
                 communityGroupsExpanded: d.communityGroupsExpanded
                 getCurrencyAmount: function (balance, symbol) {
                     return root.getCurrencyAmount(balance, symbol)
