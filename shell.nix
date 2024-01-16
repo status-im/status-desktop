@@ -16,10 +16,10 @@ let
       qtwebview
       qttools
       qtwebchannel
+      qtgraphicaleffects
 #      qtlottie # return after qt upgrade ?
 #      qtwebengine
 #      qtlocation
-#      qtgraphicaleffects
 
   ]));
 
