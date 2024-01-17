@@ -18,8 +18,8 @@ let
       qtwebchannel
       qtgraphicaleffects
       qtwebengine
+      qtlocation
 #      qtlottie # return after qt upgrade ?
-#      qtlocation
 
   ]));
 
