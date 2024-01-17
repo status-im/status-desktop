@@ -77,6 +77,7 @@ in pkgs.mkShell {
     qt515.qtbase
     qt515.qtsvg
     qt515.qtwebengine
+    qt515.qtlocation
     libglvnd
     gcc-unwrapped
     libpulseaudio
