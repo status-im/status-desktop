@@ -107,5 +107,3 @@ in pkgs.mkShell {
     xorg.xcbutil
     ];
 }
-
-

@@ -5,7 +5,7 @@ library 'status-jenkins-lib@linux-use-nix'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'linux' }
+  agent none
 
   parameters {
     booleanParam(
@@ -28,12 +28,17 @@ pipeline {
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
     )
+    booleanParam(
+      name: 'NIX_SHELL',
+      description: 'Run build in Nix shell',
+      defaultValue: getDefaultNixShell()
+    )
   }
 
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    //timeout(time: 25, unit: 'MINUTES')
+    timeout(time: 25, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -51,7 +56,7 @@ pipeline {
   environment {
     TARGET = "linux/${getArch()}"
     /* Improve make performance */
-    MAKEFLAGS = "-j1 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
@@ -60,22 +65,50 @@ pipeline {
   }
 
   stages {
+    stage('environment setup') {
+      steps { script {
+        if (env.NIX_SHELL) {
+          currentBuild.agent = { label 'linux' }
+        } else {
+          currentBuild.agent = {
+            /* Necessary image with Ubuntu 20.04 for older Glibc. */
+            docker {
+              label 'linux'
+                image 'statusteam/nim-status-client-build:1.3.0-qt5.15.2'
+                /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+                args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+            }
+          }
+          QTDIR = "/opt/qt/5.15.2/gcc_64"
+          PATH = "${env.QTDIR}/bin:${env.PATH}"
+        }
+      } }
+    }
+
     stage('Deps') {
       steps { script {
-        nix.shell('make update --debug V=1', pure: true)
-        nix.shell('make deps --debug V=1', pure: true)
+        if (env.NIX_SHELL) {
+          nix.shell('make update --debug V=1', pure: true)
+          nix.shell('make deps --debug V=1', pure: true)
+        } else {
+          sh 'make update'
+          sh 'make deps'
+        }
       } }
     }
 
     stage('status-go') {
       steps { script {
-        nix.shell('make status-go --debug V=1', pure: true)
+        if (env.NIX_SHELL) {
+          nix.shell('make status-go --debug V=1', pure: true)
+        } else {
+          sh 'make status-go'
       } }
     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('--debug=b tgz-linux', 1)
+        linux.bundle('--debug=b tgz-linux', 1, env.NIX_SHELL)
       } }
     }
 
@@ -117,5 +150,13 @@ def getArch() {
   def tokens = Thread.currentThread().getName().split('/')
   for (def arch in ['x86_64', 'aarch64']) {
     if (tokens.contains(arch)) { return arch }
+  }
+}
+
+def getDefaultNixShell() {
+  if (env.JOB_BASE_NAME == "package_nix") {
+    return true
+  } else {
+    return false
   }
 }
