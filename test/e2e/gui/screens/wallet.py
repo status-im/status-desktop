@@ -139,20 +139,27 @@ class SavedAddressesView(QObject):
 
     def __init__(self):
         super(SavedAddressesView, self).__init__('mainWindow_SavedAddressesView')
-        self._add_new_address_button = Button('mainWallet_Saved_Addreses_Add_Buttton')
+        self._add_new_address_button = Button('mainWallet_Saved_Addresses_Add_Buttton')
         self._address_list_item = QObject('savedAddressView_Delegate')
         self._addresses_area = QObject('savedAddresses_area')
+        self._addresses_list_view = QObject('mainWallet_Saved_Addresses_List')
         self._send_button = Button('send_StatusRoundButton')
         self._open_menu_button = Button('savedAddressView_Delegate_menuButton')
+        self._saved_address_item = QObject('savedAddressView_Delegate')
 
     @property
     @allure.step('Get saved addresses names')
     def address_names(self):
         address_names = []
-        for child in walk_children(self._addresses_area.object):
+        for child in walk_children(self._addresses_list_view.object):
             if getattr(child, 'id', '') == 'savedAddressDelegate':
                 address_names.append(str(child.name))
         return address_names
+
+    @allure.step('Get saved addresses list')
+    def get_saved_addresses_list(self):
+        addresses = [str(address.name) for address in driver.findAllObjects(self._saved_address_item.real_name)]
+        return addresses
 
     @allure.step('Open add new address popup')
     def open_add_saved_address_popup(self, attempt=2) -> 'AddressPopup':
