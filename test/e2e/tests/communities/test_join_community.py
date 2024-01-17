@@ -17,7 +17,6 @@ from gui.main_window import MainWindow
 @pytest.mark.parametrize('user_data_one, user_data_two', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/13199')
 def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_data_two):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
@@ -84,13 +83,12 @@ def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
         with step(f'User {user_two.name}, see two members in community members list'):
-            assert user_one.name in community_screen.right_panel.members
+            assert driver.waitFor(lambda: user_one.name in community_screen.right_panel.members)
             assert driver.waitFor(lambda: '2' in community_screen.left_panel.members)
             main_window.hide()
 
         with step(f'User {user_one.name}, see two members in community members list'):
             aut_one.attach()
             main_window.prepare()
-            assert user_one.name in community_screen.right_panel.members
             assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members)
             assert '2' in community_screen.left_panel.members

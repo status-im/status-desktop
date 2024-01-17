@@ -106,6 +106,7 @@ class Message:
 
     @allure.step('Open community invitation')
     def open_community_invitation(self):
+        driver.waitFor(lambda: self.banner_image.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         self.banner_image.click()
         return CommunityScreen().wait_until_appears()
 
