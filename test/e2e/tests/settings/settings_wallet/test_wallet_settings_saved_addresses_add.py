@@ -23,7 +23,7 @@ pytestmark = marks
                                  ''.join(random.choices(string.ascii_letters, k=24)),
                                  '0x8397bc3c5a60a1883174f722403d63a8833312b7')
                          ])
-# @pytest.mark.case(704620) TODO: enable that after i test multiple references
+@pytest.mark.case(704620)
 def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str, name: str):
     with (step('Open wallet settings - Saved addresses section')):
         settings_saved_addresses = \
