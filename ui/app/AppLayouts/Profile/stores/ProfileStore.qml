@@ -29,6 +29,8 @@ QtObject {
 
     readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
+    readonly property var collectiblesModel: profileModule.collectiblesModel
+
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel

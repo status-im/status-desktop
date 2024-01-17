@@ -14,9 +14,9 @@ type ProfileShowcaseAccount* = ref object of RootObj
   order*: int
 
 type ProfileShowcaseCollectible* = ref object of RootObj
-  chainId*: string
-  tokenId*: string
   contractAddress*: string
+  chainId*: int
+  tokenId*: string
   communityId*: string
   accountAddress*: string
   order*: int
@@ -27,7 +27,7 @@ type ProfileShowcaseVerifiedToken* = ref object of RootObj
 
 type ProfileShowcaseUnverifiedToken* = ref object of RootObj
   contractAddress*: string
-  chainId*: string
+  chainId*: int
   order*: int
 
 type ProfileShowcaseDto* = ref object of RootObj

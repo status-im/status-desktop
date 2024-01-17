@@ -174,6 +174,12 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  proc getCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.delegate.getCollectiblesModel()
+
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesModel
+
   proc getProfileShowcaseCommunitiesModel(self: View): QVariant {.slot.} =
     return self.profileShowcaseCommunitiesModelVariant
 
@@ -227,7 +233,7 @@ QtObject:
   proc updateProfileShowcaseAccounts*(self: View, accounts: seq[ProfileShowcaseAccountItem]) =
     self.profileShowcaseAccountsModel.reset(accounts.sorted((a, b) => cmp(a.order, b.order), SortOrder.Ascending))
 
-  proc updateProfileShowcaseCollectibless*(self: View, collectibles: seq[ProfileShowcaseCollectibleItem]) =
+  proc updateProfileShowcaseCollectibles*(self: View, collectibles: seq[ProfileShowcaseCollectibleItem]) =
     self.profileShowcaseCollectiblesModel.reset(collectibles.sorted((a, b) => cmp(a.order, b.order), SortOrder.Ascending))
 
   proc updateProfileShowcaseAssets*(self: View, assets: seq[ProfileShowcaseAssetItem]) =

@@ -23,9 +23,9 @@ type ProfileShowcaseAccountPreference* = ref object of RootObj
   order*: int
 
 type ProfileShowcaseCollectiblePreference* = ref object of RootObj
-  chainId*: string
-  tokenId*: string
   contractAddress*: string
+  chainId*: int
+  tokenId*: string
   communityId*: string
   accountAddress*: string
   showcaseVisibility*: ProfileShowcaseVisibility
@@ -38,7 +38,7 @@ type ProfileShowcaseVerifiedTokenPreference* = ref object of RootObj
 
 type ProfileShowcaseUnverifiedTokenPreference* = ref object of RootObj
   contractAddress*: string
-  chainId*: string
+  chainId*: int
   showcaseVisibility*: ProfileShowcaseVisibility
   order*: int
 

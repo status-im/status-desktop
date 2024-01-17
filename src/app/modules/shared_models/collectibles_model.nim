@@ -332,6 +332,12 @@ QtObject:
   proc getItems*(self: Model): seq[CollectiblesEntry] =
     return self.items
 
+  proc getItemById*(self: Model, id: string): CollectiblesEntry =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getID(), id) == 0):
+        return item
+    return nil
+
   proc setItems*(self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool) =
     if offset == 0:
       self.removeCollectibleItems()

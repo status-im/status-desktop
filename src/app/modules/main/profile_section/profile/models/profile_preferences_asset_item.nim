@@ -2,7 +2,6 @@ import json, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
 
-import app_service/service/wallet_account/dto/account_dto
 import app_service/service/profile/dto/profile_showcase_preferences
 
 import app/modules/shared_models/currency_amount
@@ -16,7 +15,7 @@ type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem
     contractAddress*: string
     communityId*: string
-    chainId*: string
+    chainId*: int
     symbol*: string
     name*: string
     enabledNetworkBalance*: CurrencyAmount

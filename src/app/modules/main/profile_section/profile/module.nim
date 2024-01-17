@@ -9,17 +9,22 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
 import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_models/collectibles_entry
 
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
+
+import backend/collectibles as backend_collectibles
 
 export io_interface
 
@@ -29,7 +34,8 @@ logScope:
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
-    controller: Controller
+    controller: controller.Controller
+    collectiblesController: collectiblesc.Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
@@ -41,18 +47,26 @@ proc newModule*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service): Module =
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, networkService)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
+    autofetch = false,
+    networkService = networkService,
+    events = events
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.collectiblesController.delete
 
 method load*(self: Module) =
   self.controller.init()
@@ -63,6 +77,9 @@ method isLoaded*(self: Module): bool =
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+method getCollectiblesModel*(self: Module): QVariant =
+  return self.collectiblesController.getModelAsVariant()
 
 proc updateSocialLinks(self: Module, socialLinks: SocialLinks) =
   var socialLinkItems = toSocialLinkItems(socialLinks)
@@ -159,7 +176,6 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
-  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
 
   for communityEntry in profileShowcase.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
@@ -196,7 +212,6 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
-  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
 
   for communityEntry in preferences.communities:
     let community = self.controller.getCommunityById(communityEntry.communityId)
@@ -220,8 +235,30 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
     accountAddresses.add(account.address)
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
 
+  # Collectibles profile preferences
+  # FIXME: what should happen if not accounts selected
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
+
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  for collectibleProfile in preferences.collectibles:
+    let collectible = self.collectiblesController.getItemForData(collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId)
+    if collectible != nil:
+      var collectibleItem = ProfileShowcaseCollectibleItem()
+      collectibleItem.contractAddress = collectible.getContractAddress()
+      collectibleItem.chainId = collectible.getChainID()
+      collectibleItem.tokenId = collectible.getTokenIDAsString()
+      collectibleItem.communityId = collectible.getCommunityId()
+      collectibleItem.name = collectible.getName()
+      collectibleItem.collectionName = collectible.getCollectionName()
+      collectibleItem.imageUrl = collectible.getImageURL()
+      collectibleItem.backgroundColor = collectible.getBackgroundColor()
+      collectibleItem.showcaseVisibility = collectibleProfile.showcaseVisibility
+      collectibleItem.order = collectibleProfile.order
+      profileCollectibleItems.add(collectibleItem)
+  self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
+
   # TODO: verified and unverified tokens
-  # TODO: collectibles
 
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
   var profileCommunityItems = self.view.getProfileShowcaseCommunities()

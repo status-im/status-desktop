@@ -5,17 +5,19 @@ import app_service/service/profile/dto/profile_showcase_preferences
 
 type
   ModelRole {.pure.} = enum
-    ShowcaseVisibility = UserRole + 1
-    Order
-
+    Uid = UserRole + 1,
     ChainId
-    TokenId
     ContractAddress
-    CommunityId
+    TokenId
     Name
-    CollectionName
     ImageUrl
     BackgroundColor
+    CollectionName
+    IsLoading
+    CommunityId
+
+    ShowcaseVisibility
+    Order
 
 QtObject:
   type
@@ -52,17 +54,19 @@ QtObject:
 
   method roleNames(self: ProfileShowcaseCollectiblesModel): Table[int, string] =
     {
-      ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
-      ModelRole.Order.int: "order",
-
-      ChainId.int: "chainId",
-      TokenId.int: "tokenId",
-      ContractAddress.int: "contractAddress",
-      CommunityId.int: "communityId",
+      ModelRole.Uid.int:"uid",
+      ModelRole.ChainId.int: "chainId",
+      ModelRole.ContractAddress.int: "contractAddress",
+      ModelRole.TokenId.int: "tokenId",
       ModelRole.Name.int: "name",
-      ModelRole.CollectionName.int: "collectionName",
       ModelRole.ImageUrl.int: "imageUrl",
       ModelRole.BackgroundColor.int: "backgroundColor",
+      ModelRole.CollectionName.int: "collectionName",
+      ModelRole.IsLoading.int:"isLoading",
+      ModelRole.CommunityId.int: "communityId",
+
+      ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
+      ModelRole.Order.int: "order",
     }.toTable
 
   method data(self: ProfileShowcaseCollectiblesModel, index: QModelIndex, role: int): QVariant =
@@ -76,26 +80,31 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.ShowcaseVisibility:
-      result = newQVariant(item.showcaseVisibility.int)
-    of ModelRole.Order:
-      result = newQVariant(item.order)
+    of ModelRole.Uid:
+      result = newQVariant(item.getID())
     of ModelRole.ChainId:
       result = newQVariant(item.chainId)
-    of ModelRole.TokenId:
-      result = newQVariant(item.tokenId)
     of ModelRole.ContractAddress:
       result = newQVariant(item.contractAddress)
-    of ModelRole.CommunityId:
-      result = newQVariant(item.communityId)
+    of ModelRole.TokenId:
+      result = newQVariant(item.tokenId)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.CollectionName:
-      result = newQVariant(item.collectionName)
     of ModelRole.ImageUrl:
       result = newQVariant(item.imageUrl)
     of ModelRole.BackgroundColor:
       result = newQVariant(item.backgroundColor)
+    of ModelRole.CollectionName:
+      result = newQVariant(item.collectionName)
+    of ModelRole.IsLoading:
+      result = newQVariant(false)
+    of ModelRole.CommunityId:
+      result = newQVariant(item.communityId)
+
+    of ModelRole.ShowcaseVisibility:
+      result = newQVariant(item.showcaseVisibility.int)
+    of ModelRole.Order:
+      result = newQVariant(item.order)
 
   proc findIndexForCollectible(self: ProfileShowcaseCollectiblesModel, uid: string): int =
     for i in 0 ..< self.items.len:

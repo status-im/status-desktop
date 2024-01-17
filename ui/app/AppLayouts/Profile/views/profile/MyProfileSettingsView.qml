@@ -203,7 +203,6 @@ ColumnLayout {
         StatusTabButton {
             width: implicitWidth
             text: qsTr("Collectibles")
-            enabled: false // TODO: implement collectibles nim part
         }
 
         StatusTabButton {
@@ -240,7 +239,7 @@ ColumnLayout {
             id: profileShowcaseCollectiblesPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.collectibles
+            baseModel: root.profileStore.collectiblesModel
             showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
         }
@@ -249,7 +248,7 @@ ColumnLayout {
             id: profileShowcaseAssetsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletAssetsStore.groupedAccountAssetsModel
+            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: separated model instance from profile section
             showcaseModel: root.profileStore.profileShowcaseAssetsModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
             formatCurrencyAmount: function(amount, symbol) {

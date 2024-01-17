@@ -9,7 +9,7 @@ include app_service/common/utils
 
 type
   ProfileShowcaseCollectibleItem* = ref object of ProfileShowcaseBaseItem
-    chainId*: string
+    chainId*: int
     tokenId*: string
     contractAddress*: string
     communityId*: string
