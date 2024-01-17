@@ -2,6 +2,8 @@ import json, strformat, json_serialization
 import stint, Tables, options
 import community_tokens_types
 
+include app_service/common/json_utils
+
 type
   # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
   ContractID* = ref object of RootObj
@@ -73,6 +75,20 @@ type
   CollectibleContractOwnership* = ref object
     contractAddress*: string
     owners*: seq[CollectibleOwner]
+
+  # see status-go/services/wallet/collectibles/service.go CollectibleDataType
+  CollectiblePreferencesItemType* {.pure.} = enum
+    NonCommunityCollectible = 1, 
+    CommunityCollectible, 
+    Collection, 
+    Community
+
+  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleContractOwnership
+  CollectiblePreferences* = ref object of RootObj
+    itemType* {.serializedFieldName("type").}: CollectiblePreferencesItemType
+    key* {.serializedFieldName("key").}: string
+    position* {.serializedFieldName("position").}: int
+    visible* {.serializedFieldName("visible").}: bool
 
 # ContractID
 proc `$`*(self: ContractID): string =
@@ -366,3 +382,19 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleContractOwnership]): Collecti
         contractAddress: t{"contractAddress"}.getStr,
         owners: getCollectibleOwners(t{"owners"})
     )
+
+# CollectiblePreferences
+proc `$`*(self: CollectiblePreferences): string =
+  return fmt"""CollectiblePreferences(
+    type:{self.itemType}, 
+    key:{self.key}, 
+    position:{self.position}, 
+    visible:{self.visible}
+    """
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectiblePreferences]): CollectiblePreferences {.inline.} =
+  result = CollectiblePreferences()
+  result.itemType = t{"type"}.getInt().CollectiblePreferencesItemType
+  discard t.getProp("key", result.key)
+  discard t.getProp("position", result.position)
+  discard t.getProp("visible", result.visible)

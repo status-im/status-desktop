@@ -272,3 +272,9 @@ rpc(getCollectiblesByUniqueIDAsync, "wallet"):
 
 rpc(refetchOwnedCollectibles, "wallet"):
   discard
+
+rpc(updateCollectiblePreferences, "accounts"):
+  preferences: seq[CollectiblePreferences]
+
+rpc(getCollectiblePreferences, "accounts"):
+  discard

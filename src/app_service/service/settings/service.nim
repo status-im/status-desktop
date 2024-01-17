@@ -537,6 +537,26 @@ QtObject:
       return true
     return false
 
+  proc collectibleGroupByCommunity*(self: Service): bool =
+    return self.settings.collectibleGroupByCommunity
+
+  proc toggleCollectibleGroupByCommunity*(self: Service): bool =
+    let newValue = not self.settings.collectibleGroupByCommunity
+    if(self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, newValue)):
+      self.settings.collectibleGroupByCommunity = newValue
+      return true
+    return false
+
+  proc collectibleGroupByCollection*(self: Service): bool =
+    return self.settings.collectibleGroupByCollection
+
+  proc toggleCollectibleGroupByCollection*(self: Service): bool =
+    let newValue = not self.settings.collectibleGroupByCollection
+    if(self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, newValue)):
+      self.settings.collectibleGroupByCollection = newValue
+      return true
+    return false
+
   proc urlUnfurlingMode*(self: Service): UrlUnfurlingMode =
     return self.settings.urlUnfurlingMode
 
