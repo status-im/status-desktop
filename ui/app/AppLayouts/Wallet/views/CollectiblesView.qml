@@ -28,6 +28,8 @@ ColumnLayout {
     id: root
 
     required property var collectiblesModel
+    required property string addressFilters
+    required property string networkFilters
     property bool sendEnabled: true
     property bool filterVisible
 
@@ -67,9 +69,21 @@ ColumnLayout {
             sourceModel: d.renamedModel
         }
 
+        readonly property var nwFilters: root.networkFilters.split(":")
+        readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
+
         function hideAllCommunityTokens(communityId) {
             const tokenSymbols = ModelUtils.getAll(communityCollectiblesView.model, "symbol", "communityId", communityId)
             d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
+        }
+
+        function containsAny(list, filterList) {
+            for (let i = 0; i < list.length; i++) {
+                if (filterList.includes(list[i].toLowerCase())) {
+                    return true
+                }
+            }
+            return false
         }
     }
 
@@ -83,6 +97,13 @@ ColumnLayout {
             roleNames: ["collectionName", "communityName"]
         }
         filters: [
+            FastExpressionFilter {
+                expression: {
+                    d.addrFilters
+                    return d.nwFilters.includes(model.chainId+"") && d.containsAny(model.ownershipAddresses.split(":"), d.addrFilters)
+                }
+                expectedRoles: ["chainId", "ownershipAddresses"]
+            },
             FastExpressionFilter {
                 expression: {
                     d.controller.settingsDirty
@@ -269,37 +290,6 @@ ColumnLayout {
 
         cellWidth: d.cellWidth
         delegate: collectibleDelegate
-
-        // For some reason fetchMore is not working properly.
-        // Adding some logic here as a workaround.
-        visibleArea.onYPositionChanged: checkLoadMore()
-        visibleArea.onHeightRatioChanged: checkLoadMore()
-
-        Connections {
-            target: gridView
-            function onVisibleChanged() {
-                gridView.checkLoadMore()
-            }
-        }
-
-        Connections {
-            target: root.collectiblesModel
-            function onHasMoreChanged() {
-                gridView.checkLoadMore()
-            }
-            function onIsFetchingChanged() {
-                gridView.checkLoadMore()
-            }
-        }
-
-        function checkLoadMore() {
-            // If there is no more items to load or we're already fetching, return
-            if (!gridView.visible || !root.collectiblesModel.hasMore || root.collectiblesModel.isFetching)
-                return
-            // Only trigger if close to the bottom of the list
-            if (visibleArea.yPosition + visibleArea.heightRatio > 0.9)
-                root.collectiblesModel.loadMore()
-        }
     }
 
     Component {

@@ -17,7 +17,7 @@ import ./send/module as send_module
 import ./activity/controller as activityc
 import ./wallet_connect/controller as wcc
 
-import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_models/collectibles_model as collectiblesm
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
 import app/global/global_singleton
@@ -81,7 +81,6 @@ type
     devicesService: devices_service.Service
 
     activityController: activityc.Controller
-    collectiblesController: collectiblesc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
     # instance to be used in temporary, short-lived, workflows (e.g. send popup)
     tmpActivityController: activityc.Controller
@@ -121,7 +120,8 @@ proc newModule*(
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService)
-  result.allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
+  let allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
+  result.allCollectiblesModule = allCollectiblesModule
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
@@ -133,15 +133,8 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  let collectiblesController = collectiblesc.newController(
-    requestId = int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
-    loadType = collectiblesc.LoadType.OnDemand,
-    networkService = networkService,
-    events = events
-  )
-  result.collectiblesController = collectiblesController
   let collectiblesToTokenConverter = proc(id: string): backend_activity.Token =
-    return collectiblesController.getActivityToken(id)
+    return allCollectiblesModule.getAllCollectiblesModel().getActivityToken(id)
   result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events, collectiblesToTokenConverter)
   result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events, collectiblesToTokenConverter)
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
@@ -149,7 +142,7 @@ proc newModule*(
 
   result.wcController = wcc.newController(events, walletAccountService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectiblesController, result.collectibleDetailsController, result.wcController)
+  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectibleDetailsController, result.wcController)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -163,7 +156,6 @@ method delete*(self: Module) =
   self.view.delete
   self.activityController.delete
   self.tmpActivityController.delete
-  self.collectiblesController.delete
   self.collectibleDetailsController.delete
   self.wcController.delete
 
@@ -189,7 +181,6 @@ proc notifyFilterChanged(self: Module) =
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)
-  self.collectiblesController.setFilterAddressesAndChains(self.filter.addresses, self.filter.chainIds)
   self.allTokensModule.filterChanged(self.filter.addresses)
   self.view.setAddressFilters(self.filter.addresses.join(":"))
   if self.filter.addresses.len > 0:

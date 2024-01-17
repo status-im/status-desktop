@@ -13,6 +13,15 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getAllCollectiblesModel*(self: AccessInterface): collectibles_model.Model {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method refreshNetworks*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method refreshWalletAccounts*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateCollectiblePreferences*(self: AccessInterface, collectiblePreferencesJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

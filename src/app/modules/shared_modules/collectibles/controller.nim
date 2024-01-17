@@ -120,7 +120,7 @@ QtObject:
 
     self.checkModelState()
 
-  proc loadMoreItems(self: Controller) {.slot.} =
+  proc loadMoreItems(self: Controller) =
     if self.model.getIsFetching():
       return
 
@@ -141,6 +141,11 @@ QtObject:
       self.model.setIsError(true)
       self.fetchFromStart = true
       error "error fetching collectibles entries: ", response.error
+
+  proc onModelLoadMoreItems(self: Controller) {.slot.} =
+    if self.loadType.isAutoLoad():
+      return
+    self.loadMoreItems()
 
   proc getExtraData(self: Controller, chainID: int): ExtraData =
     let network = self.networkService.getNetwork(chainID)
@@ -273,7 +278,7 @@ QtObject:
 
     result.setupEventHandlers()
 
-    signalConnect(result.model, "loadMoreItems()", result, "loadMoreItems()")
+    signalConnect(result.model, "loadMoreItems()", result, "onModelLoadMoreItems()")
 
   proc setFilterAddressesAndChains*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
     if chainIds == self.chainIds and addresses == self.addresses:
@@ -296,6 +301,3 @@ QtObject:
     self.filter = filter
 
     self.resetModel()
-
-  proc getActivityToken*(self: Controller, id: string): backend_activity.Token =
-    return self.model.getActivityToken(id)
