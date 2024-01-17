@@ -49,6 +49,8 @@ const KEY_TOKEN_GROUP_BY_COMMUNITY* = "token-group-by-community?"
 const KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS* = "show-community-asset-when-sending-tokens?"
 const KEY_DISPLAY_ASSETS_BELOW_BALANCE* = "display-assets-below-balance?"
 const KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD* = "display-assets-below-balance-threshold"
+const KEY_COLLECTIBLE_GROUP_BY_COMMUNITY* = "collectible-group-by-community?"
+const KEY_COLLECTIBLE_GROUP_BY_COLLECTION* = "collectible-group-by-collection?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
 
@@ -160,6 +162,8 @@ type
     showCommunityAssetWhenSendingTokens*: bool
     displayAssetsBelowBalance*: bool
     displayAssetsBelowBalanceThreshold*: int64
+    collectibleGroupByCommunity*: bool
+    collectibleGroupByCollection*: bool
     urlUnfurlingMode*: UrlUnfurlingMode
 
 
@@ -221,6 +225,8 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, result.showCommunityAssetWhenSendingTokens)
   discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE, result.displayAssetsBelowBalance)
   discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, result.displayAssetsBelowBalanceThreshold)
+  discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, result.collectibleGroupByCommunity)
+  discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, result.collectibleGroupByCollection)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 
   var urlUnfurlingMode: int

@@ -6,6 +6,7 @@ import ../io_interface as delegate_interface
 
 import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
+import ./all_collectibles/module as all_collectibles_module
 import ./assets/module as assets_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
@@ -25,6 +26,7 @@ import app/modules/shared_modules/add_account/module as add_account_module
 import app/modules/shared_modules/keypair_import/module as keypair_import_module
 import app_service/service/keycard/service as keycard_service
 import app_service/service/token/service as token_service
+import app_service/service/collectible/service as collectible_service
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/wallet_account/service as wallet_account_service
@@ -64,6 +66,7 @@ type
     # modules
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
+    allCollectiblesModule: all_collectibles_module.AccessInterface
     assetsModule: assets_module.AccessInterface
     sendModule: send_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
@@ -93,6 +96,7 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -117,6 +121,7 @@ proc newModule*(
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService)
+  result.allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
@@ -149,6 +154,7 @@ proc newModule*(
 method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
+  self.allCollectiblesModule.delete
   self.assetsModule.delete
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
@@ -282,6 +288,7 @@ method load*(self: Module) =
   self.view.load()
   self.accountsModule.load()
   self.allTokensModule.load()
+  self.allCollectiblesModule.load()
   self.assetsModule.load()
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
@@ -297,6 +304,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.allTokensModule.isLoaded()):
+    return
+
+  if(not self.allCollectiblesModule.isLoaded()):
     return
 
   if(not self.assetsModule.isLoaded()):
@@ -334,6 +344,9 @@ method accountsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method allTokensModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method allCollectiblesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method collectiblesModuleDidLoad*(self: Module) =

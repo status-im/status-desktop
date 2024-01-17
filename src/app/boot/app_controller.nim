@@ -10,6 +10,7 @@ import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/message/service as message_service
 import ../../app_service/service/token/service as token_service
+import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/currency/service as currency_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
@@ -75,6 +76,7 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
     tokenService: token_service.Service
+    collectibleService: collectible_service.Service
     currencyService: currency_service.Service
     transactionService: transaction_service.Service
     walletAccountService: wallet_account_service.Service
@@ -178,6 +180,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
   )
+  result.collectibleService = collectible_service.newService(
+    statusFoundation.events, statusFoundation.threadpool
+  )
   result.currencyService = currency_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.tokenService, result.settingsService
   )
@@ -253,6 +258,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.communityService,
     result.messageService,
     result.tokenService,
+    result.collectibleService,
     result.currencyService,
     result.transactionService,
     result.walletAccountService,
@@ -313,6 +319,7 @@ proc delete*(self: AppController) =
   self.chatService.delete
   self.communityService.delete
   self.currencyService.delete
+  self.collectibleService.delete
   self.tokenService.delete
   self.transactionService.delete
   self.walletAccountService.delete
@@ -441,6 +448,7 @@ proc load(self: AppController) =
 
   self.networkService.init()
   self.tokenService.init()
+  self.collectibleService.init()
   self.currencyService.init()
   self.walletAccountService.init()
 
