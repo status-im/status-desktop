@@ -156,7 +156,9 @@ RightTabBaseView {
                 }
 
                 CollectiblesView {
-                    collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
+                    collectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
+                    networkFilters: RootStore.networkFilters
+                    addressFilters: RootStore.addressFilters
                     sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
                     filterVisible: filterButton.checked
                     onCollectibleClicked: {

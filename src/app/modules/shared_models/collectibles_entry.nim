@@ -1,8 +1,9 @@
-import NimQml, json, strformat, sequtils, strutils, stint, strutils
+import NimQml, json, strformat, sequtils, sugar, strutils, stint, strutils
 import options
 
 import backend/collectibles as backend
 import collectible_trait_model
+import collectible_ownership_model
 import ../../../app_service/service/community_tokens/dto/community_token 
 
 const invalidTimestamp* = high(int)
@@ -24,6 +25,7 @@ QtObject:
       data: backend.Collectible
       extradata: ExtraData
       traits: TraitModel
+      ownership: OwnershipModel
 
   proc setup(self: CollectiblesEntry) =
     self.QObject.setup
@@ -34,9 +36,13 @@ QtObject:
   proc setData(self: CollectiblesEntry, data: backend.Collectible) =
     self.data = data
     self.traits = newTraitModel()
+    self.ownership = newOwnershipModel()
     if isSome(data.collectibleData) and isSome(data.collectibleData.get().traits):
       let traits = data.collectibleData.get().traits.get()
       self.traits.setItems(traits)
+    if isSome(data.ownership):
+      let ownership = data.ownership.get()
+      self.ownership.setItems(ownership)
     self.setup()
 
   proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
@@ -51,6 +57,7 @@ QtObject:
     result.id = id
     result.extradata = extradata
     result.traits = newTraitModel()
+    result.ownership = newOwnershipModel()
     result.setup()
 
   proc newCollectibleDetailsEmptyEntry*(): CollectiblesEntry =
@@ -69,7 +76,8 @@ QtObject:
       id:{self.id},
       data:{self.data},
       extradata:{self.extradata},
-      traits:{self.traits}
+      traits:{self.traits},
+      ownership:{self.ownership},
     )"""
 
   proc getCollectibleUniqueID*(self: CollectiblesEntry): backend.CollectibleUniqueID =
@@ -241,33 +249,23 @@ QtObject:
     read = getTraits
     notify = traitsChanged
 
-  proc balanceChanged*(self: CollectiblesEntry) {.signal.}
-  proc getBalance*(self: CollectiblesEntry): UInt256  =
-    var balance: UInt256 = stint.u256(0)
-    if self.hasOwnership():
-      for item in self.getOwnership():
-        balance += item.balance
-    return balance
-  proc getBalanceAsString*(self: CollectiblesEntry): string {.slot.} =
-    return $self.getBalance()
-  
-  QtProperty[string] balance:
-    read = getBalanceAsString
-    notify = balanceChanged
-  
-  proc lastTxTimestampChanged*(self: CollectiblesEntry) {.signal.}
-  proc getLastTxTimestamp*(self: CollectiblesEntry): int =
-    var lastTxTimestamp = -1
-    if self.hasOwnership():
-      for item in self.getOwnership():
-        lastTxTimestamp = max(lastTxTimestamp, item.txTimestamp)
-    if lastTxTimestamp < 0:
-      lastTxTimestamp = invalidTimestamp
-    return lastTxTimestamp
-  
-  QtProperty[int] lastTxTimestamp:
-    read = getLastTxTimestamp
-    notify = lastTxTimestampChanged
+  proc ownershipChanged*(self: CollectiblesEntry) {.signal.}
+  proc getOwnershipModel*(self: CollectiblesEntry): QVariant {.slot.} =
+    return newQVariant(self.ownership)
+
+  QtProperty[QVariant] ownership:
+    read = getOwnershipModel
+    notify = ownershipChanged
+
+  proc ownershipAddressesChanged*(self: CollectiblesEntry) {.signal.}
+  proc getOwnershipAddresses*(self: CollectiblesEntry): string {.slot.} =
+    if not self.hasOwnership():
+      return ""
+    return self.getOwnership().map(o => o.address).join(":")
+
+  QtProperty[string] ownershipAddresses:
+    read = getOwnershipAddresses
+    notify = ownershipAddressesChanged
 
   proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityID*(self: CollectiblesEntry): string {.slot.} =
@@ -355,8 +353,7 @@ QtObject:
     self.collectionNameChanged()
     self.collectionImageUrlChanged()
     self.traitsChanged()
-    self.balanceChanged()
-    self.lastTxTimestampChanged()
+    # Ownership doesn't change with updated data
     self.communityIdChanged()
     self.communityNameChanged()
     self.communityColorChanged()

@@ -37,7 +37,20 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  discard
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+    self.delegate.refreshWalletAccounts()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+    self.delegate.refreshWalletAccounts()
+    
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
+    self.delegate.refreshNetworks()
+
+proc getWalletAddresses*(self: Controller): seq[string] =
+  return self.walletAccountService.getWalletAddresses()
+
+proc getChainIds*(self: Controller): seq[int] =
+  return self.networkService.getNetworks().map(n => n.chainId)
 
 proc updateCollectiblePreferences*(self: Controller, tokenPreferencesJson: string) =
   self.collectibleService.updateCollectiblePreferences(tokenPreferencesJson)

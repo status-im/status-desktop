@@ -20,6 +20,7 @@ ListModel {
     readonly property var data: [
         {
             uid: "123",
+            chainId: 5,
             name: "Punx not dead!",
             collectionUid: "",
             collectionName: "",
@@ -28,10 +29,12 @@ ListModel {
             communityImage: "",
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240:0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
         },
         {
             uid: "pp23",
+            chainId: 5,
             name: "pepepunk#23",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
@@ -40,10 +43,12 @@ ListModel {
             communityImage: "",
             imageUrl: "https://i.seadn.io/s/raw/files/ba2811bb5cd0bed67529d69fa92ef5aa.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "34545656768",
+            chainId: 420,
             name: "Kitty 1",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -52,10 +57,12 @@ ListModel {
             communityImage: "",
             imageUrl: ModelsData.collectibles.kitty1Big,
             isLoading: true,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
         },
         {
             uid: "123456",
+            chainId: 420,
             name: "Kitty 2",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -64,10 +71,12 @@ ListModel {
             communityImage: "",
             imageUrl: ModelsData.collectibles.kitty2Big,
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "12345645459537432",
+            chainId: 421613,
             name: "Big Kitty",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -76,10 +85,12 @@ ListModel {
             communityImage: "",
             imageUrl: ModelsData.collectibles.kitty3Big,
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240:0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
         },
         {
             uid: "pp21",
+            chainId: 421613,
             name: "pepepunk#21",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
@@ -88,10 +99,12 @@ ListModel {
             communityImage: "",
             imageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
         },
         {
             uid: "lp#666a",
+            chainId: 421613,
             name: "Lonely Panda #666",
             collectionUid: "lpan_collection",
             collectionName: "Lonely Panda Collection",
@@ -100,7 +113,8 @@ ListModel {
             communityImage: "",
             imageUrl: "",
             isLoading: false,
-            backgroundColor: "pink"
+            backgroundColor: "pink",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
     ]
 

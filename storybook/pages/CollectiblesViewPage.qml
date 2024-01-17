@@ -2,7 +2,9 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import mainui 1.0
 import utils 1.0
@@ -33,11 +35,34 @@ SplitView {
         communityTokensStore: QtObject {}
     }
 
+    QtObject {
+        id: d
+        readonly property string networksChainsCurrentlySelected: {
+            let supportNwChains = ":"
+            for (let i =0; i< networksRepeater.count; i++) {
+                if (networksRepeater.itemAt(i).checked && networksRepeater.itemAt(i).visible)
+                    supportNwChains +=  networksRepeater.itemAt(i).chainID + ":"
+            }
+            return supportNwChains
+        }
+
+        readonly property string addressesSelected: {
+            let supportedAddresses = ""
+            for (let i =0; i< accountsRepeater.count; i++) {
+                if (accountsRepeater.itemAt(i).checked && accountsRepeater.itemAt(i).visible)
+                    supportedAddresses += accountsRepeater.itemAt(i).address + ":"
+            }
+            return supportedAddresses
+        }
+    }
+
     CollectiblesView {
         id: assetsView
         SplitView.preferredWidth: 600
         SplitView.fillHeight: true
         collectiblesModel: collectiblesModel
+        networkFilters: d.networksChainsCurrentlySelected
+        addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
         onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid"], arguments)
         onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
@@ -46,15 +71,14 @@ SplitView {
         onManageTokensRequested: logs.logEvent("onManageTokensRequested")
     }
 
-    LogsAndControlsPanel {
-        id: logsAndControlsPanel
-
-        SplitView.minimumWidth: 150
-        SplitView.preferredWidth: 250
-
-        logsView.logText: logs.logText
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
 
         ColumnLayout {
+            spacing: 12
+            anchors.fill: parent
+
             Switch {
                 id: ctrlFilterVisible
                 text: "Filter visible"
@@ -70,7 +94,61 @@ SplitView {
                 text: "Community collectibles"
                 checked: true
             }
+
+            CheckBox {
+                id: loadingCheckbox
+                checked: false
+                text: "loading"
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "select supported network(s)"
+                }
+                Repeater {
+                    id: networksRepeater
+                    model: NetworksModel.allNetworks
+                    delegate: CheckBox {
+                        property int chainID: chainId
+                        width: parent.width
+                        text: chainName
+                        visible: isTest
+                        checked: true
+                        onToggled: {
+                            isEnabled = checked
+                        }
+                    }
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "select account(s)"
+                }
+                Repeater {
+                    id: accountsRepeater
+                    model: WalletAccountsModel {}
+                    delegate: CheckBox {
+                        property string address: model.address
+                        checked: true
+                        visible: index<2
+                        width: parent.width
+                        text: name
+                    }
+                }
+            }
         }
+    }
+
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
+        SplitView.minimumWidth: 150
+        SplitView.preferredWidth: 250
+
+        logsView.logText: logs.logText
     }
 }
 

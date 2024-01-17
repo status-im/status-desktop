@@ -1,7 +1,6 @@
 import NimQml, json
 
 import ./activity/controller as activityc
-import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import ../../shared_models/currency_amount
@@ -18,7 +17,6 @@ QtObject:
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
       tmpActivityController: activityc.Controller
-      collectiblesController: collectiblesc.Controller
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
@@ -33,12 +31,11 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller, wcController: wcc.Controller): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectibleDetailsController: collectible_detailsc.Controller, wcController: wcc.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityController = tmpActivityController
-    result.collectiblesController = collectiblesController
     result.collectibleDetailsController = collectibleDetailsController
     result.wcController = wcController
 
@@ -148,11 +145,6 @@ QtObject:
     return newQVariant(self.activityController)
   QtProperty[QVariant] activityController:
     read = getActivityController
-
-  proc getCollectiblesController(self: View): QVariant {.slot.} =
-    return newQVariant(self.collectiblesController)
-  QtProperty[QVariant] collectiblesController:
-    read = getCollectiblesController
 
   proc getCollectibleDetailsController(self: View): QVariant {.slot.} =
     return newQVariant(self.collectibleDetailsController)

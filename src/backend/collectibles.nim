@@ -13,6 +13,7 @@ type
     WalletAccount
     ProfileShowcase
     WalletSend
+    AllCollectibles
 
 # Declared in services/wallet/collectibles/service.go
 const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ownership-update-started"

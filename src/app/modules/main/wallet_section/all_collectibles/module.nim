@@ -23,6 +23,7 @@ type
     events: EventEmitter
     view: View
     controller: all_collectibles_controller.Controller
+    collectiblesController: collectibles_controller.Controller
     moduleLoaded: bool
 
 proc newModule*(
@@ -38,12 +39,21 @@ proc newModule*(
   result.events = events
   result.controller = all_collectibles_controller.newController(result, events, collectibleService, networkService, walletAccountService, settingsService)
 
+  let collectiblesController = collectibles_controller.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.AllCollectibles),
+    loadType = collectibles_controller.LoadType.AutoLoadSingleUpdate,
+    networkService = networkService,
+    events = events
+  )
+  result.collectiblesController = collectiblesController
+
   result.view = newView(result)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.controller.delete
+  self.collectiblesController.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAllCollectibles", newQVariant(self.view))
@@ -58,9 +68,24 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
+proc refreshCollectiblesFilter(self: Module) =
+  let addresses = self.controller.getWalletAddresses()
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.setFilterAddressesAndChains(addresses, chainIds)
+
 method viewDidLoad*(self: Module) =
+  self.refreshCollectiblesFilter()
   self.moduleLoaded = true
   self.delegate.allCollectiblesModuleDidLoad()
+
+method getAllCollectiblesModel*(self: Module): collectibles_model.Model =
+  return self.collectiblesController.getModel()
+
+method refreshNetworks*(self: Module) =
+  self.refreshCollectiblesFilter()
+
+method refreshWalletAccounts*(self: Module) =
+  self.refreshCollectiblesFilter()
 
 method updateCollectiblePreferences*(self: Module, collectiblePreferencesJson: string) {.slot.} =
   self.controller.updateCollectiblePreferences(collectiblePreferencesJson)
