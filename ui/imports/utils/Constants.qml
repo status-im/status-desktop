@@ -436,6 +436,8 @@ QtObject {
         readonly property int member: 2
         readonly property int read: 3
         readonly property int viewAndPost: 4
+        readonly property int becomeTokenMaster: 5
+        readonly property int becomeTokenOwner: 6
     }
 
     readonly property QtObject messageContentType: QtObject {

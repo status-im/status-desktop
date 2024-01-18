@@ -1550,7 +1550,6 @@ QtObject:
         raise newException(RpcException, error.message)
 
       let checkPermissionsToJoinResponse = rpcResponseObj["response"]["result"].toCheckPermissionsToJoinResponseDto
-
       self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE, CheckPermissionsToJoinResponseArgs(
         communityId: communityId,
         checkPermissionsToJoinResponse: checkPermissionsToJoinResponse

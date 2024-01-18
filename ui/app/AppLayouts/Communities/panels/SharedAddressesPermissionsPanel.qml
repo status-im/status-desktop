@@ -33,6 +33,10 @@ Rectangle {
     implicitHeight: permissionsScrollView.contentHeight - permissionsScrollView.anchors.topMargin
     color: Theme.palette.baseColor2
 
+    readonly property bool hasAnyVisiblePermission: root.permissionsModel && root.permissionsModel.count &&
+                                                    (d.tokenMasterPermissionsModel.count > 0 || d.adminPermissionsModel.count > 0 ||
+                                                     d.joinPermissionsModel.count > 0 || d.channelsPermissionsModel.count > 0)
+
     QtObject {
         id: d
 
@@ -62,12 +66,23 @@ Rectangle {
         readonly property bool lostChannelPermissions: root.isEditMode && d.uniquePermissionChannels.length > 0 && channelPermissionsPanel.anyPermissionLost
 
         // models
+        readonly property var tokenMasterPermissionsModel: SortFilterProxyModel {
+            id: tokenMasterPermissionsModel
+            sourceModel: root.permissionsModel
+            function filterPredicate(modelData) {
+                return (modelData.permissionType === Constants.permissionType.becomeTokenMaster)
+                        && modelData.tokenCriteriaMet
+            }
+            filters: ExpressionFilter {
+                expression: tokenMasterPermissionsModel.filterPredicate(model)
+            }
+        }
         readonly property var adminPermissionsModel: SortFilterProxyModel {
             id: adminPermissionsModel
             sourceModel: root.permissionsModel
             function filterPredicate(modelData) {
                 return (modelData.permissionType === Constants.permissionType.admin) &&
-                        (modelData.tokenCriteriaMet && !modelData.isPrivate) // admin privs are hidden if criteria not met
+                        (!modelData.isPrivate || (modelData.tokenCriteriaMet && modelData.isPrivate)) // visible or (hidden & met)
             }
             filters: ExpressionFilter {
                 expression: adminPermissionsModel.filterPredicate(model)
@@ -78,10 +93,23 @@ Rectangle {
             sourceModel: root.permissionsModel
             function filterPredicate(modelData) {
                 return (modelData.permissionType === Constants.permissionType.member) &&
-                        (modelData.tokenCriteriaMet || !modelData.isPrivate)
+                        (!modelData.isPrivate || (modelData.tokenCriteriaMet && modelData.isPrivate)) // visible or (hidden & met)
             }
             filters: ExpressionFilter {
                 expression: joinPermissionsModel.filterPredicate(model)
+            }
+        }
+
+        // used to check if there are any visible channel permissions
+        readonly property var channelsPermissionsModel: SortFilterProxyModel {
+            id: channelsPermissionsModel
+            sourceModel: root.permissionsModel
+            function filterPredicate(modelData) {
+                return (modelData.permissionType === Constants.permissionType.read || modelData.permissionType === Constants.permissionType.viewAndPost) &&
+                        (!modelData.isPrivate || (modelData.tokenCriteriaMet && modelData.isPrivate)) // visible or (hidden & met)
+            }
+            filters: ExpressionFilter {
+                expression: channelsPermissionsModel.filterPredicate(model)
             }
         }
     }
@@ -118,6 +146,11 @@ Rectangle {
             }
 
             // permission types
+            PermissionPanel {
+                id: tokenMasterPermissionPanel
+                permissionType: PermissionTypes.Type.TokenMaster
+                permissionsModel: d.tokenMasterPermissionsModel
+            }
             PermissionPanel {
                 id: joinPermissionPanel
                 permissionType: PermissionTypes.Type.Member
@@ -178,6 +211,8 @@ Rectangle {
                 return qsTr("Become an admin")
             case PermissionTypes.Type.Member:
                 return qsTr("Join %1").arg(root.communityName)
+            case PermissionTypes.Type.TokenMaster:
+                return qsTr("Become a TokenMaster")
             default:
                 return d.uniquePermissionChannels[index][1]
             }
@@ -326,6 +361,8 @@ Rectangle {
                                             return qsTr("View only")
                                         case PermissionTypes.Type.ViewAndPost:
                                             return qsTr("View & post")
+                                        case PermissionTypes.Type.TokenMaster:
+                                            return qsTr("TokenMaster")
                                         default:
                                             return "???"
                                         }
@@ -354,6 +391,15 @@ Rectangle {
         padding: d.absLeftMargin
         background: PanelBg {}
 
+        visible: {
+            for (var i = 0; i < channelPermsRepeater.count; i++) {
+                var chanPermissionItem = channelPermsRepeater.itemAt(i);
+                if (chanPermissionItem.channelPermissionsModel.count > 0)
+                    return true
+            }
+            return false
+        }
+
         readonly property string channelKey: modelData[0]
         readonly property bool readPermissionMet: channelPermsRepeater.count > 0 ? channelPermsRepeater.itemAt(0).tokenCriteriaMet : false
         readonly property bool viewAndPostPermissionMet: channelPermsRepeater.count > 1 ? channelPermsRepeater.itemAt(1).tokenCriteriaMet : false
@@ -377,6 +423,7 @@ Rectangle {
                         readonly property int permissionType: modelData
                         readonly property alias tokenCriteriaMet: overallPermissionRow2.tokenCriteriaMet
                         readonly property bool permissionLost: d.initialChannelPermissions[channelPermsPanel.channelKey][index] && !tokenCriteriaMet
+                        readonly property alias channelPermissionsModel: permissionsRepeater2.model
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: grid2.implicitHeight + grid2.anchors.margins*2
@@ -384,6 +431,7 @@ Rectangle {
                         border.color: d.tableBorderColor
                         radius: Style.current.radius
                         color: "transparent"
+                        visible: permissionsRepeater2.model.count > 0
 
                         GridLayout {
                             id: grid2
@@ -405,7 +453,7 @@ Rectangle {
                                     sourceModel: root.permissionsModel
                                     function filterPredicate(modelData) {
                                         return modelData.permissionType === channelPermsSubPanel.permissionType &&
-                                                !modelData.isPrivate &&
+                                                (!modelData.isPrivate || (modelData.tokenCriteriaMet && modelData.isPrivate)) &&
                                                 ModelUtils.contains(modelData.channelsListModel, "key", channelPermsPanel.channelKey) // filter and group by channel "key"
                                     }
                                     filters: ExpressionFilter {
