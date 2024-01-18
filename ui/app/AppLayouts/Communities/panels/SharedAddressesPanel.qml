@@ -215,7 +215,7 @@ Control {
             radius: Style.current.padding
             border.width: 1
             border.color: Theme.palette.baseColor3
-            visible: d.hasPermissions
+            visible: permissionsView.hasAnyVisiblePermission
 
             layer.enabled: true
             layer.effect: DropShadow {
@@ -240,7 +240,7 @@ Control {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.topMargin: -Style.current.padding // compensate for the half-rounded divider above
-            visible: d.hasPermissions
+            visible: permissionsView.hasAnyVisiblePermission
         }
     }
 }

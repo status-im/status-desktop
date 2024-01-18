@@ -60,7 +60,7 @@ type
 type
   JoiningCommunityDetails = object
     communityId: string
-    communityIdForChannelsPermisisons: string
+    communityIdForPermissions: string
     communityIdForRevealedAccounts: string
     ensName: string
     addressesToShare: OrderedTable[string, AddressToShareDetails] ## [address, AddressToShareDetails]
@@ -818,9 +818,14 @@ method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: s
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
 method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
-  self.joiningCommunityDetails.communityIdForChannelsPermisisons = communityId
+  self.joiningCommunityDetails.communityIdForPermissions = communityId
+
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.checkingPermissionToJoinInProgress = true
+
   self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+  self.checkingAllChannelPermissionsInProgress = true
+
   self.view.setCheckingPermissionsInProgress(inProgress = true)
 
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
@@ -898,7 +903,8 @@ method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: s
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
     checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
-  if self.joiningCommunityDetails.communityId != communityId:
+  if not self.checkingPermissionToJoinInProgress and
+      self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
   self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
   self.checkingPermissionToJoinInProgress = false
@@ -906,7 +912,8 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: str
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
     checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
-  if self.joiningCommunityDetails.communityIdForChannelsPermisisons != communityId:
+  if not self.checkingAllChannelPermissionsInProgress and
+      self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
   self.checkingAllChannelPermissionsInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)

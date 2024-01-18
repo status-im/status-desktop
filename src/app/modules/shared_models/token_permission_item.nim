@@ -20,7 +20,10 @@ proc `$`*(self: TokenPermissionItem): string =
   result = fmt"""TokenPermissionItem(
     id: {self.id},
     type: {self.type},
-    ]"""
+    isPrivate: {self.isPrivate},
+    tokenCriteriaMet: {self.tokenCriteriaMet},
+    state: {self.state}
+    )"""
 
 proc initTokenPermissionItem*(
   id: string,
