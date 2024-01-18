@@ -26,6 +26,9 @@ SplitView {
         readonly property string sender: "0xfB8131c260749c7835a08ccBdb64728De432858E"
         readonly property string recipient: "0x3fb81384583b3910BB14Cc72582E8e8a56E83ae9"
         readonly property bool isNFT: ctrlIsNft.checked
+        readonly property bool isCommunityAssetViaAirdrop: isCommunityAssetViaAirdrop.checked
+        readonly property string communityName: "Doodles"
+        readonly property string communityImageUrl: Style.png("collectibles/HappyMeow")
         readonly property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         readonly property string tokenAddress: "0xdeadbeef"
         readonly property string tokenInAddress: "0xdeadbeef-00"
@@ -117,6 +120,12 @@ SplitView {
             CheckBox {
                 id: ctrlIsNft
                 text: "Is NFT"
+            }
+
+            CheckBox {
+                id: isCommunityAssetViaAirdrop
+                checked: true
+                text: "Is Community Asset Via Airdrop"
             }
 
             Label {
