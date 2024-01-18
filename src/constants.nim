@@ -30,7 +30,7 @@ let
   ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore")
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
-  KEYCARDPAIRINGDATAFILE* = joinPath(baseDir, "data", "keycard/pairings.json")
+  KEYCARDPAIRINGDATAFILE* = joinPath(baseDir, "data", "keycard", "pairings.json")
   DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(baseDir, "data", "archivedata")
   DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(baseDir, "data", "torrents")
 
