@@ -75,6 +75,7 @@ type
   # see status-go/services/wallet/collectibles/filter.go Filter
   # All empty sequences mean include all
   CollectibleFilter* = object
+    collectibleIds*: seq[CollectibleUniqueID]
     communityIds*: seq[string]
     communityPrivilegesLevels*: seq[int]
     filterCommunity*: FilterCommunityType
@@ -131,6 +132,9 @@ proc fromJson*(t: JsonNode, T: typedesc[OwnershipUpdateMessage]): OwnershipUpdat
   )
 
 # CollectibleFilter
+proc newCollectibleFilterAllCollectibleIds*(): seq[CollectibleUniqueID] {.inline.} =
+  return @[]
+
 proc newCollectibleFilterAllCommunityIds*(): seq[string] {.inline.} =
   return @[]
 
@@ -139,6 +143,7 @@ proc newCollectibleFilterAllCommunityPrivilegesLevels*(): seq[int] {.inline.} =
 
 proc newCollectibleFilterAllEntries*(): CollectibleFilter {.inline.} =
   return CollectibleFilter(
+    collectibleIds: newCollectibleFilterAllCollectibleIds(),
     communityIds: newCollectibleFilterAllCommunityIds(),
     communityPrivilegesLevels: newCollectibleFilterAllCommunityPrivilegesLevels(),
     filterCommunity: FilterCommunityType.All
@@ -146,6 +151,7 @@ proc newCollectibleFilterAllEntries*(): CollectibleFilter {.inline.} =
 
 proc `$`*(self: CollectibleFilter): string =
   return fmt"""CollectibleFilter(
+    collectibleIds:{self.collectibleIds}, 
     communityIds:{self.communityIds}, 
     communityPrivilegesLevels:{self.communityPrivilegesLevels}, 
     filterCommunity:{self.filterCommunity}
@@ -153,6 +159,7 @@ proc `$`*(self: CollectibleFilter): string =
 
 proc `%`*(t: CollectibleFilter): JsonNode {.inline.} =
   result = newJObject()
+  result["collectible_ids"] = %(t.collectibleIds)
   result["community_ids"] = %(t.communityIds)
   result["community_privileges_levels"] = %(t.communityPrivilegesLevels)
   result["filter_community"] = %(t.filterCommunity.int)
