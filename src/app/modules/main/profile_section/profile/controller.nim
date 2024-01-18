@@ -86,6 +86,12 @@ proc getCommunityById*(self: Controller, id: string): CommunityDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts(true)
+
+proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
+  return self.walletAccountService.getTokensByAddresses(addresses)
+
 proc getBalancesByChain*(self: Controller, accountAddresses: seq[string], tokenAddresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getBalancesByChain(accountAddresses, tokenAddresses)
 

@@ -3,6 +3,7 @@ import json, strutils, strformat, stint, json_serialization, tables
 import profile_preferences_base_item
 
 import app_service/service/profile/dto/profile_showcase_preferences
+import app/modules/shared_models/collectibles_entry
 
 include app_service/common/json_utils
 include app_service/common/utils
@@ -17,6 +18,23 @@ type
     collectionName*: string
     imageUrl*: string
     backgroundColor*: string
+    loading*: bool
+
+proc initProfileShowcaseCollectibleItem*(collectible: CollectiblesEntry, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseCollectibleItem =
+  result = ProfileShowcaseCollectibleItem()
+  result.contractAddress = collectible.getContractAddress()
+  result.chainId = collectible.getChainID()
+  result.tokenId = collectible.getTokenIDAsString()
+  result.communityId = collectible.getCommunityId()
+  result.name = collectible.getName()
+  result.collectionName = collectible.getCollectionName()
+  result.imageUrl = collectible.getImageURL()
+  result.backgroundColor = collectible.getBackgroundColor()
+  result.showcaseVisibility = visibility
+  result.order = order
+  result.showcaseVisibility = visibility
+  result.order = order
+  result.loading = false
 
 proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollectibleItem =
   result = ProfileShowcaseCollectibleItem()

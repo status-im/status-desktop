@@ -97,7 +97,7 @@ QtObject:
     of ModelRole.CollectionName:
       result = newQVariant(item.collectionName)
     of ModelRole.IsLoading:
-      result = newQVariant(false)
+      result = newQVariant(item.loading)
     of ModelRole.CommunityId:
       result = newQVariant(item.communityId)
 
@@ -149,6 +149,7 @@ QtObject:
         ModelRole.CollectionName.int,
         ModelRole.ImageUrl.int,
         ModelRole.BackgroundColor.int,
+        ModelRole.IsLoading.int
       ])
 
   proc upsertItemJson(self: ProfileShowcaseCollectiblesModel, itemJson: string) {.slot.} =

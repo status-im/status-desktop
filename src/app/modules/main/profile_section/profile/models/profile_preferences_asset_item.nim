@@ -22,20 +22,20 @@ type
     color*: string
     decimals*: int
 
-proc initProfileShowcaseAssetItem*(token: WalletTokenDto, contractAddress: string, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
+
+proc initProfileShowcaseVerifiedToken*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
   result.showcaseVisibility = visibility
   result.order = order
 
-  result.contractAddress = contractAddress
-  # TODO: result.chainId = token.chainId
-  result.communityId = token.communityId
   result.symbol = token.symbol
   result.name = token.name
   result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
   result.color = token.color
   result.decimals = token.decimals
+
+  # TODO: initProfileShowcaseUnverifiedToken
 
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
