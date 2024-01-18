@@ -481,7 +481,7 @@ QtObject:
     let tmpFlow = self.currentFlow
     self.cancelCurrentFlow()
     self.currentFlow = tmpFlow
-    self.runTimer(ReRunCurrentFlowInterval, "reRunCurrentFlowLater")
+    self.runTimer(ReRunCurrentFlowInterval, $TimerReason.ReRunCurrentFlowLater)
 
   proc registerForKeycardAvailability*(self: Service, p: proc()) =
     if not self.busy:
