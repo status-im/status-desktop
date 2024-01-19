@@ -582,7 +582,7 @@ ifndef IN_NIX_SHELL
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
 	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
-	mv $(_APPIMAGE_TOOL) tmp/linux/tools/appimagetool
+	mv $(_APPIMAGE_TOOL) $(APPIMAGE_TOOL)
 	chmod +x $(APPIMAGE_TOOL)
 endif
 

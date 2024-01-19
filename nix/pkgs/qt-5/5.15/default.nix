@@ -7,7 +7,7 @@ Check for any minor version changes.
 
 */
 
-{ makeScopeWithSplicing, generateSplicesForMkScope
+{ newScope, generateSplicesForMkScope
 , lib, stdenv, fetchurl, fetchgit, fetchpatch, fetchFromGitHub, makeSetupHook, makeWrapper
 , bison, cups ? null, harfbuzz, libGL, perl, python3
 , gstreamer, gst-plugins-base, gtk3, dconf
@@ -57,19 +57,19 @@ let
     qtwebengine = [
       (fetchpatch {
         url = "https://raw.githubusercontent.com/Homebrew/formula-patches/a6f16c6daea3b5a1f7bc9f175d1645922c131563/qt5/qt5-webengine-python3.patch";
-        hash = "sha256-rUSDwTucXVP3Obdck7LRTeKZ+JYQSNhQ7+W31uHZ9yM=";
+        sha256 = "sha256-rUSDwTucXVP3Obdck7LRTeKZ+JYQSNhQ7+W31uHZ9yM=";
       })
       (fetchpatch {
         url = "https://raw.githubusercontent.com/Homebrew/formula-patches/7ae178a617d1e0eceb742557e63721af949bd28a/qt5/qt5-webengine-chromium-python3.patch";
         stripLen = 1;
         extraPrefix = "src/3rdparty/";
-        hash = "sha256-MZGYeMdGzwypfKoSUaa56K3inbcGRx7he/+AFyk5ekA=";
+        sha256 = "sha256-MZGYeMdGzwypfKoSUaa56K3inbcGRx7he/+AFyk5ekA=";
       })
       (fetchpatch {
         url = "https://raw.githubusercontent.com/Homebrew/formula-patches/7ae178a617d1e0eceb742557e63721af949bd28a/qt5/qt5-webengine-gcc12.patch";
         stripLen = 1;
         extraPrefix = "src/3rdparty/";
-        hash = "sha256-s4GsGMJTBNWw2gTJuIEP3tqT82AmTsR2mbj59m2p6rM=";
+        sha256 = "sha256-s4GsGMJTBNWw2gTJuIEP3tqT82AmTsR2mbj59m2p6rM=";
       })
     ] ++ lib.optionals stdenv.isDarwin [
       ./qtwebengine-darwin-no-platform-check.patch
@@ -134,10 +134,6 @@ let
         inherit bison cups harfbuzz libGL;
         withGtk3 = !stdenv.isDarwin; inherit dconf gtk3;
         inherit developerBuild decryptSslTraffic;
-        inherit (darwin.apple_sdk_11_0.frameworks) AGL AppKit ApplicationServices AVFoundation Carbon Cocoa CoreAudio CoreBluetooth
-          CoreLocation CoreServices DiskArbitration Foundation OpenGL MetalKit IOKit;
-        libobjc = darwin.apple_sdk_11_0.objc4;
-        xcbuild = darwin.apple_sdk_11_0.xcodebuild;
       };
 
       qt3d = callPackage ../modules/qt3d.nix {};
@@ -212,7 +208,7 @@ let
 
       qmake = makeSetupHook {
         name = "qmake-hook";
-        propagatedBuildInputs = [ self.qtbase.dev ];
+        deps = [ self.qtbase.dev ];
         substitutions = {
           inherit debug;
           fix_qmake_libtool = ../hooks/fix-qmake-libtool.sh;
@@ -221,12 +217,10 @@ let
 
       wrapQtAppsHook = makeSetupHook {
         name = "wrap-qt5-apps-hook";
-        propagatedBuildInputs = [ self.qtbase.dev buildPackages.makeWrapper ]
-          ++ lib.optional stdenv.isLinux self.qtwayland.dev;
+        deps =
+          [ self.qtbase.dev buildPackages.makeWrapper ]
+          ++ optional stdenv.isLinux self.qtwayland.dev;
       } ../hooks/wrap-qt-apps-hook.sh;
-    } // lib.optionalAttrs config.allowAliases {
-      # remove before 23.11
-      overrideScope' = lib.warn "qt5 now uses makeScopeWithSplicing which does not have \"overrideScope'\", use \"overrideScope\"." self.overrideScope;
     };
-
-in makeScopeWithSplicing (generateSplicesForMkScope "qt5") (_: {}) (_: {}) addPackages
+  self = lib.makeScope newScope addPackages;
+in self

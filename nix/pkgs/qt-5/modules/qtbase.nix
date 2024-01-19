@@ -3,9 +3,6 @@
 
 , coreutils, bison, flex, gdb, gperf, lndir, perl, pkg-config, python3
 , which
-  # darwin support
-, libiconv, libobjc, xcbuild, AGL, AppKit, ApplicationServices, AVFoundation, Carbon, Cocoa, CoreAudio, CoreBluetooth
-, CoreLocation, CoreServices, DiskArbitration, Foundation, OpenGL, MetalKit, IOKit
 
 , dbus, fontconfig, freetype, glib, harfbuzz, icu, libdrm, libX11, libXcomposite
 , libXcursor, libXext, libXi, libXrender, libinput, libjpeg, libpng , libxcb
@@ -27,14 +24,13 @@
 , debug ? false
 , developerBuild ? false
 , decryptSslTraffic ? false
-, testers
 }:
 
 let
   debugSymbols = debug || developerBuild;
 in
 
-stdenv.mkDerivation (finalAttrs: {
+stdenv.mkDerivation {
   pname = "qtbase";
   inherit qtCompatVersion src version;
   debug = debugSymbols;
@@ -50,10 +46,6 @@ stdenv.mkDerivation (finalAttrs: {
     pcre2
   ] ++ (
     if stdenv.isDarwin then [
-      # TODO: move to buildInputs, this should not be propagated.
-      AGL AppKit ApplicationServices AVFoundation Carbon Cocoa CoreAudio CoreBluetooth
-      CoreLocation CoreServices DiskArbitration Foundation OpenGL
-      libobjc libiconv MetalKit IOKit
     ] else [
       dbus glib udev
 
@@ -79,8 +71,7 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optional (mysqlSupport) libmysqlclient
     ++ lib.optional (postgresql != null) postgresql;
 
-  nativeBuildInputs = [ bison flex gperf lndir perl pkg-config which ]
-    ++ lib.optionals stdenv.isDarwin [ xcbuild ];
+  nativeBuildInputs = [ bison flex gperf lndir perl pkg-config which ];
 
   propagatedNativeBuildInputs = [ lndir ];
 
@@ -122,15 +113,6 @@ stdenv.mkDerivation (finalAttrs: {
     patchShebangs ./bin
   '' + (
     if stdenv.isDarwin then ''
-        sed -i \
-            -e 's|/usr/bin/xcode-select|xcode-select|' \
-            -e 's|/usr/bin/xcrun|xcrun|' \
-            -e 's|/usr/bin/xcodebuild|xcodebuild|' \
-            -e 's|QMAKE_CONF_COMPILER=`getXQMakeConf QMAKE_CXX`|QMAKE_CXX="clang++"\nQMAKE_CONF_COMPILER="clang++"|' \
-            ./configure
-            substituteInPlace ./mkspecs/common/mac.conf \
-                --replace "/System/Library/Frameworks/OpenGL.framework/" "${OpenGL}/Library/Frameworks/OpenGL.framework/" \
-                --replace "/System/Library/Frameworks/AGL.framework/" "${AGL}/Library/Frameworks/AGL.framework/"
     '' else lib.optionalString libGLSupported ''
       sed -i mkspecs/common/linux.conf \
           -e "/^QMAKE_INCDIR_OPENGL/ s|$|${libGL.dev or libGL}/include|" \
@@ -179,7 +161,7 @@ stdenv.mkDerivation (finalAttrs: {
     done
   '';
 
-  env.NIX_CFLAGS_COMPILE = toString ([
+  NIX_CFLAGS_COMPILE = toString ([
     "-Wno-error=sign-compare" # freetype-2.5.4 changed signedness of some struct fields
     ''-DNIXPKGS_QTCOMPOSE="${libX11.out}/share/X11/locale"''
     ''-DLIBRESOLV_SO="${stdenv.cc.libc.out}/lib/libresolv"''
@@ -343,8 +325,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   setupHook = ../hooks/qtbase-setup-hook.sh;
 
-  passthru.tests.pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
-
   meta = with lib; {
     homepage = "https://www.qt.io/";
     description = "A cross-platform application framework for C++";
@@ -372,4 +352,4 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = platforms.unix;
   };
 
-})
+}

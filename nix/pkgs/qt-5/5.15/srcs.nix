@@ -13,7 +13,6 @@ let
       src = override.src or
         fetchgit {
           inherit (args) url rev sha256;
-          fetchLFS = false;
           fetchSubmodules = true;
           deepClone = false;
           leaveDotGit = false;
@@ -37,7 +36,7 @@ lib.mapAttrs mk (lib.importJSON ./srcs-generated.json)
   catapult = fetchgit {
     url = "https://chromium.googlesource.com/catapult";
     rev = "5eedfe23148a234211ba477f76fc2ea2e8529189";
-    hash = "sha256-LPfBCEB5tJOljXpptsNk0sHGtJf/wIRL7fccN79Nh6o=";
+    sha256 = "sha256-LPfBCEB5tJOljXpptsNk0sHGtJf/wIRL7fccN79Nh6o=";
   };
 
   qtwebengine =

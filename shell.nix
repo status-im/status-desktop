@@ -3,8 +3,8 @@
 }:
 
 let
-  qtCustom = (with pkgs.qt515;
-    # TODO:check the required modules after Qt upgrade
+  qtCustom = (with pkgs.qt515_8;
+    # TODO:check the required modules
     env "qt-custom-${qtbase.version}" ([
       qtbase
       qtdeclarative
@@ -18,13 +18,12 @@ let
       qtgraphicaleffects
       qtwebengine
       qtlocation
-#      qtlottie # TODO: was missing in 5.15.2, review after upgrade
   ]));
 
 in pkgs.mkShell {
   name = "status-desktop-build-shell";
 
-  # TODO:check the required packages after Qt upgrade
+  # TODO:check the required packages
   buildInputs = with pkgs; [
     bash curl wget git file unzip jq lsb-release which cacert gnupg
     linuxdeployqt appimagekit
@@ -53,20 +52,8 @@ in pkgs.mkShell {
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
   '';
 
-  # Used to workaround missing lib links in qt-custom
-  # TODO:check if it's still needed after Qt upgrade
-  LIBRARY_PATH = with pkgs.qt515; pkgs.lib.makeLibraryPath [
-    qtdeclarative
-    qtmultimedia
-    qtquickcontrols
-    qtquickcontrols2
-    qtsvg
-    qtwebchannel
-    qtwebview
-  ];
-
   # Used for linuxdeployqt
-  # TODO:check if qt modules are still needed here after Qt upgrade
+  # TODO:check which deps are needed
   LD_LIBRARY_PATH = with pkgs; lib.makeLibraryPath (
   [
     alsaLib
@@ -84,15 +71,7 @@ in pkgs.mkShell {
     libxkbcommon
     p11-kit
     zlib
-  ] ++ (with qt515; [
-    qtbase
-    qtdeclarative
-    qtlocation
-    qtmultimedia
-    qtquickcontrols2
-    qtsvg
-    qtwebengine
-  ]) ++ (with xorg; [
+  ] ++ (with xorg; [
     libICE
     libSM
     libX11
