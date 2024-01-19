@@ -1636,10 +1636,25 @@ Item {
         clip: false
 
         delegate: StatusToastMessage {
+            property bool isSquare : isSquareShape(model.actionData)
+
+            // Specific method to calculate image radius depending on if the toast represents some info about a collectible or an asset
+            function isSquareShape(data) {
+                // It expects the data is a JSON file containing `tokenType`
+                if(data) {
+                    var parsedData = JSON.parse(data)
+                    var tokenType = parsedData.tokenType
+                    return tokenType === Constants.TokenType.ERC721
+                }
+                return false
+            }
+
             objectName: "statusToastMessage"
             width: ListView.view.width
             primaryText: model.title
             secondaryText: model.subTitle
+            image: model.image
+            imageRadius: model.image && isSquare ? 8 : imageSize / 2
             icon.name: model.icon
             iconColor: model.iconColor
             loading: model.loading

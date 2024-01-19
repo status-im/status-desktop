@@ -204,6 +204,10 @@ method displayEphemeralWithActionNotification*(self: AccessInterface, title: str
     ephNotifType: int, actionType: int, actionData: string, details = NotificationDetails()) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method displayEphemeralImageWithActionNotification*(self: AccessInterface, title: string, subTitle: string, image: string,
+    ephNotifType: int, actionType: int, actionData: string, details = NotificationDetails()) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method removeEphemeralNotification*(self: AccessInterface, id: int64) {.base.} =
   raise newException(ValueError, "No implementation available")
 
