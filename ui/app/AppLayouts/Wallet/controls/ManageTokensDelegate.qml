@@ -13,22 +13,20 @@ DropArea {
     id: root
     objectName: "manageTokensDelegate-%1".arg(index)
 
-    // expected roles: symbol, name, communityId, communityName, communityImage, collectionName, imageUrl
-    // + enabledNetworkBalance, enabledNetworkCurrencyBalance -> TODO might get dropped/renamed in the future!!!
+    // expected roles: symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, imageUrl
+    // + enabledNetworkBalance, enabledNetworkCurrencyBalance
 
     property var controller
     property int visualIndex: index
     property alias dragParent: delegate.dragParent
     property alias dragEnabled: delegate.dragEnabled
     property alias bgColor: delegate.bgColor
-    property alias topInset: delegate.topInset
-    property alias bottomInset: delegate.bottomInset
-    property bool isGrouped
     property bool isHidden // inside the "Hidden" section
     property int count
     property bool isCollectible
 
     readonly property alias title: delegate.title
+    readonly property bool isCommunityToken: !!model.communityId
 
     readonly property var priv: QtObject {
         id: priv
@@ -42,6 +40,7 @@ DropArea {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
+    keys: isCommunityToken ? ["x-status-draggable-community-token-item"] : ["x-status-draggable-regular-token-item"]
     width: ListView.view ? ListView.view.width : 0
     height: visible ? delegate.height : 0
 
@@ -66,7 +65,7 @@ DropArea {
 
         width: root.width
         title: model.name
-        secondaryTitle: root.isCollectible ? (!!model.communityId ? qsTr("Community minted") : model.collectionName || model.symbol) :
+        secondaryTitle: root.isCollectible ? (root.isCommunityToken ? qsTr("Community minted") : model.collectionName || model.collectionUid) :
                                              hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance))
                                                                               .arg(LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkCurrencyBalance))
                                                                             : LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
@@ -81,7 +80,7 @@ DropArea {
         actions: [
             ManageTokensCommunityTag {
                 Layout.maximumWidth: delegate.width *.4
-                visible: !!model.communityId && !root.isGrouped
+                visible: !!model.communityId
                 text: model.communityName
                 asset.name: model && !!model.communityImage ? model.communityImage : ""
             },
@@ -91,19 +90,22 @@ DropArea {
                 currentIndex: root.visualIndex
                 count: root.count
                 inHidden: root.isHidden
-                groupId: model.communityId
-                isCommunityAsset: !!model.communityId
+                groupId: model.communityId || model.collectionUid
+                isCommunityToken: root.isCommunityToken
                 isCollectible: root.isCollectible
                 onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
                 onShowHideRequested: function(symbol, flag) {
-                    if (isCommunityAsset)
+                    if (isCommunityToken)
                         root.controller.showHideCommunityToken(symbol, flag)
                     else
                         root.controller.showHideRegularToken(symbol, flag)
                     root.controller.saveSettings()
                 }
                 onShowHideGroupRequested: function(groupId, flag) {
-                    root.controller.showHideGroup(groupId, flag)
+                    if (isCommunityToken)
+                        root.controller.showHideGroup(groupId, flag)
+                    else
+                        root.controller.showHideCollectionGroup(groupId, flag)
                     root.controller.saveSettings()
                 }
             }

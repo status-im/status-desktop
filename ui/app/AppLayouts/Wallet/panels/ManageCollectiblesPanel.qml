@@ -7,7 +7,6 @@ import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Models 0.1
 
 import utils 1.0
@@ -37,110 +36,35 @@ Control {
         root.controller.clearSettings();
     }
 
-    QtObject {
-        id: d
-
-        //property bool collectionGroupsExpanded: true
-        property bool communityGroupsExpanded: true
-    }
-
-    Binding {
-        target: controller
-        property: "arrangeByCommunity"
-        value: switchArrangeByCommunity.checked
-    }
-
     contentItem: ColumnLayout {
         spacing: Style.current.padding
 
         ShapeRectangle {
             Layout.fillWidth: true
             Layout.margins: 2
-            visible: !root.controller.regularTokensModel.count
+            visible: !root.controller.regularTokensModel.count && !root.controller.communityTokensModel.count
             text: qsTr("You’ll be able to manage the display of your collectibles here")
         }
 
-// TODO https://github.com/status-im/status-desktop/issues/12703
-//        StatusSwitch {
-//            Layout.alignment: Qt.AlignTrailing
-//            LayoutMirroring.enabled: true
-//            LayoutMirroring.childrenInherit: true
-//            id: switchArrangeByCollection
-//            textColor: Theme.palette.baseColor1
-//            text: qsTr("Arrange by collection")
-//            visible: root.controller.regularTokensModel.count
-//        }
-
-//        StatusModalDivider {
-//            Layout.fillWidth: true
-//            Layout.topMargin: -Style.current.halfPadding
-//            visible: switchArrangeByCollection.visible && switchArrangeByCollection.checked
-//        }
-
-//        StatusLinkText {
-//            Layout.alignment: Qt.AlignTrailing
-//            visible: switchArrangeByCollection.visible && switchArrangeByCollection.checked
-//            text: d.collectionGroupsExpanded ? qsTr("Collapse all") : qsTr("Expand all")
-//            normalColor: linkColor
-//            font.weight: Font.Normal
-//            onClicked: d.collectionGroupsExpanded = !d.collectionGroupsExpanded
-//        }
-
-        StatusListView {
-            objectName: "lvRegularTokens"
-            Layout.fillWidth: true
-            model: root.controller.regularTokensModel
-            implicitHeight: contentHeight
-            interactive: false
-
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
-
-            delegate: ManageTokensDelegate {
-                isCollectible: true
-                controller: root.controller
-                dragParent: root
-                count: root.controller.regularTokensModel.count
-                dragEnabled: count > 1
-                keys: ["x-status-draggable-token-item"]
-            }
-        }
-
         RowLayout {
-            id: communityTokensHeader
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
             visible: root.controller.communityTokensModel.count
             StatusBaseText {
-                color: Theme.palette.baseColor1
-                text: qsTr("Community")
+                Layout.fillWidth: true
+                text: qsTr("Community minted")
             }
-            Item { Layout.fillWidth: true }
             StatusSwitch {
                 objectName: "switchArrangeByCommunity"
                 LayoutMirroring.enabled: true
                 LayoutMirroring.childrenInherit: true
                 id: switchArrangeByCommunity
                 textColor: Theme.palette.baseColor1
+                font.pixelSize: 13
                 text: qsTr("Arrange by community")
+                checked: root.controller.arrangeByCommunity
+                onToggled: root.controller.arrangeByCommunity = checked
             }
-        }
-
-        StatusModalDivider {
-            Layout.fillWidth: true
-            Layout.topMargin: -Style.current.halfPadding
-            visible: communityTokensHeader.visible && switchArrangeByCommunity.checked
-        }
-
-        StatusLinkText {
-            objectName: "switchCollapseCommunityGroups"
-            Layout.alignment: Qt.AlignTrailing
-            visible: communityTokensHeader.visible && switchArrangeByCommunity.checked
-            text: d.communityGroupsExpanded ? qsTr("Collapse all") : qsTr("Expand all")
-            normalColor: linkColor
-            font.weight: Font.Normal
-            onClicked: d.communityGroupsExpanded = !d.communityGroupsExpanded
         }
 
         Loader {
@@ -149,6 +73,34 @@ Control {
             active: root.controller.communityTokensModel.count
             visible: active
             sourceComponent: switchArrangeByCommunity.checked ? cmpCommunityTokenGroups : cmpCommunityTokens
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+            visible: root.controller.regularTokensModel.count
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: qsTr("Other")
+            }
+            StatusSwitch {
+                LayoutMirroring.enabled: true
+                LayoutMirroring.childrenInherit: true
+                id: switchArrangeByCollection
+                textColor: Theme.palette.baseColor1
+                font.pixelSize: 13
+                text: qsTr("Arrange by collection")
+                checked: root.controller.arrangeByCollection
+                onToggled: root.controller.arrangeByCollection = checked
+            }
+        }
+
+        Loader {
+            objectName: "loaderRegularTokens"
+            Layout.fillWidth: true
+            active: root.controller.regularTokensModel.count
+            visible: active
+            sourceComponent: switchArrangeByCollection.checked ? cmpCollectionTokenGroups : cmpRegularTokens
         }
     }
 
@@ -170,7 +122,6 @@ Control {
                 dragParent: root
                 count: root.controller.communityTokensModel.count
                 dragEnabled: count > 1
-                keys: ["x-status-draggable-community-token-item"]
             }
         }
     }
@@ -182,7 +133,6 @@ Control {
             model: root.controller.communityTokenGroupsModel
             implicitHeight: contentHeight
             interactive: false
-            spacing: Style.current.halfPadding
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
@@ -193,7 +143,49 @@ Control {
                 controller: root.controller
                 dragParent: root
                 dragEnabled: root.controller.communityTokenGroupsModel.count > 1
-                communityGroupsExpanded: d.communityGroupsExpanded
+            }
+        }
+    }
+
+    Component {
+        id: cmpRegularTokens
+        StatusListView {
+            objectName: "lvRegularTokens"
+            model: root.controller.regularTokensModel
+            implicitHeight: contentHeight
+            interactive: false
+
+            displaced: Transition {
+                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+            }
+
+            delegate: ManageTokensDelegate {
+                isCollectible: true
+                controller: root.controller
+                dragParent: root
+                count: root.controller.regularTokensModel.count
+                dragEnabled: count > 1
+            }
+        }
+    }
+
+    Component {
+        id: cmpCollectionTokenGroups
+        StatusListView {
+            objectName: "lvCollectionTokenGroups"
+            model: root.controller.collectionGroupsModel
+            implicitHeight: contentHeight
+            interactive: false
+
+            displaced: Transition {
+                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+            }
+
+            delegate: ManageTokensGroupDelegate {
+                isCollection: true
+                controller: root.controller
+                dragParent: root
+                dragEnabled: root.controller.collectionGroupsModel.count > 1
             }
         }
     }

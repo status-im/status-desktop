@@ -19,7 +19,7 @@ ComboBox {
     id: root
 
     required property var regularTokensModel // "uncategorized" collectibles (not grouped)
-    required property var regularTokenGroupsModel // collection groups
+    required property var collectionGroupsModel // collection groups
     required property var communityTokenGroupsModel // community groups
 
     property bool hasCommunityGroups
@@ -57,7 +57,7 @@ ComboBox {
                     markerRoleValue: "community"
                 },
                 SourceModel {
-                    model: root.regularTokenGroupsModel
+                    model: root.collectionGroupsModel
                     markerRoleValue: "collection"
                 }
             ]

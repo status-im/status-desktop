@@ -57,12 +57,12 @@ SplitView {
             }
 
             Button {
+                enabled: showcasePanel.dirty
                 text: "Save"
                 onClicked: showcasePanel.saveSettings()
             }
 
             Button {
-                enabled: showcasePanel.dirty
                 text: "Revert"
                 onClicked: showcasePanel.revert()
             }

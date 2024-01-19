@@ -23,6 +23,7 @@ RadioButton {
 
     opacity: enabled ? 1.0 : 0.3
     font.family: Theme.palette.baseFont.name
+    font.pixelSize: Theme.primaryTextFontSize
 
     indicator: Rectangle {
         implicitWidth: root.size === StatusRadioButton.Size.Large ? 20 : 14

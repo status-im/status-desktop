@@ -68,7 +68,7 @@ ColumnLayout {
 
         function hideAllCommunityTokens(communityId) {
             const tokenSymbols = ModelUtils.getAll(assetsListView.model, "symbol", "communityId", communityId)
-            d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
+            d.controller.settingsHideGroupTokens(communityId, tokenSymbols)
         }
 
         function getTotalBalance(balances, decimals) {
