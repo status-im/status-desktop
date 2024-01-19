@@ -4,12 +4,14 @@ import logging
 
 LOG = logging.getLogger(__name__)
 
-def wait_for_port(host: str, port: int, timeout: int = 1, retries: int = 0):
-    for i in range(retries+1):
+
+def wait_for_port(host: str, port: int, timeout: int = 3, retries: int = 0):
+    for i in range(retries + 1):
         try:
             LOG.debug('Checking TCP port: %s:%d', host, port)
             with socket.create_connection((host, port), timeout=timeout):
-                return
+                if socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex((host, port)) == 0:
+                    return
         except OSError as err:
             LOG.debug('Connection error: %s', err)
             time.sleep(1)
