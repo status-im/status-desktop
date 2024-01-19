@@ -1310,7 +1310,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, "",
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, "",
   loading, finalEphNotifType, url, 0, "", details)
   self.view.ephemeralNotificationModel().addItem(item)
 
@@ -1326,8 +1326,25 @@ method displayEphemeralWithActionNotification*[T](self: Module[T], title: string
   elif(ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon, iconColor,
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, iconColor,
   loading, finalEphNotifType, "", actionType, actionData, details)
+  self.view.ephemeralNotificationModel().addItem(item)
+
+# TO UNIFY with the one above.
+# Further refactor will be done in a next step
+method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: string, subTitle: string, image: string, ephNotifType: int, 
+    actionType: int, actionData: string, details = NotificationDetails()) =
+  let now = getTime()
+  let id = now.toUnix * 1000000000 + now.nanosecond
+  var finalEphNotifType = EphemeralNotificationType.Default
+  if(ephNotifType == EphemeralNotificationType.Success.int):
+    finalEphNotifType = EphemeralNotificationType.Success
+  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+    finalEphNotifType = EphemeralNotificationType.Danger
+
+
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false, 
+  finalEphNotifType, "", actionType, actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =

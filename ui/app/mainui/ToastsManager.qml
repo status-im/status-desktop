@@ -2,6 +2,8 @@ import QtQuick 2.15
 
 import utils 1.0
 
+import AppLayouts.Wallet 1.0
+
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -21,7 +23,8 @@ QtObject {
         NavigateToCommunityAdmin = 1,
         OpenFinaliseOwnershipPopup = 2,
         OpenSendModalPopup = 3,
-        ViewTransactionDetails = 4
+        ViewTransactionDetails = 4,
+        OpenFirstCommunityTokenPopup = 5
     }
 
     // Stores:
@@ -52,22 +55,6 @@ QtObject {
                                                  Constants.ephemeralNotificationType.normal,
                                                  ToastsManager.ActionType.OpenFinaliseOwnershipPopup,
                                                  communityId)
-        }
-
-        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor, balance, chainId, txHash) {
-            var data = {
-                communityId: communityId,
-                chainId: chainId,
-                txHash: txHash
-            }
-            Global.displayToastWithActionMessage(qsTr("You were airdropped %1 %2 asset from %3").arg(balance).arg(name).arg(communityName),
-                                                 qsTr("View transaction details"),
-                                                 image,
-                                                 communityColor,
-                                                 false,
-                                                 Constants.ephemeralNotificationType.normal,
-                                                 ToastsManager.ActionType.ViewTransactionDetails,
-                                                 JSON.stringify(data))
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {
@@ -140,6 +127,48 @@ QtObject {
                                        Constants.ephemeralNotificationType.danger,
                                        "")
         }
+
+        // Community token received in the user wallet:
+        function onCommunityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
+
+            // Some error control:
+            if(tokenType !== Constants.TokenType.ERC20 && tokenType !== Constants.TokenType.ERC721) {
+                console.warn("Community token Received: Unexpected token type while creating a toast message: " + tokenType)
+                return
+            }
+
+            var data = {
+                communityId: communityId,
+                chainId: chainId,
+                txHash: txHash,
+                tokenType: tokenType
+            }
+
+            if(isFirst) {
+                var tokenTypeText = ""
+                if(tokenType === Constants.TokenType.ERC20) {
+                    tokenTypeText = qsTr("You received your first community asset")
+                } else if(tokenType === Constants.TokenType.ERC721) {
+                    tokenTypeText = qsTr("You received your first community collectible")
+                }
+
+                // First community token received toast:
+                Global.displayImageToastWithActionMessage(qsTr("%1: %2 %3").arg(tokenTypeText).arg(balance).arg(name),
+                                                          qsTr("Learn more"),
+                                                          image,
+                                                          Constants.ephemeralNotificationType.normal,
+                                                          ToastsManager.ActionType.OpenFirstCommunityTokenPopup,
+                                                          JSON.stringify(data))
+            } else {
+                // Generic community token received toast:
+                Global.displayImageToastWithActionMessage(qsTr("You were airdropped %1 %2 from %3 to %4").arg(balance).arg(name).arg(communityName).arg(walletAccountName),
+                                                          qsTr("View transaction details"),
+                                                          image,
+                                                          Constants.ephemeralNotificationType.normal,
+                                                          ToastsManager.ActionType.ViewTransactionDetails,
+                                                          JSON.stringify(data))
+            }
+        }
     }
 
     // Connections to global. These will lead the backend integration:
@@ -155,6 +184,10 @@ QtObject {
         function onDisplayToastWithActionMessage(title: string, subTitle: string, icon: string, iconColor: string, loading: bool, ephNotifType: int, actionType: int, actionData: string) {
             root.rootStore.mainModuleInst.displayEphemeralWithActionNotification(title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData)
         }
+
+        function onDisplayImageToastWithActionMessage(title: string, subTitle: string, image: string, ephNotifType: int, actionType: int, actionData: string) {
+            root.rootStore.mainModuleInst.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
+        }
     }
 
     // It will cover all specific actions (different than open external links) that can be done after clicking toast link text
@@ -168,6 +201,22 @@ QtObject {
             return
         case ToastsManager.ActionType.OpenSendModalPopup:
             root.sendModalPopup.open()
+            return
+        case ToastsManager.ActionType.ViewTransactionDetails:
+            var txHash = ""
+            if(actionData) {
+                var parsedData = JSON.parse(actionData)
+                txHash = parsedData.txHash
+                Global.changeAppSectionBySectionType(Constants.appSection.wallet,
+                                                     WalletLayout.LeftPanelSelection.AllAddresses,
+                                                     WalletLayout.RightPanelSelection.Activity)
+                // TODO: Final navigation to the specific transaction entry --> {transaction: txHash}) --> Issue #13249
+                return
+            }
+            console.warn("Unexpected transaction hash while trying to navigate to the details page: " + txHash)
+            return
+        case ToastsManager.ActionType.OpenFirstCommunityTokenPopup:
+            console.warn("TODO: #12366")
             return
         default:
             console.warn("ToastsManager: Action type is not defined")

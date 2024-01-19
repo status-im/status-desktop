@@ -13,6 +13,7 @@ type
     title: string
     durationInMs: int
     subTitle: string
+    image: string
     icon: string
     iconColor: string
     loading: bool
@@ -26,6 +27,7 @@ proc initItem*(id: int64,
     title: string,
     durationInMs = 0,
     subTitle = "",
+    image = "",
     icon = "",
     iconColor = "",
     loading = false,
@@ -40,6 +42,7 @@ proc initItem*(id: int64,
   result.durationInMs = durationInMs
   result.title = title
   result.subTitle = subTitle
+  result.image = image
   result.icon = icon
   result.iconColor = iconColor
   result.loading = loading
@@ -63,6 +66,9 @@ proc durationInMs*(self: Item): int =
   
 proc subTitle*(self: Item): string =
   self.subTitle
+
+proc image*(self: Item): string =
+  self.image
 
 proc icon*(self: Item): string =
   self.icon

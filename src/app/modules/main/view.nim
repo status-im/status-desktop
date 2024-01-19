@@ -124,6 +124,12 @@ QtObject:
     ephNotifType: int, actionType: int, actionData: string) {.slot.} =
     self.delegate.displayEphemeralWithActionNotification(title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData)
 
+  # TO UNIFY with the one above.
+  # Further refactor will be done in a next step
+  proc displayEphemeralImageWithActionNotification*(self: View, title: string, subTitle: string, image: string, ephNotifType: int, 
+    actionType: int, actionData: string) {.slot.} =
+    self.delegate.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
+
   proc removeEphemeralNotification*(self: View, id: string) {.slot.} =
     self.delegate.removeEphemeralNotification(id.parseInt)
 

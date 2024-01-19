@@ -8,6 +8,7 @@ type
     DurationInMs
     Title
     SubTitle
+    Image
     Icon
     IconColor
     Loading
@@ -41,6 +42,7 @@ QtObject:
       ModelRole.DurationInMs.int:"durationInMs",
       ModelRole.Title.int:"title",
       ModelRole.SubTitle.int:"subTitle",
+      ModelRole.Image.int:"image",
       ModelRole.Icon.int:"icon",
       ModelRole.IconColor.int:"iconColor",
       ModelRole.Loading.int:"loading",
@@ -69,6 +71,8 @@ QtObject:
         result = newQVariant(item.title)
       of ModelRole.SubTitle:
         result = newQVariant(item.subTitle)
+      of ModelRole.Image:
+        result = newQVariant(item.image)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
       of ModelRole.IconColor:

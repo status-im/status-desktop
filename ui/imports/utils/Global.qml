@@ -27,6 +27,7 @@ QtObject {
 
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
     signal displayToastWithActionMessage(string title, string subTitle, string icon, string iconColor, bool loading, int ephNotifType, int actionType, string data)
+    signal displayImageToastWithActionMessage(string title, string subTitle, string image, int ephNotifType, int actionType, string data)
 
     signal openPopupRequested(var popupComponent, var params)
     signal closePopupRequested()
