@@ -54,14 +54,14 @@ std::optional<TokenData> ManageTokensModel::takeItem(const QString& symbol)
     return res;
 }
 
-QList<TokenData> ManageTokensModel::takeAllItems(const QString& communityId)
+QList<TokenData> ManageTokensModel::takeAllItems(const QString& groupId)
 {
     QList<TokenData> result;
     QList<int> indexesToRemove;
 
     for (int i = 0; i < m_data.count(); i++) {
         const auto &token = m_data.at(i);
-        if (token.communityId == communityId) {
+        if (token.communityId == groupId || token.collectionUid == groupId) {
             result.append(token);
             indexesToRemove.append(i);
         }
@@ -193,6 +193,18 @@ void ManageTokensModel::applySort()
     // clazy:exclude=clazy-detaching-member
     std::stable_sort(m_data.begin(), m_data.end(), [this](const TokenData& lhs, const TokenData& rhs) {
         return lhs.customSortOrderNo < rhs.customSortOrderNo;
+    });
+
+    emit layoutChanged({}, QAbstractItemModel::VerticalSortHint);
+}
+
+void ManageTokensModel::applySortByTokensAmount()
+{
+    emit layoutAboutToBeChanged({}, QAbstractItemModel::VerticalSortHint);
+
+    // clazy:exclude=clazy-detaching-member
+    std::stable_sort(m_data.begin(), m_data.end(), [this](const TokenData& lhs, const TokenData& rhs) {
+        return lhs.balance.toLongLong() > rhs.balance.toLongLong();
     });
 
     emit layoutChanged({}, QAbstractItemModel::VerticalSortHint);

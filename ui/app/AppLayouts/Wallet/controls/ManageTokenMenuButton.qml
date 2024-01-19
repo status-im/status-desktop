@@ -15,8 +15,9 @@ StatusFlatButton {
 
     property bool inHidden
     property bool isGroup
+    property bool isCollection
     property string groupId
-    property bool isCommunityAsset
+    property bool isCommunityToken
     property bool isCollectible
 
     readonly property bool hideEnabled: model.symbol !== "ETH"
@@ -78,7 +79,7 @@ StatusFlatButton {
             // any token
             StatusAction {
                 objectName: "miHideToken"
-                enabled: !root.inHidden && root.hideEnabled && !root.isGroup && !root.isCommunityAsset
+                enabled: !root.inHidden && root.hideEnabled && !root.isGroup && !root.isCommunityToken && !root.isCollectible
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: root.isCollectible ? qsTr("Hide collectible") : qsTr("Hide asset")
@@ -95,7 +96,7 @@ StatusFlatButton {
             // (hide) community tokens
             StatusMenu {
                 id: communitySubmenu
-                enabled: !root.inHidden && root.isCommunityAsset
+                enabled: !root.inHidden && root.isCommunityToken
                 title: qsTr("Hide")
                 assetSettings.name: "hide"
                 type: StatusAction.Type.Danger
@@ -118,20 +119,56 @@ StatusFlatButton {
                 }
             }
 
+            // (hide) collection tokens
+            StatusMenu {
+                id: collectionSubmenu
+                enabled: !root.inHidden && root.isCollectible && !root.isCommunityToken && !root.isGroup
+                title: qsTr("Hide")
+                assetSettings.name: "hide"
+                type: StatusAction.Type.Danger
+
+                StatusAction {
+                    objectName: "miHideCollectionToken"
+                    text: qsTr("This collectible")
+                    onTriggered: {
+                        root.showHideRequested(model.symbol, false)
+                        communitySubmenu.dismiss()
+                    }
+                }
+                StatusAction {
+                    objectName: "miHideAllCollectionTokens"
+                    text: qsTr("All collectibles from this collection")
+                    onTriggered: {
+                        root.showHideGroupRequested(root.groupId, false)
+                        communitySubmenu.dismiss()
+                    }
+                }
+            }
+
             // token group
             StatusAction {
                 objectName: "miHideTokenGroup"
                 enabled: !root.inHidden && root.isGroup
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
-                text: root.isCollectible ? qsTr("Hide all collectibles from this community") : qsTr("Hide all assets from this community")
+                text: {
+                    if (root.isCollection)
+                        return qsTr("Hide all collectibles from this collection")
+                    return root.isCollectible ? qsTr("Hide all collectibles from this community")
+                                              : qsTr("Hide all assets from this community")
+                }
                 onTriggered: root.showHideGroupRequested(root.groupId, false)
             }
             StatusAction {
                 objectName: "miShowTokenGroup"
                 enabled: root.inHidden && root.groupId
                 icon.name: "show"
-                text: root.isCollectible ? qsTr("Show all collectibles from this community") : qsTr("Show all assets from this community")
+                text: {
+                    if (root.isCollection)
+                        return qsTr("Show all collectibles from this collection")
+                    return root.isCollectible ? qsTr("Show all collectibles from this community")
+                                              : qsTr("Show all assets from this community")
+                }
                 onTriggered: root.showHideGroupRequested(root.groupId, true)
             }
         }

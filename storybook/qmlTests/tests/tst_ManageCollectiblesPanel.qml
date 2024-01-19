@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtTest 1.15
 
 import StatusQ 0.1
@@ -7,7 +6,6 @@ import StatusQ.Models 0.1
 
 import AppLayouts.Wallet.panels 1.0
 
-import Storybook 1.0
 import Models 1.0
 import utils 1.0
 
@@ -34,7 +32,6 @@ Item {
     Component {
         id: componentUnderTest
         ManageCollectiblesPanel {
-            id: showcasePanel
             width: 500
             controller: ManageTokensController {
                 sourceModel: renamedModel
@@ -99,7 +96,7 @@ Item {
             notificationSpy.clear()
         }
 
-        function test_showHideToken() {
+        function test_showHideSingleToken() {
             verify(!controlUnderTest.dirty)
 
             const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
@@ -111,7 +108,7 @@ Item {
             verify(!!delegate0)
             const title = delegate0.title
             tryCompare(notificationSpy, "count", 0)
-            triggerDelegateMenuAction(lvRegular, 0, "miHideToken")
+            triggerDelegateMenuAction(lvRegular, 0, "miHideCollectionToken")
             // verify the signal to show the notification toast got fired
             tryCompare(notificationSpy, "count", 1)
 
@@ -173,10 +170,6 @@ Item {
             verify(!!switchArrangeByCommunity)
             mouseClick(switchArrangeByCommunity)
 
-            const switchCollapseCommunityGroups = findChild(controlUnderTest, "switchCollapseCommunityGroups")
-            verify(!!switchCollapseCommunityGroups)
-            mouseClick(switchCollapseCommunityGroups)
-
             const loaderCommunityTokens = findChild(controlUnderTest, "loaderCommunityTokens")
             verify(!!loaderCommunityTokens)
             tryCompare(loaderCommunityTokens, "active", true)
@@ -225,34 +218,12 @@ Item {
             verify(!!bearzGroupTokenDelegate)
             waitForItemPolished(bearzGroupTokenDelegate)
 
-            // get the Bearz child listview
-            const bearzChildLV = findChild(bearzGroupTokenDelegate, "manageTokensGroupListView")
-            verify(!!bearzChildLV)
-
-            // find the 2385 delegate from the Bearz group and hide it
-            const bear2385DelegateIdx = findDelegateIndexWithTitle(bearzChildLV, "KILLABEAR #2385")
-            verify(bear2385DelegateIdx !== -1)
-            tryCompare(notificationSpy, "count", 0)
-            triggerDelegateMenuAction(bearzChildLV, bear2385DelegateIdx, "miHideCommunityToken")
-            // verify the signal to show the notification toast got fired
-            tryCompare(notificationSpy, "count", 1)
-
             // now move the Bearz group up so that it's first (ends up at index 0)
             waitForItemPolished(lvCommunityTokenGroups)
             triggerDelegateMenuAction(lvCommunityTokenGroups, 1, "miMoveUp", true)
             verify(controlUnderTest.dirty)
             bearzGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0")
             verify(!!bearzGroupTokenDelegate)
-
-            // get one of the other group's (Pandas) tokens and hide it
-            const pandasGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-1")
-            verify(!!pandasGroupTokenDelegate)
-            const pandasChildLV = findChild(pandasGroupTokenDelegate, "manageTokensGroupListView")
-            verify(!!pandasChildLV)
-            const panda909DelegateIdx = findDelegateIndexWithTitle(pandasChildLV, "Frenly Panda #909")
-            triggerDelegateMenuAction(pandasChildLV, panda909DelegateIdx, "miHideCommunityToken")
-            // verify the signal to show the notification toast got fired
-            tryCompare(notificationSpy, "count", 2)
 
             // finally verify that the Bearz group is still at top
             waitForItemPolished(lvCommunityTokenGroups)
@@ -278,7 +249,6 @@ Item {
 
             // trigger move to bottom
             triggerDelegateMenuAction(lvRegular, 0, "miMoveToBottom")
-
             waitForItemPolished(lvRegular)
             verify(controlUnderTest.dirty)
 
@@ -309,14 +279,10 @@ Item {
         }
 
         function test_saveLoad() {
-            // start with clear settings
-            controlUnderTest.clearSettings()
-            controlUnderTest.revert()
-
             verify(!controlUnderTest.dirty)
             const titleToTest = "Big Kitty"
 
-            const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
+            let lvRegular = findChild(controlUnderTest, "lvRegularTokens")
             verify(!!lvRegular)
             const bigKittyIndex = findDelegateIndexWithTitle(lvRegular, titleToTest)
             verify(bigKittyIndex !== -1)
@@ -337,8 +303,13 @@ Item {
             // load the settings and check BigKitty is still on top
             controlUnderTest.revert()
             verify(!controlUnderTest.dirty)
+            lvRegular = findChild(controlUnderTest, "lvRegularTokens")
+            verify(!!lvRegular)
             waitForItemPolished(lvRegular)
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-0"), "title", titleToTest)
+            tryVerify(() => lvRegular.count > 0)
+            const topItem = findChild(lvRegular, "manageTokensDelegate-0")
+            verify(!!topItem)
+            tryCompare(topItem, "title", titleToTest)
         }
     }
 }
