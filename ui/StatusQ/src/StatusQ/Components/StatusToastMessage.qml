@@ -86,6 +86,24 @@ Control {
     }
 
     /*!
+        \qmlproperty string StatusToastMessage::image
+        This property holds an image source to be displayed in the ToastMessage.
+    */
+    property string image: ""
+
+    /*!
+        \qmlproperty real StatusToastMessage::imageSize
+        This property holds the imageSize of the image to be displayed in the ToastMessage.
+    */
+    property int imageSize: 32
+
+    /*!
+        \qmlproperty real StatusToastMessage::imageRadius
+        This property holds the imageRadius of the image to be displayed in the ToastMessage.
+    */
+    property real imageRadius: imageSize / 2
+
+    /*!
         \qmlproperty int StatusToastMessage::type
         This property holds the type of the ToastMessage. Values are:
         \list
@@ -280,8 +298,8 @@ Control {
                     id: loader
                     anchors.centerIn: parent
                     sourceComponent: root.loading ? loadingInd :
-                                                    root.icon.name != ""? statusIcon :
-                                                                          undefined
+                                                    root.icon.name != "" ? statusIcon :
+                                                                           root.image !== "" ? statusImage : undefined
 
                     Component {
                         id: loadingInd
@@ -297,6 +315,19 @@ Control {
                             height: root.icon.height
                             color: d.iconColor
                             icon: root.icon.name
+                        }
+                    }
+
+                    Component {
+                        id: statusImage
+                        StatusRoundedImage {
+                            anchors.centerIn: parent
+                            radius: root.imageRadius
+                            width: root.imageSize
+                            height: root.imageSize
+                            image.source: root.image
+                            showLoadingIndicator: false
+                            image.fillMode: Image.PreserveAspectCrop
                         }
                     }
                 }
@@ -337,7 +368,8 @@ Control {
                     height: visible ? implicitHeight : 0
                     font.pixelSize: 13
                     hoveredLinkColor: Theme.palette.primaryColor1
-                    text: "<p><a style='text-decoration:none' href='%1'>%2</a></p>".arg(root.linkUrl).arg(root.secondaryText)
+                    text: root.actionRequired ? "<p><a style='text-decoration:none' href=' '>%1</a></p>".arg(root.secondaryText) :
+                                                "<p><a style='text-decoration:none' href='%1'>%2</a></p>".arg(root.linkUrl).arg(root.secondaryText)
                     onLinkActivated: {
                         root.linkActivated(link);
                     }
