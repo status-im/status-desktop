@@ -124,5 +124,4 @@ def test_edit_community(main_screen: MainWindow, params):
         community_info = community_settings.communities[0]
         assert community_info.name == params['name']
         assert community_info.description == params['description']
-        # TODO after https://github.com/status-im/status-desktop/issues/12967 will be fixed
-        # assert '1' in community_info.members
+        assert '1' in community_info.members
