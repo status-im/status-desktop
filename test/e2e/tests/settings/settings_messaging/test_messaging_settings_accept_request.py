@@ -11,6 +11,8 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703011', 'Add a contact with a chat key')
 @pytest.mark.case(703011)
 @pytest.mark.parametrize('user_data_one, user_data_two', [
