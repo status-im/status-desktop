@@ -57,14 +57,17 @@ Control {
             filters: FastExpressionFilter {
                 expression: {
                     root.collectiblesController.hiddenCommunityGroups
-                    return !root.collectiblesController.hiddenCommunityGroups.includes(model.communityId)
+                    root.collectiblesController.hiddenCollectionGroups
+                    return !root.collectiblesController.hiddenCommunityGroups.includes(model.communityId) &&
+                            !root.collectiblesController.hiddenCollectionGroups.includes(model.collectionUid)
                 }
-                expectedRoles: ["communityId"]
+                expectedRoles: ["communityId", "collectionUid"]
             }
         }
 
         readonly property var combinedModel: ConcatModel {
             sources: [
+                // assets
                 SourceModel { // single hidden assets (not belonging to a group)
                     model: d.filteredHiddenAssets
                     markerRoleValue: "asset"
@@ -73,13 +76,18 @@ Control {
                     model: root.assetsController.hiddenCommunityTokenGroupsModel
                     markerRoleValue: "assetGroup"
                 },
-                SourceModel { // single hidden collectibles (not belonging to a group)
+                // collectibles
+                SourceModel { // single hidden collectibles (not belonging to any group)
                     model: d.filteredHiddenCollectibles
                     markerRoleValue: "collectible"
                 },
                 SourceModel { // community collectible groups
                     model: root.collectiblesController.hiddenCommunityTokenGroupsModel
                     markerRoleValue: "collectibleGroup"
+                },
+                SourceModel { // collectible collection groups
+                    model: root.collectiblesController.hiddenCollectionGroupsModel
+                    markerRoleValue: "collectibleCollectionGroup"
                 }
             ]
 
@@ -99,7 +107,6 @@ Control {
                     expression: model.tokenType.endsWith("Group")
                     expectedRoles: "tokenType"
                 }
-                // TODO collection
             ]
             // TODO sort by recency/timestamp (newest first)
         }
@@ -147,7 +154,6 @@ Control {
             controller: isCollectible ? root.collectiblesController : root.assetsController
             dragParent: null
             dragEnabled: false
-            keys: ["x-status-draggable-none"]
             isHidden: true
         }
     }
@@ -156,10 +162,10 @@ Control {
         id: tokenGroupDelegate
         ManageTokensGroupDelegate {
             isCollectible: model.isCollectible
+            isCollection: model.tokenType === "collectibleCollectionGroup"
             controller: isCollectible ? root.collectiblesController : root.assetsController
             dragParent: null
             dragEnabled: false
-            keys: ["x-status-draggable-none"]
             isHidden: true
         }
     }

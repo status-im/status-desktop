@@ -13,18 +13,18 @@ DropArea {
     id: root
     objectName: "manageTokensGroupDelegate-%1".arg(index)
 
-    // expected roles: communityId, communityName, communityImage
+    // expected roles: communityId, communityName, communityImage, collectionUid, collectionName, imageUrl // FIXME unify group image
 
     property int visualIndex: index
     property var controller
-    property bool communityGroupsExpanded
     property var dragParent
     property alias dragEnabled: groupedCommunityTokenDelegate.dragEnabled
-    property bool isCollectible
+    property bool isCollectible: isCollection
+    property bool isCollection
     property bool isHidden // inside the "Hidden" section
 
-    readonly property string communityId: model.communityId
-    readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in m_communityTokenGroupsModel
+    readonly property string groupId: isCollection ? model.collectionUid : model.communityId
+    readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in the grouped model
     readonly property alias title: groupedCommunityTokenDelegate.title
 
     ListView.onRemove: SequentialAnimation {
@@ -33,7 +33,7 @@ DropArea {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
-    keys: ["x-status-draggable-community-group-item"]
+    keys: isCollection ? ["x-status-draggable-collection-group-item"] : ["x-status-draggable-community-group-item"]
     width: ListView.view ? ListView.view.width : 0
     height: visible ? groupedCommunityTokenDelegate.implicitHeight : 0
 
@@ -50,11 +50,10 @@ DropArea {
         id: groupedCommunityTokenDelegate
         width: parent.width
         height: dragActive ? implicitHeight : parent.height
-        horizontalPadding: root.isHidden ? 0 : Style.current.halfPadding
         draggable: true
         spacing: 12
         bgColor: Theme.palette.baseColor4
-        title: model.communityName
+        title: root.isCollection ? model.collectionName : model.communityName
 
         visualIndex: index
         dragParent: root.dragParent
@@ -62,88 +61,59 @@ DropArea {
         Drag.hotSpot.x: root.width/2
         Drag.hotSpot.y: root.height/2
 
-        contentItem: ColumnLayout {
-            spacing: 12
+        contentItem: RowLayout {
+            spacing: groupedCommunityTokenDelegate.spacing
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 12
-                Layout.rightMargin: 12
-                spacing: groupedCommunityTokenDelegate.spacing
-
-                StatusIcon {
-                    Layout.preferredWidth: 20
-                    Layout.preferredHeight: 20
-                    icon: "justify"
-                    color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
-                }
-
-                StatusRoundedImage {
-                    //radius: groupedCommunityTokenDelegate.bgRadius // TODO different for a collection
-                    Layout.preferredWidth: root.isCollectible ? 44 : 32
-                    Layout.preferredHeight: root.isCollectible ? 44 : 32
-                    image.source: model.communityImage
-                    showLoadingIndicator: true
-                    image.fillMode: Image.PreserveAspectCrop
-                }
-
-                StatusBaseText {
-                    text: groupedCommunityTokenDelegate.title
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                    font.weight: Font.Medium
-                }
-
-                Item { Layout.fillWidth: true }
-
-                ManageTokensCommunityTag {
-                    text: root.childCount
-                    asset.name: root.isCollectible ? "image" : "token"
-                    asset.isImage: false
-                    asset.color: Theme.palette.baseColor1
-                    enabled: false
-                }
-
-                ManageTokenMenuButton {
-                    objectName: "btnManageTokenMenu-%1".arg(currentIndex)
-                    currentIndex: visualIndex
-                    count: root.controller.communityTokenGroupsModel.count // FIXME collection
-                    isGroup: true
-                    isCollectible: root.isCollectible
-                    groupId: model.communityId
-                    inHidden: root.isHidden
-                    onMoveRequested: (from, to) => root.controller.communityTokenGroupsModel.moveItem(from, to) // FIXME collection
-                    onShowHideGroupRequested: function(groupId, flag) {
-                        root.controller.showHideGroup(groupId, flag)
-                        root.controller.saveSettings()
-                    }
-                }
+            StatusIcon {
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: 20
+                icon: "justify"
+                color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
             }
 
-            StatusListView {
-                objectName: "manageTokensGroupListView"
-                Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
-                model: root.controller.communityTokensModel
-                interactive: false
-                visible: root.communityGroupsExpanded && !root.isHidden
+            StatusRoundedImage {
+                radius: root.isCollection ? Style.current.radius : height/2
+                Layout.preferredWidth: root.isCollectible ? 44 : 32
+                Layout.preferredHeight: root.isCollectible ? 44 : 32
+                image.source: root.isCollection ? model.imageUrl : model.communityImage // FIXME unify group image
+                showLoadingIndicator: true
+                image.fillMode: Image.PreserveAspectCrop
+            }
 
-                displaced: Transition {
-                    NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-                }
+            StatusBaseText {
+                text: groupedCommunityTokenDelegate.title
+                elide: Text.ElideRight
+                maximumLineCount: 1
+                font.weight: Font.Medium
+            }
 
-                delegate: ManageTokensDelegate {
-                    controller: root.controller
-                    dragParent: root.dragParent
-                    isGrouped: true
-                    count: root.childCount
-                    dragEnabled: count > 1
-                    keys: ["x-status-draggable-community-token-item-%1".arg(model.communityId)]
-                    bgColor: Theme.palette.indirectColor4
-                    topInset: 2 // tighter "spacing"
-                    bottomInset: 2
-                    visible: root.communityId === model.communityId
-                    isCollectible: root.isCollectible
+            Item { Layout.fillWidth: true }
+
+            ManageTokensCommunityTag {
+                text: root.childCount
+                asset.name: root.isCollectible ? "image" : "token"
+                asset.isImage: false
+                asset.color: Theme.palette.baseColor1
+                enabled: false
+            }
+
+            ManageTokenMenuButton {
+                objectName: "btnManageTokenMenu-%1".arg(currentIndex)
+                currentIndex: visualIndex
+                count: root.isCollection ? root.controller.collectionGroupsModel.count :
+                                           root.controller.communityTokenGroupsModel.count
+                isGroup: true
+                isCollection: root.isCollection
+                isCollectible: root.isCollectible
+                groupId: root.groupId
+                inHidden: root.isHidden
+                onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
+                onShowHideGroupRequested: function(groupId, flag) {
+                    if (root.isCollection)
+                        root.controller.showHideCollectionGroup(groupId, flag)
+                    else
+                        root.controller.showHideGroup(groupId, flag)
+                    root.controller.saveSettings()
                 }
             }
         }

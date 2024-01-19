@@ -10,6 +10,9 @@ Switch {
 
     property color textColor: Theme.palette.directColor1
 
+    font.family: Theme.palette.baseFont.name
+    font.pixelSize: Theme.primaryTextFontSize
+
     background: MouseArea {
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton
@@ -75,6 +78,7 @@ Switch {
         text: root.text
         opacity: enabled ? 1.0 : 0.3
         color: root.textColor
+        font: root.font
         verticalAlignment: Text.AlignVCenter
         leftPadding: root.mirrored ? 0 : !!root.text ? root.indicator.width + root.spacing : root.indicator.width
         rightPadding: root.mirrored ? !!root.text ? root.indicator.width + root.spacing : root.indicator.width : 0
