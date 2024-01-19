@@ -79,7 +79,7 @@ ColumnLayout {
 
         function hideAllCommunityTokens(communityId) {
             const tokenSymbols = ModelUtils.getAll(communityCollectiblesView.model, "symbol", "communityId", communityId)
-            d.controller.settingsHideCommunityTokens(communityId, tokenSymbols)
+            d.controller.settingsHideGroupTokens(communityId, tokenSymbols)
         }
 
         function containsAny(list, filterList) {
@@ -184,7 +184,7 @@ ColumnLayout {
             FilterComboBox {
                 id: cmbFilter
                 regularTokensModel: d.controller.regularTokensModel
-                regularTokenGroupsModel: d.controller.regularTokenGroupsModel
+                collectionGroupsModel: d.controller.collectionGroupsModel
                 communityTokenGroupsModel: d.controller.communityTokenGroupsModel
                 hasCommunityGroups: d.hasCommunityCollectibles
             }

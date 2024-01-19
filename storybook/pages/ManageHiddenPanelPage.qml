@@ -95,6 +95,13 @@ SplitView {
             Label {
                 text: assetsController.hiddenCommunityGroups.concat(collectiblesController.hiddenCommunityGroups).join()
             }
+
+            Label {
+                text: "Hidden collection groups:"
+            }
+            Label {
+                text: assetsController.hiddenCollectionGroups.concat(collectiblesController.hiddenCollectionGroups).join()
+            }
         }
     }
 }

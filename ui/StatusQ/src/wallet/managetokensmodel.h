@@ -72,7 +72,7 @@ public:
 
     void addItem(const TokenData& item, bool append = true);
     std::optional<TokenData> takeItem(const QString& symbol);
-    QList<TokenData> takeAllItems(const QString& communityId);
+    QList<TokenData> takeAllItems(const QString& groupId);
     void clear();
 
     SerializedTokenData save(bool isVisible = true);
@@ -82,13 +82,14 @@ public:
 
     void saveCustomSortOrder();
     void applySort();
+    void applySortByTokensAmount();
 
     int count() const { return rowCount(); }
     const TokenData& itemAt(int row) const { return m_data.at(row); }
     TokenData& itemAt(int row) { return m_data[row]; }
 
-    void setCommunityIds(const QStringList& ids) { m_communityIds = ids; };
-    bool hasCommunityIdToken(const QString& communityId) const;
+    void setCommunityIds(const QStringList& ids) { m_communityIds = ids; }; // FIXME remove; sort by number of tokens inside
+    bool hasCommunityIdToken(const QString& communityId) const; // FIXME remove
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
