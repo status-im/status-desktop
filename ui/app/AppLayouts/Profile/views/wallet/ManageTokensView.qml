@@ -137,30 +137,7 @@ ColumnLayout {
     Component {
         id: advancedTab
         ColumnLayout {
-            spacing: 0
-            StatusBaseText {
-                Layout.fillWidth: true
-                Layout.topMargin: 18
-                Layout.bottomMargin: 18
-                text: qsTr("Token lists")
-                color: Theme.palette.baseColor1
-            }
-            SupportedTokenListsPanel {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                sourcesOfTokensModel: root.sourcesOfTokensModel
-                tokensListModel: root.tokensListModel
-            }
-            StatusBaseText {
-                Layout.fillWidth: true
-                Layout.topMargin: 40 + 18
-                Layout.bottomMargin: 26
-                text: qsTr("Asset settings")
-                color: Theme.palette.baseColor1
-            }
-            StatusDialogDivider {
-                Layout.fillWidth: true
-            }
+            spacing: 8
             StatusListItem {
                 Layout.fillWidth: true
                 title: qsTr("Show community assets when sending tokens")
@@ -202,6 +179,31 @@ ColumnLayout {
                 onClicked: {
                     displayThresholdSwitch.checked = !displayThresholdSwitch.checked
                 }
+            }
+            StatusDialogDivider {
+                Layout.fillWidth: true
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 64
+                Layout.topMargin: 18
+                Layout.bottomMargin: 18
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Token lists")
+                    color: Style.current.textColor
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignRight
+                    text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.sourcesOfTokensModel.get(0).updatedAt * 1000)).arg(LocaleUtils.formatTime(root.sourcesOfTokensModel.get(0).updatedAt, Locale.ShortFormat))
+                    color: Style.current.darkGrey
+                }
+            }
+            SupportedTokenListsPanel {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                sourcesOfTokensModel: root.sourcesOfTokensModel
+                tokensListModel: root.tokensListModel
             }
         }
     }

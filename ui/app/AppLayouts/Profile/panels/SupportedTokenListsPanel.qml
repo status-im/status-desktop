@@ -29,9 +29,10 @@ StatusListView {
         width: ListView.view.width
         title: model.name
         sensor.enabled: false
-        subTitle: qsTr("%n token(s) · Last updated %1 @%2",
-                       "",
-                       model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
+        //TODO will be re-implemented post-MVP
+//        subTitle: qsTr("%n token(s) · Last updated %1 @%2",
+//                       "",
+//                       model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
         statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
         asset.name: model.image
         asset.isImage: true
