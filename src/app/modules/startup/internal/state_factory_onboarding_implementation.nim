@@ -4,11 +4,12 @@ proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: strin
     keycardEvent.error.len > 0:
       if keycardEvent.error == ErrorPCSC:
         return createState(StateType.KeycardNoPCSCService, state.flowType, backState)
-      if keycardEvent.error == ErrorNoReader:
-        controller.reRunCurrentFlowLater()
-        if state.stateType == StateType.KeycardPluginReader:
-          return nil
-        return createState(StateType.KeycardPluginReader, state.flowType, backState)
+      if keycardEvent.error == ErrorNoReader or
+        keycardEvent.error == ErrorReaderList:
+          controller.reRunCurrentFlowLater()
+          if state.stateType == StateType.KeycardPluginReader:
+            return nil
+          return createState(StateType.KeycardPluginReader, state.flowType, backState)
   if keycardFlowType == ResponseTypeValueInsertCard and
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
