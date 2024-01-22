@@ -235,7 +235,7 @@ Item {
             sharedKeycardModule: root.sharedKeycardModule
 
             Component.onCompleted: {
-                seedPhraseRevealed = false
+                d.primaryButtonEnabled = seedPhraseRevealed
             }
 
             onSeedPhraseRevealedChanged: {
