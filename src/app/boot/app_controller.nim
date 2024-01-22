@@ -485,12 +485,6 @@ proc appReady*(self: AppController) =
 proc finishAppLoading*(self: AppController) =
   self.load()
 
-  # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not
-  # and delete mnemonic in the first case.
-  let importedAccount = self.accountsService.getImportedAccount()
-  if(importedAccount.isValid()):
-    self.privacyService.removeMnemonic()
-
   if not self.startupModule.isNil:
     self.startupModule.onAppLoaded()
     self.startupModule = nil

@@ -380,9 +380,9 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool, recoverAccount: bool = false) =
+proc setupAccount(self: Controller, accountId: string, removeMnemonic: bool, storeToKeychain: bool, recoverAccount: bool = false) =
   self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, recoverAccount)
+  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, removeMnemonic, recoverAccount)
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
@@ -394,11 +394,11 @@ proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
     error "list of generated accounts is empty"
     return
   let accountId = accounts[0].id
-  self.setupAccount(accountId, storeToKeychain)
+  self.setupAccount(accountId, removeMnemonic=false, storeToKeychain)
 
 proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   let accountId = self.getImportedAccount().id
-  self.setupAccount(accountId, storeToKeychain, recoverAccount)
+  self.setupAccount(accountId, removeMnemonic=true, storeToKeychain, recoverAccount)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.importMnemonic():
