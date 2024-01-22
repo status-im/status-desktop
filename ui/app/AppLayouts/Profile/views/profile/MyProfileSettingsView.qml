@@ -248,7 +248,7 @@ ColumnLayout {
             id: profileShowcaseAssetsPanel
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: separated model instance from profile section
+            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
             showcaseModel: root.profileStore.profileShowcaseAssetsModel
             onShowcaseEntryChanged: hasAnyProfileShowcaseChanges = true
             formatCurrencyAmount: function(amount, symbol) {

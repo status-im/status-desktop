@@ -92,9 +92,6 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
 
-proc getBalancesByChain*(self: Controller, accountAddresses: seq[string], tokenAddresses: seq[string]): seq[WalletTokenDto] =
-  return self.walletAccountService.getBalancesByChain(accountAddresses, tokenAddresses)
-
 proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 

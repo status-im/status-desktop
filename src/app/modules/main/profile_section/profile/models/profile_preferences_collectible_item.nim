@@ -32,8 +32,6 @@ proc initProfileShowcaseCollectibleItem*(collectible: CollectiblesEntry, visibil
   result.backgroundColor = collectible.getBackgroundColor()
   result.showcaseVisibility = visibility
   result.order = order
-  result.showcaseVisibility = visibility
-  result.order = order
   result.loading = false
 
 proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollectibleItem =

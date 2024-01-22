@@ -102,12 +102,3 @@ proc hasPairedDevices(): bool =
     return response.result.getBool
   except Exception as e:
     error "error: ", errDesription=e.msg
-
-proc balanceInfoToTable(jsonNode: JsonNode): Table[string, UInt256] =
-  for pair in jsonNode.pairs():
-    for pair2 in pair.val.pairs():
-      for pair3 in pair2.val.pairs():
-        let amount = fromHex(UInt256, pair3.val.getStr)
-        if amount != stint.u256(0):
-          result[pair2.key.toUpper] = amount
-        break
