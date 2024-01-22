@@ -1,6 +1,7 @@
 module StatusQ.Core.Utils
 
 ClippingWrapper 0.1 ClippingWrapper.qml
+DoubleFlickable 0.1 DoubleFlickable.qml
 EmojiJSON 1.0 emojiList.js
 JSONListModel 0.1 JSONListModel.qml
 ModelChangeGuard 0.1 ModelChangeGuard.qml
