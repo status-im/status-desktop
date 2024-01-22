@@ -269,10 +269,10 @@ QtObject:
     return logLevel
 
   proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
-    installationId: string, displayName: string): JsonNode =
+    installationId: string, displayName: string, withoutMnemonic: bool): JsonNode =
     result = %* {
       "key-uid": account.keyUid,
-      "mnemonic": account.mnemonic,
+      "mnemonic": if withoutMnemonic: "" else: account.mnemonic,
       "public-key": account.derivedAccounts.whisper.publicKey,
       "name": account.alias,
       "display-name": displayName,
@@ -302,16 +302,14 @@ QtObject:
       "url-unfurling-mode": int(settings.UrlUnfurlingMode.AlwaysAsk),
     }
 
-  proc getAccountSettings(self: Service, accountId: string,
-    installationId: string,
-    displayName: string): JsonNode =
+  proc getAccountSettings(self: Service, accountId: string, installationId: string, displayName: string, withoutMnemonic: bool): JsonNode =
     for acc in self.generatedAccounts:
       if(acc.id == accountId):
-        return self.prepareAccountSettingsJsonObject(acc, installationId, displayName)
+        return self.prepareAccountSettingsJsonObject(acc, installationId, displayName, withoutMnemonic)
 
     if(self.importedAccount.isValid()):
       if(self.importedAccount.id == accountId):
-        return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
+        return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName, withoutMnemonic)
 
   proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.ShardsTest
@@ -430,13 +428,13 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc setupAccount*(self: Service, accountId, password, displayName: string, recoverAccount: bool = false): string =
+  proc setupAccount*(self: Service, accountId, password, displayName: string, removeMnemonic: bool, recoverAccount: bool = false): string =
     try:
       let installationId = $genUUID()
       var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
       self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
       let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-      var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
+      var settingsJson = self.getAccountSettings(accountId, installationId, displayName, removeMnemonic)
       let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
 
       if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
