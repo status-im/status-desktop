@@ -21,7 +21,8 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
     state.flowType == FlowType.MigrateFromAppToKeycard:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and
         keycardEvent.error.len > 0 and
-        keycardEvent.error == ErrorNoReader:
+        (keycardEvent.error == ErrorNoReader or
+        keycardEvent.error == ErrorReaderList):
           controller.reRunCurrentFlowLater()
           if state.stateType == StateType.PluginReader:
             return nil
@@ -41,8 +42,9 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
   if state.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection or
-      keycardEvent.error == ErrorNoReader:
+      (keycardEvent.error == ErrorConnection or
+      keycardEvent.error == ErrorNoReader or
+      keycardEvent.error == ErrorReaderList):
         controller.reRunCurrentFlowLater()
         if state.stateType == StateType.PluginReader:
           return nil
