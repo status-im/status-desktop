@@ -167,15 +167,24 @@ StatusModal {
                         errorMessage: qsTr("Please name your saved address")
                     },
                     StatusValidator {
+                        property bool isEmoji: false
+
                         name: "check-for-no-emojis"
                         validate: (value) => {
-                                      return !Constants.regularExpressions.emoji.test(value)
+                                      if (!value) {
+                                          return true
+                                      }
+
+                                      isEmoji = Constants.regularExpressions.emoji.test(value)
+                                      if (isEmoji){
+                                          return false
+                                      }
+
+                                      return Constants.regularExpressions.alphanumericalExpanded1.test(value)
                                   }
-                        errorMessage: Constants.errorMessages.emojRegExp
-                    },
-                    StatusRegularExpressionValidator {
-                        regularExpression: Constants.regularExpressions.alphanumericalExpanded1
-                        errorMessage: Constants.errorMessages.alphanumericalExpanded1RegExp
+                        errorMessage: isEmoji?
+                                          Constants.errorMessages.emojRegExp
+                                        : Constants.errorMessages.alphanumericalExpanded1RegExp
                     },
                     StatusValidator {
                         name: "check-saved-address-existence"

@@ -5,9 +5,11 @@ import QtQuick.Layouts 1.14
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls.Validators 0.1
 
 import SortFilterProxyModel 0.2
 
+import utils 1.0
 import shared.controls 1.0
 
 import "../stores"
@@ -27,11 +29,49 @@ ColumnLayout {
         }
     }
 
+    SearchBox {
+        id: searchBox
+        Layout.fillWidth: true
+        Layout.bottomMargin: 16
+        visible: RootStore.savedAddresses.count > 0
+        placeholderText: qsTr("Search for name, ENS or address")
+
+        validators: [
+            StatusValidator {
+                property bool isEmoji: false
+
+                name: "check-for-no-emojis"
+                validate: (value) => {
+                              if (!value) {
+                                  return true
+                              }
+
+                              isEmoji = Constants.regularExpressions.emoji.test(value)
+                              if (isEmoji){
+                                  return false
+                              }
+
+                              return Constants.regularExpressions.alphanumericalExpanded1.test(value)
+                          }
+                errorMessage: isEmoji?
+                                  qsTr("Your search is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)")
+                                : qsTr("Your search contains invalid characters (use A-Z and 0-9, single whitespace, hyphens and underscores only)")
+            }
+        ]
+    }
+
     ShapeRectangle {
         id: noSavedAddresses
         Layout.fillWidth: true
-        visible: listView.count === 0
+        visible: RootStore.savedAddresses.count === 0
         text: qsTr("Your saved addresses will appear here")
+    }
+
+    ShapeRectangle {
+        id: emptySearchResult
+        Layout.fillWidth: true
+        visible: RootStore.savedAddresses.count > 0 && listView.count === 0
+        text: qsTr("No saved addresses found. Check spelling or address is correct.")
     }
 
     StatusLoadingIndicator {
@@ -42,15 +82,9 @@ ColumnLayout {
     }
 
     Item {
-        visible: noSavedAddresses.visible || loadingIndicator.visible
+        visible: noSavedAddresses.visible || emptySearchResult.visible || loadingIndicator.visible
         Layout.fillWidth: true
         Layout.fillHeight: true
-    }
-
-    SearchBox {
-        Layout.fillWidth: true
-        visible: listView.visible
-        placeholderText: qsTr("Search for name, ENS or address")
     }
 
     StatusListView {
@@ -58,13 +92,36 @@ ColumnLayout {
         objectName: "SavedAddressesView_savedAddresses"
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.topMargin: 16
         spacing: 8
         visible: count > 0
 
         model: SortFilterProxyModel {
             sourceModel: RootStore.savedAddresses
-            sorters: RoleSorter { roleName: "name"; sortOrder: Qt.AscendingOrder }
+            delayed: true
+
+            sorters: RoleSorter {
+                roleName: "name"
+                sortOrder: Qt.AscendingOrder
+            }
+
+            filters: ExpressionFilter {
+
+                function spellingTolerantSearch(data, searchKeyword) {
+                    const regex = new RegExp(searchKeyword.split('').join('.{0,1}'), 'i')
+                    return regex.test(data)
+                }
+
+                enabled: !!searchBox.text && searchBox.valid
+
+                expression: {
+                    searchBox.text
+                    let keyword = searchBox.text.trim().toUpperCase()
+                    return spellingTolerantSearch(model.name, keyword) ||
+                            model.address.toUpperCase().includes(keyword) ||
+                            model.ens.toUpperCase().includes(keyword) ||
+                            model.chainShortNames.toUpperCase().includes(keyword)
+                }
+            }
         }
 
         section.property: "name"

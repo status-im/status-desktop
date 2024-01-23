@@ -691,10 +691,10 @@ QtObject {
     readonly property QtObject errorMessages: QtObject {
         readonly property string alphanumericalRegExp: qsTr("Only letters and numbers allowed")
         readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, periods, whitespaces and hyphens allowed")
-        readonly property string alphanumericalExpanded1RegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+        readonly property string alphanumericalExpanded1RegExp: qsTr("Invalid characters (A-Z and 0-9, single whitespace, hyphens and underscores only)")
         readonly property string alphanumericalWithSpaceRegExp: qsTr("Special characters are not allowed")
         readonly property string asciiRegExp: qsTr("Only letters, numbers and ASCII characters allowed")
-        readonly property string emojRegExp: qsTr("Name is too cool (use letters, numbers, underscores, whitespaces and hyphens only)")
+        readonly property string emojRegExp: qsTr("Name is too cool (use A-Z and 0-9, single whitespace, hyphens and underscores only)")
     }
 
     readonly property QtObject socialLinkType: QtObject {
