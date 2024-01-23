@@ -101,6 +101,11 @@ method buildNewPrivateKeyKeypairAndAddItToOrigin*(self: AccessInterface) {.base.
 method buildNewSeedPhraseKeypairAndAddItToOrigin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removingSavedAddressConfirmed*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 type
   DelegateInterface* = concept c

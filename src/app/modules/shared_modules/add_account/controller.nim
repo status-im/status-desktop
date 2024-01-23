@@ -2,13 +2,14 @@ import times, chronicles
 import uuids
 import io_interface
 
-import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/keycard/service as keycard_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/saved_address/service as saved_address_service
+import app_service/service/keycard/service as keycard_service
 
 import ../keycard_popup/io_interface as keycard_shared_module
 
-import ../../../core/eventemitter
+import app/core/eventemitter
 
 logScope:
   topics = "wallet-add-account-controller"
@@ -21,6 +22,7 @@ type
     events: EventEmitter
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+    savedAddressService: saved_address_service.Service
     keycardService: keycard_service.Service
     connectionIds: seq[UUID]
     connectionKeycardResponse: UUID
@@ -40,6 +42,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   accountsService: accounts_service.Service,
   walletAccountService: wallet_account_service.Service,
+  savedAddressService: saved_address_service.Service,
   keycardService: keycard_service.Service):
   Controller =
   result = Controller()
@@ -47,6 +50,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
+  result.savedAddressService = savedAddressService
   result.keycardService = keycardService
 
 proc disconnectAll*(self: Controller) =
@@ -66,25 +70,30 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED) do(e:Args):
-    var args = DerivedAddressesArgs(e)
+    let args = DerivedAddressesArgs(e)
     self.delegate.onDerivedAddressesFetched(args.derivedAddresses, args.error)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED) do(e:Args):
-    var args = DerivedAddressesArgs(e)
+    let args = DerivedAddressesArgs(e)
     self.delegate.onDerivedAddressesFromMnemonicFetched(args.derivedAddresses, args.error)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED) do(e:Args):
-    var args = DerivedAddressesFromNotImportedMnemonicArgs(e)
+    let args = DerivedAddressesFromNotImportedMnemonicArgs(e)
     self.delegate.onAddressesFromNotImportedMnemonicFetched(args.derivations, args.error)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED) do(e:Args):
-    var args = DerivedAddressesArgs(e)
+    let args = DerivedAddressesArgs(e)
     if args.uniqueId != self.uniqueFetchingDetailsId:
       return
     self.delegate.onAddressDetailsFetched(args.derivedAddresses, args.error)
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):
+    let args = SavedAddressArgs(e)
+    self.delegate.savedAddressDeleted(args.address, args.errorMsg)
   self.connectionIds.add(handlerId)
 
 proc setAuthenticatedKeyUid*(self: Controller, value: string) =
@@ -122,6 +131,12 @@ proc getKeypairs*(self: Controller): seq[KeypairDto] =
 
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
+
+proc getSavedAddress*(self: Controller, address: string): SavedAddressDto =
+  return self.savedAddressService.getSavedAddress(address)
+
+proc deleteSavedAddress*(self: Controller, address: string) =
+  self.savedAddressService.deleteSavedAddress(address)
 
 proc finalizeAction*(self: Controller) =
   self.delegate.finalizeAction()

@@ -99,11 +99,16 @@ StatusModal {
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
         readonly property bool addressInputIsENS: !!d.ens
 
-        property bool addressAlreadyAdded: false
-        function checkIfAddressIsAlreadyAddded(address) {
+        property bool addressAlreadyAddedToWallet: false
+        function checkIfAddressIsAlreadyAdddedToWallet(address) {
+            let name = RootStore.getNameForWalletAddress(address)
+            d.addressAlreadyAddedToWallet = !!name
+        }
+
+        property bool addressAlreadyAddedToSavedAddresses: false
+        function checkIfAddressIsAlreadyAdddedToSavedAddresses(address) {
             let details = RootStore.getSavedAddress(address)
-            d.addressAlreadyAdded = !!details.address
-            return !d.addressAlreadyAdded
+            d.addressAlreadyAddedToSavedAddresses = !!details.address
         }
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
@@ -220,7 +225,8 @@ StatusModal {
                         errorMessage: qsTr("Please enter an ethereum address")
                     },
                     StatusValidator {
-                        errorMessage: d.addressAlreadyAdded? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
+                        errorMessage: d.addressAlreadyAddedToWallet? qsTr("This address is already added to Wallet") :
+                                                                     d.addressAlreadyAddedToSavedAddresses? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
                         validate: function (value) {
                             if (value !== Constants.zeroAddress) {
                                 if (Utils.isValidEns(value)) {
@@ -231,7 +237,12 @@ StatusModal {
                                         return true
                                     }
                                     const prefixAndAddress = Utils.splitToChainPrefixAndAddress(value)
-                                    return d.checkIfAddressIsAlreadyAddded(prefixAndAddress.address)
+                                    d.checkIfAddressIsAlreadyAdddedToWallet(prefixAndAddress.address)
+                                    if (d.addressAlreadyAddedToWallet) {
+                                        return false
+                                    }
+                                    d.checkIfAddressIsAlreadyAdddedToSavedAddresses(prefixAndAddress.address)
+                                    return !d.addressAlreadyAddedToSavedAddresses
                                 }
                             }
 
@@ -243,7 +254,8 @@ StatusModal {
                     StatusAsyncValidator {
                         id: resolvingEnsName
                         name: "resolving-ens-name"
-                        errorMessage: d.addressAlreadyAdded? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
+                        errorMessage: d.addressAlreadyAddedToWallet? qsTr("This address is already added to Wallet") :
+                                                                     d.addressAlreadyAddedToSavedAddresses? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
                         asyncOperation: (value) => {
                                             if (!Utils.isValidEns(value)) {
                                                 resolvingEnsName.asyncComplete("not-ens")
@@ -257,7 +269,12 @@ StatusModal {
                                           return true
                                       }
                                       if (!!value) {
-                                          return d.checkIfAddressIsAlreadyAddded(value)
+                                          d.checkIfAddressIsAlreadyAdddedToWallet(prefixAndAddress.address)
+                                          if (d.addressAlreadyAddedToWallet) {
+                                              return false
+                                          }
+                                          d.checkIfAddressIsAlreadyAdddedToSavedAddresses(value)
+                                          return !d.addressAlreadyAddedToSavedAddresses
                                       }
                                       return false
                                   }
@@ -290,7 +307,7 @@ StatusModal {
                     if (skipTextUpdate || !d.initialized)
                         return
 
-                    d.addressAlreadyAdded = false
+                    d.addressAlreadyAddedToSavedAddresses = false
                     plainText = input.edit.getText(0, text.length)
 
                     if (input.edit.previousText != plainText) {

@@ -354,3 +354,12 @@ QtObject:
   proc startScanningForActivity*(self: View) {.slot.} =
     self.delegate.startScanningForActivity()
 
+  proc confirmSavedAddressRemoval*(self: View, name: string, address: string) {.signal.}
+  proc sendConfirmSavedAddressRemovalSignal*(self: View, name: string, address: string) =
+    self.confirmSavedAddressRemoval(name, address)
+
+  proc removingSavedAddressConfirmed*(self: View, address: string) {.slot.} =
+    self.delegate.removingSavedAddressConfirmed(address)
+
+  proc removingSavedAddressRejected*(self: View) {.slot.} =
+    self.setDisablePopup(false)

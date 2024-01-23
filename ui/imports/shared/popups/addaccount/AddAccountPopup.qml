@@ -6,6 +6,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
+import shared.popups 1.0
 
 import "./stores"
 import "./states"
@@ -29,6 +30,13 @@ StatusModal {
 
     onClosed: {
         root.store.currentState.doCancelAction()
+    }
+
+    Connections {
+        target: root.store.addAccountModule
+        function onConfirmSavedAddressRemoval(name, address) {
+            Global.openPopup(confirmSavedAddressRemoval, {address: address, name: name})
+        }
     }
 
     StatusScrollView {
@@ -151,6 +159,37 @@ StatusModal {
                     onContinueOnKeycard: {
                         root.close()
                     }
+                }
+            }
+        }
+
+        Component {
+            id: confirmSavedAddressRemoval
+
+            ConfirmationDialog {
+
+                property string name
+                property string address
+
+                closePolicy: Popup.NoAutoClose
+                hasCloseButton: false
+                headerSettings.title: qsTr("Removing saved address")
+                confirmationText: qsTr("The account you're trying to add <b>%1</b> is already saved under the name <b>%2</b>.<br/><br/>Do you want to remove it from saved addresses in favour of adding it to the Wallet?")
+                .arg(address)
+                .arg(name)
+                showCancelButton: true
+                cancelBtnType: ""
+                confirmButtonLabel: qsTr("Yes")
+                cancelButtonLabel: qsTr("No")
+
+                onConfirmButtonClicked: {
+                    root.store.addAccountModule.removingSavedAddressConfirmed(address)
+                    close()
+                }
+
+                onCancelButtonClicked: {
+                    root.store.addAccountModule.removingSavedAddressRejected()
+                    close()
                 }
             }
         }
