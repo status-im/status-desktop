@@ -78,6 +78,7 @@ type
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+    savedAddressService: saved_address_service.Service
     devicesService: devices_service.Service
 
     activityController: activityc.Controller
@@ -114,6 +115,7 @@ proc newModule*(
   result.keycardService = keycardService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
+  result.savedAddressService = savedAddressService
   result.devicesService = devicesService
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
@@ -375,13 +377,13 @@ method destroyAddAccountPopup*(self: Module) =
 method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()
   self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
-    self.walletAccountService)
+    self.walletAccountService, self.savedAddressService)
   self.addAccountModule.loadForAddingAccount(addingWatchOnlyAccount)
 
 method runEditAccountPopup*(self: Module, address: string) =
   self.destroyAddAccountPopup()
   self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
-    self.walletAccountService)
+    self.walletAccountService, self.savedAddressService)
   self.addAccountModule.loadForEditingAccount(address)
 
 method getAddAccountModule*(self: Module): QVariant =

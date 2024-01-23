@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, json
+import NimQml, chronicles, strutils, sequtils, json
 
 import dto
 
@@ -72,6 +72,11 @@ QtObject:
 
   proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
     return self.savedAddresses
+
+  proc getSavedAddress*(self: Service, address: string): SavedAddressDto =
+    for sa in self.savedAddresses:
+      if cmpIgnoreCase(sa.address, address) == 0:
+        return sa
 
   proc updateAddresses(self: Service, signal: string, arg: Args) =
     self.savedAddresses = self.getAddresses()

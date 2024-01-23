@@ -4,18 +4,19 @@ import io_interface
 import view, controller
 import internal/[state, state_factory]
 
-import ../../../core/eventemitter
+import app/core/eventemitter
 
-import ../../../global/global_singleton
+import app/global/global_singleton
 
-import ../../shared/keypairs
-import ../../shared_models/[keypair_model, derived_address_model]
-import ../../shared_modules/keycard_popup/module as keycard_shared_module
+import app/modules/shared/keypairs
+import app/modules/shared_models/[keypair_model, derived_address_model]
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 
-import ../../../../app_service/common/account_constants
-import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/keycard/service as keycard_service
+import app_service/common/account_constants
+import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/saved_address/service as saved_address_service
+import app_service/service/keycard/service as keycard_service
 
 export io_interface
 
@@ -46,8 +47,6 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
-    accountsService: accounts_service.Service
-    walletAccountService: wallet_account_service.Service
     authenticationReason: AuthenticationReason
     fetchingAddressesIsInProgress: bool
 
@@ -58,15 +57,16 @@ proc newModule*[T](delegate: T,
   events: EventEmitter,
   keycardService: keycard_service.Service,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service):
+  walletAccountService: wallet_account_service.Service,
+  savedAddressService: saved_address_service.Service):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.events = events
-  result.walletAccountService = walletAccountService
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, accountsService, walletAccountService, keycardService)
+  result.controller = controller.newController(result, events, accountsService, walletAccountService,
+    savedAddressService, keycardService)
   result.authenticationReason = AuthenticationReason.AddingAccount
   result.fetchingAddressesIsInProgress = false
 
@@ -629,6 +629,11 @@ proc doAddAccount[T](self: Module[T]) =
     publicKey = ""
     keyUid = ""
 
+  let savedAddressDto = self.controller.getSavedAddress(address)
+  if not savedAddressDto.isNil:
+    self.view.sendConfirmSavedAddressRemovalSignal(savedAddressDto.name, savedAddressDto.address)
+    return
+
   var success = false
   if addingNewKeyPair:
     if selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
@@ -688,6 +693,15 @@ proc doAddAccount[T](self: Module[T]) =
       error "failed to store account", address=selectedAddrItem.getAddress()
 
   self.closeAddAccountPopup()
+
+method removingSavedAddressConfirmed[T](self: Module[T], address: string) =
+  self.controller.deleteSavedAddress(address)
+
+method savedAddressDeleted*[T](self: Module[T], address: string, errorMsg: string) =
+  if errorMsg.len > 0:
+    error "failed to delete saved address", address=address, err=errorMsg
+    return
+  self.doAddAccount()
 
 proc doEditAccount[T](self: Module[T]) =
   self.view.setDisablePopup(true)
