@@ -79,7 +79,7 @@ class Message:
         self.icon: typing.Optional[Image] = None
         self.from_user: typing.Optional[str] = None
         self.text: typing.Optional[str] = None
-        self.banner_image: typing.Optional[Button] = None
+        self.delegate_button: typing.Optional[Button] = None
         self.community_invitation: dict = {}
         self.init_ui()
 
@@ -101,13 +101,13 @@ class Message:
                         self.time = str(child.text)
                     case 'chatText':
                         self.text = str(child.text)
-                    case 'bannerImage':
-                        self.banner_image = Button(name='', real_name=driver.objectMap.realName(child))
+                    case 'delegate':
+                        self.delegate_button = Button(name='', real_name=driver.objectMap.realName(child))
 
     @allure.step('Open community invitation')
     def open_community_invitation(self):
-        driver.waitFor(lambda: self.banner_image.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        self.banner_image.click()
+        driver.waitFor(lambda: self.delegate_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        self.delegate_button.click()
         return CommunityScreen().wait_until_appears()
 
 
