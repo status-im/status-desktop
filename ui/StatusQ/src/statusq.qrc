@@ -1,82 +1,94 @@
 <RCC>
     <qresource prefix="/">
-        <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageImageAlbum.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageQuickActions.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageReply.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusPinMessageDetails.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusSticker.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusTextMessage.qml</file>
-        <file>StatusQ/Components/StatusTimeStampLabel.qml</file>
-        <file>StatusQ/Components/qmldir</file>
-        <file>StatusQ/Components/private/qmldir</file>
+        <file>StatusQ/Components/LoadingComponent.qml</file>
         <file>StatusQ/Components/StatusAddress.qml</file>
         <file>StatusQ/Components/StatusAddressPanel.qml</file>
         <file>StatusQ/Components/StatusAnimatedImage.qml</file>
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusCard.qml</file>
+        <file>StatusQ/Components/StatusChartPanel.qml</file>
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>
         <file>StatusQ/Components/StatusChatList.qml</file>
         <file>StatusQ/Components/StatusChatListAndCategories.qml</file>
         <file>StatusQ/Components/StatusChatListCategoryItem.qml</file>
         <file>StatusQ/Components/StatusChatListItem.qml</file>
-        <file>StatusQ/Components/StatusImage.qml</file>
-        <file>StatusQ/Components/StatusToolBar.qml</file>
         <file>StatusQ/Components/StatusColorSpace.qml</file>
         <file>StatusQ/Components/StatusCommunityCard.qml</file>
         <file>StatusQ/Components/StatusCommunityTags.qml</file>
         <file>StatusQ/Components/StatusContactRequestsIndicatorListItem.qml</file>
         <file>StatusQ/Components/StatusContactVerificationIcons.qml</file>
         <file>StatusQ/Components/StatusCursorDelegate.qml</file>
+        <file>StatusQ/Components/StatusDateGroupLabel.qml</file>
         <file>StatusQ/Components/StatusDatePicker.qml</file>
         <file>StatusQ/Components/StatusDescriptionListItem.qml</file>
+        <file>StatusQ/Components/StatusDotsLoadingIndicator.qml</file>
+        <file>StatusQ/Components/StatusDraggableListItem.qml</file>
         <file>StatusQ/Components/StatusEmoji.qml</file>
+        <file>StatusQ/Components/StatusEmojiAndColorComboBox.qml</file>
         <file>StatusQ/Components/StatusExpandableItem.qml</file>
-        <file>StatusQ/Components/StatusImageCropPanel.qml</file>
         <file>StatusQ/Components/StatusFlowSelector.qml</file>
+        <file>StatusQ/Components/StatusGroupBox.qml</file>
+        <file>StatusQ/Components/StatusImage.qml</file>
+        <file>StatusQ/Components/StatusImageCropPanel.qml</file>
+        <file>StatusQ/Components/StatusInfoBoxPanel.qml</file>
         <file>StatusQ/Components/StatusItemSelector.qml</file>
         <file>StatusQ/Components/StatusLetterIdenticon.qml</file>
         <file>StatusQ/Components/StatusListItem.qml</file>
         <file>StatusQ/Components/StatusListItemBadge.qml</file>
         <file>StatusQ/Components/StatusListItemTag.qml</file>
         <file>StatusQ/Components/StatusListPicker.qml</file>
+        <file>StatusQ/Components/StatusListPickerProxies.qml</file>
         <file>StatusQ/Components/StatusListSectionHeadline.qml</file>
         <file>StatusQ/Components/StatusLoadingIndicator.qml</file>
         <file>StatusQ/Components/StatusMemberListItem.qml</file>
         <file>StatusQ/Components/StatusMessage.qml</file>
         <file>StatusQ/Components/StatusMessageDetails.qml</file>
         <file>StatusQ/Components/StatusMessageHeader.qml</file>
+        <file>StatusQ/Components/StatusMessageSenderDetails.qml</file>
         <file>StatusQ/Components/StatusNavigationListItem.qml</file>
         <file>StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
+        <file>StatusQ/Components/StatusOnlineBadge.qml</file>
+        <file>StatusQ/Components/StatusPageIndicator.qml</file>
+        <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
+        <file>StatusQ/Components/StatusRoundIcon.qml</file>
         <file>StatusQ/Components/StatusRoundedComponent.qml</file>
         <file>StatusQ/Components/StatusRoundedImage.qml</file>
         <file>StatusQ/Components/StatusRoundedMedia.qml</file>
-        <file>StatusQ/Components/StatusRoundIcon.qml</file>
         <file>StatusQ/Components/StatusSmartIdenticon.qml</file>
+        <file>StatusQ/Components/StatusSortableColumnHeader.qml</file>
+        <file>StatusQ/Components/StatusStepper.qml</file>
+        <file>StatusQ/Components/StatusSyncDeviceDelegate.qml</file>
         <file>StatusQ/Components/StatusTagSelector.qml</file>
+        <file>StatusQ/Components/StatusTimeStampLabel.qml</file>
         <file>StatusQ/Components/StatusToastMessage.qml</file>
+        <file>StatusQ/Components/StatusToolBar.qml</file>
         <file>StatusQ/Components/StatusVideo.qml</file>
         <file>StatusQ/Components/StatusWizardStepper.qml</file>
-        <file>StatusQ/Components/StatusSortableColumnHeader.qml</file>
-        <file>StatusQ/Controls/Validators/qmldir</file>
-        <file>StatusQ/Controls/Validators/StatusAddressOrEnsValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusAddressValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusAsyncEnsValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusAsyncValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusFloatValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusIntValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusMinLengthValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusRegularExpressionValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusUrlValidator.qml</file>
-        <file>StatusQ/Controls/Validators/StatusValidator.qml</file>
-        <file>StatusQ/Controls/qmldir</file>
+        <file>StatusQ/Components/WebEngineLoader.qml</file>
+        <file>StatusQ/Components/private/chart/Chart.js</file>
+        <file>StatusQ/Components/private/chart/Chart.qml</file>
+        <file>StatusQ/Components/private/chart/LICENSE</file>
+        <file>StatusQ/Components/private/qmldir</file>
+        <file>StatusQ/Components/private/qwebchannel/helpers.js</file>
+        <file>StatusQ/Components/private/qwebchannel/qwebchannel.js</file>
+        <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageEmojiReactions.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageImageAlbum.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageQuickActions.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageReply.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusPinMessageDetails.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusSticker.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusTextMessage.qml</file>
+        <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Controls/StatusAccountSelector.qml</file>
         <file>StatusQ/Controls/StatusActivityCenterButton.qml</file>
+        <file>StatusQ/Controls/StatusBackButton.qml</file>
         <file>StatusQ/Controls/StatusBanner.qml</file>
         <file>StatusQ/Controls/StatusBaseButton.qml</file>
         <file>StatusQ/Controls/StatusBaseInput.qml</file>
+        <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
         <file>StatusQ/Controls/StatusButton.qml</file>
         <file>StatusQ/Controls/StatusChatCommandButton.qml</file>
         <file>StatusQ/Controls/StatusChatInfoButton.qml</file>
@@ -85,6 +97,7 @@
         <file>StatusQ/Controls/StatusColorRadioButton.qml</file>
         <file>StatusQ/Controls/StatusColorSelector.qml</file>
         <file>StatusQ/Controls/StatusColorSelectorGrid.qml</file>
+        <file>StatusQ/Controls/StatusComboBox.qml</file>
         <file>StatusQ/Controls/StatusCommunityTag.qml</file>
         <file>StatusQ/Controls/StatusDropdown.qml</file>
         <file>StatusQ/Controls/StatusFlatButton.qml</file>
@@ -93,12 +106,16 @@
         <file>StatusQ/Controls/StatusIconTextButton.qml</file>
         <file>StatusQ/Controls/StatusIdenticonRing.qml</file>
         <file>StatusQ/Controls/StatusImageCrop.qml</file>
+        <file>StatusQ/Controls/StatusImageSelector.qml</file>
         <file>StatusQ/Controls/StatusInput.qml</file>
+        <file>StatusQ/Controls/StatusItemDelegate.qml</file>
         <file>StatusQ/Controls/StatusItemPicker.qml</file>
         <file>StatusQ/Controls/StatusLabeledSlider.qml</file>
+        <file>StatusQ/Controls/StatusLinkText.qml</file>
         <file>StatusQ/Controls/StatusNavBarTabButton.qml</file>
-        <file>StatusQ/Controls/StatusPasswordStrengthIndicator.qml</file>
+        <file>StatusQ/Controls/StatusNavigationButton.qml</file>
         <file>StatusQ/Controls/StatusPasswordInput.qml</file>
+        <file>StatusQ/Controls/StatusPasswordStrengthIndicator.qml</file>
         <file>StatusQ/Controls/StatusPickerButton.qml</file>
         <file>StatusQ/Controls/StatusPinInput.qml</file>
         <file>StatusQ/Controls/StatusProgressBar.qml</file>
@@ -116,122 +133,105 @@
         <file>StatusQ/Controls/StatusTabBarIconButton.qml</file>
         <file>StatusQ/Controls/StatusTabButton.qml</file>
         <file>StatusQ/Controls/StatusTagItem.qml</file>
+        <file>StatusQ/Controls/StatusTextArea.qml</file>
+        <file>StatusQ/Controls/StatusTextWithLoadingState.qml</file>
         <file>StatusQ/Controls/StatusTokenInlineSelector.qml</file>
         <file>StatusQ/Controls/StatusToolTip.qml</file>
         <file>StatusQ/Controls/StatusWalletColorButton.qml</file>
         <file>StatusQ/Controls/StatusWalletColorSelect.qml</file>
-        <file>StatusQ/Controls/StatusTextArea.qml</file>
+        <file>StatusQ/Controls/StatusWarningBox.qml</file>
+        <file>StatusQ/Controls/Validators/StatusAddressOrEnsValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusAddressValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusAsyncEnsValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusAsyncValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusFloatValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusIntValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusMinLengthValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusRegularExpressionValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusUrlValidator.qml</file>
+        <file>StatusQ/Controls/Validators/StatusValidator.qml</file>
+        <file>StatusQ/Controls/Validators/qmldir</file>
+        <file>StatusQ/Controls/qmldir</file>
         <file>StatusQ/Core/Backpressure/Backpressure.qml</file>
         <file>StatusQ/Core/Backpressure/LICENSE</file>
-        <file>StatusQ/Core/Backpressure/qmldir</file>
         <file>StatusQ/Core/Backpressure/README.md</file>
-        <file>StatusQ/Core/Theme/qmldir</file>
+        <file>StatusQ/Core/Backpressure/qmldir</file>
+        <file>StatusQ/Core/LocaleUtils.qml</file>
+        <file>StatusQ/Core/StatusAnimatedStack.qml</file>
+        <file>StatusQ/Core/StatusAssetSettings.qml</file>
+        <file>StatusQ/Core/StatusBaseText.qml</file>
+        <file>StatusQ/Core/StatusCenteredFlow.qml</file>
+        <file>StatusQ/Core/StatusFontSettings.qml</file>
+        <file>StatusQ/Core/StatusGridView.qml</file>
+        <file>StatusQ/Core/StatusIcon.qml</file>
+        <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
+        <file>StatusQ/Core/StatusListView.qml</file>
+        <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
+        <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
+        <file>StatusQ/Core/StatusRollArea.qml</file>
+        <file>StatusQ/Core/StatusScrollView.qml</file>
+        <file>StatusQ/Core/StatusTooltipSettings.qml</file>
         <file>StatusQ/Core/Theme/StatusColors.qml</file>
         <file>StatusQ/Core/Theme/StatusDarkTheme.qml</file>
         <file>StatusQ/Core/Theme/StatusLightTheme.qml</file>
         <file>StatusQ/Core/Theme/Theme.qml</file>
         <file>StatusQ/Core/Theme/ThemePalette.qml</file>
+        <file>StatusQ/Core/Theme/qmldir</file>
+        <file>StatusQ/Core/Utils/AmountsArithmetic.qml</file>
         <file>StatusQ/Core/Utils/ClippingWrapper.qml</file>
+        <file>StatusQ/Core/Utils/DoubleFlickable.qml</file>
+        <file>StatusQ/Core/Utils/DoubleFlickableWithFolding.qml</file>
         <file>StatusQ/Core/Utils/Emoji.qml</file>
+        <file>StatusQ/Core/Utils/JSONListModel.qml</file>
+        <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
+        <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
+        <file>StatusQ/Core/Utils/ModelUtils.qml</file>
+        <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
+        <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
+        <file>StatusQ/Core/Utils/StackViewStates.qml</file>
+        <file>StatusQ/Core/Utils/StatesStack.qml</file>
+        <file>StatusQ/Core/Utils/StringUtils.qml</file>
+        <file>StatusQ/Core/Utils/Subscription.qml</file>
+        <file>StatusQ/Core/Utils/SubscriptionBroker.qml</file>
+        <file>StatusQ/Core/Utils/Utils.qml</file>
+        <file>StatusQ/Core/Utils/big.min.mjs</file>
         <file>StatusQ/Core/Utils/emojiList.js</file>
         <file>StatusQ/Core/Utils/qmldir</file>
-        <file>StatusQ/Core/Utils/Utils.qml</file>
-        <file>StatusQ/Core/Utils/StatesStack.qml</file>
+        <file>StatusQ/Core/Utils/xss.js</file>
         <file>StatusQ/Core/qmldir</file>
-        <file>StatusQ/Core/LocaleUtils.qml</file>
-        <file>StatusQ/Core/StatusAnimatedStack.qml</file>
-        <file>StatusQ/Core/StatusBaseText.qml</file>
-        <file>StatusQ/Core/StatusFontSettings.qml</file>
-        <file>StatusQ/Core/StatusIcon.qml</file>
-        <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
-        <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
-        <file>StatusQ/Core/StatusScrollView.qml</file>
-        <file>StatusQ/Core/StatusTooltipSettings.qml</file>
-        <file>StatusQ/Layout/qmldir</file>
         <file>StatusQ/Layout/StatusAppNavBar.qml</file>
-        <file>StatusQ/Platform/qmldir</file>
+        <file>StatusQ/Layout/StatusMainLayout.qml</file>
+        <file>StatusQ/Layout/StatusSectionLayout.qml</file>
+        <file>StatusQ/Layout/qmldir</file>
         <file>StatusQ/Platform/StatusMacNotification.qml</file>
         <file>StatusQ/Platform/StatusMacTrafficLights.qml</file>
         <file>StatusQ/Platform/StatusWindowsTitleBar.qml</file>
-        <file>StatusQ/Popups/Dialog/qmldir</file>
+        <file>StatusQ/Platform/qmldir</file>
         <file>StatusQ/Popups/Dialog/StatusDialog.qml</file>
+        <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogDivider.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogFooter.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogHeader.qml</file>
         <file>StatusQ/Popups/Dialog/StatusHeaderActions.qml</file>
         <file>StatusQ/Popups/Dialog/StatusTitleSubtitle.qml</file>
-        <file>StatusQ/Popups/statusModal/StatusImageWithTitle.qml</file>
-        <file>StatusQ/Popups/statusModal/StatusModalFooter.qml</file>
-        <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
-        <file>StatusQ/Popups/qmldir</file>
-        <file>StatusQ/Popups/StatusColorDialog.qml</file>
-        <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
+        <file>StatusQ/Popups/Dialog/qmldir</file>
         <file>StatusQ/Popups/StatusAction.qml</file>
-        <file>StatusQ/Popups/StatusSuccessAction.qml</file>
+        <file>StatusQ/Popups/StatusColorDialog.qml</file>
+        <file>StatusQ/Popups/StatusMenu.qml</file>
+        <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
+        <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
         <file>StatusQ/Popups/StatusMenuItem.qml</file>
         <file>StatusQ/Popups/StatusMenuSeparator.qml</file>
         <file>StatusQ/Popups/StatusModal.qml</file>
         <file>StatusQ/Popups/StatusModalDivider.qml</file>
-        <file>StatusQ/Popups/StatusMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchLocationMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
-        <file>StatusQ/Components/StatusListPickerProxies.qml</file>
-        <file>StatusQ/Layout/StatusSectionLayout.qml</file>
-        <file>StatusQ/Layout/StatusMainLayout.qml</file>
-        <file>StatusQ/Components/private/chart/Chart.js</file>
-        <file>StatusQ/Components/private/chart/Chart.qml</file>
-        <file>StatusQ/Components/private/chart/LICENSE</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageEmojiReactions.qml</file>
-        <file>StatusQ/Components/StatusChartPanel.qml</file>
-        <file>StatusQ/Components/StatusDateGroupLabel.qml</file>
-        <file>StatusQ/Components/StatusMessageSenderDetails.qml</file>
-        <file>StatusQ/Controls/StatusBackButton.qml</file>
-        <file>StatusQ/Controls/StatusComboBox.qml</file>
-        <file>StatusQ/Controls/StatusItemDelegate.qml</file>
-        <file>StatusQ/Controls/StatusNavigationButton.qml</file>
-        <file>StatusQ/Core/Utils/JSONListModel.qml</file>
-        <file>StatusQ/Core/Utils/xss.js</file>
-        <file>StatusQ/Core/StatusAssetSettings.qml</file>
-        <file>StatusQ/Core/StatusCenteredFlow.qml</file>
-        <file>StatusQ/Core/StatusGridView.qml</file>
-        <file>StatusQ/Core/StatusListView.qml</file>
-        <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
-        <file>StatusQ/Core/StatusRollArea.qml</file>
-        <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
-        <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
-        <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
-        <file>StatusQ/Controls/StatusTextWithLoadingState.qml</file>
-        <file>StatusQ/Components/LoadingComponent.qml</file>
-        <file>StatusQ/Core/Utils/ModelUtils.qml</file>
-        <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
-        <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
-        <file>StatusQ/Core/Utils/StringUtils.qml</file>
-        <file>StatusQ/Core/Utils/DoubleFlickable.qml</file>
-        <file>StatusQ/Core/Utils/DoubleFlickableWithFolding.qml</file>
-        <file>StatusQ/Components/StatusPageIndicator.qml</file>
-        <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
-        <file>StatusQ/Components/StatusOnlineBadge.qml</file>
-        <file>StatusQ/Components/StatusGroupBox.qml</file>
-        <file>StatusQ/Components/StatusDotsLoadingIndicator.qml</file>
-        <file>StatusQ/Components/StatusDraggableListItem.qml</file>
-        <file>StatusQ/Components/StatusEmojiAndColorComboBox.qml</file>
-        <file>StatusQ/Components/StatusStepper.qml</file>
-        <file>StatusQ/Components/StatusSyncDeviceDelegate.qml</file>
-        <file>StatusQ/Controls/StatusImageSelector.qml</file>
-        <file>StatusQ/Controls/StatusLinkText.qml</file>
-        <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
-        <file>StatusQ/Core/Utils/StackViewStates.qml</file>
-        <file>StatusQ/Core/Utils/AmountsArithmetic.qml</file>
-        <file>StatusQ/Core/Utils/big.min.mjs</file>
-        <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
-        <file>StatusQ/Components/StatusInfoBoxPanel.qml</file>
-        <file>StatusQ/Controls/StatusWarningBox.qml</file>
-        <file>StatusQ/Core/Utils/Subscription.qml</file>
-        <file>StatusQ/Core/Utils/SubscriptionBroker.qml</file>
-        <file>StatusQ/Components/WebEngineLoader.qml</file>
-        <file>StatusQ/Components/private/qwebchannel/qwebchannel.js</file>
-        <file>StatusQ/Components/private/qwebchannel/helpers.js</file>
+        <file>StatusQ/Popups/StatusSuccessAction.qml</file>
+        <file>StatusQ/Popups/qmldir</file>
+        <file>StatusQ/Popups/statusModal/StatusImageWithTitle.qml</file>
+        <file>StatusQ/Popups/statusModal/StatusModalFooter.qml</file>
+        <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
     </qresource>
 </RCC>
