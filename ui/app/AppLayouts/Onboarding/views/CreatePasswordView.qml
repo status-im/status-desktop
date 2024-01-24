@@ -7,7 +7,6 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 import shared.views 1.0
 
-import "../../Profile/views"
 import "../controls"
 import "../stores"
 
@@ -44,6 +43,7 @@ Item {
         PasswordView {
             id: view
             Layout.preferredWidth: root.width - 2 * Style.current.bigPadding
+            Layout.maximumWidth: 460
             Layout.fillHeight: true
             passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
             highSizeIntro: true

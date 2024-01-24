@@ -150,6 +150,19 @@ StatusSectionLayout {
         Loader {
             active: false
             asynchronous: true
+            sourceComponent: ChangePasswordView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                privacyStore: root.store.privacyStore
+                passwordStrengthScoreFunction: SharedStores.RootStore.getPasswordStrengthScore
+                contentWidth: d.contentWidth
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.password)
+            }
+        }
+
+        Loader {
+            active: false
+            asynchronous: true
             sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height

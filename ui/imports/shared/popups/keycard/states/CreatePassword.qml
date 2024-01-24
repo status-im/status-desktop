@@ -22,11 +22,11 @@ Item {
         spacing: Style.current.padding
 
         PasswordView {
+            Layout.minimumWidth: 460
             Layout.fillWidth: true
             Layout.fillHeight: true
             passwordStrengthScoreFunction: RootStore.getPasswordStrengthScore
             highSizeIntro: true
-            fixIntroTextWidth: true
 
             newPswText: root.sharedKeycardModule.getNewPassword()
             confirmationPswText: root.sharedKeycardModule.getNewPassword()

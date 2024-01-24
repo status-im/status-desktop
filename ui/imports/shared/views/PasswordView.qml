@@ -19,11 +19,13 @@ ColumnLayout {
     property bool createNewPsw: true
     property string title: qsTr("Create a password")
     property bool titleVisible: true
+    property real titleSize: 22
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %n character(s). To strengthen your password consider including:", "", Constants.minPasswordLength)
     property bool highSizeIntro: false
-    property bool fixIntroTextWidth: false
+
+    property int contentAlignment: Qt.AlignHCenter
 
     property var passwordStrengthScoreFunction: function () {}
 
@@ -79,8 +81,6 @@ ColumnLayout {
 
         readonly property var validatorRegexp: /^[!-~]{0,64}$/
         readonly property string validatorErrMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
-
-        readonly property int defaultInputWidth: 416
 
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
@@ -142,16 +142,17 @@ ColumnLayout {
         function isTooShort() { return newPswInput.text.length < Constants.minPasswordLength }
     }
 
+    implicitWidth: 460
     spacing: Style.current.bigPadding
     z: root.zFront
 
     // View visual content:
     StatusBaseText {
         id: title
-        Layout.alignment: Qt.AlignHCenter
+        Layout.alignment: root.contentAlignment
         visible: root.titleVisible
         text: root.title
-        font.pixelSize: 22
+        font.pixelSize: root.titleSize
         font.bold: true
         color: Theme.palette.directColor1
     }
@@ -159,16 +160,16 @@ ColumnLayout {
     ColumnLayout {
         id: introColumn
 
-        Layout.preferredWidth: root.fixIntroTextWidth ? d.defaultInputWidth : parent.width
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.alignment: root.contentAlignment
         spacing: 4
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: root.contentAlignment
 
             text: root.introText
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: root.contentAlignment
             font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.baseColor1
@@ -176,10 +177,10 @@ ColumnLayout {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: root.contentAlignment
 
             text: root.recoverText
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: root.contentAlignment
             font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
@@ -194,8 +195,8 @@ ColumnLayout {
 
         z: root.zFront
         visible: !root.createNewPsw
-        Layout.preferredWidth: d.defaultInputWidth
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.alignment: root.contentAlignment
         placeholderText: qsTr("Current password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
@@ -219,7 +220,8 @@ ColumnLayout {
     ColumnLayout {
         spacing: 4
         z: root.zFront
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.alignment: root.contentAlignment
 
         StatusPasswordInput {
             id: newPswInput
@@ -227,8 +229,8 @@ ColumnLayout {
 
             property bool showPassword
 
-            Layout.preferredWidth: d.defaultInputWidth
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: root.contentAlignment
+            Layout.fillWidth: true
             placeholderText: qsTr("New password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
@@ -269,6 +271,7 @@ ColumnLayout {
 
         StatusPasswordStrengthIndicator {
             id: strengthInditactor
+            Layout.fillWidth: true
             value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
             from: 0
             to: Constants.minPasswordLength
@@ -280,46 +283,66 @@ ColumnLayout {
         }
     }
 
-    StatusBaseText {
-        id: strengthenTxt
-        Layout.alignment: Qt.AlignHCenter
-        wrapMode: Text.WordWrap
-        text: root.strengthenText
-        font.pixelSize: 12
-        color: Theme.palette.baseColor1
-        clip: true
-    }
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: 80
+        border.color: Theme.palette.baseColor2
+        border.width: 1
+        radius: Style.current.radius
+        implicitHeight: strengthColumn.implicitHeight
+        implicitWidth: strengthColumn.implicitWidth
 
-    RowLayout {
-        spacing: Style.current.padding
-        Layout.alignment: Qt.AlignHCenter
+        ColumnLayout {
+            id: strengthColumn
+            anchors.fill: parent
+            anchors.margins: Style.current.padding
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: Style.current.padding
 
-        StatusBaseText {
-            id: lowerCaseTxt
-            text: "• " + qsTr("Lower case")
-            font.pixelSize: 12
-            color: d.containsLower ? Theme.palette.successColor1 : Theme.palette.baseColor1
-        }
+            StatusBaseText {
+                id: strengthenTxt
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignHCenter
+                wrapMode: Text.WordWrap
+                text: root.strengthenText
+                font.pixelSize: 12
+                color: Theme.palette.baseColor1
+                clip: true
+            }
 
-        StatusBaseText {
-            id: upperCaseTxt
-            text: "• " + qsTr("Upper case")
-            font.pixelSize: 12
-            color: d.containsUpper ? Theme.palette.successColor1 : Theme.palette.baseColor1
-        }
+            RowLayout {
+                spacing: Style.current.padding
+                Layout.alignment: Qt.AlignHCenter
 
-        StatusBaseText {
-            id: numbersTxt
-            text: "• " + qsTr("Numbers")
-            font.pixelSize: 12
-            color: d.containsNumbers ? Theme.palette.successColor1 : Theme.palette.baseColor1
-        }
+                StatusBaseText {
+                    id: lowerCaseTxt
+                    text: "• " + qsTr("Lower case")
+                    font.pixelSize: 12
+                    color: d.containsLower ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                }
 
-        StatusBaseText {
-            id: symbolsTxt
-            text: "• " + qsTr("Symbols")
-            font.pixelSize: 12
-            color: d.containsSymbols ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                StatusBaseText {
+                    id: upperCaseTxt
+                    text: "• " + qsTr("Upper case")
+                    font.pixelSize: 12
+                    color: d.containsUpper ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                }
+
+                StatusBaseText {
+                    id: numbersTxt
+                    text: "• " + qsTr("Numbers")
+                    font.pixelSize: 12
+                    color: d.containsNumbers ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                }
+
+                StatusBaseText {
+                    id: symbolsTxt
+                    text: "• " + qsTr("Symbols")
+                    font.pixelSize: 12
+                    color: d.containsSymbols ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                }
+            }
         }
     }
 
@@ -330,8 +353,8 @@ ColumnLayout {
         property bool showPassword
 
         z: root.zFront
-        Layout.preferredWidth: d.defaultInputWidth
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.alignment: root.contentAlignment
         placeholderText: qsTr("Confirm password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
@@ -376,7 +399,7 @@ ColumnLayout {
 
     StatusBaseText {
         id: errorTxt
-        Layout.alignment: Qt.AlignHCenter
+        Layout.alignment: root.contentAlignment
         Layout.fillHeight: true
         font.pixelSize: 12
         color: Theme.palette.dangerColor1

@@ -93,6 +93,7 @@ Rectangle {
     property alias subTitleBadgeComponent: subTitleBadgeLoader.sourceComponent
     property alias errorIcon: errorIcon
     property alias statusListItemTagsRowLayout: statusListItemSubtitleTagsRow
+    property bool showLoadingIndicator: false
 
     property int subTitleBadgeLoaderAlignment: Qt.AlignVCenter
 
@@ -113,7 +114,9 @@ Rectangle {
         }
         return Math.max(64, statusListItemTitleArea.height + 90)
     }
-    color: {
+    color: bgColor
+
+    property color bgColor: {
         if (sensor.containsMouse || root.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
@@ -153,6 +156,8 @@ Rectangle {
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
 
+
+
         StatusSmartIdenticon {
             id: iconOrImage
             anchors.left: parent.left
@@ -160,14 +165,27 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             asset: root.asset
             name: root.title
-            active: root.asset.isLetterIdenticon ||
+            active: ((root.asset.isLetterIdenticon ||
                     !!root.asset.name ||
-                    !!root.asset.emoji
+                    !!root.asset.emoji) && !root.showLoadingIndicator)
             badge.border.color: root.color
             ringSettings: root.ringSettings
             loading: root.loading
 
             onClicked: root.iconClicked(mouse)
+        }
+
+        Loader {
+            id: loadingIndicator
+            anchors.left: parent.left
+            anchors.leftMargin: root.leftPadding
+            anchors.top: statusListItemTitleArea.top
+            active: root.showLoadingIndicator
+            sourceComponent: StatusLoadingIndicator {
+                width: 24
+                height: 24
+                color: Theme.palette.baseColor1
+            }
         }
 
         Item {
@@ -181,9 +199,9 @@ Rectangle {
                 return !root.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
             }
 
-            anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
+            anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.left : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: iconOrImage.active ? 16 : root.leftPadding
+            anchors.leftMargin: iconOrImage.active || loadingIndicator.active ? 16 : root.leftPadding
             anchors.rightMargin: Math.max(root.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 
@@ -291,7 +309,7 @@ Rectangle {
                 Loader {
                     id: subTitleBadgeLoader
                     Layout.alignment: root.subTitleBadgeLoaderAlignment
-                    visible: sourceComponent
+                    visible: sourceComponent && !root.showLoadingIndicator
                 }
 
                 StatusTextWithLoadingState {

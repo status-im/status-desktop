@@ -331,25 +331,26 @@ QtObject {
 
     readonly property QtObject settingsSubsection: QtObject {
         readonly property int profile: 0
-        readonly property int contacts: 1
-        readonly property int ensUsernames: 2
-        readonly property int messaging: 3
-        readonly property int wallet: 4
-        readonly property int appearance: 5
-        readonly property int language: 6
-        readonly property int notifications: 7
-        readonly property int syncingSettings: 8
-        readonly property int browserSettings: 9
-        readonly property int advanced: 10
-        readonly property int about: 11
-        readonly property int communitiesSettings: 12
-        readonly property int keycard: 13
-        readonly property int about_terms: 14 // a subpage under "About"
-        readonly property int about_privacy: 15 // a subpage under "About"
+        readonly property int password: 1
+        readonly property int contacts: 2
+        readonly property int ensUsernames: 3
+        readonly property int messaging: 4
+        readonly property int wallet:5
+        readonly property int appearance: 6
+        readonly property int language: 7
+        readonly property int notifications: 8
+        readonly property int syncingSettings: 9
+        readonly property int browserSettings: 10
+        readonly property int advanced: 11
+        readonly property int about: 12
+        readonly property int communitiesSettings: 13
+        readonly property int keycard: 14
+        readonly property int about_terms: 15 // a subpage under "About"
+        readonly property int about_privacy: 16 // a subpage under "About"
 
         // special treatment; these do not participate in the main settings' StackLayout
-        readonly property int signout: 16
-        readonly property int backUpSeed: 17
+        readonly property int signout: 17
+        readonly property int backUpSeed: 18
     }
 
     readonly property QtObject walletSettingsSubsection: QtObject {
