@@ -9,6 +9,7 @@ EnableShardingPopup 1.0 EnableShardingPopup.qml
 ExportControlNodePopup 1.0 ExportControlNodePopup.qml
 FinaliseOwnershipDeclinePopup 1.0 FinaliseOwnershipDeclinePopup.qml
 FinaliseOwnershipPopup 1.0 FinaliseOwnershipPopup.qml
+FirstTokenReceivedPopup 1.0 FirstTokenReceivedPopup.qml
 HoldingsDropdown 1.0 HoldingsDropdown.qml
 ImportControlNodePopup 1.0 ImportControlNodePopup.qml
 InDropdown 1.0 InDropdown.qml

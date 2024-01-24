@@ -129,7 +129,7 @@ QtObject {
         }
 
         // Community token received in the user wallet:
-        function onCommunityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
+        function onCommunityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, symbol) {
 
             // Some error control:
             if(tokenType !== Constants.TokenType.ERC20 && tokenType !== Constants.TokenType.ERC721) {
@@ -139,9 +139,14 @@ QtObject {
 
             var data = {
                 communityId: communityId,
+                communityName: communityName,
                 chainId: chainId,
                 txHash: txHash,
-                tokenType: tokenType
+                tokenType: tokenType,
+                tokenName: name,
+                tokenSymbol: symbol,
+                tokenImage: image,
+                tokenAmount: balance
             }
 
             if(isFirst) {
@@ -216,7 +221,24 @@ QtObject {
             console.warn("Unexpected transaction hash while trying to navigate to the details page: " + txHash)
             return
         case ToastsManager.ActionType.OpenFirstCommunityTokenPopup:
-            console.warn("TODO: #12366")
+            if(actionData) {
+                var data = JSON.parse(actionData)
+                var communityId = data.communityId
+                var communityName = data.communityName
+                var tokenType = data.tokenType
+                var tokenName = data.tokenName
+                var tokenSymbol = data.tokenSymbol
+                var tokenImage = data.tokenImage
+                var tokenAmount = data.tokenAmount
+                Global.openFirstTokenReceivedPopup(communityId,
+                                                   communityName,
+                                                   rootChatStore.getCommunityDetailsAsJson(communityId).image,
+                                                   tokenSymbol,
+                                                   tokenName,
+                                                   tokenAmount,
+                                                   tokenType,
+                                                   tokenImage);
+            }
             return
         default:
             console.warn("ToastsManager: Action type is not defined")

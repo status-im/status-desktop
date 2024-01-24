@@ -38,7 +38,8 @@ QtObject {
                                   string communityId, string communityName,
                                   string balance, int chainId,
                                   string txHash, bool isFirst,
-                                  int tokenType, string walletAccountName)
+                                  int tokenType, string walletAccountName,
+                                  string symbol)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -136,16 +137,18 @@ QtObject {
             root.ownerTokenReceived(communityId, communityName)
         }
 
-        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor /*Unused, can be removed*/, balance, chainId, txHash/*, isFirst, tokenType, walletAccountName*/) {
+        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor /*Unused, can be removed*/, balance, chainId, txHash/*, isFirst, tokenType, walletAccountName, symbol*/) {
             // TODO BACKEND: #13250
             // ** `isFirst` property will be true if it's the first time the user receives a community asset and  a community collectible
             // ** `tokenType` property will determine if the received minted token is an ERC20 or an ERC720
             // ** `walletAccountName` property will provide the wallet account name where the token was received
+            // ** `symbol` property will provide the token symbol
 
             var isFirst = false
             var tokenType = Constants.TokenType.ERC20
             var walletAccountName = "Status account"
-            root.communityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName)
+            var symbol = "NON"
+            root.communityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, symbol)
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {
