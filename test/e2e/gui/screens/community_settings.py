@@ -213,6 +213,12 @@ class EditCommunityView(QObject):
         self._scroll.vertical_scroll_to(self._outro_text_edit)
         self._outro_text_edit.text = value
 
+    @property
+    @allure.step('Get pin message checkbox state')
+    def pin_message_checkbox_state(self) -> bool:
+        self._scroll.vertical_scroll_to(self._pin_messages_checkbox)
+        return self._pin_messages_checkbox.object.checked
+
     @allure.step('Edit community')
     def edit(self, kwargs):
         for key in list(kwargs):
@@ -421,7 +427,8 @@ class PermissionsSettingsView(QObject):
 
     @allure.step('Get title of inCommunity tag')
     def get_in_community_in_channel_tags_titles(self) -> typing.List[str]:
-        in_community_in_channel_tags = [str(tag.title) for tag in driver.findAllObjects(self._in_community_in_channel_tag.real_name)]
+        in_community_in_channel_tags = [str(tag.title) for tag in
+                                        driver.findAllObjects(self._in_community_in_channel_tag.real_name)]
         return in_community_in_channel_tags
 
     @allure.step('Set state of who holds checkbox')

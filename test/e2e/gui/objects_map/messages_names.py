@@ -41,6 +41,7 @@ mainWindow_inputScrollView_StatusScrollView = {"container": statusDesktop_mainWi
 inputScrollView_Message_PlaceholderText = {"container": mainWindow_inputScrollView_StatusScrollView, "text": "Message", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_StatusChatListItem = {"container": mainWindow_scrollView_StatusScrollView, "type": "StatusChatListItem", "visible": True}
+tiny_pin_icon_StatusIcon = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "tiny/pin-icon", "type": "StatusIcon"}
 
 # User List Panel
 mainWindow_UserListPanel = {"container": mainWindow_chatView_ChatView, "type": "UserListPanel", "unnamed": 1, "visible": True}
@@ -50,3 +51,12 @@ userListPanel_StatusMemberListItem = {"container": mainWindow_UserListPanel, "ty
 mainWindow_userListPanel_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "userListPanel", "type": "StatusListView", "visible": True}
 groupUserListPanel_StatusMemberListItem = {"container": mainWindow_userListPanel_StatusListView, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
 
+# Message quick actions
+mainWindow_chatLogView_StatusListView = {"container":  statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
+chatLogView_chatMessageViewDelegate_MessageView = {"container": mainWindow_chatLogView_StatusListView, "index": 0, "objectName": "chatMessageViewDelegate", "type": "MessageView", "visible": True}
+chatMessageViewDelegate_StatusMessageQuickActions = {"container": chatLogView_chatMessageViewDelegate_MessageView, "type": "StatusMessageQuickActions", "unnamed": 1, "visible": True}
+chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "MessageView_toggleMessagePin", "type": "StatusFlatRoundButton", "visible": True}
+chatMessageViewDelegate_replyToMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "replyToMessageButton", "type": "StatusFlatRoundButton", "visible": True}
+chatMessageViewDelegate_editMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "editMessageButton", "type": "StatusFlatRoundButton", "visible": True}
+chatMessageViewDelegate_markAsUnreadButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "markAsUnreadButton", "type": "StatusFlatRoundButton", "visible": True}
+chatMessageViewDelegate_chatDeleteMessageButton_StatusFlatRoundButton = {"container": chatLogView_chatMessageViewDelegate_MessageView, "objectName": "chatDeleteMessageButton", "type": "StatusFlatRoundButton", "visible": True}

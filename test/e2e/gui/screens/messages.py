@@ -68,6 +68,10 @@ class ToolBar(QObject):
 
     def __init__(self):
         super().__init__('mainWindow_statusToolBar_StatusToolBar')
+        self.pinned_message_tooltip = QObject('statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip')
+
+    def is_pin_message_tooltip_visible(self) -> bool:
+        return self.pinned_message_tooltip.is_visible
 
 
 class Message:
@@ -110,6 +114,30 @@ class Message:
         self.delegate_button.click()
         return CommunityScreen().wait_until_appears()
 
+    @allure.step('Hover message')
+    def hover_message(self):
+        self.delegate_button.hover()
+        return MessageQuickActions()
+
+    @allure.step('Get color of message background')
+    def get_message_color(self) -> str:
+        return self.delegate_button.object.background.color.name
+
+    @property
+    @allure.step('Get user name in pinned message details')
+    def user_name_in_pinned_message(self) -> str:
+        return str(self.delegate_button.object.pinnedBy)
+
+    @property
+    @allure.step('Get info text in pinned message details')
+    def pinned_info_text(self) -> str:
+        return str(self.delegate_button.object.pinnedMsgInfoText)
+
+    @property
+    @allure.step('Get message pinned state')
+    def message_is_pinned(self) -> bool:
+        return self.delegate_button.object.isPinned
+
 
 class ChatView(QObject):
 
@@ -125,6 +153,18 @@ class ChatView(QObject):
             if getattr(item, 'isMessage', False):
                 _messages.append(Message(item))
         return _messages
+
+    def find_message_by_text(self, message_text):
+        message = None
+        started_at = time.monotonic()
+        while message is None:
+            for _message in self.messages:
+                if message_text in _message.text:
+                    message = _message
+                    break
+            if time.monotonic() - started_at > configs.timeouts.MESSAGING_TIMEOUT_SEC:
+                raise LookupError(f'Message not found')
+        return message
 
     @allure.step('Accept community invitation')
     def accept_community_invite(self, community: str) -> 'CommunityScreen':
@@ -216,7 +256,18 @@ class ChatMessagesView(QObject):
     @allure.step('Send message to group chat')
     def send_message_to_group_chat(self, message: str):
         self._message_field.type_text(message)
-        driver.nativeType('<Return>')
+        for i in range(2):
+            driver.nativeType('<Return>')
+
+
+class MessageQuickActions(QObject):
+    def __init__(self):
+        super().__init__('chatMessageViewDelegate_StatusMessageQuickActions')
+        self._pin_button = Button('chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton')
+
+    @allure.step('Toggle pin button')
+    def toggle_pin(self):
+        self._pin_button.click()
 
 
 class Members(QObject):

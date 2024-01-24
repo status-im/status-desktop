@@ -43,6 +43,7 @@ statusToolBar_statusSmartIdenticonLetter_StatusLetterIdenticon = {"container": m
 statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "statusChatInfoButtonNameText", "type": "TruncatedTextWithTooltip", "visible": True}
 statusToolBar_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "type": "TruncatedTextWithTooltip", "unnamed": 1, "visible": True}
 statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton = {"checkable": False, "container": mainWindow_statusToolBar_StatusToolBar, "objectName": "chatInfoBtnInHeader", "type": "StatusChatInfoButton",  "visible": True}
+statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip = {"container": mainWindow_statusToolBar_StatusToolBar, "objectName": "StatusChatInfo_pinText", "type": "TruncatedTextWithTooltip", "visible": True}
 
 # Chat
 mainWindow_ChatMessagesView = {"container": mainWindow_StatusWindow, "type": "ChatMessagesView", "unnamed": 1, "visible": True}
