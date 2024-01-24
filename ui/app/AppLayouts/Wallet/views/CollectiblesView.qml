@@ -2,14 +2,16 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import Qt.labs.settings 1.1
+import QtQml 2.15
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Models 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Internal 0.1
+import StatusQ.Models 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -47,6 +49,7 @@ ColumnLayout {
         readonly property int cellHeight: 225
         readonly property int communityCellHeight: 242
         readonly property int cellWidth: 176
+        readonly property int headerHeight: 56
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
@@ -61,8 +64,10 @@ ColumnLayout {
             ]
         }
 
-        readonly property bool hasCollectibles: regularCollectiblesView.count
-        readonly property bool hasCommunityCollectibles: communityCollectiblesView.count
+        readonly property bool hasCollectibles: nonCommunityModel.count
+        readonly property bool hasCommunityCollectibles: communityModel.count
+
+        readonly property bool onlyOneType: !hasCollectibles || !hasCommunityCollectibles
 
         readonly property var controller: ManageTokensController {
             settingsKey: "WalletCollectibles"
@@ -141,6 +146,16 @@ ColumnLayout {
         ]
     }
 
+    CustomSFPM {
+        id: communityModel
+
+        isCommunity: true
+    }
+
+    CustomSFPM {
+        id: nonCommunityModel
+    }
+
     Settings {
         category: "CollectiblesViewSortSettings"
         property alias currentSortField: cmbTokenOrder.currentIndex
@@ -150,6 +165,7 @@ ColumnLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
+        Layout.fillHeight: false
         Layout.preferredHeight: root.filterVisible ? implicitHeight : 0
         spacing: 20
         opacity: root.filterVisible ? 1 : 0
@@ -226,66 +242,160 @@ ColumnLayout {
         text: qsTr("Collectibles will appear here")
     }
 
-    StatusScrollView {
+    DoubleFlickableWithFolding {
+        id: doubleFlickable
+
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.topMargin: Style.current.padding
-        leftPadding: 0
-        verticalPadding: 0
-        contentWidth: availableWidth
 
-        ColumnLayout {
+        clip: true
+
+        flickable1: CustomGridView {
+            id: communityCollectiblesView
+
+            header: Item {
+                id: communityHeader
+
+                height: d.headerHeight
+                width: doubleFlickable.width
+
+                HeaderDelegate {
+                    width: communityHeader.width
+                    height: communityHeader.height
+
+                    parent: doubleFlickable.contentItem
+                    y: doubleFlickable.gridHeader1YInContentItem
+                    z: 1
+
+                    text: qsTr("Community minted")
+
+                    scrolled: !doubleFlickable.atYBeginning
+                    checked: doubleFlickable.flickable1Folded
+
+                    onToggleClicked: doubleFlickable.flip1Folding()
+                    onInfoClicked: Global.openPopup(communityInfoPopupCmp)
+                }
+            }
+
+            Binding {
+                target: communityCollectiblesView
+                property: "header"
+                when: d.onlyOneType
+                value: null
+
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            width: doubleFlickable.width
+            cellHeight: d.communityCellHeight
+
+            model: communityModel
+        }
+
+        flickable2: CustomGridView {
+            id: regularCollectiblesView
+
+            header: Item {
+                id: nonCommunityHeader
+
+                height: d.headerHeight
+                width: doubleFlickable.width
+
+                HeaderDelegate {
+                    width: nonCommunityHeader.width
+                    height: nonCommunityHeader.height
+
+                    parent: doubleFlickable.contentItem
+                    y: doubleFlickable.gridHeader2YInContentItem
+                    z: 1
+
+                    text: qsTr("Others")
+
+                    checked: doubleFlickable.flickable2Folded
+                    scrolled: (doubleFlickable.contentY >
+                               communityCollectiblesView.contentHeight
+                               - d.headerHeight)
+                    showInfoButton: false
+
+                    onToggleClicked: doubleFlickable.flip2Folding()
+                }
+            }
+
+            Binding {
+                target: regularCollectiblesView
+                property: "header"
+                when: d.onlyOneType
+                value: null
+
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            width: doubleFlickable.width
+            cellHeight: d.cellHeight
+
+            model: nonCommunityModel
+        }
+    }
+
+    component HeaderDelegate: Rectangle {
+        id: sectionDelegate
+
+        property alias text: headerLabel.text
+        property alias checked: toggleButton.checked
+        property bool scrolled: false
+        property alias showInfoButton: infoButton.visible
+
+        signal toggleClicked
+        signal infoClicked
+
+        color: Theme.palette.statusListItem.backgroundColor
+
+        RowLayout {
+            anchors.fill: parent
+
+            StatusFlatButton {
+                id: toggleButton
+
+                checkable: true
+                size: StatusBaseButton.Size.Small
+                icon.name: checked ? "chevron-down" : "next"
+                textColor: Theme.palette.baseColor1
+                textHoverColor: Theme.palette.directColor1
+
+                onToggled: sectionDelegate.toggleClicked()
+            }
+            StatusBaseText {
+                id: headerLabel
+
+                Layout.fillWidth: true
+
+                color: Theme.palette.baseColor1
+                elide: Text.ElideRight
+            }
+
+            StatusFlatButton {
+                id: infoButton
+
+                icon.name: "info"
+                textColor: Theme.palette.baseColor1
+
+                onClicked: sectionDelegate.infoClicked()
+            }
+        }
+
+        Rectangle {
             width: parent.width
-            spacing: 0
+            height: 4
+            anchors.top: parent.bottom
 
-            CustomGridView {
-                id: regularCollectiblesView
-                cellHeight: d.cellHeight
-                model: CustomSFPM {}
-            }
-
-            StatusDialogDivider {
-                Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
-                Layout.bottomMargin: Style.current.halfPadding
-                visible: d.hasCollectibles && d.hasCommunityCollectibles
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: Style.current.padding
-                Layout.rightMargin: Style.current.smallPadding
-                Layout.bottomMargin: 4
-                visible: d.hasCommunityCollectibles
-                StatusBaseText {
-                    text: qsTr("Community collectibles")
-                    color: Theme.palette.baseColor1
-                }
-                Item { Layout.fillWidth: true }
-                StatusFlatButton {
-                    Layout.preferredWidth: 32
-                    Layout.preferredHeight: 32
-                    icon.name: "info"
-                    textColor: Theme.palette.baseColor1
-                    horizontalPadding: 0
-                    verticalPadding: 0
-                    onClicked: Global.openPopup(communityInfoPopupCmp)
-                }
-            }
-
-            CustomGridView {
-                id: communityCollectiblesView
-                cellHeight: d.communityCellHeight
-                model: CustomSFPM { isCommunity: true }
-            }
+            color: Theme.palette.directColor8
+            visible: !sectionDelegate.checked && sectionDelegate.scrolled
         }
     }
 
     component CustomGridView: StatusGridView {
         id: gridView
 
-        Layout.fillWidth: true
-        Layout.preferredHeight: contentHeight
         interactive: false
 
         cellWidth: d.cellWidth
