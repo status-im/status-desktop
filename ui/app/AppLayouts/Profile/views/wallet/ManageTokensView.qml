@@ -49,12 +49,6 @@ ColumnLayout {
         loader.item.saveSettings()
     }
 
-    function resetChanges() {
-        if (tabBar.currentIndex > d.hiddenTabIndex)
-            return
-        loader.item.revert()
-    }
-
     QtObject {
         id: d
 

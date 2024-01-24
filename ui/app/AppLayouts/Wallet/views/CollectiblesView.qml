@@ -157,10 +157,20 @@ ColumnLayout {
     }
 
     Settings {
+        id: settings
         category: "CollectiblesViewSortSettings"
-        property alias currentSortField: cmbTokenOrder.currentIndex
+        property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
         property alias currentSortOrder: cmbTokenOrder.currentSortOrder
         property alias selectedFilterGroupIds: cmbFilter.selectedFilterGroupIds
+    }
+
+    Component.onCompleted: {
+        settings.sync()
+        cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue)
+    }
+
+    Component.onDestruction: {
+        settings.currentSortValue = cmbTokenOrder.currentValue
     }
 
     ColumnLayout {
