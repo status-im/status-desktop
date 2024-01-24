@@ -7,6 +7,7 @@ import Storybook 1.0
 import Models 1.0
 
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Wallet.stores 1.0
 
 SplitView {
     id: root
@@ -14,6 +15,10 @@ SplitView {
 
     ListModel {
         id: emptyModel
+    }
+
+    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
     }
 
     Component {
@@ -40,6 +45,8 @@ SplitView {
                 return emptyModel
             }
 
+            walletAssetsModel: walletAssetStore.groupedAccountAssetsModel
+
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
             visible: true
@@ -51,6 +58,14 @@ SplitView {
             onSignSharedAddressesForAllNonKeycardKeypairs: logs.logEvent("::onSignSharedAddressesForAllNonKeycardKeypairs")
             onSignSharedAddressesForKeypair: logs.logEvent("::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
             onClosed: destroy()
+            getCurrencyAmount: function (balance, symbol) {
+                return ({
+                            amount: balance,
+                            symbol: symbol.toUpperCase(),
+                            displayDecimals: 2,
+                            stripTrailingZeroes: false
+                        })
+            }
         }
     }
 

@@ -23,6 +23,9 @@ const auto kEnabledNetworkCurrencyBalanceRoleName = QByteArrayLiteral("enabledNe
 const auto kCustomSortOrderNoRoleName = QByteArrayLiteral("customSortOrderNo");
 const auto kTokenImageRoleName = QByteArrayLiteral("imageUrl");
 const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
+const auto kBalancesRoleName = QByteArrayLiteral("balances");
+const auto kDecimalsRoleName = QByteArrayLiteral("decimals");
+const auto kMarketDetailsRoleName = QByteArrayLiteral("marketDetails");
 // TODO add communityPrivilegesLevel for collectibles
 } // namespace
 
@@ -30,6 +33,7 @@ struct TokenData {
     QString symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, image;
     QColor backgroundColor{Qt::transparent};
     QVariant balance, currencyBalance;
+    QVariant balances, marketDetails, decimals;
     int customSortOrderNo{INT_MAX};
 };
 
@@ -56,6 +60,9 @@ public:
         CustomSortOrderNoRole,
         TokenImageRole,
         TokenBackgroundColorRole,
+        TokenBalancesRole,
+        TokenDecimalsRole,
+        TokenMarketDetailsRole,
     };
     Q_ENUM(TokenDataRoles)
 

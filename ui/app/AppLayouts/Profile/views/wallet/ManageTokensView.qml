@@ -24,6 +24,9 @@ ColumnLayout {
     required property var baseWalletAssetsModel
     required property var baseWalletCollectiblesModel
 
+    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrentCurrencyAmount: function(balance){}
+
     property alias currentIndex: tabBar.currentIndex
 
     readonly property bool dirty: {
@@ -123,6 +126,12 @@ ColumnLayout {
         id: tokensPanel
         ManageAssetsPanel {
             baseModel: root.baseWalletAssetsModel
+            getCurrencyAmount: function (balance, symbol) {
+                return root.getCurrencyAmount(balance, symbol)
+            }
+            getCurrentCurrencyAmount: function (balance) {
+                return root.getCurrentCurrencyAmount(balance)
+            }
         }
     }
 

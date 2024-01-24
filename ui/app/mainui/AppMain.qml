@@ -254,6 +254,8 @@ Item {
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
+        currencyStore: appMain.currencyStore
+        walletAssetsStore: appMain.walletAssetsStore
         isDevBuild: !production
 
         onOpenExternalLink: globalConns.onOpenLink(link)
@@ -1205,6 +1207,8 @@ Item {
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 tokensStore: appMain.tokensStore
                                 transactionStore: appMain.transactionStore
+                                walletAssetsStore: appMain.walletAssetsStore
+                                currencyStore: appMain.currencyStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -1384,6 +1388,8 @@ Item {
                                 }
                                 tokensStore: appMain.tokensStore
                                 transactionStore: appMain.transactionStore
+                                walletAssetsStore: appMain.walletAssetsStore
+                                currencyStore: appMain.currencyStore
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

@@ -275,9 +275,16 @@ SettingsContentBase {
             id: manageTokensView
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
-            baseWalletAssetsModel: RootStore.assets
+            baseWalletAssetsModel: RootStore.walletAssetsStore.groupedAccountAssetsModel
             baseWalletCollectiblesModel: {
                 return RootStore.collectiblesStore.allCollectiblesModel
+            }
+            getCurrencyAmount: function (balance, symbol) {
+                return RootStore.currencyStore.getCurrencyAmount(balance, symbol)
+            }
+
+            getCurrentCurrencyAmount: function (balance) {
+                return RootStore.currencyStore.getCurrentCurrencyAmount(balance)
             }
 
             Binding on currentIndex {

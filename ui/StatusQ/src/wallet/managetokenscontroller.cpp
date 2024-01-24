@@ -410,6 +410,9 @@ void ManageTokensController::addItem(int index)
     token.collectionName = !collectionName.isEmpty() ? collectionName : collectionUid;
     token.balance = dataForIndex(srcIndex, kEnabledNetworkBalanceRoleName);
     token.currencyBalance = dataForIndex(srcIndex, kEnabledNetworkCurrencyBalanceRoleName);
+    token.balances = dataForIndex(srcIndex, kBalancesRoleName);
+    token.decimals = dataForIndex(srcIndex, kDecimalsRoleName);
+    token.marketDetails = dataForIndex(srcIndex, kMarketDetailsRoleName);
 
     token.customSortOrderNo = m_settingsData.contains(symbol) ? std::get<0>(m_settingsData.value(symbol))
                                                               : (visible ? INT_MAX : 0); // append/prepend

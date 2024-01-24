@@ -22,10 +22,13 @@ StatusDialog {
     required property string communityIcon
     property int loginType: Constants.LoginType.Password
 
+    property var walletAssetsModel
     required property var walletAccountsModel // name, address, emoji, colorId, assets
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
     required property var assetsModel
     required property var collectiblesModel
+
+    property var getCurrencyAmount: function (balance, symbol){}
 
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
     signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
@@ -121,6 +124,7 @@ StatusDialog {
             communityIcon: root.communityIcon
             loginType: root.loginType
             walletAccountsModel: root.walletAccountsModel
+            walletAssetsModel: root.walletAssetsModel
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
@@ -133,6 +137,9 @@ StatusDialog {
                 root.sharedAddressesChanged(airdropAddress, sharedAddresses)
             }
             onClose: root.close()
+            getCurrencyAmount: function (balance, symbol){
+                return root.getCurrencyAmount(balance, symbol)
+            }
         }
     }
 

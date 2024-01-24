@@ -26,6 +26,9 @@ DropArea {
     readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in m_communityTokenGroupsModel
     readonly property alias title: groupedCommunityTokenDelegate.title
 
+    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrentCurrencyAmount: function(balance){}
+
     ListView.onRemove: SequentialAnimation {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
         NumberAnimation { target: root; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
@@ -147,6 +150,12 @@ DropArea {
                     bottomInset: 2
                     visible: root.communityId === model.communityId
                     isCollectible: root.isCollectible
+                    getCurrencyAmount: function (balance, symbol) {
+                        return root.getCurrencyAmount(balance, symbol)
+                    }
+                    getCurrentCurrencyAmount: function (balance) {
+                        return root.getCurrentCurrencyAmount(balance)
+                    }
                 }
             }
         }

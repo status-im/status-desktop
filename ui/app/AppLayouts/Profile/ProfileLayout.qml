@@ -335,6 +335,8 @@ StatusSectionLayout {
 
                 profileSectionStore: root.store
                 rootStore: root.globalStore
+                currencyStore: root.currencyStore
+                walletAssetsStore: root.walletAssetsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }

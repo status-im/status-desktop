@@ -632,7 +632,7 @@ QtObject {
                     },
                     {
                         type: Constants.TokenType.ERC20,
-                        key: "snt",
+                        key: "stt",
                         amount: 666,
                         available: true
                     }
@@ -643,7 +643,7 @@ QtObject {
         return [
                     {
                         type: Constants.TokenType.ERC20,
-                        key: "socks",
+                        key: "eth",
                         amount: 15,
                         available: true
                     },
@@ -666,13 +666,13 @@ QtObject {
         return [
                     {
                         type: Constants.TokenType.ERC20,
-                        key: "socks",
+                        key: "eth",
                         amount: 15,
                         available: true
                     },
                     {
                         type: Constants.TokenType.ERC20,
-                        key: "snt",
+                        key: "stt",
                         amount: 25000,
                         available: true
                     },
@@ -695,7 +695,7 @@ QtObject {
         return [
                     {
                         type: Constants.TokenType.ERC20,
-                        key: "socks",
+                        key: "eth",
                         amount: 15,
                         available: true
                     },

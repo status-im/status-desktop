@@ -3,7 +3,6 @@ import QtQuick 2.15
 import utils 1.0
 
 ListModel {
-    property ListModel assetsModel: WalletAssetsModel {}
     readonly property var data: [
         {
             name: "helloworld",

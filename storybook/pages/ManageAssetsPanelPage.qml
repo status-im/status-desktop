@@ -4,12 +4,13 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 
-import AppLayouts.Wallet.panels 1.0
-
 import utils 1.0
 
 import Storybook 1.0
 import Models 1.0
+
+import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0
 
 SplitView {
     id: root
@@ -18,8 +19,8 @@ SplitView {
 
     orientation: Qt.Horizontal
 
-    ManageTokensModel {
-        id: assetsModel
+    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
@@ -29,7 +30,23 @@ SplitView {
         ManageAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: ctrlEmptyModel.checked ? null : assetsModel
+            baseModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
+            getCurrencyAmount: function (balance, symbol) {
+                return ({
+                            amount: balance,
+                            symbol: symbol,
+                            displayDecimals: 2,
+                            stripTrailingZeroes: false
+                        })
+            }
+            getCurrentCurrencyAmount: function (balance) {
+                return ({
+                            amount: balance,
+                            symbol: "USD",
+                            displayDecimals: 2,
+                            stripTrailingZeroes: false
+                        })
+            }
         }
     }
 
@@ -61,14 +78,6 @@ SplitView {
                 enabled: showcasePanel.dirty
                 text: "Revert"
                 onClicked: showcasePanel.revert()
-            }
-
-            Button {
-                text: "Random data"
-                onClicked: {
-                    assetsModel.clear()
-                    assetsModel.randomizeData()
-                }
             }
 
             Button {

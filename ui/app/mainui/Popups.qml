@@ -21,6 +21,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStore
 
 import shared.popups 1.0
 import shared.status 1.0
+import shared.stores 1.0
 
 import utils 1.0
 
@@ -32,6 +33,8 @@ QtObject {
     required property var communityTokensStore
     property var communitiesStore
     property var devicesStore
+    property CurrenciesStore currencyStore
+    property WalletStore.WalletAssetsStore walletAssetsStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -552,12 +555,18 @@ QtObject {
                 loginType: root.rootStore.loginType
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
                 walletAccountsModel: root.rootStore.walletAccountsModel
+                walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
                     return root.rootStore.permissionsModel
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
+
+                getCurrencyAmount: function (balance, symbol){
+                    return currencyStore.getCurrencyAmount(balance, symbol)
+                }
+
                 onPrepareForSigning: {
                     root.rootStore.prepareKeypairsForSigning(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress, false)
 
@@ -780,6 +789,7 @@ QtObject {
                 requirementsCheckPending: root.rootStore.requirementsCheckPending
                 loginType: chatStore.loginType
                 walletAccountsModel: root.rootStore.walletAccountsModel
+                walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
                     return root.rootStore.permissionsModel
@@ -815,6 +825,10 @@ QtObject {
                     function onSharedAddressesForAllNonKeycardKeypairsSigned() {
                         editSharedAddressesPopup.sharedAddressesForAllNonKeycardKeypairsSigned()
                     }
+                }
+
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.currencyStore.getCurrencyAmount(balance, symbol)
                 }
             }
         },

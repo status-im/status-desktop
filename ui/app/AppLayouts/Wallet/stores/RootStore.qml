@@ -36,7 +36,6 @@ QtObject {
 
     property string backButtonName: ""
     property var overview: walletSectionOverview
-    property var assets: walletSectionAssets.assets
     property bool balanceLoading: overview.balanceLoading
     property var accounts: walletSectionAccounts.accounts
     property var receiveAccounts: walletSectionSend.accounts
@@ -107,7 +106,9 @@ QtObject {
         id: d
 
         property var activityFiltersStoreDictionary: ({})
-        readonly property Component activityFilterStoreComponent: ActivityFiltersStore{}
+        readonly property Component activityFilterStoreComponent: ActivityFiltersStore{
+            tokensList: walletAssetsStore.groupedAccountAssetsModel
+        }
 
         property var chainColors: ({})
 

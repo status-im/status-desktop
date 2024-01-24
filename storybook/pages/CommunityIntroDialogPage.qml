@@ -8,12 +8,20 @@ import Models 1.0
 import shared.popups 1.0
 import utils 1.0
 
+import AppLayouts.Wallet.stores 1.0
+
 SplitView {
     SplitView {
+        id: root
+
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
         Logs { id: logs }
+
+        readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+            assetsWithFilteredBalances: groupedAccountsAssetsModel
+        }
 
         Item {
             SplitView.fillWidth: true
@@ -48,6 +56,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 requirementsCheckPending: false
 
                 walletAccountsModel: WalletAccountsModel {}
+                walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
                 permissionsModel: dialog.accessType === Constants.communityChatOnRequestAccess ? PermissionsModel.complexPermissionsModel
                                                                                                : null
                 assetsModel: AssetsModel {}
@@ -60,6 +69,14 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 onSignSharedAddressesForAllNonKeycardKeypairs: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForAllNonKeycardKeypairs")
                 onSignSharedAddressesForKeypair: logs.logEvent("CommunityIntroDialog::onSignSharedAddressesForKeypair", ["keyUid"], arguments)
                 onSharedAddressesUpdated: logs.logEvent("CommunityIntroDialog::onSharedAddressesUpdated", ["sharedAddresses"], arguments)
+                getCurrencyAmount: function (balance, symbol) {
+                    return ({
+                                amount: balance,
+                                symbol: symbol.toUpperCase(),
+                                displayDecimals: 2,
+                                stripTrailingZeroes: false
+                            })
+                }
             }
         }
 
