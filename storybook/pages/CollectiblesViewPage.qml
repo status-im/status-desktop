@@ -58,8 +58,10 @@ SplitView {
 
     CollectiblesView {
         id: assetsView
-        SplitView.preferredWidth: 600
+
+        SplitView.fillWidth: true
         SplitView.fillHeight: true
+
         collectiblesModel: collectiblesModel
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
@@ -71,9 +73,13 @@ SplitView {
         onManageTokensRequested: logs.logEvent("onManageTokensRequested")
     }
 
-    Pane {
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
+
+        logsView.logText: logs.logText
 
         ColumnLayout {
             spacing: 12
@@ -139,16 +145,11 @@ SplitView {
                     }
                 }
             }
+
+            Item {
+                Layout.fillHeight: true
+            }
         }
-    }
-
-    LogsAndControlsPanel {
-        id: logsAndControlsPanel
-
-        SplitView.minimumWidth: 150
-        SplitView.preferredWidth: 250
-
-        logsView.logText: logs.logText
     }
 }
 
