@@ -121,6 +121,7 @@ ListModel {
     readonly property var communityData: [
         {
             uid: "fp#9140",
+            chainId: 5,
             name: "Frenly Panda #9140",
             collectionUid: "",
             collectionName: "",
@@ -129,10 +130,12 @@ ListModel {
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
             imageUrl: "https://i.seadn.io/gae/qPfQjj4P1w0xVQXAmQJLmQ4ZtLFAJU6oiH69Lsny82LFbipLAgXhHKrcLBx2U09SmRnzeHY0ygz-3NIb-JegE_hWrZquFeL-qUPXPdw",
             isLoading: false,
-            backgroundColor: "pink"
+            backgroundColor: "pink",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "691",
+            chainId: 421613,
             name: "KILLABEAR #691",
             collectionUid: "",
             collectionName: "",
@@ -141,10 +144,12 @@ ListModel {
             communityImage: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
             imageUrl: "https://assets.killabears.com/content/killabears/gif/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.gif",
             isLoading: true,
-            backgroundColor: "navy"
+            backgroundColor: "navy",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "8876",
+            chainId: 421613,
             name: "KILLABEAR #2385",
             collectionUid: "",
             collectionName: "",
@@ -153,10 +158,12 @@ ListModel {
             communityImage: "https://i.seadn.io/gcs/files/4a875f997063f4f3772190852c1c44f0.png?w=128&auto=format",
             imageUrl: "https://assets.killabears.com/content/killabears/transparent-512/2385-86ba13cc6945ed0aea7c32a363a96be2f218898358745ae07b947452cb7e4e79.png",
             isLoading: false,
-            backgroundColor: "pink"
+            backgroundColor: "pink",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "fp#3195",
+            chainId: 5,
             name: "Frenly Panda #3195324354654756756756784234523",
             collectionUid: "",
             collectionName: "",
@@ -165,10 +172,12 @@ ListModel {
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
             imageUrl: "https://i.seadn.io/s/raw/files/59ad1f2e3c5eb5d4b62c06e200076514.png",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "fp#4297",
+            chainId: 5,
             name: "Frenly Panda #4297",
             collectionUid: "",
             collectionName: "",
@@ -177,10 +186,12 @@ ListModel {
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
             imageUrl: "https://i.seadn.io/gae/K4_vmYtXAqU6LTnGDliLtJZc4UPmf9jUlk09_FDbXvSKKyUARyyV9RQEgXdb5bjje5OE9j9ZryC5pzcwBwH7TDOIl8oq7D2tSJ7p",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "fp#909",
+            chainId: 5,
             name: "Frenly Panda #909",
             collectionUid: "",
             collectionName: "",
@@ -189,10 +200,12 @@ ListModel {
             communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
             imageUrl: "https://i.seadn.io/gae/cR-Bjmb6DsrywCJMOqEBPkkrMHjbTzeRSAKIvLpd7i8ss6raYZ3-doh8oF2z8bJsnmfC1oR3kllz6UxMfFaYAKdXYzXlhfVsDHo6bg",
             isLoading: false,
-            backgroundColor: ""
+            backgroundColor: "",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
         {
             uid: "lb#666",
+            chainId: 420,
             name: "Lonely Bear #666",
             collectionUid: "",
             collectionName: "",
@@ -201,7 +214,8 @@ ListModel {
             communityImage: "",
             imageUrl: "",
             isLoading: false,
-            backgroundColor: "pink"
+            backgroundColor: "pink",
+            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
         },
     ]
 
