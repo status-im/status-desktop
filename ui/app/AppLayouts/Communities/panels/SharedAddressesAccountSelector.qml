@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -14,12 +15,15 @@ import utils 1.0
 StatusListView {
     id: root
 
+    property var walletAssetsModel
     property bool hasPermissions
     property var uniquePermissionTokenKeys
 
     // read/write properties
     property string selectedAirdropAddress
     property var selectedSharedAddresses: []
+
+    property var getCurrencyAmount: function (balance, symbol){}
 
     signal addressesChanged()
 
@@ -45,6 +49,15 @@ StatusListView {
         function selectFirstAvailableAirdropAddress() {
             root.selectedAirdropAddress = ModelUtils.modelToFlatArray(root.model, "address").find(address => selectedSharedAddresses.includes(address))
         }
+
+        function getTotalBalance(balances, decimals, symbol) {
+            let totalBalance = 0
+            for(let i=0; i<balances.count; i++) {
+                let balancePerAddressPerChain = ModelUtils.get(balances, i)
+                totalBalance += AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+            }
+            return totalBalance
+        }
     }
 
     spacing: Style.current.halfPadding
@@ -56,22 +69,42 @@ StatusListView {
         statusListItemTitle.font.weight: Font.Medium
         title: model.name
         tertiaryTitle: !walletAccountAssetsModel.count && root.hasPermissions ? qsTr("No relevant tokens") : ""
+        property string accountAddress: model.address
 
+        SubmodelProxyModel {
+            id: filteredBalances
+            sourceModel: root.walletAssetsModel
+            submodelRoleName: "balances"
+            delegateModel: SortFilterProxyModel {
+                sourceModel: submodel
+                filters: FastExpressionFilter {
+                    expression: listItem.accountAddress === model.account
+                    expectedRoles: ["account"]
+                }
+            }
+        }
         tagsModel: SortFilterProxyModel {
             id: walletAccountAssetsModel
-            sourceModel: model.assets
+            sourceModel: filteredBalances
 
-            function filterPredicate(modelData) {
-                return root.uniquePermissionTokenKeys.includes(modelData.symbol.toUpperCase())
+            function filterPredicate(symbol) {
+                return root.uniquePermissionTokenKeys.includes(symbol.toUpperCase())
             }
 
-            filters: ExpressionFilter {
-                expression: walletAccountAssetsModel.filterPredicate(model)
+            proxyRoles: FastExpressionRole {
+                name: "enabledNetworkBalance"
+                expression: d.getTotalBalance(model.balances, model.decimals, model.symbol)
+                expectedRoles: ["balances", "decimals", "symbol"]
             }
-            sorters: ExpressionSorter {
+            filters: FastExpressionFilter {
+                expression: walletAccountAssetsModel.filterPredicate(model.symbol)
+                expectedRoles: ["symbol"]
+            }
+            sorters: FastExpressionSorter {
                 expression: {
-                    return modelLeft.enabledNetworkBalance.amount > modelRight.enabledNetworkBalance.amount // descending, biggest first
+                    return modelLeft.enabledNetworkBalance > modelRight.enabledNetworkBalance // descending, biggest first
                 }
+                expectedRoles: ["enabledNetworkBalance"]
             }
         }
         statusListItemInlineTagsSlot.spacing: Style.current.padding
@@ -86,7 +119,7 @@ StatusListView {
             StatusBaseText {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: Theme.tertiaryTextFontSize
-                text: LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
+                text: LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(model.enabledNetworkBalance, model.symbol))
             }
         }
 

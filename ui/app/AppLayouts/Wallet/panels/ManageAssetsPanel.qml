@@ -21,6 +21,9 @@ Control {
     readonly property bool dirty: d.controller.dirty
     readonly property bool hasSettings: d.controller.hasSettings
 
+    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrentCurrencyAmount: function(balance){}
+
     background: null
 
     function saveSettings() {
@@ -72,6 +75,12 @@ Control {
                 count: d.controller.regularTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-token-item"]
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
+                }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
             }
         }
 
@@ -140,6 +149,12 @@ Control {
                 dragEnabled: false
                 keys: ["x-status-draggable-none"]
                 isHidden: true
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
+                }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
             }
         }
     }
@@ -161,6 +176,12 @@ Control {
                 count: d.controller.communityTokensModel.count
                 dragEnabled: count > 1
                 keys: ["x-status-draggable-community-token-item"]
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
+                }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
             }
         }
     }
@@ -182,6 +203,12 @@ Control {
                 dragParent: root
                 dragEnabled: d.controller.communityTokenGroupsModel.count > 1
                 communityGroupsExpanded: d.communityGroupsExpanded
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
+                }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
             }
         }
     }

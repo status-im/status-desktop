@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -13,7 +14,7 @@ DropArea {
     objectName: "manageTokensDelegate-%1".arg(index)
 
     // expected roles: symbol, name, communityId, communityName, communityImage, collectionName, imageUrl
-    // + enabledNetworkBalance, enabledNetworkCurrencyBalance -> TODO might get dropped/renamed in the future!!!
+    // enabledNetworkCurrencyBalance -> TODO might get dropped/renamed in the future!!!
 
     property var controller
     property int visualIndex: index
@@ -29,12 +30,16 @@ DropArea {
     property bool isCollectible
 
     readonly property alias title: delegate.title
+    readonly property var balances: model.balances
 
     readonly property var priv: QtObject {
         id: priv
         readonly property int iconSize: root.isCollectible ? 44 : 32
         readonly property int bgRadius: root.isCollectible ? Style.current.radius : iconSize/2
     }
+
+    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrentCurrencyAmount: function(balance){}
 
     ListView.onRemove: SequentialAnimation {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
@@ -66,10 +71,12 @@ DropArea {
 
         width: root.width
         title: model.name
+        readonly property var totalBalance: aggregator.value/(10 ** model.decimals)
         secondaryTitle: root.isCollectible ? (!!model.communityId ? qsTr("Community minted") : model.collectionName || model.symbol) :
-                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance))
-                                                                              .arg(LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkCurrencyBalance))
-                                                                            : LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
+                                             hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol)))
+                                                                              .arg(!model.communityId ? LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(totalBalance * model.marketDetails.currencyPrice.amount)):
+                                                                                                        LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(0)))
+                                                                            : LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol))
         bgRadius: priv.bgRadius
         hasImage: true
         icon.source: root.isCollectible ? model.imageUrl : Constants.tokenIcon(model.symbol) // TODO unify via backend model for both assets and collectibles; handle communityPrivilegesLevel
@@ -107,5 +114,11 @@ DropArea {
                 }
             }
         ]
+
+        SumAggregator {
+            id: aggregator
+            model: root.balances
+            roleName: "balance"
+        }
     }
 }

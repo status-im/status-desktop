@@ -7,6 +7,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.stores 1.0
 import shared.views.chat 1.0
 import shared.stores.send 1.0
 
@@ -18,6 +19,7 @@ import "."
 import "../panels"
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.views 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 import "../popups"
 import "../helpers"
 import "../controls"
@@ -33,6 +35,8 @@ StatusSectionLayout {
     required property TransactionStore transactionStore
     property var createChatPropertiesStore
     property var communitiesStore
+    required property WalletStore.WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
     property var sectionItemModel
 
     property var emojiPopup
@@ -246,6 +250,8 @@ StatusSectionLayout {
             communityData: sectionItemModel
             store: root.rootStore
             communitiesStore: root.communitiesStore
+            walletAssetsStore: root.walletAssetsStore
+            currencyStore: root.currencyStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
             isPendingOwnershipRequest: root.isPendingOwnershipRequest

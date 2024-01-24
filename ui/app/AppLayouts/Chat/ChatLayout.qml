@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 import shared.stores.send 1.0
 
 import "views"
@@ -28,6 +29,8 @@ StackLayout {
     property var communitiesStore
     required property WalletStore.TokensStore tokensStore
     required property TransactionStore transactionStore
+    required property WalletStore.WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
 
     property var sectionItemModel
     property var sendModalPopup
@@ -144,6 +147,8 @@ StackLayout {
             transactionStore: root.transactionStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
+            walletAssetsStore: root.walletAssetsStore
+            currencyStore: root.currencyStore
             sectionItemModel: root.sectionItemModel
             amIMember: chatItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
@@ -246,6 +251,7 @@ StackLayout {
 
             loginType: root.rootStore.loginType
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
             requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
                 root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
@@ -253,6 +259,10 @@ StackLayout {
             }
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
+
+            getCurrencyAmount: function (balance, symbol){
+                return currencyStore.getCurrencyAmount(balance, symbol)
+            }
 
             onPrepareForSigning: {
                 root.rootStore.prepareKeypairsForSigning(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress)

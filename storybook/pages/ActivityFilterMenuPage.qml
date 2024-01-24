@@ -74,10 +74,14 @@ SplitView {
                 console.warn("activityController:: updateFilter")
             }
         }
+
+        readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+            assetsWithFilteredBalances: groupedAccountsAssetsModel
+        }
     }
     ActivityFiltersStore {
         id: actvityStore
-        tokensList: WalletAssetsModel {}
+        tokensList: d.walletAssetStore.groupedAccountAssetsModel
         collectiblesList: CollectiblesModel {}
         savedAddressesModel: d.recipientModel.savedAddresses
         activityController: d.activityController

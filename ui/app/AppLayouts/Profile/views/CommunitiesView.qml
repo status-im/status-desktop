@@ -12,6 +12,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -26,6 +27,8 @@ SettingsContentBase {
 
     property var profileSectionStore
     property var rootStore
+    required property WalletStore.WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
 
     clip: true
 
@@ -234,6 +237,7 @@ SettingsContentBase {
 
             loginType: chatStore.loginType
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
             requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
                 root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
@@ -241,6 +245,10 @@ SettingsContentBase {
             }
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel
+
+            getCurrencyAmount: function (balance, symbol){
+                return currencyStore.getCurrencyAmount(balance, symbol)
+            }
 
             onPrepareForSigning: {
                 chatStore.prepareKeypairsForSigning(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress, false)

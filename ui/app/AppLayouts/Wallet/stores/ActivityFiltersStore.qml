@@ -184,7 +184,7 @@ QtObject {
     }
 
     // Tokens Filters
-    property var tokensList: walletSectionAssets.assets
+    property var tokensList
     property var tokensFilter: []
     function toggleToken(symbol) {
         // update filters

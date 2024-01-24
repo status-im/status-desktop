@@ -16,6 +16,7 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls.chat.menuItems 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 import shared.views.chat 1.0
 
 import AppLayouts.Communities.popups 1.0
@@ -37,6 +38,8 @@ Item {
 
     property var store
     property var communitiesStore
+    required property WalletStore.WalletAssetsStore walletAssetsStore
+    required property CurrenciesStore currencyStore
     property bool hasAddedContacts: false
     property var communityData
 
@@ -526,12 +529,17 @@ Item {
                     accessType: communityData.access
                     loginType: root.store.loginType
                     walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+                    walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                     permissionsModel: {
                         root.store.prepareTokenModelForCommunity(communityData.id)
                         return root.store.permissionsModel
                     }
                     assetsModel: root.store.assetsModel
                     collectiblesModel: root.store.collectiblesModel
+
+                    getCurrencyAmount: function (balance, symbol){
+                        return currencyStore.getCurrencyAmount(balance, symbol)
+                    }
 
                     onPrepareForSigning: {
                         root.store.prepareKeypairsForSigning(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress, false)

@@ -26,6 +26,7 @@ StatusStackModal {
     property int loginType: Constants.LoginType.Password
 
     required property var walletAccountsModel // name, address, emoji, colorId
+    property var walletAssetsModel
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
     required property var assetsModel
     required property var collectiblesModel
@@ -33,6 +34,8 @@ StatusStackModal {
     required property bool requirementsCheckPending
 
     property var keypairSigningModel
+
+    property var getCurrencyAmount: function (balance, symbol){}
 
     signal prepareForSigning(string airdropAddress, var sharedAddresses)
     signal joinCommunity()
@@ -133,6 +136,7 @@ StatusStackModal {
                     }
                 ]
             }
+            walletAssetsModel: root.walletAssetsModel
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
@@ -143,6 +147,9 @@ StatusStackModal {
             }
             onSharedAddressesChanged: {
                 root.sharedAddressesUpdated(sharedAddresses)
+            }
+            getCurrencyAmount: function (balance, symbol){
+                return root.getCurrencyAmount(balance, symbol)
             }
         }
     }

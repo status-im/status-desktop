@@ -32,6 +32,7 @@ Control {
     required property string communityIcon
     property int loginType: Constants.LoginType.Password
 
+    required property var walletAssetsModel
     required property var walletAccountsModel // name, address, emoji, colorId, assets
     required property var permissionsModel  // id, key, permissionType, holdingsListModel, channelsListModel, isPrivate, tokenCriteriaMet
     required property var assetsModel
@@ -76,6 +77,8 @@ Control {
 
     property var selectedSharedAddresses: []
     property string selectedAirdropAddress
+
+    property var getCurrencyAmount: function (balance, symbol){}
 
     signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
@@ -180,6 +183,7 @@ Control {
             Layout.maximumHeight: hasPermissions ? permissionsView.implicitHeight > root.availableHeight / 2 ? root.availableHeight / 2 : root.availableHeight : -1
             Layout.fillHeight: !hasPermissions
             model: root.walletAccountsModel
+            walletAssetsModel: root.walletAssetsModel
             selectedSharedAddresses: d.initialSelectedSharedAddresses
             selectedAirdropAddress: d.initialSelectedAirdropAddress
             onAddressesChanged: accountSelector.applyChange()
@@ -187,6 +191,9 @@ Control {
                 root.selectedSharedAddresses = selectedSharedAddresses
                 root.selectedAirdropAddress = selectedAirdropAddress
                 root.sharedAddressesChanged(selectedAirdropAddress, selectedSharedAddresses)
+            }
+            getCurrencyAmount: function (balance, symbol){
+                return root.getCurrencyAmount(balance, symbol)
             }
         }
 

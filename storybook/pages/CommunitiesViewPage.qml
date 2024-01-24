@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import StatusQ.Core 0.1
 
 import AppLayouts.Profile.views 1.0
+import AppLayouts.Wallet.stores 1.0
 import mainui 1.0
 import utils 1.0
 
@@ -17,6 +18,12 @@ SplitView {
     Logs { id: logs }
 
     orientation: Qt.Vertical
+
+    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
+    }
+
+    readonly property var currencyStore: CurrenciesStore {}
 
     Popups {
         popupParent: root
@@ -165,6 +172,8 @@ SplitView {
                 logs.logEvent("rootStore::setActiveCommunity", ["communityId"], arguments)
             }
         }
+        currencyStore: currencyStore
+        walletAssetsStore: walletAssetsStore
     }
 
     LogsAndControlsPanel {
