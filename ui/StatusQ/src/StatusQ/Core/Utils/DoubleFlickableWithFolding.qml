@@ -5,11 +5,11 @@ DoubleFlickable {
     readonly property real gridHeader1YInContentItem: contentY
     readonly property real gridHeader2YInContentItem: contentY + d.grid2HeaderOffset
 
-    readonly property bool flickable1Folded: d.grid1ConentInViewport
+    readonly property bool flickable1Folded: !d.grid1ContentInViewport
     readonly property bool flickable2Folded: d.grid2HeaderAtEnd || d.model2Blocked
 
     function flip1Folding() {
-        if (d.grid1ConentInViewport) {
+        if (d.grid1ContentInViewport) {
             if (d.grid2FullyFilling)
                 contentY = flickable1ContentHeight - d.header1Size
             else
@@ -55,10 +55,10 @@ DoubleFlickable {
     QtObject {
         id: d
 
-        readonly property real header1Size: flickable1.headerItem.height
-        readonly property real header2Size: flickable2.headerItem.height
+        readonly property real header1Size: flickable1.headerItem ? flickable1.headerItem.height : 0
+        readonly property real header2Size: flickable2.headerItem ? flickable2.headerItem.height : 0
 
-        readonly property bool grid1ConentInViewport:
+        readonly property bool grid1ContentInViewport:
             flickable1.y > contentY - Math.min(height, flickable1ContentHeight) + header1Size
         readonly property real grid2HeaderOffset:
             Math.min(Math.max(flickable2.y - contentY, header1Size), height - header2Size)
@@ -97,7 +97,7 @@ DoubleFlickable {
         property: "model"
         value: null
 
-        restoreMode: Binding.RestoreBinding
+        restoreMode: Binding.RestoreBindingOrValue
     }
 
     Binding {
@@ -106,7 +106,7 @@ DoubleFlickable {
         property: "model"
         value: null
 
-        restoreMode: Binding.RestoreBinding
+        restoreMode: Binding.RestoreBindingOrValue
     }
 }
 

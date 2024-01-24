@@ -101,7 +101,7 @@ SplitView {
                             Label {
                                 anchors.centerIn: parent
                                 font.bold: true
-                                text: (doubleFlickable.flickable1Folded ? "⬇" : "➡️")
+                                text: (doubleFlickable.flickable1Folded ? "➡️" : "⬇")
                                       + " Community"
                             }
 
