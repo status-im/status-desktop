@@ -357,7 +357,8 @@ QtObject {
         readonly property int manageAccounts: 1
         readonly property int manageAssets: 2
         readonly property int manageCollectibles: 3
-        readonly property int manageTokenLists: 4
+        readonly property int manageHidden: 4
+        readonly property int manageAdvanced: 5
     }
 
     readonly property QtObject currentUserStatus: QtObject{

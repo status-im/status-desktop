@@ -156,9 +156,19 @@ ColumnLayout {
     }
 
     Settings {
+        id: settings
         category: "AssetsViewSortSettings"
-        property alias currentSortField: cmbTokenOrder.currentIndex
+        property int currentSortValue: SortOrderComboBox.TokenOrderCurrencyBalance
         property alias currentSortOrder: cmbTokenOrder.currentSortOrder
+    }
+
+    Component.onCompleted: {
+        settings.sync()
+        cmbTokenOrder.currentIndex = cmbTokenOrder.indexOfValue(settings.currentSortValue)
+    }
+
+    Component.onDestruction: {
+        settings.currentSortValue = cmbTokenOrder.currentValue
     }
 
     ColumnLayout {

@@ -20,7 +20,7 @@ FocusScope {
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
     property alias bottomHeaderComponents: secondHeaderRow.contentItem
-    default property Item content
+    default property alias content: contentWrapper.children
     property alias titleLayout: titleLayout
 
     property bool dirty: false
@@ -49,8 +49,6 @@ FocusScope {
     }
 
     Component.onCompleted: {
-        content.parent = contentWrapper
-
         if (headerComponents.length) {
             for (let i in headerComponents) {
                 headerComponents[i].parent = titleRow

@@ -335,18 +335,12 @@ Item {
                 return
 
             appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
+
             if (sectionType === Constants.appSection.profile) {
                 Global.settingsSubsection = subsection;
-                Global.settingsSubSubsection = settingsSubsection;
-                return
-            }
-
-            if (sectionType === Constants.appSection.wallet) {
-                appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(
-                            WalletLayout.LeftPanelSelection.AllAddresses,
-                            WalletLayout.RightPanelSelection.Activity,
-                            data
-                            )
+                Global.settingsSubSubsection = subSubsection;
+            } else if (sectionType === Constants.appSection.wallet) {
+                appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
             }
         }
 
