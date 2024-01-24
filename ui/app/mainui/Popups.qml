@@ -75,6 +75,7 @@ QtObject {
         Global.openTransferOwnershipPopup.connect(openTransferOwnershipPopup)
         Global.openFinaliseOwnershipPopup.connect(openFinaliseOwnershipPopup)
         Global.openDeclineOwnershipPopup.connect(openDeclineOwnershipPopup)
+        Global.openFirstTokenReceivedPopup.connect(openFirstTokenReceivedPopup)
     }
 
     property var currentPopup
@@ -313,6 +314,20 @@ QtObject {
 
     function openDeclineOwnershipPopup(communityId, communityName) {
         openPopup(declineOwnershipPopup, { communityName: communityName, communityId: communityId })
+    }
+
+    function openFirstTokenReceivedPopup(communityId, communityName, communityLogo, tokenSymbol, tokenName, tokenAmount, tokenType, tokenImage) {
+        openPopup(firstTokenReceivedPopup,
+                  {
+                      communityId: communityId,
+                      communityName: communityName,
+                      communityLogo: communityLogo,
+                      tokenSymbol: tokenSymbol,
+                      tokenName: tokenName,
+                      tokenAmount: tokenAmount,
+                      tokenType: tokenType,
+                      tokenImage: tokenImage
+                  })
     }
 
     readonly property list<Component> _components: [
@@ -919,7 +934,17 @@ QtObject {
 
                 onDeclineClicked: root.ownershipDeclined()
             }
-        }
+        },
         // End of components related to transfer community ownership flow.
+
+        Component {
+            id: firstTokenReceivedPopup
+
+            FirstTokenReceivedPopup {
+                communitiesStore: root.communitiesStore
+
+                onHideClicked: console.warn("TODO: OPEN HIDE POPUP")
+            }
+        }
     ]
 }

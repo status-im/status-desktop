@@ -58,6 +58,14 @@ QtObject {
                                       var sendModalPopup)
     signal openFinaliseOwnershipPopup(string communityId)
     signal openDeclineOwnershipPopup(string communityId, string communityName)
+    signal openFirstTokenReceivedPopup(string communityId,
+                                       string communityName,
+                                       string communityLogo,
+                                       string tokenSymbol,
+                                       string tokenName,
+                                       string tokenAmount,
+                                       int tokenType,
+                                       string tokenImage)
 
     signal openLink(string link)
     signal openLinkWithConfirmation(string link, string domain)
