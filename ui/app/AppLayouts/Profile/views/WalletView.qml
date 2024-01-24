@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import Qt.labs.settings 1.1
 import QtQml 2.15
 
 import StatusQ.Controls 0.1
@@ -22,6 +23,8 @@ import "../panels"
 
 import AppLayouts.Profile.views.wallet 1.0
 import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet 1.0
 
 SettingsContentBase {
     id: root
@@ -65,9 +68,22 @@ SettingsContentBase {
     }
     onSaveChangesClicked: {
         manageTokensView.saveChanges()
+
+        let sectionLink = "%1/%2/".arg(Constants.appSection.wallet).arg(WalletLayout.LeftPanelSelection.AllAddresses)
+
+        if (Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets) {
+            sectionLink += WalletLayout.RightPanelSelection.Assets
+            priv.assetSettings.setValue("currentSortValue", SortOrderComboBox.TokenOrderCustom)
+            priv.assetSettings.sync()
+        } else if (Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles) {
+            sectionLink += WalletLayout.RightPanelSelection.Collectibles
+            priv.collectiblesSettings.setValue("currentSortValue", SortOrderComboBox.TokenOrderCustom)
+            priv.collectiblesSettings.sync()
+        }
+
         Global.displayToastMessage(
             qsTr("Your new custom token order has been applied to your %1", "Go to Wallet")
-                    .arg(`<a style="text-decoration:none" href="#${Constants.appSection.wallet}">` + qsTr("Wallet", "Go to Wallet") + "</a>"),
+                    .arg(`<a style="text-decoration:none" href="#${sectionLink}">` + qsTr("Wallet", "Go to Wallet") + "</a>"),
             "",
             "checkmark-circle",
             false,
@@ -77,6 +93,24 @@ SettingsContentBase {
     }
     onResetChangesClicked: {
         manageTokensView.resetChanges()
+    }
+
+    readonly property var priv: QtObject {
+        id: priv
+        readonly property bool isManageTokensSubsection: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
+                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
+                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
+                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
+
+        readonly property var assetSettings: Settings {
+            category: "AssetsViewSortSettings"
+            //property int currentSortValue
+        }
+
+        readonly property var collectiblesSettings: Settings {
+            category: "CollectiblesViewSortSettings"
+            //property int currentSortValue
+        }
     }
 
     StackLayout {
@@ -94,9 +128,7 @@ SettingsContentBase {
 
         Binding on currentIndex {
             value: root.manageTokensViewIndex
-            when: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
-                  Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
-                  Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageTokenLists
+            when: priv.isManageTokensSubsection
             restoreMode: Binding.RestoreNone
         }
 
@@ -294,13 +326,13 @@ SettingsContentBase {
                         return 0
                     case Constants.walletSettingsSubsection.manageCollectibles:
                         return 1
-                    case Constants.walletSettingsSubsection.manageTokenLists:
-                        return 2
+                    case Constants.walletSettingsSubsection.manageHidden:
+                        return 3
+                    case Constants.walletSettingsSubsection.manageAdvanced:
+                        return 4
                     }
                 }
-                when: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
-                      Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
-                      Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageTokenLists
+                when: priv.isManageTokensSubsection
                 restoreMode: Binding.RestoreNone
             }
         }

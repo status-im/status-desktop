@@ -57,8 +57,8 @@ Item {
     }
 
     enum RightPanelSelection {
-        Collectibles,
         Assets,
+        Collectibles,
         Activity
     }
 
