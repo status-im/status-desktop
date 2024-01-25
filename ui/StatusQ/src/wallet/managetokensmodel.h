@@ -26,6 +26,7 @@ const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
 const auto kBalancesRoleName = QByteArrayLiteral("balances");
 const auto kDecimalsRoleName = QByteArrayLiteral("decimals");
 const auto kMarketDetailsRoleName = QByteArrayLiteral("marketDetails");
+const auto kIsSelfCollectionRoleName = QByteArrayLiteral("isSelfCollection");
 // TODO add communityPrivilegesLevel for collectibles
 } // namespace
 
@@ -35,6 +36,7 @@ struct TokenData {
     QVariant balance, currencyBalance;
     QVariant balances, marketDetails, decimals;
     int customSortOrderNo{INT_MAX};
+    bool isSelfCollection{false};
 };
 
 // symbol -> {sortOrder, visible, groupId}
@@ -63,6 +65,7 @@ public:
         TokenBalancesRole,
         TokenDecimalsRole,
         TokenMarketDetailsRole,
+        IsSelfCollectionRole,
     };
     Q_ENUM(TokenDataRoles)
 
