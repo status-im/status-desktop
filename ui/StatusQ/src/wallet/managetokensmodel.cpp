@@ -120,6 +120,7 @@ QHash<int, QByteArray> ManageTokensModel::roleNames() const
         {CustomSortOrderNoRole, kCustomSortOrderNoRoleName},
         {TokenImageRole, kTokenImageRoleName},
         {TokenBackgroundColorRole, kBackgroundColorRoleName},
+        {IsSelfCollectionRole, kIsSelfCollectionRoleName},
     };
 
     return roles;
@@ -146,6 +147,7 @@ QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
     case CustomSortOrderNoRole: return token.customSortOrderNo;
     case TokenImageRole: return token.image;
     case TokenBackgroundColorRole: return token.backgroundColor;
+    case IsSelfCollectionRole: return token.isSelfCollection;
     }
 
     return {};

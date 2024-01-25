@@ -23,6 +23,8 @@ const auto kEnabledNetworkCurrencyBalanceRoleName = QByteArrayLiteral("enabledNe
 const auto kCustomSortOrderNoRoleName = QByteArrayLiteral("customSortOrderNo");
 const auto kTokenImageRoleName = QByteArrayLiteral("imageUrl");
 const auto kBackgroundColorRoleName = QByteArrayLiteral("backgroundColor");
+
+const auto kIsSelfCollectionRoleName = QByteArrayLiteral("isSelfCollection");
 // TODO add communityPrivilegesLevel for collectibles
 } // namespace
 
@@ -31,6 +33,7 @@ struct TokenData {
     QColor backgroundColor{Qt::transparent};
     QVariant balance, currencyBalance;
     int customSortOrderNo{INT_MAX};
+    bool isSelfCollection{false};
 };
 
 // symbol -> {sortOrder, visible, groupId}
@@ -56,6 +59,7 @@ public:
         CustomSortOrderNoRole,
         TokenImageRole,
         TokenBackgroundColorRole,
+        IsSelfCollectionRole,
     };
     Q_ENUM(TokenDataRoles)
 

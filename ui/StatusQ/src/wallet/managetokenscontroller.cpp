@@ -344,6 +344,12 @@ void ManageTokensController::settingsHideGroupTokens(const QString& groupId, con
             m_settingsData.insert(symbol, {0, false, groupId});
     }
 
+    if (!m_hiddenCommunityGroups.contains(groupId)) {
+        m_hiddenCommunityGroups.insert(groupId);
+        emit hiddenCommunityGroupsChanged();
+        rebuildHiddenCommunityTokenGroupsModel();
+    }
+
     saveSettings(true);
 }
 
@@ -491,6 +497,7 @@ void ManageTokensController::addItem(int index)
     token.communityName = !communityName.isEmpty() ? communityName : communityId;
     token.communityImage = dataForIndex(srcIndex, kCommunityImageRoleName).toString();
     token.collectionUid = !collectionUid.isEmpty() ? collectionUid : symbol;
+    token.isSelfCollection = collectionUid.isEmpty();
     token.collectionName = dataForIndex(srcIndex, kCollectionNameRoleName).toString();
     token.balance = dataForIndex(srcIndex, kEnabledNetworkBalanceRoleName);
     token.currencyBalance = dataForIndex(srcIndex, kEnabledNetworkCurrencyBalanceRoleName);
@@ -644,7 +651,8 @@ void ManageTokensController::rebuildCollectionGroupsModel()
     const auto count = m_regularTokensModel->count();
     for (auto i = 0; i < count; i++) {
         const auto& collectionToken = m_regularTokensModel->itemAt(i);
-        auto collectionId = collectionToken.collectionUid;
+        const auto collectionId = collectionToken.collectionUid;
+        const auto isSelfCollection = collectionToken.isSelfCollection;
         if (!collectionIds.contains(collectionId)) { // insert into groups
             collectionIds.append(collectionId);
 
@@ -652,11 +660,12 @@ void ManageTokensController::rebuildCollectionGroupsModel()
 
             TokenData tokenGroup;
             tokenGroup.collectionUid = collectionId;
+            tokenGroup.isSelfCollection = isSelfCollection;
             tokenGroup.collectionName = collectionName;
             tokenGroup.image = collectionToken.image;
             tokenGroup.balance = 1;
             result.append(tokenGroup);
-        } else { // update group's childCount
+        } else if (!isSelfCollection) { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [collectionId](const auto& item) {
                 return collectionId == item.collectionUid;
             });
@@ -683,7 +692,8 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
     const auto count = m_hiddenTokensModel->count();
     for (auto i = 0; i < count; i++) {
         const auto& collectionToken = m_hiddenTokensModel->itemAt(i);
-        auto collectionId = collectionToken.collectionUid;
+        const auto collectionId = collectionToken.collectionUid;
+        const auto isSelfCollection = collectionToken.isSelfCollection;
         if (!collectionIds.contains(collectionId) && m_hiddenCollectionGroups.contains(collectionId)) { // insert into groups
             collectionIds.append(collectionId);
 
@@ -691,11 +701,12 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
 
             TokenData tokenGroup;
             tokenGroup.collectionUid = collectionId;
+            tokenGroup.isSelfCollection = isSelfCollection;
             tokenGroup.collectionName = collectionName;
             tokenGroup.image = collectionToken.image;
             tokenGroup.balance = 1;
             result.append(tokenGroup);
-        } else { // update group's childCount
+        } else if (!isSelfCollection) { // update group's childCount
             const auto tokenGroup = std::find_if(result.cbegin(), result.cend(), [collectionId](const auto& item) {
                 return collectionId == item.collectionUid;
             });
