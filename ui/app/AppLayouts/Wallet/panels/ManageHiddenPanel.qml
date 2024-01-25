@@ -22,6 +22,9 @@ Control {
     required property var assetsController
     required property var collectiblesController
 
+    property var getCurrencyAmount: function (balance, symbol) {}
+    property var getCurrentCurrencyAmount: function (balance) {}
+
     readonly property bool dirty: false // never dirty, the "show xxx" actions are immediate
     readonly property bool hasSettings: root.assetsController.hasSettings || root.collectiblesController.hasSettings
 
@@ -155,6 +158,12 @@ Control {
             dragParent: null
             dragEnabled: false
             isHidden: true
+            getCurrencyAmount: function (balance, symbol) {
+                return root.getCurrencyAmount(balance, symbol)
+            }
+            getCurrentCurrencyAmount: function (balance) {
+                return root.getCurrentCurrencyAmount(balance)
+            }
         }
     }
 

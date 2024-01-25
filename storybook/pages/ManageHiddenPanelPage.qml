@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Models 0.1
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0
 
 import utils 1.0
 
@@ -20,8 +21,8 @@ SplitView {
 
     orientation: Qt.Horizontal
 
-    ManageTokensModel {
-        id: assetsModel
+    readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
+        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     ManageCollectiblesModel {
@@ -41,7 +42,7 @@ SplitView {
 
     ManageTokensController {
         id: assetsController
-        sourceModel: ctrlEmptyModel.checked ? null : assetsModel
+        sourceModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
         settingsKey: "WalletAssets"
     }
 
@@ -61,6 +62,23 @@ SplitView {
             width: 500
             assetsController: assetsController
             collectiblesController: collectiblesController
+
+            getCurrencyAmount: function (balance, symbol) {
+                return ({
+                            amount: balance,
+                            symbol: symbol,
+                            displayDecimals: 2,
+                            stripTrailingZeroes: false
+                        })
+            }
+            getCurrentCurrencyAmount: function (balance) {
+                return ({
+                            amount: balance,
+                            symbol: "USD",
+                            displayDecimals: 2,
+                            stripTrailingZeroes: false
+                        })
+            }
         }
     }
 
