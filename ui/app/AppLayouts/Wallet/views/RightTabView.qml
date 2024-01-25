@@ -30,7 +30,8 @@ RightTabBaseView {
     function resetView() {
         stack.currentIndex = 0
         root.currentTabIndex = 0
-        historyView.resetView()
+        if (walletTabBar.currentIndex === 2)
+            mainViewLoader.item.resetView()
     }
 
     function resetStack() {
@@ -119,74 +120,88 @@ RightTabBaseView {
                     highlighted: checked
                 }
             }
-            StackLayout {
+            Loader {
                 id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                currentIndex: walletTabBar.currentIndex
-
-                AssetsView {
-                    areAssetsLoading: RootStore.overview.balanceLoading
-                    assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
-                    networkFilters: RootStore.networkFilters
-                    addressFilters: RootStore.addressFilters
-                    overview: RootStore.overview
-                    currencyStore: RootStore.currencyStore
-                    networkConnectionStore: root.networkConnectionStore
-                    assetDetailsLaunched: stack.currentIndex === 2
-                    filterVisible: filterButton.checked
-                    onAssetClicked: {
-                        assetDetailView.token = token
-                        RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
-                        stack.currentIndex = 2
+                sourceComponent: {
+                    switch (walletTabBar.currentIndex) {
+                    case 0: return assetsView
+                    case 1: return collectiblesView
+                    case 2: return historyView
                     }
-                    onSendRequested: (symbol) => {
-                                         root.sendModal.preSelectedSendType = Constants.SendType.Transfer
-                                         root.sendModal.preSelectedHoldingID = symbol
-                                         root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
-                                         root.sendModal.onlyAssets = true
-                                         root.sendModal.open()
-                                     }
-                    onReceiveRequested: (symbol) => root.launchShareAddressModal()
-                    onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
-                    onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
-                                                                                  Constants.walletSettingsSubsection.manageAssets)
                 }
+                active: visible
 
-                CollectiblesView {
-                    collectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
-                    networkFilters: RootStore.networkFilters
-                    addressFilters: RootStore.addressFilters
-                    sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
-                    filterVisible: filterButton.checked
-                    onCollectibleClicked: {
-                        RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                        RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
-                        stack.currentIndex = 1
+                Component {
+                    id: assetsView
+                    AssetsView {
+                        areAssetsLoading: RootStore.overview.balanceLoading
+                        assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
+                        networkFilters: RootStore.networkFilters
+                        addressFilters: RootStore.addressFilters
+                        overview: RootStore.overview
+                        currencyStore: RootStore.currencyStore
+                        networkConnectionStore: root.networkConnectionStore
+                        assetDetailsLaunched: stack.currentIndex === 2
+                        filterVisible: filterButton.checked
+                        onAssetClicked: {
+                            assetDetailView.token = token
+                            RootStore.setCurrentViewedHolding(token.symbol, Constants.TokenType.ERC20)
+                            stack.currentIndex = 2
+                        }
+                        onSendRequested: (symbol) => {
+                                            root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                                            root.sendModal.preSelectedHoldingID = symbol
+                                            root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+                                            root.sendModal.onlyAssets = true
+                                            root.sendModal.open()
+                                        }
+                        onReceiveRequested: (symbol) => root.launchShareAddressModal()
+                        onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
+                        onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
+                                                                                    Constants.walletSettingsSubsection.manageAssets)
                     }
-                    onSendRequested: (symbol) => {
-                                         root.sendModal.preSelectedSendType = Constants.SendType.Transfer
-                                         root.sendModal.preSelectedHoldingID = symbol
-                                         root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
-                                         root.sendModal.onlyAssets = false
-                                         root.sendModal.open()
-                                     }
-                    onReceiveRequested: (symbol) => root.launchShareAddressModal()
-                    onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
-                    onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
-                                                                                  Constants.walletSettingsSubsection.manageCollectibles)
                 }
-
-                HistoryView {
+                Component {
+                    id: collectiblesView
+                    CollectiblesView {
+                        collectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
+                        networkFilters: RootStore.networkFilters
+                        addressFilters: RootStore.addressFilters
+                        sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
+                        filterVisible: filterButton.checked
+                        onCollectibleClicked: {
+                            RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
+                            RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
+                            stack.currentIndex = 1
+                        }
+                        onSendRequested: (symbol) => {
+                                            root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                                            root.sendModal.preSelectedHoldingID = symbol
+                                            root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                                            root.sendModal.onlyAssets = false
+                                            root.sendModal.open()
+                                        }
+                        onReceiveRequested: (symbol) => root.launchShareAddressModal()
+                        onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
+                        onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
+                                                                                    Constants.walletSettingsSubsection.manageCollectibles)
+                    }
+                }
+                Component {
                     id: historyView
-                    overview: RootStore.overview
-                    showAllAccounts: RootStore.showAllAccounts
-                    sendModal: root.sendModal
-                    filterVisible: filterButton.checked
-                    onLaunchTransactionDetail: function (entry, entryIndex) {
-                        transactionDetailView.transactionIndex = entryIndex
-                        transactionDetailView.transaction = entry
-                        stack.currentIndex = 3
+                    HistoryView {
+                        id: historyView
+                        overview: RootStore.overview
+                        showAllAccounts: RootStore.showAllAccounts
+                        sendModal: root.sendModal
+                        filterVisible: filterButton.checked
+                        onLaunchTransactionDetail: function (entry, entryIndex) {
+                            transactionDetailView.transactionIndex = entryIndex
+                            transactionDetailView.transaction = entry
+                            stack.currentIndex = 3
+                        }
                     }
                 }
             }
