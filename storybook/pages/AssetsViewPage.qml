@@ -7,6 +7,7 @@ import SortFilterProxyModel 0.2
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Models 0.1
 
 import mainui 1.0
 import utils 1.0
@@ -122,6 +123,9 @@ SplitView {
             Layout.fillWidth: true
             areAssetsLoading: loadingCheckbox.checked
             assets: d.builtAccountAssetsModel
+            controller: ManageTokensController {
+                settingsKey: "WalletAssets"
+            }
             filterVisible: ctrlFilterVisible.checked
             currencyStore: d.currencyStore
             networkFilters: d.networksChainsCurrentlySelected

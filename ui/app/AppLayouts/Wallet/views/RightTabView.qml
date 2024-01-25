@@ -130,6 +130,7 @@ RightTabBaseView {
                 AssetsView {
                     areAssetsLoading: RootStore.overview.balanceLoading
                     assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
+                    controller: RootStore.walletAssetsStore.manageAssetsController
                     networkFilters: RootStore.networkFilters
                     addressFilters: RootStore.addressFilters
                     overview: RootStore.overview

@@ -3,6 +3,7 @@ import QtQuick 2.15
 import SortFilterProxyModel 0.2
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Models 0.1
 
 import shared.stores 1.0
 
@@ -67,5 +68,10 @@ QtObject {
         leftModel: walletSectionAssets.groupedAccountAssetsModel
         rightModel: _jointTokensBySymbolModel
         joinRole: "tokensKey"
+    }
+
+    readonly property var manageAssetsController: ManageTokensController {
+        settingsKey: "WalletAssets"
+        sourceModel: root.groupedAccountAssetsModel
     }
 }

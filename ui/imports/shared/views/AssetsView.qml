@@ -30,6 +30,8 @@ ColumnLayout {
     // expected roles: name, symbol, balances, currencyPrice, changePct24hour, communityId, communityName, communityImage
     required property var assets
 
+    required property var controller
+
     property var currencyStore
     property var networkConnectionStore
     property var overview
@@ -56,19 +58,15 @@ ColumnLayout {
 
         function tokenIsVisible(symbol) {
             // NOTE Backend returns ETH, SNT, STT and DAI by default
-            if (!d.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
+            if (!root.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
             // Received tokens can have 0 balance, which indicate previosuly owned token
             return true // TODO handle UI threshold (#12611)
         }
 
-        readonly property var controller: ManageTokensController {
-            settingsKey: "WalletAssets"
-        }
-
         function hideAllCommunityTokens(communityId) {
             const tokenSymbols = ModelUtils.getAll(assetsListView.model, "symbol", "communityId", communityId)
-            d.controller.settingsHideGroupTokens(communityId, tokenSymbols)
+            root.controller.settingsHideGroupTokens(communityId, tokenSymbols)
         }
 
         function getTotalBalance(balances, decimals) {
@@ -128,7 +126,7 @@ ColumnLayout {
             filters: [
                 FastExpressionFilter {
                     expression: {
-                        d.controller.settingsDirty
+                        root.controller.settingsDirty
                         return d.tokenIsVisible(model.symbol)
                     }
                     expectedRoles: ["symbol"]
@@ -140,8 +138,8 @@ ColumnLayout {
                 },
                 FastExpressionSorter {
                     expression: {
-                        d.controller.settingsDirty
-                        return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
+                        root.controller.settingsDirty
+                        return root.controller.lessThan(modelLeft.symbol, modelRight.symbol)
                     }
                     enabled: d.isCustomView
                     expectedRoles: ["symbol"]
@@ -196,7 +194,7 @@ ColumnLayout {
 
             SortOrderComboBox {
                 id: cmbTokenOrder
-                hasCustomOrderDefined: d.controller.hasSettings
+                hasCustomOrderDefined: root.controller.hasSettings
                 model: [
                     { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
                     { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Asset balance"), icon: "channel", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole on "enabledNetworkBalance" amount
@@ -412,7 +410,7 @@ ColumnLayout {
             confirmationText: qsTr("Are you sure you want to hide %1? You will no longer see or be able to interact with this asset anywhere inside Status.").arg(formattedName)
             onCancelButtonClicked: close()
             onConfirmButtonClicked: {
-                d.controller.settingsHideToken(symbol)
+                root.controller.settingsHideToken(symbol)
                 close()
                 Global.displayToastMessage(
                             qsTr("%1 was successfully hidden. You can toggle asset visibility via %2.").arg(formattedName)

@@ -205,6 +205,7 @@ Dialog {
             AssetsView {
                 id: assetsTab
                 assets: WalletStore.dappBrowserAccount.assets
+                controller: null
             }
             HistoryView {
                 id: historyTab
