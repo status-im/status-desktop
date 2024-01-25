@@ -122,7 +122,8 @@ QHash<int, QByteArray> ManageTokensModel::roleNames() const
         {TokenBackgroundColorRole, kBackgroundColorRoleName},
         {TokenBalancesRole, kBalancesRoleName},
         {TokenDecimalsRole, kDecimalsRoleName},
-        {TokenMarketDetailsRole, kMarketDetailsRoleName}
+        {TokenMarketDetailsRole, kMarketDetailsRoleName},
+        {IsSelfCollectionRole, kIsSelfCollectionRoleName},
     };
 
     return roles;
@@ -152,6 +153,7 @@ QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
     case TokenBalancesRole: return token.balances;
     case TokenDecimalsRole: return token.decimals;
     case TokenMarketDetailsRole: return token.marketDetails;
+    case IsSelfCollectionRole: return token.isSelfCollection;
     }
 
     return {};

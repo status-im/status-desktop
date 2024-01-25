@@ -99,9 +99,10 @@ DropArea {
                 currentIndex: root.visualIndex
                 count: root.count
                 inHidden: root.isHidden
-                groupId: model.communityId || model.collectionUid
+                groupId: isCollection ? model.collectionUid : model.communityId
                 isCommunityToken: root.isCommunityToken
                 isCollectible: root.isCollectible
+                isCollection: isCollectible && !model.isSelfCollection
                 onMoveRequested: (from, to) => root.ListView.view.model.moveItem(from, to)
                 onShowHideRequested: function(symbol, flag) {
                     if (isCommunityToken)

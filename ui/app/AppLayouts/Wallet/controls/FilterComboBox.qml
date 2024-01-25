@@ -88,6 +88,14 @@ ComboBox {
                         return model.groupName.toLowerCase().includes(d.searchTextLowerCase) || model.groupId.toLowerCase().includes(d.searchTextLowerCase)
                     }
                     expectedRoles: ["groupName", "groupId"]
+                },
+                FastExpressionFilter {
+                    expression: {
+                        if (model.sourceGroup === "collection")
+                            return !model.isSelfCollection
+                        return true
+                    }
+                    expectedRoles: ["sourceGroup", "isSelfCollection"]
                 }
             ]
         }
@@ -95,8 +103,8 @@ ComboBox {
         readonly property var uncategorizedModel: SortFilterProxyModel { // regular collectibles with no collection
             sourceModel: root.regularTokensModel
             filters: ValueFilter {
-                roleName: "collectionUid"
-                value: ""
+                roleName: "isSelfCollection"
+                value: true
             }
             onCountChanged: if (!count) d.removeFilter("") // different underlying model -> uncheck
         }
