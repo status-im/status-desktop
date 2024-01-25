@@ -191,6 +191,12 @@ ColumnLayout {
     Component {
         id: hiddenPanel
         ManageHiddenPanel {
+            getCurrencyAmount: function (balance, symbol) {
+                return root.getCurrencyAmount(balance, symbol)
+            }
+            getCurrentCurrencyAmount: function (balance) {
+                return root.getCurrentCurrencyAmount(balance)
+            }
             assetsController: d.assetsController
             collectiblesController: d.collectiblesController
         }

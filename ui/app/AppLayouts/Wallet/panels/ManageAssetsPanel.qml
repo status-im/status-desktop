@@ -21,7 +21,7 @@ Control {
     readonly property bool hasSettings: root.controller.hasSettings
 
     property var getCurrencyAmount: function (balance, symbol) {}
-    property var getCurrentCurrencyAmount: function(balance){}
+    property var getCurrentCurrencyAmount: function(balance) {}
 
     background: null
 
@@ -134,12 +134,6 @@ Control {
                 controller: root.controller
                 dragParent: root
                 dragEnabled: root.controller.communityTokenGroupsModel.count > 1
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
-                }
-                getCurrentCurrencyAmount: function (balance) {
-                    return root.getCurrentCurrencyAmount(balance)
-                }
             }
         }
     }

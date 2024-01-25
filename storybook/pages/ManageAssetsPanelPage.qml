@@ -48,7 +48,7 @@ SplitView {
                         })
             }
             controller: ManageTokensController {
-                sourceModel: ctrlEmptyModel.checked ? null : assetsModel
+                sourceModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
                 settingsKey: "WalletAssets"
             }
         }

@@ -71,7 +71,7 @@ DropArea {
         width: root.width
         title: model.name
 
-        readonly property var totalBalance: aggregator.value/(10 ** model.decimals)
+        readonly property real totalBalance: aggregator.value/(10 ** model.decimals)
 
         secondaryTitle: root.isCollectible ? (root.isCommunityToken ? qsTr("Community minted") : model.collectionName || model.collectionUid) :
                                              hovered || menuBtn.menuVisible ? "%1 • %2".arg(LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmount(totalBalance, model.symbol)))
@@ -123,7 +123,7 @@ DropArea {
 
         SumAggregator {
             id: aggregator
-            model: root.balances
+            model: root.balances ?? null
             roleName: "balance"
         }
     }
