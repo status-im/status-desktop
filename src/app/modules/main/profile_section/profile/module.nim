@@ -9,17 +9,22 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
 import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_models/collectibles_entry
 
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
+
+import backend/collectibles as backend_collectibles
 
 export io_interface
 
@@ -29,7 +34,8 @@ logScope:
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
-    controller: Controller
+    controller: controller.Controller
+    collectiblesController: collectiblesc.Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
@@ -41,18 +47,26 @@ proc newModule*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service): Module =
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, networkService)
+  result.collectiblesController = collectiblesc.newController(
+    requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
+    loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
+    networkService = networkService,
+    events = events
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.collectiblesController.delete
 
 method load*(self: Module) =
   self.controller.init()
@@ -63,6 +77,9 @@ method isLoaded*(self: Module): bool =
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+method getCollectiblesModel*(self: Module): QVariant =
+  return self.collectiblesController.getModelAsVariant()
 
 proc updateSocialLinks(self: Module, socialLinks: SocialLinks) =
   var socialLinkItems = toSocialLinkItems(socialLinks)
@@ -118,11 +135,22 @@ method storeProfileShowcasePreferences(self: Module,
     if acc.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
       revealedAddresses.add(acc.address)
 
+  var verifiedTokens: seq[ProfileShowcaseVerifiedTokenPreference] = @[]
+  var unverifiedTokens: seq[ProfileShowcaseUnverifiedTokenPreference] = @[]
+
+  for asset in assets:
+    # TODO: more obvious way to check if it is verified or not
+    if asset.communityId == "":
+      verifiedTokens.add(asset.toShowcaseVerifiedTokenPreference())
+    else:
+      unverifiedTokens.add(asset.toShowcaseUnverifiedTokenPreference())
+
   self.controller.storeProfileShowcasePreferences(ProfileShowcasePreferencesDto(
     communities: communities.map(item => item.toShowcasePreferenceItem()),
     accounts: accounts.map(item => item.toShowcasePreferenceItem()),
     collectibles: collectibles.map(item => item.toShowcasePreferenceItem()),
-    assets: assets.map(item => item.toShowcasePreferenceItem()),
+    verifiedTokens: verifiedTokens,
+    unverifiedTokens: unverifiedTokens
     ),
     revealedAddresses
   )
@@ -150,80 +178,100 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
   if self.presentedPublicKey != profileShowcase.contactId:
     return
 
+  # Communities for a contact
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
-  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
-
-  for communityEntry in profileShowcase.communities:
-    let community = self.controller.getCommunityById(communityEntry.communityId)
+  for communityProfile in profileShowcase.communities:
+    let community = self.controller.getCommunityById(communityProfile.communityId)
     if community.id == "":
       # Fetch the community, however, we do not the shard info, so hopefully we can fetch it
-      self.controller.requestCommunityInfo(communityEntry.communityId, shard = nil)
+      self.controller.requestCommunityInfo(communityProfile.communityId, shard = nil)
       profileCommunityItems.add(initProfileShowcaseCommunityLoadingItem(
-        communityEntry.communityId, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
+        communityProfile.communityId, ProfileShowcaseVisibility.ToEveryone, communityProfile.order))
     else:
       profileCommunityItems.add(initProfileShowcaseCommunityItem(
-        community, ProfileShowcaseVisibility.ToEveryone, communityEntry.order))
+        community, ProfileShowcaseVisibility.ToEveryone, communityProfile.order))
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
-  var addresses: seq[string] = @[]
+  # Accounts for a contact, reuse addresses for collectibles and token balances
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var accountAddresses: seq[string] = @[]
   for account in profileShowcase.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
-      account.address,
-      account.name,
-      account.emoji,
-      account.colorId,
-      ProfileShowcaseVisibility.ToEveryone,
-      account.order
-    ))
-    addresses.add(account.address)
-
-  for assetEntry in profileShowcase.assets:
-    for token in self.controller.getTokensByAddresses(addresses):
-      if assetEntry.symbol == token.symbol:
-        profileAssetItems.add(initProfileShowcaseAssetItem(token, ProfileShowcaseVisibility.ToEveryone, assetEntry.order))
-
+      account.address, account.name, account.emoji, account.colorId,
+      ProfileShowcaseVisibility.ToEveryone, account.order))
+    accountAddresses.add(account.address)
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
+
+  # Collectibles for a contact
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
+
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  for collectibleProfile in profileShowcase.collectibles:
+    let collectible = self.collectiblesController.getItemForData(collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId)
+    if collectible != nil:
+      profileCollectibleItems.add(initProfileShowcaseCollectibleItem(
+        collectible, ProfileShowcaseVisibility.ToEveryone, collectibleProfile.order))
+  self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
+
+  # Verified tokens for a contact
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+  for tokenProfile in profileShowcase.verifiedTokens:
+    # NOTE: not yet working for external wallet accounts
+    for token in self.controller.getTokensByAddresses(accountAddresses):
+      if tokenProfile.symbol == token.symbol:
+        profileAssetItems.add(initProfileShowcaseVerifiedToken(token, ProfileShowcaseVisibility.ToEveryone, tokenProfile.order))
+
+  # TODO: Unverified tokens for a contact
   self.view.updateProfileShowcaseAssets(profileAssetItems)
-  # TODO: collectibles, need wallet api to fetch collectible by uid
 
 method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
   if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
     return
 
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
-  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
-
-  for communityEntry in preferences.communities:
-    let community = self.controller.getCommunityById(communityEntry.communityId)
+  for communityProfile in preferences.communities:
+    let community = self.controller.getCommunityById(communityProfile.communityId)
     if community.id == "":
-      warn "Unknown community added to our own profile showcase" , communityId = communityEntry.communityId
+      warn "Unknown community added to our own profile showcase" , communityId = communityProfile.communityId
     else:
       profileCommunityItems.add(initProfileShowcaseCommunityItem(
-        community, communityEntry.showcaseVisibility, communityEntry.order))
+        community, communityProfile.showcaseVisibility, communityProfile.order))
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
-  var addresses: seq[string] = @[]
+  # For profile preferences we are using all the addresses for colletibles and token balances
+  # TODO: add wallet accounts model instance here to remove QML dependency from the wallet module
+  let accountAddresses = self.controller.getWalletAccounts().map(acc => acc.address) # filter(acc => acc.walletType != WalletTypeWatch).
+
+  # Accounts profile preferences
+  var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
   for account in preferences.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
-      account.address,
-      account.name,
-      account.emoji,
-      account.colorId,
-      account.showcaseVisibility,
-      account.order
-    ))
-    addresses.add(account.address)
-
-  for assetEntry in preferences.assets:
-    for token in self.controller.getTokensByAddresses(addresses):
-      if assetEntry.symbol == token.symbol:
-        profileAssetItems.add(initProfileShowcaseAssetItem(token, assetEntry.showcaseVisibility, assetEntry.order))
-
+      account.address, account.name, account.emoji, account.colorId,
+      account.showcaseVisibility, account.order))
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
+
+  # Collectibles profile preferences
+  let chainIds = self.controller.getChainIds()
+  self.collectiblesController.setFilterAddressesAndChains(accountAddresses, chainIds)
+
+  var profileCollectibleItems: seq[ProfileShowcaseCollectibleItem] = @[]
+  for collectibleProfile in preferences.collectibles:
+    let collectible = self.collectiblesController.getItemForData(collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId)
+    if collectible != nil:
+      profileCollectibleItems.add(initProfileShowcaseCollectibleItem(
+        collectible, collectibleProfile.showcaseVisibility, collectibleProfile.order))
+  self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
+
+  # TODO: Verified tokens preferences
+  var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
+  for tokenProfile in preferences.verifiedTokens:
+    for token in self.controller.getTokensByAddresses(accountAddresses):
+      if tokenProfile.symbol == token.symbol:
+        profileAssetItems.add(initProfileShowcaseVerifiedToken(token, tokenProfile.showcaseVisibility, tokenProfile.order))
+
+  # TODO: Unverified tokens preferences
   self.view.updateProfileShowcaseAssets(profileAssetItems)
-  # TODO: collectibles, need wallet api to fetch collectible by uid
 
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
   var profileCommunityItems = self.view.getProfileShowcaseCommunities()

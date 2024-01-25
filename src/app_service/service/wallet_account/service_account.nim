@@ -87,7 +87,7 @@ proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletA
       continue
     result.add(acc)
 
-proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
+proc getWalletAccounts*(self: Service, excludeWatchOnly: bool = false): seq[WalletAccountDto] =
   for _, kp in self.keypairs:
     if kp.keypairType == KeypairTypeProfile:
       for acc in kp.accounts:
@@ -96,7 +96,8 @@ proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
         result.add(acc)
       continue
     result.add(kp.accounts)
-  result.add(toSeq(self.watchOnlyAccounts.values))
+  if not excludeWatchOnly:
+    result.add(toSeq(self.watchOnlyAccounts.values))
   result.sort(walletAccountsCmp)
 
 proc getWalletAddresses*(self: Service): seq[string] =

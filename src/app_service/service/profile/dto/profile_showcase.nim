@@ -14,11 +14,20 @@ type ProfileShowcaseAccount* = ref object of RootObj
   order*: int
 
 type ProfileShowcaseCollectible* = ref object of RootObj
-  uid*: string
+  contractAddress*: string
+  chainId*: int
+  tokenId*: string
+  communityId*: string
+  accountAddress*: string
   order*: int
 
-type ProfileShowcaseAsset* = ref object of RootObj
+type ProfileShowcaseVerifiedToken* = ref object of RootObj
   symbol*: string
+  order*: int
+
+type ProfileShowcaseUnverifiedToken* = ref object of RootObj
+  contractAddress*: string
+  chainId*: int
   order*: int
 
 type ProfileShowcaseDto* = ref object of RootObj
@@ -26,7 +35,8 @@ type ProfileShowcaseDto* = ref object of RootObj
   communities*: seq[ProfileShowcaseCommunity]
   accounts*: seq[ProfileShowcaseAccount]
   collectibles*: seq[ProfileShowcaseCollectible]
-  assets*: seq[ProfileShowcaseAsset]
+  verifiedTokens*: seq[ProfileShowcaseVerifiedToken]
+  unverifiedTokens*: seq[ProfileShowcaseUnverifiedToken]
 
 proc toProfileShowcaseCommunity*(jsonObj: JsonNode): ProfileShowcaseCommunity =
   result = ProfileShowcaseCommunity()
@@ -43,12 +53,22 @@ proc toProfileShowcaseAccount*(jsonObj: JsonNode): ProfileShowcaseAccount =
 
 proc toProfileShowcaseCollectible*(jsonObj: JsonNode): ProfileShowcaseCollectible =
   result = ProfileShowcaseCollectible()
-  discard jsonObj.getProp("uid", result.uid)
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("tokenId", result.tokenId)
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
+  discard jsonObj.getProp("accountAddress", result.accountAddress)
   discard jsonObj.getProp("order", result.order)
 
-proc toProfileShowcaseAsset*(jsonObj: JsonNode): ProfileShowcaseAsset =
-  result = ProfileShowcaseAsset()
+proc toProfileShowcaseVerifiedToken*(jsonObj: JsonNode): ProfileShowcaseVerifiedToken =
+  result = ProfileShowcaseVerifiedToken()
   discard jsonObj.getProp("symbol", result.symbol)
+  discard jsonObj.getProp("order", result.order)
+
+proc toProfileShowcaseUnverifiedToken*(jsonObj: JsonNode): ProfileShowcaseUnverifiedToken =
+  result = ProfileShowcaseUnverifiedToken()
+  discard jsonObj.getProp("contractAddress", result.contractAddress)
+  discard jsonObj.getProp("chainId", result.chainId)
   discard jsonObj.getProp("order", result.order)
 
 proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
@@ -62,5 +82,7 @@ proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
     result.accounts.add(jsonMsg.toProfileShowcaseAccount())
   for jsonMsg in jsonObj["collectibles"]:
     result.collectibles.add(jsonMsg.toProfileShowcaseCollectible())
-  for jsonMsg in jsonObj["assets"]:
-    result.assets.add(jsonMsg.toProfileShowcaseAsset())
+  for jsonMsg in jsonObj["verifiedTokens"]:
+    result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedToken())
+  for jsonMsg in jsonObj["unverifiedTokens"]:
+    result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedToken())

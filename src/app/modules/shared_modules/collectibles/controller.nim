@@ -301,3 +301,10 @@ QtObject:
     self.filter = filter
 
     self.resetModel()
+
+  proc getActivityToken*(self: Controller, id: string): backend_activity.Token =
+    return self.model.getActivityToken(id)
+
+  proc getItemForData*(self: Controller, tokenId: string, tokenAddress: string, chainId: int): CollectiblesEntry =
+    let uid = self.model.getUidForData(tokenId, tokenAddress, chainId)
+    return self.model.getItemById(uid)

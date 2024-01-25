@@ -10,7 +10,7 @@ ProfileShowcasePanel {
     property var formatCurrencyAmount: function(amount, symbol){}
 
     keyRole: "symbol"
-    roleNames: ["symbol", "name", "enabledNetworkBalance", "decimals"].concat(showcaseRoles)
+    roleNames: ["symbol", "name", "address", "communityId", "enabledNetworkBalance", "decimals"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
     hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
     showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")

@@ -5,14 +5,19 @@ import app_service/service/profile/dto/profile_showcase_preferences
 
 type
   ModelRole {.pure.} = enum
-    ShowcaseVisibility = UserRole + 1
-    Order
-
-    Uid
+    Uid = UserRole + 1,
+    ChainId
+    ContractAddress
+    TokenId
     Name
-    CollectionName
     ImageUrl
     BackgroundColor
+    CollectionName
+    IsLoading
+    CommunityId
+
+    ShowcaseVisibility
+    Order
 
 QtObject:
   type
@@ -49,14 +54,19 @@ QtObject:
 
   method roleNames(self: ProfileShowcaseCollectiblesModel): Table[int, string] =
     {
-      ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
-      ModelRole.Order.int: "order",
-
-      ModelRole.Uid.int: "uid",
+      ModelRole.Uid.int:"uid",
+      ModelRole.ChainId.int: "chainId",
+      ModelRole.ContractAddress.int: "contractAddress",
+      ModelRole.TokenId.int: "tokenId",
       ModelRole.Name.int: "name",
-      ModelRole.CollectionName.int: "collectionName",
       ModelRole.ImageUrl.int: "imageUrl",
       ModelRole.BackgroundColor.int: "backgroundColor",
+      ModelRole.CollectionName.int: "collectionName",
+      ModelRole.IsLoading.int:"isLoading",
+      ModelRole.CommunityId.int: "communityId",
+
+      ModelRole.ShowcaseVisibility.int: "showcaseVisibility",
+      ModelRole.Order.int: "order",
     }.toTable
 
   method data(self: ProfileShowcaseCollectiblesModel, index: QModelIndex, role: int): QVariant =
@@ -70,24 +80,35 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.ShowcaseVisibility:
-      result = newQVariant(item.showcaseVisibility.int)
-    of ModelRole.Order:
-      result = newQVariant(item.order)
     of ModelRole.Uid:
-      result = newQVariant(item.uid)
+      result = newQVariant(item.getID())
+    of ModelRole.ChainId:
+      result = newQVariant(item.chainId)
+    of ModelRole.ContractAddress:
+      result = newQVariant(item.contractAddress)
+    of ModelRole.TokenId:
+      result = newQVariant(item.tokenId)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.CollectionName:
-      result = newQVariant(item.collectionName)
     of ModelRole.ImageUrl:
       result = newQVariant(item.imageUrl)
     of ModelRole.BackgroundColor:
       result = newQVariant(item.backgroundColor)
+    of ModelRole.CollectionName:
+      result = newQVariant(item.collectionName)
+    of ModelRole.IsLoading:
+      result = newQVariant(item.loading)
+    of ModelRole.CommunityId:
+      result = newQVariant(item.communityId)
+
+    of ModelRole.ShowcaseVisibility:
+      result = newQVariant(item.showcaseVisibility.int)
+    of ModelRole.Order:
+      result = newQVariant(item.order)
 
   proc findIndexForCollectible(self: ProfileShowcaseCollectiblesModel, uid: string): int =
     for i in 0 ..< self.items.len:
-      if (self.items[i].uid == uid):
+      if (self.items[i].getID() == uid):
         return i
     return -1
 
@@ -109,7 +130,7 @@ QtObject:
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseCollectiblesModel, item: ProfileShowcaseCollectibleItem) =
-    let ind = self.findIndexForCollectible(item.uid)
+    let ind = self.findIndexForCollectible(item.getID())
     if ind == -1:
       self.appendItem(item)
     else:
@@ -120,11 +141,15 @@ QtObject:
       self.dataChanged(index, index, @[
         ModelRole.ShowcaseVisibility.int,
         ModelRole.Order.int,
-        ModelRole.Uid.int,
+        ModelRole.ChainId.int,
+        ModelRole.TokenId.int,
+        ModelRole.ContractAddress.int,
+        ModelRole.CommunityId.int,
         ModelRole.Name.int,
         ModelRole.CollectionName.int,
         ModelRole.ImageUrl.int,
         ModelRole.BackgroundColor.int,
+        ModelRole.IsLoading.int
       ])
 
   proc upsertItemJson(self: ProfileShowcaseCollectiblesModel, itemJson: string) {.slot.} =

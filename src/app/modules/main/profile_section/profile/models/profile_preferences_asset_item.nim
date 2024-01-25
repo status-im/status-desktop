@@ -2,7 +2,6 @@ import json, strutils, stint, json_serialization, tables
 
 import profile_preferences_base_item
 
-import app_service/service/wallet_account/dto/account_dto
 import app_service/service/profile/dto/profile_showcase_preferences
 
 import app/modules/shared_models/currency_amount
@@ -14,13 +13,17 @@ import backend/helpers/token
 
 type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem
+    contractAddress*: string
+    communityId*: string
+    chainId*: int
     symbol*: string
     name*: string
     enabledNetworkBalance*: CurrencyAmount
     color*: string
     decimals*: int
 
-proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
+
+proc initProfileShowcaseVerifiedToken*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
   result.showcaseVisibility = visibility
@@ -32,6 +35,8 @@ proc initProfileShowcaseAssetItem*(token: WalletTokenDto, visibility: ProfileSho
   result.color = token.color
   result.decimals = token.decimals
 
+  # TODO: initProfileShowcaseUnverifiedToken
+
 proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
@@ -42,6 +47,8 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
     visibilityInt <= ord(high(ProfileShowcaseVisibility)))):
       result.showcaseVisibility = ProfileShowcaseVisibility(visibilityInt)
 
+  discard jsonObj.getProp("address", result.contractAddress)
+  discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("color", result.color)
@@ -49,21 +56,17 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
 
   result.enabledNetworkBalance = newCurrencyAmount(jsonObj{"enabledNetworkBalance"}.getFloat, result.symbol, result.decimals, false)
 
-proc toShowcasePreferenceItem*(self: ProfileShowcaseAssetItem): ProfileShowcaseAssetPreference =
-  result = ProfileShowcaseAssetPreference()
+proc toShowcaseVerifiedTokenPreference*(self: ProfileShowcaseAssetItem): ProfileShowcaseVerifiedTokenPreference =
+  result = ProfileShowcaseVerifiedTokenPreference()
 
   result.symbol = self.symbol
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 
-proc symbol*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.symbol
+proc toShowcaseUnverifiedTokenPreference*(self: ProfileShowcaseAssetItem): ProfileShowcaseUnverifiedTokenPreference =
+  result = ProfileShowcaseUnverifiedTokenPreference()
 
-proc name*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.name
-
-proc enabledNetworkBalance*(self: ProfileShowcaseAssetItem): CurrencyAmount {.inline.} =
-  self.enabledNetworkBalance
-
-proc color*(self: ProfileShowcaseAssetItem): string {.inline.} =
-  self.color
+  result.contractAddress = self.contractAddress
+  result.chainId = self.chainId
+  result.showcaseVisibility = self.showcaseVisibility
+  result.order = self.order

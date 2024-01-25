@@ -1,3 +1,4 @@
+import sugar, sequtils
 import io_interface
 
 import app/global/app_signals
@@ -6,6 +7,7 @@ import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
 import app_service/common/social_links
 import app_service/common/types
 
@@ -21,6 +23,7 @@ type
     settingsService: settings_service.Service
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
+    networkService: network_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -28,7 +31,8 @@ proc newController*(
     profileService: profile_service.Service,
     settingsService: settings_service.Service,
     communityService: community_service.Service,
-    walletAccountService: wallet_account_service.Service): Controller =
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -36,6 +40,7 @@ proc newController*(
   result.settingsService = settingsService
   result.communityService = communityService
   result.walletAccountService = walletAccountService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -81,8 +86,17 @@ proc getCommunityById*(self: Controller, id: string): CommunityDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts(true)
+
 proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
+
+proc getChainIds*(self: Controller): seq[int] =
+  return self.networkService.getNetworks().map(n => n.chainId)
+
+proc getEnabledChainIds*(self: Controller): seq[int] =
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)

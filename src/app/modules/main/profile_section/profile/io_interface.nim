@@ -26,6 +26,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method storeIdentityImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
