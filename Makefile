@@ -439,7 +439,7 @@ status-go-clean:
 	echo -e "\033[92mCleaning:\033[39m status-go"
 	rm -f $(STATUSGO)
 
-STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
+export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
 
 status-keycard-go: $(STATUSKEYCARDGO)
@@ -456,7 +456,7 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
-FLEETS_FILE := ./fleets.json
+export FLEETS_FILE := ./fleets.json
 $(FLEETS_FILE):
 	echo -e $(BUILD_MSG) "Getting latest $(FLEETS_FILE)"
 	curl -s https://fleets.status.im/ > $(FLEETS_FILE)
@@ -591,7 +591,7 @@ STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
 ifeq ($(detected_OS),Linux)
- FCITX5_QT := vendor/fcitx5-qt/build/qt5/platforminputcontext/libfcitx5platforminputcontextplugin.so
+ export FCITX5_QT := vendor/fcitx5-qt/build/qt5/platforminputcontext/libfcitx5platforminputcontextplugin.so
  FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF -DENABLE_QT5=ON
  FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
@@ -608,54 +608,37 @@ $(FCITX5_QT): | check-qt-dir deps
 
 PRODUCTION_PARAMETERS ?= -d:production
 
+export APP_DIR := tmp/linux/dist
+
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
-	rm -rf tmp/linux/dist
-	mkdir -p tmp/linux/dist/usr/bin
-	mkdir -p tmp/linux/dist/usr/lib
-	mkdir -p tmp/linux/dist/usr/qml
+	chmod -R u+w tmp || true
 
-	# General Files
-	cp bin/nim_status_client tmp/linux/dist/usr/bin
-	cp nim-status.desktop tmp/linux/dist/.
-	cp status.png tmp/linux/dist/status.png
-	cp status.png tmp/linux/dist/usr/.
-	cp -R resources.rcc tmp/linux/dist/usr/.
-	cp -R $(FLEETS_FILE) tmp/linux/dist/usr/.
-	mkdir -p tmp/linux/dist/usr/i18n
-	cp bin/i18n/* tmp/linux/dist/usr/i18n
-	mkdir -p tmp/linux/dist/usr/bin/StatusQ
-	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
-
-	# Libraries
-ifndef IN_NIX_SHELL
-	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
-	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
-	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
-endif
-	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
-	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
-	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
+	scripts/init_app_dir.sh
 
 	echo -e $(BUILD_MSG) "AppImage"
 
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
-ifdef IN_NIX_SHELL
-	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
-endif
+	linuxdeployqt $(APP_DIR)/nim-status.desktop \
+		-no-copy-copyright-files \
+		-qmldir=ui -qmlimport=$(QT5_QMLDIR) \
+		-bundle-non-qt-libs \
+		-exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0 \
+		-verbose=1 \
+		-executable=$(APP_DIR)/usr/libexec/QtWebEngineProcess
 
-	# Qt plugins
-	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
+	scripts/fix_app_dir.sh
 
-	rm tmp/linux/dist/AppRun
-	cp AppRun tmp/linux/dist/.
+	rm $(APP_DIR)/AppRun
+	cp AppRun $(APP_DIR)/.
 
 	mkdir -p pkg
-	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+	$(APPIMAGE_TOOL) $(APP_DIR) $(STATUS_CLIENT_APPIMAGE)
+
+# Fix rpath and interpreter for AppImage
 ifdef IN_NIX_SHELL
 	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $(STATUS_CLIENT_APPIMAGE)
+	patchelf --remove-rpath $(STATUS_CLIENT_APPIMAGE)
 endif
 
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature

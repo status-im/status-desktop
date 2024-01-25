@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@linux-use-nix'
+library 'status-jenkins-lib@v1.8.18'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -54,7 +54,7 @@ pipeline {
   }
 
   environment {
-    TARGET = "linux/${getArch()}"
+    PLATFORM = "linux/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
@@ -67,20 +67,20 @@ pipeline {
   stages {
     stage('Deps') {
       steps { script {
-        nix.shell('make update --debug V=1', pure: true)
-        nix.shell('make deps --debug V=1', pure: true)
+        nix.shell('make update', pure: true)
+        nix.shell('make deps', pure: true)
       } }
     }
 
     stage('status-go') {
       steps { script {
-        nix.shell('make status-go --debug V=1', pure: true)
+        nix.shell('make status-go', pure: true)
       } }
     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('--debug=b tgz-linux', 1, true)
+        linux.bundle('tgz-linux', 0, true)
       } }
     }
 
@@ -104,10 +104,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    // Windows workspace often becomes broken if stoped during checkout.
-    // Post cleanup will fail too.
-    // Use 'Wipe out repository and force clone' manual UI option to prevent it.
-    cleanup { cleanWs() }
+    cleanup { sh './scripts/clean-git.sh' }
   }
 }
 

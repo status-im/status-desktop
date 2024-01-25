@@ -46,11 +46,17 @@ in pkgs.mkShell {
   QTDIR = qtCustom;
   # TODO: still needed?
   # https://github.com/NixOS/nixpkgs/pull/109649
-  QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515.qtbase.qtPluginPrefix}";
+  QT_INSTALL_PLUGINS = "${qtCustom}/${pkgs.qt515_8.qtbase.qtPluginPrefix}";
 
   shellHook = ''
+    export MAKEFLAGS="-j$NIX_BUILD_CORES"
     export PATH="${pkgs.lddWrapped}/bin:$PATH"
   '';
+
+  LIBKRB5_PATH = pkgs.libkrb5;
+  QTWEBENGINE_PATH = pkgs.qt515_8.qtwebengine.out;
+  GSTREAMER_PATH = pkgs.gst_all_1.gstreamer;
+  NSS_PATH = pkgs.nss;
 
   # Used for linuxdeployqt
   # TODO:check which deps are needed
@@ -69,6 +75,8 @@ in pkgs.mkShell {
     libpng
     libpulseaudio
     libxkbcommon
+    openexr
+    openssl
     p11-kit
     zlib
   ] ++ (with xorg; [
@@ -84,6 +92,9 @@ in pkgs.mkShell {
     xcbutilwm
   ]) ++ (with gst_all_1; [
     gst-plugins-base
+    gst-plugins-good
+    gst-plugins-bad
+    gst-plugins-ugly
     gstreamer
   ]));
 }
