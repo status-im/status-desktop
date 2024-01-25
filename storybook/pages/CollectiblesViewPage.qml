@@ -5,6 +5,7 @@ import QtQuick.Controls 2.15
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Models 0.1
 
 import mainui 1.0
 import utils 1.0
@@ -64,6 +65,10 @@ SplitView {
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
+        controller: ManageTokensController {
+            settingsKey: "WalletCollectibles"
+            sourceModel: collectiblesModel
+        }
         onCollectibleClicked: logs.logEvent("onCollectibleClicked", ["chainId", "contractAddress", "tokenId", "uid"], arguments)
         onSendRequested: logs.logEvent("onSendRequested", ["symbol"], arguments)
         onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
