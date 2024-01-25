@@ -79,7 +79,7 @@ StatusFlatButton {
             // any token
             StatusAction {
                 objectName: "miHideToken"
-                enabled: !root.inHidden && root.hideEnabled && !root.isGroup && !root.isCommunityToken && !root.isCollectible
+                enabled: !root.inHidden && root.hideEnabled && !root.isGroup && !root.isCommunityToken && !root.groupId
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: root.isCollectible ? qsTr("Hide collectible") : qsTr("Hide asset")
@@ -122,7 +122,7 @@ StatusFlatButton {
             // (hide) collection tokens
             StatusMenu {
                 id: collectionSubmenu
-                enabled: !root.inHidden && root.isCollectible && !root.isCommunityToken && !root.isGroup
+                enabled: !root.inHidden && root.isCollectible && !root.isCommunityToken && !root.isGroup && root.groupId
                 title: qsTr("Hide")
                 assetSettings.name: "hide"
                 type: StatusAction.Type.Danger
