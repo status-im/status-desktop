@@ -33,6 +33,8 @@ SettingsContentBase {
     property ProfileSectionStore rootStore
     property var walletStore: rootStore.walletStore
     required property TokensStore tokensStore
+    required property WalletAssetsStore assetsStore
+    required property CollectiblesStore collectiblesStore
 
     readonly property int mainViewIndex: 0
     readonly property int networksViewIndex: 1
@@ -305,10 +307,11 @@ SettingsContentBase {
 
         ManageTokensView {
             id: manageTokensView
+
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
-            baseWalletAssetsModel: RootStore.assets
-            baseWalletCollectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
+            assetsController: RootStore.walletAssetsStore.manageAssetsController
+            collectiblesController: RootStore.collectiblesStore.manageCollectiblesController
 
             Binding on currentIndex {
                 value: {

@@ -23,8 +23,8 @@ ColumnLayout {
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
 
-    required property var baseWalletAssetsModel
-    required property var baseWalletCollectiblesModel
+    required property var assetsController
+    required property var collectiblesController
 
     property alias currentIndex: tabBar.currentIndex
 
@@ -54,50 +54,6 @@ ColumnLayout {
         readonly property int hiddenTabIndex: 2
         readonly property int advancedTabIndex: 3
 
-        // assets
-        readonly property var assetsController: ManageTokensController {
-            sourceModel: root.baseWalletAssetsModel
-            settingsKey: "WalletAssets"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                       false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                            qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
-                                            false, Constants.ephemeralNotificationType.success, "")
-        }
-
-        // collectibles
-        readonly property var renamedCollectiblesModel: RolesRenamingModel {
-            sourceModel: root.baseWalletCollectiblesModel
-            mapping: [
-                RoleRename {
-                    from: "uid"
-                    to: "symbol"
-                }
-            ]
-        }
-
-        readonly property var collectiblesController: ManageTokensController {
-            sourceModel: d.renamedCollectiblesModel
-            settingsKey: "WalletCollectibles"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                       false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                            qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
-                                            false, Constants.ephemeralNotificationType.success, "")
-        }
-
         function checkLoadMoreCollectibles() {
             if (tabBar.currentIndex !== collectiblesTabIndex)
                 return
@@ -108,13 +64,62 @@ ColumnLayout {
         }
     }
 
+    // TO CHECK: Is it needed now without using pagination?
     Connections {
-        target: root.baseWalletCollectiblesModel
+        target: root.collectiblesController.sourceModel
         function onHasMoreChanged() {
             d.checkLoadMoreCollectibles()
         }
         function onIsFetchingChanged() {
             d.checkLoadMoreCollectibles()
+        }
+    }
+
+    Connections {
+        target: root.assetsController
+
+        function onTokenHidden(symbol, name) {
+            Global.displayToastMessage(qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onCommunityTokenGroupHidden(communityName) {
+            Global.displayToastMessage(qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onTokenShown(symbol, name) {
+            Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onCommunityTokenGroupShown(communityName) {
+            Global.displayToastMessage(qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+    }
+
+    Connections {
+        target: root.collectiblesController
+
+        function onTokenHidden(symbol, name) {
+            Global.displayToastMessage(qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onCommunityTokenGroupHidden(communityName) {
+            Global.displayToastMessage(qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onTokenShown(symbol, name) {
+            Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
+        }
+
+        function onCommunityTokenGroupShown(communityName) {
+            Global.displayToastMessage(qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
+                                       false, Constants.ephemeralNotificationType.success, "")
         }
     }
 
@@ -167,14 +172,14 @@ ColumnLayout {
     Component {
         id: tokensPanel
         ManageAssetsPanel {
-            controller: d.assetsController
+            controller: root.assetsController
         }
     }
 
     Component {
         id: collectiblesPanel
         ManageCollectiblesPanel {
-            controller: d.collectiblesController
+            controller: root.collectiblesController
             Component.onCompleted: d.checkLoadMoreCollectibles()
         }
     }
@@ -182,8 +187,8 @@ ColumnLayout {
     Component {
         id: hiddenPanel
         ManageHiddenPanel {
-            assetsController: d.assetsController
-            collectiblesController: d.collectiblesController
+            assetsController: root.assetsController
+            collectiblesController: root.collectiblesController
         }
     }
 

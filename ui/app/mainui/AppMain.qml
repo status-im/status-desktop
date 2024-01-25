@@ -71,6 +71,7 @@ Item {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
+    readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
 
     // set from main.qml
     property var sysPalette
@@ -1286,6 +1287,8 @@ Item {
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                             tokensStore: appMain.tokensStore
+                            assetsStore: appMain.walletAssetsStore
+                            collectiblesStore: appMain.walletCollectiblesStore
                         }
                     }
 
