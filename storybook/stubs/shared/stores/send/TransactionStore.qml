@@ -170,10 +170,6 @@ QtObject {
         }
     }
 
-    function findTokenSymbolByAddress() {
-        return "ETH"
-    }
-
     function switchSenderAccount(index) {
         selectedSenderAccount = senderAccounts.get(index)
     }

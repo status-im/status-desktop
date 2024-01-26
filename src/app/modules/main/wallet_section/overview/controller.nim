@@ -2,8 +2,6 @@ import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/currency/service as currency_service
 
-import backend/helpers/token
-
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface

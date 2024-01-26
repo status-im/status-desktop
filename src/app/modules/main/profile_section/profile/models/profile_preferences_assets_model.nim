@@ -13,7 +13,6 @@ type
     Symbol
     Name
     EnabledNetworkBalance
-    Color
     Decimals
 
 QtObject:
@@ -59,7 +58,6 @@ QtObject:
       ModelRole.Symbol.int: "symbol",
       ModelRole.Name.int: "name",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
-      ModelRole.Color.int: "color",
       ModelRole.Decimals.int: "decimals",
     }.toTable
 
@@ -88,8 +86,6 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.enabledNetworkBalance)
-    of ModelRole.Color:
-      result = newQVariant(item.color)
     of ModelRole.Decimals:
       result = newQVariant(item.decimals)
 
@@ -133,7 +129,6 @@ QtObject:
         ModelRole.Symbol.int,
         ModelRole.Name.int,
         ModelRole.EnabledNetworkBalance.int,
-        ModelRole.Color.int,
         ModelRole.Decimals.int,
       ])
 

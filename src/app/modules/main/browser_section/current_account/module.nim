@@ -7,12 +7,9 @@ import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/currency/service as currency_service
 import app/modules/shared/wallet_utils
-import app/modules/shared_models/token_model as token_model
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
-
-import backend/helpers/token
 
 export io_interface
 
@@ -24,9 +21,6 @@ type
     controller: Controller
     moduleLoaded: bool
     currentAccountIndex: int
-
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
-proc onCurrencyFormatsUpdated(self: Module)
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -47,18 +41,6 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
 
-proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
-  let chainIds = self.controller.getChainIds()
-  let enabledChainIds = self.controller.getEnabledChainIds()
-
-  let currency = self.controller.getCurrentCurrency()
-
-  let currencyFormat = self.controller.getCurrencyFormat(currency)
-
-  let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
-
-  self.view.getAssetsModel().setItems(items)
-
 proc switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
 
@@ -70,8 +52,7 @@ proc switchAccount*(self: Module, accountIndex: int) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  let currencyBalance = self.controller.getCurrencyBalance(walletAccount.address, enabledChainIds, currency)
-  let tokens = self.controller.getTokensByAddress(walletAccount.address)
+  let currencyBalance = self.controller.getTotalCurrencyBalance(walletAccount.address, enabledChainIds)
 
   let accountItem = walletAccountToWalletAccountsItem(
     walletAccount,
@@ -83,7 +64,6 @@ proc switchAccount*(self: Module, accountIndex: int) =
   )
 
   self.view.setData(accountItem)
-  self.setAssets(tokens)
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", newQVariant(self.view))
@@ -105,13 +85,6 @@ method load*(self: Module) =
       self.switchAccount(0)
       self.view.connectedAccountDeleted()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    let arg = TokensPerAccountArgs(e)
-    self.onTokensRebuilt(arg.accountsTokens)
-
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
-    self.onCurrencyFormatsUpdated()
-
   self.controller.init()
   self.view.load()
   self.switchAccount(0)
@@ -125,20 +98,3 @@ method viewDidLoad*(self: Module) =
 method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)
   self.switchAccount(accountIndex)
-
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
-  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
-  if not accountsTokens.contains(walletAccount.address):
-    return
-  self.setAssets(accountsTokens[walletAccount.address])
-
-proc onCurrencyFormatsUpdated(self: Module) =
-  # Update assets
-  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
-  if walletAccount.isNil:
-    return
-  let tokens = self.controller.getTokensByAddress(walletAccount.address)
-  self.setAssets(tokens)
-
-method findTokenSymbolByAddress*(self: Module, address: string): string =
-  return self.controller.findTokenSymbolByAddress(address)

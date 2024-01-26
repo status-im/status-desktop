@@ -8,12 +8,11 @@ import app_service/service/settings/service as settings_service
 import app_service/service/community/service as community_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
+import app_service/service/token/service as token_service
 import app_service/common/social_links
 import app_service/common/types
 
 import app_service/service/profile/dto/profile_showcase_preferences
-
-import backend/helpers/token
 
 type
   Controller* = ref object of RootObj
@@ -24,6 +23,7 @@ type
     communityService: community_service.Service
     walletAccountService: wallet_account_service.Service
     networkService: network_service.Service
+    tokenService: token_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -32,7 +32,8 @@ proc newController*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    networkService: network_service.Service): Controller =
+    networkService: network_service.Service,
+    tokenService: token_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -41,6 +42,7 @@ proc newController*(
   result.communityService = communityService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
+  result.tokenService = tokenService
 
 proc delete*(self: Controller) =
   discard
@@ -93,9 +95,6 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts(true)
 
-proc getTokensByAddresses*(self: Controller, addresses: seq[string]): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddresses(addresses)
-
 proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 
@@ -126,3 +125,6 @@ proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
 
 proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
   self.communityService.requestCommunityInfo(communityId, shard)
+
+proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
+  return self.tokenService.getTokenBySymbolList()

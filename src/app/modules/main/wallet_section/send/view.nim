@@ -1,7 +1,6 @@
 import NimQml, sequtils, strutils, stint, sugar
 
 import ./io_interface, ./accounts_model, ./account_item, ./network_model, ./network_item, ./suggested_route_item, ./transaction_routes
-import app/modules/shared_models/token_model
 import app/modules/shared_models/collectibles_model as collectibles
 import app/modules/shared_models/collectibles_nested_model as nested_collectibles
 import app_service/service/transaction/dto as transaction_dto
@@ -187,8 +186,8 @@ QtObject:
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksModel.getAllNetworksChainIds():
-      self.fromNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalanceOnChain(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
-      self.toNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalanceOnChain(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
+      self.fromNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
+      self.toNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
 
   proc setItems*(self: View, items: seq[AccountItem]) =
     self.accounts.setItems(items)
@@ -267,7 +266,7 @@ QtObject:
     self.toNetworksModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
-      let hasGas = self.selectedSenderAccount.getAssets().hasGas(fromChainId, self.fromNetworksModel.getNetworkNativeGasSymbol(fromChainId), totalFeesInEth)
+      let hasGas = self.delegate.hasGas(self.selectedSenderAccount.address, fromChainId, self.fromNetworksModel.getNetworkNativeGasSymbol(fromChainId), totalFeesInEth)
       self.fromNetworksModel.updateFromNetworks(path, hasGas)
       self.toNetworksModel.updateToNetworks(path)
 

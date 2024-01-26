@@ -173,9 +173,6 @@ QtObject:
   proc getStickersMarketAddress(self: View): string {.slot.} =
     return self.stickersMarketAddress
 
-  proc getSNTBalance*(self: View): string {.slot.} =
-    return self.delegate.getSNTBalance()
-
   proc getWalletDefaultAddress*(self: View): string {.slot.} =
     return self.delegate.getWalletDefaultAddress()
 

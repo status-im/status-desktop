@@ -40,9 +40,6 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method findTokenSymbolByAddress*(self: AccessInterface, address: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getHistoricalDataForToken*(self: AccessInterface, symbol: string, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

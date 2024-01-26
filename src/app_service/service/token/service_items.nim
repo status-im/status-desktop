@@ -2,8 +2,6 @@ import strformat
 
 import app_service/common/types as common_types
 
-import backend/helpers/token
-
 # This file holds the data types used by models internally
 
 type SupportedSourcesItem* = ref object of RootObj

@@ -173,12 +173,6 @@ QtObject {
         return globalUtils.hex2Gwei(value)
     }
 
-    function findTokenSymbolByAddress(address) {
-        if (Global.appIsReady)
-            return walletSectionAllTokens.findTokenSymbolByAddress(address)
-        return ""
-    }
-
     function getCurrencyAmount(amount, symbol) {
         return currencyStore.getCurrencyAmount(amount, symbol)
     }

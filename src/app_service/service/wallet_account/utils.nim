@@ -2,14 +2,6 @@
 # Common functions
 #################################################
 
-proc priorityTokenCmp(a, b: WalletTokenDto): int =
-  for symbol in @["ETH", "SNT", "DAI", "STT"]:
-    if a.symbol == symbol:
-      return -1
-    if b.symbol == symbol:
-      return 1
-  cmp(a.name, b.name)
-
 proc walletAccountsCmp(x, y: WalletAccountDto): int =
   cmp(x.position, y.position)
 
@@ -35,20 +27,6 @@ proc responseHasNoErrors(procName: string, response: RpcResponse[JsonNode]): boo
     return true
   error "error: ", procName=procName, errDesription = errMsg
   return false
-
-proc allBalancesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
-    for token in tokens:
-      for chainId, balanceDto in token.balancesPerChain:
-        if not balanceDto.hasError:
-          return false
-    return true
-
-proc allMarketValuesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
-  for token in tokens:
-    for currency, marketDto in token.marketValuesPerCurrency:
-      if not marketDto.hasError:
-        return false
-  return true
 
 #################################################
 # Remote functions

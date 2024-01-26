@@ -15,8 +15,6 @@ import app/modules/shared_models/currency_amount
 import app/core/signals/types
 import app/core/eventemitter
 
-import backend/helpers/token
-
 logScope:
   topics = "wallet-send-controller"
 
@@ -102,8 +100,8 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc getTokenBalanceOnChain*(self: Controller, address: string, chainId: int, symbol: string): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTokenBalanceOnChain(address, chainId, symbol), self.currencyService.getCurrencyFormat(symbol))
+proc getTokenBalance*(self: Controller, address: string, chainId: int, symbol: string): CurrencyAmount =
+  return currencyAmountToItem(self.walletAccountService.getTokenBalance(address, chainId, symbol), self.currencyService.getCurrencyFormat(symbol))
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER,
@@ -129,11 +127,8 @@ proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAd
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 
-proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddress(address)
-
-proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
-  return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+proc getTotalCurrencyBalance*(self: Controller, address: seq[string], chainIds: seq[int]): float64 =
+  return self.walletAccountService.getTotalCurrencyBalance(address, chainIds)
 
 proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
@@ -162,3 +157,6 @@ proc runSignFlow*(self: Controller, pin, bip44Path, txHash: string) =
   self.cancelCurrentFlow()
   self.connectKeycardReponseSignal()
   self.keycardService.startSignFlow(bip44Path, txHash, pin)
+
+proc hasGas*(self: Controller, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
+  return self.walletAccountService.hasGas(accountAddress, chainId, nativeGasSymbol, requiredGas)

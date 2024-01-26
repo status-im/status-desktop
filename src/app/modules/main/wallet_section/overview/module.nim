@@ -11,8 +11,6 @@ import ./item
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
-import backend/helpers/token
-
 export io_interface
 
 type

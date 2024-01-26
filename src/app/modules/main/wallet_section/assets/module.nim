@@ -9,13 +9,9 @@ import app_service/service/network/service as network_service
 import app_service/service/network_connection/service as network_connection
 import app_service/service/node/service as node_service
 import app/modules/shared/wallet_utils
-import app/modules/shared_models/token_model as token_model
-import app/modules/shared_models/token_item as token_item
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
-
-import backend/helpers/token
 
 export io_interface
 
@@ -45,12 +41,6 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
 
-proc setLoadingAssets(self: Module) =
-  var loadingTokenItems: seq[token_item.Item]
-  for i in 0 ..< 25:
-    loadingTokenItems.add(token_item.initLoadingItem())
-  self.view.getAssetsModel().setItems(loadingTokenItems)
-
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
@@ -58,7 +48,6 @@ method load*(self: Module) =
     self.view.modelsAboutToUpdate()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    let arg = TokensPerAccountArgs(e)
     self.view.modelsUpdated()
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
     self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
@@ -71,15 +60,6 @@ method load*(self: Module) =
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())
     self.view.setHasMarketValuesCache(self.controller.getHasMarketValuesCache())
 
-  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
-    if self.view.getAssetsModel().getCount() == 0:
-      self.setLoadingAssets()
-
-  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
-    let args = NetworkConnectionsArgs(e)
-    if args.website == BLOCKCHAINS and args.completelyDown and self.view.getAssetsModel().getCount() == 0:
-      self.setLoadingAssets()
-
   self.controller.init()
   self.view.load()
 
@@ -89,25 +69,6 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.assetsModuleDidLoad()
-
-proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto], enabledChainIds: seq[int]) =
-  let chainIds = self.controller.getChainIds()
-  let currency = self.controller.getCurrentCurrency()
-  let currencyFormat = self.controller.getCurrencyFormat(currency)
-
-  let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
-  let totalCurrencyBalanceForAllAssets = tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0)
-
-  self.view.getAssetsModel().setItems(items)
-
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
-
-  if walletAccounts[0].assetsLoading:
-    self.setLoadingAssets()
-  else:
-    let walletTokens = self.controller.getWalletTokensByAddresses(addresses)
-    self.setAssetsAndBalance(walletTokens, chainIds)
 
 # Interfaces for getting lists from the service files into the abstract models
 

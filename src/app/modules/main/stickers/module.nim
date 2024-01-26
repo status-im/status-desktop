@@ -269,9 +269,6 @@ method addStickerPackToList*(self: Module, stickerPack: StickerPackDto, isInstal
         )
   self.view.addStickerPackToList(stickerPackItem, isInstalled, isBought, isPending)
 
-method getSNTBalance*(self: Module): string =
-  return self.controller.getSNTBalance()
-
 method getWalletDefaultAddress*(self: Module): string =
   return self.controller.getWalletDefaultAddress()
 

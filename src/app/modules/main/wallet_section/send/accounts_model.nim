@@ -10,7 +10,6 @@ type
     ColorId,
     WalletType,
     Emoji,
-    Assets,
     CurrencyBalance,
     Position,
     PreferredSharingChainIds
@@ -54,7 +53,6 @@ QtObject:
       ModelRole.ColorId.int:"colorId",
       ModelRole.WalletType.int:"walletType",
       ModelRole.Emoji.int: "emoji",
-      ModelRole.Assets.int: "assets",
       ModelRole.CurrencyBalance.int: "currencyBalance",
       ModelRole.Position.int: "position",
       ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
@@ -89,8 +87,6 @@ QtObject:
       result = newQVariant(item.emoji())
     of ModelRole.Position:
       result = newQVariant(item.getPosition())
-    of ModelRole.Assets:
-      result = newQVariant(item.getAssetsAsQVariant())
     of ModelRole.CurrencyBalance:
       result = newQVariant(item.getCurrencyBalanceAsQVariant())
     of ModelRole.PreferredSharingChainIds:
@@ -107,5 +103,3 @@ proc getItemByAddress*(self: AccountsModel, address: string): tuple[account: Acc
       return (self.items[i], i)
   if self.items.len > 0:
     return (self.items[0], 0)
-
-

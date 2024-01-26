@@ -13,7 +13,6 @@ import app/core/signals/types
 import app_service/common/cache
 import constants as main_constants
 import ./dto, ./service_items
-import backend/helpers/token
 
 export dto, service_items
 
@@ -497,22 +496,6 @@ QtObject:
       if token.address == address:
         return token
 
-  proc findTokenSymbolByAddress*(self: Service, address: string): string =
-    if address.isEmptyOrWhitespace:
-      return ""
-
-    var hexAddressValue: Address
-    try:
-      hexAddressValue = fromHex(Address, address)
-    except Exception as e:
-      return ""
-
-    for _, tokens in self.tokens:
-      for token in tokens:
-        if token.address == $hexAddressValue:
-          return token.symbol
-    return ""
-
   proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
     return crypto & fiat
 
@@ -526,12 +509,6 @@ QtObject:
       result[symbol] = initTable[string, float64]()
       for (currency, price) in pricePerCurrency.pairs:
         result[symbol][currency] = price.getFloat
-
-  proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
-    # Use data fetched by walletAccountService to update local price cache
-    for token in tokens:
-      for currency, marketValues in token.marketValuesPerCurrency:
-        self.updateCachedTokenPrice(token.symbol, currency, marketValues.price)
 
   proc isCachedTokenPriceRecent*(self: Service, crypto: string, fiat: string): bool =
     let (cryptoKey, _) = getCryptoKeyAndFactor(crypto)

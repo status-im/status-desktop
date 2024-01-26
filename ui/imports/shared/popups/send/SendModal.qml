@@ -427,11 +427,7 @@ StatusDialog {
                         assets: popup.store.walletAssetStore.groupedAccountAssetsModel
                         collectibles: popup.preSelectedAccount ? popup.nestedCollectiblesModel : null
                         networksModel: popup.store.allNetworksModel
-                        onlyAssets: holdingSelector.onlyAssets
-                        // TODO remove this as address should be found directly in model itself
-                        searchTokenSymbolByAddressFn: function (address) {
-                            return store.findTokenSymbolByAddress(address)
-                        }
+                        onlyAssets: holdingSelector.onlyAssets 
                         onTokenSelected: {
                             d.setSelectedHoldingId(symbol, holdingType)
                         }

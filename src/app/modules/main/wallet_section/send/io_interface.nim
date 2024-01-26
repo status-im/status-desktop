@@ -21,7 +21,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenBalanceOnChain*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
+method getTokenBalance*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutes*(self: AccessInterface, accountFrom: string, accountTo: string, amount: UInt256, token: string, disabledFromChainIDs,
@@ -72,4 +72,7 @@ method prepareSignaturesForTransactions*(self: AccessInterface, txHashes: seq[st
   raise newException(ValueError, "No implementation available")
 
 method onTransactionSigned*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method hasGas*(self: AccessInterface, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -2,8 +2,6 @@ import NimQml, tables
 import app/core/eventemitter
 from app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
 
-from backend/helpers/token import WalletTokenDto
-
 import app/modules/shared_models/keypair_item
 
 type FlowType* {.pure.} = enum
@@ -238,7 +236,7 @@ method syncKeycardBasedOnAppState*(self: AccessInterface, keyUid: string, pin: s
 method getPin*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onTokensRebuilt*(self: AccessInterface, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) {.base.} =
+method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

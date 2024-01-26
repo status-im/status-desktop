@@ -1,7 +1,6 @@
 import NimQml, json, stint, strutils
 
 import ./io_interface
-import ../../../shared_models/token_model as token_model
 import ./grouped_account_assets_model as grouped_account_assets_model
 import app_service/service/wallet_account/service
 
@@ -9,7 +8,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      assets: token_model.Model
       groupedAccountAssetsModel: grouped_account_assets_model.Model
       hasBalanceCache: bool
       hasMarketValuesCache: bool
@@ -18,28 +16,16 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: View) =
-    self.assets.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.setup()
     result.delegate = delegate
-    result.assets = token_model.newModel()
     result.groupedAccountAssetsModel = grouped_account_assets_model.newModel(delegate.getGroupedAccountAssetsDataSource())
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-
-  proc getAssetsModel*(self: View): token_model.Model =
-    return self.assets
-
-  proc assetsChanged(self: View) {.signal.}
-  proc getAssets*(self: View): QVariant {.slot.} =
-    return newQVariant(self.assets)
-  QtProperty[QVariant] assets:
-    read = getAssets
-    notify = assetsChanged   
 
   proc groupedAccountAssetsModelChanged(self: View) {.signal.}
   proc getGroupedAccountAssetsModel*(self: View): QVariant {.slot.} =

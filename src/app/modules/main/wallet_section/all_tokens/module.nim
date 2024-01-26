@@ -82,9 +82,6 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.allTokensModuleDidLoad()
 
-method findTokenSymbolByAddress*(self: Module, address: string): string =
-  return self.controller.findTokenSymbolByAddress(address)
-
 method getHistoricalDataForToken*(self: Module, symbol: string, currency: string) =
   self.controller.getHistoricalDataForToken(symbol, currency, WEEKLY_TIME_RANGE)
   self.controller.getHistoricalDataForToken(symbol, currency, MONTHLY_TIME_RANGE)
