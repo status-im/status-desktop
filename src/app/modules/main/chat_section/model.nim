@@ -1,8 +1,10 @@
-import NimQml, Tables, strutils, strformat, json, sequtils
+import NimQml, Tables, strutils, strformat, json, sequtils, times, system
 import ../../../../app_service/common/types
 import ../../../../app_service/service/chat/dto/chat
 from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
 import item
+import ../../../global/utils as utils
+import ../../../global/global_singleton
 
 type
   ModelRole {.pure.} = enum
@@ -345,7 +347,10 @@ QtObject:
     if index == -1:
       return
     self.items[index].name = name
-    self.items[index].icon = icon
+
+    var updatedIcon = singletonInstance.utils().addTimestampToURL(icon)
+
+    self.items[index].icon = updatedIcon
     self.items[index].trustStatus = trustStatus
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
