@@ -264,6 +264,7 @@ Item {
 
         StatusChatInfoButton {
             readonly property string emojiIcon: chatContentModule? chatContentModule.chatDetails.emoji : "" // Needed for test
+            readonly property string assetName: chatContentModule && Utils.addTimestampToURL(chatContentModule.chatDetails.icon)
 
             objectName: "chatInfoBtnInHeader"
             title: chatContentModule? chatContentModule.chatDetails.name : ""
@@ -283,7 +284,7 @@ Item {
                     return ""
                 }
             }
-            asset.name: chatContentModule? chatContentModule.chatDetails.icon : ""
+            asset.name: assetName
             asset.isImage: chatContentModule && chatContentModule.chatDetails.icon !== ""
             asset.isLetterIdenticon: chatContentModule && chatContentModule.chatDetails.icon === ""
             ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?

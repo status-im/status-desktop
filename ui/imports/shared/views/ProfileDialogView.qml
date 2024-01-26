@@ -278,7 +278,7 @@ Pane {
                                  : d.mainDisplayName
                 pubkey: root.publicKey
                 image: root.dirty ? root.dirtyValues.profileLargeImage
-                                  : d.contactDetails.largeImage
+                                  : Utils.addTimestampToURL(d.contactDetails.largeImage)
                 interactive: false
                 imageWidth: 80
                 imageHeight: imageWidth

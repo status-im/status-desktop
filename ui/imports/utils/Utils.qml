@@ -938,4 +938,8 @@ QtObject {
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
+
+    function addTimestampToURL(url) {
+        return globalUtilsInst.addTimestampToURL(url)
+    }
 }
