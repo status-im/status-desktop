@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
@@ -20,11 +21,10 @@ Item {
     property var assets: null
     property var collectibles: null
     property var networksModel
+
     signal tokenSelected(string symbol, var holdingType)
     signal tokenHovered(string symbol, var holdingType, bool hovered)
-    property var searchTokenSymbolByAddressFn: function (address) {
-        return ""
-    }
+
     property bool onlyAssets: false
     property int browsingHoldingType: Constants.TokenType.ERC20
     property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
@@ -70,6 +70,18 @@ Item {
             leftModel: root.collectibles
             rightModel: d.renamedAllNetworksModel
             joinRole: "chainId"
+        }
+
+        function searchAddressInList(addressPerChain, searchString) {
+            let addressFound = false
+            let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
+            for (let i =0; i< tokenAddresses.length; i++){
+                if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
+                    addressFound = true
+                    break;
+                }
+            }
+            return addressFound
         }
     }
 
@@ -142,14 +154,16 @@ Item {
     property var tokensModel: SortFilterProxyModel {
         sourceModel: root.assets
         filters: [
-            ExpressionFilter {
-                expression: {
-                    var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.assetSearchString)
+            FastExpressionFilter {
+                function search(symbol, name, addressPerChain, searchString) {
                     tokenList.positionViewAtBeginning()
                     return (
-                        symbol.startsWith(d.assetSearchString.toUpperCase()) || name.toUpperCase().startsWith(d.assetSearchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                        symbol.startsWith(searchString.toUpperCase()) ||
+                                name.toUpperCase().startsWith(searchString.toUpperCase()) || d.searchAddressInList(addressPerChain, searchString)
                     )
                 }
+                expression: search(symbol, name, addressPerChain, d.assetSearchString)
+                expectedRoles: ["symbol", "name", "addressPerChain"]
             }
         ]
     }

@@ -1,5 +1,3 @@
-import backend/helpers/token
-
 #################################################
 # Special signal emitted by main module and handled in wallet account service
 #################################################
@@ -71,7 +69,8 @@ type DerivedAddressesArgs* = ref object of Args
   error*: string
 
 type TokensPerAccountArgs* = ref object of Args
-  accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
+  accountAddresses*: seq[string]
+  accountTokens*: seq[GroupedTokenItem]
 
 type KeycardActivityArgs* = ref object of Args
   success*: bool

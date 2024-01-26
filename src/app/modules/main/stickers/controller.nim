@@ -162,9 +162,6 @@ proc getSigningPhrase*(self: Controller): string =
 proc getStickerMarketAddress*(self: Controller): string =
   return self.stickerService.getStickerMarketAddress()
 
-proc getSNTBalance*(self: Controller): string =
-  return self.stickerService.getSNTBalance()
-
 proc getWalletDefaultAddress*(self: Controller): string =
   return self.walletAccountService.getWalletAccount(0).address
 

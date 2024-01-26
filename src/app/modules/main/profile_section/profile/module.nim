@@ -12,6 +12,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/profile/dto/profile_showcase
 import app_service/service/profile/dto/profile_showcase_preferences
+import app_service/service/token/service as token_service
 import app_service/common/social_links
 
 import app/modules/shared_models/social_links_model
@@ -48,12 +49,13 @@ proc newModule*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    networkService: network_service.Service): Module =
+    networkService: network_service.Service,
+    tokenService: token_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, networkService)
+  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, networkService, tokenService)
   result.collectiblesController = collectiblesc.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
     loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
@@ -218,7 +220,7 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
   for tokenProfile in profileShowcase.verifiedTokens:
     # NOTE: not yet working for external wallet accounts
-    for token in self.controller.getTokensByAddresses(accountAddresses):
+    for token in self.controller.getTokenBySymbolList():
       if tokenProfile.symbol == token.symbol:
         profileAssetItems.add(initProfileShowcaseVerifiedToken(token, ProfileShowcaseVisibility.ToEveryone, tokenProfile.order))
 
@@ -266,7 +268,7 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   # TODO: Verified tokens preferences
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
   for tokenProfile in preferences.verifiedTokens:
-    for token in self.controller.getTokensByAddresses(accountAddresses):
+    for token in self.controller.getTokenBySymbolList():
       if tokenProfile.symbol == token.symbol:
         profileAssetItems.add(initProfileShowcaseVerifiedToken(token, tokenProfile.showcaseVisibility, tokenProfile.order))
 

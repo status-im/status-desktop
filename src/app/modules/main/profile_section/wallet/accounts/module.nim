@@ -12,10 +12,9 @@ import app/core/eventemitter
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/settings/service
+import app_service/service/token/service
 
 import backend/collectibles as backend_collectibles
-
-import backend/helpers/token
 
 export io_interface
 
@@ -84,13 +83,13 @@ proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAc
     testPreferredChainIds = account.testPreferredChainIds,
     hideFromTotalBalance = account.hideFromTotalBalance)
 
-proc setBalance(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+proc setBalance(self: Module, accountAddresses: seq[string]) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  for address, tokens in accountsTokens.pairs:
-    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)
-    self.view.setBalanceForKeyPairs(address, balance)
+  for acc in accountAddresses:
+    let balance =  currencyAmountToItem(self.controller.getTotalCurrencyBalance(acc, enabledChainIds), currencyFormat)
+    self.view.setBalanceForKeyPairs(acc, balance)
 
 proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
@@ -110,7 +109,7 @@ proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): se
   for item in keyPairItems:
     let accounts = item.getAccountsModel().getItems()
     for acc in accounts:
-      let balance =  currencyAmountToItem(self.controller.getCurrencyBalance(acc.getAddress(), enabledChainIds, currency), currencyFormat)
+      let balance =  currencyAmountToItem(self.controller.getTotalCurrencyBalance(acc.getAddress(), enabledChainIds), currencyFormat)
       acc.setBalance(balance)
 
   return keyPairItems
@@ -144,7 +143,10 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.setBalance(arg.accountsTokens)
+    self.setBalance(arg.accountAddresses)
+
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
+    self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = AccountArgs(e)

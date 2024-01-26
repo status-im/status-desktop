@@ -3,13 +3,12 @@ import json, strutils, stint, json_serialization, tables
 import profile_preferences_base_item
 
 import app_service/service/profile/dto/profile_showcase_preferences
+import app_service/service/token/service_items
 
 import app/modules/shared_models/currency_amount
 
 include app_service/common/json_utils
 include app_service/common/utils
-
-import backend/helpers/token
 
 type
   ProfileShowcaseAssetItem* = ref object of ProfileShowcaseBaseItem
@@ -19,11 +18,10 @@ type
     symbol*: string
     name*: string
     enabledNetworkBalance*: CurrencyAmount
-    color*: string
     decimals*: int
 
 
-proc initProfileShowcaseVerifiedToken*(token: WalletTokenDto, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
+proc initProfileShowcaseVerifiedToken*(token: TokenBySymbolItem, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseAssetItem =
   result = ProfileShowcaseAssetItem()
 
   result.showcaseVisibility = visibility
@@ -31,8 +29,7 @@ proc initProfileShowcaseVerifiedToken*(token: WalletTokenDto, visibility: Profil
 
   result.symbol = token.symbol
   result.name = token.name
-  result.enabledNetworkBalance = newCurrencyAmount(token.getTotalBalanceOfSupportedChains(), token.symbol, token.decimals, false)
-  result.color = token.color
+  result.enabledNetworkBalance = newCurrencyAmount()
   result.decimals = token.decimals
 
   # TODO: initProfileShowcaseUnverifiedToken
@@ -51,7 +48,6 @@ proc toProfileShowcaseAssetItem*(jsonObj: JsonNode): ProfileShowcaseAssetItem =
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("decimals", result.decimals)
 
   result.enabledNetworkBalance = newCurrencyAmount(jsonObj{"enabledNetworkBalance"}.getFloat, result.symbol, result.decimals, false)

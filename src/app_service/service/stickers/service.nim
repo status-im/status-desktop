@@ -11,7 +11,6 @@ import backend/stickers as status_stickers
 import backend/chat as status_chat
 import backend/response_type
 import backend/eth as status_eth
-import backend/helpers/helpers
 import backend/backend as status_go_backend
 import backend/wallet_connect as status_wallet_connect
 import backend/wallet as status_wallet
@@ -389,16 +388,6 @@ QtObject:
       discard status_stickers.clearRecentStickers()
     except RpcException:
       error "Error removing recent stickers", message = getCurrentExceptionMsg()
-
-  proc getSNTBalance*(self: Service): string =
-    let token = self.getStatusToken()
-    let account = self.walletAccountService.getWalletAccount(0).address
-    let network = self.networkService.getAppNetwork()
-
-    let info = getTokenBalanceForAccount(network.chainId, account, token.address)
-    if info.isNone:
-      return "0"
-    return ens_utils.hex2Token(info.get().rawBalance.toString(16), token.decimals)
 
   # proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string): JsonNode =
   proc prepareTxForBuyingStickers*(self: Service, chainId: int, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,

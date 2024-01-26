@@ -103,12 +103,6 @@ QtObject {
         }
     }
 
-    function findTokenSymbolByAddress(address) {
-        if (Global.appIsReady)
-            return walletSectionAllTokens.findTokenSymbolByAddress(address)
-        return ""
-    }
-
     function getAsset(assetsList, symbol) {
         for(var i=0; i< assetsList.rowCount();i++) {
             let asset = ModelUtils.get(assetsList, i)

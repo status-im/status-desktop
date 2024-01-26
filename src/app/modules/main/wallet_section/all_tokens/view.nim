@@ -63,9 +63,6 @@ QtObject:
     read = getBalanceHistoryIsLoading
     notify = balanceHistoryIsLoadingChanged
 
-  proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
-    return self.delegate.findTokenSymbolByAddress(address)
-
   proc getHistoricalDataForToken*(self: View, symbol: string, currency: string) {.slot.} =
     self.setMarketHistoryIsLoading(true)
     self.delegate.getHistoricalDataForToken(symbol, currency)

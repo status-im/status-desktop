@@ -179,7 +179,6 @@ method setTotalCurrencyBalance*(self: Module) =
 
 proc notifyFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allAddresses)
-  self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.allAddresses, self.filter.chainIds, self.filter.allChainsEnabled)

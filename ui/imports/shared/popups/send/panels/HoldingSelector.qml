@@ -12,6 +12,7 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import "../controls"
 
@@ -28,9 +29,6 @@ Item {
     implicitWidth: holdingItemSelector.implicitWidth
     implicitHeight: holdingItemSelector.implicitHeight
 
-    property var searchAssetSymbolByAddressFn: function (address) {
-        return ""
-    }
     property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
     property var getCurrentCurrencyAmount: function(balance){}
 
@@ -81,7 +79,6 @@ Item {
         property var currentHoldingType: Constants.TokenType.Unknown
 
         property string searchText
-        readonly property string assetSymbolByAddress: isCurrentBrowsingTypeAsset ? "": root.searchAssetSymbolByAddressFn(searchText)
         readonly property string uppercaseSearchText: searchText.toUpperCase()
 
         property var assetTextFn: function (asset) {
@@ -95,16 +92,18 @@ Item {
         property var assetComboBoxModel: SortFilterProxyModel {
             sourceModel: root.assetsModel
             filters: [
-                ExpressionFilter {
-                    expression: {
-                        d.uppercaseSearchText; // Force re-evaluation when searchText changes
+                FastExpressionFilter {
+                    function search(symbol, name, addressPerChain, searchString) {
                         return (
-                            d.uppercaseSearchText === "" ||
-                            symbol.startsWith(d.uppercaseSearchText) ||
-                            name.toUpperCase().startsWith(d.uppercaseSearchText) |
-                            (d.assetSymbolByAddress !== "" && symbol.startsWith(d.assetSymbolByAddress))
+                            searchString === "" ||
+                            symbol.startsWith(searchString) ||
+                            name.toUpperCase().startsWith(searchString) ||
+                            d.searchAddressInList(addressPerChain, searchString)
                         )
                     }
+
+                    expression: search(symbol, name, addressPerChain, d.uppercaseSearchText)
+                    expectedRoles: ["symbol", "name", "addressPerChain"]
                 }
             ]
         }
@@ -169,6 +168,18 @@ Item {
         readonly property int collectibleContentIconSize: 28
         readonly property int assetContentTextSize: 28
         readonly property int collectibleContentTextSize: 15
+
+        function searchAddressInList(addressPerChain, searchString) {
+            let addressFound = false
+            let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
+            for (let i =0; i< tokenAddresses.length; i++){
+                if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
+                    addressFound = true
+                    break;
+                }
+            }
+            return addressFound
+        }
     }
 
     HoldingItemSelector {

@@ -13,6 +13,7 @@ import app_service/service/keycard/constants as keycard_constants
 import app/modules/shared/wallet_utils
 import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
+import app_service/service/token/service
 
 import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_models/collectibles_model as collectibles
@@ -58,7 +59,7 @@ type
     receiveCurrentAccountIndex: int
 
 # Forward declaration
-method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount
+method getTokenBalance*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -127,7 +128,7 @@ proc convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkI
       true,
       false,
       true,
-      self.getTokenBalanceOnChain(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetSymbol())
+      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetSymbol())
       )
 
 proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
@@ -177,20 +178,13 @@ method refreshWalletAccounts*(self: Module) =
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
 
   let items = walletAccounts.map(w => (block:
-    let tokens = self.controller.getTokensByAddress(w.address)
-    let tokenFormats = collect(initTable()):
-      for t in tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-
-    let currencyBalance = self.controller.getCurrencyBalance(w.address, enabledChainIds, currency)
+    let currencyBalance = self.controller.getTotalCurrencyBalance(@[w.address], enabledChainIds)
     walletAccountToWalletSendAccountItem(
       w,
-      tokens,
       chainIds,
       enabledChainIds,
-      currency,
       currencyBalance,
       currencyFormat,
-      tokenFormats,
       areTestNetworksEnabled,
     )
   ))
@@ -243,6 +237,9 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
+    self.refreshWalletAccounts()
+
   self.controller.init()
   self.view.load()
 
@@ -255,8 +252,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
 
-method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
-  return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
+method getTokenBalance*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
+  return self.controller.getTokenBalance(address, chainId, symbol)
 
 method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
   self.tmpSendTransactionDetails.fromAddr = fromAddr
@@ -400,3 +397,6 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
 
   editedText = "<a><p>" & editedText & "</a></p>"
   return editedText
+
+method hasGas*(self: Module, accountAddress: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
+  return self.controller.hasGas(accountAddress, chainId, nativeGasSymbol, requiredGas)

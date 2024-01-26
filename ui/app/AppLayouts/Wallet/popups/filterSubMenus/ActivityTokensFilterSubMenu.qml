@@ -2,9 +2,11 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.controls 1.0
 import "../../controls"
@@ -29,13 +31,26 @@ StatusMenu {
     signal tokenToggled(string tokenSymbol)
     signal collectibleToggled(string uid)
 
-    property var searchTokenSymbolByAddressFn: function (address) { return "" } // TODO
-
     implicitWidth: 289
 
     function resetView() {
         tokensSearchBox.reset()
         collectiblesSearchBox.reset()
+    }
+
+    QtObject {
+        id: d
+        function searchAddressInList(addressPerChain, searchString) {
+            let addressFound = false
+            let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
+            for (let i =0; i< tokenAddresses.length; i++){
+                if(tokenAddresses[i].toUpperCase().startsWith(searchString)) {
+                    addressFound = true
+                    break;
+                }
+            }
+            return addressFound
+        }
     }
 
     contentItem: ColumnLayout {
@@ -82,7 +97,7 @@ StatusMenu {
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("No Assets")
-                    visible: root.tokensList.count === 0
+                    visible: root.tokensList.rowCount() === 0
                 }
 
                 SearchBox {
@@ -102,13 +117,19 @@ StatusMenu {
                     model: SortFilterProxyModel {
                         id: tokenProxyModel
                         sourceModel: root.tokensList
-                        filters: ExpressionFilter {
+                        filters: FastExpressionFilter {
                             readonly property string tokenSearchValue: tokensSearchBox.text.toUpperCase()
-                            readonly property string tokenSymbolByAddress: root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
-                            enabled: root.tokensList.count > 0
-                            expression: {
-                                return symbol.startsWith(tokenSearchValue) || name.toUpperCase().startsWith(tokenSearchValue) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                            function search(symbol, name, addressPerChain, searchString) {
+                                return (
+                                    searchString === "" ||
+                                    symbol.toUpperCase().startsWith(searchString) ||
+                                    name.toUpperCase().startsWith(searchString) ||
+                                    d.searchAddressInList(addressPerChain, searchString)
+                                )
                             }
+                            enabled: root.tokensList.rowCount() > 0
+                            expression:search(symbol, name, addressPerChain, tokenSearchValue)
+                            expectedRoles: ["symbol", "name", "addressPerChain"]
                         }
                     }
                     delegate: ActivityTypeCheckBox {

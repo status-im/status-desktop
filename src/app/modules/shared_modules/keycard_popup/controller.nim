@@ -1,4 +1,4 @@
-import chronicles, tables, strutils, sequtils, sugar
+import chronicles, tables, strutils, sequtils, sugar, stint
 import uuids
 import io_interface
 
@@ -210,7 +210,7 @@ proc init*(self: Controller, fullConnect = true) =
 
     handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
       let arg = TokensPerAccountArgs(e)
-      self.delegate.onTokensRebuilt(arg.accountsTokens)
+      self.delegate.onTokensRebuilt(arg.accountAddresses, arg.accountTokens)
     self.connectionIds.add(handlerId)
 
 proc switchToWalletSection*(self: Controller) =
@@ -783,11 +783,6 @@ proc getCurrency*(self: Controller): string =
     return
   return self.settingsService.getCurrency()
 
-proc getChainIdsOfAllKnownNetworks*(self: Controller): seq[int] =
-  if not serviceApplicable(self.networkService):
-    return
-  return self.networkService.getNetworks().map(n => n.chainId)
-
 proc enterKeycardPin*(self: Controller, pin: string) =
   if not serviceApplicable(self.keycardService):
     return
@@ -852,3 +847,9 @@ proc tryToStoreDataToKeychain*(self: Controller, password: string) =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.walletAccountService.getCurrencyFormat(symbol)
+
+proc getTotalCurrencyBalance*(self: Controller, address: string, chainIds: seq[int]): float64 =
+  return self.walletAccountService.getTotalCurrencyBalance(@[address], chainIds)
+
+proc parseCurrencyValue*(self: Controller, symbol: string, amountInt: UInt256): float64 =
+  return self.walletAccountService.parseCurrencyValue(symbol, amountInt)

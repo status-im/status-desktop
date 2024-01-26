@@ -45,9 +45,6 @@ proc init*(self: Controller) =
 
   self.tokenService.getSupportedTokensList()
 
-proc findTokenSymbolByAddress*(self: Controller, address: string): string =
-  return self.walletAccountService.findTokenSymbolByAddress(address)
-
 proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 

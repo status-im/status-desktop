@@ -5,8 +5,6 @@ import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/currency/service as currency_service
 
-import backend/helpers/token
-
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -44,9 +42,6 @@ proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
 proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)
 
-proc findTokenSymbolByAddress*(self: Controller, address: string): string =
-  return self.walletAccountService.findTokenSymbolByAddress(address)
-
 proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 
@@ -62,11 +57,8 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 
-proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto] =
-  return self.walletAccountService.getTokensByAddress(address)
-
-proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
-  return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+proc getTotalCurrencyBalance*(self: Controller, address: string, chainIds: seq[int]): float64 =
+  return self.walletAccountService.getTotalCurrencyBalance(@[address], chainIds)
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   return self.walletAccountService.getTokensMarketValuesLoading()

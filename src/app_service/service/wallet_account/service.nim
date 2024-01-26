@@ -45,15 +45,12 @@ QtObject:
     currencyService: currency_service.Service
     watchOnlyAccounts: Table[string, WalletAccountDto] ## [address, WalletAccountDto]
     keypairs: Table[string, KeypairDto] ## [keyUid, KeypairDto]
-    accountsTokens*: Table[string, seq[WalletTokenDto]] ## [address, seq[WalletTokenDto]]
-
     groupedAccountsTokensTable: Table[string, GroupedTokenItem]
     groupedAccountsTokensList: seq[GroupedTokenItem]
     hasBalanceCache: bool
 
   # Forward declaration
-  proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
-  proc newBuildAllTokens*(self: Service, accounts: seq[string], store: bool)
+  proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service, addresses: seq[string])
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
@@ -61,7 +58,6 @@ QtObject:
   proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string)
   # All slots defined in included files have to be forward declared
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.}
-  proc onNewAllTokensBuilt*(self: Service, response: string) {.slot.}
   proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.}
   proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.slot.}
   proc onAddressDetailsFetched*(self: Service, jsonString: string) {.slot.}
@@ -97,4 +93,3 @@ QtObject:
   include service_account
   include service_token
   include service_keycard
-  include service_token_new

@@ -19,8 +19,6 @@ import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/keychain/service as keychain_service
 
-import backend/helpers/token
-
 export io_interface
 
 logScope:
@@ -669,18 +667,23 @@ method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
     paths, keycardDto)
   self.setKeyPairForProcessing(item)
 
-method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) =
   if self.getKeyPairForProcessing().isNil and self.getKeyPairHelper().isNil:
     return
-  let chainIds = self.controller.getChainIdsOfAllKnownNetworks()
+  var totalTokenBalance = 0.0
   let currency = self.controller.getCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  for address, tokens in accountsTokens.pairs:
-    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0), currencyFormat)
-    if not self.getKeyPairForProcessing().isNil:
-      self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
-    if not self.getKeyPairHelper().isNil:
-      self.getKeyPairHelper().setBalanceForAddress(address, balance)
+  for address in accountAddresses:
+    let accAdd = address
+    for token in accountTokens:
+      let filteredBalances = token.balancesPerAccount.filter(b =>  b.account == accAdd)
+      for balance in filteredBalances:
+          totalTokenBalance += self.controller.parseCurrencyValue(token.symbol, balance.balance)
+      let balance =  currencyAmountToItem(totalTokenBalance, currencyFormat)
+      if not self.getKeyPairForProcessing().isNil:
+        self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
+      if not self.getKeyPairHelper().isNil:
+        self.getKeyPairHelper().setBalanceForAddress(address, balance)
 
 proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata):
   tuple[item: KeyPairItem, knownKeyPair: bool] =

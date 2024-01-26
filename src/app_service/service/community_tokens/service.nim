@@ -15,6 +15,7 @@ import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
 import ../activity_center/service as ac_service
 import ../community/service as community_service
+import app_service/service/currency/service as currency_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
 from backend/collectibles_types import CollectibleOwner
@@ -238,6 +239,7 @@ QtObject:
       walletAccountService: wallet_account_service.Service
       acService: ac_service.Service
       communityService: community_service.Service
+      currencyService: currency_service.Service
 
       tokenOwnersTimer: QTimer
       tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
@@ -267,7 +269,8 @@ QtObject:
     settingsService: settings_service.Service,
     walletAccountService: wallet_account_service.Service,
     acService: ac_service.Service,
-    communityService: community_service.Service
+    communityService: community_service.Service,
+    currencyService: currency_service.Service,
   ): Service =
     result = Service()
     result.QObject.setup
@@ -279,6 +282,7 @@ QtObject:
     result.walletAccountService = walletAccountService
     result.acService = acService
     result.communityService = communityService
+    result.currencyService = currencyService
     result.tokenOwnersTimer = newQTimer()
     result.tokenOwnersTimer.setInterval(10*60*1000)
     signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
@@ -1080,10 +1084,16 @@ QtObject:
       error "Error computing eth value", msg = e.msg
 
   proc getWalletBalanceForChain(self:Service, walletAddress: string, chainId: int): float =
-    let tokens = self.walletAccountService.getTokensByAddress(walletAddress.toLower())
+    var balance = 0.0
+    let tokens = self.walletAccountService.getGroupedAccountsAssetsList()
     for token in tokens:
       if token.symbol == ethSymbol:
-        return token.balancesPerChain[chainId].balance
+        let balances = token.balancesPerAccount.filter(
+          balanceItem => balanceItem.account == walletAddress.toLower() and
+          balanceItem.chainId == chainId).map(b => b.balance)
+        for b in balances:
+          balance += self.currencyService.parseCurrencyValue(token.symbol, b)
+    return balance
 
   proc createComputeFeeArgsFromEthAndBalance(self: Service, ethValue: float, balance: float): ComputeFeeArgs =
     let fiatValue = self.getFiatValue(ethValue, ethSymbol)

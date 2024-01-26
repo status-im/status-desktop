@@ -1,7 +1,6 @@
 import NimQml, sequtils
 
 import ./io_interface
-import ../../../shared_models/token_model as token_model
 import ../../../shared_models/currency_amount
 
 import ../../wallet_section/accounts/item as account_item
@@ -16,21 +15,18 @@ QtObject:
       colorId: string
       walletType: string
       currencyBalance: CurrencyAmount
-      assets: token_model.Model
       emoji: string
 
   proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
-    self.assets.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.setup()
     result.delegate = delegate
-    result.assets = token_model.newModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -89,16 +85,6 @@ QtObject:
     read = getCurrencyBalance
     notify = currencyBalanceChanged
 
-  proc getAssetsModel*(self: View): token_model.Model =
-    return self.assets
-
-  proc assetsChanged(self: View) {.signal.}
-  proc getAssets*(self: View): QVariant {.slot.} =
-    return newQVariant(self.assets)
-  QtProperty[QVariant] assets:
-    read = getAssets
-    notify = assetsChanged
-
   proc getEmoji(self: View): QVariant {.slot.} =
     return newQVariant(self.emoji)
 
@@ -113,12 +99,6 @@ QtObject:
 
 
   proc connectedAccountDeleted*(self: View) {.signal.}
-
-  proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
-    return self.delegate.findTokenSymbolByAddress(address)
-
-  proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
-    return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
 
 proc setData*(self: View, item: account_item.Item) =
     self.name = item.name()

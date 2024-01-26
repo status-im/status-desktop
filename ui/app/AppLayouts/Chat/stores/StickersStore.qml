@@ -18,12 +18,6 @@ QtObject {
         return stickersModule.getStickersMarketAddress()
     }
 
-    function getSntBalance() {
-        if(!root.stickersModule)
-            return ""
-        return stickersModule.getSNTBalance()
-    }
-
     function getWalletDefaultAddress() {
         if(!root.stickersModule)
             return ""
