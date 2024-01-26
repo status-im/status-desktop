@@ -478,6 +478,10 @@ proc getProfileShowcaseForContact*(contactId: string): RpcResponse[JsonNode] {.r
   let payload = %* [contactId]
   result = callPrivateRPC("getProfileShowcaseForContact".prefix, payload)
 
+proc getProfileShowcaseAccountsByAddress*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address]
+  result = callPrivateRPC("getProfileShowcaseAccountsByAddress".prefix, payload)
+
 proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("getProfileShowcasePreferences".prefix, %*[])
 

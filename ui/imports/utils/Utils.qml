@@ -406,10 +406,15 @@ QtObject {
 
     /* Validation section end */
 
-    function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false) {
+    function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
         const defaultValue = {
+            defaultDisplayName: "",
+            optionalName: "",
+            icon: "",
+            isCurrentUser: "",
+            colorId: "",
+            colorHash: "",
             displayName: "",
-            displayIcon: "",
             publicKey: publicKey,
             name: "",
             ensVerified: false,
@@ -420,21 +425,24 @@ QtObject {
             thumbnailImage: "",
             largeImage: "",
             isContact: false,
-            isAdded: false,
             isBlocked: false,
-            requestReceived: false,
+            isContactRequestReceived: false,
+            isContactRequestSent: false,
             isSyncing: false,
             removed: false,
             trustStatus: Constants.trustStatus.unknown,
+            contactRequestState: Constants.ContactRequestState.None,
             verificationStatus: Constants.verificationStatus.unverified,
             incomingVerificationStatus: Constants.verificationStatus.unverified,
+            socialLinks: [],
+            bio: "",
             onlineStatus: Constants.onlineStatus.inactive
         }
 
         if (!mainModuleInst || !publicKey)
             return defaultValue
 
-        const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus)
+        const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus, includeDetails)
 
         try {
             return JSON.parse(jsonObj)

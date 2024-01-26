@@ -90,6 +90,7 @@ proc `%`*(x: WalletAccountDto): JsonNode =
   result["path"] = % x.path
   result["colorId"] = % x.colorId
   result["publicKey"] = % x.publicKey
+  result["walletType"] = % x.walletType
   result["isWallet"] = % x.isWallet
   result["isChat"] = % x.isChat
   result["emoji"] = % x.emoji

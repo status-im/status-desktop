@@ -66,6 +66,12 @@ method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
 method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method fetchProfileShowcaseAccountsByAddress*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onProfileShowcaseAccountsByAddressFetched*(self: AccessInterface, accounts: seq[ProfileShowcaseAccount]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

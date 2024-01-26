@@ -35,7 +35,7 @@ ActivityNotificationBase {
         sender.profileImage {
             width: 40
             height: 40
-            name: contactDetails ? contactDetails.displayIcon : ""
+            name: contactDetails ? contactDetails.thumbnailImage : ""
             pubkey: contactId
             colorId: Utils.colorIdForPubkey(contactId)
             colorHash: Utils.getColorHashAsJson(contactId, sender.isEnsVerified)

@@ -43,7 +43,7 @@ Item {
     }
 
     function isUserAdded() {
-        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isAdded : false
+        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContactRequestSent : false
     }
 
     onPubKeyChanged: {

@@ -1,3 +1,5 @@
+import json
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -21,6 +23,9 @@ method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: s
   raise newException(ValueError, "No implementation available")
 
 method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getWalletAccountAsJson*(self: AccessInterface, address: string): JsonNode {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

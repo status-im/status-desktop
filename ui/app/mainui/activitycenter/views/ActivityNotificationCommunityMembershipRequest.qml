@@ -20,7 +20,7 @@ ActivityNotificationMessage {
     contactDetails: notification ? Utils.getContactDetailsAsJson(notification.author, false) : null
 
     messageDetails.messageText: qsTr("Wants to join")
-    messageDetails.sender.profileImage.name: contactDetails ? contactDetails.displayIcon : ""
+    messageDetails.sender.profileImage.name: contactDetails ? contactDetails.thumbnailImage : ""
     messageDetails.sender.profileImage.assetSettings.isImage: true
     messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""
     messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? notification.author : "")

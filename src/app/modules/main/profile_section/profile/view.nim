@@ -238,3 +238,10 @@ QtObject:
 
   proc updateProfileShowcaseAssets*(self: View, assets: seq[ProfileShowcaseAssetItem]) =
     self.profileShowcaseAssetsModel.reset(assets.sorted((a, b) => cmp(a.order, b.order), SortOrder.Ascending))
+
+  proc fetchProfileShowcaseAccountsByAddress*(self: View, address: string) {.slot.} =
+    self.delegate.fetchProfileShowcaseAccountsByAddress(address)
+
+  proc profileShowcaseAccountsByAddressFetched*(self: View, accounts: string) {.signal.}
+  proc emitProfileShowcaseAccountsByAddressFetchedSignal*(self: View, accounts: string) =
+    self.profileShowcaseAccountsByAddressFetched(accounts)

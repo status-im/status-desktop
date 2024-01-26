@@ -46,7 +46,7 @@ ActivityNotificationMessage {
     }
 
     ctaComponent: StatusFlatButton {
-        enabled: root.contactDetails && !root.contactDetails.added && !root.contactDetails.hasAddedUs
+        enabled: root.contactDetails && !root.contactDetails.added && !root.contactDetails.isContactRequestReceived
         size: StatusBaseButton.Size.Small
         text: qsTr("Send Contact Request")
         onClicked: Global.openContactRequestPopup(root.contactId, null)

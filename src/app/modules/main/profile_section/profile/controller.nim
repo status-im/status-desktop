@@ -64,6 +64,10 @@ proc init*(self: Controller) =
     let args = ProfileShowcaseForContactArgs(e)
     self.delegate.updateProfileShowcase(args.profileShowcase)
 
+  self.events.on(SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED) do(e: Args):
+    let args = ProfileShowcaseForContactArgs(e)
+    self.delegate.onProfileShowcaseAccountsByAddressFetched(args.profileShowcase.accounts)
+
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
     let args = CommunitiesArgs(e)
     self.delegate.onCommunitiesUpdated(args.communities)
@@ -116,6 +120,9 @@ proc requestProfileShowcasePreferences*(self: Controller) =
 
 proc requestProfileShowcaseForContact*(self: Controller, contactId: string) =
   self.profileService.requestProfileShowcaseForContact(contactId)
+
+proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
+  self.profileService.fetchProfileShowcaseAccountsByAddress(address)
 
 proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
   self.communityService.requestCommunityInfo(communityId, shard)

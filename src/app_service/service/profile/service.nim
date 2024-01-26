@@ -1,4 +1,4 @@
-import NimQml, json, chronicles, tables
+import NimQml, json, chronicles, tables, sequtils
 
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
@@ -28,6 +28,7 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_UPDATED* = "profileShowcasePreferencesUpdated"
 const SIGNAL_PROFILE_SHOWCASE_FOR_CONTACT_UPDATED* = "profileShowcaseForContactUpdated"
+const SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
 
 QtObject:
   type Service* = ref object of QObject
@@ -127,6 +128,33 @@ QtObject:
         ProfileShowcaseForContactArgs(profileShowcase: profileShowcase))
     except Exception as e:
       error "Error requesting profile showcase for a contact", msg = e.msg
+
+  proc fetchProfileShowcaseAccountsByAddress*(self: Service, address: string) =
+    let arg = FetchProfileShowcaseAccountsTaskArg(
+      address: address,
+      tptr: cast[ByteAddress](fetchProfileShowcaseAccountsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onProfileShowcaseAccountsByAddressFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onProfileShowcaseAccountsByAddressFetched*(self: Service, rpcResponse: string) {.slot.} =
+    var data = ProfileShowcaseForContactArgs(
+      profileShowcase: ProfileShowcaseDto(
+        accounts: @[],
+      ),
+    )
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+      if rpcResponseObj{"response"}.kind != JArray:
+        raise newException(CatchableError, "invalid response")
+
+      data.profileShowcase.accounts = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): ProfileShowcaseAccount = toProfileShowcaseAccount(x))
+    except Exception as e:
+      error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
+    self.events.emit(SIGNAL_PROFILE_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)
 
   proc requestProfileShowcasePreferences*(self: Service) =
     let arg = QObjectTaskArg(

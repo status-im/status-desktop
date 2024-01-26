@@ -7,6 +7,7 @@ type ProfileShowcaseCommunity* = ref object of RootObj
   order*: int
 
 type ProfileShowcaseAccount* = ref object of RootObj
+  contactId*: string
   address*: string
   name*: string
   colorId*: string
@@ -45,6 +46,7 @@ proc toProfileShowcaseCommunity*(jsonObj: JsonNode): ProfileShowcaseCommunity =
 
 proc toProfileShowcaseAccount*(jsonObj: JsonNode): ProfileShowcaseAccount =
   result = ProfileShowcaseAccount()
+  discard jsonObj.getProp("contactId", result.contactId)
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("colorId", result.colorId)
@@ -86,3 +88,12 @@ proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
     result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedToken())
   for jsonMsg in jsonObj["unverifiedTokens"]:
     result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedToken())
+
+proc `%`*(x: ProfileShowcaseAccount): JsonNode =
+  result = newJobject()
+  result["contactId"] = % x.contactId
+  result["address"] = % x.address
+  result["name"] = % x.name
+  result["colorId"] = % x.colorId
+  result["emoji"] = % x.emoji
+  result["order"] = % x.order
