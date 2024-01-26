@@ -24,33 +24,32 @@ SplitView {
         assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ManageAssetsPanel {
+        id: showcasePanel
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        Component.onCompleted: forceActiveFocus()
-        ManageAssetsPanel {
-            id: showcasePanel
-            width: 500
-            getCurrencyAmount: function (balance, symbol) {
-                return ({
-                            amount: balance,
-                            symbol: symbol,
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
-            getCurrentCurrencyAmount: function (balance) {
-                return ({
-                            amount: balance,
-                            symbol: "USD",
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
-            controller: ManageTokensController {
-                sourceModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
-                settingsKey: "WalletAssets"
-            }
+
+        getCurrencyAmount: function (balance, symbol) {
+            return ({
+                amount: balance,
+                symbol: symbol,
+                displayDecimals: 2,
+                stripTrailingZeroes: false
+            })
+        }
+        getCurrentCurrencyAmount: function (balance) {
+            return ({
+                amount: balance,
+                symbol: "USD",
+                displayDecimals: 2,
+                stripTrailingZeroes: false
+            })
+        }
+
+        controller: ManageTokensController {
+            sourceModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
+            settingsKey: "WalletAssets"
         }
     }
 

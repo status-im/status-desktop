@@ -23,9 +23,9 @@ Switch {
 
         implicitWidth: 52
         implicitHeight: 28
-        anchors.left: parent.left
+        anchors.left: root.left
         anchors.leftMargin: root.leftPadding
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: root.verticalCenter
 
         Rectangle {
             anchors.fill: parent
@@ -45,8 +45,8 @@ Switch {
             color: Theme.palette.white
             layer.enabled: true
             layer.effect: DropShadow {
-                width: parent.width
-                height: parent.height
+                width: circle.width
+                height: circle.height
                 visible: true
                 verticalOffset: 1
                 fast: true

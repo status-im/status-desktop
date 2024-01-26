@@ -12,7 +12,7 @@ import utils 1.0
 Item {
     id: root
     width: 600
-    height: 400
+    height: 2000
 
     ManageCollectiblesModel {
         id: collectiblesModel
@@ -33,6 +33,7 @@ Item {
         id: componentUnderTest
         ManageCollectiblesPanel {
             width: 500
+            height: contentItem.contentHeight
             controller: ManageTokensController {
                 sourceModel: renamedModel
                 settingsKey: "WalletCollectibles"
@@ -59,7 +60,7 @@ Item {
         property ManageCollectiblesPanel controlUnderTest: null
 
         function findDelegateIndexWithTitle(listview, title) {
-            waitForItemPolished(listview)
+            waitForRendering(listview)
             const count = listview.count
             for (let i = 0; i < count; i++) {
                 const item = listview.itemAtIndex(i)
@@ -74,9 +75,12 @@ Item {
             verify(!!token)
             const delegateBtn = findChild(token, "btnManageTokenMenu-%1".arg(index))
             verify(!!delegateBtn)
+
+            waitForItemPolished(delegateBtn)
             mouseClick(delegateBtn)
             const btnMenuLoader = findChild(delegateBtn, "manageTokensContextMenuLoader")
             verify(!!btnMenuLoader)
+
             tryCompare(btnMenuLoader, "active", true)
             const btnMenu = btnMenuLoader.item
             verify(!!btnMenu)
@@ -92,105 +96,120 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
-            controlUnderTest.clearSettings()
             notificationSpy.clear()
         }
 
+        function cleanup() {
+            controlUnderTest.clearSettings()
+        }
+
         function test_showHideSingleToken() {
+            waitForItemPolished(controlUnderTest)
             verify(!controlUnderTest.dirty)
 
-            const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
-            verify(!!lvRegular)
-            const lvRegularCount = lvRegular.count
-            verify(lvRegularCount === 7)
+            const lvOther = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvOther)
 
-            const delegate0 = findChild(lvRegular, "manageTokensDelegate-0")
+            tryCompare(lvOther, "count", 7)
+            const delegate0 = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title = delegate0.title
             tryCompare(notificationSpy, "count", 0)
-            triggerDelegateMenuAction(lvRegular, 0, "miHideCollectionToken")
+            triggerDelegateMenuAction(lvOther, 0, "miHideCollectionToken")
             // verify the signal to show the notification toast got fired
             tryCompare(notificationSpy, "count", 1)
 
             // verify we now have -1 regular tokens after the "hide" operation
-            tryCompare(lvRegular, "count", lvRegularCount-1)
+            tryCompare(lvOther, "count", 6)
         }
 
         function test_showHideCommunityGroup() {
             verify(!controlUnderTest.dirty)
 
-            const loaderCommunityTokens = findChild(controlUnderTest, "loaderCommunityTokens")
-            verify(!!loaderCommunityTokens)
-            tryCompare(loaderCommunityTokens, "active", true)
-            const switchArrangeByCommunity = findChild(controlUnderTest, "switchArrangeByCommunity")
+            const communityHeader = findChild(controlUnderTest, "communityHeader")
+            verify(!!communityHeader)
+            const switchArrangeByCommunity = findChild(communityHeader, "switch")
             verify(!!switchArrangeByCommunity)
-            switchArrangeByCommunity.toggle()
-            const lvCommunityTokenGroups = findChild(loaderCommunityTokens, "lvCommunityTokenGroups")
-            verify(!!lvCommunityTokenGroups)
+
+            waitForRendering(switchArrangeByCommunity)
+            mouseClick(switchArrangeByCommunity)
+            tryCompare(switchArrangeByCommunity, "checked", true)
+
+            tryCompare(controlUnderTest.controller, "arrangeByCommunity", true)
+
+            waitForRendering(controlUnderTest)
+            const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
+            verify(!!lvCommunity)
 
             // verify we have 2 community collectible groups
-            tryCompare(lvCommunityTokenGroups, "count", 3)
+            tryCompare(lvCommunity, "count", 3)
             tryCompare(notificationSpy, "count", 0)
-            triggerDelegateMenuAction(lvCommunityTokenGroups, 0, "miHideTokenGroup", true)
+            triggerDelegateMenuAction(lvCommunity, 0, "miHideTokenGroup", true)
             // verify the signal to show the notification toast got fired
             tryCompare(notificationSpy, "count", 1)
 
             // verify we have one less group
-            waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 2)
+            waitForItemPolished(lvCommunity)
+            tryCompare(lvCommunity, "count", 2)
         }
 
         function test_dnd() {
             verify(!controlUnderTest.dirty)
 
-            const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
-            verify(!!lvRegular)
-            verify(lvRegular.count !== 0)
+            const lvOther = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvOther)
+            verify(lvOther.count !== 0)
 
-            const delegate0 = findChild(lvRegular, "manageTokensDelegate-0")
+            const delegate0 = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title0 = delegate0.title
             verify(!!title0)
-            const title1 = findChild(lvRegular, "manageTokensDelegate-1").title
+            const delegate1 = findChild(lvOther, "manageTokensDelegate-1")
+            const title1 = delegate1.title
             verify(!!title1)
 
-            // DND one item down (~80px in height)
-            mouseDrag(delegate0, delegate0.width/2, delegate0.height/2, 0, 80)
+            waitForRendering(delegate1)
+
+            // DND one item up
+            mouseDrag(delegate1, delegate1.width/2, delegate1.height/2, 0, -delegate1.height)
 
             // cross compare the titles
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-0"), "title", title1)
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-1"), "title", title0)
+            tryCompare(findChild(lvOther, "manageTokensDelegate-0"), "title", title1)
+            tryCompare(findChild(lvOther, "manageTokensDelegate-1"), "title", title0)
             verify(controlUnderTest.dirty)
         }
 
         function test_group_dnd() {
             verify(!controlUnderTest.dirty)
 
-            const switchArrangeByCommunity = findChild(controlUnderTest, "switchArrangeByCommunity")
+            const communityHeader = findChild(controlUnderTest, "communityHeader")
+            verify(!!communityHeader)
+            const switchArrangeByCommunity = findChild(communityHeader, "switch")
             verify(!!switchArrangeByCommunity)
+
+            waitForItemPolished(switchArrangeByCommunity)
             mouseClick(switchArrangeByCommunity)
 
-            const loaderCommunityTokens = findChild(controlUnderTest, "loaderCommunityTokens")
-            verify(!!loaderCommunityTokens)
-            tryCompare(loaderCommunityTokens, "active", true)
-            const lvCommunityTokenGroups = findChild(loaderCommunityTokens, "lvCommunityTokenGroups")
-            verify(!!lvCommunityTokenGroups)
-            waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 3)
+            const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
+            verify(!!lvCommunity)
+            waitForItemPolished(lvCommunity)
+            tryCompare(lvCommunity, "count", 3)
 
-            const group0 = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0")
+            const group0 = findChild(lvCommunity, "manageTokensGroupDelegate-0")
             const title0 = group0.title
             verify(!!title0)
-            const title1 = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-1").title
+            const group1 = findChild(lvCommunity, "manageTokensGroupDelegate-1")
+            const title1 = group1.title
             verify(!!title1)
             verify(title0 !== title1)
 
-            // DND one group down (~80px in height)
-            mouseDrag(group0, group0.width/2, group0.height/2, 0, 80)
+            waitForRendering(group1)
+
+            mouseDrag(group1, group1.width/2, group1.height/2, 0, -group1.height)
 
             // cross compare the titles
-            tryCompare(findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0"), "title", title1)
-            tryCompare(findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-1"), "title", title0)
+            tryCompare(findChild(lvCommunity, "manageTokensGroupDelegate-0"), "title", title1)
+            tryCompare(findChild(lvCommunity, "manageTokensGroupDelegate-1"), "title", title0)
 
             verify(controlUnderTest.dirty)
         }
@@ -199,101 +218,101 @@ Item {
             verify(!controlUnderTest.dirty)
             const titleToTest = "Bearz"
 
-            const switchArrangeByCommunity = findChild(controlUnderTest, "switchArrangeByCommunity")
+            const communityHeader = findChild(controlUnderTest, "communityHeader")
+            verify(!!communityHeader)
+            const switchArrangeByCommunity = findChild(communityHeader, "switch")
             verify(!!switchArrangeByCommunity)
+            waitForRendering(switchArrangeByCommunity)
             mouseClick(switchArrangeByCommunity)
 
-            const loaderCommunityTokens = findChild(controlUnderTest, "loaderCommunityTokens")
-            verify(!!loaderCommunityTokens)
-            tryCompare(loaderCommunityTokens, "active", true)
-            const lvCommunityTokenGroups = findChild(loaderCommunityTokens, "lvCommunityTokenGroups")
-            verify(!!lvCommunityTokenGroups)
-            waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(lvCommunityTokenGroups, "count", 3)
+            const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
+            verify(!!lvCommunity)
+            waitForItemPolished(lvCommunity)
+            tryCompare(lvCommunity, "count", 3)
 
             // get the "Bearz" group at index 1
-            var bearzGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-1")
+            var bearzGroupTokenDelegate = findChild(lvCommunity, "manageTokensGroupDelegate-1")
             const bearzTitle = bearzGroupTokenDelegate.title
             compare(bearzTitle, titleToTest)
             verify(!!bearzGroupTokenDelegate)
             waitForItemPolished(bearzGroupTokenDelegate)
 
             // now move the Bearz group up so that it's first (ends up at index 0)
-            waitForItemPolished(lvCommunityTokenGroups)
-            triggerDelegateMenuAction(lvCommunityTokenGroups, 1, "miMoveUp", true)
+            waitForItemPolished(lvCommunity)
+            triggerDelegateMenuAction(lvCommunity, 1, "miMoveUp", true)
             verify(controlUnderTest.dirty)
-            bearzGroupTokenDelegate = findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0")
+            bearzGroupTokenDelegate = findChild(lvCommunity, "manageTokensGroupDelegate-0")
             verify(!!bearzGroupTokenDelegate)
 
             // finally verify that the Bearz group is still at top
-            waitForItemPolished(lvCommunityTokenGroups)
-            tryCompare(findChild(lvCommunityTokenGroups, "manageTokensGroupDelegate-0"), "title", titleToTest)
+            waitForItemPolished(lvCommunity)
+            tryCompare(findChild(lvCommunity, "manageTokensGroupDelegate-0"), "title", titleToTest)
         }
 
         function test_moveOperations() {
             verify(!controlUnderTest.dirty)
 
-            const lvRegular = findChild(controlUnderTest, "lvRegularTokens")
-            verify(!!lvRegular)
-            verify(lvRegular.count !== 0)
+            const lvOther = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvOther)
+            verify(lvOther.count !== 0)
 
-            var delegate0 = findChild(lvRegular, "manageTokensDelegate-0")
+            var delegate0 = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!delegate0)
             const title = delegate0.title
 
             // verify moveUp and moveToTop is not available for the first item
-            const moveUpAction = findDelegateMenuAction(lvRegular, 0, "miMoveUp")
+            const moveUpAction = findDelegateMenuAction(lvOther, 0, "miMoveUp")
             tryCompare(moveUpAction, "enabled", false)
-            const moveTopAction = findDelegateMenuAction(lvRegular, 0, "miMoveToTop")
+            const moveTopAction = findDelegateMenuAction(lvOther, 0, "miMoveToTop")
             tryCompare(moveTopAction, "enabled", false)
 
             // trigger move to bottom
-            triggerDelegateMenuAction(lvRegular, 0, "miMoveToBottom")
-            waitForItemPolished(lvRegular)
+            waitForItemPolished(lvOther)
+            triggerDelegateMenuAction(lvOther, 0, "miMoveToBottom")
             verify(controlUnderTest.dirty)
 
             // verify the previous first and current last are actually the same item
-            const delegateN = findChild(lvRegular, "manageTokensDelegate-%1".arg(lvRegular.count-1))
+            const delegateN = findChild(lvOther, "manageTokensDelegate-%1".arg(lvOther.count-1))
             verify(!!delegateN)
             const titleN = delegateN.title
             compare(title, titleN)
 
             // verify move down and to bottom is not available for the last item
-            const moveDownAction = findDelegateMenuAction(lvRegular, lvRegular.count-1, "miMoveDown")
+            const moveDownAction = findDelegateMenuAction(lvOther, lvOther.count-1, "miMoveDown")
             tryCompare(moveDownAction, "enabled", false)
-            const moveBottomAction = findDelegateMenuAction(lvRegular, lvRegular.count-1, "miMoveToBottom")
+            const moveBottomAction = findDelegateMenuAction(lvOther, lvOther.count-1, "miMoveToBottom")
             tryCompare(moveBottomAction, "enabled", false)
 
             // trigger move to top and verify we got the same title (item) again
-            triggerDelegateMenuAction(lvRegular, lvRegular.count-1, "miMoveToTop")
-            waitForItemPolished(lvRegular)
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-0"), "title", title)
+            triggerDelegateMenuAction(lvOther, lvOther.count-1, "miMoveToTop")
+            waitForItemPolished(lvOther)
+            tryCompare(findChild(lvOther, "manageTokensDelegate-0"), "title", title)
 
             // trigger move down and verify we got the same title (item) again
-            triggerDelegateMenuAction(lvRegular, 0, "miMoveDown")
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-1"), "title", title)
+            triggerDelegateMenuAction(lvOther, 0, "miMoveDown")
+            tryCompare(findChild(lvOther, "manageTokensDelegate-1"), "title", title)
 
             // trigger move up and verify we got the same title (item) again
-            triggerDelegateMenuAction(lvRegular, 1, "miMoveUp")
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-0"), "title", title)
+            triggerDelegateMenuAction(lvOther, 1, "miMoveUp")
+            tryCompare(findChild(lvOther, "manageTokensDelegate-0"), "title", title)
         }
 
         function test_saveLoad() {
             verify(!controlUnderTest.dirty)
             const titleToTest = "Big Kitty"
 
-            let lvRegular = findChild(controlUnderTest, "lvRegularTokens")
-            verify(!!lvRegular)
-            const bigKittyIndex = findDelegateIndexWithTitle(lvRegular, titleToTest)
+            let lvOther = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvOther)
+            const bigKittyIndex = findDelegateIndexWithTitle(lvOther, titleToTest)
             verify(bigKittyIndex !== -1)
-            const title0 = findChild(lvRegular, "manageTokensDelegate-0").title
+            const title0 = findChild(lvOther, "manageTokensDelegate-0").title
             verify(!!title0)
             verify(title0 !== titleToTest)
 
             // trigger move to top and verify we got the correct title
-            triggerDelegateMenuAction(lvRegular, bigKittyIndex, "miMoveToTop")
-            waitForItemPolished(lvRegular)
-            tryCompare(findChild(lvRegular, "manageTokensDelegate-0"), "title", titleToTest)
+            triggerDelegateMenuAction(lvOther, bigKittyIndex, "miMoveToTop")
+            waitForItemPolished(lvOther)
+            tryCompare(findChild(lvOther, "manageTokensDelegate-0"), "title", titleToTest)
 
             // save
             verify(controlUnderTest.dirty)
@@ -303,11 +322,11 @@ Item {
             // load the settings and check BigKitty is still on top
             controlUnderTest.revert()
             verify(!controlUnderTest.dirty)
-            lvRegular = findChild(controlUnderTest, "lvRegularTokens")
-            verify(!!lvRegular)
-            waitForItemPolished(lvRegular)
-            tryVerify(() => lvRegular.count > 0)
-            const topItem = findChild(lvRegular, "manageTokensDelegate-0")
+            lvOther = findChild(controlUnderTest, "otherTokensListView")
+            verify(!!lvOther)
+            waitForItemPolished(lvOther)
+            tryVerify(() => lvOther.count > 0)
+            const topItem = findChild(lvOther, "manageTokensDelegate-0")
             verify(!!topItem)
             tryCompare(topItem, "title", titleToTest)
         }

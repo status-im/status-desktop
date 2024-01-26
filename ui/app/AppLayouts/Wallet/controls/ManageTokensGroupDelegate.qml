@@ -35,7 +35,7 @@ DropArea {
 
     keys: isCollection ? ["x-status-draggable-collection-group-item"] : ["x-status-draggable-community-group-item"]
     width: ListView.view ? ListView.view.width : 0
-    height: visible ? groupedCommunityTokenDelegate.implicitHeight : 0
+    height: groupedCommunityTokenDelegate.implicitHeight
 
     onEntered: function(drag) {
         const from = drag.source.visualIndex

@@ -47,13 +47,14 @@ DropArea {
 
     keys: isCommunityToken ? ["x-status-draggable-community-token-item"] : ["x-status-draggable-regular-token-item"]
     width: ListView.view ? ListView.view.width : 0
-    height: visible ? delegate.height : 0
+    height: delegate.height
 
     onEntered: function(drag) {
         const from = drag.source.visualIndex
         const to = delegate.visualIndex
         if (to === from)
             return
+
         ListView.view.model.moveItem(from, to)
         drag.accept()
     }
