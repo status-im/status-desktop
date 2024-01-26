@@ -1,16 +1,21 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtQml 2.15
 
-import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Models 0.1
 
-import utils 1.0
+import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
+
+import "internals"
 
 Control {
     id: root
@@ -37,18 +42,35 @@ Control {
         root.controller.clearSettings();
     }
 
+    QtObject {
+        id: d
 
-    contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        readonly property int sectionHeight: 64
+    }
 
-        StatusListView {
-            Layout.fillWidth: true
+    contentItem: DoubleFlickableWithFolding {
+        id: doubleFlickable
+
+        clip: true
+
+        ScrollBar.vertical: StatusScrollBar {
+            policy: ScrollBar.AsNeeded
+            visible: resolveVisibility(policy, doubleFlickable.height,
+                                       doubleFlickable.contentHeight)
+        }
+
+        flickable1: ManageTokensListViewBase {
             model: root.controller.regularTokensModel
-            implicitHeight: contentHeight
-            interactive: false
+            width: doubleFlickable.width
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+            ScrollBar.vertical: null
+
+            header: FoldableHeader {
+                width: ListView.view.width
+                title: qsTr("Assets")
+                folded: doubleFlickable.flickable1Folded
+
+                onToggleFolding: doubleFlickable.flip1Folding()
             }
 
             delegate: ManageTokensDelegate {
@@ -63,78 +85,69 @@ Control {
                     return root.getCurrentCurrencyAmount(balance)
                 }
             }
+
+            placeholderText: qsTr("Your assets will appear here")
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            visible: root.controller.communityTokensModel.count
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("Community")
-            }
-            StatusSwitch {
-                LayoutMirroring.enabled: true
-                LayoutMirroring.childrenInherit: true
-                id: switchArrangeByCommunity
-                textColor: Theme.palette.baseColor1
-                font.pixelSize: 13
-                text: qsTr("Arrange by community")
+        flickable2: ManageTokensListViewBase {
+            width: doubleFlickable.width
+
+            model: root.controller.arrangeByCommunity ? communityGroupedModel
+                                                      : communityNonGroupedModel
+
+            header: FoldableHeader {
+                width: ListView.view.width
+                title: qsTr("Community minted")
+                switchText: qsTr("Arrange by community")
+                folded: doubleFlickable.flickable2Folded
                 checked: root.controller.arrangeByCommunity
-                onToggled: root.controller.arrangeByCommunity = checked
-            }
-        }
 
-        Loader {
-            Layout.fillWidth: true
-            active: root.controller.communityTokensModel.count
-            visible: active
-            sourceComponent: switchArrangeByCommunity.checked ? cmpCommunityTokenGroups : cmpCommunityTokens
+                onToggleFolding: doubleFlickable.flip2Folding()
+                onToggleSwitch: root.controller.arrangeByCommunity = checked
+            }
+
+            placeholderText: qsTr("Your community minted assets will appear here")
         }
     }
 
-    Component {
-        id: cmpCommunityTokens
-        StatusListView {
-            model: root.controller.communityTokensModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: communityNonGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+        model: root.controller.communityTokensModel
+
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensDelegate {
+            controller: root.controller
+            dragParent: root
+            count: root.controller.communityTokensModel.count
+            dragEnabled: count > 1
+            getCurrencyAmount: function (balance, symbol) {
+                return root.getCurrencyAmount(balance, symbol)
             }
-
-            delegate: ManageTokensDelegate {
-                controller: root.controller
-                dragParent: root
-                count: root.controller.communityTokensModel.count
-                dragEnabled: count > 1
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
-                }
-                getCurrentCurrencyAmount: function (balance) {
-                    return root.getCurrentCurrencyAmount(balance)
-                }
+            getCurrentCurrencyAmount: function (balance) {
+                return root.getCurrentCurrencyAmount(balance)
             }
         }
     }
 
-    Component {
-        id: cmpCommunityTokenGroups
-        StatusListView {
-            model: root.controller.communityTokenGroupsModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: communityGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+        model: root.controller.communityTokenGroupsModel
 
-            delegate: ManageTokensGroupDelegate {
-                controller: root.controller
-                dragParent: root
-                dragEnabled: root.controller.communityTokenGroupsModel.count > 1
-            }
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensGroupDelegate {
+            height: 76
+
+            controller: root.controller
+            dragParent: root
+            dragEnabled: root.controller.communityTokenGroupsModel.count > 1
         }
     }
 }

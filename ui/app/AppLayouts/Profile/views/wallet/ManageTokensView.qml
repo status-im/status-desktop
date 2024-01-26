@@ -17,7 +17,7 @@ import utils 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.panels 1.0
 
-ColumnLayout {
+Item {
     id: root
 
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
@@ -121,157 +121,162 @@ ColumnLayout {
         }
     }
 
-    StatusTabBar {
-        id: tabBar
+    ColumnLayout {
+        anchors.fill: parent
 
-        Layout.fillWidth: true
-        Layout.topMargin: 5
+        StatusTabBar {
+            id: tabBar
 
-        StatusTabButton {
-            leftPadding: 0
-            width: implicitWidth
-            text: qsTr("Assets")
-        }
-        StatusTabButton {
-            width: implicitWidth
-            text: qsTr("Collectibles")
-        }
-        StatusTabButton {
-            width: implicitWidth
-            text: qsTr("Hidden")
-        }
-        StatusTabButton {
-            width: implicitWidth
-            text: qsTr("Advanced")
-        }
-    }
+            Layout.fillWidth: true
+            Layout.topMargin: 5
 
-    // NB: we want to discard any pending unsaved changes when switching tabs or navigating away
-    Loader {
-        id: loader
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        active: visible
-
-        sourceComponent: {
-            switch (tabBar.currentIndex) {
-            case d.assetsTabIndex:
-                return tokensPanel
-            case d.collectiblesTabIndex:
-                return collectiblesPanel
-            case d.hiddenTabIndex:
-                return hiddenPanel
-            case d.advancedTabIndex:
-                return advancedTab
+            StatusTabButton {
+                leftPadding: 0
+                width: implicitWidth
+                text: qsTr("Assets")
+            }
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Collectibles")
+            }
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Hidden")
+            }
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Advanced")
             }
         }
-    }
 
-    Component {
-        id: tokensPanel
-        ManageAssetsPanel {
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
-            }
-            getCurrentCurrencyAmount: function (balance) {
-                return root.getCurrentCurrencyAmount(balance)
-            }
-            controller: d.assetsController
-        }
-    }
+        // NB: we want to discard any pending unsaved changes when switching tabs or navigating away
+        Loader {
+            id: loader
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            active: visible
 
-    Component {
-        id: collectiblesPanel
-        ManageCollectiblesPanel {
-            controller: d.collectiblesController
-            Component.onCompleted: d.checkLoadMoreCollectibles()
-        }
-    }
-
-    Component {
-        id: hiddenPanel
-        ManageHiddenPanel {
-            getCurrencyAmount: function (balance, symbol) {
-                return root.getCurrencyAmount(balance, symbol)
-            }
-            getCurrentCurrencyAmount: function (balance) {
-                return root.getCurrentCurrencyAmount(balance)
-            }
-            assetsController: d.assetsController
-            collectiblesController: d.collectiblesController
-        }
-    }
-
-    Component {
-        id: advancedTab
-        ColumnLayout {
-            spacing: 8
-            StatusListItem {
-                Layout.fillWidth: true
-                title: qsTr("Show community assets when sending tokens")
-
-                components: [
-                    StatusSwitch {
-                        id: showCommunityAssetsSwitch
-                        checked: true // FIXME integrate with backend (#13178)
-                        onCheckedChanged: {
-                            // FIXME integrate with backend (#13178)
-                        }
-                    }
-                ]
-                onClicked: {
-                    showCommunityAssetsSwitch.checked = !showCommunityAssetsSwitch.checked
+            sourceComponent: {
+                switch (tabBar.currentIndex) {
+                case d.assetsTabIndex:
+                    return tokensPanel
+                case d.collectiblesTabIndex:
+                    return collectiblesPanel
+                case d.hiddenTabIndex:
+                    return hiddenPanel
+                case d.advancedTabIndex:
+                    return advancedTab
                 }
             }
-            StatusDialogDivider {
-                Layout.fillWidth: true
-            }
-            StatusListItem {
-                Layout.fillWidth: true
-                title: qsTr("Don’t display assets with balance lower than")
+        }
 
-                components: [
-                    CurrencyAmountInput {
-                        enabled: displayThresholdSwitch.checked
-                        currencySymbol: SharedStores.RootStore.currencyStore.currentCurrency
-                        value: 0.10 // FIXME integrate with backend (#13178)
-                    },
-                    StatusSwitch {
-                        id: displayThresholdSwitch
-                        checked: false // FIXME integrate with backend (#13178)
-                        onCheckedChanged: {
-                            // FIXME integrate with backend (#13178)
-                        }
-                    }
-                ]
-                onClicked: {
-                    displayThresholdSwitch.checked = !displayThresholdSwitch.checked
+        Component {
+            id: tokensPanel
+            ManageAssetsPanel {
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
                 }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
+
+                controller: d.assetsController
             }
-            StatusDialogDivider {
-                Layout.fillWidth: true
+        }
+
+        Component {
+            id: collectiblesPanel
+            ManageCollectiblesPanel {
+                controller: d.collectiblesController
+                Component.onCompleted: d.checkLoadMoreCollectibles()
             }
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                Layout.topMargin: 18
-                Layout.bottomMargin: 18
-                StatusBaseText {
+        }
+
+        Component {
+            id: hiddenPanel
+            ManageHiddenPanel {
+                getCurrencyAmount: function (balance, symbol) {
+                    return root.getCurrencyAmount(balance, symbol)
+                }
+                getCurrentCurrencyAmount: function (balance) {
+                    return root.getCurrentCurrencyAmount(balance)
+                }
+                assetsController: d.assetsController
+                collectiblesController: d.collectiblesController
+            }
+        }
+
+        Component {
+            id: advancedTab
+            ColumnLayout {
+                spacing: 8
+                StatusListItem {
                     Layout.fillWidth: true
-                    text: qsTr("Token lists")
-                    color: Style.current.textColor
+                    title: qsTr("Show community assets when sending tokens")
+
+                    components: [
+                        StatusSwitch {
+                            id: showCommunityAssetsSwitch
+                            checked: true // FIXME integrate with backend (#13178)
+                            onCheckedChanged: {
+                                // FIXME integrate with backend (#13178)
+                            }
+                        }
+                    ]
+                    onClicked: {
+                        showCommunityAssetsSwitch.checked = !showCommunityAssetsSwitch.checked
+                    }
                 }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignRight
-                    text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.sourcesOfTokensModel.get(0).updatedAt * 1000)).arg(LocaleUtils.formatTime(root.sourcesOfTokensModel.get(0).updatedAt, Locale.ShortFormat))
-                    color: Style.current.darkGrey
+                StatusDialogDivider {
+                    Layout.fillWidth: true
                 }
-            }
-            SupportedTokenListsPanel {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                sourcesOfTokensModel: root.sourcesOfTokensModel
-                tokensListModel: root.tokensListModel
+                StatusListItem {
+                    Layout.fillWidth: true
+                    title: qsTr("Don’t display assets with balance lower than")
+
+                    components: [
+                        CurrencyAmountInput {
+                            enabled: displayThresholdSwitch.checked
+                            currencySymbol: SharedStores.RootStore.currencyStore.currentCurrency
+                            value: 0.10 // FIXME integrate with backend (#13178)
+                        },
+                        StatusSwitch {
+                            id: displayThresholdSwitch
+                            checked: false // FIXME integrate with backend (#13178)
+                            onCheckedChanged: {
+                                // FIXME integrate with backend (#13178)
+                            }
+                        }
+                    ]
+                    onClicked: {
+                        displayThresholdSwitch.checked = !displayThresholdSwitch.checked
+                    }
+                }
+                StatusDialogDivider {
+                    Layout.fillWidth: true
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 64
+                    Layout.topMargin: 18
+                    Layout.bottomMargin: 18
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        text: qsTr("Token lists")
+                        color: Style.current.textColor
+                    }
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignRight
+                        text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.sourcesOfTokensModel.get(0).updatedAt * 1000)).arg(LocaleUtils.formatTime(root.sourcesOfTokensModel.get(0).updatedAt, Locale.ShortFormat))
+                        color: Style.current.darkGrey
+                    }
+                }
+                SupportedTokenListsPanel {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    sourcesOfTokensModel: root.sourcesOfTokensModel
+                    tokensListModel: root.tokensListModel
+                }
             }
         }
     }

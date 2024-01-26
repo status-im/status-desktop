@@ -35,17 +35,15 @@ SplitView {
         ]
     }
 
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ManageCollectiblesPanel {
+        id: showcasePanel
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        Component.onCompleted: forceActiveFocus()
-        ManageCollectiblesPanel {
-            id: showcasePanel
-            width: 500
-            controller: ManageTokensController {
-                sourceModel: renamedModel
-                settingsKey: "WalletCollectibles"
-            }
+
+        controller: ManageTokensController {
+            sourceModel: renamedModel
+            settingsKey: "WalletCollectibles"
         }
     }
 
@@ -94,7 +92,4 @@ SplitView {
 }
 
 // category: Panels
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19341-250476&mode=design&t=jR53lJ7aDzVHE4hZ-0
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19655-204534&mode=design&t=jR53lJ7aDzVHE4hZ-0
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19622-173583&mode=design&t=jR53lJ7aDzVHE4hZ-0
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=19622-179146&mode=design&t=jR53lJ7aDzVHE4hZ-0
+// https://www.figma.com/file/eM26pyHZUeAwMLviaS1KJn/%E2%9A%99%EF%B8%8F-Wallet-Settings%3A-Manage-Tokens

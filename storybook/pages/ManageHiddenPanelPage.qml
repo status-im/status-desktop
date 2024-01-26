@@ -52,33 +52,30 @@ SplitView {
         settingsKey: "WalletCollectibles"
     }
 
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ManageHiddenPanel {
+        id: showcasePanel
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        Component.onCompleted: forceActiveFocus()
 
-        ManageHiddenPanel {
-            id: showcasePanel
-            width: 500
-            assetsController: assetsController
-            collectiblesController: collectiblesController
+        assetsController: assetsController
+        collectiblesController: collectiblesController
 
-            getCurrencyAmount: function (balance, symbol) {
-                return ({
-                            amount: balance,
-                            symbol: symbol,
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
-            getCurrentCurrencyAmount: function (balance) {
-                return ({
-                            amount: balance,
-                            symbol: "USD",
-                            displayDecimals: 2,
-                            stripTrailingZeroes: false
-                        })
-            }
+        getCurrencyAmount: function (balance, symbol) {
+            return ({
+                        amount: balance,
+                        symbol: symbol,
+                        displayDecimals: 2,
+                        stripTrailingZeroes: false
+                    })
+        }
+        getCurrentCurrencyAmount: function (balance) {
+            return ({
+                        amount: balance,
+                        symbol: "USD",
+                        displayDecimals: 2,
+                        stripTrailingZeroes: false
+                    })
         }
     }
 

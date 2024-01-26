@@ -1,18 +1,15 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Models 0.1
-
-import utils 1.0
-import shared.controls 1.0
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.controls 1.0
+
+import "internals"
 
 Control {
     id: root
@@ -36,157 +33,133 @@ Control {
         root.controller.clearSettings();
     }
 
-    contentItem: ColumnLayout {
-        spacing: Style.current.padding
+    contentItem: DoubleFlickableWithFolding {
+        id: doubleFlickable
 
-        ShapeRectangle {
-            Layout.fillWidth: true
-            Layout.margins: 2
-            visible: !root.controller.regularTokensModel.count && !root.controller.communityTokensModel.count
-            text: qsTr("You’ll be able to manage the display of your collectibles here")
+        clip: true
+
+        ScrollBar.vertical: StatusScrollBar {
+            policy: ScrollBar.AsNeeded
+            visible: resolveVisibility(policy, doubleFlickable.height,
+                                       doubleFlickable.contentHeight)
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            visible: root.controller.communityTokensModel.count
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("Community minted")
-            }
-            StatusSwitch {
-                objectName: "switchArrangeByCommunity"
-                LayoutMirroring.enabled: true
-                LayoutMirroring.childrenInherit: true
-                id: switchArrangeByCommunity
-                textColor: Theme.palette.baseColor1
-                font.pixelSize: 13
-                text: qsTr("Arrange by community")
+        flickable1: ManageTokensListViewBase {
+            objectName: "communityTokensListView"
+
+            width: doubleFlickable.width
+
+            model: root.controller.arrangeByCommunity
+                   ? communityGroupedModel : communityNonGroupedModel
+
+            header: FoldableHeader {
+                objectName: "communityHeader"
+
+                width: ListView.view.width
+                title: qsTr("Community minted")
+                switchText: qsTr("Arrange by community")
+                folded: doubleFlickable.flickable1Folded
                 checked: root.controller.arrangeByCommunity
-                onToggled: root.controller.arrangeByCommunity = checked
+
+                onToggleFolding: doubleFlickable.flip1Folding()
+                onToggleSwitch: root.controller.arrangeByCommunity = checked
             }
+
+            placeholderText: qsTr("Your community minted collectibles will appear here")
         }
 
-        Loader {
-            objectName: "loaderCommunityTokens"
-            Layout.fillWidth: true
-            active: root.controller.communityTokensModel.count
-            visible: active
-            sourceComponent: switchArrangeByCommunity.checked ? cmpCommunityTokenGroups : cmpCommunityTokens
-        }
+        flickable2: ManageTokensListViewBase {
+            objectName: "otherTokensListView"
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-            visible: root.controller.regularTokensModel.count
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("Other")
-            }
-            StatusSwitch {
-                LayoutMirroring.enabled: true
-                LayoutMirroring.childrenInherit: true
-                id: switchArrangeByCollection
-                textColor: Theme.palette.baseColor1
-                font.pixelSize: 13
-                text: qsTr("Arrange by collection")
+            width: doubleFlickable.width
+
+            model: root.controller.arrangeByCollection
+                   ? otherGroupedModel : otherNonGroupedModel
+
+            header: FoldableHeader {
+                objectName: "nonCommunityHeader"
+
+                width: ListView.view.width
+                title: qsTr("Other")
+                switchText: qsTr("Arrange by collection")
+                folded: doubleFlickable.flickable2Folded
                 checked: root.controller.arrangeByCollection
-                onToggled: root.controller.arrangeByCollection = checked
-            }
-        }
 
-        Loader {
-            objectName: "loaderRegularTokens"
-            Layout.fillWidth: true
-            active: root.controller.regularTokensModel.count
-            visible: active
-            sourceComponent: switchArrangeByCollection.checked ? cmpCollectionTokenGroups : cmpRegularTokens
+                onToggleFolding: doubleFlickable.flip2Folding()
+                onToggleSwitch: root.controller.arrangeByCollection = checked
+            }
+
+            placeholderText: qsTr("Your other collectibles will appear here")
         }
     }
 
-    Component {
-        id: cmpCommunityTokens
-        StatusListView {
-            objectName: "lvCommunityTokens"
-            model: root.controller.communityTokensModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: communityNonGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+        model: root.controller.communityTokensModel
 
-            delegate: ManageTokensDelegate {
-                isCollectible: true
-                controller: root.controller
-                dragParent: root
-                count: root.controller.communityTokensModel.count
-                dragEnabled: count > 1
-            }
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensDelegate {
+            isCollectible: true
+            controller: root.controller
+            dragParent: root
+            count: root.controller.communityTokensModel.count
+            dragEnabled: count > 1
         }
     }
 
-    Component {
-        id: cmpCommunityTokenGroups
-        StatusListView {
-            objectName: "lvCommunityTokenGroups"
-            model: root.controller.communityTokenGroupsModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: communityGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+        model: root.controller.communityTokenGroupsModel
 
-            delegate: ManageTokensGroupDelegate {
-                isCollectible: true
-                controller: root.controller
-                dragParent: root
-                dragEnabled: root.controller.communityTokenGroupsModel.count > 1
-            }
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensGroupDelegate {
+            isCollectible: true
+            controller: root.controller
+            dragParent: root
+            dragEnabled: root.controller.communityTokenGroupsModel.count > 1
         }
     }
 
-    Component {
-        id: cmpRegularTokens
-        StatusListView {
-            objectName: "lvRegularTokens"
-            model: root.controller.regularTokensModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: otherNonGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+        model: root.controller.regularTokensModel
 
-            delegate: ManageTokensDelegate {
-                isCollectible: true
-                controller: root.controller
-                dragParent: root
-                count: root.controller.regularTokensModel.count
-                dragEnabled: count > 1
-            }
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensDelegate {
+            isCollectible: true
+            controller: root.controller
+            dragParent: root
+            count: root.controller.regularTokensModel.count
+            dragEnabled: count > 1
         }
     }
 
-    Component {
-        id: cmpCollectionTokenGroups
-        StatusListView {
-            objectName: "lvCollectionTokenGroups"
-            model: root.controller.collectionGroupsModel
-            implicitHeight: contentHeight
-            interactive: false
+    DelegateModel {
+        id: otherGroupedModel
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+        model: root.controller.collectionGroupsModel
 
-            delegate: ManageTokensGroupDelegate {
-                isCollection: true
-                controller: root.controller
-                dragParent: root
-                dragEnabled: root.controller.collectionGroupsModel.count > 1
-            }
+        function moveItem(from, to) {
+            model.moveItem(from, to)
+        }
+
+        delegate: ManageTokensGroupDelegate {
+            isCollection: true
+            controller: root.controller
+            dragParent: root
+            dragEnabled: root.controller.collectionGroupsModel.count > 1
         }
     }
 }

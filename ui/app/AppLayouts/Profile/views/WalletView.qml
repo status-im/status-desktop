@@ -305,6 +305,10 @@ SettingsContentBase {
 
         ManageTokensView {
             id: manageTokensView
+
+            implicitHeight: root.availableHeight
+            Layout.fillWidth: true
+
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
             baseWalletAssetsModel: RootStore.walletAssetsStore.groupedAccountAssetsModel

@@ -184,6 +184,8 @@ Control {
 
         ColumnLayout { // no assets placeholder
             Layout.fillWidth: true
+            Layout.fillHeight: false
+
             spacing: 0
             visible: !d.assetsCount
             SectionDelegate {
@@ -196,9 +198,11 @@ Control {
         }
 
         StatusListView {
+            id: listView
+
             Layout.fillWidth: true
-            implicitHeight: contentHeight
             Layout.fillHeight: true
+
             model: d.sfpm
 
             displaced: Transition {
@@ -221,21 +225,29 @@ Control {
                 isCollectible: section == "true"
             }
             section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+
+            footer: ColumnLayout { // no collectibles placeholder
+                width: ListView.view.width
+
+                spacing: 0
+                visible: !d.collectiblesCount
+                height: visible ? implicitHeight : 0
+
+                SectionDelegate {
+                    Layout.fillWidth: true
+                    isCollectible: true
+                }
+                Placeholder {
+                    Layout.fillWidth: true
+                    isCollectible: true
+                    visible: d.collectiblesExpanded
+                }
+            }
         }
 
-        ColumnLayout { // no collectibles placeholder
-            Layout.fillWidth: true
-            spacing: 0
-            visible: !d.collectiblesCount
-            SectionDelegate {
-                Layout.fillWidth: true
-                isCollectible: true
-            }
-            Placeholder {
-                Layout.fillWidth: true
-                isCollectible: true
-                visible: d.collectiblesExpanded
-            }
+        Item {
+            Layout.fillHeight: true
+            visible: listView.count === 0
         }
     }
 }

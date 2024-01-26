@@ -28,6 +28,10 @@ FocusScope {
     property bool saveChangesButtonEnabled: false
     readonly property alias toast: settingsDirtyToastMessage
 
+    readonly property real availableHeight:
+        scrollView.availableHeight - settingsDirtyToastMessagePlaceholder.height
+        - Style.current.bigPadding
+
     signal baseAreaClicked()
     signal saveChangesClicked()
     signal saveForLaterClicked()
@@ -118,7 +122,8 @@ FocusScope {
             }
 
             Item {
-                // This is a settingsDirtyToastMessage placeholder
+                id: settingsDirtyToastMessagePlaceholder
+
                 width: settingsDirtyToastMessage.implicitWidth
                 height: settingsDirtyToastMessage.active && !root.ignoreDirty ? settingsDirtyToastMessage.implicitHeight : 0
 
