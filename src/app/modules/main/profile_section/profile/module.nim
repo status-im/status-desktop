@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar
+import NimQml, chronicles, sequtils, sugar, json
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -173,6 +173,13 @@ method requestProfileShowcase*(self: Module, publicKey: string) =
   self.presentedPublicKey = publicKey
 
   self.controller.requestProfileShowcaseForContact(publicKey)
+
+method fetchProfileShowcaseAccountsByAddress*(self: Module, address: string) =
+  self.controller.fetchProfileShowcaseAccountsByAddress(address)
+
+method onProfileShowcaseAccountsByAddressFetched*(self: Module, accounts: seq[ProfileShowcaseAccount]) =
+  let jsonObj = % accounts
+  self.view.emitProfileShowcaseAccountsByAddressFetchedSignal($jsonObj)
 
 method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) =
   if self.presentedPublicKey != profileShowcase.contactId:

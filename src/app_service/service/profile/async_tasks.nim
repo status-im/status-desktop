@@ -36,3 +36,22 @@ const asyncGetProfileShowcaseForContactTask: Task = proc(argEncoded: string) {.g
       "publicKey": arg.pubkey,
       "error": e.msg,
     })
+
+type
+  FetchProfileShowcaseAccountsTaskArg = ref object of QObjectTaskArg
+    address: string
+
+const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchProfileShowcaseAccountsTaskArg](argEncoded)
+  var response = %* {
+    "response": "",
+    "error": "",
+  }
+  try:
+    let rpcResponse = status_accounts.getProfileShowcaseAccountsByAddress(arg.address)
+    if not rpcResponse.error.isNil:
+      raise newException(CatchableError, rpcResponse.error.message)
+    response["response"] = rpcResponse.result
+  except Exception as e:
+    response["error"] = %* e.msg
+  arg.finish(response)

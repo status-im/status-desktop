@@ -1,6 +1,6 @@
-import NimQml, sequtils, strutils
+import NimQml, json, sequtils, strutils
 
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/wallet_account/service as wallet_account_service
 
 import ./model
 import ./item
@@ -66,3 +66,6 @@ QtObject:
 
   proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
     self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+
+  proc getWalletAccountAsJson*(self: View, address: string): string {.slot.} =
+    return $self.delegate.getWalletAccountAsJson(address)

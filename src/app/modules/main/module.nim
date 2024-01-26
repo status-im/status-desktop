@@ -1099,40 +1099,55 @@ method onCommunityMuted*[T](
 method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
   self.controller.getVerificationRequestFrom(publicKey)
 
-method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string =
-  let contact = self.controller.getContact(publicKey)
+method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool = false,
+  getOnlineStatus: bool = false, includeDetails: bool = false): string =
+  var contactDetails: ContactDetails
+  ## If includeDetails is true, additional details are calculated, like color hash and that results in higher CPU usage,
+  ## that's why by default it is false and we should set it to true only when we really need it.
+  if includeDetails:
+    contactDetails = self.controller.getContactDetails(publicKey)
+  else:
+    contactDetails.dto = self.controller.getContact(publicKey)
+
   var requestStatus = 0
   if getVerificationRequest:
     requestStatus = self.getVerificationRequestFrom(publicKey).status.int
   var onlineStatus = OnlineStatus.Inactive
   if getOnlineStatus:
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
+
   let jsonObj = %* {
-    "displayName": contact.displayName,
-    "displayIcon": contact.image.thumbnail,
-    "publicKey": contact.id,
-    "name": contact.name,
-    "ensVerified": contact.ensVerified,
-    "alias": contact.alias,
-    "lastUpdated": contact.lastUpdated,
-    "lastUpdatedLocally": contact.lastUpdatedLocally,
-    "localNickname": contact.localNickname,
-    "thumbnailImage": contact.image.thumbnail,
-    "largeImage": contact.image.large,
-    "isContact": contact.isContact,
-    "isBlocked": contact.blocked,
-    "requestReceived": contact.hasAddedUs,
-    "isAdded": contact.isContactRequestSent,
-    "isSyncing": contact.isSyncing,
-    "removed": contact.removed,
-    "trustStatus": contact.trustStatus.int,
+    # contact details props
+    "defaultDisplayName": contactDetails.defaultDisplayName,
+    "optionalName": contactDetails.optionalName,
+    "icon": contactDetails.icon,
+    "isCurrentUser": contactDetails.isCurrentUser,
+    "colorId": contactDetails.colorId,
+    "colorHash": contactDetails.colorHash,
+    # contact dto props
+    "displayName": contactDetails.dto.displayName,
+    "publicKey": contactDetails.dto.id,
+    "name": contactDetails.dto.name,
+    "ensVerified": contactDetails.dto.ensVerified,
+    "alias": contactDetails.dto.alias,
+    "lastUpdated": contactDetails.dto.lastUpdated,
+    "lastUpdatedLocally": contactDetails.dto.lastUpdatedLocally,
+    "localNickname": contactDetails.dto.localNickname,
+    "thumbnailImage": contactDetails.dto.image.thumbnail,
+    "largeImage": contactDetails.dto.image.large,
+    "isContact": contactDetails.dto.isContact,
+    "isBlocked": contactDetails.dto.isBlocked,
+    "isContactRequestReceived": contactDetails.dto.isContactRequestReceived,
+    "isContactRequestSent": contactDetails.dto.isContactRequestSent,
+    "isSyncing": contactDetails.dto.isSyncing,
+    "removed": contactDetails.dto.removed,
+    "trustStatus": contactDetails.dto.trustStatus.int,
     # TODO rename verificationStatus to outgoingVerificationStatus
-    "contactRequestState": contact.contactRequestState.int,
-    "verificationStatus": contact.verificationStatus.int,
+    "contactRequestState": contactDetails.dto.contactRequestState.int,
+    "verificationStatus": contactDetails.dto.verificationStatus.int,
     "incomingVerificationStatus": requestStatus,
-    "hasAddedUs": contact.hasAddedUs,
-    "socialLinks": $contact.socialLinks.toJsonNode(),
-    "bio": contact.bio,
+    "socialLinks": $contactDetails.dto.socialLinks.toJsonNode(),
+    "bio": contactDetails.dto.bio,
     "onlineStatus": onlineStatus.int
   }
   return $jsonObj
@@ -1334,7 +1349,7 @@ method displayEphemeralWithActionNotification*[T](self: Module[T], title: string
 
 # TO UNIFY with the one above.
 # Further refactor will be done in a next step
-method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: string, subTitle: string, image: string, ephNotifType: int, 
+method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: string, subTitle: string, image: string, ephNotifType: int,
     actionType: int, actionData: string, details = NotificationDetails()) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
@@ -1345,7 +1360,7 @@ method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: s
     finalEphNotifType = EphemeralNotificationType.Danger
 
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false, 
+  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false,
   finalEphNotifType, "", actionType, actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
 

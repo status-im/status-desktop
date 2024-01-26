@@ -112,7 +112,7 @@ ItemDelegate {
             isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
             isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
             status: root.contactDetails.onlineStatus
-            asset.name: root.contactDetails.displayIcon
+            asset.name: root.contactDetails.thumbnailImage
             asset.isImage: (asset.name !== "")
             asset.isLetterIdenticon: (asset.name === "")
             asset.color: Utils.colorForPubkey(root.contactId)

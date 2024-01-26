@@ -52,13 +52,13 @@ Item {
         color: d.isContact ? Utils.colorForPubkey(root.contactPubKey) : d.walletAddressColor
         name: {
             if (d.isContact) {
-                return isImage ? d.contactData.displayIcon : nameText.text
+                return isImage ? d.contactData.thumbnailImage : nameText.text
             } else if (d.isWallet && !d.walletAddressEmoji) {
                 return "filled-account"
             }
             return ""
         }
-        isImage: d.isContact && statusAssetSettings.isImgSrc(d.contactData.displayIcon)
+        isImage: d.isContact && statusAssetSettings.isImgSrc(d.contactData.thumbnailImage)
         emoji: d.isWallet && !!d.walletAddressEmoji ? d.walletAddressEmoji : ""
         isLetterIdenticon: d.isContact && !isImage
         charactersLen: 2

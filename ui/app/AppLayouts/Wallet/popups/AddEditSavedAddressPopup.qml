@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.14
 import utils 1.0
 import shared.controls 1.0
 import shared.panels 1.0
+import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -62,7 +63,7 @@ StatusModal {
             colorSelection.selectedColorIndex = ind
         }
 
-        if (!!d.ens)
+        if (d.addressInputIsENS)
             addressInput.setPlainText(d.ens)
         else
             addressInput.setPlainText("%1%2"
@@ -70,6 +71,12 @@ StatusModal {
                                       .arg(d.address == Constants.zeroAddress? "" : d.address))
 
         nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    enum CardType {
+        Contact,
+        WalletAccount,
+        SavedAddress
     }
 
     QtObject {
@@ -90,26 +97,77 @@ StatusModal {
         property string storedChainShortNames: ""
 
         property bool chainShortNamesDirty: false
-        readonly property bool valid: addressInput.valid && nameInput.valid
+        property bool addressInputValid: d.editMode ||
+                                         addressInput.input.dirty &&
+                                         d.addressInputIsAddress &&
+                                         !d.minAddressLengthRequestError &&
+                                         !d.addressAlreadyAddedToWalletError &&
+                                         !d.addressAlreadyAddedToSavedAddressesError
+        readonly property bool valid: d.addressInputValid && nameInput.valid
         readonly property bool dirty: nameInput.input.dirty && (!d.editMode || d.storedName !== d.name)
                                       || chainShortNamesDirty && (!d.editMode || d.storedChainShortNames !== d.chainShortNames)
                                       || d.colorId.toUpperCase() !== d.storedColorId.toUpperCase()
 
 
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
-        readonly property bool addressInputIsENS: !!d.ens
+        readonly property bool addressInputIsENS: !!d.ens &&
+                                                  Utils.isValidEns(d.ens)
+        readonly property bool addressInputIsAddress: !!d.address &&
+                                                      d.address != Constants.zeroAddress &&
+                                                      (Utils.isAddress(d.address) || Utils.isValidAddressWithChainPrefix(d.address))
 
-        property bool addressAlreadyAddedToWallet: false
+        property ListModel cardsModel: ListModel {}
+
+        // possible errors/warnings
+        readonly property int minAddressLen: 1
+        property bool minAddressLengthRequestError: false
+        property bool addressAlreadyAddedToWalletError: false
+        property bool addressAlreadyAddedToSavedAddressesError: false
+        property bool checkingContactsAddressInProgress: false
+        property int contactsWithSameAddress: 0
+
         function checkIfAddressIsAlreadyAdddedToWallet(address) {
-            let name = RootStore.getNameForWalletAddress(address)
-            d.addressAlreadyAddedToWallet = !!name
+            let account = RootStore.getWalletAccount(address)
+            d.cardsModel.clear()
+            d.addressAlreadyAddedToWalletError = !!account.name
+            if (!d.addressAlreadyAddedToWalletError) {
+                return
+            }
+            d.cardsModel.append({
+                                    type: AddEditSavedAddressPopup.CardType.WalletAccount,
+                                    address: account.mixedcaseAddress,
+                                    title: account.name,
+                                    icon: "",
+                                    emoji: account.emoji,
+                                    color: Utils.getColorForId(account.colorId).toString().toUpperCase()
+                                })
         }
 
-        property bool addressAlreadyAddedToSavedAddresses: false
         function checkIfAddressIsAlreadyAdddedToSavedAddresses(address) {
-            let details = RootStore.getSavedAddress(address)
-            d.addressAlreadyAddedToSavedAddresses = !!details.address
+            let savedAddress = RootStore.getSavedAddress(address)
+            d.cardsModel.clear()
+            d.addressAlreadyAddedToSavedAddressesError = !!savedAddress.address
+            if (!d.addressAlreadyAddedToSavedAddressesError) {
+                return
+            }
+            d.cardsModel.append({
+                                    type: AddEditSavedAddressPopup.CardType.SavedAddress,
+                                    address: savedAddress.ens || savedAddress.address,
+                                    title: savedAddress.name,
+                                    icon: "",
+                                    emoji: "",
+                                    color: Utils.getColorForId(savedAddress.colorId).toString().toUpperCase()
+                                })
         }
+
+        property bool resolvingEnsNameInProgress: false
+        readonly property string uuid: Utils.uuid()
+        readonly property var validateEnsAsync: Backpressure.debounce(root, 500, function (value) {
+            var name = value.startsWith("@") ? value.substring(1) : value
+            mainModule.resolveENS(name, d.uuid)
+        });
+
+        property var profileModuleInst: SharedStores.RootStore.profileSectionModuleInst.profileModule
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
@@ -118,11 +176,81 @@ StatusModal {
             return prefixStr.match(d.chainPrefixRegexPattern)
         }
 
-        function resetAddressValues() {
-            d.ens = ""
-            d.address = Constants.zeroAddress
-            d.chainShortNames = ""
-            allNetworksModelCopy.setEnabledNetworks([])
+        function resetAddressValues(fullReset) {
+            if (fullReset) {
+                d.ens = ""
+                d.address = Constants.zeroAddress
+                d.chainShortNames = ""
+                allNetworksModelCopy.setEnabledNetworks([])
+            }
+
+            d.cardsModel.clear()
+            d.resolvingEnsNameInProgress = false
+            d.checkingContactsAddressInProgress = false
+        }
+
+        function checkForAddressInputOwningErrorsWarnings() {
+            d.addressAlreadyAddedToWalletError = false
+            d.addressAlreadyAddedToSavedAddressesError = false
+
+            if (d.addressInputIsAddress) {
+                d.checkIfAddressIsAlreadyAdddedToWallet(d.address)
+                if (d.addressAlreadyAddedToWalletError) {
+                    addressInput.errorMessageCmp.text = qsTr("You cannot add your own account as a saved address")
+                    addressInput.errorMessageCmp.visible = true
+                    return
+                }
+                d.checkIfAddressIsAlreadyAdddedToSavedAddresses(d.address)
+                if (d.addressAlreadyAddedToSavedAddressesError) {
+                    addressInput.errorMessageCmp.text = qsTr("This address is already saved")
+                    addressInput.errorMessageCmp.visible = true
+                    return
+                }
+
+                d.checkingContactsAddressInProgress = true
+                d.contactsWithSameAddress = 0
+                d.profileModuleInst.fetchProfileShowcaseAccountsByAddress(d.address)
+                return
+            }
+
+            addressInput.errorMessageCmp.text = qsTr("Not registered ens address")
+            addressInput.errorMessageCmp.visible = true
+        }
+
+        function checkForAddressInputErrorsWarnings() {
+            addressInput.errorMessageCmp.visible = false
+            addressInput.errorMessageCmp.color = Theme.palette.dangerColor1
+            addressInput.errorMessageCmp.text = ""
+
+            d.minAddressLengthRequestError = false
+
+            if (d.editMode || !addressInput.input.dirty) {
+                return
+            }
+
+            if (d.addressInputIsENS || d.addressInputIsAddress) {
+                let value = d.ens || d.address
+                if (value.trim().length < d.minAddressLen) {
+                    d.minAddressLengthRequestError = true
+                    addressInput.errorMessageCmp.text = qsTr("Please enter an ethereum address")
+                    addressInput.errorMessageCmp.visible = true
+                    return
+                }
+            }
+
+            if (d.addressInputIsENS) {
+                d.resolvingEnsNameInProgress = true
+                d.validateEnsAsync(d.ens)
+                return
+            }
+
+            if (d.addressInputIsAddress) {
+                d.checkForAddressInputOwningErrorsWarnings()
+                return
+            }
+
+            addressInput.errorMessageCmp.text = qsTr("Ethereum address invalid")
+            addressInput.errorMessageCmp.visible = true
         }
 
         function submit(event) {
@@ -134,13 +262,56 @@ StatusModal {
             RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
+    }
 
-        property bool resolvingEnsName: false
-        readonly property string uuid: Utils.uuid()
-        readonly property var validateEnsAsync: Backpressure.debounce(root, 500, function (value) {
-            var name = value.startsWith("@") ? value.substring(1) : value
-            mainModule.resolveENS(name, d.uuid)
-        });
+    Connections {
+        target: mainModule
+        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
+            if (uuid !== d.uuid) {
+                return
+            }
+
+            d.resolvingEnsNameInProgress = false
+            d.address = resolvedAddress
+            d.checkForAddressInputOwningErrorsWarnings()
+        }
+    }
+
+    Connections {
+        target: d.profileModuleInst
+        function onProfileShowcaseAccountsByAddressFetched(accounts: string) {
+            d.cardsModel.clear()
+            d.checkingContactsAddressInProgress = false
+            try {
+                let accountsJson = JSON.parse(accounts)
+                d.contactsWithSameAddress = accountsJson.length
+                addressInput.errorMessageCmp.visible = d.contactsWithSameAddress > 0
+                addressInput.errorMessageCmp.color = Theme.palette.warningColor1
+                addressInput.errorMessageCmp.text = ""
+                if (d.contactsWithSameAddress === 1)
+                    addressInput.errorMessageCmp.text = qsTr("This address belongs to a contact")
+                if (d.contactsWithSameAddress > 1)
+                    addressInput.errorMessageCmp.text = qsTr("This address belongs to the following contacts")
+
+                for (let i = 0; i < accountsJson.length; ++i) {
+                    let contact = Utils.getContactDetailsAsJson(accountsJson[i].contactId, true, true, true)
+                    d.cardsModel.append({
+                                            type: AddEditSavedAddressPopup.CardType.Contact,
+                                            address: accountsJson[i].address,
+                                            title: ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias),
+                                            icon: contact.icon,
+                                            emoji: "",
+                                            color: Utils.colorForColorId(contact.colorId),
+                                            onlineStatus: contact.onlineStatus,
+                                            colorHash: contact.colorHash
+                                        })
+
+                }
+            }
+            catch (e) {
+                console.warn("error parsing fetched accounts for contact: ", e.message)
+            }
+        }
     }
 
     StatusScrollView {
@@ -219,96 +390,21 @@ StatusModal {
                 maximumHeight: 66
                 input.implicitHeight: Math.min(Math.max(input.edit.contentHeight + topPadding + bottomPadding, minimumHeight), maximumHeight) // setting height instead does not work
                 enabled: !(d.editMode || d.addAddress)
-                validators: [
-                    StatusMinLengthValidator {
-                        minLength: 1
-                        errorMessage: qsTr("Please enter an ethereum address")
-                    },
-                    StatusValidator {
-                        errorMessage: d.addressAlreadyAddedToWallet? qsTr("This address is already added to Wallet") :
-                                                                     d.addressAlreadyAddedToSavedAddresses? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
-                        validate: function (value) {
-                            if (value !== Constants.zeroAddress) {
-                                if (Utils.isValidEns(value)) {
-                                    return true
-                                }
-                                if (Utils.isValidAddressWithChainPrefix(value)) {
-                                    if (d.editMode) {
-                                        return true
-                                    }
-                                    const prefixAndAddress = Utils.splitToChainPrefixAndAddress(value)
-                                    d.checkIfAddressIsAlreadyAdddedToWallet(prefixAndAddress.address)
-                                    if (d.addressAlreadyAddedToWallet) {
-                                        return false
-                                    }
-                                    d.checkIfAddressIsAlreadyAdddedToSavedAddresses(prefixAndAddress.address)
-                                    return !d.addressAlreadyAddedToSavedAddresses
-                                }
-                            }
-
-                            return false
-                        }
-                    }
-                ]
-                asyncValidators: [
-                    StatusAsyncValidator {
-                        id: resolvingEnsName
-                        name: "resolving-ens-name"
-                        errorMessage: d.addressAlreadyAddedToWallet? qsTr("This address is already added to Wallet") :
-                                                                     d.addressAlreadyAddedToSavedAddresses? qsTr("This address is already saved") : qsTr("Ethereum address invalid")
-                        asyncOperation: (value) => {
-                                            if (!Utils.isValidEns(value)) {
-                                                resolvingEnsName.asyncComplete("not-ens")
-                                                return
-                                            }
-                                            d.resolvingEnsName = true
-                                            d.validateEnsAsync(value)
-                                        }
-                        validate: (value) => {
-                                      if (d.editMode || value === "not-ens") {
-                                          return true
-                                      }
-                                      if (!!value) {
-                                          d.checkIfAddressIsAlreadyAdddedToWallet(prefixAndAddress.address)
-                                          if (d.addressAlreadyAddedToWallet) {
-                                              return false
-                                          }
-                                          d.checkIfAddressIsAlreadyAdddedToSavedAddresses(value)
-                                          return !d.addressAlreadyAddedToSavedAddresses
-                                      }
-                                      return false
-                                  }
-
-                        Connections {
-                            target: mainModule
-                            function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
-                                if (uuid !== d.uuid) {
-                                    return
-                                }
-                                d.resolvingEnsName = false
-                                d.address = resolvedAddress
-                                resolvingEnsName.asyncComplete(resolvedAddress)
-                            }
-                        }
-                    }
-                ]
-
                 input.edit.textFormat: TextEdit.RichText
-                input.asset.name: addressInput.valid && !d.editMode ? "checkbox" : ""
+                input.asset.name: d.addressInputValid && !d.editMode ? "checkbox" : ""
                 input.asset.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                 input.rightPadding: 16
                 input.leftIcon: false
 
                 multiline: true
 
-                property string plainText: input.edit.getText(0, text.length)
+                property string plainText: input.edit.getText(0, text.length).trim()
 
                 onTextChanged: {
                     if (skipTextUpdate || !d.initialized)
                         return
 
-                    d.addressAlreadyAddedToSavedAddresses = false
-                    plainText = input.edit.getText(0, text.length)
+                    plainText = input.edit.getText(0, text.length).trim()
 
                     if (input.edit.previousText != plainText) {
                         let newText = plainText
@@ -322,30 +418,29 @@ StatusModal {
                         setRichText(newText)
 
                         // Reset
-                        if (plainText.length == 0) {
-                            d.resetAddressValues()
-                            return
+                        d.resetAddressValues(plainText.length == 0)
+
+                        if (plainText.length > 0) {
+                            // Update root values
+                            if (Utils.isLikelyEnsName(plainText)) {
+                                d.ens = plainText
+                                d.address = Constants.zeroAddress
+                                d.chainShortNames = ""
+                            }
+                            else {
+                                d.ens = ""
+                                d.address = prefixAndAddress.address
+                                d.chainShortNames = prefixAndAddress.prefix
+
+                                let prefixArrWithColumn = d.getPrefixArrayWithColumns(prefixAndAddress.prefix)
+                                if (!prefixArrWithColumn)
+                                    prefixArrWithColumn = []
+
+                                allNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
+                            }
                         }
 
-                        // Update root values
-                        if (Utils.isLikelyEnsName(plainText)) {
-                            d.resolvingEnsName = true
-                            d.ens = plainText
-                            d.address = Constants.zeroAddress
-                            d.chainShortNames = ""
-                        }
-                        else {
-                            d.resolvingEnsName = false
-                            d.ens = ""
-                            d.address = prefixAndAddress.address
-                            d.chainShortNames = prefixAndAddress.prefix
-
-                            let prefixArrWithColumn = d.getPrefixArrayWithColumns(prefixAndAddress.prefix)
-                            if (!prefixArrWithColumn)
-                                prefixArrWithColumn = []
-
-                            allNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
-                        }
+                        d.checkForAddressInputErrorsWarnings()
                     }
                 }
 
@@ -403,6 +498,51 @@ StatusModal {
                 }
             }
 
+            Column {
+                width: scrollView.availableWidth
+                visible: d.cardsModel.count > 0
+
+                spacing: Style.current.halfPadding
+
+                Repeater {
+                    model: d.cardsModel
+
+                    StatusListItem {
+                        width: d.componentWidth
+                        border.width: 1
+                        border.color: Theme.palette.baseColor2
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        title: model.title
+                        subTitle: model.address
+                        statusListItemSubTitle.font.pixelSize: 12
+                        sensor.hoverEnabled: false
+                        statusListItemIcon.badge.visible: model.type === AddEditSavedAddressPopup.CardType.Contact
+                        statusListItemIcon.badge.color: model.type === AddEditSavedAddressPopup.CardType.Contact && model.onlineStatus === 1?
+                                                            Theme.palette.successColor1
+                                                          : Theme.palette.baseColor1
+                        statusListItemIcon.hoverEnabled: false
+                        ringSettings.ringSpecModel: model.type === AddEditSavedAddressPopup.CardType.Contact? model.colorHash : ""
+
+                        asset {
+                            width: 40
+                            height: 40
+                            name: model.icon
+                            isImage: model.icon !== ""
+                            emoji: model.emoji
+                            color: model.color
+                            isLetterIdenticon: !model.icon
+                            useAcronymForLetterIdenticon: model.type === AddEditSavedAddressPopup.CardType.SavedAddress
+                            charactersLen: {
+                                if (model.type === AddEditSavedAddressPopup.CardType.SavedAddress && model.title.split(" ").length == 1) {
+                                    return 1
+                                }
+                                return 2
+                            }
+                        }
+                    }
+                }
+            }
+
             StatusColorSelectorGrid {
                 id: colorSelection
                 objectName: "addSavedAddressColor"
@@ -426,7 +566,7 @@ StatusModal {
                 implicitWidth: d.componentWidth
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                enabled: addressInput.valid && !d.addressInputIsENS
+                enabled: d.addressInputValid && !d.addressInputIsENS
                 defaultItemText: "Add networks"
                 defaultItemImageSource: "add"
                 rightButtonVisible: true
@@ -515,8 +655,8 @@ StatusModal {
     rightButtons: [
         StatusButton {
             text: d.editMode? qsTr("Save") : qsTr("Add address")
-            enabled: d.valid && d.dirty && !d.resolvingEnsName
-            loading: d.resolvingEnsName
+            enabled: d.valid && d.dirty
+            loading: d.resolvingEnsNameInProgress || d.checkingContactsAddressInProgress
             onClicked: {
                 d.submit()
             }

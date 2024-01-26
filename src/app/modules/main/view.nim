@@ -126,7 +126,7 @@ QtObject:
 
   # TO UNIFY with the one above.
   # Further refactor will be done in a next step
-  proc displayEphemeralImageWithActionNotification*(self: View, title: string, subTitle: string, image: string, ephNotifType: int, 
+  proc displayEphemeralImageWithActionNotification*(self: View, title: string, subTitle: string, image: string, ephNotifType: int,
     actionType: int, actionData: string) {.slot.} =
     self.delegate.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
 
@@ -233,8 +233,9 @@ QtObject:
   QtProperty[QVariant] appSearchModule:
     read = getAppSearchModule
 
-  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string {.slot.} =
-    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus)
+  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool,
+    includeDetails: bool): string {.slot.} =
+    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus, includeDetails)
 
   proc getOwnerTokenAsJson(self: View, communityId: string): string {.slot.} =
     return self.delegate.getOwnerTokenAsJson(communityId)

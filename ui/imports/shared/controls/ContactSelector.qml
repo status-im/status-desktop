@@ -104,7 +104,7 @@ Item {
                 asset.height: 32
                 asset.isImage: true
                 asset.name: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
-                active: !!selectedContact && !!selectedContact.displayIcon
+                active: !!selectedContact && !!selectedContact.thumbnailImage
             }
             StatusBaseText {
                 id: selectedTextField
@@ -142,7 +142,7 @@ Item {
 
                 StatusSmartIdenticon {
                     asset.isImage: true
-                    asset.name: currentContact.displayIcon
+                    asset.name: currentContact.thumbnailImage
                 }
                 ColumnLayout {
                     Layout.fillWidth: true

@@ -253,6 +253,44 @@ QtObject {
         return walletSectionAccounts.getNameByAddress(address)
     }
 
+    function getWalletAccount(address) {
+        const defaultValue = {
+            name: "",
+            address: "",
+            mixedcaseAddress: "",
+            keyUid: "",
+            path: "",
+            colorId: Constants.walletAccountColors.primary,
+            publicKey: "",
+            walletType: "",
+            isWallet: false,
+            isChat: false,
+            emoji: "",
+            ens: "",
+            assetsLoading: false,
+            removed: "",
+            operable: "",
+            createdAt: -1,
+            position: -1,
+            prodPreferredChainIds: "",
+            testPreferredChainIds: "",
+            hideFromTotalBalance: false
+        }
+
+        const jsonObj = walletSectionAccounts.getWalletAccountAsJson(address)
+
+        try {
+            if (jsonObj === "null" || jsonObj === undefined) {
+                return defaultValue
+            }
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            console.warn("error parsing wallet account for address: ", address, " error: ", e.message)
+            return defaultValue
+        }
+    }
+
     function getSavedAddress(address) {
         const defaultValue = {
             name: "",

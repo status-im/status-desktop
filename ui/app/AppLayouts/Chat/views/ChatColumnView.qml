@@ -49,7 +49,7 @@ Item {
     property var viewAndPostHoldingsModel
 
     readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
-    readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isAdded
+    readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isContactRequestSent
     property bool amISectionAdmin: false
 
     signal openStickerPackPopup(string stickerPackId)
