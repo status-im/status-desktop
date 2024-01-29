@@ -72,6 +72,7 @@ Item {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
+    readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
     readonly property CurrenciesStore currencyStore: CurrenciesStore{}
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
@@ -1302,6 +1303,7 @@ Item {
                             tokensStore: appMain.tokensStore
                             transactionStore: appMain.transactionStore
                             walletAssetsStore: appMain.walletAssetsStore
+                            collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                         }
                     }

@@ -38,8 +38,6 @@ Item {
         if (tabBar.currentIndex > d.hiddenTabIndex)
             return false
         // FIXME take advanced settings into account here too (#13178)
-        if (tabBar.currentIndex === d.collectiblesTabIndex && baseWalletCollectiblesModel.isFetching)
-            return false
         return loader.item && loader.item.dirty
     }
 
@@ -76,18 +74,8 @@ Item {
         }
 
         // collectibles
-        readonly property var renamedCollectiblesModel: RolesRenamingModel {
-            sourceModel: root.baseWalletCollectiblesModel
-            mapping: [
-                RoleRename {
-                    from: "uid"
-                    to: "symbol"
-                }
-            ]
-        }
-
         readonly property var collectiblesController: ManageTokensController {
-            sourceModel: d.renamedCollectiblesModel
+            sourceModel: root.baseWalletCollectiblesModel
             settingsKey: "WalletCollectibles"
             onTokenHidden: (symbol, name) => Global.displayToastMessage(
                                qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
@@ -100,25 +88,6 @@ Item {
             onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
                                             qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
                                             false, Constants.ephemeralNotificationType.success, "")
-        }
-
-        function checkLoadMoreCollectibles() {
-            if (tabBar.currentIndex !== collectiblesTabIndex)
-                return
-            // If there is no more items to load or we're already fetching, return
-            if (!root.baseWalletCollectiblesModel.hasMore || root.baseWalletCollectiblesModel.isFetching)
-                return
-            root.baseWalletCollectiblesModel.loadMore()
-        }
-    }
-
-    Connections {
-        target: root.baseWalletCollectiblesModel
-        function onHasMoreChanged() {
-            d.checkLoadMoreCollectibles()
-        }
-        function onIsFetchingChanged() {
-            d.checkLoadMoreCollectibles()
         }
     }
 

@@ -35,6 +35,7 @@ StatusSectionLayout {
     required property TokensStore tokensStore
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
+    required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
 
     backButtonName: root.store.backButtonName
@@ -195,6 +196,8 @@ StatusSectionLayout {
                 rootStore: root.store
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore
+                assetsStore: root.walletAssetsStore
+                collectiblesStore: root.collectiblesStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth
