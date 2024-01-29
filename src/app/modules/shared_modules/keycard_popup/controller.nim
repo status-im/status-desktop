@@ -851,4 +851,6 @@ proc tryToStoreDataToKeychain*(self: Controller, password: string) =
   self.keychainService.storeData(singletonInstance.userProfile.getKeyUid(), password)
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+  if not serviceApplicable(self.walletAccountService):
+    return
   return self.walletAccountService.getCurrencyFormat(symbol)
