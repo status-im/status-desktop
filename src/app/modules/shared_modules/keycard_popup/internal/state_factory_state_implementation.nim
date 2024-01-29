@@ -25,14 +25,14 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
         keycardEvent.error == ErrorReaderList):
           controller.reRunCurrentFlowLater()
           if state.stateType == StateType.PluginReader:
-            return nil
+            return state
           return createState(StateType.PluginReader, state.flowType, nil)
       if keycardFlowType == ResponseTypeValueInsertCard and
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorConnection:
           controller.reRunCurrentFlowLater()
           if state.stateType == StateType.InsertKeycard:
-            return nil
+            return state
           return createState(StateType.InsertKeycard, state.flowType, nil)
       if keycardFlowType == ResponseTypeValueCardInserted:
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
@@ -645,6 +645,8 @@ proc readingKeycard*(state: State, keycardFlowType: string, keycardEvent: Keycar
           if keyUid != keycardEvent.keyUid:
             return createState(StateType.WrongKeycard, state.flowType, nil)
           controller.setKeycardUid(keycardEvent.instanceUID)
+        return nextState
+      return ensureKeycardPresenceState
 
   # this is used in case a keycard is inserted and we jump to the first meaningful screen
   return ensureReaderAndCardPresenceAndResolveNextState(state, keycardFlowType, keycardEvent, controller)
