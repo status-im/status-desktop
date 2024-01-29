@@ -29,6 +29,18 @@ SplitView {
         includeCommunityCollectibles: ctrlIncludeCommunityCollectibles.checked
     }
 
+    RolesRenamingModel {
+        id: renamedModel
+        sourceModel: collectiblesModel
+
+        mapping: [
+            RoleRename {
+                from: "uid"
+                to: "symbol"
+            }
+        ]
+    }
+
     Popups {
         popupParent: root
         rootStore: QtObject {}
@@ -62,7 +74,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        collectiblesModel: collectiblesModel
+        collectiblesModel: renamedModel
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked

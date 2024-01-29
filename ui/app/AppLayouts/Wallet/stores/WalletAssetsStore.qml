@@ -1,17 +1,24 @@
 import QtQuick 2.15
 
-import SortFilterProxyModel 0.2
 import StatusQ 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.stores 1.0
 
 import utils 1.0
 
+import SortFilterProxyModel 0.2
+
 QtObject {
     id: root
 
     property TokensStore walletTokensStore
+
+    // custom controller used for sorting/filtering (w/o source model)
+    readonly property var manageAssetsController: ManageTokensController {
+        settingsKey: "WalletAssets"
+    }
 
     /* PRIVATE: This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
     it can be easily joined with the Account Assets model */
