@@ -22,6 +22,7 @@ method executePrePrimaryStateCommand*(self: WrongKeycardState, controller: Contr
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true, nextFlow = FlowType.MigrateFromAppToKeycard,
         forceFlow = controller.getForceFlow(), nextKeyUid = controller.getKeyPairForProcessing().getKeyUid())
       return
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   if self.flowType == FlowType.MigrateFromAppToKeycard:
     controller.runLoginFlow()
     return
