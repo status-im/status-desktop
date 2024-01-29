@@ -263,28 +263,18 @@ ColumnLayout {
         flickable1: CustomGridView {
             id: communityCollectiblesView
 
-            header: Item {
-                id: communityHeader
-
+            header: HeaderDelegate {
                 height: d.headerHeight
                 width: doubleFlickable.width
+                z: 1
 
-                HeaderDelegate {
-                    width: communityHeader.width
-                    height: communityHeader.height
+                text: qsTr("Community minted")
 
-                    parent: doubleFlickable.contentItem
-                    y: doubleFlickable.gridHeader1YInContentItem
-                    z: 1
+                scrolled: !doubleFlickable.atYBeginning
+                checked: doubleFlickable.flickable1Folded
 
-                    text: qsTr("Community minted")
-
-                    scrolled: !doubleFlickable.atYBeginning
-                    checked: doubleFlickable.flickable1Folded
-
-                    onToggleClicked: doubleFlickable.flip1Folding()
-                    onInfoClicked: Global.openPopup(communityInfoPopupCmp)
-                }
+                onToggleClicked: doubleFlickable.flip1Folding()
+                onInfoClicked: Global.openPopup(communityInfoPopupCmp)
             }
 
             Binding {
@@ -305,30 +295,20 @@ ColumnLayout {
         flickable2: CustomGridView {
             id: regularCollectiblesView
 
-            header: Item {
-                id: nonCommunityHeader
-
+            header: HeaderDelegate {
                 height: d.headerHeight
                 width: doubleFlickable.width
+                z: 1
 
-                HeaderDelegate {
-                    width: nonCommunityHeader.width
-                    height: nonCommunityHeader.height
+                text: qsTr("Others")
 
-                    parent: doubleFlickable.contentItem
-                    y: doubleFlickable.gridHeader2YInContentItem
-                    z: 1
+                checked: doubleFlickable.flickable2Folded
+                scrolled: (doubleFlickable.contentY >
+                           communityCollectiblesView.contentHeight
+                           - d.headerHeight)
+                showInfoButton: false
 
-                    text: qsTr("Others")
-
-                    checked: doubleFlickable.flickable2Folded
-                    scrolled: (doubleFlickable.contentY >
-                               communityCollectiblesView.contentHeight
-                               - d.headerHeight)
-                    showInfoButton: false
-
-                    onToggleClicked: doubleFlickable.flip2Folding()
-                }
+                onToggleClicked: doubleFlickable.flip2Folding()
             }
 
             Binding {
