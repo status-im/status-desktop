@@ -35,6 +35,8 @@ ColumnLayout {
     property bool sendEnabled: true
     property bool filterVisible
 
+    readonly property var controller: d.controller
+
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
     signal sendRequested(string symbol)
     signal receiveRequested(string symbol)
@@ -463,7 +465,7 @@ ColumnLayout {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide collectible")
-                onTriggered: Global.openPopup(confirmHideCollectiblePopup, {symbol, tokenName, tokenImage, communityId})
+                onTriggered: Global.openConfirmHideCollectiblePopup(symbol, tokenName, tokenImage)
             }
             StatusAction {
                 enabled: !!communityId
@@ -490,41 +492,6 @@ ColumnLayout {
     }
 
     Component {
-        id: confirmHideCollectiblePopup
-        ConfirmationDialog {
-            property string symbol
-            property string tokenName
-            property string tokenImage
-            property string communityId
-
-            readonly property string formattedName: tokenName + (communityId ? " (" + qsTr("community collectible") + ")" : "")
-
-            width: 520
-            destroyOnClose: true
-            confirmButtonLabel: qsTr("Hide %1").arg(tokenName)
-            cancelBtnType: ""
-            showCancelButton: true
-            headerSettings.title: qsTr("Hide %1").arg(formattedName)
-            headerSettings.asset.name: tokenImage
-            confirmationText: qsTr("Are you sure you want to hide %1? You will no longer see or be able to interact with this collectible anywhere inside Status.").arg(formattedName)
-            onCancelButtonClicked: close()
-            onConfirmButtonClicked: {
-                d.controller.settingsHideToken(symbol)
-                close()
-                Global.displayToastMessage(
-                    qsTr("%1 was successfully hidden. You can toggle collectible visibility via %2.").arg(formattedName)
-                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageCollectibles}">` + qsTr("Settings", "Go to Settings") + "</a>"),
-                    "",
-                    "checkmark-circle",
-                    false,
-                    Constants.ephemeralNotificationType.success,
-                    ""
-                )
-            }
-        }
-    }
-
-    Component {
         id: confirmHideCommunityCollectiblesPopup
         ConfirmationDialog {
             property string communityId
@@ -533,7 +500,7 @@ ColumnLayout {
 
             width: 520
             destroyOnClose: true
-            confirmButtonLabel: qsTr("Hide all collectibles minted by this community")
+            confirmButtonLabel: qsTr("Hide '%1' collectibles").arg(communityName)
             cancelBtnType: ""
             showCancelButton: true
             headerSettings.title: qsTr("Hide %1 community collectibles").arg(communityName)

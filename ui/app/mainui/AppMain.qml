@@ -257,6 +257,7 @@ Item {
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
+        walletCollectiblesStore: appMain.walletCollectiblesStore
         isDevBuild: !production
 
         onOpenExternalLink: globalConns.onOpenLink(link)

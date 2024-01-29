@@ -84,6 +84,9 @@ SplitView {
         popupParent: root
         rootStore: QtObject {}
         communityTokensStore: QtObject {}
+        walletAssetsStore: WalletAssetsStore {
+            manageAssetsController: assetsView.controller
+        }
     }
 
     StackLayout {

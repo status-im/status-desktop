@@ -41,4 +41,6 @@ QtObject {
         rightModel: communityModel
         joinRole: "communityId"
     }
+
+    property var manageAssetsController
 }

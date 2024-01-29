@@ -66,6 +66,8 @@ QtObject {
                                        string tokenAmount,
                                        int tokenType,
                                        string tokenImage)
+    signal openConfirmHideAssetPopup(string assetSymbol, string assetName, string assetImage)
+    signal openConfirmHideCollectiblePopup(string collectibleSymbol, string collectibleName, string collectibleImage)
 
     signal openLink(string link)
     signal openLinkWithConfirmation(string link, string domain)

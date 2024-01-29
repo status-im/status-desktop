@@ -10,6 +10,7 @@ import mainui 1.0
 import utils 1.0
 
 import AppLayouts.Wallet.views 1.0
+import AppLayouts.Wallet.stores 1.0
 
 import shared.views 1.0
 
@@ -45,6 +46,9 @@ SplitView {
         popupParent: root
         rootStore: QtObject {}
         communityTokensStore: QtObject {}
+        walletCollectiblesStore: CollectiblesStore {
+            manageCollectiblesController: collectiblesView.controller
+        }
     }
 
     QtObject {
@@ -69,7 +73,7 @@ SplitView {
     }
 
     CollectiblesView {
-        id: assetsView
+        id: collectiblesView
 
         SplitView.fillWidth: true
         SplitView.fillHeight: true
