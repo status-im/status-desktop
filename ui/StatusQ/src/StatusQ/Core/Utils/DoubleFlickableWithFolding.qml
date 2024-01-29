@@ -2,9 +2,6 @@ import QtQuick 2.15
 import QtQml 2.15
 
 DoubleFlickable {
-    readonly property real gridHeader1YInContentItem: contentY
-    readonly property real gridHeader2YInContentItem: contentY + d.grid2HeaderOffset
-
     readonly property bool flickable1Folded: !d.grid1ContentInViewport
     readonly property bool flickable2Folded: d.grid2HeaderAtEnd || d.model2Blocked
 
@@ -52,11 +49,57 @@ DoubleFlickable {
         }
     }
 
+    HeaderWrapper {
+        id: header1Wrapper
+
+        parent: contentItem
+        flickable: flickable1
+        y: contentY
+    }
+
+    HeaderWrapper {
+        id: header2Wrapper
+
+        parent: contentItem
+        flickable: flickable2
+        y: contentY + d.grid2HeaderOffset
+    }
+
+    // The Flickable component (ListView or GridView) controls y positioning
+    // of the header and it cannot be effectively overriden. As a solution to
+    // this problem, the header can be reparented to a wrapper compensating
+    // for the y offset.
+    component HeaderWrapper: Item {
+        property Flickable flickable
+
+        z: 1
+
+        Binding {
+            when: flickable.headerItem
+            target: flickable.headerItem
+            property: "parent"
+            value: container
+            restoreMode: Binding.RestoreBindingOrValue
+        }
+
+        Binding {
+            when: flickable.headerItem
+            target: container
+            property: "y"
+            value: -flickable.headerItem.y
+            restoreMode: Binding.RestoreBindingOrValue
+        }
+
+        Item { id: container }
+    }
+
     QtObject {
         id: d
 
-        readonly property real header1Size: flickable1.headerItem ? flickable1.headerItem.height : 0
-        readonly property real header2Size: flickable2.headerItem ? flickable2.headerItem.height : 0
+        readonly property real header1Size: flickable1.headerItem
+                                            ? flickable1.headerItem.height : 0
+        readonly property real header2Size: flickable2.headerItem
+                                            ? flickable2.headerItem.height : 0
 
         readonly property bool grid1ContentInViewport:
             flickable1.y > contentY - Math.min(height, flickable1ContentHeight) + header1Size

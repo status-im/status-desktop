@@ -82,34 +82,25 @@ SplitView {
                     cellWidth: 120
                     cellHeight: 30
 
-                    header: Item {
-                        id: header1
+                    header: Rectangle {
+                        z: 1
 
                         height: root.header1Size
                         width: GridView.view.width
 
-                        Rectangle {
-                            parent: doubleFlickable.contentItem
-                            y: doubleFlickable.gridHeader1YInContentItem
-                            z: 1
+                        color: "orange"
 
-                            width: header1.width
-                            height: header1.height
+                        Label {
+                            anchors.centerIn: parent
+                            font.bold: true
+                            text: (doubleFlickable.flickable1Folded ? "➡️" : "⬇")
+                                  + " Community"
+                        }
 
-                            color: "orange"
+                        MouseArea {
+                            anchors.fill: parent
 
-                            Label {
-                                anchors.centerIn: parent
-                                font.bold: true
-                                text: (doubleFlickable.flickable1Folded ? "➡️" : "⬇")
-                                      + " Community"
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-
-                                onClicked: doubleFlickable.flip1Folding()
-                            }
+                            onClicked: doubleFlickable.flip1Folding()
                         }
                     }
 
@@ -143,34 +134,25 @@ SplitView {
                     cellWidth: 100
                     cellHeight: 100
 
-                    header: Item {
-                        id: header2
+                    header: Rectangle {
+                        z: 1
 
                         height: root.header2Size
                         width: GridView.view.width
 
-                        Rectangle {
-                            parent: doubleFlickable.contentItem
-                            y: doubleFlickable.gridHeader2YInContentItem
-                            z: 1
+                        color: "red"
 
-                            width: header2.width
-                            height: header2.height
+                        Label {
+                            anchors.centerIn: parent
+                            font.bold: true
+                            text: (doubleFlickable.flickable2Folded ? "➡️" : "⬇")
+                                  + " Others"
+                        }
 
-                            color: "red"
+                        MouseArea {
+                            anchors.fill: parent
 
-                            Label {
-                                anchors.centerIn: parent
-                                font.bold: true
-                                text: (doubleFlickable.flickable2Folded ? "➡️" : "⬇")
-                                      + " Others"
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-
-                                onClicked: doubleFlickable.flip2Folding()
-                            }
+                            onClicked: doubleFlickable.flip2Folding()
                         }
                     }
 
