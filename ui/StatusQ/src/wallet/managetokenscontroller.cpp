@@ -239,8 +239,7 @@ void ManageTokensController::loadSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
-    setSettingsDirty(true);
-    m_settingsData.clear();
+    SerializedTokenData result;
 
     // load from QSettings
     m_settings.beginGroup(settingsGroupName());
@@ -256,7 +255,7 @@ void ManageTokensController::loadSettings()
         const auto pos = m_settings.value(QStringLiteral("pos"), INT_MAX).toInt();
         const auto visible = m_settings.value(QStringLiteral("visible"), true).toBool();
         const auto groupId = m_settings.value(QStringLiteral("groupId")).toString();
-        m_settingsData.insert(symbol, {pos, visible, groupId});
+        result.insert(symbol, {pos, visible, groupId});
     }
     m_settings.endArray();
 
@@ -277,7 +276,11 @@ void ManageTokensController::loadSettings()
     setArrangeByCollection(m_settings.value(QStringLiteral("ArrangeByCollection"), false).toBool());
 
     m_settings.endGroup();
-    setSettingsDirty(false);
+
+    if (result != m_settingsData) {
+        m_settingsData = result;
+        setSettingsDirty(true);
+    }
 }
 
 void ManageTokensController::setSettingsDirty(bool dirty)
@@ -353,7 +356,7 @@ void ManageTokensController::settingsHideGroupTokens(const QString& groupId, con
     saveSettings(true);
 }
 
-bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const
+int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
 {
     int leftPos, rightPos;
     bool leftVisible, rightVisible;
@@ -365,7 +368,11 @@ bool ManageTokensController::lessThan(const QString& lhsSymbol, const QString& r
     leftPos = leftVisible ? leftPos : INT_MAX;
     rightPos = rightVisible ? rightPos : INT_MAX;
 
-    return leftPos <= rightPos;
+    if (leftPos < rightPos)
+        return -1;
+    if (leftPos > rightPos)
+        return 1;
+    return 0;
 }
 
 bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const

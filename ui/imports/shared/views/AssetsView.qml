@@ -140,7 +140,7 @@ ColumnLayout {
                 FastExpressionSorter {
                     expression: {
                         d.controller.settingsDirty
-                        return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
+                        return d.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
                     }
                     enabled: d.isCustomView
                     expectedRoles: ["symbol"]
@@ -175,6 +175,7 @@ ColumnLayout {
         Layout.preferredHeight: root.filterVisible ? implicitHeight : 0
         spacing: 20
         opacity: root.filterVisible ? 1 : 0
+        visible: opacity > 0
 
         Behavior on Layout.preferredHeight { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
         Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }

@@ -133,7 +133,7 @@ ColumnLayout {
             FastExpressionSorter {
                 expression: {
                     d.controller.settingsDirty
-                    return d.controller.lessThan(modelLeft.symbol, modelRight.symbol)
+                    return d.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
                 }
                 enabled: d.isCustomView
                 expectedRoles: ["symbol"]

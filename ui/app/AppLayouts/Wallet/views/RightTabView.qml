@@ -131,7 +131,6 @@ RightTabBaseView {
                     case 2: return historyView
                     }
                 }
-                active: visible
 
                 Component {
                     id: assetsView
