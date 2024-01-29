@@ -53,17 +53,6 @@ ColumnLayout {
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
-        readonly property var renamedModel: RolesRenamingModel {
-            sourceModel: root.collectiblesModel
-
-            mapping: [
-                RoleRename {
-                    from: "uid"
-                    to: "symbol"
-                }
-            ]
-        }
-
         readonly property bool hasCollectibles: nonCommunityModel.count
         readonly property bool hasCommunityCollectibles: communityModel.count
 
@@ -71,7 +60,7 @@ ColumnLayout {
 
         readonly property var controller: ManageTokensController {
             settingsKey: "WalletCollectibles"
-            sourceModel: d.renamedModel
+            sourceModel: root.collectiblesModel
         }
 
         readonly property var nwFilters: root.networkFilters.split(":")
@@ -96,7 +85,7 @@ ColumnLayout {
         id: customFilter
         property bool isCommunity
 
-        sourceModel: d.renamedModel
+        sourceModel: root.collectiblesModel
         proxyRoles: JoinRole {
             name: "groupName"
             roleNames: ["collectionName", "communityName"]

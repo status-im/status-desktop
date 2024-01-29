@@ -33,6 +33,8 @@ SettingsContentBase {
     property ProfileSectionStore rootStore
     property var walletStore: rootStore.walletStore
     required property TokensStore tokensStore
+    required property WalletAssetsStore assetsStore
+    required property CollectiblesStore collectiblesStore
 
     readonly property int mainViewIndex: 0
     readonly property int networksViewIndex: 1
@@ -307,10 +309,8 @@ SettingsContentBase {
             id: manageTokensView
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
-            baseWalletAssetsModel: RootStore.walletAssetsStore.groupedAccountAssetsModel
-            baseWalletCollectiblesModel: {
-                return RootStore.collectiblesStore.allCollectiblesModel
-            }
+            baseWalletAssetsModel: root.assetsStore.groupedAccountAssetsModel
+            baseWalletCollectiblesModel: root.collectiblesStore.allCollectiblesModel
             getCurrencyAmount: function (balance, symbol) {
                 return RootStore.currencyStore.getCurrencyAmount(balance, symbol)
             }
