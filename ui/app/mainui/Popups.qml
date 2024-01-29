@@ -35,6 +35,7 @@ QtObject {
     property var devicesStore
     property CurrenciesStore currencyStore
     property WalletStore.WalletAssetsStore walletAssetsStore
+    property WalletStore.CollectiblesStore walletCollectiblesStore
     property var networkConnectionStore
     property bool isDevBuild
 
@@ -80,6 +81,8 @@ QtObject {
         Global.openFinaliseOwnershipPopup.connect(openFinaliseOwnershipPopup)
         Global.openDeclineOwnershipPopup.connect(openDeclineOwnershipPopup)
         Global.openFirstTokenReceivedPopup.connect(openFirstTokenReceivedPopup)
+        Global.openConfirmHideAssetPopup.connect(openConfirmHideAssetPopup)
+        Global.openConfirmHideCollectiblePopup.connect(openConfirmHideCollectiblePopup)
     }
 
     property var currentPopup
@@ -332,6 +335,14 @@ QtObject {
                       tokenType: tokenType,
                       tokenImage: tokenImage
                   })
+    }
+    
+    function openConfirmHideAssetPopup(assetSymbol, assetName, assetImage) {
+        openPopup(confirmHideAssetPopup, { assetSymbol, assetName, assetImage })
+    }
+
+    function openConfirmHideCollectiblePopup(collectibleSymbol, collectibleName, collectibleImage) {
+        openPopup(confirmHideCollectiblePopup, { collectibleSymbol, collectibleName, collectibleImage })
     }
 
     readonly property list<Component> _components: [
@@ -960,6 +971,66 @@ QtObject {
                 communitiesStore: root.communitiesStore
 
                 onHideClicked: console.warn("TODO: OPEN HIDE POPUP")
+            }
+        },
+        Component {
+            id: confirmHideAssetPopup
+            ConfirmationDialog {
+
+                property string assetSymbol
+                property string assetName
+                property string assetImage
+
+                width: 520
+                destroyOnClose: true
+                confirmButtonLabel: qsTr("Hide asset")
+                cancelBtnType: ""
+                showCancelButton: true
+                headerSettings.title: qsTr("Hide %1 (%2)").arg(assetName).arg(assetSymbol)
+                headerSettings.asset.name: assetImage
+                confirmationText: qsTr("Are you sure you want to hide %1 (%2)? You will no longer see or be able to interact with this asset anywhere inside Status.").arg(assetName).arg(assetSymbol)
+                onCancelButtonClicked: close()
+                onConfirmButtonClicked: {
+                    root.walletAssetsStore.manageAssetsController.settingsHideToken(assetSymbol)
+                    close()
+                    Global.displayToastMessage(qsTr("%1 (%2) successfully hidden. You can toggle asset visibility via %3.").arg(assetName).arg(assetSymbol)
+                                               .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageAssets}">` + qsTr("Settings", "Go to Settings") + "</a>"),
+                                               "",
+                                               "checkmark-circle",
+                                               false,
+                                               Constants.ephemeralNotificationType.success,
+                                               "")
+                }
+            }
+        },
+        Component {
+            id: confirmHideCollectiblePopup
+            ConfirmationDialog {
+
+                property string collectibleSymbol
+                property string collectibleName
+                property string collectibleImage
+
+                width: 520
+                destroyOnClose: true
+                confirmButtonLabel: qsTr("Hide collectible")
+                cancelBtnType: ""
+                showCancelButton: true
+                headerSettings.title: qsTr("Hide %1").arg(collectibleName)
+                headerSettings.asset.name: collectibleImage
+                confirmationText: qsTr("Are you sure you want to hide %1? You will no longer see or be able to interact with this collectible anywhere inside Status.").arg(collectibleName)
+                onCancelButtonClicked: close()
+                onConfirmButtonClicked: {
+                    root.walletCollectiblesStore.manageCollectiblesController.settingsHideToken(collectibleSymbol)
+                    close()
+                    Global.displayToastMessage(qsTr("%1 successfully hidden. You can toggle collectible visibility via %2.").arg(collectibleName)
+                                               .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageCollectibles}">` + qsTr("Settings", "Go to Settings") + "</a>"),
+                                               "",
+                                               "checkmark-circle",
+                                               false,
+                                               Constants.ephemeralNotificationType.success,
+                                               "")
+                }
             }
         }
     ]
