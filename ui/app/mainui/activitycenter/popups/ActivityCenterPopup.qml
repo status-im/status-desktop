@@ -130,6 +130,7 @@ Popup {
                 case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
                     return newKeypairFromPairedDeviceComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.CommunityTokenReceived:
+                case ActivityCenterStore.ActivityCenterNotificationType.FirstCommunityTokenReceived:
                     return communityTokenReceivedComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnerTokenReceived:
                 case ActivityCenterStore.ActivityCenterNotificationType.OwnershipReceived:
@@ -287,14 +288,12 @@ Popup {
 
             readonly property var community : notification ? root.store.getCommunityDetailsAsJson(notification.communityId) : null
 
+            communityId: notification.communityId
             communityName: community ? community.name : ""
-            communityColor: community ? community.color : "black"
             communityImage: community ? community.image : ""
 
             filteredIndex: parent.filteredIndex
             notification: parent.notification
-            store: root.store
-            activityCenterStore: root.activityCenterStore
             onCloseActivityCenter: root.close()
         }
     }
