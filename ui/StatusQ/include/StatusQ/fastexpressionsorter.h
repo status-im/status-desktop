@@ -5,6 +5,8 @@
 #include <QQmlContext>
 #include <QQmlExpression>
 #include <QQmlScriptString>
+#include <QSet>
+#include <QQmlPropertyMap>
 
 #include <memory>
 
@@ -14,9 +16,10 @@ class FastExpressionSorter : public qqsfpm::Sorter
     Q_PROPERTY(QQmlScriptString expression READ expression
                WRITE setExpression NOTIFY expressionChanged)
 
-    Q_PROPERTY(QStringList expectedRoles READ expectedRoles
+    Q_PROPERTY(QSet<QByteArray> expectedRoles READ expectedRoles
                WRITE setExpectedRoles NOTIFY expectedRolesChanged)
 public:
+
     using qqsfpm::Sorter::Sorter;
 
     const QQmlScriptString& expression() const;
@@ -24,16 +27,18 @@ public:
 
     void proxyModelCompleted(const qqsfpm::QQmlSortFilterProxyModel& proxyModel) override;
 
-    void setExpectedRoles(const QStringList& expectedRoles);
-    const QStringList& expectedRoles() const;
+    void setExpectedRoles(const QSet<QByteArray>& expectedRoles);
+    const QSet<QByteArray>& expectedRoles() const;
+
+    void queueInvalidate();
+    void onInvalidate();
 
 Q_SIGNALS:
     void expressionChanged();
     void expectedRolesChanged();
 
 protected:
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight,
-                const qqsfpm::QQmlSortFilterProxyModel& proxyModel) const override;
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const qqsfpm::QQmlSortFilterProxyModel& proxyModel) const override;
 
 private:
     void updateContext(const qqsfpm::QQmlSortFilterProxyModel& proxyModel);
@@ -44,5 +49,10 @@ private:
     std::unique_ptr<QQmlExpression> m_expression;
     std::unique_ptr<QQmlContext> m_context;
 
-    QStringList m_expectedRoles;
+    QSet<QByteArray> m_expectedRoles;
+
+    bool m_queuedInvalidate { false };
+
+    mutable QQmlPropertyMap m_modelLeftMap;
+    mutable QQmlPropertyMap m_modelRightMap;
 };

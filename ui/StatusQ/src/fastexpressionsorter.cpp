@@ -50,12 +50,28 @@ void FastExpressionSorter::setExpression(const QQmlScriptString& scriptString)
     updateExpression();
 
     emit expressionChanged();
-    invalidate();
+    queueInvalidate();
+}
+
+void FastExpressionSorter::queueInvalidate()
+{
+    if (m_queuedInvalidate)
+        return;
+
+    m_queuedInvalidate = true;
+    QMetaObject::invokeMethod(this, &FastExpressionSorter::invalidate, Qt::QueuedConnection);
+}
+
+void FastExpressionSorter::onInvalidate()
+{
+    m_queuedInvalidate = false;
+    Sorter::invalidate();
 }
 
 void FastExpressionSorter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
 {
     updateContext(proxyModel);
+    Sorter::proxyModelCompleted(proxyModel);
 }
 
 /*!
@@ -63,7 +79,7 @@ void FastExpressionSorter::proxyModelCompleted(const QQmlSortFilterProxyModel& p
 
     List of role names intended to be available in the expression's context.
 */
-void FastExpressionSorter::setExpectedRoles(const QStringList& expectedRoles)
+void FastExpressionSorter::setExpectedRoles(const QSet<QByteArray>& expectedRoles)
 {
     if (m_expectedRoles == expectedRoles)
         return;
@@ -71,43 +87,44 @@ void FastExpressionSorter::setExpectedRoles(const QStringList& expectedRoles)
     m_expectedRoles = expectedRoles;
     emit expectedRolesChanged();
 
-    invalidate();
+    queueInvalidate();
 }
 
-const QStringList &FastExpressionSorter::expectedRoles() const
+const QSet<QByteArray> &FastExpressionSorter::expectedRoles() const
 {
     return m_expectedRoles;
 }
 
-bool evaluateBoolExpression(QQmlExpression& expression)
+int evaluateIntExpression(QQmlExpression& expression)
 {
     QVariant variantResult = expression.evaluate();
     if (expression.hasError()) {
         qWarning() << expression.error();
-        return false;
+        return -1;
     }
 
-    if (variantResult.canConvert<bool>())
-        return variantResult.toBool();
+    if (variantResult.canConvert<int>())
+        return variantResult.toInt();
 
-    qWarning("%s:%i:%i : Can't convert result to bool",
+    qWarning("%s:%i:%i : Can't convert result to int",
              expression.sourceFile().toUtf8().data(),
              expression.lineNumber(),
              expression.columnNumber());
-    return false;
+    return 0;
 }
 
+
 int FastExpressionSorter::compare(const QModelIndex& sourceLeft,
-                                  const QModelIndex& sourceRight,
-                                  const QQmlSortFilterProxyModel& proxyModel) const
+                                    const QModelIndex& sourceRight,
+                                    const QQmlSortFilterProxyModel& proxyModel) const
 {
-    if (m_scriptString.isEmpty())
-        return 0;
 
-    QVariantMap modelLeftMap, modelRightMap;
+    if (m_scriptString.isEmpty() || !m_context || !m_expression)
+        return false;
+    
+    m_expression->setNotifyOnValueChanged(false);
+
     QHash<int, QByteArray> roles = proxyModel.roleNames();
-
-    QQmlContext context(qmlContext(this));
 
     for (auto it = roles.cbegin(); it != roles.cend(); ++it) {
         auto role = it.key();
@@ -116,50 +133,42 @@ int FastExpressionSorter::compare(const QModelIndex& sourceLeft,
         if (!m_expectedRoles.contains(name))
             continue;
 
-        modelLeftMap.insert(name, proxyModel.sourceData(sourceLeft, role));
-        modelRightMap.insert(name, proxyModel.sourceData(sourceRight, role));
+        m_modelLeftMap.insert(name, proxyModel.sourceData(sourceLeft, role));
+        m_modelRightMap.insert(name, proxyModel.sourceData(sourceRight, role));
     }
-    modelLeftMap.insert(QStringLiteral("index"), sourceLeft.row());
-    modelRightMap.insert(QStringLiteral("index"), sourceRight.row());
+    m_modelLeftMap.insert(QStringLiteral("index"), sourceLeft.row());
+    m_modelRightMap.insert(QStringLiteral("index"), sourceRight.row());
 
-    QQmlExpression expression(m_scriptString, &context);
+    m_expression->setNotifyOnValueChanged(true);
 
-    context.setContextProperty(QStringLiteral("modelLeft"), modelLeftMap);
-    context.setContextProperty(QStringLiteral("modelRight"), modelRightMap);
-
-    if (evaluateBoolExpression(expression))
-        return -1;
-
-    context.setContextProperty(QStringLiteral("modelLeft"), modelRightMap);
-    context.setContextProperty(QStringLiteral("modelRight"), modelLeftMap);
-
-    if (evaluateBoolExpression(expression))
-        return 1;
-
-    return 0;
+    return evaluateIntExpression(*m_expression);
 }
 
 void FastExpressionSorter::updateContext(const QQmlSortFilterProxyModel& proxyModel)
 {
     m_context = std::make_unique<QQmlContext>(qmlContext(this));
+    updateExpression();
 
-    QVariantMap modelLeftMap, modelRightMap;
+    if (!m_expression)
+        return;
+
+    m_expression->setNotifyOnValueChanged(false);
 
     const auto roleNames = proxyModel.roleNames();
     for (const QByteArray& name : roleNames) {
         if (!m_expectedRoles.contains(name))
             continue;
 
-        modelLeftMap.insert(name, {});
-        modelRightMap.insert(name, {});
+        m_modelLeftMap.insert(name, {});
+        m_modelRightMap.insert(name, {});
     }
-    modelLeftMap.insert(QStringLiteral("index"), -1);
-    modelRightMap.insert(QStringLiteral("index"), -1);
+    m_modelLeftMap.insert(QStringLiteral("index"), -1);
+    m_modelRightMap.insert(QStringLiteral("index"), -1);
 
-    m_context->setContextProperty(QStringLiteral("modelLeft"), modelLeftMap);
-    m_context->setContextProperty(QStringLiteral("modelRight"), modelRightMap);
+    m_context->setContextProperty(QStringLiteral("modelLeft"), &m_modelLeftMap);
+    m_context->setContextProperty(QStringLiteral("modelRight"), &m_modelRightMap);
 
-    updateExpression();
+    m_expression->setNotifyOnValueChanged(true);
 }
 
 void FastExpressionSorter::updateExpression()
@@ -171,7 +180,7 @@ void FastExpressionSorter::updateExpression()
                                                     m_context.get());
 
     connect(m_expression.get(), &QQmlExpression::valueChanged, this,
-            &FastExpressionSorter::invalidate);
+            &FastExpressionSorter::queueInvalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }

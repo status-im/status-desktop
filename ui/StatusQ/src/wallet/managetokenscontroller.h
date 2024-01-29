@@ -52,7 +52,7 @@ public:
     Q_INVOKABLE void settingsHideToken(const QString& symbol);
     Q_INVOKABLE void settingsHideGroupTokens(const QString& groupId, const QStringList& symbols);
 
-    Q_INVOKABLE bool lessThan(const QString& lhsSymbol, const QString& rhsSymbol) const;
+    Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
 
 protected:

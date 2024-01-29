@@ -102,7 +102,12 @@ StatusListView {
             }
             sorters: FastExpressionSorter {
                 expression: {
-                    return modelLeft.enabledNetworkBalance > modelRight.enabledNetworkBalance // descending, biggest first
+                    if (modelLeft.enabledNetworkBalance > modelRight.enabledNetworkBalance)
+                        return -1 // descending, biggest first
+                    else if (modelLeft.enabledNetworkBalance < modelRight.enabledNetworkBalance)
+                        return 1
+                    else
+                        return 0
                 }
                 expectedRoles: ["enabledNetworkBalance"]
             }
