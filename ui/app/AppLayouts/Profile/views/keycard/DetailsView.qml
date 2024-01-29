@@ -35,13 +35,6 @@ ColumnLayout {
                 root.detailsModelIsEmpty()
             }
         }
-
-        function checkAndCheckTitleIfNeeded(newKeycardName) {
-            // We change title if there is only a single keycard for a keypair in keycard details view
-            if (root.keycardStore.keycardModule.keycardDetailsModel.count === 1) {
-                root.changeSectionTitle(newKeycardName)
-            }
-        }
     }
 
     StatusListView {
@@ -61,10 +54,6 @@ ColumnLayout {
             keyPairIcon: model.keycard.icon
             keyPairImage: model.keycard.image
             keyPairAccounts: model.keycard.accounts
-
-            onKeycardNameChanged: {
-                d.checkAndCheckTitleIfNeeded(keycardName)
-            }
         }
     }
 
