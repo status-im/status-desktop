@@ -39,6 +39,8 @@ ColumnLayout {
     property string addressFilters
     property string networkFilters
 
+    readonly property var controller: d.controller
+
     signal assetClicked(var token)
     signal sendRequested(string symbol)
     signal receiveRequested(string symbol)
@@ -341,7 +343,7 @@ ColumnLayout {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide asset")
-                onTriggered: Global.openPopup(confirmHideAssetPopup, {symbol, assetName, assetImage, communityId})
+                onTriggered: Global.openConfirmHideAssetPopup(symbol, assetName, assetImage)
             }
             StatusAction {
                 enabled: !!communityId
@@ -359,41 +361,6 @@ ColumnLayout {
     }
 
     Component {
-        id: confirmHideAssetPopup
-        ConfirmationDialog {
-            property string symbol
-            property string assetName
-            property string assetImage
-            property string communityId
-
-            readonly property string formattedName: assetName + (communityId ? " (" + qsTr("community asset") + ")" : "")
-
-            width: 520
-            destroyOnClose: true
-            confirmButtonLabel: qsTr("Hide %1").arg(assetName)
-            cancelBtnType: ""
-            showCancelButton: true
-            headerSettings.title: qsTr("Hide %1").arg(formattedName)
-            headerSettings.asset.name: assetImage
-            confirmationText: qsTr("Are you sure you want to hide %1? You will no longer see or be able to interact with this asset anywhere inside Status.").arg(formattedName)
-            onCancelButtonClicked: close()
-            onConfirmButtonClicked: {
-                d.controller.settingsHideToken(symbol)
-                close()
-                Global.displayToastMessage(
-                            qsTr("%1 was successfully hidden. You can toggle asset visibility via %2.").arg(formattedName)
-                            .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageAssets}">` + qsTr("Settings", "Go to Settings") + "</a>"),
-                            "",
-                            "checkmark-circle",
-                            false,
-                            Constants.ephemeralNotificationType.success,
-                            ""
-                            )
-            }
-        }
-    }
-
-    Component {
         id: confirmHideCommunityAssetsPopup
         ConfirmationDialog {
             property string communityId
@@ -402,7 +369,7 @@ ColumnLayout {
 
             width: 520
             destroyOnClose: true
-            confirmButtonLabel: qsTr("Hide all assets minted by this community")
+            confirmButtonLabel: qsTr("Hide '%1' assets").arg(communityName)
             cancelBtnType: ""
             showCancelButton: true
             headerSettings.title: qsTr("Hide %1 community assets").arg(communityName)

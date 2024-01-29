@@ -258,6 +258,7 @@ Item {
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
+        walletCollectiblesStore: appMain.walletCollectiblesStore
         networkConnectionStore: appMain.networkConnectionStore
         isDevBuild: !production
 
