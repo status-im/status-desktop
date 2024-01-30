@@ -15,6 +15,7 @@ Item {
     property alias count: comboBox.count
     property alias delegate: comboBox.delegate
     property alias contentItem: comboBox.contentItem
+    property alias comboBoxListViewSection: listView.section
 
     property alias currentIndex: comboBox.currentIndex
     property alias currentValue: comboBox.currentValue

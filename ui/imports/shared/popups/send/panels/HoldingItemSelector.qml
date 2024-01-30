@@ -34,6 +34,7 @@ Item {
 
     property alias comboBoxControl: comboBox.control
     property alias comboBoxDelegate: comboBox.delegate
+    property alias comboBoxListViewSection: comboBox.comboBoxListViewSection
     property var comboBoxPopupHeader
 
     property int contentIconSize: 21

@@ -6,6 +6,7 @@ import shared.stores 1.0
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.stores 1.0
@@ -15,6 +16,7 @@ QtObject {
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
     property WalletAssetsStore walletAssetStore
+    property TokensStore tokensStore
 
     property var mainModuleInst: mainModule
     property var walletSectionSendInst: walletSectionSend
@@ -105,15 +107,9 @@ QtObject {
 
     function getAsset(assetsList, symbol) {
         for(var i=0; i< assetsList.rowCount();i++) {
-            let asset = ModelUtils.get(assetsList, i)
+            let asset = assetsList.get(i)
             if(symbol === asset.symbol) {
-                return {
-                    name: asset.name,
-                    symbol: asset.symbol,
-                    totalBalance: asset.totalBalance,
-                    balances: asset.balances,
-                    decimals: asset.decimals
-                }
+                return asset
             }
         }
         return {}
@@ -137,7 +133,7 @@ QtObject {
 
     function getHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
+            return getAsset(processedAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getCollectible(holdingId)
         } else {
@@ -147,7 +143,7 @@ QtObject {
 
     function getSelectorHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
+            return getAsset(processedAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getSelectorCollectible(holdingId)
         } else {
@@ -238,6 +234,7 @@ QtObject {
     }
 
     function resetStoredProperties() {
+        assetSearchString = ""
         walletSectionSendInst.resetStoredProperties()
         nestedCollectiblesModel.currentCollectionUid = ""
     }
@@ -253,13 +250,104 @@ QtObject {
         return walletSectionSendInst.getShortChainIds(chainShortNames)
     }
 
-    function getCurrencyAmountFromBigInt(balance, symbol, decimals) {
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
         let bigIntBalance = AmountsArithmetic.fromString(balance)
         let decimalBalance = AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return currencyStore.getCurrencyAmount(decimalBalance, symbol)
+        return currencyStore.formatCurrencyAmount(decimalBalance, symbol)
     }
 
-    function getCurrentCurrencyAmount(balance) {
-        return currencyStore.getCurrencyAmount(balance, currencyStore.currentCurrency)
+    // Property set from TokenLIstView and HoldingSelector to search token by name, symbol or contract address
+    property string assetSearchString
+
+    // Internal model filtering balances by the account selected on the SendModalPage
+    property SubmodelProxyModel __assetsWithFilteredBalances: SubmodelProxyModel {
+        sourceModel: walletAssetStore.groupedAccountAssetsModel
+        submodelRoleName: "balances"
+        delegateModel: SortFilterProxyModel {
+            sourceModel: submodel
+            filters: FastExpressionFilter {
+                expression: root.selectedSenderAccount.address === model.account
+                expectedRoles: ["account"]
+            }
+        }
+    }
+
+    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
+    property var processedAssetsModel: SortFilterProxyModel {
+        sourceModel: __assetsWithFilteredBalances
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            },
+            FastExpressionRole {
+                name: "currentBalance"
+                expression: __getTotalBalance(model.balances, model.decimals, root.selectedSenderAccount)
+                expectedRoles: ["balances", "decimals"]
+            },
+            FastExpressionRole {
+                name: "currentCurrencyBalance"
+                expression: {
+                    if (!!model.marketDetails) {
+                        return model.currentBalance * model.marketDetails.currencyPrice.amount
+                    }
+                    return 0
+                }
+                expectedRoles: ["marketDetails", "currentBalance", "symbol"]
+            }
+        ]
+        filters: [
+            FastExpressionFilter {
+                function search(symbol, name, addressPerChain, searchString) {
+                    return (
+                        symbol.toUpperCase().startsWith(searchString.toUpperCase()) ||
+                                name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
+                    )
+                }
+                expression: search(symbol, name, addressPerChain, assetSearchString)
+                expectedRoles: ["symbol", "name", "addressPerChain"]
+            },
+            ValueFilter {
+                roleName: "isCommunityAsset"
+                value: false
+                enabled: !tokensStore.showCommunityAssetsInSend
+            },
+            FastExpressionFilter {
+                expression: {
+                    if (model.isCommunityAsset)
+                        return true
+                    return model.currentCurrencyBalance > tokensStore.balanceThresholdAmount
+                }
+                expectedRoles: ["isCommunityAsset", "currentCurrencyBalance"]
+                enabled: tokensStore.balanceThresholdEnabled
+            }
+        ]
+        sorters: RoleSorter {
+            roleName: "isCommunityAsset"
+        }
+    }
+
+    /* Internal function to search token address */
+    function __searchAddressInList(addressPerChain, searchString) {
+        let addressFound = false
+        let tokenAddresses = ModelUtils.modelToFlatArray(addressPerChain, "address")
+        for (let i =0; i< tokenAddresses.length; i++){
+            if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
+                addressFound = true
+                break;
+            }
+        }
+        return addressFound
+    }
+
+    /* Internal function to calculate total balance */
+    function __getTotalBalance(balances, decimals) {
+        let totalBalance = 0
+        for(let i=0; i<balances.count; i++) {
+            let balancePerAddressPerChain = ModelUtils.get(balances, i)
+            totalBalance+=AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+        }
+        return totalBalance
     }
 }

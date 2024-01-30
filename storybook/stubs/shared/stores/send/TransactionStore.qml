@@ -90,7 +90,7 @@ QtObject {
 
     function getHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
+            return getAsset(processedAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getCollectible(holdingId)
         } else {
@@ -100,7 +100,7 @@ QtObject {
 
     function getSelectorHolding(holdingId, holdingType) {
         if (holdingType === Constants.TokenType.ERC20) {
-            return getAsset(walletAssetStore.groupedAccountAssetsModel, holdingId)
+            return getAsset(processedAssetsModel, holdingId)
         } else if (holdingType === Constants.TokenType.ERC721) {
             return getSelectorCollectible(holdingId)
         } else {
@@ -255,14 +255,96 @@ QtObject {
         return SQUtils.ModelUtils.getByKey(NetworksModel.allNetworks, "chainId", chainId, "chainName")
     }
 
-    function getCurrencyAmountFromBigInt(balance, symbol, decimals) {
+    function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
         let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balance)
-        let balance123 = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
-        return currencyStore.getCurrencyAmount(balance123, symbol)
+        let decimalBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, decimals)
+        return currencyStore.formatCurrencyAmount(decimalBalance, symbol)
     }
 
-    function getCurrentCurrencyAmount(balance) {
-        return currencyStore.getCurrencyAmount(balance, currencyStore.currentCurrency)
+    // Property and methods below are used to apply advanced token management settings to the SendModal
+    property bool showCommunityAssetsInSend: true
+    property bool balanceThresholdEnabled: true
+    property real balanceThresholdAmount
+
+    // Property set from TokenLIstView and HoldingSelector to search token by name, symbol or contract address
+    property string assetSearchString
+
+    // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
+    property var processedAssetsModel: SortFilterProxyModel {
+        sourceModel: walletAssetStore.groupedAccountAssetsModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            },
+            FastExpressionRole {
+                name: "currentBalance"
+                expression: __getTotalBalance(model.balances, model.decimals, model.symbol, root.selectedSenderAccount)
+                expectedRoles: ["balances", "decimals", "symbol"]
+            },
+            FastExpressionRole {
+                name: "currentCurrencyBalance"
+                expression: {
+                    if (!!model.marketDetails) {
+                        return model.currentBalance * model.marketDetails.currencyPrice.amount
+                    }
+                    return 0
+                }
+                expectedRoles: ["marketDetails", "currentBalance"]
+            }
+        ]
+        filters: [
+            FastExpressionFilter {
+                function search(symbol, name, addressPerChain, searchString) {
+                    return (
+                        symbol.startsWith(searchString.toUpperCase()) ||
+                                name.toUpperCase().startsWith(searchString.toUpperCase()) || __searchAddressInList(addressPerChain, searchString)
+                    )
+                }
+                expression: search(symbol, name, addressPerChain, root.assetSearchString)
+                expectedRoles: ["symbol", "name", "addressPerChain"]
+            },
+            ValueFilter {
+                roleName: "isCommunityAsset"
+                value: false
+                enabled: !showCommunityAssetsInSend
+            },
+            FastExpressionFilter {
+                expression: {
+                    if (model.isCommunityAsset)
+                        return true
+                    return model.currentCurrencyBalance > balanceThresholdAmount
+                }
+                expectedRoles: ["isCommunityAsset", "currentCurrencyBalance"]
+                enabled: balanceThresholdEnabled
+            }
+        ]
+        sorters: RoleSorter {
+            roleName: "isCommunityAsset"
+        }
     }
 
+    /* Internal function to search token address */
+    function __searchAddressInList(addressPerChain, searchString) {
+        let addressFound = false
+        let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
+        for (let i =0; i< tokenAddresses.length; i++){
+            if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
+                addressFound = true
+                break;
+            }
+        }
+        return addressFound
+    }
+
+    /* Internal function to calculate total balance */
+    function __getTotalBalance(balances, decimals, symbol) {
+        let totalBalance = 0
+        for(let i=0; i<balances.count; i++) {
+            let balancePerAddressPerChain = SQUtils.ModelUtils.get(balances, i)
+            totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+        }
+        return totalBalance
+    }
 }

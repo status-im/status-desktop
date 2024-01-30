@@ -89,7 +89,6 @@ ColumnLayout {
             sourceModel: root.assets
             proxyRoles: [
                 FastExpressionRole {
-                    id: filter
                     name: "currentBalance"
                     expression: d.getTotalBalance(model.balances, model.decimals, root.addressFilters, root.networkFilters)
                     expectedRoles: ["balances", "decimals"]
@@ -240,35 +239,9 @@ ColumnLayout {
 
     Component {
         id: sectionDelegate
-        ColumnLayout {
+        AssetsSectionDelegate {
             width: parent.width
-            spacing: 0
-
-            StatusDialogDivider {
-                Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
-                Layout.bottomMargin: Style.current.halfPadding
-            }
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: Style.current.padding
-                Layout.rightMargin: Style.current.smallPadding
-                Layout.bottomMargin: 4
-                StatusBaseText {
-                    text: qsTr("Community assets")
-                    color: Theme.palette.baseColor1
-                }
-                Item { Layout.fillWidth: true }
-                StatusFlatButton {
-                    Layout.preferredWidth: 32
-                    Layout.preferredHeight: 32
-                    icon.name: "info"
-                    textColor: Theme.palette.baseColor1
-                    horizontalPadding: 0
-                    verticalPadding: 0
-                    onClicked: Global.openPopup(communityInfoPopupCmp)
-                }
-            }
+            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
         }
     }
 
@@ -307,7 +280,7 @@ ColumnLayout {
             }
             currencyBalance.text: {
                 let totalCurrencyBalance = modelData && modelData.currentCurrencyBalance ? modelData.currentCurrencyBalance : 0
-                return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrentCurrencyAmount(totalCurrencyBalance))
+                return currencyStore.formatCurrencyAmount(totalCurrencyBalance, currencyStore.currentCurrency)
             }
             errorMode: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache : false
             errorIcon.tooltip.text: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCacheText : ""
@@ -380,16 +353,7 @@ ColumnLayout {
 
     Component {
         id: communityInfoPopupCmp
-        StatusDialog {
-            destroyOnClose: true
-            title: qsTr("What are community assets?")
-            standardButtons: Dialog.Ok
-            width: 520
-            contentItem: StatusBaseText {
-                wrapMode: Text.Wrap
-                text: qsTr("Community assets are assets that have been minted by a community. As these assets cannot be verified, always double check their origin and validity before interacting with them. If in doubt, ask a trusted member or admin of the relevant community.")
-            }
-        }
+        CommunityAssetsInfoPopup {}
     }
 
     Component {

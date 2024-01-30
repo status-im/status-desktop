@@ -73,8 +73,9 @@ Item {
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
     readonly property CurrenciesStore currencyStore: CurrenciesStore{}
-    readonly property TransactionStore transactionStore: TransactionStore{
+    readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
+        tokensStore: appMain.tokensStore
     }
 
     // set from main.qml
