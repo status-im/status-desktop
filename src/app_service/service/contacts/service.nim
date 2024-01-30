@@ -55,8 +55,9 @@ type
   RpcResponseArgs* = ref object of Args
     response*: RpcResponse[JsonNode]
 
-  ReloadOneToOneArgs* = ref object of Args
-    sectionId*: string
+  AppendChatMessagesArgs* = ref object of Args
+    chatId*: string
+    messages*: JsonNode
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
@@ -80,7 +81,7 @@ const SIGNAL_CONTACT_VERIFICATION_ACCEPTED* = "contactVerificationRequestAccepte
 const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
 const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
-const SIGNAL_RELOAD_ONE_TO_ONE_CHAT* = "reloadOneToOneChat"
+const SIGNAL_APPEND_CHAT_MESSAGES* = "appendChatMessages"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -470,7 +471,10 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
+      self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
+        chatId: publicKey,
+        messages: response.result{"messages"}
+      ))
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
@@ -490,7 +494,10 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
+      self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
+        chatId: publicKey,
+        messages: response.result{"messages"}
+      ))
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
@@ -556,7 +563,10 @@ QtObject:
       error "error removing contact ", msg = response.error.message
       return
 
-    self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
+    self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
+      chatId: publicKey,
+      messages: response.result{"messages"}
+    ))
     self.parseContactsResponse(response)
     checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
