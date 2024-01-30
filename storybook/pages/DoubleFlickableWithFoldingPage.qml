@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
@@ -14,6 +15,8 @@ SplitView {
 
     readonly property int header1Size: 40
     readonly property int header2Size: 40
+
+    readonly property int footerSize: 60
 
     function fillModel(model, count) {
         const content = []
@@ -104,6 +107,29 @@ SplitView {
                         }
                     }
 
+                    footer: Rectangle {
+                        z: 1
+
+                        height: root.footerSize
+                        width: grid1.width
+
+                        Label {
+                            anchors.centerIn: parent
+                            text: "placeholder 1"
+                        }
+
+                        color: "yellow"
+                    }
+
+                    Binding {
+                        target: grid1
+                        property: "footer"
+                        when: !grid1.model || grid1.count !== 0
+                        //when: grid1.count !== 0
+                        value: null
+                        restoreMode: Binding.RestoreBindingOrValue
+                    }
+
                     delegate: Rectangle {
                         width: grid1.cellWidth
                         height: grid1.cellHeight
@@ -154,6 +180,28 @@ SplitView {
 
                             onClicked: doubleFlickable.flip2Folding()
                         }
+                    }
+
+                    footer: Rectangle {
+                        z: 1
+
+                        height: root.footerSize
+                        width: grid2.width
+
+                        Label {
+                            anchors.centerIn: parent
+                            text: "placeholder 2"
+                        }
+
+                        color: "yellow"
+                    }
+
+                    Binding {
+                        target: grid2
+                        property: "footer"
+                        when: !grid2.model || grid2.count !== 0
+                        value: null
+                        restoreMode: Binding.RestoreBindingOrValue
                     }
 
                     delegate: Rectangle {

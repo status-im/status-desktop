@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQml 2.15
 
+import "internal"
+
 DoubleFlickable {
     readonly property bool flickable1Folded: !d.grid1ContentInViewport
     readonly property bool flickable2Folded: d.grid2HeaderAtEnd || d.model2Blocked
@@ -49,48 +51,20 @@ DoubleFlickable {
         }
     }
 
+    // The Flickable component (ListView or GridView) controls y positioning
+    // of the header and it cannot be effectively overriden. As a solution to
+    // this problem, the header can be reparented to a wrapper compensating
+    // for the y offset.
     HeaderWrapper {
-        id: header1Wrapper
-
         parent: contentItem
         flickable: flickable1
         y: contentY
     }
 
     HeaderWrapper {
-        id: header2Wrapper
-
         parent: contentItem
         flickable: flickable2
         y: contentY + d.grid2HeaderOffset
-    }
-
-    // The Flickable component (ListView or GridView) controls y positioning
-    // of the header and it cannot be effectively overriden. As a solution to
-    // this problem, the header can be reparented to a wrapper compensating
-    // for the y offset.
-    component HeaderWrapper: Item {
-        property Flickable flickable
-
-        z: 1
-
-        Binding {
-            when: flickable.headerItem
-            target: flickable.headerItem
-            property: "parent"
-            value: container
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-
-        Binding {
-            when: flickable.headerItem
-            target: container
-            property: "y"
-            value: -flickable.headerItem.y
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-
-        Item { id: container }
     }
 
     QtObject {
