@@ -43,6 +43,7 @@ type
     RendezvousNodes*: seq[string]
     WakuNodes*: seq[string]
     DiscV5BootstrapNodes*: seq[string]
+    ClusterID*: int
 
 
   LightEthConfig* = object
@@ -249,6 +250,7 @@ proc toNetwork*(jsonObj: JsonNode): Network =
 proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
   discard jsonObj.getProp("Fleet", result.Fleet)
+  discard jsonObj.getProp("ClusterID", result.ClusterID)
 
   var arr: JsonNode
   if(jsonObj.getProp("StaticNodes", arr)):
