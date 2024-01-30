@@ -269,7 +269,7 @@ QtObject:
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
         reactions: @[])
-      
+
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
@@ -398,10 +398,20 @@ QtObject:
       let data = EnvelopeExpiredArgs(messagesIds: receivedData.messageIds)
       self.events.emit(SIGNAL_ENVELOPE_EXPIRED, data)
 
-    self.events.on(SIGNAL_RELOAD_ONE_TO_ONE_CHAT) do(e: Args):
-      let args = ReloadOneToOneArgs(e)
-      self.resetMessageCursor(args.sectionId)
-      self.asyncLoadMoreMessagesForChat(args.sectionId)
+    self.events.on(SIGNAL_APPEND_CHAT_MESSAGES) do(e: Args):
+      let args = AppendChatMessagesArgs(e)
+
+      if args.messages != nil and args.messages.kind != JNull:
+        var messages: seq[MessageDto]
+        messages = map(args.messages.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
+        self.bulkReplacePubKeysWithDisplayNames(messages)
+
+        self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs(
+          chatId: args.chatId,
+          messages: messages,
+          reactions: @[],
+        ))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
