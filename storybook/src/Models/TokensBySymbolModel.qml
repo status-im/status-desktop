@@ -104,7 +104,7 @@ ListModel {
             addressPerChain: [
                 { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271e0f"}
             ],
-            decimals: 18,
+            decimals: 0,
             type: 1,
             communityId: "ddls",
             description: "",
@@ -130,7 +130,7 @@ ListModel {
             addressPerChain: [
                 { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271p0f"}
             ],
-            decimals: 18,
+            decimals: 0,
             type: 1,
             communityId: "sox",
             description: "",
@@ -156,7 +156,7 @@ ListModel {
             addressPerChain: [
                 { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271d0f"}
             ],
-            decimals: 18,
+            decimals: 0,
             type: 1,
             communityId: "ddls",
             description: "",
@@ -182,7 +182,7 @@ ListModel {
             addressPerChain: [
                 { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271a0f"}
             ],
-            decimals: 18,
+            decimals: 0,
             type: 1,
             communityId: "ast",
             description: "",

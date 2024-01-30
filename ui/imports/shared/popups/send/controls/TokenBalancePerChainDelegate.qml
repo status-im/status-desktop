@@ -14,8 +14,8 @@ StatusListItem {
 
     signal tokenSelected(var selectedToken)
     signal tokenHovered(var selectedToken, bool hovered)
-    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
-    property var getCurrentCurrencyAmount: function(balance){}
+    property var formatCurrentCurrencyAmount: function(balance){}
+    property var formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
     property var balancesModel
     property string selectedSenderAccount
 
@@ -28,25 +28,6 @@ StatusListItem {
 
         function selectToken() {
             root.tokenSelected({name, symbol, balances, decimals})
-        }
-
-        readonly property string balanceRoleName: "balance"
-        property string roleName: balanceRoleName
-    }
-
-    property var filteredBalances : SortFilterProxyModel {
-        sourceModel: root.balancesModel
-        filters: FastExpressionFilter {
-            expression: {
-                root.selectedSenderAccount
-                return root.selectedSenderAccount === model.account
-            }
-            expectedRoles: ["account"]
-        }
-        onCountChanged: {
-            // Added because the SumAggregator is not evaluated after the filters are applied
-            d.roleName = ""
-            d.roleName = d.balanceRoleName
         }
     }
 
@@ -64,11 +45,8 @@ StatusListItem {
     statusListItemTitleAside.width: statusListItemTitleArea.width - statusListItemTitle.width
     statusListItemTitleAside.elide: Text.ElideRight
     label: {
-        if (!!model && !!model.marketDetails && !!model.marketDetails.currencyPrice) {
-            let totalCurrencyBalance = aggregator.value/(10 ** decimals) * model.marketDetails.currencyPrice.amount
-            return LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(totalCurrencyBalance))
-        }
-        return LocaleUtils.currencyAmountToLocaleString(root.getCurrentCurrencyAmount(0))
+        let balance = !!model && !!model.currentCurrencyBalance ? model.currentCurrencyBalance : 0
+        return root.formatCurrentCurrencyAmount(balance)
     }
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
@@ -77,13 +55,13 @@ StatusListItem {
     statusListItemLabel.anchors.verticalCenterOffset: -12
     statusListItemLabel.color: Theme.palette.directColor1
     statusListItemInlineTagsSlot.spacing: 0
-    tagsModel: filteredBalances
+    tagsModel: root.balancesModel
     tagsDelegate: expandedItem
     statusListItemInlineTagsSlot.children: Row {
         id: compactRow
         spacing: -6
         Repeater {
-            model: filteredBalances
+            model: root.balancesModel
             delegate: compactItem
         }
     }
@@ -92,12 +70,6 @@ StatusListItem {
     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
 
     onClicked: d.selectToken()
-
-    SumAggregator {
-        id: aggregator
-        model: filteredBalances
-        roleName: d.roleName
-    }
 
     Component {
         id: compactItem
@@ -114,7 +86,7 @@ StatusListItem {
         StatusListItemTag {
             height: 16
             leftPadding: 0
-            title: LocaleUtils.currencyAmountToLocaleString(root.getCurrencyAmountFromBigInt(balance, symbol, decimals))
+            title: root.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
             titleText.font.pixelSize: 12
             closeButtonVisible: false
             bgColor: "transparent"

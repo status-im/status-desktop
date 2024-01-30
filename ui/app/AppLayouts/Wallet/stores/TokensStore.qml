@@ -98,4 +98,9 @@ QtObject {
             }
         ]
     }
+
+    // Property and methods below are used to apply advanced token management settings to the SendModal
+    readonly property bool showCommunityAssetsInSend: root._allTokensModule.showCommunityAssetWhenSendingTokens
+    readonly property bool balanceThresholdEnabled: root._allTokensModule.displayAssetsBelowBalance
+    readonly property real balanceThresholdAmount: root._allTokensModule.displayAssetsBelowBalanceThreshold
 }

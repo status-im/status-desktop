@@ -8,10 +8,11 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
+import shared.controls 1.0
+import shared.popups 1.0
 import "../controls"
 
 Item {
@@ -21,25 +22,28 @@ Item {
     property var assets: null
     property var collectibles: null
     property var networksModel
+    property string assetSearchString
 
     signal tokenSelected(string symbol, var holdingType)
     signal tokenHovered(string symbol, var holdingType, bool hovered)
 
     property bool onlyAssets: false
     property int browsingHoldingType: Constants.TokenType.ERC20
-    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
-    property var getCurrentCurrencyAmount: function(balance){}
+    property var formatCurrentCurrencyAmount: function(balance){}
+    property var formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
 
     onVisibleChanged: {
-        if(!visible && root.collectibles)
-            root.collectibles.currentCollectionUid = ""
+        if(!visible) {
+            if (root.collectibles)
+                root.collectibles.currentCollectionUid = ""
+            tokenList.headerItem.input.edit.clear()
+        }
     }
 
     QtObject {
         id: d
-        property string assetSearchString
         readonly property var updateAssetSearchText: Backpressure.debounce(root, 1000, function(inputText) {
-            d.assetSearchString = inputText
+            assetSearchString = inputText
         })
 
         property string collectibleSearchString
@@ -70,18 +74,6 @@ Item {
             leftModel: root.collectibles
             rightModel: d.renamedAllNetworksModel
             joinRole: "chainId"
-        }
-
-        function searchAddressInList(addressPerChain, searchString) {
-            let addressFound = false
-            let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
-            for (let i =0; i< tokenAddresses.length; i++){
-                if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
-                    addressFound = true
-                    break;
-                }
-            }
-            return addressFound
         }
     }
 
@@ -144,28 +136,32 @@ Item {
                     height: tokenList.contentHeight
 
                     header: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenHeader : collectibleHeader
-                    model: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokensModel : collectiblesModel
+                    model: root.browsingHoldingType === Constants.TokenType.ERC20 ? root.assets : collectiblesModel
                     delegate: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenDelegate : collectiblesDelegate
+                    section {
+                        property: "isCommunityAsset"
+                        delegate: Loader {
+                            width: ListView.view.width
+                            required property string section
+                            sourceComponent: root.browsingHoldingType === Constants.TokenType.ERC20 && section === "true" ? sectionDelegate : null
+                        }
+                    }
+                }
+
+                Component {
+                    id: sectionDelegate
+                    AssetsSectionDelegate {
+                        width: parent.width
+                        onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                    }
+                }
+
+                Component {
+                    id: communityInfoPopupCmp
+                    CommunityAssetsInfoPopup {}
                 }
             }
         }
-    }
-
-    property var tokensModel: SortFilterProxyModel {
-        sourceModel: root.assets
-        filters: [
-            FastExpressionFilter {
-                function search(symbol, name, addressPerChain, searchString) {
-                    tokenList.positionViewAtBeginning()
-                    return (
-                        symbol.startsWith(searchString.toUpperCase()) ||
-                                name.toUpperCase().startsWith(searchString.toUpperCase()) || d.searchAddressInList(addressPerChain, searchString)
-                    )
-                }
-                expression: search(symbol, name, addressPerChain, d.assetSearchString)
-                expectedRoles: ["symbol", "name", "addressPerChain"]
-            }
-        ]
     }
 
     property var collectiblesModel: SortFilterProxyModel {
@@ -195,11 +191,11 @@ Item {
             }
             onTokenSelected: root.tokenSelected(symbol, Constants.TokenType.ERC20)
             onTokenHovered: root.tokenHovered(symbol, Constants.TokenType.ERC20, hovered)
-            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
-                return root.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+            formatCurrentCurrencyAmount: function(balance){
+                return root.formatCurrentCurrencyAmount(balance)
             }
-            getCurrentCurrencyAmount: function(balance){
-                return root.getCurrentCurrencyAmount(balance)
+            formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                return root.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
             }
         }
     }

@@ -72,8 +72,8 @@ Item {
         primaryText: token && token.name ? token.name : Constants.dummyText
         secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(token.currentBalance, token.symbol)) : Constants.dummyText
         tertiaryText: {
-            let totalCurrencyBalance = token && token.currentCurrencyBalance ? token.currentCurrencyBalance : 0
-            return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrentCurrencyAmount(totalCurrencyBalance))
+            let totalCurrencyBalance = token && token.currentCurrencyBalance && token.symbol ? token.currentCurrencyBalance : 0
+            return currencyStore.formatCurrencyAmount(totalCurrencyBalance, token.symbol)
         }
         decimals: token && token.decimals ? token.decimals : 4
         balances: token && token.balances ? token.balances: null

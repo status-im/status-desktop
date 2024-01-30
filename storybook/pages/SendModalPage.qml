@@ -31,8 +31,9 @@ SplitView {
         submodelRoleName: "balances"
         delegateModel: SortFilterProxyModel {
             sourceModel: submodel
-            filters: ExpressionFilter {
-                expression: txStore.selectedSenderAccount.address === account
+            filters: FastExpressionFilter {
+                expression: txStore.selectedSenderAccount.address === model.account
+                expectedRoles: ["account"]
             }
         }
     }
@@ -40,6 +41,9 @@ SplitView {
     TransactionStore {
         id: txStore
         walletAssetStore: root.walletAssetStore
+        showCommunityAssetsInSend: showCommunityAssetsCheckBox.checked
+        balanceThresholdEnabled: balanceThresholdCheckbox.checked
+        balanceThresholdAmount: Number(balanceThresholdValue.text)
     }
 
     QtObject {
@@ -272,6 +276,32 @@ SplitView {
                 onClicked: {
                     loader.item.close()
                     loader.item.open()
+                }
+            }
+
+            CheckBox {
+                id: showCommunityAssetsCheckBox
+                text: "Show community assets when sending tokens"
+                checked: true
+            }
+
+            CheckBox {
+                id: balanceThresholdCheckbox
+                text: "Turn on balance threshold"
+                checked: false
+            }
+
+            Rectangle {
+                border.width: 1
+                Layout.preferredWidth: 100
+                Layout.preferredHeight: 50
+                color: "lightgrey"
+                TextInput {
+                    id: balanceThresholdValue
+                    anchors.fill: parent
+                    enabled: balanceThresholdCheckbox.checked
+                    text: "0.10"
+                    inputMethodHints: Qt.ImhFormattedNumbersOnly
                 }
             }
         }

@@ -4,6 +4,7 @@ import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import shared.controls 1.0
+import shared.popups 1.0
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -12,7 +13,6 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import "../controls"
 
@@ -25,12 +25,13 @@ Item {
     property var networksModel
     property string currentCurrencySymbol
     property bool onlyAssets: true
+    property string searchText
 
     implicitWidth: holdingItemSelector.implicitWidth
     implicitHeight: holdingItemSelector.implicitHeight
 
-    property var getCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
-    property var getCurrentCurrencyAmount: function(balance){}
+    property var formatCurrentCurrencyAmount: function(balance){}
+    property var formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){}
 
     signal itemHovered(string holdingId, var holdingType)
     signal itemSelected(string holdingId, var holdingType)
@@ -78,7 +79,6 @@ Item {
 
         property var currentHoldingType: Constants.TokenType.Unknown
 
-        property string searchText
         readonly property string uppercaseSearchText: searchText.toUpperCase()
 
         property var assetTextFn: function (asset) {
@@ -87,25 +87,6 @@ Item {
 
         property var assetIconSourceFn: function (asset) {
             return !!asset && asset.symbol ? Style.png("tokens/%1".arg(asset.symbol)) : ""
-        }
-
-        property var assetComboBoxModel: SortFilterProxyModel {
-            sourceModel: root.assetsModel
-            filters: [
-                FastExpressionFilter {
-                    function search(symbol, name, addressPerChain, searchString) {
-                        return (
-                            searchString === "" ||
-                            symbol.startsWith(searchString) ||
-                            name.toUpperCase().startsWith(searchString) ||
-                            d.searchAddressInList(addressPerChain, searchString)
-                        )
-                    }
-
-                    expression: search(symbol, name, addressPerChain, d.uppercaseSearchText)
-                    expectedRoles: ["symbol", "name", "addressPerChain"]
-                }
-            ]
         }
 
         property var collectibleTextFn: function (item) {
@@ -168,18 +149,6 @@ Item {
         readonly property int collectibleContentIconSize: 28
         readonly property int assetContentTextSize: 28
         readonly property int collectibleContentTextSize: 15
-
-        function searchAddressInList(addressPerChain, searchString) {
-            let addressFound = false
-            let tokenAddresses = SQUtils.ModelUtils.modelToFlatArray(addressPerChain, "address")
-            for (let i =0; i< tokenAddresses.length; i++){
-                if(tokenAddresses[i].toUpperCase().startsWith(searchString.toUpperCase())) {
-                    addressFound = true
-                    break;
-                }
-            }
-            return addressFound
-        }
     }
 
     HoldingItemSelector {
@@ -222,15 +191,39 @@ Item {
         comboBoxPopupHeader: headerComponent
         itemTextFn: d.isCurrentBrowsingTypeAsset ? d.assetTextFn : d.collectibleTextFn
         itemIconSourceFn: d.isCurrentBrowsingTypeAsset ? d.assetIconSourceFn : d.collectibleIconSourceFn
-        comboBoxModel: d.isCurrentBrowsingTypeAsset ? d.assetComboBoxModel : d.collectibleComboBoxModel
+        comboBoxModel: d.isCurrentBrowsingTypeAsset ? root.assetsModel : d.collectibleComboBoxModel
 
         contentIconSize: d.isAsset(d.currentHoldingType) ? d.assetContentIconSize : d.collectibleContentIconSize
         contentTextSize: d.isAsset(d.currentHoldingType) ? d.assetContentTextSize : d.collectibleContentTextSize
+        comboBoxListViewSection.property: "isCommunityAsset"
+        comboBoxListViewSection.delegate: Loader {
+                width: ListView.view.width
+                required property string section
+                sourceComponent: d.isCurrentBrowsingTypeAsset && section === "true" ? sectionDelegate : null
+            }
+        comboBoxControl.popup.onClosed: comboBoxControl.popup.contentItem.headerItem.clear()
+    }
+
+    Component {
+        id: sectionDelegate
+        AssetsSectionDelegate {
+            width: parent.width
+            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+        }
+    }
+
+    Component {
+        id: communityInfoPopupCmp
+        CommunityAssetsInfoPopup {}
     }
 
     Component {
         id: headerComponent
         ColumnLayout {
+            function clear() {
+                searchInput.input.edit.clear()
+            }
+
             width: holdingItemSelector.comboBoxControl.popup.width
             Layout.topMargin: d.headerTopMargin
             spacing: -1 // Used to overlap rectangles from row components
@@ -318,11 +311,11 @@ Item {
                 root.itemSelected(selectedToken.symbol, Constants.TokenType.ERC20)
                 holdingItemSelector.comboBoxControl.popup.close()
             }
-            getCurrencyAmountFromBigInt: function(balance, symbol, decimals){
-                return root.getCurrencyAmountFromBigInt(balance, symbol, decimals)
+            formatCurrentCurrencyAmount: function(balance){
+                return root.formatCurrentCurrencyAmount(balance)
             }
-            getCurrentCurrencyAmount: function(balance){
-                return root.getCurrentCurrencyAmount(balance)
+            formatCurrencyAmountFromBigInt: function(balance, symbol, decimals){
+                return root.formatCurrencyAmountFromBigInt(balance, symbol, decimals)
             }
         }
     }
