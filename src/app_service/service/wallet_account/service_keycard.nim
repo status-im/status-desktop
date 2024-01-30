@@ -98,12 +98,9 @@ proc getKeycardByKeycardUid*(self: Service, keycardUid: string): KeycardDto =
     error "error: ", procName="getKeycardByKeycardUid", errName = e.name, errDesription = e.msg
 
 proc getKeycardsWithSameKeyUid*(self: Service, keyUid: string): seq[KeycardDto] =
-  try:
-    let response = backend.getKeycardsWithSameKeyUID(keyUid)
-    if responseHasNoErrors("getKeycardsWithSameKeyUid", response):
-      return map(response.result.getElems(), proc(x: JsonNode): KeycardDto = toKeycardDto(x))
-  except Exception as e:
-    error "error: ", procName="getKeycardsWithSameKeyUid", errName = e.name, errDesription = e.msg
+  for kp in self.keypairs.values:
+    if kp.keyUid == keyUid:
+      return kp.keycards
 
 proc isKeycardAccount*(self: Service, account: WalletAccountDto): bool =
   if account.isNil or
