@@ -1,23 +1,16 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtQml 2.15
 
-import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
-import StatusQ.Models 0.1
-
-import shared.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 
 import "internals"
 
-Control {
+DoubleFlickableWithFolding {
     id: root
 
     required property var controller
@@ -27,8 +20,6 @@ Control {
 
     property var getCurrencyAmount: function (balance, symbol) {}
     property var getCurrentCurrencyAmount: function(balance) {}
-
-    background: null
 
     function saveSettings() {
         root.controller.saveSettings();
@@ -42,72 +33,65 @@ Control {
         root.controller.clearSettings();
     }
 
+    clip: true
+
     QtObject {
         id: d
 
         readonly property int sectionHeight: 64
     }
 
-    contentItem: DoubleFlickableWithFolding {
-        id: doubleFlickable
+    ScrollBar.vertical: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.height, root.contentHeight)
+    }
 
-        clip: true
+    flickable1: ManageTokensListViewBase {
+        model: root.controller.regularTokensModel
+        width: root.width
 
-        ScrollBar.vertical: StatusScrollBar {
-            policy: ScrollBar.AsNeeded
-            visible: resolveVisibility(policy, doubleFlickable.height,
-                                       doubleFlickable.contentHeight)
+        header: FoldableHeader {
+            width: ListView.view.width
+            title: qsTr("Assets")
+            folded: root.flickable1Folded
+
+            onToggleFolding: root.flip1Folding()
         }
 
-        flickable1: ManageTokensListViewBase {
-            model: root.controller.regularTokensModel
-            width: doubleFlickable.width
-
-            ScrollBar.vertical: null
-
-            header: FoldableHeader {
-                width: ListView.view.width
-                title: qsTr("Assets")
-                folded: doubleFlickable.flickable1Folded
-
-                onToggleFolding: doubleFlickable.flip1Folding()
+        delegate: ManageTokensDelegate {
+            controller: root.controller
+            dragParent: root
+            count: root.controller.regularTokensModel.count
+            dragEnabled: count > 1
+            getCurrencyAmount: function (balance, symbol) {
+                return root.getCurrencyAmount(balance, symbol)
             }
-
-            delegate: ManageTokensDelegate {
-                controller: root.controller
-                dragParent: root
-                count: root.controller.regularTokensModel.count
-                dragEnabled: count > 1
-                getCurrencyAmount: function (balance, symbol) {
-                    return root.getCurrencyAmount(balance, symbol)
-                }
-                getCurrentCurrencyAmount: function (balance) {
-                    return root.getCurrentCurrencyAmount(balance)
-                }
+            getCurrentCurrencyAmount: function (balance) {
+                return root.getCurrentCurrencyAmount(balance)
             }
-
-            placeholderText: qsTr("Your assets will appear here")
         }
 
-        flickable2: ManageTokensListViewBase {
-            width: doubleFlickable.width
+        placeholderText: qsTr("Your assets will appear here")
+    }
 
-            model: root.controller.arrangeByCommunity ? communityGroupedModel
-                                                      : communityNonGroupedModel
+    flickable2: ManageTokensListViewBase {
+        width: root.width
 
-            header: FoldableHeader {
-                width: ListView.view.width
-                title: qsTr("Community minted")
-                switchText: qsTr("Arrange by community")
-                folded: doubleFlickable.flickable2Folded
-                checked: root.controller.arrangeByCommunity
+        model: root.controller.arrangeByCommunity ? communityGroupedModel
+                                                  : communityNonGroupedModel
 
-                onToggleFolding: doubleFlickable.flip2Folding()
-                onToggleSwitch: root.controller.arrangeByCommunity = checked
-            }
+        header: FoldableHeader {
+            width: ListView.view.width
+            title: qsTr("Community minted")
+            switchText: qsTr("Arrange by community")
+            folded: root.flickable2Folded
+            checked: root.controller.arrangeByCommunity
 
-            placeholderText: qsTr("Your community minted assets will appear here")
+            onToggleFolding: root.flip2Folding()
+            onToggleSwitch: root.controller.arrangeByCommunity = checked
         }
+
+        placeholderText: qsTr("Your community minted assets will appear here")
     }
 
     DelegateModel {

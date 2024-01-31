@@ -33,7 +33,7 @@ Item {
         id: componentUnderTest
         ManageCollectiblesPanel {
             width: 500
-            height: contentItem.contentHeight
+            height: contentHeight
             controller: ManageTokensController {
                 sourceModel: renamedModel
                 settingsKey: "WalletCollectibles"

@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
@@ -11,15 +10,13 @@ import AppLayouts.Wallet.controls 1.0
 
 import "internals"
 
-Control {
+DoubleFlickableWithFolding {
     id: root
 
     required property var controller
 
     readonly property bool dirty: root.controller.dirty
     readonly property bool hasSettings: root.controller.hasSettings
-
-    background: null
 
     function saveSettings() {
         root.controller.saveSettings();
@@ -33,64 +30,59 @@ Control {
         root.controller.clearSettings();
     }
 
-    contentItem: DoubleFlickableWithFolding {
-        id: doubleFlickable
+    clip: true
 
-        clip: true
+    ScrollBar.vertical: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.height, root.contentHeight)
+    }
 
-        ScrollBar.vertical: StatusScrollBar {
-            policy: ScrollBar.AsNeeded
-            visible: resolveVisibility(policy, doubleFlickable.height,
-                                       doubleFlickable.contentHeight)
+    flickable1: ManageTokensListViewBase {
+        objectName: "communityTokensListView"
+
+        width: root.width
+
+        model: root.controller.arrangeByCommunity
+               ? communityGroupedModel : communityNonGroupedModel
+
+        header: FoldableHeader {
+            objectName: "communityHeader"
+
+            width: ListView.view.width
+            title: qsTr("Community minted")
+            switchText: qsTr("Arrange by community")
+            folded: root.flickable1Folded
+            checked: root.controller.arrangeByCommunity
+
+            onToggleFolding: root.flip1Folding()
+            onToggleSwitch: root.controller.arrangeByCommunity = checked
         }
 
-        flickable1: ManageTokensListViewBase {
-            objectName: "communityTokensListView"
+        placeholderText: qsTr("Your community minted collectibles will appear here")
+    }
 
-            width: doubleFlickable.width
+    flickable2: ManageTokensListViewBase {
+        objectName: "otherTokensListView"
 
-            model: root.controller.arrangeByCommunity
-                   ? communityGroupedModel : communityNonGroupedModel
+        width: root.width
 
-            header: FoldableHeader {
-                objectName: "communityHeader"
+        model: root.controller.arrangeByCollection
+               ? otherGroupedModel : otherNonGroupedModel
 
-                width: ListView.view.width
-                title: qsTr("Community minted")
-                switchText: qsTr("Arrange by community")
-                folded: doubleFlickable.flickable1Folded
-                checked: root.controller.arrangeByCommunity
+        header: FoldableHeader {
+            objectName: "nonCommunityHeader"
 
-                onToggleFolding: doubleFlickable.flip1Folding()
-                onToggleSwitch: root.controller.arrangeByCommunity = checked
-            }
+            width: ListView.view.width
+            title: qsTr("Other")
+            switchText: qsTr("Arrange by collection")
+            folded: root.flickable2Folded
+            checked: root.controller.arrangeByCollection
 
-            placeholderText: qsTr("Your community minted collectibles will appear here")
+            onToggleFolding: root.flip2Folding()
+            onToggleSwitch: root.controller.arrangeByCollection = checked
         }
 
-        flickable2: ManageTokensListViewBase {
-            objectName: "otherTokensListView"
-
-            width: doubleFlickable.width
-
-            model: root.controller.arrangeByCollection
-                   ? otherGroupedModel : otherNonGroupedModel
-
-            header: FoldableHeader {
-                objectName: "nonCommunityHeader"
-
-                width: ListView.view.width
-                title: qsTr("Other")
-                switchText: qsTr("Arrange by collection")
-                folded: doubleFlickable.flickable2Folded
-                checked: root.controller.arrangeByCollection
-
-                onToggleFolding: doubleFlickable.flip2Folding()
-                onToggleSwitch: root.controller.arrangeByCollection = checked
-            }
-
-            placeholderText: qsTr("Your other collectibles will appear here")
-        }
+        placeholderText: qsTr("Your other collectibles will appear here")
     }
 
     DelegateModel {
