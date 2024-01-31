@@ -183,29 +183,33 @@ Item {
         function getPairings(callback) {
             console.debug(`WC WalletConnectSDK.wcCall.getPairings;`)
 
-            d.engine.runJavaScript(`wc.getPairings()`, function(result) {
-                console.debug(`WC WalletConnectSDK.wcCall.getPairings; result: ${JSON.stringify(result, null, 2)}`)
+            if (d.engine) {
+                d.engine.runJavaScript(`wc.getPairings()`, function(result) {
+                    console.debug(`WC WalletConnectSDK.wcCall.getPairings; result: ${JSON.stringify(result, null, 2)}`)
 
-                if (callback && result) {
-                    callback(result)
-                }
-            })
+                    if (callback && result) {
+                        callback(result)
+                    }
+                })
+            }
         }
 
         function getActiveSessions(callback) {
             console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions;`)
 
-            d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
-                let allSessions = ""
-                for (var key of Object.keys(result)) {
-                    allSessions += `\nsessionTopic: ${key}  relatedPairingTopic: ${result[key].pairingTopic}`;
-                }
-                console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${allSessions}`)
+            if (d.engine) {
+                d.engine.runJavaScript(`wc.getActiveSessions()`, function(result) {
+                    let allSessions = ""
+                    for (var key of Object.keys(result)) {
+                        allSessions += `\nsessionTopic: ${key}  relatedPairingTopic: ${result[key].pairingTopic}`;
+                    }
+                    console.debug(`WC WalletConnectSDK.wcCall.getActiveSessions; result: ${allSessions}`)
 
-                if (callback && result) {
-                    callback(result)
-                }
-            })
+                    if (callback && result) {
+                        callback(result)
+                    }
+                })
+            }
         }
 
         function pair(pairLink) {

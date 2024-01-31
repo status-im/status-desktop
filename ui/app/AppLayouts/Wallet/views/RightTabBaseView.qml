@@ -34,7 +34,7 @@ FocusScope {
             networkConnectionStore: root.networkConnectionStore
         }
 
-        Column {
+        Item {
             id: contentWrapper
             Layout.fillWidth: true
             Layout.fillHeight: true

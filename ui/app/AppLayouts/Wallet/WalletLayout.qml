@@ -69,7 +69,7 @@ Item {
 
         d.displayAllAddresses()
 
-        if (!!rightPanelStackView.currentItem.resetView) {
+        if (rightPanelStackView.currentItem && !!rightPanelStackView.currentItem.resetView) {
             rightPanelStackView.currentItem.resetView()
         }
 
