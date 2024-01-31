@@ -88,6 +88,11 @@ QtObject:
   proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
 
+  proc getIsRuntimeLogLevelSet*(self: View): bool {.slot.} =
+    return self.delegate.isRuntimeLogLevelSet()
+  QtProperty[bool] isRuntimeLogLevelSet:
+    read = getIsRuntimeLogLevelSet
+
   proc toggleWalletSection*(self: View) {.slot.} =
     self.delegate.toggleWalletSection()
 

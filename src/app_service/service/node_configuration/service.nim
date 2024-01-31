@@ -5,6 +5,7 @@ import ../settings/service as settings_service
 import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node_config as status_node_config
+import ../../../constants as main_constants
 
 export node_config
 
@@ -14,7 +15,9 @@ logScope:
 const WAKU_VERSION_1* = 1
 const WAKU_VERSION_2* = 2
 
-const SIGNAL_NODE_LOG_LEVEL_UPDATE* = "nodeLogLevelUpdated"
+const
+  SIGNAL_NODE_LOG_LEVEL_UPDATE* = "nodeLogLevelUpdated"
+  DEBUG_LOG_LEVELS = @["DEBUG", "TRACE"]
 
 type
   NodeLogLevelUpdatedArgs* = ref object of Args
@@ -194,7 +197,10 @@ proc getLogLevel(self: Service): string =
   return self.configuration.LogLevel
 
 proc isDebugEnabled*(self: Service): bool =
-  return self.getLogLevel() == $LogLevel.DEBUG
+  var logLevel = self.getLogLevel()
+  if main_constants.runtimeLogLevelSet():
+    logLevel = main_constants.LOG_LEVEL
+  return logLevel in DEBUG_LOG_LEVELS
 
 proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
   var newConfiguration = self.configuration

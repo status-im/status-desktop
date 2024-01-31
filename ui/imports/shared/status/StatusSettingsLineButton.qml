@@ -54,7 +54,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         text: root.text
         font.pixelSize: 15
-        color: !root.isEnabled ? Style.current.secondaryText : Style.current.textColor
+        color: Style.current.textColor
     }
 
     StyledText {
