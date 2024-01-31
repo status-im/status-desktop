@@ -35,6 +35,7 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged FINAL)
     Q_PROPERTY(bool hasSettings READ hasSettings NOTIFY settingsDirtyChanged FINAL)
     Q_PROPERTY(bool settingsDirty READ settingsDirty NOTIFY settingsDirtyChanged FINAL)
+    Q_PROPERTY(int revision READ revision NOTIFY revisionChanged FINAL)
 
 public:
     explicit ManageTokensController(QObject* parent = nullptr);
@@ -45,12 +46,9 @@ public:
     Q_INVOKABLE void showHideCollectionGroup(const QString& groupId, bool flag);
 
     Q_INVOKABLE void loadSettings();
-    Q_INVOKABLE void saveSettings(bool reuseCurrent = false);
+    Q_INVOKABLE void saveSettings();
     Q_INVOKABLE void clearSettings();
     Q_INVOKABLE void revert();
-
-    Q_INVOKABLE void settingsHideToken(const QString& symbol);
-    Q_INVOKABLE void settingsHideGroupTokens(const QString& groupId, const QStringList& symbols);
 
     Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
@@ -76,6 +74,8 @@ signals:
 
     void hiddenCommunityGroupsChanged();
     void hiddenCollectionGroupsChanged();
+
+    void revisionChanged();
 
 private:
     QAbstractItemModel* m_sourceModel{nullptr};
@@ -133,10 +133,15 @@ private:
     QSettings m_settings;
     SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId}
     bool hasSettings() const;
+    void loadSettingsData(bool withGroup = false);
 
     bool m_settingsDirty{false};
     bool settingsDirty() const { return m_settingsDirty; }
     void setSettingsDirty(bool dirty);
+
+    int m_revision{0};
+    int revision() const { return m_revision; }
+    void incRevision();
 
     bool m_modelConnectionsInitialized{false};
 

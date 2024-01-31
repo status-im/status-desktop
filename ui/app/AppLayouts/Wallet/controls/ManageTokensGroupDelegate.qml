@@ -114,7 +114,6 @@ DropArea {
                         root.controller.showHideCollectionGroup(groupId, flag)
                     else
                         root.controller.showHideGroup(groupId, flag)
-                    root.controller.saveSettings()
                 }
             }
         }

@@ -73,7 +73,7 @@ Item {
     readonly property WalletStore.TokensStore tokensStore: WalletStore.RootStore.tokensStore
     readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.RootStore.walletAssetsStore
     readonly property WalletStore.CollectiblesStore walletCollectiblesStore: WalletStore.RootStore.collectiblesStore
-    readonly property CurrenciesStore currencyStore: CurrenciesStore{}
+    readonly property CurrenciesStore currencyStore: CurrenciesStore {}
     readonly property TransactionStore transactionStore: TransactionStore {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
@@ -1280,6 +1280,8 @@ Item {
                             globalStore: appMain.rootStore
                             sendTransactionModal: sendModal
                             transactionStore: appMain.transactionStore
+                            assetsStore: appMain.walletAssetsStore
+                            currencyStore: appMain.currencyStore
                         }
                         // Loaders do not have access to the context, so props need to be set
                         // Adding a "_" to avoid a binding loop

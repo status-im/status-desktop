@@ -61,6 +61,7 @@ Row {
                 image.source: statusImageWithTitle.asset.name
                 width: statusImageWithTitle.asset.width
                 height: statusImageWithTitle.asset.height
+                radius: statusImageWithTitle.asset.bgRadius || width/2
                 color: Theme.palette.statusRoundedImage.backgroundColor
                 border.width: 1
                 border.color: Theme.palette.directColor7

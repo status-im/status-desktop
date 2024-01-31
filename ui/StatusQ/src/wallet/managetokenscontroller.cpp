@@ -83,6 +83,7 @@ void ManageTokensController::showHideRegularToken(const QString& symbol, bool fl
             emit tokenHidden(shownItem->symbol, shownItem->name);
         }
     }
+    saveSettings();
 }
 
 void ManageTokensController::showHideCommunityToken(const QString& symbol, bool flag)
@@ -108,6 +109,7 @@ void ManageTokensController::showHideCommunityToken(const QString& symbol, bool 
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
+    saveSettings();
 }
 
 void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
@@ -140,6 +142,7 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     }
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
+    saveSettings();
 }
 
 void ManageTokensController::showHideCollectionGroup(const QString& groupId, bool flag)
@@ -170,9 +173,10 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     }
     rebuildCollectionGroupsModel();
     rebuildHiddenCollectionGroupsModel();
+    saveSettings();
 }
 
-void ManageTokensController::saveSettings(bool reuseCurrent)
+void ManageTokensController::saveSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
@@ -180,13 +184,9 @@ void ManageTokensController::saveSettings(bool reuseCurrent)
 
     // gather the data to save
     SerializedTokenData result;
-    if (reuseCurrent) {
-        result = m_settingsData;
-    } else {
-        for(auto model : {m_regularTokensModel, m_communityTokensModel})
-            result.insert(model->save());
-        result.insert(m_hiddenTokensModel->save(false));
-    }
+    for(auto model : {m_regularTokensModel, m_communityTokensModel})
+        result.insert(model->save());
+    result.insert(m_hiddenTokensModel->save(false));
 
     // save to QSettings
     m_settings.beginGroup(settingsGroupName());
@@ -219,6 +219,10 @@ void ManageTokensController::saveSettings(bool reuseCurrent)
     for (auto model: m_allModels)
         model->setDirty(false);
 
+    loadSettingsData(true); // reload positions and visibility
+
+    incRevision();
+
     setSettingsDirty(false);
 }
 
@@ -235,14 +239,12 @@ void ManageTokensController::clearSettings()
     emit settingsDirtyChanged(false);
 }
 
-void ManageTokensController::loadSettings()
+void ManageTokensController::loadSettingsData(bool withGroup)
 {
-    Q_ASSERT(!m_settingsKey.isEmpty());
-
     SerializedTokenData result;
 
-    // load from QSettings
-    m_settings.beginGroup(settingsGroupName());
+    if (withGroup)
+        m_settings.beginGroup(settingsGroupName());
 
     const auto size = m_settings.beginReadArray(m_settingsKey);
     for (auto i = 0; i < size; i++) {
@@ -258,6 +260,25 @@ void ManageTokensController::loadSettings()
         result.insert(symbol, {pos, visible, groupId});
     }
     m_settings.endArray();
+
+    if (withGroup)
+        m_settings.endGroup();
+
+    if (result != m_settingsData)
+        m_settingsData = result;
+}
+
+void ManageTokensController::loadSettings()
+{
+    Q_ASSERT(!m_settingsKey.isEmpty());
+
+    setSettingsDirty(true);
+    m_settingsData.clear();
+
+    // load from QSettings
+    m_settings.beginGroup(settingsGroupName());
+
+    loadSettingsData();
 
     // hidden groups
     const auto groups = m_settings.value(QStringLiteral("HiddenCommunityGroups")).toStringList();
@@ -277,10 +298,7 @@ void ManageTokensController::loadSettings()
 
     m_settings.endGroup();
 
-    if (result != m_settingsData) {
-        m_settingsData = result;
-        setSettingsDirty(true);
-    }
+    setSettingsDirty(false);
 }
 
 void ManageTokensController::setSettingsDirty(bool dirty)
@@ -288,6 +306,12 @@ void ManageTokensController::setSettingsDirty(bool dirty)
     if (m_settingsDirty == dirty) return;
     m_settingsDirty = dirty;
     emit settingsDirtyChanged(m_settingsDirty);
+}
+
+void ManageTokensController::incRevision()
+{
+    m_revision++;
+    emit revisionChanged();
 }
 
 QStringList ManageTokensController::hiddenCommunityGroups() const
@@ -315,45 +339,6 @@ bool ManageTokensController::hasSettings() const
     Q_ASSERT(!m_settingsKey.isEmpty());
     const auto groups = m_settings.childGroups();
     return groups.contains(settingsGroupName());
-}
-
-void ManageTokensController::settingsHideToken(const QString& symbol)
-{
-    if (m_settingsData.contains(symbol)) { // find or create the settings entry
-        auto [pos, visible, group] = m_settingsData.value(symbol);
-        m_settingsData.remove(symbol); // remove all
-        m_settingsData.insert(symbol, {pos, false, group});
-    } else {
-        m_settingsData.insert(symbol, {0, false, {}});
-    }
-
-    saveSettings(true);
-}
-
-void ManageTokensController::settingsHideGroupTokens(const QString& groupId, const QStringList& symbols)
-{
-    QMutableHashIterator<QString, std::tuple<int, bool, QString>> i(m_settingsData);
-    bool found = false;
-    while (i.hasNext()) {
-        i.next();
-        if (groupId == std::get<2>(i.value())) {
-            found = true;
-            i.setValue({0, false, groupId});
-        }
-    }
-
-    if (!found) {
-        for (const auto& symbol: symbols)
-            m_settingsData.insert(symbol, {0, false, groupId});
-    }
-
-    if (!m_hiddenCommunityGroups.contains(groupId)) {
-        m_hiddenCommunityGroups.insert(groupId);
-        emit hiddenCommunityGroupsChanged();
-        rebuildHiddenCommunityTokenGroupsModel();
-    }
-
-    saveSettings(true);
 }
 
 int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const

@@ -15,9 +15,17 @@ QtObject {
 
     property TokensStore walletTokensStore
 
-    // custom controller used for sorting/filtering (w/o source model)
-    readonly property var manageAssetsController: ManageTokensController {
+    readonly property var assetsController: ManageTokensController {
+        sourceModel: groupedAccountAssetsModel
         settingsKey: "WalletAssets"
+        onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                         qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
+                                         false, Constants.ephemeralNotificationType.success, "")
+        onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                   false, Constants.ephemeralNotificationType.success, "")
+        onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                        qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
+                                        false, Constants.ephemeralNotificationType.success, "")
     }
 
     /* PRIVATE: This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that

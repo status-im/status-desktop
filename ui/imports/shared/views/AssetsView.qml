@@ -28,7 +28,7 @@ ColumnLayout {
     id: root
 
     // expected roles: name, symbol, balances, currencyPrice, changePct24hour, communityId, communityName, communityImage
-    required property var assets
+    required property var controller
 
     property var currencyStore
     property var networkConnectionStore
@@ -38,8 +38,6 @@ ColumnLayout {
     property bool areAssetsLoading: false
     property string addressFilters
     property string networkFilters
-
-    readonly property var controller: d.controller
 
     signal assetClicked(var token)
     signal sendRequested(string symbol)
@@ -58,19 +56,10 @@ ColumnLayout {
 
         function tokenIsVisible(symbol) {
             // NOTE Backend returns ETH, SNT, STT and DAI by default
-            if (!d.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
+            if (!root.controller.filterAcceptsSymbol(symbol)) // explicitely hidden
                 return false
             // Received tokens can have 0 balance, which indicate previosuly owned token
             return true // TODO handle UI threshold (#12611)
-        }
-
-        readonly property var controller: ManageTokensController {
-            settingsKey: "WalletAssets"
-        }
-
-        function hideAllCommunityTokens(communityId) {
-            const tokenSymbols = ModelUtils.getAll(assetsListView.model, "symbol", "communityId", communityId)
-            d.controller.settingsHideGroupTokens(communityId, tokenSymbols)
         }
 
         function getTotalBalance(balances, decimals) {
@@ -88,7 +77,7 @@ ColumnLayout {
         }
 
         property SortFilterProxyModel customSFPM: SortFilterProxyModel {
-            sourceModel: root.assets
+            sourceModel: root.controller.sourceModel
             proxyRoles: [
                 FastExpressionRole {
                     name: "currentBalance"
@@ -129,7 +118,7 @@ ColumnLayout {
             filters: [
                 FastExpressionFilter {
                     expression: {
-                        d.controller.settingsDirty
+                        root.controller.revision
                         return d.tokenIsVisible(model.symbol)
                     }
                     expectedRoles: ["symbol"]
@@ -141,8 +130,8 @@ ColumnLayout {
                 },
                 FastExpressionSorter {
                     expression: {
-                        d.controller.settingsDirty
-                        return d.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
+                        root.controller.revision
+                        return root.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
                     }
                     enabled: d.isCustomView
                     expectedRoles: ["symbol"]
@@ -198,7 +187,7 @@ ColumnLayout {
 
             SortOrderComboBox {
                 id: cmbTokenOrder
-                hasCustomOrderDefined: d.controller.hasSettings
+                hasCustomOrderDefined: root.controller.hasSettings
                 model: [
                     { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
                     { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Asset balance"), icon: "channel", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole on "enabledNetworkBalance" amount
@@ -343,7 +332,7 @@ ColumnLayout {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide asset")
-                onTriggered: Global.openConfirmHideAssetPopup(symbol, assetName, assetImage)
+                onTriggered: Global.openConfirmHideAssetPopup(symbol, assetName, assetImage, !!communityId)
             }
             StatusAction {
                 enabled: !!communityId
@@ -377,7 +366,7 @@ ColumnLayout {
             confirmationText: qsTr("Are you sure you want to hide all community assets minted by %1? You will no longer see or be able to interact with these assets anywhere inside Status.").arg(communityName)
             onCancelButtonClicked: close()
             onConfirmButtonClicked: {
-                d.hideAllCommunityTokens(communityId)
+                root.controller.showHideGroup(communityId, false)
                 close()
                 Global.displayToastMessage(
                             qsTr("%1 community assets were successfully hidden. You can toggle asset visibility via %2.").arg(communityName)

@@ -313,6 +313,8 @@ SettingsContentBase {
             Layout.fillWidth: true
 
             tokenListUpdatedAt: tokensStore.tokenListUpdatedAt
+            assetsController: root.assetsStore.assetsController
+            collectiblesController: root.collectiblesStore.collectiblesController
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
             baseWalletAssetsModel: root.assetsStore.groupedAccountAssetsModel
@@ -333,9 +335,9 @@ SettingsContentBase {
                     case Constants.walletSettingsSubsection.manageCollectibles:
                         return 1
                     case Constants.walletSettingsSubsection.manageHidden:
-                        return 3
+                        return 2
                     case Constants.walletSettingsSubsection.manageAdvanced:
-                        return 4
+                        return 3
                     }
                 }
                 when: priv.isManageTokensSubsection

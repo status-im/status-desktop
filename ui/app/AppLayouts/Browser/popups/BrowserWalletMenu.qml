@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
@@ -15,6 +15,9 @@ import "../stores"
 // TODO: replace with StatusMenu
 Dialog {
     id: popup
+
+    required property var assetsStore
+    required property var currencyStore
 
     signal sendTriggered(var selectedAccount)
     signal disconnect()
@@ -204,7 +207,8 @@ Dialog {
 
             AssetsView {
                 id: assetsTab
-                assets: WalletStore.dappBrowserAccount.assets
+                controller: popup.assetsStore.assetsController
+                currencyStore: popup.currencyStore
             }
             HistoryView {
                 id: historyTab

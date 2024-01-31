@@ -136,7 +136,7 @@ RightTabBaseView {
                     id: assetsView
                     AssetsView {
                         areAssetsLoading: RootStore.overview.balanceLoading
-                        assets: RootStore.walletAssetsStore.groupedAccountAssetsModel
+                        controller: RootStore.walletAssetsStore.assetsController
                         networkFilters: RootStore.networkFilters
                         addressFilters: RootStore.addressFilters
                         overview: RootStore.overview
@@ -159,13 +159,13 @@ RightTabBaseView {
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
-                                                                                    Constants.walletSettingsSubsection.manageAssets)
+                                                                                      Constants.walletSettingsSubsection.manageAssets)
                     }
                 }
                 Component {
                     id: collectiblesView
                     CollectiblesView {
-                        collectiblesModel: RootStore.collectiblesStore.allCollectiblesModel
+                        controller: RootStore.collectiblesStore.collectiblesController
                         networkFilters: RootStore.networkFilters
                         addressFilters: RootStore.addressFilters
                         sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
@@ -185,13 +185,12 @@ RightTabBaseView {
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
-                                                                                    Constants.walletSettingsSubsection.manageCollectibles)
+                                                                                      Constants.walletSettingsSubsection.manageCollectibles)
                     }
                 }
                 Component {
                     id: historyView
                     HistoryView {
-                        id: historyView
                         overview: RootStore.overview
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal

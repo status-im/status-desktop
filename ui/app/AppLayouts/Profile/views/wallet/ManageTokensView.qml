@@ -21,6 +21,9 @@ Item {
     id: root
 
     required property double tokenListUpdatedAt
+    required property var assetsController
+    required property var collectiblesController
+
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
 
@@ -55,40 +58,6 @@ Item {
         readonly property int collectiblesTabIndex: 1
         readonly property int hiddenTabIndex: 2
         readonly property int advancedTabIndex: 3
-
-        // assets
-        readonly property var assetsController: ManageTokensController {
-            sourceModel: root.baseWalletAssetsModel
-            settingsKey: "WalletAssets"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                       false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                            qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
-                                            false, Constants.ephemeralNotificationType.success, "")
-        }
-
-        // collectibles
-        readonly property var collectiblesController: ManageTokensController {
-            sourceModel: root.baseWalletCollectiblesModel
-            settingsKey: "WalletCollectibles"
-            onTokenHidden: (symbol, name) => Global.displayToastMessage(
-                               qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
-                               false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
-                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
-                                             false, Constants.ephemeralNotificationType.success, "")
-            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
-                                                                       false, Constants.ephemeralNotificationType.success, "")
-            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
-                                            qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
-                                            false, Constants.ephemeralNotificationType.success, "")
-        }
     }
 
     ColumnLayout {
@@ -150,15 +119,14 @@ Item {
                     return root.getCurrentCurrencyAmount(balance)
                 }
 
-                controller: d.assetsController
+                controller: root.assetsController
             }
         }
 
         Component {
             id: collectiblesPanel
             ManageCollectiblesPanel {
-                controller: d.collectiblesController
-                Component.onCompleted: d.checkLoadMoreCollectibles()
+                controller: root.collectiblesController
             }
         }
 
@@ -171,8 +139,8 @@ Item {
                 getCurrentCurrencyAmount: function (balance) {
                     return root.getCurrentCurrencyAmount(balance)
                 }
-                assetsController: d.assetsController
-                collectiblesController: d.collectiblesController
+                assetsController: root.assetsController
+                collectiblesController: root.collectiblesController
             }
         }
 
