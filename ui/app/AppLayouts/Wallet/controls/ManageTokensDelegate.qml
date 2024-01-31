@@ -110,14 +110,17 @@ DropArea {
                         root.controller.showHideCommunityToken(symbol, flag)
                     else
                         root.controller.showHideRegularToken(symbol, flag)
-                    root.controller.saveSettings()
+                    if (!flag) {
+                        const msg = isCollectible ? qsTr("%1 was successfully hidden").arg(delegate.title)
+                                                  : qsTr("%1 (%2) was successfully hidden").arg(delegate.title).arg(symbol)
+                        Global.displayToastMessage(msg, "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                    }
                 }
                 onShowHideGroupRequested: function(groupId, flag) {
                     if (isCommunityToken)
                         root.controller.showHideGroup(groupId, flag)
                     else
                         root.controller.showHideCollectionGroup(groupId, flag)
-                    root.controller.saveSettings()
                 }
             }
         ]

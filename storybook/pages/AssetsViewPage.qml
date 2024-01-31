@@ -5,6 +5,7 @@ import QtQuick.Controls 2.15
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -60,6 +61,7 @@ SplitView {
 
         property WalletAssetsStore walletAssetStore: WalletAssetsStore {
             assetsWithFilteredBalances: d.assetsWithFilteredBalances
+            assetsController: assetsView.controller
         }
 
         // Added this here simply because the network and address filtering wont work in Storybook applied in AssetsView
@@ -73,7 +75,7 @@ SplitView {
                         d.networksChainsCurrentlySelected
                         d.addressesSelected
                         return d.networksChainsCurrentlySelected.split(":").includes(chainId+"") &&
-                                (!!d.addressesSelected ?  d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
+                                (!!d.addressesSelected ? d.addressesSelected.toUpperCase() === account.toUpperCase() : true)
                     }
                 }
             }
@@ -84,9 +86,7 @@ SplitView {
         popupParent: root
         rootStore: QtObject {}
         communityTokensStore: QtObject {}
-        walletAssetsStore: WalletAssetsStore {
-            manageAssetsController: assetsView.controller
-        }
+        walletAssetsStore: d.walletAssetStore
     }
 
     StackLayout {
@@ -101,7 +101,21 @@ SplitView {
             Layout.fillHeight: true
             Layout.fillWidth: true
             areAssetsLoading: loadingCheckbox.checked
-            assets: d.walletAssetStore.groupedAccountAssetsModel
+            controller: ManageTokensController {
+                sourceModel: d.walletAssetStore.groupedAccountAssetsModel
+                settingsKey: "WalletAssets"
+                onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                                   qsTr("%1 (%2) was successfully hidden").arg(name).arg(symbol), "", "checkmark-circle",
+                                   false, Constants.ephemeralNotificationType.success, "")
+                onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                                 qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
+                                                 false, Constants.ephemeralNotificationType.success, "")
+                onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                           false, Constants.ephemeralNotificationType.success, "")
+                onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                                qsTr("%1 community assets are now visible").arg(communityName), "", "checkmark-circle",
+                                                false, Constants.ephemeralNotificationType.success, "")
+            }
             filterVisible: ctrlFilterVisible.checked
             currencyStore: d.currencyStore
             networkFilters: d.networksChainsCurrentlySelected

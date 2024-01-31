@@ -29,13 +29,11 @@ import SortFilterProxyModel 0.2
 ColumnLayout {
     id: root
 
-    required property var collectiblesModel
+    required property var controller
     required property string addressFilters
     required property string networkFilters
     property bool sendEnabled: true
     property bool filterVisible
-
-    readonly property var controller: d.controller
 
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
     signal sendRequested(string symbol)
@@ -60,18 +58,8 @@ ColumnLayout {
 
         readonly property bool onlyOneType: !hasCollectibles || !hasCommunityCollectibles
 
-        readonly property var controller: ManageTokensController {
-            settingsKey: "WalletCollectibles"
-            sourceModel: root.collectiblesModel
-        }
-
         readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
-
-        function hideAllCommunityTokens(communityId) {
-            const tokenSymbols = ModelUtils.getAll(communityCollectiblesView.model, "symbol", "communityId", communityId)
-            d.controller.settingsHideGroupTokens(communityId, tokenSymbols)
-        }
 
         function containsAny(list, filterList) {
             for (let i = 0; i < list.length; i++) {
@@ -87,7 +75,7 @@ ColumnLayout {
         id: customFilter
         property bool isCommunity
 
-        sourceModel: root.collectiblesModel
+        sourceModel: root.controller.sourceModel
         proxyRoles: JoinRole {
             name: "groupName"
             roleNames: ["collectionName", "communityName"]
@@ -102,8 +90,8 @@ ColumnLayout {
             },
             FastExpressionFilter {
                 expression: {
-                    d.controller.settingsDirty
-                    return d.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
+                    root.controller.revision
+                    return root.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
                 }
                 expectedRoles: ["symbol", "communityId"]
             },
@@ -123,8 +111,8 @@ ColumnLayout {
         sorters: [
             FastExpressionSorter {
                 expression: {
-                    d.controller.settingsDirty
-                    return d.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
+                    root.controller.revision
+                    return root.controller.compareTokens(modelLeft.symbol, modelRight.symbol)
                 }
                 enabled: d.isCustomView
                 expectedRoles: ["symbol"]
@@ -184,9 +172,9 @@ ColumnLayout {
 
             FilterComboBox {
                 id: cmbFilter
-                regularTokensModel: d.controller.regularTokensModel
-                collectionGroupsModel: d.controller.collectionGroupsModel
-                communityTokenGroupsModel: d.controller.communityTokenGroupsModel
+                regularTokensModel: root.controller.regularTokensModel
+                collectionGroupsModel: root.controller.collectionGroupsModel
+                communityTokenGroupsModel: root.controller.communityTokenGroupsModel
                 hasCommunityGroups: d.hasCommunityCollectibles
             }
 
@@ -206,7 +194,7 @@ ColumnLayout {
 
             SortOrderComboBox {
                 id: cmbTokenOrder
-                hasCustomOrderDefined: d.controller.hasSettings
+                hasCustomOrderDefined: root.controller.hasSettings
                 model: [
                     { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "calendar", sortRoleName: "dateAdded" }, // FIXME sortRoleName #12942
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "bold", sortRoleName: "name" },
@@ -446,7 +434,7 @@ ColumnLayout {
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide collectible")
-                onTriggered: Global.openConfirmHideCollectiblePopup(symbol, tokenName, tokenImage)
+                onTriggered: Global.openConfirmHideCollectiblePopup(symbol, tokenName, tokenImage, !!communityId)
             }
             StatusAction {
                 enabled: !!communityId
@@ -489,7 +477,7 @@ ColumnLayout {
             confirmationText: qsTr("Are you sure you want to hide all community collectibles minted by %1? You will no longer see or be able to interact with these collectibles anywhere inside Status.").arg(communityName)
             onCancelButtonClicked: close()
             onConfirmButtonClicked: {
-                d.hideAllCommunityTokens(communityId)
+                root.controller.showHideGroup(communityId, false)
                 close()
                 Global.displayToastMessage(
                     qsTr("%1 community collectibles were successfully hidden. You can toggle collectible visibility via %2.").arg(communityName)

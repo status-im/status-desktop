@@ -31,7 +31,7 @@ StatusDialog {
     required property int tokenType // ERC20 or ERC721
     readonly property bool isAssetType : tokenType === Constants.TokenType.ERC20
 
-    signal hideClicked
+    signal hideClicked(string tokenSymbol, string tokenName, string tokenImage, bool isAsset)
 
     QtObject {
         id: d
@@ -124,13 +124,11 @@ StatusDialog {
             StatusFlatButton {
                 id: hideBtn
 
-                visible: false // TODO: #13293
-
                 text: root.isAssetType ? qsTr("Hide this asset") : qsTr("Hide this collectible")
 
                 onClicked: {
                     root.close()
-                    root.hideClicked()
+                    root.hideClicked(root.tokenSymbol, root.tokenName, root.tokenImage, root.isAssetType)
                 }
             }
 

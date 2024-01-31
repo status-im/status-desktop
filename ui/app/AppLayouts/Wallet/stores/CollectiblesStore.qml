@@ -26,9 +26,17 @@ QtObject {
         ]
     }
 
-    // custom controller used for sorting/filtering (w/o source model)
-    readonly property var manageCollectiblesController: ManageTokensController {
+    readonly property var collectiblesController: ManageTokensController {
+        sourceModel: allCollectiblesModel
         settingsKey: "WalletCollectibles"
+        onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                         qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
+                                         false, Constants.ephemeralNotificationType.success, "")
+        onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                   false, Constants.ephemeralNotificationType.success, "")
+        onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                        qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
+                                        false, Constants.ephemeralNotificationType.success, "")
     }
 
     /* The following are used to display the detailed view of a collectible */

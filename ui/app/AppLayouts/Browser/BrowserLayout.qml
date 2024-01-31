@@ -32,6 +32,8 @@ StatusSectionLayout {
     property var globalStore
     property var sendTransactionModal
     required property TransactionStore transactionStore
+    required property var assetsStore
+    required property var currencyStore
 
     function openUrlInNewTab(url) {
         var tab = _internal.addNewTab()
@@ -207,7 +209,6 @@ StatusSectionLayout {
 
         BrowserHeader {
             id: browserHeader
-            property bool walletMenuPopupOpen: false
 
             anchors.top: parent.top
             anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
@@ -252,10 +253,7 @@ StatusSectionLayout {
                 }
                 _internal.currentWebView.url = _internal.determineRealURL(url);
             }
-            onOpenWalletMenu: {
-                walletMenuPopupOpen ? Global.closePopup() : Global.openPopup(browserWalletMenu);
-                walletMenuPopupOpen = !walletMenuPopupOpen;
-            }
+            onOpenWalletMenu: Global.openPopup(browserWalletMenu)
         }
 
         BrowserTabView {
@@ -434,12 +432,14 @@ StatusSectionLayout {
         Component  {
             id: browserWalletMenu
             BrowserWalletMenu {
+                assetsStore: root.assetsStore
+                currencyStore: root.currencyStore
                 property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
                 x: (parent.width - width - Style.current.halfPadding)
                 y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
                     browserHeader.anchors.topMargin + Style.current.halfPadding)
                 onSendTriggered: {
-                    sendTransactionModal.selectedAccount = selectedAccount
+                    sendTransactionModal.preSelectedAccount = selectedAccount
                     sendTransactionModal.open()
                 }
                 onReload: {
@@ -452,10 +452,6 @@ StatusSectionLayout {
                     provider.postMessage("web3-disconnect-account", "{}");
                     _internal.currentWebView.reload()
                     close()
-                }
-                Component.onDestruction: {
-                    if (browserHeader.walletMenuPopupOpen)
-                        browserHeader.walletMenuPopupOpen = false;
                 }
             }
         }

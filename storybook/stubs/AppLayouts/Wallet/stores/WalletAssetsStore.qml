@@ -42,5 +42,5 @@ QtObject {
         joinRole: "communityId"
     }
 
-    property var manageAssetsController
+    property var assetsController
 }

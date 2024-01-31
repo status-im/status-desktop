@@ -58,7 +58,7 @@ SplitView {
         ColumnLayout {
             Label {
                 Layout.fillWidth: true
-                text: "Dirty: %1".arg(showcasePanel.dirty ? "true" : "false")
+                text: "Dirty: %1 (rev %2)".arg(showcasePanel.dirty ? "true" : "false").arg(showcasePanel.controller.revision)
             }
 
             Label {

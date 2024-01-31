@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ 0.1
+import StatusQ.Models 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -47,7 +48,7 @@ SplitView {
         rootStore: QtObject {}
         communityTokensStore: QtObject {}
         walletCollectiblesStore: CollectiblesStore {
-            manageCollectiblesController: collectiblesView.controller
+            collectiblesController: collectiblesView.controller
         }
     }
 
@@ -78,7 +79,21 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        collectiblesModel: renamedModel
+        controller: ManageTokensController {
+            sourceModel: renamedModel
+            settingsKey: "WalletCollectibles"
+            onTokenHidden: (symbol, name) => Global.displayToastMessage(
+                               qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
+                               false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
+                                             qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
+                                             false, Constants.ephemeralNotificationType.success, "")
+            onTokenShown: (symbol, name) => Global.displayToastMessage(qsTr("%1 is now visible").arg(name), "", "checkmark-circle",
+                                                                       false, Constants.ephemeralNotificationType.success, "")
+            onCommunityTokenGroupShown: (communityName) => Global.displayToastMessage(
+                                            qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
+                                            false, Constants.ephemeralNotificationType.success, "")
+        }
         networkFilters: d.networksChainsCurrentlySelected
         addressFilters: d.addressesSelected
         filterVisible: ctrlFilterVisible.checked
