@@ -60,7 +60,7 @@ StatusListItem {
     readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol, currentCurrency): 0.0
     readonly property double feeCryptoValue: 0.0 // TODO fill when bridge data is implemented
     readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
-    readonly property string communityName: isModelDataValid ? modelData.communityName : ""
+    readonly property string communityName: isModelDataValid && modelData.communityName ? modelData.communityName : ""
     readonly property string networkColor: isModelDataValid ? rootStore.getNetworkColor(modelData.chainId) : ""
     readonly property string networkName: isModelDataValid ? rootStore.getNetworkFullName(modelData.chainId) : ""
     readonly property string networkNameIn: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdIn) : ""
@@ -68,7 +68,7 @@ StatusListItem {
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
-    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && modelData.isCommunityAssetViaAirdrop
+    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && modelData.isCommunityAssetViaAirdrop ? modelData.isCommunityAssetViaAirdrop : false
 
     readonly property string transactionValue: {
         if (!isModelDataValid) {

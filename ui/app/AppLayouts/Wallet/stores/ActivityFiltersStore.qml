@@ -198,7 +198,7 @@ QtObject {
     // Collectibles Filters
     property var collectiblesList: activityController.collectiblesModel
     property var collectiblesFilter: []
-    property bool loadingCollectibles: activityController.status.loadingCollectibles
+    readonly property bool loadingCollectibles: activityController.status.loadingCollectibles ? activityController.status.loadingCollectibles : false
     function updateCollectiblesModel() {
         activityController.updateCollectiblesModel()
     }
