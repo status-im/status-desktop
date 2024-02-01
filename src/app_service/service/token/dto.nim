@@ -70,15 +70,17 @@ proc newTokenDto*(
 type TokenSourceDto* = ref object of RootObj
     name* {.serializedFieldName("name").}: string
     tokens* {.serializedFieldName("tokens").}: seq[TokenDto]
-    updatedAt* {.serializedFieldName("updatedAt").}: int64
     source* {.serializedFieldName("source").}: string
     version* {.serializedFieldName("version").}: string
+
+type TokenListDto* = ref object of RootObj
+    updatedAt* {.serializedFieldName("updatedAt").}: int64
+    data* {.serializedFieldName("data").}: seq[TokenSourceDto]
 
 proc `$`*(self: TokenSourceDto): string =
   result = fmt"""TokenSourceDto[
     name: {self.name},
     tokens: {self.tokens},
-    updatedAt: {self.updatedAt},
     source: {self.source},
     version: {self.version}
     ]"""

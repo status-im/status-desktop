@@ -90,7 +90,6 @@ StatusListView {
                 sourceName: delegate.name
                 sourceImage: delegate.image
                 sourceUrl: delegate.source
-                sourceUpdatedAt: delegate.updatedAt
                 sourceVersion: delegate.version
                 tokensCount: delegate.tokensCount
 

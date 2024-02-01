@@ -63,7 +63,6 @@ SplitView {
                     required property string name
                     required property string image
                     required property string source
-                    required property int updatedAt
                     required property string version
                     required property int tokensCount
 
@@ -77,7 +76,6 @@ SplitView {
                         sourceName: delegate.name
                         sourceImage: delegate.image
                         sourceUrl: delegate.source
-                        sourceUpdatedAt: delegate.updatedAt
                         sourceVersion: delegate.version
                         tokensCount: delegate.tokensCount
 

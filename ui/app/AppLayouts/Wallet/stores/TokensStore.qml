@@ -12,6 +12,8 @@ QtObject {
     readonly property var _allTokensModule: !!walletSectionAllTokens ? walletSectionAllTokens : null
     readonly property var _networksModule: !!networksModule ? networksModule : null
 
+    readonly property double tokenListUpdatedAt: root._allTokensModule.tokenListUpdatedAt
+
     /* This contains the different sources for the tokens list
        ex. uniswap list, status tokens list */
     readonly property var sourcesOfTokensModel: SortFilterProxyModel {

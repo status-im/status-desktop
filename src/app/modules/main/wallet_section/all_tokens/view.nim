@@ -8,6 +8,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       marketHistoryIsLoading: bool
       balanceHistoryIsLoading: bool
+
+      tokenListUpdatedAt: int64
       # This contains the different sources for the tokens list
       # ex. uniswap list, status tokens list
       sourcesOfTokensModel: SourcesOfTokensModel
@@ -50,6 +52,16 @@ QtObject:
   QtProperty[QVariant] marketHistoryIsLoading:
     read = getMarketHistoryIsLoading
     notify = marketHistoryIsLoadingChanged
+
+  proc tokenListUpdatedAtChanged*(self: View) {.signal.}
+  proc getTokenListUpdatedAt(self: View): QVariant {.slot.} =
+    return newQVariant(self.tokenListUpdatedAt)
+  proc setTokenListUpdatedAt*(self: View, updatedAt: int64) =
+    self.tokenListUpdatedAt = updatedAt
+    self.tokenListUpdatedAtChanged()
+  QtProperty[QVariant] tokenListUpdatedAt:
+    read = getTokenListUpdatedAt
+    notify = tokenListUpdatedAtChanged
 
   proc balanceHistoryIsLoadingChanged*(self: View) {.signal.}
   proc getBalanceHistoryIsLoading(self: View): QVariant {.slot.} =

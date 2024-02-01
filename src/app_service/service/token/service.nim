@@ -84,6 +84,7 @@ QtObject:
     tokensMarketDetailsLoading: bool
     hasMarketDetailsCache: bool
     hasPriceValuesCache: bool
+    tokenListUpdatedAt: int64
 
   proc getCurrency*(self: Service): string
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
@@ -202,6 +203,9 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
 
+  proc getTokenListUpdatedAt*(self: Service): int64 =
+    return self.tokenListUpdatedAt
+
   proc fetchTokensPrices(self: Service, symbols: seq[string]) =
     self.tokensPricesLoading = true
     defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
@@ -254,16 +258,21 @@ QtObject:
 
       if not errorString.isEmptyOrWhitespace:
         raise newException(Exception, "Error getting supported tokens list: " & errorString)
-      let sourcesList = if tokensResult.isNil or tokensResult.kind == JNull: @[]
-                else: Json.decode($tokensResult, seq[TokenSourceDto], allowUnknownFields = true)
+      
+      if tokensResult.isNil or tokensResult.kind == JNull:
+        raise newException(Exception, "Error in response of getting supported tokens list")
+
+      let tokenList =  Json.decode($tokensResult, TokenListDto, allowUnknownFields = true)
+      self.tokenListUpdatedAt = tokenList.updatedAt
 
       let supportedNetworkChains = self.networkService.getAllNetworkChainIds()
       var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
       var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
       var tokenSymbols: seq[string] = @[]
 
-      for s in sourcesList:
-        let newSource = SupportedSourcesItem(name: s.name, updatedAt: s.updatedAt, source: s.source, version: s.version, tokensCount: s.tokens.len)
+
+      for s in tokenList.data:
+        let newSource = SupportedSourcesItem(name: s.name, source: s.source, version: s.version, tokensCount: s.tokens.len)
         self.sourcesOfTokensList.add(newSource)
 
         for token in s.tokens:

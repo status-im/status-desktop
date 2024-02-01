@@ -19,7 +19,6 @@ StatusDialog {
     required property string sourceName
     required property string sourceImage
     required property string sourceUrl
-    required property int sourceUpdatedAt
     required property string sourceVersion
     required property int tokensCount
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl, isTest
@@ -146,13 +145,6 @@ StatusDialog {
         CustomTextBlock {
             title: qsTr("Version")
             text: root.sourceVersion
-        }
-
-        CustomTextBlock {
-            title: qsTr("Automatically updates")
-            text: qsTr("Last updated %n day(s) ago",
-                       "",
-                       LocaleUtils.daysBetween(root.sourceUpdatedAt * 1000, Date.now()))
         }
     }
 
