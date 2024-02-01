@@ -66,7 +66,7 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeploymentArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.communityId, args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
-    let args = OwnerTokenDeployedStatusArgs(e)
+    let args = CommunityTokenDeployedStatusArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.transactionHash, args.deployState)
   self.events.on(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
     let args = OwnerTokenDeploymentArgs(e)
