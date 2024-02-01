@@ -20,6 +20,7 @@ import AppLayouts.Wallet.panels 1.0
 Item {
     id: root
 
+    required property double tokenListUpdatedAt
     required property var sourcesOfTokensModel // Expected roles: key, name, updatedAt, source, version, tokensCount, image
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl
 
@@ -267,7 +268,7 @@ Item {
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.sourcesOfTokensModel.get(0).updatedAt * 1000)).arg(LocaleUtils.formatTime(root.sourcesOfTokensModel.get(0).updatedAt, Locale.ShortFormat))
+                        text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.tokenListUpdatedAt * 1000)).arg(LocaleUtils.formatTime(root.tokenListUpdatedAt, Locale.ShortFormat))
                         color: Style.current.darkGrey
                     }
                 }

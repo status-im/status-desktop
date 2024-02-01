@@ -63,6 +63,9 @@ proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
 proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =
   return self.tokenService.getTokenDetails(symbol)
 
+proc getTokenListUpdatedAt*(self: Controller): int64 =
+  return self.tokenService.getTokenListUpdatedAt()
+
 proc getMarketValuesBySymbol*(self: Controller, symbol: string): TokenMarketValuesItem =
   return self.tokenService.getMarketValuesBySymbol(symbol)
 

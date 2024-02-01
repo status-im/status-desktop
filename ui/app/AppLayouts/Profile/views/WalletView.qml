@@ -309,6 +309,7 @@ SettingsContentBase {
             implicitHeight: root.availableHeight
             Layout.fillWidth: true
 
+            tokenListUpdatedAt: tokensStore.tokenListUpdatedAt
             sourcesOfTokensModel: tokensStore.sourcesOfTokensModel
             tokensListModel: tokensStore.extendedFlatTokensModel
             baseWalletAssetsModel: RootStore.walletAssetsStore.groupedAccountAssetsModel

@@ -13,7 +13,6 @@ ListModel {
         {
             key: root.uniswap,
             name: "Uniswap Labs Default",
-            updatedAt: 1695720962,
             source: "https://gateway.ipfs.io/ipns/tokens.uniswap.org",
             version: "11.6.0",
             tokensCount: 731,
@@ -22,7 +21,6 @@ ListModel {
         {
             key: root.status,
             name: "Status Token List",
-            updatedAt: 1661506562,
             source: "https://status.im/",
             version: "11.6.0",
             tokensCount: 250,
