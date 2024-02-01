@@ -32,6 +32,7 @@ def test_create_community_channel(main_screen: MainWindow, channel_name, channel
 @pytest.mark.case(703050)
 @pytest.mark.parametrize('channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color',
                          [('Channel', 'Description', 'sunglasses', None, '#4360df')])
+@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/475")
 def test_edit_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
                                 channel_color):
     with step('Create simple community'):
