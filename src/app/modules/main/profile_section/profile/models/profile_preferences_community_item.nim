@@ -74,15 +74,3 @@ proc patchFromCommunity*(self: ProfileShowcaseCommunityItem, community: Communit
   self.description = community.description
   self.membersCount = len(community.members)
   self.loading = false
-
-proc name*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.name
-
-proc memberRole*(self: ProfileShowcaseCommunityItem): MemberRole {.inline.} =
-  self.memberRole
-
-proc image*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.image
-
-proc color*(self: ProfileShowcaseCommunityItem): string {.inline.} =
-  self.color

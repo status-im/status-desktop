@@ -227,6 +227,12 @@ QtObject:
   proc getProfileShowcaseCommunities*(self: View): seq[ProfileShowcaseCommunityItem] =
     return self.profileShowcaseCommunitiesModel.items()
 
+  proc getProfileShowcaseCollectibles*(self: View): seq[ProfileShowcaseCollectibleItem] =
+    return self.profileShowcaseCollectiblesModel.items()
+
+  proc updateProfileCollectiblesFromBaseModel*(self: View) {.slot.} =
+    self.delegate.updateProfileCollectiblesFromBaseModel()
+
   proc updateProfileShowcaseCommunities*(self: View, communities: seq[ProfileShowcaseCommunityItem]) =
     self.profileShowcaseCommunitiesModel.reset(communities.sorted((a, b) => cmp(a.order, b.order), SortOrder.Ascending))
 

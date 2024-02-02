@@ -107,4 +107,8 @@ QtObject {
     function requestProfileShowcase(publicKey) {
         root.profileModule.requestProfileShowcase(publicKey)
     }
+
+    function updateProfileCollectiblesFromBaseModel() {
+        root.profileModule.updateProfileCollectiblesFromBaseModel()
+    }
 }

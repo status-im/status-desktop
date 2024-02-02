@@ -251,7 +251,6 @@ Control {
                 cellWidth: (width-rightMargin)/4
                 cellHeight: cellWidth
                 visible: count
-                // TODO Issue #11637: Dedicated controller for user's list of collectibles (no watch-only entries)
                 model: SortFilterProxyModel {
                     sourceModel: root.profileStore.profileShowcaseCollectiblesModel
                     filters: ValueFilter {

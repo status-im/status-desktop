@@ -34,6 +34,15 @@ proc initProfileShowcaseCollectibleItem*(collectible: CollectiblesEntry, visibil
   result.order = order
   result.loading = false
 
+proc initProfileShowcaseCollectibleLoadingItem*(tokenId: string, contractAddress: string, chainId: int, visibility: ProfileShowcaseVisibility, order: int): ProfileShowcaseCollectibleItem =
+  result = ProfileShowcaseCollectibleItem()
+  result.contractAddress = contractAddress
+  result.chainId = chainId
+  result.tokenId = tokenId
+  result.showcaseVisibility = visibility
+  result.order = order
+  result.loading = true
+
 proc toProfileShowcaseCollectibleItem*(jsonObj: JsonNode): ProfileShowcaseCollectibleItem =
   result = ProfileShowcaseCollectibleItem()
 
@@ -62,6 +71,13 @@ proc toShowcasePreferenceItem*(self: ProfileShowcaseCollectibleItem): ProfileSho
   result.communityId = self.communityId
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
+
+proc patchFromCollectible*(self: ProfileShowcaseCollectibleItem, collectible: CollectiblesEntry) =
+  self.communityId = collectible.getCommunityId()
+  self.name = collectible.getName()
+  self.collectionName = collectible.getCollectionName()
+  self.imageUrl = collectible.getImageURL()
+  self.backgroundColor = collectible.getBackgroundColor()
 
 # NOTE: should be same as CollectiblesEntry::getID
 proc getID*(self: ProfileShowcaseCollectibleItem): string =

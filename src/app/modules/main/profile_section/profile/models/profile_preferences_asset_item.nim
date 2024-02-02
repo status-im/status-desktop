@@ -17,7 +17,9 @@ type
     chainId*: int
     symbol*: string
     name*: string
+    image*: string
     enabledNetworkBalance*: CurrencyAmount
+    marketDetails*: string # TODO: MarketDetailsItem
     decimals*: int
 
 
@@ -29,7 +31,10 @@ proc initProfileShowcaseVerifiedToken*(token: TokenBySymbolItem, visibility: Pro
 
   result.symbol = token.symbol
   result.name = token.name
+  result.image = token.image
+  result.communityId = token.communityId
   result.enabledNetworkBalance = newCurrencyAmount()
+  #result.marketDetails = token.marketDetails
   result.decimals = token.decimals
 
   # TODO: initProfileShowcaseUnverifiedToken

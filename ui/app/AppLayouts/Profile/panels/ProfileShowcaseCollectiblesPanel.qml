@@ -22,8 +22,12 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
-            root.showcaseEntryChanged()
+            if (hasAnyItemInShowcase) {
+                root.showPopupAndContinue(tmpObj)
+            } else {
+                showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+                root.showcaseEntryChanged()
+            }
         }
     }
     showcaseDraggableDelegateComponent: CollectibleShowcaseDelegate {

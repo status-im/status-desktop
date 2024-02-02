@@ -12,7 +12,9 @@ type
     CommunityId
     Symbol
     Name
+    Image
     EnabledNetworkBalance
+    MarketDetails
     Decimals
 
 QtObject:
@@ -57,7 +59,9 @@ QtObject:
       ModelRole.CommunityId.int: "communityId",
       ModelRole.Symbol.int: "symbol",
       ModelRole.Name.int: "name",
+      ModelRole.Image.int: "image",
       ModelRole.EnabledNetworkBalance.int: "enabledNetworkBalance",
+      ModelRole.MarketDetails.int: "marketDetails",
       ModelRole.Decimals.int: "decimals",
     }.toTable
 
@@ -84,8 +88,12 @@ QtObject:
       result = newQVariant(item.symbol)
     of ModelRole.Name:
       result = newQVariant(item.name)
+    of ModelRole.Image:
+      result = newQVariant(item.image)
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.enabledNetworkBalance)
+    of ModelRole.MarketDetails:
+      result = newQVariant(item.marketDetails)
     of ModelRole.Decimals:
       result = newQVariant(item.decimals)
 
@@ -128,7 +136,9 @@ QtObject:
         ModelRole.CommunityId.int,
         ModelRole.Symbol.int,
         ModelRole.Name.int,
+        ModelRole.Image.int,
         ModelRole.EnabledNetworkBalance.int,
+        ModelRole.MarketDetails.int,
         ModelRole.Decimals.int,
       ])
 

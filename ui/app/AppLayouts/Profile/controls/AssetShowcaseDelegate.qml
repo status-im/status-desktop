@@ -16,11 +16,21 @@ ShowcaseDelegate {
                        LocaleUtils.currencyAmountToLocaleString(showcaseObj.enabledNetworkBalance) :
                        !!showcaseObj && !!showcaseObj.symbol ? formatCurrencyAmount(totalValue, showcaseObj.symbol): Qt.locale().zeroDigit
     hasImage: true
-    icon.source: !!showcaseObj ? Constants.tokenIcon(showcaseObj.symbol) : ""
+    icon.source: {
+        if (!showcaseObj)
+            return ""
+        if (showcaseObj.image)
+            return modelData.image
+        if (showcaseObj.symbol)
+            return Constants.tokenIcon(showcaseObj.symbol, false)
+        return ""
+    }
 
     SumAggregator {
         id: balancesAggregator
         model: !!showcaseObj && !!showcaseObj.balances ? showcaseObj.balances: null
         roleName: "balance"
     }
+
+    // NOTE: display marketDetails for new Profile Showcase UI same as in TokenDelegate
 }

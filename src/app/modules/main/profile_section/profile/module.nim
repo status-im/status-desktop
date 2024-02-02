@@ -221,6 +221,9 @@ method updateProfileShowcase(self: Module, profileShowcase: ProfileShowcaseDto) 
     if collectible != nil:
       profileCollectibleItems.add(initProfileShowcaseCollectibleItem(
         collectible, ProfileShowcaseVisibility.ToEveryone, collectibleProfile.order))
+    else:
+      profileCollectibleItems.add(initProfileShowcaseCollectibleLoadingItem(
+        collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId, ProfileShowcaseVisibility.ToEveryone, collectibleProfile.order))
   self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
 
   # Verified tokens for a contact
@@ -248,16 +251,14 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
         community, communityProfile.showcaseVisibility, communityProfile.order))
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
 
-  # For profile preferences we are using all the addresses for colletibles and token balances
-  # TODO: add wallet accounts model instance here to remove QML dependency from the wallet module
-  let accountAddresses = self.controller.getWalletAccounts().map(acc => acc.address) # filter(acc => acc.walletType != WalletTypeWatch).
-
-  # Accounts profile preferences
+  # Accounts profile preferences, reuse addresses for collectibles and token balances
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
+  var accountAddresses: seq[string] = @[]
   for account in preferences.accounts:
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address, account.name, account.emoji, account.colorId,
       account.showcaseVisibility, account.order))
+    accountAddresses.add(account.address)
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
 
   # Collectibles profile preferences
@@ -270,6 +271,9 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
     if collectible != nil:
       profileCollectibleItems.add(initProfileShowcaseCollectibleItem(
         collectible, collectibleProfile.showcaseVisibility, collectibleProfile.order))
+    else:
+      profileCollectibleItems.add(initProfileShowcaseCollectibleLoadingItem(
+        collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId, collectibleProfile.showcaseVisibility, collectibleProfile.order))
   self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
 
   # TODO: Verified tokens preferences
@@ -282,6 +286,16 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   # TODO: Unverified tokens preferences
   self.view.updateProfileShowcaseAssets(profileAssetItems)
 
+method updateProfileCollectiblesFromBaseModel*(self: Module) =
+  var profileCollectiblesItems = self.view.getProfileShowcaseCollectibles()
+
+  for collectibleProfile in profileCollectiblesItems:
+    let collectible = self.collectiblesController.getItemForData(collectibleProfile.tokenId, collectibleProfile.contractAddress, collectibleProfile.chainId)
+    if collectible != nil:
+      collectibleProfile.patchFromCollectible(collectible)
+
+  self.view.updateProfileShowcaseCollectibles(profileCollectiblesItems)
+
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
   var profileCommunityItems = self.view.getProfileShowcaseCommunities()
 
@@ -291,3 +305,6 @@ method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =
         item.patchFromCommunity(community)
 
   self.view.updateProfileShowcaseCommunities(profileCommunityItems)
+
+
+

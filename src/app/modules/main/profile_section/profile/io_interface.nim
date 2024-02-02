@@ -78,6 +78,9 @@ method updateProfileShowcase*(self: AccessInterface, profileShowcase: ProfileSho
 method updateProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateProfileCollectiblesFromBaseModel*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
