@@ -3,7 +3,7 @@ import time
 import allure
 import pytest
 from allure import step
-from . import marks
+from tests.wallet_main_screen import marks
 
 import constants
 from driver.aut import AUT
@@ -25,7 +25,6 @@ pytestmark = marks
                          [
                              pytest.param('GenAcc2', '#2a4af5', 'sunglasses', '1f60e')
                          ])
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/12973')
 def test_add_generated_account_restart_add_again(
         aut: AUT, main_screen: MainWindow, user_account,
         color: str, emoji: str, emoji_unicode: str, name: str,

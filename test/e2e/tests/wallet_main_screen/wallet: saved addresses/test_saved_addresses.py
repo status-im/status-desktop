@@ -7,7 +7,7 @@ from allure import step
 
 from gui.components.toast_message import ToastMessage
 from gui.screens.wallet import SavedAddressesView
-from . import marks
+from tests.wallet_main_screen import marks
 
 import configs
 import driver

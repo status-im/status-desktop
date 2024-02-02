@@ -3,7 +3,7 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
-from . import marks
+from tests.wallet_main_screen import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
