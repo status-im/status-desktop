@@ -13,6 +13,7 @@ StatusDialog {
 
     property var profileStore
     property var contactsStore
+    property var networkConnectionStore
     property var communitiesModel
 
     width: 640
@@ -25,6 +26,7 @@ StatusDialog {
         publicKey: root.publicKey
         profileStore: root.profileStore
         contactsStore: root.contactsStore
+        networkConnectionStore: root.networkConnectionStore
         communitiesModel: root.communitiesModel
         onCloseRequested: root.close()
     }

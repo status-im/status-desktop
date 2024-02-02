@@ -20,6 +20,7 @@ StatusListItem {
 
     property var store
     property var contactsStore
+    property var networkConnectionStore
     property string name
     property string address
     property string ens
@@ -79,6 +80,7 @@ StatusListItem {
             type: StatusRoundButton.Type.Quinary
             radius: 8
             icon.name: "send"
+            enabled: root.networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.openSendModal(d.visibleAddress)
         },
         StatusRoundButton {

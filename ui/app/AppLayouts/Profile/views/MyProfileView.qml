@@ -28,6 +28,7 @@ SettingsContentBase {
     property ProfileStore profileStore
     property PrivacyStore privacyStore
     property ContactsStore contactsStore
+    property NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
 
@@ -93,6 +94,7 @@ SettingsContentBase {
 
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                networkConnectionStore: root.networkConnectionStore
                 communitiesModel: root.communitiesModel
                 dirtyValues: settingsView.dirtyValues
                 dirty: settingsView.dirty

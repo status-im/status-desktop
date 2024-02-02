@@ -9,10 +9,12 @@ ColumnLayout {
     id: root
 
     property ContactsStore contactsStore
+    property var networkConnectionStore
     property var sendModal
 
     SavedAddresses {
         sendModal: root.sendModal
         contactsStore: root.contactsStore
+        networkConnectionStore: root.networkConnectionStore
     }
 }

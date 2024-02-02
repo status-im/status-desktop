@@ -434,6 +434,7 @@ ColumnLayout {
 
             StatusAction {
                 enabled: root.sendEnabled
+                visibleOnDisabled: true
                 icon.name: "send"
                 text: qsTr("Send")
                 onTriggered: root.sendRequested(symbol)

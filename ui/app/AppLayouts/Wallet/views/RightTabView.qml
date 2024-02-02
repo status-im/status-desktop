@@ -250,6 +250,7 @@ RightTabBaseView {
             showAllAccounts: RootStore.showAllAccounts
             sendModal: root.sendModal
             contactsStore: root.contactsStore
+            networkConnectionStore: root.networkConnectionStore
             visible: (stack.currentIndex === 3)
         }
     }

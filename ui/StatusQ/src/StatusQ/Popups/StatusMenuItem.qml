@@ -9,11 +9,13 @@ import StatusQ.Popups 0.1
 
 MenuItem {
     id: root
-    
+
     objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
     spacing: 4
     horizontalPadding: 8
+
+    property bool visibleOnDisabled: d.isStatusAction ? action.visibleOnDisabled : false
 
     QtObject {
         id: d

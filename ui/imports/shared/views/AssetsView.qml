@@ -320,6 +320,7 @@ ColumnLayout {
 
             StatusAction {
                 enabled: root.networkConnectionStore.sendBuyBridgeEnabled && !root.overview.isWatchOnlyAccount && root.overview.canSend
+                visibleOnDisabled: true
                 icon.name: "send"
                 text: qsTr("Send")
                 onTriggered: root.sendRequested(symbol)

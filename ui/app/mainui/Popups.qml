@@ -35,6 +35,7 @@ QtObject {
     property var devicesStore
     property CurrenciesStore currencyStore
     property WalletStore.WalletAssetsStore walletAssetsStore
+    property var networkConnectionStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -448,6 +449,7 @@ QtObject {
                 id: profilePopup
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
+                networkConnectionStore: root.networkConnectionStore
                 communitiesModel: rootStore.profileSectionStore.communitiesList
 
                 onClosed: {

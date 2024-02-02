@@ -10,5 +10,6 @@ RightTabBaseView {
 
         sendModal: root.sendModal
         contactsStore: root.contactsStore
+        networkConnectionStore: root.networkConnectionStore
     }
 }

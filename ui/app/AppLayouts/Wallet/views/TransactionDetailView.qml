@@ -27,6 +27,7 @@ Item {
 
     property var overview: WalletStores.RootStore.overview
     property var contactsStore
+    property var networkConnectionStore
     property var transaction
     property int transactionIndex
     property var sendModal
@@ -787,6 +788,7 @@ Item {
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
         isSepoliaEnabled: WalletStores.RootStore.isSepoliaEnabled
         contactsStore: root.contactsStore
+        networkConnectionStore: root.networkConnectionStore
         onOpenSendModal: (address) => root.sendModal.open(address)
     }
 

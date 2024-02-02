@@ -33,6 +33,7 @@ SettingsContentBase {
     property ProfileSectionStore rootStore
     property var walletStore: rootStore.walletStore
     required property TokensStore tokensStore
+    property var networkConnectionStore
 
     readonly property int mainViewIndex: 0
     readonly property int networksViewIndex: 1
@@ -345,6 +346,7 @@ SettingsContentBase {
         SavedAddressesView {
             id: savedAddressesView
             contactsStore: root.rootStore.contactsStore
+            networkConnectionStore: root.networkConnectionStore
             sendModal: root.rootStore.sendModalPopup
         }
 
