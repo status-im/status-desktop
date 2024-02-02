@@ -408,8 +408,6 @@ QtObject:
       return self.settings.pinnedMailserver.wakuv2Prod
     elif (fleet == Fleet.WakuV2Test):
       return self.settings.pinnedMailserver.wakuv2Test
-    elif (fleet == Fleet.GoWakuTest):
-      return self.settings.pinnedMailserver.goWakuTest
     elif (fleet == Fleet.ShardsTest):
       return self.settings.pinnedMailserver.shardsTest
     return ""
@@ -422,8 +420,6 @@ QtObject:
         self.settings.pinnedMailserver.wakuv2Prod = mailserverID
       elif (fleet == Fleet.WakuV2Test):
         self.settings.pinnedMailserver.wakuv2Test = mailserverID
-      elif (fleet == Fleet.GoWakuTest):
-        self.settings.pinnedMailserver.goWakuTest = mailserverID
       elif (fleet == Fleet.ShardsTest):
         self.settings.pinnedMailserver.shardsTest = mailserverID
       return true

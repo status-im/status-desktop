@@ -16,7 +16,6 @@ inline const auto Prod = u"eth.prod"_qs;
 inline const auto Staging = u"eth.staging"_qs;
 inline const auto WakuV2Prod = u"wakuv2.prod"_qs;
 inline const auto WakuV2Test = u"wakuv2.test"_qs;
-inline const auto GoWakuTest = u"go-waku.test"_qs;
 } // namespace Fleet
 
 namespace FleetNodes

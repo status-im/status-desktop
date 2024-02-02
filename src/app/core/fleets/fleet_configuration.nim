@@ -5,7 +5,6 @@ type
     Undefined = "",
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
-    GoWakuTest = "go-waku.test"
     ShardsTest = "shards.test"
 
   FleetNodes* {.pure.} = enum

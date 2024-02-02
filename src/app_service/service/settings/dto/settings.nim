@@ -173,7 +173,6 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("eth.staging", result.ethStaging)
   discard jsonObj.getProp("wakuv2.prod", result.wakuv2Prod)
   discard jsonObj.getProp("wakuv2.test", result.wakuv2Test)
-  discard jsonObj.getProp("go-waku.test", result.goWakuTest)
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
   discard jsonObj.getProp("shards.test", result.shardsTest)
@@ -256,7 +255,6 @@ proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
     "eth.staging": mailserver.ethStaging,
     "wakuv2.prod": mailserver.wakuv2Prod,
     "wakuv2.test": mailserver.wakuv2Test,
-    "go-waku.test": mailserver.goWakuTest,
     "status.test": mailserver.statusTest,
     "status.prod": mailserver.statusProd
   }
