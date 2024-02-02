@@ -81,6 +81,7 @@ DropArea {
             }
 
             StatusBaseText {
+                Layout.fillWidth: true
                 text: groupedCommunityTokenDelegate.title
                 elide: Text.ElideRight
                 maximumLineCount: 1
