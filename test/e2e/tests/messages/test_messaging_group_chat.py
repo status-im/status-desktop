@@ -15,12 +15,11 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014)
-@pytest.mark.timeout(timeout=240)
+@pytest.mark.timeout(timeout=265)
 @pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
      configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-@pytest.mark.skip(reason="https://github.com/status-im/desktop-qa-automation/issues/475")
 def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_three):
     user_one: UserAccount = constants.user_account_one
     user_two: UserAccount = constants.user_account_two
@@ -41,7 +40,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
             aut_two.attach()
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.get_chat_key_from_profile_link
+            chat_key = profile_popup.copy_chat_key
             profile_popup.close()
             main_window.hide()
 
@@ -68,7 +67,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
             aut_three.attach()
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.get_chat_key_from_profile_link
+            chat_key = profile_popup.copy_chat_key
             profile_popup.close()
             main_window.hide()
 
