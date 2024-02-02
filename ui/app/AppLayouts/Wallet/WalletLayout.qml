@@ -161,6 +161,7 @@ Item {
         SavedAddressesView {
             store: root.store
             contactsStore: root.contactsStore
+            networkConnectionStore: root.networkConnectionStore
             sendModal: root.sendModalPopup
 
             networkFilter.visible: false

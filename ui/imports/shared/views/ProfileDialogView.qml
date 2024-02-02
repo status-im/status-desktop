@@ -33,6 +33,7 @@ Pane {
     property var profileStore
     property var contactsStore
     property var walletStore: WalletNS.RootStore
+    property var networkConnectionStore
     property var communitiesModel
 
     property QtObject dirtyValues: null
@@ -699,6 +700,7 @@ Pane {
                     readOnly: root.readOnly
                     profileStore: root.profileStore
                     walletStore: root.walletStore
+                    networkConnectionStore: root.networkConnectionStore
                     communitiesModel: root.communitiesModel
 
                     onCloseRequested: root.closeRequested()

@@ -103,7 +103,7 @@ Menu {
     }
 
     delegate: StatusMenuItem {
-        visible: root.hideDisabledItems ? enabled : true
+        visible: root.hideDisabledItems && !visibleOnDisabled ? enabled : true
         height: visible ? implicitHeight : 0
         onImplicitWidthChanged: {
             if (visible)

@@ -132,6 +132,7 @@ StatusSectionLayout {
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore
                 contactsStore: root.store.contactsStore
+                networkConnectionStore: root.networkConnectionStore
                 communitiesModel: root.store.communitiesList
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
@@ -193,6 +194,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 rootStore: root.store
                 tokensStore: root.tokensStore
+                networkConnectionStore: root.networkConnectionStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth

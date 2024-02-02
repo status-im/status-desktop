@@ -24,6 +24,7 @@ Control {
     property bool readOnly
     property var profileStore
     property var walletStore
+    property var networkConnectionStore
     property var communitiesModel
 
     signal closeRequested()
@@ -208,6 +209,7 @@ Control {
                             type: StatusFlatRoundButton.Type.Secondary
                             icon.name: "send"
                             tooltip.text: qsTr("Send")
+                            enabled: root.networkConnectionStore.sendBuyBridgeEnabled
                             onClicked: {
                                 Global.openSendModal(model.address)
                             }

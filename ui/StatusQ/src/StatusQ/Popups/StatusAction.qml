@@ -14,6 +14,7 @@ Action {
     }
 
     property int type: StatusAction.Type.Normal
+    property bool visibleOnDisabled: false
 
     property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: 18

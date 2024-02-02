@@ -31,6 +31,7 @@ StatusMenu {
     id: root
 
     property var contactsStore
+    property var networkConnectionStore
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
 
@@ -156,7 +157,10 @@ StatusMenu {
         d.refreshShowOnActionsVisiblity(chainShortNameList)
         saveAddressAction.enabled = d.addressName.length === 0
         editAddressAction.enabled = !isWalletAccount && !isContact && d.addressName.length > 0
-        sendToAddressAction.enabled = true
+
+        if (root.networkConnectionStore.sendBuyBridgeEnabled)
+            sendToAddressAction.enabled = true
+
         showQrAction.enabled = true
 
         d.openMenu(delegate)
@@ -343,6 +347,7 @@ StatusMenu {
     StatusAction {
         id: sendToAddressAction
         enabled: false
+        visibleOnDisabled: true
         text: {
             switch(d.addressType) {
             case TransactionAddressMenu.AddressType.Sender:

@@ -20,6 +20,7 @@ ColumnLayout {
 
     property var sendModal
     property var contactsStore
+    property var networkConnectionStore
 
     QtObject {
         id: d
@@ -148,6 +149,7 @@ ColumnLayout {
             colorId: model.colorId
             store: RootStore
             contactsStore: root.contactsStore
+            networkConnectionStore: root.networkConnectionStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
             isSepoliaEnabled: RootStore.isSepoliaEnabled
             onOpenSendModal: root.sendModal.open(recipient);

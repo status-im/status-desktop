@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 Item {
     property alias profileStore: profilePreview.profileStore
     property alias contactsStore: profilePreview.contactsStore
+    property alias networkConnectionStore: profilePreview.networkConnectionStore
     property alias communitiesModel: profilePreview.communitiesModel
     property alias dirtyValues: profilePreview.dirtyValues
     property alias dirty: profilePreview.dirty

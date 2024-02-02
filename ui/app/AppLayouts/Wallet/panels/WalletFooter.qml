@@ -66,7 +66,7 @@ Rectangle {
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
         }
-        
+
         StatusFlatButton {
             id: buySellBtn
 
