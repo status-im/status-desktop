@@ -69,9 +69,26 @@ class ToolBar(QObject):
     def __init__(self):
         super().__init__('mainWindow_statusToolBar_StatusToolBar')
         self.pinned_message_tooltip = QObject('statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip')
+        self.confirm_button = Button('statusToolBar_Confirm_StatusButton')
+        self.status_button = Button('statusToolBar_Cancel_StatusButton')
+        self.contact_tag = QObject('statusToolBar_StatusTagItem')
 
+    @property
+    @allure.step('Get visibility of pin message tooltip')
     def is_pin_message_tooltip_visible(self) -> bool:
         return self.pinned_message_tooltip.is_visible
+
+    @allure.step('Confirm action in toolbar')
+    def confirm_action_in_toolbar(self):
+        self.confirm_button.click()
+
+    @allure.step('Remove member by clicking close icon on member tag')
+    def click_contact_close_icon(self, member):
+        for item in driver.findAllObjects(self.contact_tag.real_name):
+            if str(getattr(item, 'text', '')) == str(member):
+                for child in walk_children(item):
+                    if getattr(child, 'objectName', '') == 'close-icon':
+                        driver.mouseClick(child)
 
 
 class Message:
@@ -217,6 +234,8 @@ class ChatMessagesView(QObject):
         self._more_button = Button('moreOptionsButton_StatusFlatRoundButton')
         self._edit_menu_item = QObject('edit_name_and_image_StatusMenuItem')
         self._leave_group_item = QObject('leave_group_StatusMenuItem')
+        self._add_remove_item = QObject('add_remove_from_group_StatusMenuItem')
+        self._message_input_area = QObject('inputScrollView_messageInputField_TextArea')
         self._message_field = TextEdit('inputScrollView_Message_PlaceholderText')
 
     @property
@@ -232,6 +251,16 @@ class ChatMessagesView(QObject):
                 for item in walk_children(delegate):
                     if getattr(item, 'id', '') == 'descText':
                         return str(item.text)
+
+    @property
+    @allure.step('Get gray text from message area')
+    def gray_text_from_message_area(self) -> str:
+        return driver.waitForObjectExists(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).placeholderText
+
+    @property
+    @allure.step('Get enabled state of message area')
+    def is_message_area_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._message_input_area.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
     @allure.step('Click more options button')
     def open_more_options(self):
@@ -258,6 +287,18 @@ class ChatMessagesView(QObject):
         self._message_field.type_text(message)
         for i in range(2):
             driver.nativeType('<Return>')
+
+    @allure.step('Remove member from chat')
+    def remove_member_from_chat(self, member):
+        time.sleep(2)
+        self.open_more_options()
+        time.sleep(2)
+        self._add_remove_item.click()
+        tool_bar = ToolBar().wait_until_appears()
+        tool_bar.click_contact_close_icon(member)
+        time.sleep(1)
+        tool_bar.confirm_action_in_toolbar()
+        time.sleep(1)
 
 
 class MessageQuickActions(QObject):

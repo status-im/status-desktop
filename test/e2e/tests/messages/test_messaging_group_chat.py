@@ -1,6 +1,8 @@
 import allure
 import pytest
 from allure_commons._allure import step
+
+import driver
 from . import marks
 
 import configs.testpath
@@ -15,7 +17,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
 @pytest.mark.case(703014)
-@pytest.mark.timeout(timeout=265)
+@pytest.mark.timeout(timeout=310)
 @pytest.mark.parametrize('user_data_one, user_data_two, user_data_three', [
     (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two',
      configs.testpath.TEST_USER_DATA / 'user_account_two')
@@ -127,11 +129,13 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
             for message_item in message_items:
                 assert 'Hi' in message_item
 
-        with step('Leave group'):
-            messages_screen.group_chat.leave_group().confirm_leaving()
+        with step(f'Remove {user_three.name} from group'):
+            messages_screen.group_chat.remove_member_from_chat(user_three.name)
 
-        with step('Check that group name is not displayed on left panel'):
-            assert new_name not in messages_screen.left_panel.contacts
+        with step('Verify there are two members in group members list'):
+            assert driver.waitFor(lambda: user_one.name in messages_screen.right_panel.members, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert user_two.name in messages_screen.right_panel.members
+            assert len(messages_screen.right_panel.members) == 2
             main_window.hide()
 
         with step(f'Restart app for {user_two.name} and open group chat'):
@@ -139,9 +143,9 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
             main_window.authorize_user(user_two)
             messages_screen.left_panel.open_chat(new_name)
 
-        with step('Verify there are two members in group members list'):
+        with step('Verify there are three members in group members list'):
+            assert user_one.name in messages_screen.right_panel.members
             assert user_two.name in messages_screen.right_panel.members
-            assert user_three.name in messages_screen.right_panel.members
             assert len(messages_screen.right_panel.members) == 2
 
         with step('Send message to group chat and verify it was sent'):
@@ -158,25 +162,27 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
             assert new_name not in messages_screen.left_panel.contacts
             main_window.hide()
 
-        with step(f'Restart app for {user_three.name} and open group chat'):
+        with step(f'Restart app for {user_three.name} and verify that user is not the member of chat'):
             aut_three.restart()
             main_window.authorize_user(user_three)
+
+        with step('Check that {user_three.name} is not a member of a group'):
+            messages_screen.left_panel.open_chat(new_name)
+            gray_message_text = messages_screen.group_chat.gray_text_from_message_area
+            assert gray_message_text == Messaging.YOU_NEED_TO_BE_A_MEMBER.value
+            assert not messages_screen.group_chat.is_message_area_enabled
+
+        with step(f'Restart app for {user_one.name} and open group chat'):
+            aut_one.restart()
+            main_window.authorize_user(user_one)
             messages_screen.left_panel.open_chat(new_name)
 
         with step('Verify there is one member in group members list'):
-            assert user_three.name in messages_screen.right_panel.members
+            assert user_one.name in messages_screen.right_panel.members
             assert len(messages_screen.right_panel.members) == 1
 
-        with step('Send message to group chat and verify it was sent'):
-            messages_screen.group_chat.send_message_to_group_chat('Hi')
-            message_objects = messages_screen.chat.messages
-            message_items = [message.text for message in message_objects]
-            for message_item in message_items:
-                assert 'Hi' in message_item
-
         with step('Leave group'):
-            messages_screen.left_panel.open_leave_group_popup(new_name).confirm_leaving()
+            messages_screen.group_chat.leave_group().confirm_leaving()
 
         with step('Check that group name is not displayed on left panel'):
             assert new_name not in messages_screen.left_panel.contacts
-            main_window.hide()
