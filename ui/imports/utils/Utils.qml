@@ -17,6 +17,10 @@ QtObject {
     readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
     readonly property int communityIdLength: 68
 
+    function restartApplication() {
+        globalUtilsInst.restartApplication()
+    }
+    
     function isDigit(value) {
       return /^\d$/.test(value);
     }

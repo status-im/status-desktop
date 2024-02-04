@@ -127,6 +127,9 @@ DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_quit(void);
 
+/// @brief  Calls the QGuiApplication::quit() function of the current QGuiApplication and  QProcess::startDetached to spawn another process
+DOS_API void DOS_CALL dos_qguiapplication_restart(void);
+
 /// \brief Free the memory of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_delete(void);
