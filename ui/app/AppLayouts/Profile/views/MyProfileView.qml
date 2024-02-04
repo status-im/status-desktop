@@ -19,6 +19,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.stores 1.0
 
 SettingsContentBase {
@@ -34,86 +35,221 @@ SettingsContentBase {
 
     property var communitiesModel
 
-    titleRowComponentLoader.sourceComponent: StatusButton {
-        objectName: "profileSettingsChangePasswordButton"
-        text: qsTr("Change Password")
-        onClicked: Global.openPopup(changePasswordModal)
-        enabled: !userProfile.isKeycardUser
+    titleRowComponentLoader.sourceComponent: RowLayout {
+        StatusButton {
+            objectName: "profileSettingsChangePasswordButton"
+            text: qsTr("Change Password")
+            onClicked: Global.openPopup(changePasswordModal)
+            enabled: !userProfile.isKeycardUser
+        }
+        StatusButton {
+            text: qsTr("Preview")
+            onClicked: Global.openPopup(profilePreview)
+        }
     }
 
-    dirty: settingsView.dirty
-    saveChangesButtonEnabled: settingsView.valid
+    dirty: (!descriptionPanel.isEnsName &&
+            descriptionPanel.displayName.text !== profileStore.displayName) ||
+            descriptionPanel.bio.text !== profileStore.bio ||
+            profileStore.socialLinksDirty ||
+            profileHeader.icon !== profileStore.profileLargeImage ||
+            priv.hasAnyProfileShowcaseChanges
+    saveChangesButtonEnabled: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
-    onResetChangesClicked: {
-        settingsView.reset()
-        profilePreview.reload()
-    }
-    onSaveChangesClicked: {
-        settingsView.save()
-        profilePreview.reload()
-    }
+    onResetChangesClicked: priv.reset()
+
+    onSaveChangesClicked: priv.save()
 
     bottomHeaderComponents: StatusTabBar {
-        id: editPreviwTabBar
+        id: profileTabBar
+
         StatusTabButton {
+            width: implicitWidth
             leftPadding: 0
-            width: implicitWidth
-            text: qsTr("Edit")
+            text: qsTr("Identity")
         }
+
         StatusTabButton {
             width: implicitWidth
-            text: qsTr("Preview")
+            text: qsTr("Communities")
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Accounts")
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Collectibles")
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Assets")
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Web")
+        }
+    }
+
+    onVisibleChanged: if (visible) profileStore.requestProfileShowcasePreferences()
+    Component.onCompleted: profileStore.requestProfileShowcasePreferences()
+
+    readonly property var priv: QtObject {
+        id: priv
+
+        property bool hasAnyProfileShowcaseChanges: false
+
+        function reset() {
+            descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
+            descriptionPanel.bio.text = Qt.binding(() => { return profileStore.bio })
+            profileStore.resetSocialLinks()
+            profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+
+            profileShowcaseCommunitiesPanel.reset()
+            profileShowcaseAccountsPanel.reset()
+            profileShowcaseCollectiblesPanel.reset()
+            profileShowcaseAssetsPanel.reset()
+            root.profileStore.requestProfileShowcasePreferences()
+            hasAnyProfileShowcaseChanges = false
+        }
+
+        function save() {
+            if (hasAnyProfileShowcaseChanges)
+                profileStore.storeProfileShowcasePreferences()
+
+            if (!descriptionPanel.isEnsName)
+                profileStore.setDisplayName(descriptionPanel.displayName.text)
+            profileStore.setBio(descriptionPanel.bio.text.trim())
+            profileStore.saveSocialLinks()
+            if (profileHeader.icon === "") {
+                root.profileStore.removeImage()
+            } else {
+                profileStore.uploadImage(profileHeader.icon,
+                                         profileHeader.cropRect.x.toFixed(),
+                                         profileHeader.cropRect.y.toFixed(),
+                                         (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
+                                         (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed());
+            }
+
+            reset()
         }
     }
 
     ColumnLayout {
-        id: layout
-        spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
         StackLayout {
             id: stackLayout
-            currentIndex: editPreviwTabBar.currentIndex
+            currentIndex: profileTabBar.currentIndex
 
-            MyProfileSettingsView {
-                id: settingsView
+            // identity
+            ColumnLayout {
                 objectName: "myProfileSettingsView"
-                profileStore: root.profileStore
-                privacyStore: root.privacyStore
-                walletStore: root.walletStore
-                communitiesModel: root.communitiesModel
-                walletAssetsStore: root.walletAssetsStore
-                currencyStore: root.currencyStore
+                ProfileHeader {
+                    id: profileHeader
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
 
-                onVisibleChanged: if (visible) stackLayout.Layout.preferredHeight = settingsView.implicitHeight
-                Component.onCompleted: stackLayout.Layout.preferredHeight = Qt.binding(() => settingsView.implicitHeight)
+                    store: root.profileStore
+
+                    displayName: profileStore.name
+                    pubkey: profileStore.pubkey
+                    icon: profileStore.profileLargeImage
+                    imageSize: ProfileHeader.ImageSize.Big
+
+                    displayNameVisible: false
+                    pubkeyVisible: false
+                    emojiHashVisible: false
+                    editImageButtonVisible: true
+                }
+
+                ProfileDescriptionPanel {
+                    id: descriptionPanel
+
+                    readonly property bool isEnsName: profileStore.preferredName
+
+                    Layout.fillWidth: true
+
+                    displayName.focus: !isEnsName
+                    displayName.input.edit.readOnly: isEnsName
+                    displayName.text: profileStore.name
+                    displayName.validationMode: StatusInput.ValidationMode.Always
+                    displayName.validators: isEnsName ? [] : Constants.validators.displayName
+                    bio.text: profileStore.bio
+                }
             }
 
-            MyProfilePreview {
+            // communities
+            ProfileShowcaseCommunitiesPanel {
+                id: profileShowcaseCommunitiesPanel
+                baseModel: root.communitiesModel
+                showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            }
+
+            // accounts
+            ProfileShowcaseAccountsPanel {
+                id: profileShowcaseAccountsPanel
+                baseModel: root.walletStore.accounts
+                showcaseModel: root.profileStore.profileShowcaseAccountsModel
+                currentWallet: root.walletStore.overview.mixedcaseAddress
+                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            }
+
+            // collectibles
+            ProfileShowcaseCollectiblesPanel {
+                id: profileShowcaseCollectiblesPanel
+                baseModel: root.profileStore.collectiblesModel
+                showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            }
+
+            // assets
+            ProfileShowcaseAssetsPanel {
+                id: profileShowcaseAssetsPanel
+                baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
+                showcaseModel: root.profileStore.profileShowcaseAssetsModel
+                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+                formatCurrencyAmount: function(amount, symbol) {
+                    return root.currencyStore.formatCurrencyAmount(amount, symbol)
+                }
+            }
+
+            // web
+            ProfileSocialLinksPanel {
+                profileStore: root.profileStore
+                socialLinksModel: root.profileStore.temporarySocialLinksModel
+            }
+
+            Component {
+                id: changePasswordModal
+                ChangePasswordModal {
+                    privacyStore: root.privacyStore
+                    onPasswordChanged: Global.openPopup(successPopup)
+                }
+            }
+
+            Component {
+                id: successPopup
+                ChangePasswordSuccessModal {}
+            }
+
+            Component {
                 id: profilePreview
-
-                profileStore: root.profileStore
-                contactsStore: root.contactsStore
-                networkConnectionStore: root.networkConnectionStore
-                communitiesModel: root.communitiesModel
-                dirtyValues: settingsView.dirtyValues
-                dirty: settingsView.dirty
-
-                onVisibleChanged: if (visible) stackLayout.Layout.preferredHeight = Qt.binding(() => profilePreview.implicitHeight)
+                ProfileDialog {
+                    publicKey: root.contactsStore.myPublicKey
+                    profileStore: root.profileStore
+                    contactsStore: root.contactsStore
+                    networkConnectionStore: root.networkConnectionStore
+                    communitiesModel: root.communitiesModel
+                    onClosed: destroy()
+                }
             }
-        }
-
-        Component {
-            id: changePasswordModal
-            ChangePasswordModal {
-                privacyStore: root.privacyStore
-                onPasswordChanged: Global.openPopup(successPopup);
-            }
-        }
-
-        Component {
-            id: successPopup
-            ChangePasswordSuccessModal { }
         }
     }
 }
