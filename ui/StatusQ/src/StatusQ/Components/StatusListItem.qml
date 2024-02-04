@@ -199,9 +199,9 @@ Rectangle {
                 return !root.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
             }
 
-            anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.left : parent.left
+            anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: iconOrImage.active || loadingIndicator.active ? 16 : root.leftPadding
+            anchors.leftMargin: iconOrImage.active ? 16 : loadingIndicator.active ? 6 : root.leftPadding
             anchors.rightMargin: Math.max(root.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 

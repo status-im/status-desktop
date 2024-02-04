@@ -23,13 +23,15 @@ StatusDialog {
     id: root
 
     signal changePasswordRequested()
+    // Currently this modal handles only the happy path
+    // The error is handled in the caller
+    function passwordSuccessfulyChanged() {
+        d.dbEncryptionInProgress = false;
+        d.passwordChanged = true;
+    }
 
     QtObject {
         id: d
-
-        // We temporarly store the password during "changePassword" call
-        // to store it to KeyChain after successfull change operation.
-        property string passwordProcessing: ""
 
         function reset() {
             d.dbEncryptionInProgress = false;
@@ -38,32 +40,6 @@ StatusDialog {
 
         property bool passwordChanged: false
         property bool dbEncryptionInProgress: false
-        property var cnx: Connections {
-            target: startupModule
-            function onAppStateChanged(state) {
-                d.dbEncryptionInProgress = state;
-            }
-        }
-
-        property var cnxx: Connections {
-            target: root.privacyStore.privacyModule
-            function onPasswordChanged(success: bool, errorMsg: string) {
-                onChangePasswordResponse(success, errorMsg)
-                d.passwordChanged = success;
-            }
-        }
-    }
-
-    function onChangePasswordResponse(success, errorMsg) {
-        if (success) {
-            if (Qt.platform.os === Constants.mac && localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.never) {
-                localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.notNow;
-            }
-            root.close();
-        } else {
-            d.reset()
-        }
-        d.passwordProcessing = "";
     }
 
     onClosed: {

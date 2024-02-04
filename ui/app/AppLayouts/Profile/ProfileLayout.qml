@@ -6,7 +6,7 @@ import QtQuick.Window 2.15
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.popups.keycard 1.0
 import shared.stores.send 1.0
 
@@ -38,7 +38,7 @@ StatusSectionLayout {
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
-    required property CurrenciesStore currencyStore
+    required property SharedStores.CurrenciesStore currencyStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
