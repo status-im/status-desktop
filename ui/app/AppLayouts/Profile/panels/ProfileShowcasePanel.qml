@@ -253,6 +253,9 @@ Control {
             Layout.fillWidth: true
             Layout.minimumHeight: empty ? Math.floor(hiddenTargetDropArea.height + hiddenTargetDropArea.anchors.topMargin)
                                         : d.defaultDelegateHeight * Math.min(count, 4)
+            implicitHeight: contentHeight
+            interactive: false
+
             model: root.baseModel
 
             readonly property bool empty: !contentHeight
@@ -333,5 +336,7 @@ Control {
                 }
             }
         }
+
+        Item { Layout.fillHeight: true }
     }
 }

@@ -161,5 +161,7 @@ Control {
                 }
             }
         }
+
+        Item { Layout.fillHeight: true }
     }
 }
