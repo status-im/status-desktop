@@ -103,18 +103,6 @@ proc getExpirationTime*(chainId: int, username: string): int =
   let res = status_ens.expireAt(chainId, username)
   return fromHex[int](res.result.getStr)
 
-proc getPrice*(chainId: int): Stuint[256] =
-  try:
-    let response = status_ens.price(chainId)
-    if not response.error.isNil:
-      error "Error getting ens username price, ", errDescription=response.error.message
-    if response.result.getStr == "0x":
-      error "Error getting ens username price: 0x"
-
-    result = fromHex(Stuint[256], response.result.getStr)
-  except RpcException as e:
-    error "Error obtaining expiration time", err=e.msg
-
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
 

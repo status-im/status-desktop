@@ -7,15 +7,17 @@ import utils 1.0
 import shared 1.0
 import shared.stores.send 1.0
 
+import AppLayouts.Wallet.stores 1.0
+
 import "../stores"
 
 Item {
     id: ensView
 
     property EnsUsernamesStore ensUsernamesStore
+    property WalletAssetsStore walletAssetsStore
 
     property var contactsStore
-    property var stickersStore
     property var networkConnectionStore
     required property TransactionStore transactionStore
 
@@ -246,8 +248,8 @@ Item {
         EnsTermsAndConditionsView {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
-            stickersStore: ensView.stickersStore
             transactionStore: ensView.transactionStore
+            walletAssetsStore: ensView.walletAssetsStore
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameRegistered: done(userName);

@@ -32,7 +32,7 @@ type TmpSendTransactionDetails = object
   fromAddr: string
   fromAddrPath: string
   toAddr: string
-  tokenSymbol: string
+  assetKey: string
   value: string
   paths: seq[TransactionPathDto]
   uuid: string
@@ -59,7 +59,7 @@ type
     receiveCurrentAccountIndex: int
 
 # Forward declaration
-method getTokenBalance*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount
+method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -128,7 +128,7 @@ proc convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkI
       true,
       false,
       true,
-      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetSymbol())
+      self.getTokenBalance(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetKey())
       )
 
 proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
@@ -252,13 +252,13 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
 
-method getTokenBalance*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
-  return self.controller.getTokenBalance(address, chainId, symbol)
+method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
+  return self.controller.getTokenBalance(address, chainId, tokensKey)
 
-method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, tokenSymbol: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
+method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
   self.tmpSendTransactionDetails.fromAddr = fromAddr
   self.tmpSendTransactionDetails.toAddr = toAddr
-  self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
+  self.tmpSendTransactionDetails.assetKey = assetKey
   self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.sendType = sendType
@@ -287,7 +287,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     let usePassword = self.tmpSendTransactionDetails.fromAddrPath.len == 0
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
+      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
       self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing,
       self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken
     )

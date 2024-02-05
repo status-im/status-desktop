@@ -164,8 +164,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 ensUsernamesStore: root.store.ensUsernamesStore
+                walletAssetsStore: root.walletAssetsStore
                 contactsStore: root.store.contactsStore
-                stickersStore: root.store.stickersStore
                 networkConnectionStore: root.networkConnectionStore
                 transactionStore: root.transactionStore
                 profileContentWidth: d.contentWidth

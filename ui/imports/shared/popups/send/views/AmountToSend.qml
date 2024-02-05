@@ -25,7 +25,7 @@ ColumnLayout {
     readonly property int minReceiveFiatDecimals:
         inputIsFiat ? minSendFiatDecimals + 1 : 0
 
-    property string selectedSymbol // Crypto asset symbol like ETH
+    property var selectedHolding // Crypto asset symbol like ETH
     property string currentCurrency // Fiat currency symbol like USD
 
     property int multiplierIndex // How divisible the token is, 18 for ETH
@@ -42,10 +42,6 @@ ColumnLayout {
 
     readonly property alias cryptoValueToSendFloat: d.cryptoValueToSend
 
-
-    property var getFiatValue: cryptoValue => {}
-    property var getCryptoValue: fiatValue => {}
-
     property var formatCurrencyAmount:
         (amount, symbol, options = null, locale = null) => {}
 
@@ -59,8 +55,11 @@ ColumnLayout {
 
         Binding on cryptoValueToSend {
             value: {
-                root.selectedSymbol
-                return root.inputIsFiat ? root.getCryptoValue(d.fiatValueToSend)
+                root.selectedHolding
+                if(!root.selectedHolding || !root.selectedHolding.marketDetails || !root.selectedHolding.marketDetails.currencyPrice) {
+                    return 0
+                }
+                return root.inputIsFiat ? d.fiatValueToSend/root.selectedHolding.marketDetails.currencyPrice.amount
                                         : d.inputNumber
             }
             delayed: true
@@ -68,12 +67,17 @@ ColumnLayout {
 
         Binding on fiatValueToSend {
             value: {
-                root.selectedSymbol
+                root.selectedHolding
+                if(!root.selectedHolding || !root.selectedHolding.marketDetails || !root.selectedHolding.marketDetails.currencyPrice) {
+                    return 0
+                }
                 return root.inputIsFiat ? d.inputNumber
-                                        : root.getFiatValue(d.cryptoValueToSend)
+                                        : d.cryptoValueToSend * root.selectedHolding.marketDetails.currencyPrice.amount
             }
             delayed: true
         }
+
+        readonly property string selectedSymbol: !!root.selectedHolding && !!root.selectedHolding.symbol ? root.selectedHolding.symbol: ""
 
         readonly property string cryptoValueRawToSend: {
             if (!root.inputNumberValid)
@@ -119,7 +123,7 @@ ColumnLayout {
 
         property double topAmountToSend: !inputIsFiat ? d.cryptoValueToSend
                                                       : d.fiatValueToSend
-        property string topAmountSymbol: !inputIsFiat ? root.selectedSymbol
+        property string topAmountSymbol: !inputIsFiat ? d.selectedSymbol
                                                       : root.currentCurrency
         Layout.alignment: Qt.AlignLeft
 
@@ -175,7 +179,7 @@ ColumnLayout {
 
         property double bottomAmountToSend: inputIsFiat ? d.cryptoValueToSend
                                                         : d.fiatValueToSend
-        property string bottomAmountSymbol: inputIsFiat ? selectedSymbol
+        property string bottomAmountSymbol: inputIsFiat ? d.selectedSymbol
                                                         : currentCurrency
 
         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom

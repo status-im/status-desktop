@@ -186,7 +186,10 @@ proc init*(self: Controller) =
       args.memberRevealedAccounts,
     )
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
+  self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
+    self.delegate.onWalletAccountTokensRebuilt()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
@@ -369,8 +372,8 @@ proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
 
-proc getTokenList*(self: Controller): seq[TokenDto] =
-  return self.tokenService.getTokenList()
+proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
+  return self.tokenService.getTokenBySymbolList()
 
 proc shareCommunityUrlWithChatKey*(self: Controller, communityId: string): string =
   return self.communityService.shareCommunityUrlWithChatKey(communityId)
@@ -473,3 +476,6 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
 
 proc removeCommunityChat*(self: Controller, communityId: string, channelId: string) =
   self.communityService.deleteCommunityChat(communityId, channelId)
+
+proc getNetworks*(self: Controller): seq[NetworkDto] =
+ return self.networksService.getNetworks()

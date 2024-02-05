@@ -23,7 +23,7 @@ SplitView {
     property bool isIncoming: false
 
     Component.onCompleted: {
-        RootStore.getFiatValue = (cryptoValue, symbol, currentCurrency) => { return (cryptoValue * 1800).toPrecision(2) }
+        RootStore.getFiatValue = (cryptoValue, symbol) => { return (cryptoValue * 1800).toPrecision(2) }
         RootStore.getNetworkIcon = (chainId) => { return "tiny/network/Network=Ethereum" }
         RootStore.getLatestBlockNumber = () => { return 4 }
         RootStore.hex2Dec = (number) => { return 10 }

@@ -208,3 +208,55 @@ const migrateNonProfileKeycardKeypairToAppTask*: Task = proc(argEncoded: string)
   except Exception as e:
     error "error migrating a non profile keycard keypair: ", message = e.msg
   arg.finish(responseJson)
+
+#################################################
+# Async fetching of token balances for a given account(s)
+#################################################
+
+type
+  BalanceHistoryTimeInterval* {.pure.} = enum
+    BalanceHistory7Hours = 0,
+    BalanceHistory1Month,
+    BalanceHistory6Months,
+    BalanceHistory1Year,
+    BalanceHistoryAllTime
+
+type
+  GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
+    chainIds: seq[int]
+    addresses: seq[string]
+    allAddresses: bool
+    tokenSymbol: string
+    currencySymbol: string
+    timeInterval: BalanceHistoryTimeInterval
+
+const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetTokenBalanceHistoryDataTaskArg](argEncoded)
+  var response = %*{}
+  try:
+    # status-go time intervals are starting from 1
+    response = backend.getBalanceHistory(arg.chainIds, arg.addresses, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
+
+    let output = %* {
+        "chainIds": arg.chainIds,
+        "addresses": arg.addresses,
+        "allAddresses": arg.allAddresses,
+        "tokenSymbol": arg.tokenSymbol,
+        "currencySymbol": arg.currencySymbol,
+        "timeInterval": int(arg.timeInterval),
+        "historicalData": response
+    }
+
+    arg.finish(output)
+    return
+  except Exception as e:
+    let output = %* {
+      "chainIds": arg.chainIds,
+      "addresses": arg.addresses,
+      "allAddresses": arg.allAddresses,
+      "tokenSymbol": arg.tokenSymbol,
+      "currencySymbol": arg.currencySymbol,
+      "timeInterval": int(arg.timeInterval),
+      "error": e.msg,
+    }
+    arg.finish(output)

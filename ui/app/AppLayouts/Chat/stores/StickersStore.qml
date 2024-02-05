@@ -30,22 +30,16 @@ QtObject {
         return stickersModule.getCurrentCurrency()
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        if(!root.stickersModule)
-            return ""
-        return stickersModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
     function getGasEthValue(gweiValue, gasLimit) {
         if(!root.stickersModule)
             return ""
         return stickersModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function getStatusToken() {
+    function getStatusTokenKey() {
         if(!root.stickersModule)
             return ""
-        return stickersModule.getStatusToken()
+        return stickersModule.getStatusTokenKey()
     }
 
     function estimate(packId, selectedAccount, price, uuid) {

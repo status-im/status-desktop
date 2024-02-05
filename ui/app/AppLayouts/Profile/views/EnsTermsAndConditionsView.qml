@@ -9,22 +9,36 @@ import shared.status 1.0
 import shared.popups.send 1.0
 import shared.stores.send 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+
+import AppLayouts.Wallet.stores 1.0
 
 Item {
     id: root
 
     property var ensUsernamesStore
     property var contactsStore
-    property var stickersStore
     required property TransactionStore transactionStore
+    property WalletAssetsStore walletAssetsStore
     property string username: ""
 
     signal backBtnClicked();
     signal usernameRegistered(userName: string);
+
+    QtObject {
+        id: d
+        readonly property var sntToken: ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.ensUsernamesStore.getStatusTokenKey())
+        readonly property SumAggregator aggregator: SumAggregator {
+            model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: nil
+            roleName: "balance"
+        }
+        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
+    }
 
     StatusBaseText {
         id: sectionTitle
@@ -54,7 +68,7 @@ Item {
             preSelectedSendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
-            preSelectedHoldingID: JSON.parse(root.stickersStore.getStatusToken()).symbol
+            preSelectedHoldingID: !!d.sntToken && !!d.sntToken.symbol ? d.sntToken.symbol: ""
             preSelectedHoldingType: Constants.TokenType.ERC20
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {
@@ -391,10 +405,10 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        text: parseFloat(root.ensUsernamesStore.getSntBalance()) < 10 ?
+        text: d.sntBalance < 10 ?
           qsTr("Not enough SNT") :
           qsTr("Register")
-        enabled: parseFloat(root.ensUsernamesStore.getSntBalance()) >= 10 && termsAndConditionsCheckbox.checked
+        enabled: d.sntBalance >= 10 && termsAndConditionsCheckbox.checked
         onClicked: transactionDialog.open()
     }
 }

@@ -183,10 +183,6 @@ QtObject:
       else:
         self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
 
-  proc getStatusToken*(self: Service): TokenDto =
-    let networkDto = self.networkService.getAppNetwork()
-    return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
-
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
     let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
 
@@ -469,7 +465,6 @@ QtObject:
         error "error occurred", procName="sendBuyingStickersTxWithSignatureAndWatch", msg = result.error
         return
 
-      let sntContract = self.getStatusToken()
       self.transactionService.watchTransaction(
         transactionHash,
         fromAddress,

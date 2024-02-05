@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQml.Models 2.13
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -18,6 +19,7 @@ import shared.stores.send 1.0
 
 //TODO remove this dependency!
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Wallet.stores 1.0
 
 Item {
     id: root
@@ -25,6 +27,7 @@ Item {
     property var store
     property var stickerPacks: StickerPackData {}
     required property TransactionStore transactionStore
+    required property WalletAssetsStore walletAssetsStore
     property string packId
     property bool marketVisible
 
@@ -206,7 +209,10 @@ Item {
             preSelectedSendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-            preSelectedHoldingID: JSON.parse(root.store.stickersStore.getStatusToken()).symbol
+            preSelectedHoldingID: {
+                let token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.store.stickersStore.getStatusTokenKey())
+                return !!token && !!token.symbol ? token.symbol : ""
+            }
             preSelectedHoldingType: Constants.TokenType.ERC20
             sendTransaction: function() {
                 if(bestRoutes.count === 1) {

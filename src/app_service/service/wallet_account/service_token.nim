@@ -98,7 +98,7 @@ proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: s
     let price = self.tokenService.getPriceBySymbol(token.symbol)
     let balances = token.balancesPerAccount.filter(a => addresses.contains(a.account) and chainIds.contains(a.chainId))
     for balance in balances:
-      totalBalance = totalBalance + (self.currencyService.parseCurrencyValue(token.symbol, balance.balance)*price)
+      totalBalance = totalBalance + (self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)*price)
   return totalBalance
 
 proc getGroupedAccountsAssetsList*(self: Service): var seq[GroupedTokenItem] =
@@ -141,16 +141,16 @@ proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
     if token.symbol == symbol:
       for balance in token.balancesPerAccount:
         if accountsAddresses.contains(balance.account):
-          totalTokenBalance += self.currencyService.parseCurrencyValue(symbol, balance.balance)
+          totalTokenBalance += self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
   return totalTokenBalance
 
-proc getTokenBalance*(self: Service, address: string, chainId: int, symbol: string): float64 =
+proc getTokenBalance*(self: Service, address: string, chainId: int, tokensKey: string): float64 =
   var totalTokenBalance = 0.0
   for token in self.groupedAccountsTokensList:
-    if token.symbol == symbol:
+    if token.tokensKey == tokensKey:
       let balances = token.balancesPerAccount.filter(b => address == b.account and chainId == b.chainId)
       for balance in balances:
-        totalTokenBalance = totalTokenBalance + self.currencyService.parseCurrencyValue(token.symbol, balance.balance)
+        totalTokenBalance = totalTokenBalance + self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
   return totalTokenBalance
 
 proc checkRecentHistory*(self: Service, addresses: seq[string]) =
@@ -168,5 +168,12 @@ proc reloadAccountTokens*(self: Service) =
   self.buildAllTokens(addresses, store = true)
   self.checkRecentHistory(addresses)
 
-proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-  return self.currencyService.parseCurrencyValue(symbol, amountInt)
+proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
+  return self.currencyService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
+
+proc getCurrencyFormat(self: Service, tokensKey: string): CurrencyFormatDto =
+  var symbol: string = ""
+  for token in self.tokenService.getTokenBySymbolList():
+    if token.key == tokensKey:
+      symbol = token.symbol
+  return self.currencyService.getCurrencyFormat(symbol)

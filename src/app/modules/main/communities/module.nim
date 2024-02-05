@@ -597,7 +597,11 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
   var tokenListItems: seq[TokenListItem]
 
   # Common ERC20 tokens
-  let erc20Tokens = self.controller.getTokenList()
+  let allNetworks = self.controller.getNetworks().map(n => n.chainId)
+  let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
+    let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
+    return filteredChains.len != 0
+    ))
   for token in erc20Tokens:
     let tokenListItem = initTokenListItem(
       key = token.symbol,

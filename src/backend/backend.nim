@@ -99,9 +99,6 @@ rpc(getSavedAddresses, "wakuext"):
 rpc(checkConnected, "wallet"):
   discard
 
-rpc(getTokens, "wallet"):
-  chainId: int
-
 rpc(getTokenList, "wallet"):
   discard
 

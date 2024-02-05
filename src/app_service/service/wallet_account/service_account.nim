@@ -526,7 +526,6 @@ proc toggleTestNetworksEnabled*(self: Service) =
   discard self.settingsService.toggleTestNetworksEnabled()
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
-  self.tokenService.loadData()
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
@@ -535,7 +534,6 @@ proc toggleIsSepoliaEnabled*(self: Service) =
   self.networkService.resetNetworks()
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
-  self.tokenService.loadData()
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 

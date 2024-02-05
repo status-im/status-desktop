@@ -494,6 +494,7 @@ Item {
             id: statusStickersPopup
             store: appMain.rootChatStore
             transactionStore: appMain.transactionStore
+            walletAssetsStore: appMain.walletAssetsStore
         }
     }
 

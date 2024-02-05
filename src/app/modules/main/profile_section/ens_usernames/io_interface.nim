@@ -72,27 +72,24 @@ method authenticateAndRegisterEns*(self: AccessInterface, chainId: int, ensUsern
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSNTBalance*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string
+method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string): string
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCryptoValue*(self: AccessInterface, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string
+method getCryptoValue*(self: AccessInterface, fiatAmount: string, cryptoSymbol: string): string
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getStatusToken*(self: AccessInterface): string {.base.} =
+method getStatusTokenKey*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPrefferedEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =

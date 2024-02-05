@@ -106,12 +106,6 @@ QtObject {
         return ensUsernamesModule.getEnsRegistry()
     }
 
-    function getSntBalance() {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.getSNTBalance()
-    }
-
     function getWalletDefaultAddress() {
         if(!root.ensUsernamesModule)
             return ""
@@ -124,28 +118,16 @@ QtObject {
         return ensUsernamesModule.getCurrentCurrency()
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
-    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
     function getGasEthValue(gweiValue, gasLimit) {
         if(!root.ensUsernamesModule)
             return ""
         return ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function getStatusToken() {
+    function getStatusTokenKey() {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.getStatusToken()
+        return ensUsernamesModule.getStatusTokenKey()
     }
 
     function removeEnsUsername(chainId, ensUsername) {

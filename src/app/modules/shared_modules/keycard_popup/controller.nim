@@ -853,5 +853,5 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 proc getTotalCurrencyBalance*(self: Controller, address: string, chainIds: seq[int]): float64 =
   return self.walletAccountService.getTotalCurrencyBalance(@[address], chainIds)
 
-proc parseCurrencyValue*(self: Controller, symbol: string, amountInt: UInt256): float64 =
-  return self.walletAccountService.parseCurrencyValue(symbol, amountInt)
+proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountInt: UInt256): float64 =
+  return self.walletAccountService.parseCurrencyValueByTokensKey(tokensKey, amountInt)

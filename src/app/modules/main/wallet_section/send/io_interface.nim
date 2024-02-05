@@ -21,7 +21,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenBalance*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
+method getTokenBalance*(self: AccessInterface, address: string, chainId: int, tokensKey: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method suggestedRoutes*(self: AccessInterface, accountFrom: string, accountTo: string, amount: UInt256, token: string, disabledFromChainIDs,
@@ -32,7 +32,7 @@ method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRo
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) {.base.} =
+    assetKey: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =

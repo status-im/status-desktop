@@ -13,12 +13,14 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 //TODO improve this!
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Wallet.stores 1.0
 
 Popup {
     id: root
 
     property var store
     required property TransactionStore transactionStore
+    required property WalletAssetsStore walletAssetsStore
 
     signal stickerSelected(string hashId, string packId, string url)
 
@@ -98,6 +100,7 @@ Popup {
             Layout.fillHeight: true
             store: root.store
             transactionStore: root.transactionStore
+            walletAssetsStore: root.walletAssetsStore
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             marketVisible: d.stickerPacksLoaded && d.online

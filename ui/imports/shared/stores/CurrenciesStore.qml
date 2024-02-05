@@ -988,13 +988,13 @@ QtObject {
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol)
+    function getFiatValue(cryptoAmount, cryptoSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol)
         return parseFloat(amount)
     }
 
-    function getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol)
+    function getCryptoValue(fiatAmount, cryptoSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol)
         return parseFloat(amount)
     }
 

@@ -356,14 +356,17 @@ QtObject:
     var assets = newSeq[backend_activity.Token]()
     for tokenCode in self.filterTokenCodes:
       for chainId in self.chainIds:
-        let token = self.tokenService.findTokenBySymbol(chainId, tokenCode)
+        # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
+        # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
+        let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
         if token != nil:
           let tokenType = if token.symbol == "ETH": TokenType.Native else: TokenType.ERC20
-          assets.add(backend_activity.Token(
-            tokenType: tokenType,
-            chainId: backend_activity.ChainId(token.chainId),
-            address: some(parseAddress(token.address))
-          ))
+          for addrPerChain in token.addressPerChainId:
+            assets.add(backend_activity.Token(
+              tokenType: tokenType,
+              chainId: backend_activity.ChainId(addrPerChain.chainId),
+              address: some(parseAddress(addrPerChain.address))
+            ))
 
     self.currentActivityFilter.assets = assets
 

@@ -86,6 +86,7 @@ Item {
                 errorMode: root.errorMode
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
+                selectedSymbol: root.selectedAsset.symbol
                 weiToEth: function(wei) {
                     if(!!selectedAsset && root.selectedAsset !== undefined)
                         return parseFloat(store.getWei2Eth(wei, root.selectedAsset.decimals))

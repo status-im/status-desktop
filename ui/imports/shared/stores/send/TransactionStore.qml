@@ -40,7 +40,7 @@ QtObject {
             }
         ]
     }
-    property string selectedAssetSymbol: walletSectionSendInst.selectedAssetSymbol
+    property string selectedAssetKey: walletSectionSendInst.selectedAssetKey
     property bool showUnPreferredChains: walletSectionSendInst.showUnPreferredChains
     property int sendType: walletSectionSendInst.sendType
     property string selectedRecipient: walletSectionSendInst.selectedRecipient
@@ -209,8 +209,8 @@ QtObject {
         fromNetworksModel.setRouteEnabledFromChains(chainId)
     }
 
-    function setSelectedAssetSymbol(symbol) {
-        walletSectionSendInst.setSelectedAssetSymbol(symbol)
+    function setSelectedAssetKey(assetsKey) {
+        walletSectionSendInst.setSelectedAssetKey(assetsKey)
     }
 
     function getNetworkName(chainId) {

@@ -65,6 +65,8 @@ QtObject:
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.}
   proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.}
   proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
+  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.}
+  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -93,3 +95,4 @@ QtObject:
   include service_account
   include service_token
   include service_keycard
+  include balance_history

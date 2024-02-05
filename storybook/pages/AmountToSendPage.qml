@@ -6,9 +6,12 @@ import StatusQ.Core 0.1
 import shared.popups.send.views 1.0
 
 import Storybook 1.0
+import Models 1.0
 
 SplitView {
     id: root
+
+    readonly property var tokensBySymbolModel: TokensBySymbolModel {}
 
     readonly property double maxCryptoBalance: parseFloat(maxCryptoBalanceText.text)
     readonly property double rate: parseFloat(rateText.text)
@@ -28,19 +31,13 @@ SplitView {
                 id: amountToSendInput
                 isBridgeTx: false
                 interactive: true
-                selectedSymbol: "Crypto"
+                selectedHolding: tokensBySymbolModel.data[0]
 
                 inputIsFiat: fiatInput.checked
 
-                maxInputBalance: inputIsFiat ? getFiatValue(root.maxCryptoBalance)
+                maxInputBalance: inputIsFiat ? root.maxCryptoBalance*amountToSendInput.selectedHolding.marketDetails.currencyPrice.amount
                                              : root.maxCryptoBalance
                 currentCurrency: "Fiat"
-                getFiatValue: function(cryptoValue) {
-                    return cryptoValue * root.rate
-                }
-                getCryptoValue: function(fiatValue) {
-                    return fiatValue / root.rate
-                }
                 formatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
                     const currencyAmount = {
                       amount: amount,

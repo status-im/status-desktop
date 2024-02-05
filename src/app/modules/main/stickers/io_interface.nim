@@ -87,23 +87,16 @@ method gasEstimateReturned*(self: AccessInterface, estimate: int, uuid: string) 
 method addStickerPackToList*(self: AccessInterface, stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSNTBalance*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string
-  {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getStatusToken*(self: AccessInterface): string {.base.} =
+method getStatusTokenKey*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =

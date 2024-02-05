@@ -39,7 +39,7 @@ QtObject {
         signal resolvedENS(var resolvedPubKey, var resolvedAddress, var uuid)
     }
 
-    property string selectedAssetSymbol
+    property string selectedAssetKey
     property bool showUnPreferredChains: false
     property int sendType: Constants.SendType.Transfer
     property string selectedRecipient
@@ -195,8 +195,8 @@ QtObject {
         root.selectedRecipient = recipientAddress
     }
 
-    function setSelectedAssetSymbol(symbol) {
-       root.selectedAssetSymbol = symbol
+    function setSelectedAssetKey(assetsKey) {
+       root.selectedAssetKey = assetsKey
     }
 
     function getWei2Eth(wei, decimals) {
@@ -245,7 +245,7 @@ QtObject {
         root.amountToSend = ""
         root.sendType = Constants.SendType.Transfer
         root.selectedRecipient = ""
-        root.selectedAssetSymbol = ""
+        root.selectedAssetKey = ""
         root.showUnPreferredChains = false
         root.fromNetworksModel.reset()
         root.toNetworksModel.reset()

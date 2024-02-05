@@ -11,6 +11,7 @@ import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
 import app/core/signals/types
 import app_service/common/cache
+import app_service/common/wallet_constants
 import constants as main_constants
 import ./dto, ./service_items
 
@@ -31,7 +32,6 @@ const CRYPTO_SUB_UNITS_TO_FACTOR = {
 
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
-const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
 const SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED* = "tokensListAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED* = "tokensDetailsAboutToBeUpdated"
@@ -50,28 +50,12 @@ type
   TokenHistoricalDataArgs* = ref object of Args
     result*: string
 
-type
-  TokenBalanceHistoryDataArgs* = ref object of Args
-    result*: string
-
-type
-  TokenData* = ref object of RootObj
-    addresses*: Table[int, string]
-    decimals*: int
-
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
     networkService: network_service.Service
     settingsService: settings_service.Service
-
-    # TODO: remove these once community usage of this service is removed etc...
-    tokens: Table[int, seq[TokenDto]]
-    tokenList: seq[TokenDto]
-    tokensToAddressesMap: Table[string, TokenData]
-
-    priceCache: TimedCache[float64]
 
     sourcesOfTokensList: seq[SupportedSourcesItem]
     flatTokenList: seq[TokenItem]
@@ -87,8 +71,6 @@ QtObject:
     tokenListUpdatedAt: int64
 
   proc getCurrency*(self: Service): string
-  proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
-  proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]]
   proc rebuildMarketData*(self: Service)
 
   proc delete*(self: Service) =
@@ -106,10 +88,6 @@ QtObject:
     result.threadpool = threadpool
     result.networkService = networkService
     result.settingsService = settingsService
-    result.tokens = initTable[int, seq[TokenDto]]()
-    result.priceCache = newTimedCache[float64]()
-    result.tokenList = @[]
-    result.tokensToAddressesMap = initTable[string, TokenData]()
 
     result.sourcesOfTokensList = @[]
     result.flatTokenList = @[]
@@ -351,65 +329,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  # TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
-  proc loadData*(self: Service) =
-    try:
-      let networks = self.networkService.getNetworks()
-
-      for network in networks:
-        let network = network # TODO https://github.com/nim-lang/Nim/issues/16740
-        var found = false
-        for chainId in self.tokens.keys:
-          if chainId == network.chainId:
-            found = true
-            break
-
-        if found:
-          continue
-        let responseTokens = backend.getTokens(network.chainId)
-        let default_tokens = Json.decode($responseTokens.result, seq[TokenDto], allowUnknownFields = true)
-        self.tokens[network.chainId] = default_tokens.filter(
-          proc(x: TokenDto): bool = x.chainId == network.chainId
-        )
-
-        let nativeToken = newTokenDto(
-          address = "0x0000000000000000000000000000000000000000",
-          name = network.nativeCurrencyName,
-          symbol = network.nativeCurrencySymbol,
-          decimals = network.nativeCurrencyDecimals,
-          chainId = network.chainId,
-          communityID = ""
-        )
-
-        if not self.tokensToAddressesMap.hasKey(network.nativeCurrencySymbol):
-          self.tokenList.add(nativeToken)
-          self.tokensToAddressesMap[nativeToken.symbol] = TokenData(
-            addresses: initTable[int, string](),
-          )
-
-        if not self.tokensToAddressesMap[nativeToken.symbol].addresses.hasKey(nativeToken.chainId):
-          self.tokensToAddressesMap[nativeToken.symbol].addresses[nativeToken.chainId] = $nativeToken.address
-          self.tokensToAddressesMap[nativeToken.symbol].decimals = nativeToken.decimals
-
-        for token in default_tokens:
-          if not self.tokensToAddressesMap.hasKey(token.symbol):
-            self.tokenList.add(token)
-            self.tokensToAddressesMap[token.symbol] = TokenData(
-              addresses: initTable[int, string](),
-            )
-
-          if not self.tokensToAddressesMap[token.symbol].addresses.hasKey(token.chainId):
-            self.tokensToAddressesMap[token.symbol].addresses[token.chainId] = $token.address
-            self.tokensToAddressesMap[token.symbol].decimals = token.decimals
-
-    except Exception as e:
-      error "Tokens init error", errDesription = e.msg
-
   proc init*(self: Service) =
-    if(not main_constants.WALLET_ENABLED):
-      return
-    self.loadData()
-
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
@@ -475,90 +395,59 @@ QtObject:
     else:
       return self.tokenPriceTable[symbol]
 
-  # TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
-  proc getTokenList*(self: Service): seq[TokenDto] =
-    return self.tokenList
+  proc getTokenBySymbolByTokensKey*(self: Service, key: string): TokenBySymbolItem =
+    for token in self.tokenBySymbolList:
+      if token.key == key:
+        return token
+    return nil
 
-  proc hasContractAddressesForToken*(self: Service, symbol: string): bool =
-    return self.tokensToAddressesMap.hasKey(symbol)
+  proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): TokenBySymbolItem =
+    for token in self.tokenBySymbolList:
+      for addrPerChainId in token.addressPerChainId:
+        if addrPerChainId.address == contractAddr:
+          return token
+    return nil
 
-  proc getTokenDecimals*(self: Service, symbol: string): int =
-    if self.hasContractAddressesForToken(symbol):
-      return self.tokensToAddressesMap[symbol].decimals
+  proc getStatusTokenKey*(self: Service): string =
+    var token: TokenBySymbolItem
+    if self.settingsService.areTestNetworksEnabled():
+      token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS)
+    else:
+      token = self.getTokenBySymbolByContractAddr(SNT_CONTRACT_ADDRESS)
+    if token != nil:
+      return token.key
+    else:
+        return ""
 
-  proc getContractAddressesForToken*(self: Service, symbol: string): Table[int, string] =
-    if self.hasContractAddressesForToken(symbol):
-      return self.tokensToAddressesMap[symbol].addresses
-
-  proc findTokenBySymbol*(self: Service, chainId: int, symbol: string): TokenDto =
-    if not self.tokens.hasKey(chainId):
-      return
-    for token in self.tokens[chainId]:
+  # TODO: needed in token permission right now, and activity controller which needs
+  # to consider that token symbol may not be unique
+  # https://github.com/status-im/status-desktop/issues/13505
+  proc findTokenBySymbol*(self: Service, symbol: string): TokenBySymbolItem =
+    for token in self.tokenBySymbolList:
       if token.symbol == symbol:
         return token
+    return nil
 
-  # TODO: Shouldnt be needed after accounts assets are restructured
-  proc findTokenByAddress*(self: Service, networkChainId: int, address: string): TokenDto =
-    if not self.tokens.hasKey(networkChainId):
-      return
-    for token in self.tokens[networkChainId]:
-      if token.address == address:
-        return token
+  # TODO: remove this call once the activty filter mechanism uses tokenKeys instead of the token
+  # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
+  # https://github.com/status-im/status-desktop/issues/13505
+  proc findTokenBySymbolAndChainId*(self: Service, symbol: string, chainId: int): TokenBySymbolItem =
+    for token in self.tokenBySymbolList:
+      if token.symbol == symbol:
+        for addrPerChainId in token.addressPerChainId:
+          if addrPerChainId.chainId == chainId:
+            return token
+    return nil
 
-  proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
-    return crypto & fiat
+  # TODO: Perhaps will be removed after transactions in chat is refactored
+  proc findTokenByAddress*(self: Service, networkChainId: int, address: string): TokenBySymbolItem =
+    for token in self.tokenBySymbolList:
+      for addrPerChainId in token.addressPerChainId:
+        if addrPerChainId.chainId == networkChainId and addrPerChainId.address == address:
+          return token
+    return nil
 
-  proc getCryptoKeyAndFactor(crypto: string) : (string, float64) =
-    return CRYPTO_SUB_UNITS_TO_FACTOR.getOrDefault(crypto, (crypto, 1.0))
-
-  proc jsonToPricesMap(node: JsonNode) : Table[string, Table[string, float64]] =
-    result = initTable[string, Table[string, float64]]()
-
-    for (symbol, pricePerCurrency) in node.pairs:
-      result[symbol] = initTable[string, float64]()
-      for (currency, price) in pricePerCurrency.pairs:
-        result[symbol][currency] = price.getFloat
-
-  proc isCachedTokenPriceRecent*(self: Service, crypto: string, fiat: string): bool =
-    let (cryptoKey, _) = getCryptoKeyAndFactor(crypto)
-    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
-    return self.priceCache.isCached(cacheKey)
-
-  proc getTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
-    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
-
-    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
-    if self.priceCache.isCached(cacheKey):
-      return self.priceCache.get(cacheKey) * factor
-
-    try:
-      let response = backend.fetchPrices(@[cryptoKey], @[fiat])
-      let prices = jsonToPricesMap(response.result)
-      if not prices.hasKey(cryptoKey) or not prices[cryptoKey].hasKey(fiat):
-        return 0.0
-      self.updateCachedTokenPrice(cryptoKey, fiat, prices[cryptoKey][fiat])
-      return prices[cryptoKey][fiat] * factor
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return 0.0
-
-  proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotPresent: bool = false): float64 =
-    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
-
-    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
-    if self.priceCache.hasKey(cacheKey):
-      return self.priceCache.get(cacheKey) * factor
-    elif fetchIfNotPresent:
-      return self.getTokenPrice(crypto, fiat)
-    else:
-      return 0.0
-
-  proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64) =
-    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
-    self.priceCache.set(cacheKey, price)
-
-# History Data
+  # History Data
   proc tokenHistoricalDataResolved*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
@@ -580,52 +469,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  # TODO: The below two APIS are not linked with generic tokens list but with assets per account and should perhaps be moved to
-  # wallet_account->token_service.nim and clean up rest of the code too. Callback to process the response of
-  # fetchHistoricalBalanceForTokenAsJson call
-  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      warn "blance history response is not a json object"
-      return
-
-    self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
-      result: response
-    ))
-
-  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string], allAddresses: bool, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
-    # create an empty list of chain ids
-    var chainIds: seq[int] = @[]
-    let networks = self.networkService.getNetworks()
-    for network in networks:
-      if network.enabled:
-        if network.nativeCurrencySymbol == tokenSymbol:
-          chainIds.add(network.chainId)
-        else:
-          if not self.tokens.hasKey(network.chainId):
-            continue
-          for token in self.tokens[network.chainId]:
-            if token.symbol == tokenSymbol:
-              chainIds.add(network.chainId)
-
-    if chainIds.len == 0:
-      error "failed to find a network with the symbol", tokenSymbol
-      return
-
-    let arg = GetTokenBalanceHistoryDataTaskArg(
-      tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "tokenBalanceHistoryDataResolved",
-      chainIds: chainIds,
-      addresses: addresses,
-      allAddresses: allAddresses,
-      tokenSymbol: tokenSymbol,
-      currencySymbol: currencySymbol,
-      timeInterval: timeInterval
-    )
-    self.threadpool.start(arg)
-    return
-
+  # Token Management
   proc getTokenPreferences*(self: Service): JsonNode =
     try:
       let response = backend.getTokenPreferences()

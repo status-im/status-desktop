@@ -851,11 +851,10 @@ QtObject:
       dataToEmit.errorCode =  ComputeFeeErrorCode.Other
       self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
-  proc getFiatValue*(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
+  proc getFiatValue(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
     if (cryptoSymbol == ""):
       return 0.0
-    let currentCurrency = self.settingsService.getCurrency()
-    let price = self.tokenService.getTokenPrice(cryptoSymbol, currentCurrency)
+    let price = self.tokenService.getPriceBySymbol(cryptoSymbol)
     return cryptoBalance * price
 
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =
@@ -1111,7 +1110,7 @@ QtObject:
           balanceItem => balanceItem.account == walletAddress.toLower() and
           balanceItem.chainId == chainId).map(b => b.balance)
         for b in balances:
-          balance += self.currencyService.parseCurrencyValue(token.symbol, b)
+          balance += self.currencyService.parseCurrencyValueByTokensKey(token.tokensKey, b)
     return balance
 
   proc createComputeFeeArgsFromEthAndBalance(self: Service, ethValue: float, balance: float): ComputeFeeArgs =

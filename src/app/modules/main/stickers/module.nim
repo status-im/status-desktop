@@ -275,14 +275,6 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
-  if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""):
-    return "0.00"
-
-  let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
-  let value = parseFloat(cryptoBalance) * price
-  return fmt"{value:.2f}"
-
 method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
   var gasLimitInt:int
 
@@ -304,8 +296,8 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
   let ethValue = service_conversion.wei2Eth(weiValue)
   return fmt"{ethValue}"
 
-method getStatusToken*(self: Module): string =
-  return self.controller.getStatusToken()
+method getStatusTokenKey*(self: Module): string =
+  return self.controller.getStatusTokenKey()
 
 method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, installed = true, pending = false)

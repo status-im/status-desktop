@@ -247,40 +247,37 @@ method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: stri
 
   self.authenticateKeypairThatContainsObservedAddress()
 
-method getSNTBalance*(self: Module): string =
-  return self.controller.getSNTBalance()
-
 method getWalletDefaultAddress*(self: Module): string =
   return self.controller.getWalletDefaultAddress()
 
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
+method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string): string =
   var floatCryptoBalance: float = 0
   try:
     floatCryptoBalance = parseFloat(cryptoBalance)
   except ValueError:
     return "0.00"
 
-  if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""):
+  if (cryptoBalance == "" or cryptoSymbol == ""):
     return "0.00"
 
-  let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
+  let price = self.controller.getPriceBySymbol(cryptoSymbol)
   let value = floatCryptoBalance * price
   return fmt"{value}"
 
-method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string =
+method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string): string =
   var fiatAmountBalance: float = 0
   try:
     fiatAmountBalance = parseFloat(fiatAmount)
   except ValueError:
     return "0.00"
 
-  if (fiatAmount == "" or cryptoSymbol == "" or fiatSymbol == ""):
+  if (fiatAmount == "" or cryptoSymbol == ""):
     return "0.00"
 
-  let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
+  let price = self.controller.getPriceBySymbol(cryptoSymbol)
   let value = fiatAmountBalance / price
   return fmt"{value}"
 
@@ -305,8 +302,8 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
   let ethValue = service_conversion.wei2Eth(weiValue)
   return fmt"{ethValue}"
 
-method getStatusToken*(self: Module): string =
-  return self.controller.getStatusToken()
+method getStatusTokenKey*(self: Module): string =
+  return self.controller.getStatusTokenKey()
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

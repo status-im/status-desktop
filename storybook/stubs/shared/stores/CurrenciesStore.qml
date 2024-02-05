@@ -16,7 +16,7 @@ QtObject {
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+    function getFiatValue(balance, cryptoSymbol) {
         return balance
     }
 

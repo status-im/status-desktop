@@ -27,6 +27,7 @@ RowLayout {
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
     property int errorType: Constants.NoError
+    property string selectedSymbol
     spacing: 10
 
     StatusRoundIcon {
@@ -102,7 +103,7 @@ RowLayout {
                 if(root.isERC721Transfer)
                     return ""
                 let amountOut = root.weiToEth(model.amountOut)
-                return root.formatCurrencyAmount(amountOut, store.selectedAssetSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
+                return root.formatCurrencyAmount(amountOut, root.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
@@ -125,7 +126,7 @@ RowLayout {
                 rightPadding: 5
                 implicitWidth: 410
                 title: chainName
-                subTitle: root.formatCurrencyAmount(tokenBalance.amount, store.selectedAssetSymbol)
+                subTitle: root.formatCurrencyAmount(tokenBalance.amount, root.selectedSymbol)
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32

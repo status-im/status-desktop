@@ -678,18 +678,8 @@ proc deleteCommunityTokenPermission*(self: Controller, communityId: string, perm
 proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
   return self.walletAccountService.allAccountsTokenBalance(symbol)
 
-proc getTokenList*(self: Controller): seq[TokenDto] =
-  return self.tokenService.getTokenList()
-
-proc getTokenDecimals*(self: Controller, symbol: string): int =
-  return self.tokenService.getTokenDecimals(symbol)
-
-proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int, string] =
-  var contractAddresses = self.tokenService.getContractAddressesForToken(symbol)
-  let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
-  if communityToken.address != "":
-    contractAddresses[communityToken.chainId] = communityToken.address
-  return contractAddresses
+proc findTokenBySymbol*(self: Controller, symbol: string): TokenBySymbolItem =
+  return self.tokenService.findTokenBySymbol(symbol)
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
