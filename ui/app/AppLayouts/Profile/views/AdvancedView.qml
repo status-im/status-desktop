@@ -354,9 +354,25 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Debug")
                 isSwitch: true
+                isEnabled: !root.advancedStore.isRuntimeLogLevelSet
                 switchChecked: root.advancedStore.isDebugEnabled
+
                 onClicked: {
                     Global.openPopup(enableDebugComponent)
+                }
+
+                MouseArea {
+                    id: overlayMouseArea
+                    anchors.fill: parent
+                    enabled: true
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                }
+
+                StatusToolTip {
+                    text: qsTr("The value is overridden with runtime options")
+                    visible: overlayMouseArea.containsMouse && root.advancedStore.isRuntimeLogLevelSet
+                    delay: 1000
                 }
             }
 

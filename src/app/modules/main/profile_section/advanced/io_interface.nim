@@ -63,6 +63,9 @@ method toggleAutoMessage*(self: AccessInterface) {.base.} =
 method isDebugEnabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isRuntimeLogLevelSet*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method toggleDebug*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -105,6 +105,9 @@ method toggleDebug*(self: Module) =
 method onDebugToggled*(self: Module) =
   self.view.isDebugEnabledChanged()
 
+method isRuntimeLogLevelSet*(self: Module): bool =
+  return constants.runtimeLogLevelSet()
+
 method toggleWalletSection*(self: Module) =
   self.controller.toggleWalletSection()
 

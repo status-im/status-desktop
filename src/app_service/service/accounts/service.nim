@@ -405,7 +405,8 @@ QtObject:
       "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
     }
 
-    result["LogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
+    if main_constants.runtimeLogLevelSet():
+      result["RuntimeLogLevel"] = newJString(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL))
 
     if STATUS_PORT != 0:
       result["ListenAddr"] = newJString("0.0.0.0:" & $main_constants.STATUS_PORT)

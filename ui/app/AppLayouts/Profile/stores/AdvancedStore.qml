@@ -16,6 +16,7 @@ QtObject {
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
     readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
+    property bool isRuntimeLogLevelSet: advancedModule ? advancedModule.isRuntimeLogLevelSet: false
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
