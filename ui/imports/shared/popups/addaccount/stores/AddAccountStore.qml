@@ -236,7 +236,7 @@ BasePopupStore {
                         root.privateKeyAccAddress.loaded &&
                         !root.privateKeyAccAddress.alreadyCreated &&
                         root.privateKeyAccAddress.address !== "" &&
-                        root.addAccountModule.newKeyPairName !== ""
+                        root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
             }
         }
 
@@ -246,12 +246,12 @@ BasePopupStore {
                     root.privateKeyAccAddress.loaded &&
                     !root.privateKeyAccAddress.alreadyCreated &&
                     root.privateKeyAccAddress.address !== "" &&
-                    root.addAccountModule.newKeyPairName !== ""
+                    root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
         }
 
         if (root.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhrase) {
             return root.enteredSeedPhraseIsValid &&
-                    root.addAccountModule.newKeyPairName !== ""
+                    root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
 
         }
 
@@ -276,7 +276,7 @@ BasePopupStore {
         }
 
         if (root.currentState.stateType === Constants.addAccountPopup.state.enterKeypairName) {
-            return root.addAccountModule.newKeyPairName !== ""
+            return root.addAccountModule.newKeyPairName.length >= Constants.addAccountPopup.keyPairAccountNameMinLength
         }
 
         return true

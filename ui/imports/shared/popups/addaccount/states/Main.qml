@@ -126,8 +126,8 @@ Item {
                 }
                 validators: [
                     StatusMinLengthValidator {
-                        minLength: 1
-                        errorMessage: Utils.getErrorMessage(accountName.errors, qsTr("wallet account name"))
+                        errorMessage: qsTr("Account name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                        minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
                     },
                     StatusRegularExpressionValidator {
                         regularExpression: Constants.regularExpressions.alphanumericalWithSpace

@@ -88,6 +88,13 @@ Item {
                     root.store.addAccountModule.newKeyPairName = text
                 }
 
+                validators: [
+                    StatusMinLengthValidator {
+                        errorMessage: qsTr("Keypair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                        minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
+                    }
+                ]
+
                 onKeyPressed: {
                     root.store.submitPopup(event)
                 }
