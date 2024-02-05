@@ -4,7 +4,6 @@ include app_service/common/json_utils
 
 import json_serialization
 
-# TODO: remove once this is moved to wallet_accounts service
 const WEEKLY_TIME_RANGE* = 0
 const MONTHLY_TIME_RANGE* = 1
 const HALF_YEARLY_TIME_RANGE* = 2
@@ -46,26 +45,6 @@ proc `$`*(self: TokenDto): string =
     communityData: {self.communityData},
     image: {self.image}
     ]"""
-
-# TODO: Remove after https://github.com/status-im/status-desktop/issues/12513
-proc newTokenDto*(
-  address: string,
-  name: string,
-  symbol: string,
-  decimals: int,
-  chainId: int,
-  communityId: string = "",
-  image: string = ""
-): TokenDto =
-  return TokenDto(
-    address: address,
-    name: name,
-    symbol: symbol,
-    decimals: decimals,
-    chainId: chainId,
-    communityId: communityId,
-    image: image
-  )
 
 type TokenSourceDto* = ref object of RootObj
     name* {.serializedFieldName("name").}: string

@@ -100,8 +100,8 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc getTokenBalance*(self: Controller, address: string, chainId: int, symbol: string): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTokenBalance(address, chainId, symbol), self.currencyService.getCurrencyFormat(symbol))
+proc getTokenBalance*(self: Controller, address: string, chainId: int, tokensKey: string): CurrencyAmount =
+  return currencyAmountToItem(self.walletAccountService.getTokenBalance(address, chainId, tokensKey), self.walletAccountService.getCurrencyFormat(tokensKey))
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_SEND_MODULE_IDENTIFIER,
@@ -114,10 +114,10 @@ proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, 
     disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
 
-proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
+proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string,
     value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
     usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool) =
-  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password, sendType,
+  self.transactionService.transfer(from_addr, to_addr, assetKey, value, uuid, selectedRoutes, password, sendType,
     usePassword, doHashing, tokenName, isOwnerToken)
 
 proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,

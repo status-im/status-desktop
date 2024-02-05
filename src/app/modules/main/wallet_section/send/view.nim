@@ -20,7 +20,7 @@ QtObject:
       fromNetworksModel: NetworkModel
       toNetworksModel: NetworkModel
       transactionRoutes: TransactionRoutes
-      selectedAssetSymbol: string
+      selectedAssetKey: string
       showUnPreferredChains: bool
       sendType: transaction_dto.SendType
       selectedTokenIsOwnerToken: bool
@@ -126,17 +126,17 @@ QtObject:
     read = getToNetworksModel
     notify = toNetworksModelChanged
 
-  proc selectedAssetSymbolChanged*(self: View) {.signal.}
-  proc getSelectedAssetSymbol*(self: View): string {.slot.} =
-    return self.selectedAssetSymbol
-  proc setSelectedAssetSymbol(self: View, symbol: string) {.slot.} =
-    self.selectedAssetSymbol = symbol
+  proc selectedAssetKeyChanged*(self: View) {.signal.}
+  proc getSelectedAssetKey*(self: View): string {.slot.} =
+    return self.selectedAssetKey
+  proc setSelectedAssetKey(self: View, assetKey: string) {.slot.} =
+    self.selectedAssetKey = assetKey
     self.updateNetworksTokenBalance()
-    self.selectedAssetSymbolChanged()
-  QtProperty[string] selectedAssetSymbol:
-    write = setSelectedAssetSymbol
-    read = getSelectedAssetSymbol
-    notify = selectedAssetSymbolChanged
+    self.selectedAssetKeyChanged()
+  QtProperty[string] selectedAssetKey:
+    write = setSelectedAssetKey
+    read = getSelectedAssetKey
+    notify = selectedAssetKeyChanged
 
   proc showUnPreferredChainsChanged*(self: View) {.signal.}
   proc getShowUnPreferredChains(self: View): bool {.slot.} =
@@ -186,8 +186,8 @@ QtObject:
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksModel.getAllNetworksChainIds():
-      self.fromNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
-      self.toNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetSymbol))
+      self.fromNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetKey))
+      self.toNetworksModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccount.address(), chainId, self.selectedAssetKey))
 
   proc setItems*(self: View, items: seq[AccountItem]) =
     self.accounts.setItems(items)
@@ -206,7 +206,7 @@ QtObject:
     self.transactionSent(chainId, txHash, uuid, error)
 
   proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetSymbol, value, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetKey, value, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =
@@ -221,7 +221,7 @@ QtObject:
       discard
 
     return self.delegate.suggestedRoutes(self.selectedSenderAccount.address(), self.selectedRecipient,
-      parsedAmount, self.selectedAssetSymbol, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
+      parsedAmount, self.selectedAssetKey, self.fromNetworksModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksModel.getRouteDisabledNetworkChainIds(), self.toNetworksModel.getRoutePreferredNetworkChainIds(),
       self.sendType,  self.fromNetworksModel.getRouteLockedChainIds())
 
@@ -276,7 +276,7 @@ QtObject:
     self.fromNetworksModel.reset()
     self.toNetworksModel.reset()
     self.transactionRoutes = newTransactionRoutes()
-    self.selectedAssetSymbol = ""
+    self.selectedAssetKey = ""
     self.showUnPreferredChains = false
 
   proc getLayer1NetworkChainId*(self: View): string =

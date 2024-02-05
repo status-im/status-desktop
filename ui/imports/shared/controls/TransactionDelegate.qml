@@ -53,11 +53,11 @@ StatusListItem {
     readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
     readonly property string currentCurrency: rootStore.currentCurrency
     readonly property double cryptoValue: isModelDataValid ? modelData.amount : 0.0
-    readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? rootStore.getFiatValue(cryptoValue, modelData.symbol, currentCurrency) : 0.0
+    readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? rootStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
     readonly property double inCryptoValue: isModelDataValid ? modelData.inAmount : 0.0
-    readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(inCryptoValue, modelData.inSymbol, currentCurrency): 0.0
+    readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
     readonly property double outCryptoValue: isModelDataValid ? modelData.outAmount : 0.0
-    readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol, currentCurrency): 0.0
+    readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
     readonly property double feeCryptoValue: 0.0 // TODO fill when bridge data is implemented
     readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
     readonly property string communityName: isModelDataValid && modelData.communityName ? modelData.communityName : ""
@@ -411,7 +411,7 @@ StatusListItem {
 
         // VALUES
         const fiatTransactionValue = rootStore.formatCurrencyAmount(isMultiTransaction ? root.outFiatValue : root.fiatValue, root.currentCurrency)
-        const feeFiatValue = rootStore.getFiatValue(feeEthValue, "ETH", root.currentCurrency)
+        const feeFiatValue = rootStore.getFiatValue(feeEthValue, Constants.ethToken)
         let valuesString = ""
         if (!root.isNFT) {
             switch(type) {
@@ -431,7 +431,7 @@ StatusListItem {
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             } else if (type === Constants.TransactionType.Bridge) {
                 // Reduce crypto value by fee value
-                const valueInCrypto = rootStore.getCryptoValue(root.fiatValue - feeFiatValue, modelData.inSymbol, root.currentCurrency)
+                const valueInCrypto = rootStore.getCryptoValue(root.fiatValue - feeFiatValue, modelData.inSymbol)
                 const crypto = rootStore.formatCurrencyAmount(valueInCrypto, modelData.inSymbol)
                 const fiat = rootStore.formatCurrencyAmount(root.fiatValue - feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2

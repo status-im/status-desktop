@@ -67,7 +67,7 @@ SplitView {
                     rootStore: QtObject {
                         readonly property string currentCurrency: "EUR"
 
-                        function getFiatValue(cryptoValue, symbol, currentCurrency) {
+                        function getFiatValue(cryptoValue, symbol) {
                             return cryptoValue * 0.1;
                         }
 

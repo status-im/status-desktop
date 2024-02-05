@@ -179,14 +179,11 @@ QtObject:
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
 
-  proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
-    return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
-
   proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
     return self.delegate.getGasEthValue(gweiValue, gasLimit)
 
-  proc getStatusToken*(self: View): string {.slot.} =
-    return self.delegate.getStatusToken()
+  proc getStatusTokenKey*(self: View): string {.slot.} =
+    return self.delegate.getStatusTokenKey()
 
   proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
   proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =

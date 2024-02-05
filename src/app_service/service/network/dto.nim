@@ -46,12 +46,6 @@ proc `$`*(self: NetworkDto): string =
 proc hash*(self: NetworkDto): Hash =
   return self.chainId.hash
 
-proc sntSymbol*(self: NetworkDto): string =
-  if self.chainId == Mainnet:
-    return "SNT"
-  else:
-    return "STT"
-
 type CombinedNetworkDto* = ref object
   prod* {.serializedFieldName("Prod").}: NetworkDto
   test* {.serializedFieldName("Test").}: NetworkDto

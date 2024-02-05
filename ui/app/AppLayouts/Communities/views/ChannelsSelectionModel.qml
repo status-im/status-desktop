@@ -13,7 +13,7 @@ SortFilterProxyModel {
     property var selectedChannels
     property var allChannels
 
-    sourceModel: LeftJoinModel {
+    property var jointModel: LeftJoinModel {
         readonly property var channelsModelAlignedKey: SortFilterProxyModel {
             sourceModel: root.allChannels
             proxyRoles: [
@@ -28,6 +28,8 @@ SortFilterProxyModel {
         rightModel: channelsModelAlignedKey
         joinRole: "key"
     }
+
+    sourceModel: jointModel
 
     proxyRoles: [
         FastExpressionRole {

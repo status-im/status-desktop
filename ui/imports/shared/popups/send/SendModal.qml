@@ -80,7 +80,7 @@ StatusDialog {
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currentCurrencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : store.selectedAssetSymbol
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? currencyStore.currentCurrency : !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
         readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
@@ -124,12 +124,12 @@ StatusDialog {
             if (d.selectedHoldingType === Constants.TokenType.ERC20) {
                 if(!d.ensOrStickersPurpose && store.sendType !== Constants.SendType.Bridge)
                     store.setSendType(Constants.SendType.Transfer)
-                store.setSelectedAssetSymbol(selectedHolding.symbol)
+                store.setSelectedAssetKey(selectedHolding.tokensKey)
                 store.setSelectedTokenIsOwnerToken(false)
             } else if (d.selectedHoldingType === Constants.TokenType.ERC721) {
                 store.setSendType(Constants.SendType.ERC721Transfer)
                 amountToSendInput.input.text = 1
-                store.setSelectedAssetSymbol(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
+                store.setSelectedAssetKey(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
                 store.setRouteEnabledFromChains(selectedHolding.chainId)
                 store.updateRoutePreferredChains(selectedHolding.chainId)
                 store.setSelectedTokenIsOwnerToken(selectedHolding.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner)
@@ -324,21 +324,13 @@ StatusDialog {
                             Layout.fillWidth: true
                             isBridgeTx: d.isBridgeTx
                             interactive: popup.interactive
-                            selectedSymbol: store.selectedAssetSymbol
+                            selectedHolding: d.selectedHolding
                             maxInputBalance: d.maxInputBalance
                             currentCurrency: d.currencyStore.currentCurrency
 
                             multiplierIndex: !!holdingSelector.selectedItem
                                              ? holdingSelector.selectedItem.decimals
                                              : 0
-
-                            getFiatValue: function(cryptoValue) {
-                                return selectedSymbol ? d.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
-                            }
-
-                            getCryptoValue: function(fiatValue) {
-                                return selectedSymbol ? d.currencyStore.getCryptoValue(fiatValue, selectedSymbol, currentCurrency) : 0.0
-                            }
 
                             formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
@@ -356,16 +348,13 @@ StatusDialog {
                             visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                      popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
                             isLoading: popup.isLoading
-                            selectedSymbol: store.selectedAssetSymbol
+                            selectedHolding: d.selectedHolding
                             isBridgeTx: d.isBridgeTx
                             cryptoValueToReceive: d.totalAmountToReceive
                             inputIsFiat: amountToSendInput.inputIsFiat
                             minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                             minFiatDecimals: amountToSendInput.minReceiveFiatDecimals
                             currentCurrency: d.currencyStore.currentCurrency
-                            getFiatValue: function(cryptoValue) {
-                                return d.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
-                            }
                             formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                         }
                     }
@@ -505,7 +494,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         visible: recipientLoader.ready && !!d.selectedHolding && networkSelector.advancedOrCustomMode && amountToSendInput.inputNumberValid
-                        selectedTokenSymbol: store.selectedAssetSymbol
+                        selectedTokenSymbol: d.selectedHolding.symbol
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
                         store: popup.store
@@ -533,8 +522,10 @@ StatusDialog {
             popup.bestRoutes =  txRoutes.suggestedRoutes
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
-            d.totalFeesInFiat = d.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", d.currencyStore.currentCurrency) +
-                d.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, d.currencyStore.currentCurrency)
+            let totalTokenFeesInFiat = 0
+            if (!!d.selectedHolding && !!d.selectedHolding.marketDetails && !!d.selectedHolding.marketDetails.currencyPrice)
+                totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * d.selectedHolding.marketDetails.currencyPrice.amount
+            d.totalFeesInFiat = d.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
             d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, d.selectedHolding.decimals)
             networkSelector.toNetworksList = txRoutes.toNetworksModel
             popup.isLoading = false

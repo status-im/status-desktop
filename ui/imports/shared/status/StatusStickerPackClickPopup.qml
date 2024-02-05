@@ -15,6 +15,7 @@ import shared.stores.send 1.0
 
 //TODO remove this dependency!
 import "../../../app/AppLayouts/Chat/stores"
+import AppLayouts.Wallet.stores 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
@@ -24,6 +25,7 @@ ModalPopup {
 
     property var store
     required property TransactionStore transactionStore
+    required property WalletAssetsStore walletAssetsStore
     property string thumbnail: ""
     property string name: ""
     property string author: ""
@@ -75,7 +77,10 @@ ModalPopup {
                 preSelectedSendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedHoldingID: JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol
+                preSelectedHoldingID: {
+                    let token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", stickerPackDetailsPopup.store.stickersStore.getStatusTokenKey())
+                    return !!token && !!token.symbol ? token.symbol : ""
+                }
                 preSelectedHoldingType: Constants.TokenType.ERC20
                 sendTransaction: function() {
                     if(bestRoutes.count === 1) {

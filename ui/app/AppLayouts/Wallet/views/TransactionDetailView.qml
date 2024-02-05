@@ -77,7 +77,7 @@ Item {
             return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
         readonly property real feeEthValue: d.details ? RootStore.getFeeEthValue(d.details.totalFees) : 0
-        readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0
+        readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken) : 0
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
         readonly property bool isBridge: d.transactionType === Constants.TransactionType.Bridge
 
@@ -627,7 +627,7 @@ Item {
                                 return RootStore.formatCurrencyAmount(transactionHeader.inCryptoValue, d.inSymbol)
                             } else if (type === Constants.TransactionType.Bridge) {
                                 // Reduce crypto value by fee value
-                                const valueInCrypto = RootStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol, RootStore.currentCurrency)
+                                const valueInCrypto = RootStore.getCryptoValue(transactionHeader.outFiatValue - d.feeFiatValue, d.inSymbol)
                                 return RootStore.formatCurrencyAmount(valueInCrypto, d.inSymbol)
                             }
                             return ""
@@ -670,7 +670,7 @@ Item {
                             let fiatValue
                             if (!d.symbol) {
                                 const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                fiatValue = RootStore.getFiatValue(maxFeeEth, Constants.ethToken, RootStore.currentCurrency)
+                                fiatValue = RootStore.getFiatValue(maxFeeEth, Constants.ethToken)
                             } else {
                                 fiatValue = d.feeFiatValue
                             }
@@ -713,7 +713,7 @@ Item {
                                 return ""
                             if (showMaxFee) {
                                 const maxFeeEth = RootStore.getFeeEthValue(d.details.maxTotalFees)
-                                const maxFeeFiat = RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency)
+                                const maxFeeFiat = RootStore.getFiatValue(d.feeEthValue, Constants.ethToken)
                                 return RootStore.formatCurrencyAmount(maxFeeFiat, RootStore.currentCurrency)
                             } else if (showFee) {
                                 return RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency)

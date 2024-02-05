@@ -10,7 +10,7 @@ import shared.stores 1.0
 ColumnLayout {
     id: root
 
-    property string selectedSymbol
+    property var selectedHolding
     property bool isLoading: false
     property double cryptoValueToReceive
     property bool isBridgeTx: false
@@ -18,21 +18,21 @@ ColumnLayout {
     property string currentCurrency
     property int minCryptoDecimals: 0
     property int minFiatDecimals: 0
-    property var getFiatValue: function(cryptoValue) {}
     property var formatCurrencyAmount: function() {}
 
     QtObject {
         id: d
         readonly property string fiatValue: {
-            if(!root.selectedSymbol || !cryptoValueToReceive)
+            if(!root.selectedHolding || !root.selectedHolding.symbol || !root.selectedHolding.marketDetails ||
+                    !root.selectedHolding.marketDetails.currencyPrice || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
-            let fiatValue = root.getFiatValue(cryptoValueToReceive, root.selectedSymbol, root.currentCurrency)
+            let fiatValue = cryptoValueToReceive * root.selectedHolding.marketDetails.currencyPrice.amount
             return root.formatCurrencyAmount(fiatValue, root.currentCurrency, inputIsFiat ? {"minDecimals": root.minFiatDecimals, "stripTrailingZeroes": true} : {})
         }
         readonly property string cryptoValue: {
-            if(!root.selectedSymbol || !cryptoValueToReceive)
+            if(!root.selectedHolding || !root.selectedHolding.symbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
-            return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedSymbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
+            return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedHolding.symbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
         }
     }
 

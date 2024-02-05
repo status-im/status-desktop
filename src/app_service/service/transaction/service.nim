@@ -389,8 +389,11 @@ QtObject:
           tokenSym = contract_tokenId[1]
       else:
         let network = self.networkService.getNetwork(chainID)
-        let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSym)
-        toAddress = parseAddress(token.address)
+        let token = self.tokenService.getTokenBySymbolByTokensKey(tokenSym)
+        if token != nil:
+          for addressPerChain in token.addressPerChainId:
+            if addressPerChain.chainId == network.chainId:
+              toAddress = parseAddress(addressPerChain.address)
 
       let transfer = Transfer(
         to: parseAddress(to_addr),
@@ -438,7 +441,7 @@ QtObject:
     self: Service,
     fromAddr: string,
     toAddr: string,
-    tokenSymbol: string,
+    assetKey: string,
     value: string,
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
@@ -460,6 +463,11 @@ QtObject:
 
       if(selectedRoutes.len > 0):
         chainID = selectedRoutes[0].fromNetwork.chainID
+
+      var tokenSymbol = ""
+      let token = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
+      if token != nil:
+        tokenSymbol = token.symbol
 
       let network = self.networkService.getNetwork(chainID)
       if network.nativeCurrencySymbol == tokenSymbol:
@@ -499,6 +507,13 @@ QtObject:
 
   proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
     disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
+    var tokenId: string = ""
+    if sendType == ERC721Transfer:
+      tokenId = token
+    else:
+      let token = self.tokenService.getTokenBySymbolByTokensKey(token)
+      if token != nil:
+        tokenId = token.symbol
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -506,7 +521,7 @@ QtObject:
       accountFrom: accountFrom,
       accountTo: accountTo,
       amount: amount,
-      token: token,
+      token: tokenId,
       disabledFromChainIDs: disabledFromChainIDs,
       disabledToChainIDs: disabledToChainIDs,
       preferredChainIDs: preferredChainIDs,

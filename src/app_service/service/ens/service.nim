@@ -20,6 +20,7 @@ import app_service/service/token/service as token_service
 import app_service/service/eth/utils as status_utils
 import app_service/service/eth/dto/coder
 import app_service/service/eth/dto/transaction
+import app_service/common/wallet_constants
 import dto/ens_username_dto
 
 export ens_username_dto
@@ -305,17 +306,6 @@ QtObject:
       result = 380000
       error "error occurred", procName="registerENSGasEstimate", msg = e.msg
 
-  proc getStatusToken*(self: Service): TokenDto =
-    let networkDto = self.networkService.getAppNetwork()
-    return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
-
-  proc getSNTBalance*(self: Service): string =
-    let token = self.getStatusToken()
-    let account = self.walletAccountService.getWalletAccount(0).address
-
-    let balance = self.walletAccountService.getTokenBalance(account, self.getChainId(), token.symbol)
-    return $balance
-
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:
       let response = status_ens.resourceURL(self.getChainId(), username)
@@ -430,13 +420,17 @@ QtObject:
         let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
         self.pendingEnsUsernames.incl(dto)
       elif txType == PendingTransactionTypeDto.RegisterENS:
-        let sntContract = self.getStatusToken()
+        var sntContract: string = ""
+        if self.settingsService.areTestNetworksEnabled():
+          sntContract =  STT_CONTRACT_ADDRESS
+        else:
+          sntContract = SNT_CONTRACT_ADDRESS
         let ensUsernameFinal = self.formatUsername(ensUsername, true)
         if not self.add(chainId, ensUsernameFinal):
           result.error = "failed to add ens username"
           error "error occurred", procName="sendEnsTxWithSignatureAndWatch", msg = result.error
           return
-        self.transactionService.watchTransaction(transactionHash, fromAddress, $sntContract.address, $txType,
+        self.transactionService.watchTransaction(transactionHash, fromAddress, sntContract, $txType,
           ensUsernameFinal, chainId)
         let dto = EnsUsernameDto(chainId: chainId, username: ensUsernameFinal)
         self.pendingEnsUsernames.incl(dto)

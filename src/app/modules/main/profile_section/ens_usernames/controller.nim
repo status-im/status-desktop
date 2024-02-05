@@ -132,10 +132,6 @@ proc getEnsRegisteredAddress*(self: Controller): string =
 proc registerEnsGasEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
   return self.ensService.registerEnsGasEstimate(chainId, ensUsername, address)
 
-
-proc getSNTBalance*(self: Controller): string =
-  return self.ensService.getSNTBalance()
-
 proc getWalletDefaultAddress*(self: Controller): string =
   return self.walletAccountService.getWalletAccount(0).address
 
@@ -145,21 +141,11 @@ proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto 
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
-  return self.tokenService.getTokenPrice(crypto, fiat)
+proc getPriceBySymbol*(self: Controller, crypto: string): float64 =
+  return self.tokenService.getPriceBySymbol(crypto)
 
-proc getStatusToken*(self: Controller): string =
-  let token = self.ensService.getStatusToken()
-
-  if token == nil:
-    return $ %*{}
-
-  let jsonObj = %* {
-    "name": token.name,
-    "symbol": token.symbol,
-    "address": token.address
-  }
-  return $jsonObj
+proc getStatusTokenKey*(self: Controller): string =
+  return self.tokenService.getStatusTokenKey()
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER,

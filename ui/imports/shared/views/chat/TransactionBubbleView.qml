@@ -67,8 +67,7 @@ Item {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        var defaultFiatSymbol = root.store.currentCurrency
-        return root.store.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol
+        return root.store.getFiatValue(tokenAmount, token.symbol) + " " + defaultFiatSymbol
     }
     property int state: transactionParamsObject.commandState
 

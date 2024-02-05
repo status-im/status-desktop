@@ -116,6 +116,20 @@ QtObject:
 
     return i.toFloat() + r.toFloat() / p.toFloat()
 
+  # TODO: left this for activity controller as it uses token symbol
+  # which may not be unique needs to be refactored. Also needed for
+  # hasGas api which also needs to be rethought
+  # https://github.com/status-im/status-desktop/issues/13505
   proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-    let decimals = self.tokenService.getTokenDecimals(symbol)
+    let token = self.tokenService.findTokenBySymbol(symbol)
+    var decimals: int = 0
+    if token != nil:
+      decimals = token.decimals
+    return u256ToFloat(decimals, amountInt)
+
+  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
+    let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
+    var decimals: int = 0
+    if token != nil:
+      decimals = token.decimals
     return u256ToFloat(decimals, amountInt)

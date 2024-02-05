@@ -278,6 +278,7 @@ StatusSectionLayout {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
             transactionStore: root.transactionStore
+            walletAssetsStore: root.walletAssetsStore
             onClosed: {
                 destroy();
             }

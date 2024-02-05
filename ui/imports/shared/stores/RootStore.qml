@@ -177,12 +177,12 @@ QtObject {
         return currencyStore.getCurrencyAmount(amount, symbol)
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        return currencyStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+    function getFiatValue(balance, cryptoSymbol) {
+        return currencyStore.getFiatValue(balance, cryptoSymbol)
     }
 
-    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        return currencyStore.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+    function getCryptoValue(balance, cryptoSymbol) {
+        return currencyStore.getCryptoValue(balance, cryptoSymbol)
     }
 
     function getGasEthValue(gweiValue, gasLimit) {

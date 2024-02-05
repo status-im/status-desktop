@@ -171,24 +171,11 @@ proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto 
 proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
-  return self.tokenService.getTokenPrice(crypto, fiat)
-
 proc getAppNetwork*(self: Controller): NetworkDto =
   return self.networkService.getAppNetwork()
 
-proc getStatusToken*(self: Controller): string =
-  let token = self.stickerService.getStatusToken()
-
-  if token == nil:
-    return $ %*{}
-
-  let jsonObj = %* {
-    "name": token.name,
-    "symbol": token.symbol,
-    "address": token.address
-  }
-  return $jsonObj
+proc getStatusTokenKey*(self: Controller): string =
+  return self.tokenService.getStatusTokenKey()
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_BUY_STICKER_TRANSACTION_MODULE_IDENTIFIER,

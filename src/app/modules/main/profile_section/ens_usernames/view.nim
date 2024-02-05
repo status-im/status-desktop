@@ -112,26 +112,23 @@ QtObject:
     maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
     self.delegate.authenticateAndRegisterEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
-  proc getSNTBalance*(self: View): string {.slot.} =
-    return self.delegate.getSNTBalance()
-
   proc getWalletDefaultAddress*(self: View): string {.slot.} =
     return self.delegate.getWalletDefaultAddress()
 
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
 
-  proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
-    return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
+  proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string): string {.slot.} =
+    return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol)
 
-  proc getCryptoValue*(self: View, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
-    return self.delegate.getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol)
+  proc getCryptoValue*(self: View, fiatAmount: string, cryptoSymbol: string): string {.slot.} =
+    return self.delegate.getCryptoValue(fiatAmount, cryptoSymbol)
 
   proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
     return self.delegate.getGasEthValue(gweiValue, gasLimit)
 
-  proc getStatusToken*(self: View): string {.slot.} =
-    return self.delegate.getStatusToken()
+  proc getStatusTokenKey*(self: View): string {.slot.} =
+    return self.delegate.getStatusTokenKey()
 
   proc setPrefferedEnsUsername*(self: View, ensUsername: string) {.slot.} =
     self.delegate.setPrefferedEnsUsername(ensUsername)
