@@ -167,13 +167,14 @@ StatusScrollView {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
+                interactive: false
 
                 visible: count > 0
                 model: assetsModel
 
                 delegate: StatusListItem {
                     height: 64
-                    width: mainLayout.width
+                    width: ListView.view.width
                     title: model.name ?? ""
                     subTitle: model.symbol ?? ""
                     asset.name: model.image ? model.image : ""
@@ -221,6 +222,7 @@ StatusScrollView {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: childrenRect.height
+                interactive: false
 
                 visible: count > 0
                 model: SortFilterProxyModel {
