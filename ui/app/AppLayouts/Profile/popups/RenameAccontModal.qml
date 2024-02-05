@@ -69,15 +69,15 @@ StatusModal {
             }
             validators: [
                 StatusMinLengthValidator {
-                    errorMessage: qsTr("You need to enter an account name")
-                    minLength: 1
+                    errorMessage: qsTr("Account name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                    minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
                 },
                 StatusRegularExpressionValidator {
                     regularExpression: /^[^<>]+$/
                     errorMessage: qsTr("This is not a valid account name")
                 }
             ]
-            charLimit: 40
+            charLimit: 20
         }
 
         StatusColorSelectorGrid {

@@ -176,6 +176,13 @@ Item {
                 onKeyPressed: {
                     root.store.submitPopup(event)
                 }
+
+                validators: [
+                    StatusMinLengthValidator {
+                        errorMessage: qsTr("Keypair name must be at least %n character(s)", "", Constants.addAccountPopup.keyPairAccountNameMinLength)
+                        minLength: Constants.addAccountPopup.keyPairAccountNameMinLength
+                    }
+                ]
             }
 
             StatusBaseText {

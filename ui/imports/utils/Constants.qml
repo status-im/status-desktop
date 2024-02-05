@@ -733,6 +733,7 @@ QtObject {
         readonly property int labelFontSize2: 13
         readonly property int footerButtonsHeight: 44
         readonly property int keyPairNameMaxLength: 20
+        readonly property int keyPairAccountNameMinLength: 5
         readonly property int stepperWidth: 242
         readonly property int stepperHeight: 30
 
