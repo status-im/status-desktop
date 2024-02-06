@@ -88,7 +88,7 @@ QVariant MovableModel::data(const QModelIndex &index, int role) const
     if (m_sourceModel == nullptr)
         return {};
 
-    return m_sourceModel->data(index, role);
+    return m_sourceModel->index(index.row(), index.column()).data(role);
 }
 
 QHash<int, QByteArray> MovableModel::roleNames() const
