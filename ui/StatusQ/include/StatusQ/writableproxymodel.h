@@ -32,6 +32,11 @@ public:
     ~WritableProxyModel();
 
     Q_INVOKABLE QVariantMap toVariantMap() const;
+
+    Q_INVOKABLE QVariantList getInsertedItems() const;
+    Q_INVOKABLE QVariantList getEditedItems() const;
+    Q_INVOKABLE QVariantList getRemovedItems() const;
+
     Q_INVOKABLE bool insert(int at, const QVariantMap& data = {});
     Q_INVOKABLE bool append(const QVariantMap& data = {});
     Q_INVOKABLE bool remove(int at);

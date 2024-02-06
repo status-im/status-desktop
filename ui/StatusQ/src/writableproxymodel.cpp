@@ -421,6 +421,73 @@ QVariantMap WritableProxyModel::toVariantMap() const
     return result;
 }
 
+
+QVariantList WritableProxyModel::getInsertedItems() const
+{
+    if (!d->dirty || !sourceModel())
+        return {};
+
+    QVariantList result;
+
+    for (auto iter = d->insertedRows.begin(); iter != d->insertedRows.end(); ++iter)
+    {
+        auto index = iter.key();
+        if (!index.isValid())
+            continue;
+            
+        auto data = iter.value();
+        QVariantMap rowMap;
+        for (auto it = data.begin(); it != data.end(); ++it)
+            rowMap[roleNames()[it.key()]] = it.value();
+        result.append(rowMap);
+    }
+
+    return result;
+}
+QVariantList WritableProxyModel::getEditedItems() const
+{
+    if (!d->dirty || !sourceModel())
+        return {};
+    
+    QVariantList result;
+
+    for (auto iter = d->cache.begin(); iter != d->cache.end(); ++iter)
+    {
+        auto index = iter.key();
+        if (!index.isValid())
+            continue;
+            
+        auto data = itemData(index);
+        QVariantMap rowMap;
+        for (auto it = data.begin(); it != data.end(); ++it)
+            rowMap[roleNames()[it.key()]] = it.value();
+        result.append(rowMap);
+    }
+
+    return result;
+}
+QVariantList WritableProxyModel::getRemovedItems() const
+{
+    if (!d->dirty || !sourceModel())
+        return {};
+
+    QVariantList result;
+
+    for (auto iter = d->removedRows.begin(); iter != d->removedRows.end(); ++iter)
+    {
+        if (!iter->isValid())
+            continue;
+
+        QVariantMap rowMap;
+        auto roleNames = this->roleNames();
+        for (auto it = roleNames.begin(); it != roleNames.end(); ++it)
+            rowMap[it.value()] = sourceModel()->data(*iter, it.key());
+        result.append(rowMap);
+    }
+
+    return result;
+}
+
 bool WritableProxyModel::insert(int at, const QVariantMap& data)
 {
     auto rowCount = this->rowCount();
