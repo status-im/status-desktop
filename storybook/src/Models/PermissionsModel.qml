@@ -57,6 +57,17 @@ QtObject {
         }
     ]
 
+    readonly property var oneChannelPermissionsModelData: [
+        {
+            key: "iamakey",
+            holdingsListModel: root.createHoldingsModel4(),
+            channelsListModel: root.createChannelsModel(),
+            permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Approved,
+            isPrivate: false
+        }
+    ]
+
     readonly property var longPermissionsModelData: [
         {
             holdingsListModel: root.createHoldingsModel4(),
@@ -460,6 +471,17 @@ QtObject {
         }
     }
 
+    readonly property var oneChannelPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.oneChannelPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(oneChannelPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
     readonly property var longPermissionsModel: ListModel {
         readonly property ModelChangeGuard guard: ModelChangeGuard {
             model: root.longPermissionsModel
@@ -722,6 +744,15 @@ QtObject {
                         key: "Amp",
                         amount: 2,
                         available: true
+                    }
+                ]
+    }
+
+    function createChannelsModel() {
+        return [
+                    {
+                        key: "general",
+                        channelName: "general discussion"
                     }
                 ]
     }
