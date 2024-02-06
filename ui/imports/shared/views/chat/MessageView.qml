@@ -924,6 +924,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
+                                && root.rootStore.permissionsStore.viewAndPostCriteriaMet
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
@@ -939,6 +940,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
+                                && root.rootStore.permissionsStore.viewAndPostCriteriaMet
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -961,6 +963,9 @@ Loader {
                                 return false
                             
                             if(delegate.hideQuickActions)
+                                return false;
+
+                            if (!root.rootStore.permissionsStore.viewAndPostCriteriaMet)
                                 return false;
 
                             const chatType = root.messageStore.chatType;
@@ -1024,6 +1029,8 @@ Loader {
                             if (!root.messageStore)
                                 return false;
                             if (delegate.hideQuickActions)
+                                return false;
+                            if (!root.rootStore.permissionsStore.viewAndPostCriteriaMet)
                                 return false;
                             return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||
