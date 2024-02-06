@@ -9,7 +9,6 @@ ControlNodeOfflineCenterPanel 1.0 ControlNodeOfflineCenterPanel.qml
 EditSettingsPanel 1.0 EditSettingsPanel.qml
 FeesBox 1.0 FeesBox.qml
 FeesPanel 1.0 FeesPanel.qml
-HidePermissionPanel 1.0 HidePermissionPanel.qml
 IntroPanel 1.0 IntroPanel.qml
 JoinCommunityCenterPanel 1.0 JoinCommunityCenterPanel.qml
 JoinCommunityHeaderPanel 1.0 JoinCommunityHeaderPanel.qml
