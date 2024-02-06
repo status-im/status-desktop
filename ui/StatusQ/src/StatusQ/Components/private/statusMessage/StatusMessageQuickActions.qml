@@ -15,7 +15,7 @@ Rectangle {
         readonly property int containerMargin: 2
     }
 
-    implicitWidth: buttonRow.width + _internal.containerMargin * 2
+    implicitWidth: buttonRow.width > 0 ? buttonRow.width + (_internal.containerMargin * 2) : 0
     implicitHeight: 36
     radius: 8
     color: Theme.palette.statusSelect.menuItemBackgroundColor
