@@ -3,7 +3,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 import Storybook 1.0
+import Models 1.0
 
 import AppLayouts.Communities.popups 1.0
 
@@ -47,27 +51,29 @@ SplitView {
                 modal: false
                 closePolicy: Popup.NoAutoClose
                 destroyOnClose: true
-
-                isEdit: isEditCheckBox.checked
+                isEdit: true
                 isDeleteable: isDeleteableCheckBox.checked
                 isDiscordImport: isDiscordCheckBox.checked
-
-                Binding on channelName {
-                    value: "test-channel"
-                    when: dialog.isEdit
-                    restoreMode: Binding.RestoreBindingOrValue
+                chatId: "_general"
+                channelName: "general"
+                channelDescription: "general discussion"
+                channelColor: "#4360DF"
+                activeCommunity: QtObject {
+                    readonly property string id: "0x039c47e9837a1a7dcd00a6516399d0eb521ab0a92d512ca20a44ac6278bfdbb5c5"
+                    readonly property string name: "test-1"
+                    readonly property string image: ModelsData.icons.superRare
+                    readonly property string color: "#4360DF"
+                    readonly property int memberRole: 0
                 }
-
-                Binding on channelDescription {
-                    value: "TEST TEST TEST"
-                    when: dialog.isEdit
-                    restoreMode: Binding.RestoreBindingOrValue
-                }
-
-                Binding on channelColor {
-                    value: "pink"
-                    when: dialog.isEdit
-                    restoreMode: Binding.RestoreBindingOrValue
+                assetsModel: AssetsModel {}
+                channelsModel: ChannelsModel {}
+                collectiblesModel: CollectiblesModel {}
+                
+                permissionsModel: ListModel {
+                    id: permissionsModel
+                    Component.onCompleted: {
+                        append(PermissionsModel.channelsOnlyPermissionsModelData)
+                    }
                 }
 
                 communitiesStore: QtObject {
@@ -180,18 +186,11 @@ SplitView {
 
         RowLayout {
             CheckBox {
-                id: isEditCheckBox
-                text: "isEdit"
-                onToggled: if (checked) isDiscordCheckBox.checked = false
-            }
-            CheckBox {
                 id: isDeleteableCheckBox
-                enabled: isEditCheckBox.checked
                 text: "isDeleteable"
             }
             CheckBox {
                 id: isDiscordCheckBox
-                enabled: !isEditCheckBox.checked
                 text: "isDiscordImport"
                 onToggled: {
                     if (!!dialog && dialog.opened)
