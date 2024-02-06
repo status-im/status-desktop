@@ -16,6 +16,7 @@ StatusDropdown {
 
     property int mode: PermissionsDropdown.Mode.Add
     property int initialPermissionType: PermissionTypes.Type.None
+    property bool allowCommunityOptions: true
 
     property bool enableAdminPermission: true
 
@@ -97,13 +98,14 @@ StatusDropdown {
         CustomSeparator {
             Layout.fillWidth: true
             Layout.preferredHeight: d.sectionHeight
-
+            visible: root.allowCommunityOptions
             text: qsTr("Community")
         }
 
         CustomPermissionListItem {
             permissionType: PermissionTypes.Type.Admin
             enabled: root.enableAdminPermission
+            visible: root.allowCommunityOptions
 
             Layout.fillWidth: true
             objectName: "becomeAdmin"
@@ -112,6 +114,7 @@ StatusDropdown {
         CustomPermissionListItem {
             permissionType: PermissionTypes.Type.Member
 
+            visible: root.allowCommunityOptions
             Layout.fillWidth: true
             objectName: "becomeMember"
         }

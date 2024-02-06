@@ -42,6 +42,7 @@ Item {
     required property CurrenciesStore currencyStore
     property bool hasAddedContacts: false
     property var communityData
+    property alias createChannelPopup: createChannelPopup
 
     // Community transfer ownership related props:
     required property bool isPendingOwnershipRequest
@@ -51,6 +52,11 @@ Item {
         communityData.memberRole === Constants.memberRole.owner ||
         communityData.memberRole === Constants.memberRole.admin ||
         communityData.memberRole === Constants.memberRole.tokenMaster
+
+    readonly property var permissionsModel: {
+        root.store.prepareTokenModelForCommunity(communityData.id)
+        return root.store.permissionsModel
+    }
 
     signal infoButtonClicked
     signal manageButtonClicked
@@ -297,7 +303,6 @@ Item {
 
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
-                emojiPopup: root.emojiPopup
                 showDebugOptions: root.store.isDebugEnabledfir 
 
                 // TODO pass the chatModel in its entirety instead of fetching the JSOn using just the id
@@ -368,17 +373,18 @@ Item {
                 onDisplayProfilePopup: {
                     Global.openProfilePopup(publicKey)
                 }
-
-                onEditCommunityChannel: {
-                    communitySectionModule.editCommunityChannel(
-                                chatId,
-                                newName,
-                                newDescription,
-                                newEmoji,
-                                newColor,
-                                newCategory,
-                                channelPosition // TODO change this to the signal once it is modifiable
-                                )
+                onDisplayEditChannelPopup: {
+                    Global.openPopup(createChannelPopup, {
+                        isEdit: true,
+                        channelName: chatName,
+                        channelDescription: chatDescription,
+                        channelEmoji: chatEmoji,
+                        channelColor: chatColor,
+                        categoryId: chatCategoryId,
+                        chatId: chatContextMenuView.chatId,
+                        channelPosition: channelPosition,
+                        deleteChatConfirmationDialog: deleteChatConfirmationDialog
+                    });
                 }
             }
         }
@@ -607,11 +613,63 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             communitiesStore: root.communitiesStore
+            assetsModel: root.store.assetsModel
+            collectiblesModel: root.store.collectiblesModel
+            permissionsModel: root.store.permissionsModel
+            channelsModel: root.store.chatCommunitySectionModule.model
             emojiPopup: root.emojiPopup
+            activeCommunity: root.communityData
+
+            property int channelPosition: -1
+            property var deleteChatConfirmationDialog
+            
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
                                                 chCategoryId) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
                                                   chCategoryId)
+                chatId = root.store.currentChatContentModule().chatDetails.id
+            }
+            onEditCommunityChannel: {
+                root.store.editCommunityChannel(chatId,
+                                                chName,
+                                                chDescription,
+                                                chEmoji,
+                                                chColor,
+                                                chCategoryId,
+                                                channelPosition);
+            }
+
+            onAddPermissions: function (permissions) {
+                for (var i = 0; i < permissions.length; i++) {
+                    root.store.permissionsStore.createPermission(permissions[i].holdingsListModel, 
+                                                                permissions[i].permissionType,
+                                                                permissions[i].isPrivate,
+                                                                permissions[i].channelsListModel)
+                }
+            }
+            onRemovePermissions: function (permissions) {
+                for (var i = 0; i < permissions.length; i++) {
+                    root.store.permissionsStore.removePermission(permissions[i].id)
+                }
+            }
+            onEditPermissions: function (permissions) {
+                for (var i = 0; i < permissions.length; i++) {
+                    root.store.permissionsStore.editPermission(permissions[i].id,
+                                                                permissions[i].holdingsListModel,
+                                                                permissions[i].permissionType,
+                                                                permissions[i].channelsListModel,
+                                                                permissions[i].isPrivate)
+                }
+            }
+            onSetViewOnlyCanAddReaction: function (checked) {
+                root.store.permissionsStore.setViewOnlyCanAddReaction(chatId, checked)
+            }
+            onSetHideIfPermissionsNotMet: function (checked) {
+                root.store.permissionsStore.setHideIfPermissionsNotMet(chatId, checked)
+            }
+            onDeleteCommunityChannel: {
+                Global.openPopup(deleteChatConfirmationDialog);
+                close()
             }
             onClosed: {
                 destroy()

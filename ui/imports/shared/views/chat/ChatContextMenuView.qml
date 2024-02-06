@@ -26,10 +26,11 @@ StatusMenu {
     property bool chatMuted: false
     property int channelPosition: -1
     property string chatCategoryId: ""
-    property var emojiPopup
     property bool showDebugOptions: false
+    property alias deleteChatConfirmationDialog: deleteChatConfirmationDialogComponent
 
     signal displayProfilePopup(string publicKey)
+    signal displayEditChannelPopup(string chatId)
     signal requestAllHistoricMessages(string chatId)
     signal unmuteChat(string chatId)
     signal muteChat(string chatId, int interval)
@@ -140,38 +141,7 @@ StatusMenu {
         icon.name: "edit"
         enabled: root.isCommunityChat && root.amIChatAdmin
         onTriggered: {
-            Global.openPopup(editChannelPopup, {
-                isEdit: true,
-                channelName: root.chatName,
-                channelDescription: root.chatDescription,
-                channelEmoji: root.chatEmoji,
-                channelColor: root.chatColor,
-                categoryId: root.chatCategoryId
-            });
-        }
-    }
-
-    Component {
-        id: editChannelPopup
-        CreateChannelPopup {
-            anchors.centerIn: parent
-            isEdit: true
-            isDeleteable: root.isCommunityChat
-            emojiPopup: root.emojiPopup
-            onCreateCommunityChannel: {
-                root.createCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor);
-            }
-            onEditCommunityChannel: {
-                root.editCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor,
-                    chCategoryId);
-            }
-            onDeleteCommunityChannel: {
-                Global.openPopup(deleteChatConfirmationDialogComponent)
-                close()
-            }
-            onClosed: {
-                destroy()
-            }
+            root.displayEditChannelPopup(root.chatId);
         }
     }
 

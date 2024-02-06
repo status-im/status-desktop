@@ -2,11 +2,14 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.3
+import QtQml 2.15
 import QtQml.Models 2.15
 
 import utils 1.0
 import shared.panels 1.0
 
+
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -15,8 +18,10 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.models 1.0
+import AppLayouts.Communities.controls 1.0
 
 StatusStackModal {
     id: root
@@ -26,9 +31,12 @@ StatusStackModal {
     property bool isDiscordImport // creating new or importing from discord?
     property bool isEdit: false
     property bool isDeleteable: false
+    property bool viewOnlyCanAddReaction
+    property bool hideIfPermissionsNotMet
 
     property string communityId: ""
-    property string chatId: ""
+    property string chatId: "_newChannel"
+
     property string categoryId: ""
     property string channelName: ""
     property string channelDescription: ""
@@ -39,20 +47,90 @@ StatusStackModal {
     readonly property int communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
 
+    property var activeCommunity
+    required property var assetsModel
+    required property var collectiblesModel
+    required property var permissionsModel
+
+    required property var channelsModel
+
     readonly property int maxChannelNameLength: 24
     readonly property int maxChannelDescLength: 140
 
+    // channel signals
     signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
     signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
     signal deleteCommunityChannel()
 
+    // Permissions signals:
+    // permissions arg is a list of objects with the following properties:
+    // - key: string
+    // - id: string
+    // - permissionType: string
+    // - holdings: list of objects with the following properties:
+    //   - key: string
+    //   - type: string
+    //   - amount: string
+    // - channels: list of objects with the following properties:
+    //   - key: string
+    // - isPrivate: bool
+    signal addPermissions(var permissions)
+    signal removePermissions(var permissions)
+    signal editPermissions(var permissions)
+    signal setViewOnlyCanAddReaction(bool checked)
+    signal setHideIfPermissionsNotMet(bool checked)
+
     width: 640
+    leftPadding: 0
+    rightPadding: 0
+    currentIndex: d.currentPage
+
+    enum CurrentPage {
+        ChannelDetails, //0
+        ColorPicker, //1
+        ChannelPermissions, //2
+        DiscordImportUploadFile, //3
+        DiscordImportUploadStart //4
+    }
 
     QtObject {
         id: d
+        property int currentPage: CreateChannelPopup.CurrentPage.ChannelDetails
+
+        readonly property QtObject communityDetails: QtObject {
+            readonly property string id: root.activeCommunity.id
+            readonly property string name: root.activeCommunity.name
+            readonly property string image: root.activeCommunity.image
+            readonly property string color: root.activeCommunity.color
+            readonly property bool owner: root.activeCommunity.memberRole === Constants.memberRole.owner
+            readonly property bool admin: root.activeCommunity.memberRole === Constants.memberRole.admin
+            readonly property bool tokenMaster: root.activeCommunity.memberRole === Constants.memberRole.tokenMaster
+        }
+
+        readonly property ChannelPermissionsModelEditor channelEditModel: ChannelPermissionsModelEditor {
+            channelId: root.chatId
+            name: nameInput.input.text
+            emoji: nameInput.input.asset.emoji
+            color: colorPanel.color.toString().toUpperCase()
+            channelsModel: root.channelsModel
+            permissionsModel: root.permissionsModel
+            newChannelMode: !root.isEdit
+
+            property Connections rootConnection: Connections {
+                target: root
+                function onClosed() {
+                    d.channelEditModel.reset()
+                }
+            }
+        }
+        
+        property bool viewOnlyCanAddReaction: root.viewOnlyCanAddReaction
+        property bool hideIfPermissionsNotMet: root.hideIfPermissionsNotMet
+        property bool colorPickerOpened: false
+
         function isFormValid() {
             return nameInput.valid && descriptionTextArea.valid &&
-                    Utils.validateAndReturnError(colorDialog.color.toString().toUpperCase(), communityColorValidator) === ""
+                    Utils.validateAndReturnError(colorPanel.color.toString().toUpperCase(), communityColorValidator) === ""
         }
 
         function openEmojiPopup(leftSide = false) {
@@ -70,7 +148,7 @@ StatusStackModal {
                 categoryId: root.categoryId,
                 name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
                 description: StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
-                color: colorDialog.color.toString().toUpperCase(),
+                color: colorPanel.color.toString().toUpperCase(),
                 emoji: StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji),
                 options: {
                     // TODO
@@ -85,66 +163,99 @@ StatusStackModal {
                 creatingError.open()
             }
         }
-    }
 
-    stackTitle: isDiscordImport ? qsTr("New Channel With Imported Chat History") :
-                                  isEdit ? qsTr("Edit #%1").arg(root.channelName)
-                                         : qsTr("New channel")
-
-    nextButton: StatusButton {
-        objectName: "createChannelNextBtn"
-        font.weight: Font.Medium
-        text: typeof currentItem.nextButtonText !== "undefined" ? currentItem.nextButtonText : qsTr("Import chat history")
-        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
-        loading: root.communitiesStore.discordDataExtractionInProgress
-        onClicked: {
-            const nextAction = currentItem.nextAction
-            if (typeof(nextAction) == "function") {
-                return nextAction()
+        function saveAndClose() {
+            let emoji = StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji)
+            if (!isEdit) {
+                root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
+                                            StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
+                                            emoji,
+                                            colorPanel.color.toString().toUpperCase(),
+                                            root.categoryId)
+            } else {
+                root.editCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
+                                            StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
+                                            emoji,
+                                            colorPanel.color.toString().toUpperCase(),
+                                            root.categoryId)
             }
-            root.currentIndex++
+
+            if (d.channelEditModel.dirtyPermissions) {
+                var newPermissions = d.channelEditModel.getAddedPermissions();
+                if (newPermissions.length > 0) {
+                    root.addPermissions(newPermissions);
+                }
+
+                var editedPermissions = d.channelEditModel.getEditedPermissions();
+                if (editedPermissions.length > 0) {
+                    root.editPermissions(editedPermissions);
+                }
+
+                var removedPermissions = d.channelEditModel.getRemovedPermissions();
+                if (removedPermissions.length > 0) {
+                    root.removePermissions(removedPermissions);
+                }
+            }
+
+            if (root.viewOnlyCanAddReaction !== d.viewOnlyCanAddReaction) {
+                root.setViewOnlyCanAddReaction(d.viewOnlyCanAddReaction);
+            }
+
+            if (root.hideIfPermissionsNotMet !== d.hideIfPermissionsNotMet) {
+                root.setHideIfPermissionsNotMet(d.hideIfPermissionsNotMet);
+            }
+
+            // TODO Open the channel once we have designs for it
+            root.close()
         }
     }
 
-    finishButton: StatusButton {
+    stackTitle: isDiscordImport ? qsTr("New Channel With Imported Chat History") :
+                                  !!currentItem.stackTitleText ? currentItem.stackTitleText :
+                                                                 (isEdit ? qsTr("Edit #%1").arg(root.channelName) : qsTr("New channel"))
+
+    nextButton: StatusButton {
         objectName: "createOrEditCommunityChannelBtn"
         font.weight: Font.Medium
-        text: isDiscordImport ? qsTr("Import chat history") : isEdit ? qsTr("Save changes") : qsTr("Create channel")
+        height: 44
+        visible: !d.colorPickerOpened
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        text: !!currentItem.nextButtonText ? currentItem.nextButtonText :
+                                             d.colorPickerOpened ? qsTr("Set channel color") : (
+                                                                       isDiscordImport ? qsTr("Import chat history") :
+                                                                                         isEdit ? qsTr("Save changes") : qsTr("Create channel"))
+        loading: root.communitiesStore.discordDataExtractionInProgress
         onClicked: {
             let nextAction = currentItem.nextAction
             if (typeof (nextAction) == "function") {
                 return nextAction()
             }
-            if (!root.isDiscordImport) {
-                if (!d.isFormValid()) {
-                    scrollView.scrollBackUp()
-                    return
-                }
-                let emoji = StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji)
+        }
+    }
 
-                if (!isEdit) {
-                    root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
-                                                StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
-                                                emoji,
-                                                colorDialog.color.toString().toUpperCase(),
-                                                root.categoryId)
-                } else {
-                    root.editCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
-                                              StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
-                                              emoji,
-                                              colorDialog.color.toString().toUpperCase(),
-                                              root.categoryId)
-                }
-                // TODO Open the channel once we have designs for it
-                root.close()
+    finishButton: StatusButton {
+        objectName: "createChannelNextBtn"
+        font.weight: Font.Medium
+        height: 44
+        text: (typeof currentItem.nextButtonText !== "undefined") ? currentItem.nextButtonText :
+                                                                    qsTr("Import chat history")
+        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        onClicked: {
+            const nextAction = currentItem.nextAction
+            if (typeof(nextAction) == "function") {
+                return nextAction()
             }
         }
+    }
+    //TODO
+    onCurrentIndexChanged: {
+        d.colorPickerOpened = false;
     }
 
     readonly property StatusButton clearFilesButton: StatusButton {
         font.weight: Font.Medium
         text: qsTr("Clear all")
+        height: 44
         type: StatusBaseButton.Type.Danger
         visible: typeof currentItem.isFileListView !== "undefined" && currentItem.isFileListView
         enabled: !fileListView.fileListModelEmpty && !root.communitiesStore.discordDataExtractionInProgress
@@ -153,12 +264,32 @@ StatusStackModal {
 
     readonly property StatusButton deleteChannelButton: StatusButton {
         objectName: "deleteCommunityChannelBtn"
-        visible: isEdit && isDeleteable && !isDiscordImport && typeof(replaceItem) === "undefined"
-        text: qsTr("Delete channel")
+        height: 44
+        visible: isEdit && isDeleteable && !isDiscordImport && (d.currentPage === CreateChannelPopup.CurrentPage.ChannelDetails) ||
+                 !!currentItem.deleteButtonText
+        text: (d.currentPage === CreateChannelPopup.CurrentPage.ChannelPermissions) ? currentItem.deleteButtonText : qsTr("Delete channel")
+        enabled: (d.currentPage === CreateChannelPopup.CurrentPage.ChannelPermissions) ? currentItem.deleteButtonEnabled : true
         type: StatusBaseButton.Type.Danger
-        onClicked: root.deleteCommunityChannel()
+        onClicked: {
+            const nextAction = currentItem.nextDeleteAction
+            if (typeof(nextAction) == "function") {
+                return nextAction()
+            } else {
+                root.deleteCommunityChannel();
+            }
+        }
     }
 
+    property Item backButton: StatusBackButton {
+        visible: d.currentPage !== CreateChannelPopup.CurrentPage.ChannelDetails
+        onClicked: {
+            d.currentPage = (d.currentPage === CreateChannelPopup.CurrentPage.DiscordImportUploadStart) ?
+                        CreateChannelPopup.CurrentPage.DiscordImportUploadFile : CreateChannelPopup.CurrentPage.ChannelDetails
+        }
+    }
+
+
+    leftButtons: [ backButton ]
     rightButtons: [clearFilesButton, deleteChannelButton, nextButton, finishButton]
 
     onAboutToShow: {
@@ -179,7 +310,7 @@ StatusStackModal {
             if (root.channelEmoji) {
                 nameInput.input.asset.emoji = root.channelEmoji
             }
-            colorDialog.color = root.channelColor
+            colorPanel.color = root.channelColor
         } else {
             nameInput.input.asset.isLetterIdenticon = true;
         }
@@ -188,10 +319,8 @@ StatusStackModal {
     }
 
     readonly property list<Item> discordPages: [
-        ColumnLayout {
-            id: fileListView
-            spacing: 24
-
+        Item {
+            id: fileListViewItem
             readonly property bool isFileListView: true
 
             readonly property var fileListModel: root.communitiesStore.discordFileList
@@ -205,154 +334,157 @@ StatusStackModal {
                                                                                                                                             : fileListModel.selectedCount ? qsTr("Validate (%1/%2) files").arg(fileListModel.selectedCount).arg(fileListModel.count)
                                                                                                                                                                           : qsTr("Start channel import")
             readonly property var nextAction: function () {
-                if (!fileListView.fileListModel.selectedFilesValid)
+                if (!fileListViewItem.fileListModel.selectedFilesValid)
                     return root.communitiesStore.requestExtractChannelsAndCategories()
 
-                root.currentIndex++
+                d.currentPage = CreateChannelPopup.CurrentPage.DiscordImportUploadStart;
             }
+            ColumnLayout {
+                id: fileListView
+                anchors.fill: parent
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                spacing: 24
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 12
-                StatusBaseText {
+                RowLayout {
                     Layout.fillWidth: true
-                    maximumLineCount: 2
-                    wrapMode: Text.Wrap
-                    elide: Text.ElideRight
-                    text: fileListView.fileListModelEmpty ? qsTr("Select Discord channel JSON files to import") :
-                                                            root.communitiesStore.discordImportErrorsCount ? qsTr("Some of your community files cannot be used") :
-                                                                                                             qsTr("Uncheck any files you would like to exclude from the import")
-                }
-                StatusBaseText {
-                    visible: fileListView.fileListModelEmpty && !issuePill.visible
-                    font.pixelSize: 12
-                    color: Theme.palette.baseColor1
-                    text: qsTr("(JSON file format only)")
-                }
-                IssuePill {
-                    id: issuePill
-                    type: root.communitiesStore.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
-                    count: root.communitiesStore.discordImportErrorsCount || root.communitiesStore.discordImportWarningsCount || 0
-                    visible: !!count && !fileListView.fileListModelEmpty
-                }
-                StatusButton {
-                    Layout.alignment: Qt.AlignRight
-                    text: qsTr("Browse files")
-                    type: StatusBaseButton.Type.Primary
-                    onClicked: fileDialog.open()
-                    enabled: !root.communitiesStore.discordDataExtractionInProgress
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: Theme.palette.baseColor4
-
-                ColumnLayout {
-                    visible: fileListView.fileListModelEmpty
-                    anchors.top: parent.top
-                    anchors.topMargin: 60
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 8
-
-                    StatusRoundIcon {
-                        Layout.alignment: Qt.AlignHCenter
-                        asset.name: "info"
+                    spacing: 12
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        maximumLineCount: 2
+                        wrapMode: Text.Wrap
+                        elide: Text.ElideRight
+                        text: fileListViewItem.fileListModelEmpty ? qsTr("Select Discord channel JSON files to import") :
+                                                                root.communitiesStore.discordImportErrorsCount ? qsTr("Some of your community files cannot be used") :
+                                                                                                                 qsTr("Uncheck any files you would like to exclude from the import")
                     }
                     StatusBaseText {
-                        Layout.topMargin: 8
-                        Layout.alignment: Qt.AlignHCenter
-                        horizontalAlignment: Qt.AlignHCenter
-                        text: qsTr("Export the Discord channel’s chat history data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
-                        onLinkActivated: Global.openLink(link)
-                        HoverHandler {
-                            id: handler1
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        }
+                        visible: fileListViewItem.fileListModelEmpty && !issuePill.visible
+                        font.pixelSize: 12
+                        color: Theme.palette.baseColor1
+                        text: qsTr("(JSON file format only)")
                     }
-                    StatusBaseText {
-                        Layout.alignment: Qt.AlignHCenter
-                        horizontalAlignment: Qt.AlignHCenter
-                        text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
-                        onLinkActivated: Global.openLink(link)
-                        HoverHandler {
-                            id: handler2
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            cursorShape: handler2.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        }
+                    IssuePill {
+                        id: issuePill
+                        type: root.communitiesStore.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
+                        count: root.communitiesStore.discordImportErrorsCount || root.communitiesStore.discordImportWarningsCount || 0
+                        visible: !!count && !fileListViewItem.fileListModelEmpty
+                    }
+                    StatusButton {
+                        Layout.alignment: Qt.AlignRight
+                        text: qsTr("Browse files")
+                        type: StatusBaseButton.Type.Primary
+                        onClicked: fileDialog.open()
+                        enabled: !root.communitiesStore.discordDataExtractionInProgress
                     }
                 }
 
-                Component {
-                    id: floatingDivComp
-                    Rectangle {
-                        anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
-                        width: ListView.view ? ListView.view.width : 0
-                        height: 4
-                        color: Theme.palette.directColor8
-                    }
-                }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: Theme.palette.baseColor4
 
-                StatusListView {
-                    visible: !fileListView.fileListModelEmpty
-                    enabled: !root.communitiesStore.discordDataExtractionInProgress
-                    anchors.fill: parent
-                    leftMargin: 8
-                    rightMargin: 8
-                    model: fileListView.fileListModel
-                    header: !atYBeginning ? floatingDivComp : null
-                    headerPositioning: ListView.OverlayHeader
-                    footer: !atYEnd ? floatingDivComp : null
-                    footerPositioning: ListView.OverlayHeader
-                    delegate: ColumnLayout {
-                        width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
-                        RowLayout {
-                            spacing: 20
-                            Layout.fillWidth: true
+                    ColumnLayout {
+                        visible: fileListViewItem.fileListModelEmpty
+                        anchors.top: parent.top
+                        anchors.topMargin: 60
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 8
+
+                        StatusRoundIcon {
+                            Layout.alignment: Qt.AlignHCenter
+                            asset.name: "info"
+                        }
+                        StatusBaseText {
+                            id: infoText1
                             Layout.topMargin: 8
+                            Layout.alignment: Qt.AlignHCenter
+                            horizontalAlignment: Qt.AlignHCenter
+                            text: qsTr("Export the Discord channel’s chat history data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
+                            onLinkActivated: Global.openLink(link)
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
+                        }
+                        StatusBaseText {
+                            id: infoText2
+                            Layout.alignment: Qt.AlignHCenter
+                            horizontalAlignment: Qt.AlignHCenter
+                            text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
+                            onLinkActivated: Global.openLink(link)
+                            onHoveredLinkChanged: print(hoveredLink)
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            }
+                        }
+                    }
+
+                    Component {
+                        id: floatingDivComp
+                        Rectangle {
+                            anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
+                            width: ListView.view ? ListView.view.width : 0
+                            height: 4
+                            color: Theme.palette.directColor8
+                        }
+                    }
+
+                    StatusListView {
+                        visible: !fileListViewItem.fileListModelEmpty
+                        enabled: !root.communitiesStore.discordDataExtractionInProgress
+                        anchors.fill: parent
+                        leftMargin: 8
+                        rightMargin: 8
+                        model: fileListViewItem.fileListModel
+                        header: !atYBeginning ? floatingDivComp : null
+                        headerPositioning: ListView.OverlayHeader
+                        footer: !atYEnd ? floatingDivComp : null
+                        footerPositioning: ListView.OverlayHeader
+                        delegate: ColumnLayout {
+                            width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
+                            RowLayout {
+                                spacing: 20
+                                Layout.fillWidth: true
+                                Layout.topMargin: 8
+                                StatusBaseText {
+                                    Layout.fillWidth: true
+                                    text: model.filePath
+                                    font.pixelSize: 13
+                                    elide: Text.ElideRight
+                                    wrapMode: Text.WordWrap
+                                    maximumLineCount: 2
+                                }
+
+                                StatusFlatRoundButton {
+                                    Layout.preferredWidth: 32
+                                    Layout.preferredHeight: 32
+                                    type: StatusFlatRoundButton.Type.Secondary
+                                    icon.name: "close"
+                                    icon.color: Theme.palette.directColor1
+                                    icon.width: 24
+                                    icon.height: 24
+                                    onClicked: root.communitiesStore.removeFileListItem(model.filePath)
+                                }
+                            }
+
                             StatusBaseText {
                                 Layout.fillWidth: true
-                                text: model.filePath
+                                text: "%1 %2".arg("⚠").arg(model.errorMessage)
+                                visible: model.errorMessage
                                 font.pixelSize: 13
-                                elide: Text.ElideRight
-                                wrapMode: Text.WordWrap
-                                maximumLineCount: 2
+                                font.weight: Font.Medium
+                                elide: Text.ElideMiddle
+                                color: Theme.palette.dangerColor1
+                                verticalAlignment: Qt.AlignTop
                             }
-
-                            StatusFlatRoundButton {
-                                Layout.preferredWidth: 32
-                                Layout.preferredHeight: 32
-                                type: StatusFlatRoundButton.Type.Secondary
-                                icon.name: "close"
-                                icon.color: Theme.palette.directColor1
-                                icon.width: 24
-                                icon.height: 24
-                                onClicked: root.communitiesStore.removeFileListItem(model.filePath)
-                            }
-                        }
-
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            text: "%1 %2".arg("⚠").arg(model.errorMessage)
-                            visible: model.errorMessage
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            elide: Text.ElideMiddle
-                            color: Theme.palette.dangerColor1
-                            verticalAlignment: Qt.AlignTop
                         }
                     }
                 }
             }
-
             FileDialog {
                 id: fileDialog
                 title: qsTr("Choose files to import")
@@ -368,11 +500,7 @@ StatusStackModal {
                 }
             }
         },
-
-        ColumnLayout {
-            id: categoriesAndChannelsView
-            spacing: 24
-
+        Item {
             readonly property bool canGoNext: root.communitiesStore.discordChannelsModel.hasSelectedItems
             readonly property var nextAction: function () {
                 d.requestImportDiscordChannel()
@@ -382,94 +510,102 @@ StatusStackModal {
                 root.replace(progressComponent)
             }
 
-            Component {
-                id: progressComponent
-                DiscordImportProgressContents {
-                    width: root.availableWidth
-                    store: root.communitiesStore
-                    importingSingleChannel: true
-                    onClose: root.close()
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: !root.communitiesStore.discordChannelsModel.count
-                Loader {
-                    anchors.centerIn: parent
-                    active: parent.visible
-                    sourceComponent: StatusLoadingIndicator {
-                        width: 50
-                        height: 50
-                    }
-                }
-            }
-
             ColumnLayout {
-                spacing: 12
-                visible: root.communitiesStore.discordChannelsModel.count
+                id: categoriesAndChannelsView
+                spacing: 24
+                anchors.fill: parent
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
 
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: qsTr("Select the chat history you would like to import into #%1...").arg(StatusQUtils.Utils.filterXSS(nameInput.input.text))
-                    wrapMode: Text.WordWrap
-                }
-
-                RowLayout {
-                    spacing: 20
-                    Layout.fillWidth: true
-                    StatusRadioButton {
-                        text: qsTr("Import all history")
-                        checked: true
-                    }
-                    StatusRadioButton {
-                        id: startDateRadio
-                        text: qsTr("Start date")
-                    }
-                    StatusDatePicker {
-                        id: datePicker
-                        Layout.fillWidth: true
-                        selectedDate: new Date(root.communitiesStore.discordOldestMessageTimestamp * 1000)
-                        enabled: startDateRadio.checked
+                Component {
+                    id: progressComponent
+                    DiscordImportProgressContents {
+                        width: root.availableWidth
+                        store: root.communitiesStore
+                        importingSingleChannel: true
+                        onClose: root.close()
                     }
                 }
 
-                Rectangle {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: Theme.palette.baseColor4
+                    visible: !root.communitiesStore.discordChannelsModel.count
+                    Loader {
+                        anchors.centerIn: parent
+                        active: parent.visible
+                        sourceComponent: StatusLoadingIndicator {
+                            width: 50
+                            height: 50
+                        }
+                    }
+                }
 
-                    StatusListView {
-                        anchors.fill: parent
-                        anchors.margins: 16
-                        model: root.communitiesStore.discordCategoriesModel
-                        delegate: ColumnLayout {
-                            width: ListView.view.width
-                            spacing: 8
+                ColumnLayout {
+                    spacing: 12
+                    visible: root.communitiesStore.discordChannelsModel.count
 
-                            StatusBaseText {
-                                readonly property string categoryId: model.id
-                                id: categoryCheckbox
-                                text: model.name
-                            }
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        text: qsTr("Select the chat history you would like to import into #%1...").arg(StatusQUtils.Utils.filterXSS(nameInput.input.text))
+                        wrapMode: Text.WordWrap
+                    }
 
-                            ColumnLayout {
+                    RowLayout {
+                        spacing: 20
+                        Layout.fillWidth: true
+                        StatusRadioButton {
+                            text: qsTr("Import all history")
+                            checked: true
+                        }
+                        StatusRadioButton {
+                            id: startDateRadio
+                            text: qsTr("Start date")
+                        }
+                        StatusDatePicker {
+                            id: datePicker
+                            Layout.fillWidth: true
+                            selectedDate: new Date(root.communitiesStore.discordOldestMessageTimestamp * 1000)
+                            enabled: startDateRadio.checked
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: Theme.palette.baseColor4
+
+                        StatusListView {
+                            anchors.fill: parent
+                            anchors.margins: 16
+                            model: root.communitiesStore.discordCategoriesModel
+                            delegate: ColumnLayout {
+                                width: ListView.view.width
                                 spacing: 8
-                                Layout.fillWidth: true
-                                Layout.leftMargin: 24
-                                Repeater {
+
+                                StatusBaseText {
+                                    readonly property string categoryId: model.id
+                                    id: categoryCheckbox
+                                    text: model.name
+                                }
+
+                                ColumnLayout {
+                                    spacing: 8
                                     Layout.fillWidth: true
-                                    model: root.communitiesStore.discordChannelsModel
-                                    delegate: StatusRadioButton {
-                                        width: parent.width
-                                        text: model.name
-                                        checked: model.selected
-                                        visible: model.categoryId === categoryCheckbox.categoryId
-                                        onToggled: root.communitiesStore.toggleOneDiscordChannel(model.id)
-                                        Component.onCompleted: {
-                                            if (model.selected) {
-                                                root.communitiesStore.toggleOneDiscordChannel(model.id)
+                                    Layout.leftMargin: 24
+                                    Repeater {
+                                        Layout.fillWidth: true
+                                        model: root.communitiesStore.discordChannelsModel
+                                        delegate: StatusRadioButton {
+                                            width: parent.width
+                                            text: model.name
+                                            checked: model.selected
+                                            visible: model.categoryId === categoryCheckbox.categoryId
+                                            onToggled: root.communitiesStore.toggleOneDiscordChannel(model.id)
+                                            Component.onCompleted: {
+                                                if (model.selected) {
+                                                    root.communitiesStore.toggleOneDiscordChannel(model.id)
+                                                }
                                             }
                                         }
                                     }
@@ -512,18 +648,17 @@ StatusStackModal {
 
             ColumnLayout {
                 id: content
-
                 width: scrollView.availableWidth
-                spacing: 0
-
+                spacing: Style.current.padding
                 StatusInput {
                     id: nameInput
                     Layout.fillWidth: true
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
                     input.edit.objectName: "createOrEditCommunityChannelNameInput"
                     label: qsTr("Channel name")
                     charLimit: root.maxChannelNameLength
                     placeholderText: qsTr("# Name the channel")
-
                     input.onTextChanged: {
                         const cursorPosition = input.cursorPosition
                         input.text = Utils.convertSpacesToDashes(input.text)
@@ -532,7 +667,7 @@ StatusStackModal {
                             input.letterIconName = text
                         }
                     }
-                    input.asset.color: colorDialog.color.toString()
+                    input.asset.color: colorPanel.color.toString()
                     input.rightComponent: StatusRoundButton {
                         objectName: "StatusChannelPopup_emojiButton"
                         implicitWidth: 32
@@ -559,48 +694,48 @@ StatusStackModal {
                 }
 
                 Item {
-                    Layout.preferredHeight: 16
                     Layout.fillWidth: true
-                }
+                    Layout.preferredHeight: 82
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
+                    StatusBaseText {
+                        width: parent.width
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        text: qsTr("Channel colour")
+                    }
+                    StatusPickerButton {
+                        id: colorSelectorButton
 
-                ColorPicker {
-                    id: colorDialog
-                    Layout.fillWidth: true
-                    title: qsTr("Channel colour")
-                    color: root.isEdit && root.channelColor ? root.channelColor : Theme.palette.primaryColor1
-                    onPick: root.replace(colorPanel)
-
-                    Component {
-                        id: colorPanel
-                        ColorPanel {
-                            title: qsTr("Channel colour")
-                            buttonText: qsTr("Select Colour")
-                            Component.onCompleted: color = colorDialog.color
-                            onAccepted: {
-                                colorDialog.color = color
-                                root.replaceItem = undefined
+                        property string validationError: ""
+                        width: parent.width
+                        anchors.bottom: parent.bottom
+                        bgColor: colorPanel.colorSelected ? colorPanel.color : Theme.palette.baseColor2
+                        contentColor: colorPanel.colorSelected ? Theme.palette.white : Theme.palette.baseColor1
+                        text: colorPanel.colorSelected ? colorPanel.color.toString().toUpperCase() : qsTr("Pick a colour")
+                        onClicked: { d.currentPage = CreateChannelPopup.CurrentPage.ColorPicker; d.colorPickerOpened = true; }
+                        onTextChanged: {
+                            if (colorPanel.colorSelected) {
+                                validationError = Utils.validateAndReturnError(text, communityColorValidator)
                             }
                         }
                     }
                 }
 
-                Item {
-                    Layout.preferredHeight: 16
-                    Layout.fillWidth: true
-                }
-
                 StatusInput {
                     id: descriptionTextArea
                     Layout.fillWidth: true
+                    Layout.topMargin: Style.current.halfPadding
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
                     input.edit.objectName: "createOrEditCommunityChannelDescriptionInput"
                     input.verticalAlignment: TextEdit.AlignTop
                     label: qsTr("Description")
                     charLimit: 140
-
                     placeholderText: qsTr("Describe the channel")
                     input.multiline: true
-                    minimumHeight: 88
-                    maximumHeight: 88
+                    minimumHeight: 108
+                    maximumHeight: 108
                     validators: [
                         StatusMinLengthValidator {
                             minLength: 1
@@ -612,6 +747,189 @@ StatusStackModal {
                         }
                     ]
                 }
+                Separator { 
+                    Layout.fillWidth: true
+                    visible: viewOnlyCanAddReactionCheckbox.visible
+                }
+                StatusCheckBox {
+                    id: viewOnlyCanAddReactionCheckbox
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 48
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
+                    leftSide: false
+                    text: qsTr("Hide channel from members who don't have permissions to view the channel")
+                    visible: false //TODO: Enable connect to the backend when it's ready https://github.com/status-im/status-desktop/issues/13291
+                    checked: d.hideIfPermissionsNotMet
+                    onToggled: {
+                        d.hideIfPermissionsNotMet = checked;
+                    }
+                }
+                Separator {
+                    Layout.fillWidth: true
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 56
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
+                    StatusBaseText {
+                        text: qsTr("Permissions")
+                    }
+                    Item { Layout.fillWidth: true }
+                    StatusButton {
+                        text: qsTr("Add permission")
+                        enabled: !!nameInput.text
+                        property ListModel channelToAddPermission: ListModel { }
+                        onClicked: {
+                            channelToAddPermission.clear();
+                            channelToAddPermission.append({"key": root.chatId, "name": nameInput.text});
+                            const propertiess = {
+                                channelsToEditModel: channelToAddPermission,
+                                header: null,
+                                topPadding: -root.subHeaderPadding - 8,
+                                leftPadding: 0,
+                                rightPadding: 16,
+                                viewWidth: scrollView.availableWidth - 32
+                            };
+                            editPermissionView.pushEditView(propertiess);
+                            d.currentPage = CreateChannelPopup.CurrentPage.ChannelPermissions;
+                        }
+                    }
+                }
+                PermissionsView {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignBottom
+                    Layout.leftMargin: Style.current.padding
+                    Layout.rightMargin: Style.current.padding
+                    viewWidth: (scrollView.availableWidth - 32)
+                    permissionsModel: d.channelEditModel.channelPermissionsModel
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
+                    viewOnlyCanAddReaction: root.viewOnlyCanAddReaction
+                    channelsModel: d.channelEditModel.liveChannelsModel
+                    communityDetails: d.communityDetails
+                    showChannelOptions: true
+                    allowIntroPanel: false
+                    onRemovePermissionRequested: {
+                        console.assert(d.channelEditModel.removePermission(index))
+                    }
+                    onDuplicatePermissionRequested: {
+                        const item = StatusQUtils.ModelUtils.get(d.channelEditModel.channelPermissionsModel, index);
+                        const properties = {
+                            holdingsToEditModel: item.holdingsListModel,
+                            channelsToEditModel: item.channelsListModel,
+                            permissionTypeToEdit: item.permissionType,
+                            isPrivateToEditValue: item.isPrivate,
+                            header: null,
+                            topPadding: -root.subHeaderPadding - 8,
+                            leftPadding: 0,
+                            rightPadding: 16,
+                            viewWidth: scrollView.availableWidth - 32
+                        }
+                        editPermissionView.pushEditView(properties);
+                        editPermissionView.currentItem.resetChanges()
+                        d.currentPage = CreateChannelPopup.CurrentPage.ChannelPermissions;
+                    }
+
+                    onEditPermissionRequested: {
+                        const item = d.channelEditModel.channelPermissionsModel.get(index);
+                        const requireHoldings = (item.holdingsListModel.count ?? item.holdingsListModel.rowCount()) > 0;
+                        const properties = {
+                            permissionKeyToEdit: item.key,
+                            holdingsToEditModel: item.holdingsListModel,
+                            channelsToEditModel: item.channelsListModel,
+                            permissionTypeToEdit: item.permissionType,
+                            isPrivateToEditValue: item.isPrivate,
+                            header: null,
+                            topPadding: -root.subHeaderPadding - 8,
+                            leftPadding: 0,
+                            rightPadding: 16,
+                            viewWidth: scrollView.availableWidth - 32
+                        }
+                        editPermissionView.pushEditView(properties);
+                        editPermissionView.currentItem.resetChanges()
+
+                        d.currentPage = CreateChannelPopup.CurrentPage.ChannelPermissions;
+                    }
+                    onUserRestrictionsToggled: {
+                        d.viewOnlyCanAddReaction = checked;
+                    }
+                }
+            }
+            readonly property var nextAction: function () {
+                if (!root.isDiscordImport) {
+                    if (!d.isFormValid()) {
+                        scrollView.scrollBackUp()
+                        return
+                    }
+
+                    d.saveAndClose()
+                } else {
+                    d.currentPage = CreateChannelPopup.CurrentPage.DiscordImportUploadFile;
+                }
+            }
+        },
+        ColorPanel {
+            id: colorPanel
+            readonly property string stackTitleText: qsTr("Channel Colour")
+            readonly property string nextButtonText: qsTr("Select Channel Colour")
+            padding: 0
+            leftPadding: 16
+            rightPadding: 16
+            height: Math.min(parent.height, 624)
+            property bool colorSelected: root.isEdit && root.channelColor
+            color: root.isEdit && root.channelColor ? root.channelColor : Theme.palette.primaryColor1
+            onAccepted: {
+                colorSelected = true; d.colorPickerOpened = false; d.currentPage = CreateChannelPopup.CurrentPage.ChannelDetails;
+            }
+            readonly property var nextAction: function () {
+                accepted();
+            }
+        },
+        PermissionsSettingsPanel {
+            id: editPermissionView
+            
+            leftPadding: 16
+            rightPadding: 16
+            initialPage.header: null
+            initialPage.topPadding: 0
+            initialPage.leftPadding: 0
+            viewWidth: scrollView.availableWidth - 32
+            readonly property string nextButtonText: !!currentItem.permissionKeyToEdit ?
+                                                         qsTr("Update permission") : qsTr("Create permission")
+            readonly property string stackTitleText: !!currentItem.permissionKeyToEdit ?
+                                                         qsTr("Edit #%1 permission").arg(nameInput.text) : qsTr("New #%1 permission").arg(nameInput.text)
+            readonly property string deleteButtonText: !!currentItem.permissionKeyToEdit ?
+                                                           qsTr("Revert changes") : ""
+            readonly property bool canGoNext: !!currentItem && currentItem.isDirty && currentItem.isFullyFilled ? currentItem.isDirty && currentItem.isFullyFilled : false
+            readonly property bool deleteButtonEnabled: editPermissionView.canGoNext
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+            permissionsModel: d.channelEditModel.channelPermissionsModel
+            channelsModel: d.channelEditModel.liveChannelsModel
+            communityDetails: d.communityDetails
+            showChannelSelector: false
+            readonly property var nextDeleteAction: function () {
+                if (!!currentItem.permissionKeyToEdit) {
+                    currentItem.resetChanges();
+                }
+            }
+            readonly property var nextAction: function () {
+                if (!!currentItem.permissionKeyToEdit) {
+                    currentItem.updatePermission();
+                } else {
+                    currentItem.createPermission();
+                }
+            }
+            onCreatePermissionRequested: {
+                d.channelEditModel.appendPermission(holdings, channels, permissionType, isPrivate)
+                d.currentPage = CreateChannelPopup.CurrentPage.ChannelDetails;
+            }
+
+            onUpdatePermissionRequested: {
+                d.channelEditModel.editPermission(key, permissionType, holdings, channels, isPrivate)
+                d.currentPage = CreateChannelPopup.CurrentPage.ChannelDetails;
             }
         }
     ]
