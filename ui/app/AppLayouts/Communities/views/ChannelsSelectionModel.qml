@@ -41,15 +41,6 @@ SortFilterProxyModel {
             expectedRoles: ["icon"]
         },
         FastExpressionRole {
-            function getColor(color, colorId) {
-                return !!color ? color
-                                : Theme.palette.userCustomizationColors[colorId]
-            }
-            name: "color"
-            expression: getColor(model.color, model.colorId)
-            expectedRoles: ["color", "colorId"]
-        },
-        FastExpressionRole {
             name: "operator"
 
             // Direct call for singleton enum is not handled properly by SortFilterProxyModel.

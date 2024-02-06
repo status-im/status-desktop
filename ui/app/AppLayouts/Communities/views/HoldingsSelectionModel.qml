@@ -5,6 +5,7 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.controls 1.0
 
 import StatusQ.Core.Utils 0.1
+import StatusQ 0.1
 
 import utils 1.0
 
@@ -21,7 +22,7 @@ SortFilterProxyModel {
     }
 
     proxyRoles: [
-        ExpressionRole {
+        FastExpressionRole {
             name: "text"
 
             function getName(type, key) {
@@ -50,8 +51,9 @@ SortFilterProxyModel {
                 _collectiblesChanges.revision
                 return getText(model.type, model.key, model.amount)
             }
+            expectedRoles: ["type", "key", "amount"]
         },
-        ExpressionRole {
+        FastExpressionRole {
             name: "imageSource"
 
             function getIcon(type, key) {
@@ -69,14 +71,16 @@ SortFilterProxyModel {
                 _collectiblesChanges.revision
                 return getIcon(model.type, model.key)
             }
+            expectedRoles: ["type", "key"]
         },
-        ExpressionRole {
+        FastExpressionRole {
             name: "operator"
 
             // Direct call for singleton enum is not handled properly by SortFilterProxyModel.
             readonly property int none: OperatorsUtils.Operators.None
 
             expression: none
+            expectedRoles: []
         }
     ]
 }
