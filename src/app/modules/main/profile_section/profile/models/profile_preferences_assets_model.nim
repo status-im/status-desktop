@@ -121,16 +121,7 @@ QtObject:
 
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
-      self.dataChanged(index, index, @[
-        ModelRole.ShowcaseVisibility.int,
-        ModelRole.Order.int,
-        ModelRole.Address.int,
-        ModelRole.CommunityId.int,
-        ModelRole.Symbol.int,
-        ModelRole.Name.int,
-        ModelRole.EnabledNetworkBalance.int,
-        ModelRole.Decimals.int,
-      ])
+      self.dataChanged(index, index)
 
   proc upsertItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
@@ -175,16 +166,25 @@ QtObject:
     if ind != -1:
       self.remove(ind)
 
-  proc move*(self: ProfileShowcaseAssetsModel, fromIndex: int, toIndex: int) {.slot.} =
-    if fromIndex < 0 or fromIndex >= self.items.len:
+  proc move*(self: ProfileShowcaseAssetsModel, fromRow: int, toRow: int, dummyCount: int = 1) {.slot.} =
+    if fromRow < 0 or fromRow >= self.items.len:
       return
 
-    self.beginResetModel()
-    let item = self.items[fromIndex]
-    self.items.delete(fromIndex)
-    self.items.insert(@[item], toIndex)
+    let sourceIndex = newQModelIndex()
+    defer: sourceIndex.delete
+    let destIndex = newQModelIndex()
+    defer: destIndex.delete
+
+    var destRow = toRow
+    if toRow > fromRow:
+      inc(destRow)
+
+    self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, destRow)
+    let item = self.items[fromRow]
+    self.items.delete(fromRow)
+    self.items.insert(@[item], toRow)
     self.recalcOrder()
-    self.endResetModel()
+    self.endMoveRows()
 
   proc setVisibilityByIndex*(self: ProfileShowcaseAssetsModel, ind: int, visibility: int) {.slot.} =
     if (visibility >= ord(low(ProfileShowcaseVisibility)) and
