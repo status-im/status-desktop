@@ -13,6 +13,7 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 
 import shared.popups 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import utils 1.0
 
@@ -112,7 +113,8 @@ StatusDialog {
                     // Pre-populated dialog with the relevant Owner token info:
                     root.sendModalPopup.preSelectedSendType = Constants.SendType.ERC721Transfer
                     root.sendModalPopup.preSelectedAccount = ModelUtils.getByKey(root.accounts, "address", token.accountAddress)
-                    const uid = token.chainId+"+"+token.tokenAddress.toLowerCase()+"+"+"0" // TODO use getUidForData
+                    const store = WalletStores.RootStore.currentActivityFiltersStore
+                    const uid = store.collectiblesList.getUidForData(token.key, token.tokenAddress, token.chainId);
                     root.sendModalPopup.preSelectedHoldingID = uid
                     root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC721
                     root.sendModalPopup.open()
