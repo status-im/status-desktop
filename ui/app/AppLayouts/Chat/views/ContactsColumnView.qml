@@ -141,7 +141,6 @@ Item {
 
                 popupMenu: ChatContextMenuView {
                     id: chatContextMenuView
-                    emojiPopup: root.emojiPopup
                     showDebugOptions: root.store.isDebugEnabled
 
                     openHandler: function (id) {

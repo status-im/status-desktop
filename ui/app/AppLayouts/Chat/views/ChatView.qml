@@ -166,6 +166,19 @@ StatusSectionLayout {
             rootStore: root.rootStore
             emojiPopup: root.emojiPopup
             onSearchButtonClicked: root.openAppSearch()
+            onDisplayEditChannelPopup: {
+                Global.openPopup(contactColumnLoader.item.createChannelPopup, {
+                    isEdit: true,
+                    chatId: chatId,
+                    channelName: chatName,
+                    channelDescription: chatDescription,
+                    channelEmoji: chatEmoji,
+                    channelColor: chatColor,
+                    categoryId: chatCategoryId,
+                    channelPosition: channelPosition,
+                    deleteChatConfirmationDialog: deleteDialog
+                });
+            }
         }
     }
 

@@ -38,14 +38,14 @@ StatusScrollView {
 
     readonly property alias dirtyValues: d.dirtyValues
 
-    readonly property bool isFullyFilled:
-        (dirtyValues.selectedHoldingsModel.count > 0 || !whoHoldsSwitch.checked) &&
+    readonly property bool isFullyFilled: (dirtyValues.selectedHoldingsModel.count > 0 || !whoHoldsSwitch.checked) &&
         dirtyValues.permissionType !== PermissionTypes.Type.None &&
-        (d.isCommunityPermission || dirtyValues.selectedChannelsModel.count > 0)
+        (d.isCommunityPermission || !showChannelSelector || dirtyValues.selectedChannelsModel.count > 0)
 
     property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
     property bool holdingsRequired: true
+    property bool showChannelSelector: true
 
     // roles: type, key, name, amount, imageSource
     property var selectedHoldingsModel: ListModel {}
@@ -430,6 +430,7 @@ StatusScrollView {
             PermissionsDropdown {
                 id: permissionsDropdown
 
+                allowCommunityOptions: root.showChannelSelector
                 initialPermissionType: d.dirtyValues.permissionType
                 enableAdminPermission: root.communityDetails.owner
 
@@ -454,7 +455,7 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayout.Separator { visible: root.showChannelSelector }
 
         StatusItemSelector {
             id: inSelector
@@ -463,7 +464,7 @@ StatusScrollView {
 
             addButton.visible: editable
             itemsClickable: editable
-
+            visible: root.showChannelSelector
             Layout.fillWidth: true
             icon: d.isCommunityPermission ? Style.svg("communities") : Style.svg("create-category")
             title: qsTr("In")
@@ -566,7 +567,7 @@ StatusScrollView {
             color: Theme.palette.baseColor2
         }
 
-        HidePermissionPanel {
+        StatusIconSwitch {
             Layout.topMargin: 12
             Layout.fillWidth: true
             Layout.leftMargin: 16
@@ -574,6 +575,9 @@ StatusScrollView {
 
             enabled: d.dirtyValues.permissionType !== PermissionTypes.Type.Admin
             checked: d.dirtyValues.isPrivate
+            title: qsTr("Hide permission")
+            subTitle: qsTr("Make this permission hidden from members who don’t meet its requirements")
+            icon: "hide"
             onToggled: d.dirtyValues.isPrivate = checked
         }
 
@@ -600,7 +604,7 @@ StatusScrollView {
         StatusWarningBox {
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
-
+            visible: root.showChannelSelector
             icon: "desktop"
             text: qsTr("Any changes to community permissions will take effect after the control node receives and processes them")
             borderColor: Theme.palette.baseColor1
@@ -613,7 +617,7 @@ StatusScrollView {
             Layout.fillWidth: true
             Layout.topMargin: Style.current.bigPadding
 
-            visible: !root.isEditState
+            visible: !root.isEditState && root.showChannelSelector
             text: qsTr("Create permission")
             enabled: root.isFullyFilled
                      && !root.permissionDuplicated

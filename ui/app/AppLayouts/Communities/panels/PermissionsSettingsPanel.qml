@@ -5,9 +5,11 @@ import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
+import utils 1.0
 import shared.popups 1.0
 
 StackView {
@@ -17,6 +19,8 @@ StackView {
     required property var assetsModel
     required property var collectiblesModel
     required property var channelsModel
+    property bool showChannelSelector: true
+    property alias initialPage: initialItem
 
     // id, name, image, color, owner properties expected
     required property var communityDetails
@@ -38,8 +42,13 @@ StackView {
             pop(StackView.Immediate)
     }
 
+    function pushEditView(properties) {
+        root.push(newPermissionView, properties, StackView.Immediate);
+    }
+
     // Community Permissions possible view contents:
     initialItem: SettingsPage {
+        id: initialItem
         implicitWidth: 0
 
         title: qsTr("Permissions")
@@ -52,45 +61,51 @@ StackView {
             onClicked: root.push(newPermissionView, StackView.Immediate)
         }
 
-        contentItem: PermissionsView {
-            permissionsModel: root.permissionsModel
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-            channelsModel: root.channelsModel
-            communityDetails: root.communityDetails
+        contentItem: StatusScrollView {
+            contentHeight: (permissionsView.height + topPadding)
+            topPadding: permissionsView.topPadding
+            padding: 0
+            PermissionsView {
+                id: permissionsView
+                permissionsModel: root.permissionsModel
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+                channelsModel: root.channelsModel
+                communityDetails: root.communityDetails
 
-            viewWidth: root.viewWidth
+                viewWidth: root.viewWidth
 
-            onEditPermissionRequested: {
-                const item = ModelUtils.get(root.permissionsModel, index)
+                onEditPermissionRequested: {
+                    const item = ModelUtils.get(root.permissionsModel, index)
 
-                const properties = {
-                    permissionKeyToEdit: item.key,
-                    holdingsToEditModel: item.holdingsListModel,
-                    channelsToEditModel: item.channelsListModel,
-                    permissionTypeToEdit: item.permissionType,
-                    isPrivateToEditValue: item.isPrivate
+                    const properties = {
+                        permissionKeyToEdit: item.key,
+                        holdingsToEditModel: item.holdingsListModel,
+                        channelsToEditModel: item.channelsListModel,
+                        permissionTypeToEdit: item.permissionType,
+                        isPrivateToEditValue: item.isPrivate
+                    }
+
+                    root.pushEditView(properties);
                 }
 
-                root.push(newPermissionView, properties, StackView.Immediate)
-            }
+                onDuplicatePermissionRequested: {
+                    const item = ModelUtils.get(root.permissionsModel, index)
 
-            onDuplicatePermissionRequested: {
-                const item = ModelUtils.get(root.permissionsModel, index)
+                    const properties = {
+                        holdingsToEditModel: item.holdingsListModel,
+                        channelsToEditModel: item.channelsListModel,
+                        permissionTypeToEdit: item.permissionType,
+                        isPrivateToEditValue: item.isPrivate
+                    }
 
-                const properties = {
-                    holdingsToEditModel: item.holdingsListModel,
-                    channelsToEditModel: item.channelsListModel,
-                    permissionTypeToEdit: item.permissionType,
-                    isPrivateToEditValue: item.isPrivate
+                    root.pushEditView(properties);
                 }
 
-                root.push(newPermissionView, properties, StackView.Immediate)
-            }
-
-            onRemovePermissionRequested: {
-                const key = ModelUtils.get(root.permissionsModel, index, "key")
-                root.removePermissionRequested(key)
+                onRemovePermissionRequested: {
+                    const key = ModelUtils.get(root.permissionsModel, index, "key")
+                    root.removePermissionRequested(key)
+                }
             }
         }
     }
@@ -100,19 +115,32 @@ StackView {
 
         SettingsPage {
             id: newPermissionViewPage
-
             implicitWidth: 0
-
             title: isEditState ? qsTr("Edit permission") : qsTr("New permission")
 
+            property alias isDirty: editPermissionView.dirty
+            property alias isFullyFilled: editPermissionView.isFullyFilled
+            property alias isPrivateToEditValue: editPermissionView.isPrivate
+            property alias permissionTypeToEdit: editPermissionView.permissionType
             property alias holdingsToEditModel: editPermissionView.selectedHoldingsModel
             property alias channelsToEditModel: editPermissionView.selectedChannelsModel
-            property alias permissionTypeToEdit: editPermissionView.permissionType
-            property alias isPrivateToEditValue: editPermissionView.isPrivate
+
+            property bool holdingsRequired: editPermissionView.dirtyValues.holdingsRequired
 
             property string permissionKeyToEdit
             readonly property bool isEditState: !!permissionKeyToEdit
+
             readonly property alias toast: settingsDirtyToastMessage
+
+            function resetChanges() {
+                editPermissionView.resetChanges();
+            }
+            function updatePermission() {
+                editPermissionView.saveChanges();
+            }
+            function createPermission() {
+                editPermissionView.createPermissionClicked();
+            }
 
             contentItem: EditPermissionView {
                 id: editPermissionView
@@ -123,7 +151,7 @@ StackView {
                 collectiblesModel: root.collectiblesModel
                 channelsModel: root.channelsModel
                 communityDetails: root.communityDetails
-
+                showChannelSelector: root.showChannelSelector
                 isEditState: newPermissionViewPage.isEditState
                 holdingsRequired: selectedHoldingsModel
                                   ? selectedHoldingsModel.count > 0 : false
@@ -191,14 +219,18 @@ StackView {
                                            dirtyValues.selectedHoldingsModel,
                                            ["key", "type", "amount"]) : []
 
-                    const channels = ModelUtils.modelToArray(
-                                       dirtyValues.selectedChannelsModel, ["key"])
+                    const channels = root.showChannelSelector ?
+                                   ModelUtils.modelToArray(
+                                       dirtyValues.selectedChannelsModel, ["key"]) :
+                                   ModelUtils.modelToArray(selectedChannelsModel, ["key"])
 
                     root.createPermissionRequested(
                                 dirtyValues.permissionType, holdings, channels,
                                 dirtyValues.isPrivate)
 
-                    root.pop(StackView.Immediate)
+                    if (root.showChannelSelector) {
+                        root.pop(StackView.Immediate)
+                    }
                 }
 
                 onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)
@@ -261,7 +293,8 @@ StackView {
                     // delay to avoid toast blinking on entry
                     settingsDirtyToastMessage.active = Qt.binding(
                                      () => editPermissionView.isEditState &&
-                                           editPermissionView.dirty)
+                                           editPermissionView.dirty &&
+                                           root.showChannelSelector)
                 }
             }
         }

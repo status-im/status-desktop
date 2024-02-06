@@ -58,23 +58,9 @@ QtObject {
         d.editPermission(key, permissionType, holdings, channels, isPrivate)
     }
 
-    // Function duplicating a permission. The new permission will be have a different id and key
-    function duplicatePermission(index) {
-        const permission = channelPermissionsModel.get(index)
-
-        if (!permission)
-            return
-
-        permission.id = Utils.uuid()
-        permission.key = Utils.uuid()
-        permission.holdingsListModel = d.newHoldingsModel(StatusQUtils.ModelUtils.modelToArray(permission.holdingsListModel))
-        permission.channelsListModel = d.newChannelsModel(StatusQUtils.ModelUtils.modelToArray(permission.channelsListModel))
-        channelPermissionsModel.append(permission)
-    }
-
     // Function removing a permission by index
     function removePermission(index) {
-        channelPermissionsModel.remove(index, 1);
+        return channelPermissionsModel.remove(index, 1);
     }
 
 

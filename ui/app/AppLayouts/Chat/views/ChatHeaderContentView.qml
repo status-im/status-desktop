@@ -27,6 +27,14 @@ Item {
     property int padding: Style.current.halfPadding
 
     signal searchButtonClicked()
+    signal displayEditChannelPopup(string chatId,
+                                   string chatName,
+                                   string chatDescription,
+                                   string chatEmoji,
+                                   string chatColor,
+                                   string chatCategoryId,
+                                   int channelPosition,
+                                   var deleteDialog)
 
     function addRemoveGroupMember() {
         root.state = d.stateMembersSelectorContent
@@ -140,7 +148,6 @@ Item {
             ChatContextMenuView {
                 id: contextMenu
                 objectName: "moreOptionsContextMenu"
-                emojiPopup: root.emojiPopup
                 showDebugOptions: root.rootStore.isDebugEnabled
                 openHandler: function () {
                     if(!chatContentModule) {
@@ -218,17 +225,11 @@ Item {
                 onDisplayProfilePopup: {
                     Global.openProfilePopup(publicKey)
                 }
-
-                onEditCommunityChannel: {
-                    root.rootStore.editCommunityChannel(
-                                chatId,
-                                newName,
-                                newDescription,
-                                newEmoji,
-                                newColor,
-                                newCategory,
-                                channelPosition // TODO change this to the signal once it is modifiable
-                                )
+                onDisplayEditChannelPopup: {
+                    root.displayEditChannelPopup(chatId, chatName, chatDescription,
+                                                 chatEmoji, chatColor,
+                                                 chatCategoryId, channelPosition,
+                                                 contextMenu.deleteChatConfirmationDialog);
                 }
                 onAddRemoveGroupMember: {
                     root.addRemoveGroupMember()
