@@ -205,9 +205,13 @@ Control {
 
             model: d.sfpm
 
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
+            // For some reason displaced transition doesn't work correctly in
+            // combination of delegate using Loader and leads to improper
+            // delegates positioning when the top-most item from the list is
+            // removed.
+            //displaced: Transition {
+            //    NumberAnimation { properties: "x,y" }
+            //}
 
             delegate: Loader {
                 required property var model
