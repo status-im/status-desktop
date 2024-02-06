@@ -172,7 +172,7 @@ Control {
                     if (to === from)
                         return
                     root.showcaseEntryChanged()
-                    showcaseModel.move(from, to)
+                    showcaseModel.move(from, to, 1)
                     drag.accept()
                 }
 
