@@ -78,6 +78,10 @@ QtObject {
         return Internal.PermissionUtils.getUniquePermissionChannels(model, permissionsTypesArray)
     }
 
+    function getUniqueChannelPermission(model, channelKey) {
+        return Internal.PermissionUtils.getUniquePermissionChannels(model, channelKey)
+    }
+
     function setHoldingsTextFormat(type, name, amount) {
         if (typeof amount === "string")
             amount = AmountsArithmetic.toNumber(AmountsArithmetic.fromString(amount))
