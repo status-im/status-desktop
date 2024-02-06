@@ -1,6 +1,9 @@
 import QtQml 2.15
 
 import SortFilterProxyModel 0.2
+
+import StatusQ 0.1
+
 import utils 1.0
 
 QtObject {
@@ -14,16 +17,43 @@ QtObject {
     readonly property var permissionsModel:
         chatCommunitySectionModuleInst.permissionsModel
 
-    readonly property var becomeMemberPermissionsModel: SortFilterProxyModel {
-        id: becomeMemberPermissionsModel
+    function setViewOnlyCanAddReaction(chatId, checked) {
+        //TODO: backend implementation
+    }
+
+    function setHideIfPermissionsNotMet(chatId, checked) {
+        //TODO: backend implementation
+    }
+
+    // TODO: Replace with proper backend implementation
+    // This is per chat, not per community
+    readonly property bool viewAndPostCriteriaMet: {
+        if (selectedChannelPermissionsModel.count == 0)
+            return true
+
+        for (var i = 0; i < selectedChannelPermissionsModel.count; i++) {
+            var permissionItem = selectedChannelPermissionsModel.get(i);
+            if (permissionItem && permissionItem.tokenCriteriaMet)
+                return true
+        }
+        return false
+    }
+
+    readonly property var selectedChannelPermissionsModel: SortFilterProxyModel {
+        id: selectedChannelPermissionsModel
         sourceModel: root.permissionsModel
+
         function filterPredicate(modelData) {
-            return (modelData.permissionType == Constants.permissionType.member) &&
+            return root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
                 (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
-            ExpressionFilter {
-                expression: becomeMemberPermissionsModel.filterPredicate(model)
+            FastExpressionFilter {
+                expression: {
+                    root.activeChannelId // ensure predicate is re-triggered when activeChannelId changes
+                    selectedChannelPermissionsModel.filterPredicate(model)
+                }
+                expectedRoles: ["id", "tokenCriteriaMet", "isPrivate"]
             }
         ]
     }
@@ -38,11 +68,12 @@ QtObject {
                 (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
-            ExpressionFilter {
+            FastExpressionFilter {
                 expression: {
                     root.activeChannelId // ensure predicate is re-triggered when activeChannelId changes
                     viewOnlyPermissionsModel.filterPredicate(model)
                 }
+                expectedRoles: ["id", "tokenCriteriaMet", "isPrivate", "permissionType"]
             }
         ]
     }
@@ -56,11 +87,27 @@ QtObject {
                 (modelData.tokenCriteriaMet || !modelData.isPrivate)
         }
         filters: [
-            ExpressionFilter {
+            FastExpressionFilter {
                 expression: {
                     root.activeChannelId // ensure predicate is re-triggered when activeChannelId changes
                     viewAndPostPermissionsModel.filterPredicate(model)
                 }
+                expectedRoles: ["id", "tokenCriteriaMet", "isPrivate", "permissionType"]
+            }
+        ]
+    }
+
+    readonly property var becomeMemberPermissionsModel: SortFilterProxyModel {
+        id: becomeMemberPermissionsModel
+        sourceModel: root.permissionsModel
+        function filterPredicate(modelData) {
+            return (modelData.permissionType == Constants.permissionType.member) &&
+                (modelData.tokenCriteriaMet || !modelData.isPrivate)
+        }
+        filters: [
+            FastExpressionFilter {
+                expression: becomeMemberPermissionsModel.filterPredicate(model)
+                expectedRoles: ["permissionType", "tokenCriteriaMet", "isPrivate"]
             }
         ]
     }
@@ -71,20 +118,9 @@ QtObject {
 
     readonly property QtObject _d: QtObject {
         id: d
-
-        function createPermissionEntry(holdings, permissionType, isPrivate,
-                                       channels) {
-            return {
-                holdingsListModel: holdings,
-                channelsListModel: channels,
-                permissionType,
-                isPrivate
-            }
-        }
-
+        
         function createOrEdit(key, holdings, permissionType, isPrivate,
                               channels) {
-
             root.chatCommunitySectionModuleInst.createOrEditCommunityTokenPermission(
                         root.activeSectionId, key,
                         permissionType,
