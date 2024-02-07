@@ -27,6 +27,7 @@ StatusMenu {
     property int channelPosition: -1
     property string chatCategoryId: ""
     property var emojiPopup
+    property bool showDebugOptions: false
 
     signal displayProfilePopup(string publicKey)
     signal requestAllHistoricMessages(string chatId)
@@ -127,7 +128,7 @@ StatusMenu {
         objectName: "chatFetchMessagesMenuItem"
         text: qsTr("Fetch messages")
         icon.name: "download"
-        enabled: !production
+        enabled: root.showDebugOptions
         onTriggered: {
             root.requestMoreMessages(root.chatId)
         }

@@ -141,6 +141,7 @@ Item {
                 id: contextMenu
                 objectName: "moreOptionsContextMenu"
                 emojiPopup: root.emojiPopup
+                showDebugOptions: root.rootStore.isDebugEnabled
                 openHandler: function () {
                     if(!chatContentModule) {
                         console.debug("error on open chat context menu handler - chat content module is not set")

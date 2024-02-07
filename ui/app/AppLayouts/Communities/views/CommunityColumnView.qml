@@ -298,6 +298,7 @@ Item {
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
                 emojiPopup: root.emojiPopup
+                showDebugOptions: root.store.isDebugEnabledfir 
 
                 // TODO pass the chatModel in its entirety instead of fetching the JSOn using just the id
                 openHandler: function (id) {
