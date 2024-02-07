@@ -44,9 +44,6 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED) do(e:Args):
-    self.view.modelsAboutToUpdate()
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.view.modelsUpdated()
     self.view.setHasBalanceCache(self.controller.getHasBalanceCache())

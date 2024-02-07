@@ -56,8 +56,5 @@ QtObject:
     self.hasMarketValuesCache = hasMarketValuesCache
     self.hasMarketValuesCacheChanged()
 
-  proc modelsAboutToUpdate*(self: View) =
-    self.groupedAccountAssetsModel.modelsAboutToUpdate()
-
   proc modelsUpdated*(self: View) =
     self.groupedAccountAssetsModel.modelsUpdated()

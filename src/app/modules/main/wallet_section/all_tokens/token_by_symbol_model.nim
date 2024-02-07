@@ -128,12 +128,10 @@ QtObject:
       of ModelRole.MarketDetailsLoading:
         result = newQVariant(self.delegate.getTokensMarketValuesLoading())
 
-  proc modelsAboutToUpdate*(self: TokensBySymbolModel) =
+  proc modelsUpdated*(self: TokensBySymbolModel) =
+    self.beginResetModel()
     self.tokenMarketDetails = @[]
     self.addressPerChainModel = @[]
-    self.beginResetModel()
-
-  proc modelsUpdated*(self: TokensBySymbolModel) =
     let tokensList = self.delegate.getTokenBySymbolList()
     for index in countup(0, tokensList.len-1):
       self.addressPerChainModel.add(newAddressPerChainModel(self.delegate, index))

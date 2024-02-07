@@ -33,7 +33,6 @@ const CRYPTO_SUB_UNITS_TO_FACTOR = {
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
-const SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED* = "tokensListAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED* = "tokensDetailsAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
 const SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED* = "tokensMarketValuesAboutToBeUpdated"
@@ -342,8 +341,6 @@ QtObject:
       error "error: ", errDesription
 
   proc getSupportedTokensList*(self: Service) =
-    # this is emited so that the models can know that an update is about to happen
-    self.events.emit(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED, Args())
     let arg = QObjectTaskArg(
       tptr: cast[ByteAddress](getSupportedTokenList),
       vptr: cast[ByteAddress](self.vptr),
