@@ -142,6 +142,7 @@ Item {
                 popupMenu: ChatContextMenuView {
                     id: chatContextMenuView
                     emojiPopup: root.emojiPopup
+                    showDebugOptions: root.store.isDebugEnabled
 
                     openHandler: function (id) {
                         let jsonObj = root.chatSectionModule.getItemAsJson(id)
