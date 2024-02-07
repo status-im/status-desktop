@@ -247,7 +247,6 @@ SettingsContentBase {
                     profileStore: root.profileStore
                     contactsStore: root.contactsStore
                     networkConnectionStore: root.networkConnectionStore
-                    communitiesModel: root.communitiesModel
                     onClosed: destroy()
                 }
             }

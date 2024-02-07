@@ -8,7 +8,8 @@ import shared.stores 1.0
 import mainui 1.0
 
 import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as CoreUtils
+
+import AppLayouts.Wallet.stores 1.0
 
 import Storybook 1.0
 import Models 1.0
@@ -35,6 +36,10 @@ SplitView {
 
         function isCompressedPubKey(publicKey) { return true }
 
+        function addTimestampToURL(url) {
+            return url
+        }
+
         Component.onCompleted: {
             Utils.globalUtilsInst = this
             root.globalUtilsReady = true
@@ -48,9 +53,9 @@ SplitView {
 
     // mainModuleInst mock
     QtObject {
-        function getContactDetailsAsJson(publicKey, getVerificationRequest) {
-            return JSON.stringify({ displayName: displayName.text || "Mock User Name",
-                                      optionalName: optionalName.text,
+        function getContactDetailsAsJson(publicKey, getVerificationRequest=false) {
+            return JSON.stringify({ displayName: displayName.text,
+                                      optionalName: "",
                                       displayIcon: "",
                                       publicKey: publicKey,
                                       name: name.text,
@@ -62,16 +67,12 @@ SplitView {
                                       thumbnailImage: "",
                                       largeImage: userImage.checked ? Style.png("status-logo") : "",
                                       isContact: isContact.checked,
-                                      isAdded: isAdded.checked,
                                       isBlocked: isBlocked.checked,
-                                      removed: removed.checked,
-                                      requestReceived: hasAddedUs.checked,
-                                      hasAddedUs: hasAddedUs.checked, // same as above
                                       isSyncing: false,
                                       trustStatus: trustStatus.currentValue,
                                       verificationStatus: Constants.verificationStatus.unverified,
                                       incomingVerificationStatus: Constants.verificationStatus.unverified,
-                                      contactRequestState: Constants.ContactRequestState.None,
+                                      contactRequestState: ctrlContactRequestState.currentValue,
                                       bio: bio.text,
                                       socialLinks: JSON.stringify
                                                    ([{
@@ -105,9 +106,22 @@ SplitView {
                 function changeContactNickname(publicKey, newNickname) {
                     logs.logEvent("rootStore::contactStore::changeContactNickname", ["publicKey", "newNickname"], arguments)
                 }
+
+                function blockContact(publicKey) {
+                    logs.logEvent("rootStore::contactsStore::blockContact", ["publicKey"], arguments)
+                }
+
+                function unblockContact(publicKey) {
+                    logs.logEvent("rootStore::contactsStore::unblockContact", ["publicKey"], arguments)
+                }
             }
         }
         communityTokensStore: CommunityTokensStore {}
+    }
+
+    WalletAssetsStore {
+        id: assetsStore
+        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     SplitView {
@@ -131,6 +145,8 @@ SplitView {
                     sourceComponent: ProfileDialogView {
                         implicitWidth: 640
 
+                        readOnly: ctrlReadOnly.checked
+
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")
@@ -140,11 +156,19 @@ SplitView {
                             readonly property string ensName: name.text
 
                             function getQrCodeSource() {
-                                return ""
+                                return "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
                             }
                             function copyToClipboard(text) {
                                 logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
                             }
+                            function requestProfileShowcase(publicKey) {
+                                console.warn("STUB: requestProfileShowcase(publicKey)")
+                            }
+
+                            readonly property var profileShowcaseCommunitiesModel: CommunitiesModel {}
+                            readonly property var profileShowcaseAccountsModel: WalletAccountsModel {}
+                            readonly property var profileShowcaseCollectiblesModel: ManageCollectiblesModel {}
+                            readonly property var profileShowcaseAssetsModel: assetsStore.groupedAccountAssetsModel
                         }
 
                         contactsStore: QtObject {
@@ -178,50 +202,12 @@ SplitView {
                                 logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                             }
 
-                            function getLinkToProfile(publicKey) {
-                                return "https://status.app/u/" + publicKey
+                            function verifiedTrusted(publicKey) {
+                                logs.logEvent("contactsStore::verifiedTrusted", ["publicKey"], arguments)
                             }
-                        }
 
-                        communitiesModel: ListModel {
-                            ListElement {
-                                name: "Not the cool gang"
-                                memberRole: 0 // Constants.memberRole.none
-                                isControlNode: false
-                                description: "Nothing to write home about"
-                                color: "indigo"
-                                image: ""
-                                joined: true
-                                members: [
-                                    ListElement { displayName: "Joe" }
-                                ]
-                            }
-                            ListElement {
-                                name: "Awesome bunch"
-                                memberRole: 4 // Constants.memberRole.admin
-                                isControlNode: false
-                                description: "Where the cool guys hang out & Nothing to write home about"
-                                color: "green"
-                                image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
-                                        nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-                                joined: true
-                                members: [
-                                    ListElement { displayName: "Alex" },
-                                    ListElement { displayName: "AlexJb" },
-                                    ListElement { displayName: "Michal" },
-                                    ListElement { displayName: "Noelia" },
-                                    ListElement { displayName: "Lukáš" }
-                                ]
-                            }
-                            ListElement {
-                                name: "Invisible community (should not display!)"
-                                memberRole: 1 // Constants.memberRole.owner
-                                isControlNode: true
-                                description: "Get outta here"
-                                color: "red"
-                                image: ""
-                                joined: false
-                                members: []
+                            function getLinkToProfile(publicKey) {
+                                return Constants.userLinkPrefix + publicKey
                             }
                         }
 
@@ -230,156 +216,25 @@ SplitView {
                                 logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
                             }
 
-                            readonly property var accounts: ListModel {
-                                ListElement {
-                                    name: "My Status Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
-                                    colorId: "primary"
-                                    emoji: "🇨🇿"
-                                    walletType: ""
-                                }
-                                ListElement {
-                                    name: "testing (no emoji, colored, saved, seed)"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-                                    colorId: "turquoise"
-                                    walletType: "seed"
-                                }
-                                ListElement {
-                                    name: "My Bro's Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
-                                    colorId: "sky"
-                                    emoji: "🇸🇰"
-                                    walletType: "watch"
-                                }
-                                ListElement {
-                                    name: "Keycard"
-                                    address: "0xdeadbeef"
-                                    colorId: "purple"
-                                    emoji: ""
-                                    walletType: "key"
+                            function getSavedAddress(address) {
+                                return {
+                                    name: "My Status Saved Account",
+                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000",
+                                    ens: false,
+                                    colorId: Constants.walletAccountColors.primary,
+                                    chainShortNames: "",
+                                    isTest: false
                                 }
                             }
 
-                            function getNameForSavedWalletAddress(address) {
-                                return CoreUtils.ModelUtils.getByKey(savedAddresses, "address", address, "name") ?? ""
+                            function createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames) {
+                                logs.logEvent("walletStore::createOrUpdateSavedAddress", ["name", "address", "ens", "colorId", "chainShortNames"],
+                                              arguments)
                             }
+                        }
 
-                            function createOrUpdateSavedAddress(name, address, favourite) {
-                                logs.logEvent("walletStore::createOrUpdateSavedAddress", ["name", "address", "favourite"], arguments)
-                                savedAddresses.append({name, address, favourite, ens: false})
-                                return "" // no error
-                            }
-
-                            readonly property var savedAddresses: ListModel {
-                                ListElement {
-                                    name: "My Status Saved Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-                                    favourite: true
-                                    ens: false
-                                }
-                            }
-
-                            readonly property var assets: ListModel {
-                                readonly property var data: [
-                                    {
-                                        symbol: "MANA",
-                                        enabledNetworkBalance: {
-                                            amount: 301,
-                                            symbol: "MANA"
-                                        },
-                                        changePct24hour: -2.1,
-                                    },
-                                    {
-                                        symbol: "AAVE",
-                                        enabledNetworkBalance: {
-                                            amount: 23.3,
-                                            symbol: "AAVE"
-                                        },
-                                        changePct24hour: 4.56,
-                                    },
-                                    {
-                                        symbol: "POLY",
-                                        enabledNetworkBalance: {
-                                            amount: 3590,
-                                            symbol: "POLY"
-                                        },
-                                        changePct24hour: -11.6789,
-                                    },
-                                    {
-                                        symbol: "CDT",
-                                        enabledNetworkBalance: {
-                                            amount: 1000,
-                                            symbol: "CDT"
-                                        },
-                                        changePct24hour: 0,
-                                    },
-                                    {
-                                        symbol: "MKR",
-                                        enabledNetworkBalance: {
-                                            amount: 1.3,
-                                            symbol: "MKR"
-                                        },
-                                        //changePct24hour: undefined // NB 'undefined' on purpose
-                                    },
-                                    {
-                                        symbol: "InvisibleHere",
-                                        enabledNetworkBalance: {},
-                                        changePct24hour: 0,
-                                    }
-                                ]
-                                Component.onCompleted: append(data)
-                            }
-
-                            readonly property var collectibles: ListModel {
-                                readonly property var data: [
-                                    {
-                                        //id: 123,
-                                        name: "Crypto Kitties",
-                                        description: "Super Crypto Kitty",
-                                        backgroundColor: "",
-                                        imageUrl: ModelsData.collectibles.cryptoKitties,
-                                        permalink: "",
-                                        isLoading: false
-                                    },
-                                    {
-                                        id: 34545656768,
-                                        name: "Kitty 1",
-                                        description: "",
-                                        backgroundColor: "green",
-                                        imageUrl: ModelsData.collectibles.kitty1Big,
-                                        permalink: "",
-                                        isLoading: false
-                                    },
-                                    {
-                                        id: 123456,
-                                        name: "Kitty 2",
-                                        description: "",
-                                        backgroundColor: "",
-                                        imageUrl: ModelsData.collectibles.kitty2Big,
-                                        permalink: "",
-                                        isLoading: false
-                                    },
-                                    {
-                                        id: 12345645459537432,
-                                        name: "",
-                                        description: "Kitty 3 description",
-                                        backgroundColor: "oink",
-                                        imageUrl: ModelsData.collectibles.kitty3Big,
-                                        permalink: "",
-                                        isLoading: false
-                                    },
-                                    {
-                                        id: 691,
-                                        name: "KILLABEAR #691",
-                                        description: "Please note that weapons are not yet reflected in the rarity stats.",
-                                        backgroundColor: "#807c56",
-                                        imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
-                                        permalink: "https://opensea.io/assets/ethereum/0xc99c679c50033bbc5321eb88752e89a93e9e83c5/691",
-                                        isLoading: true
-                                    }
-                                ]
-                                Component.onCompleted: append(data)
-                            }
+                        networkConnectionStore: QtObject {
+                            readonly property bool sendBuyBridgeEnabled: true
                         }
                     }
                 }
@@ -401,6 +256,12 @@ SplitView {
                         text: "Own profile"
                         checked: false
                     }
+                    Switch {
+                        id: ctrlReadOnly
+                        text: "Readonly (preview)"
+                        visible: switchOwnProfile.checked
+                        checked: false
+                    }
                 }
                 RowLayout {
                     Layout.fillWidth: true
@@ -414,12 +275,6 @@ SplitView {
                     TextField {
                         id: displayName
                         placeholderText: "Display Name"
-                    }
-                    Label { text: "optionalName:" }
-                    TextField {
-                        id: optionalName
-                        placeholderText: "Optional/Original Name"
-                        text: ""
                     }
                 }
                 RowLayout {
@@ -464,23 +319,21 @@ SplitView {
                     enabled: !switchOwnProfile.checked
                     CheckBox {
                         id: isContact
-                        enabled: false
-                        checked: isAdded.checked && hasAddedUs.checked
+                        enabled: true
+                        checked: ctrlContactRequestState.currentValue === Constants.ContactRequestState.Mutual
                         text: "isContact"
                     }
-                    CheckBox {
-                        id: isAdded
-                        checked: true
-                        text: "isAdded"
-                    }
-                    CheckBox {
-                        id: hasAddedUs
-                        checked: true
-                        text: "hasAddedUs"
-                    }
-                    CheckBox {
-                        id: removed
-                        text: "removed"
+                    ComboBox {
+                        id: ctrlContactRequestState
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: Constants.ContactRequestState.None, text: "None" },
+                            { value: Constants.ContactRequestState.Mutual, text: "Mutual" },
+                            { value: Constants.ContactRequestState.Sent, text: "Sent" },
+                            { value: Constants.ContactRequestState.Received, text: "Received" },
+                            { value: Constants.ContactRequestState.Dismissed, text: "Dismissed" }
+                        ]
                     }
                     CheckBox {
                         id: isBlocked

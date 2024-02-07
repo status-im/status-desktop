@@ -41,7 +41,7 @@ SplitView {
             if (visibility === Constants.ShowcaseVisibility.NoOne) {
                 remove(index)
             } else {
-                 get(index).showcaseVisibility = visibility
+                get(index).showcaseVisibility = visibility
             }
         }
 
@@ -77,9 +77,9 @@ SplitView {
             showcaseModel: inShowcaseAssetsModel
             formatCurrencyAmount: function (amount, symbol) {
                 return ({amount: amount,
-                                     symbol: symbol.toUpperCase(),
-                                     displayDecimals: 4,
-                                     stripTrailingZeroes: false})
+                            symbol: symbol.toUpperCase(),
+                            displayDecimals: 4,
+                            stripTrailingZeroes: false})
             }
         }
     }

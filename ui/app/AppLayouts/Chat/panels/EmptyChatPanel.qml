@@ -12,8 +12,6 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    property var rootStore
-
     signal shareChatKeyClicked()
 
     Image {
@@ -98,7 +96,6 @@ Item {
     Component {
         id: inviteFriendsPopup
         InviteFriendsPopup {
-            rootStore: element.rootStore
             destroyOnClose: true
         }
     }

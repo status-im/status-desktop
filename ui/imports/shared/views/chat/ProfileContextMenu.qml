@@ -1,7 +1,4 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
+import QtQuick 2.15
 
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
@@ -104,6 +101,7 @@ StatusMenu {
         trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus
                                                                   : Constants.trustStatus.unknown
         isContact: root.isContact
+        isBlocked: root.isBlockedContact
         isCurrentUser: root.isMe
         userIsEnsVerified: (!!contactDetails && contactDetails.ensVerified) || false
         isBridgedAccount: root.isBridgedAccount
@@ -123,6 +121,8 @@ StatusMenu {
             root.close()
         }
     }
+
+    // TODO Review contact request popup
 
     SendMessageMenuItem {
         id: sendMessageMenuItem
@@ -147,7 +147,7 @@ StatusMenu {
 
     StatusAction {
         id: verifyIdentityAction
-        text: qsTr("Verify Identity")
+        text: qsTr("Request ID verification")
         objectName: "verifyIdentity_StatusItem"
         icon.name: "checkmark-circle"
         enabled: !root.isMe && root.isContact
@@ -160,14 +160,12 @@ StatusMenu {
             root.close()
         }
     }
-
+    // TODO Mark as ID verified
     StatusAction {
         id: pendingIdentityAction
         objectName: "pendingIdentity_StatusItem"
-        text: isVerificationRequestSent ||
-            root.incomingVerificationStatus === Constants.verificationStatus.verified ?
-            qsTr("ID Request Pending....") :
-            qsTr("Respond to ID Request...")
+        text: isVerificationRequestSent || root.incomingVerificationStatus === Constants.verificationStatus.verified ? qsTr("ID Request Pending...")
+                                                                                                                     : qsTr("Respond to ID Request...")
         icon.name: "checkmark-circle"
         enabled: !root.isMe && root.isContact
                                 && !root.isBlockedContact && !root.isTrusted
@@ -188,7 +186,7 @@ StatusMenu {
     StatusAction {
         id: renameAction
         objectName: "rename_StatusItem"
-        text: qsTr("Rename")
+        text: contactDetails.localNickname ? qsTr("Edit nickname") : qsTr("Add nickname")
         icon.name: "edit_pencil"
         enabled: !root.isMe && !root.isBridgedAccount
         onTriggered: {
@@ -198,15 +196,6 @@ StatusMenu {
         }
     }
 
-    StatusAction {
-        id: unblockAction
-        objectName: "unblock_StatusItem"
-        text: qsTr("Unblock User")
-        icon.name: "remove-circle"
-        enabled: !root.isMe && root.isBlockedContact && !root.isBridgedAccount
-        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
-    }
-
     StatusMenuSeparator {
         visible: blockMenuItem.enabled
                  || markUntrustworthyMenuItem.enabled
@@ -214,26 +203,39 @@ StatusMenu {
     }
 
     StatusAction {
+        id: unblockAction
+        objectName: "unblock_StatusItem"
+        text: qsTr("Unblock user")
+        icon.name: "cancel"
+        type: StatusAction.Type.Danger
+        enabled: !root.isMe && root.isBlockedContact && !root.isBridgedAccount
+        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
+    }
+
+    // TODO Remove ID verification + confirmation dialog
+
+    StatusAction {
         id: markUntrustworthyMenuItem
         objectName: "markUntrustworthy_StatusItem"
-        text: qsTr("Mark as Untrustworthy")
+        text: qsTr("Mark as untrusted")
         icon.name: "warning"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && root.userTrustIsUnknown && !root.isBridgedAccount
+        enabled: !root.isMe && root.userTrustIsUnknown && !root.isBridgedAccount && !root.isBlockedContact
         onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
     }
 
     StatusAction {
         id: removeUntrustworthyMarkMenuItem
         objectName: "removeUntrustworthy_StatusItem"
-        text: qsTr("Remove Untrustworthy Mark")
+        text: qsTr("Remove untrusted mark")
         icon.name: "warning"
+        type: StatusAction.Type.Danger
         enabled: !root.isMe && root.userIsUntrustworthy && !root.isBridgedAccount
         onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
     }
 
     StatusAction {
-        text: qsTr("Remove Contact")
+        text: qsTr("Remove contact")
         objectName: "removeContact_StatusItem"
         icon.name: "remove-contact"
         type: StatusAction.Type.Danger
@@ -247,11 +249,10 @@ StatusMenu {
     StatusAction {
         id: blockMenuItem
         objectName: "blockUser_StatusItem"
-        text: qsTr("Block User")
+        text: qsTr("Block user")
         icon.name: "cancel"
         type: StatusAction.Type.Danger
         enabled: !root.isMe && !root.isBlockedContact && !root.isBridgedAccount
         onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
-
 }

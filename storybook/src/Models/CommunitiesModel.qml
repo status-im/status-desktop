@@ -3,23 +3,124 @@ import QtQuick 2.15
 import utils 1.0
 
 ListModel {
-    readonly property var data: [
-        {
-            communityId: "ddls",
-            communityName: "Doodles",
-            communityImage: ModelsData.collectibles.doodles
-        },
-        {
-            communityId: "sox",
-            communityName: "Socks",
-            communityImage: ModelsData.icons.socks
-        },
-        {
-            communityId: "ast",
-            communityName: "Astafarians",
-            communityImage: ModelsData.icons.dribble
-        }
-    ]
-
-    Component.onCompleted: append(data)
+    Component.onCompleted:
+        append([{
+                    id: "0x0001",
+                    name: "I am 0wner!1!!",
+                    description: "Lorem ipsum dolor sit amet",
+                    introMessage: "Welcome to ze club",
+                    outroMessage: "Sad to see you go",
+                    joined: true,
+                    spectated: false,
+                    memberRole: Constants.memberRole.owner,
+                    isControlNode: true,
+                    image: ModelsData.icons.dribble,
+                    color: "yellow",
+                    muted: false,
+                    members: [ { pubKey: "0xdeadbeef" } ],
+                    membersCount: 1,
+                    loading: false
+                },
+                {
+                    id: "0x0002",
+                    name: "Test community 2",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
+                    introMessage: "Welcome to ze club",
+                    outroMessage: "Sad to see you go",
+                    joined: true,
+                    spectated: false,
+                    memberRole: Constants.memberRole.none,
+                    isControlNode: false,
+                    image: ModelsData.icons.status,
+                    color: "peach",
+                    muted: false,
+                    members: [ { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" } ],
+                    membersCount: 3,
+                    loading: false
+                },
+                {
+                    id: "0x0003",
+                    name: "Free to join",
+                    introMessage: "Welcome to ze club",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
+                    outroMessage: "Sad to see you go",
+                    joined: false,
+                    spectated: true,
+                    memberRole: Constants.memberRole.none,
+                    isControlNode: false,
+                    image: ModelsData.icons.coinbase,
+                    color: "red",
+                    muted: false,
+                    members: [ { pubKey: "0xdeadbeef" } ],
+                    membersCount: 1,
+                    loading: false
+                },
+                {
+                    id: "0x0004",
+                    name: "Muted community",
+                    introMessage: "Welcome to ze club",
+                    description: "Lorem ipsum dolor sit amet",
+                    outroMessage: "Sad to see you go",
+                    joined: true,
+                    spectated: false,
+                    memberRole: Constants.memberRole.none,
+                    isControlNode: false,
+                    image: "",
+                    color: "whitesmoke",
+                    muted: true,
+                    members: [],
+                    membersCount: 0,
+                    loading: false
+                },
+                {
+                    id: "0x0005",
+                    name: "Admin test community",
+                    description: "Lorem ipsum dolor sit amet",
+                    introMessage: "Welcome to ze club",
+                    outroMessage: "Sad to see you go",
+                    joined: true,
+                    spectated: false,
+                    memberRole: Constants.memberRole.admin,
+                    isControlNode: false,
+                    image: ModelsData.icons.socks,
+                    color: "green",
+                    muted: false,
+                    members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
+                    membersCount: 4,
+                    loading: false
+                },
+                {
+                    id: "0x0006",
+                    name: "Pending request here",
+                    description: "Lorem ipsum dolor sit amet",
+                    introMessage: "Welcome to ze club",
+                    outroMessage: "Sad to see you go",
+                    joined: false,
+                    spectated: true,
+                    memberRole: Constants.memberRole.none,
+                    isControlNode: false,
+                    image: ModelsData.icons.spotify,
+                    color: "pink",
+                    muted: false,
+                    members: [{ pubKey: "0xdeadbeef" }],
+                    membersCount: 1,
+                    loading: false
+                },
+                {
+                    id: "0x0007",
+                    name: "Token Master Club",
+                    description: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi",
+                    introMessage: "Welcome to ze club",
+                    outroMessage: "Sad to see you go",
+                    joined: true,
+                    spectated: false,
+                    memberRole: Constants.memberRole.tokenMaster,
+                    image: ModelsData.icons.cryptPunks,
+                    color: "lightslategrey",
+                    muted: false,
+                    members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
+                    membersCount: 2,
+                    loading: false
+                }
+               ])
 }

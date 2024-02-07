@@ -431,6 +431,7 @@ QtObject {
             }
         },
 
+        // FIXME remove, unused
         Component {
             id: displayNamePopupComponent
             DisplayNamePopup {
@@ -461,7 +462,6 @@ QtObject {
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
                 networkConnectionStore: root.networkConnectionStore
-                communitiesModel: rootStore.profileSectionStore.communitiesList
 
                 onClosed: {
                     if (profilePopup.parentPopup) {

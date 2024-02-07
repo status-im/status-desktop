@@ -85,6 +85,7 @@ StatusDialog {
             userIsEnsVerified: d.userIsEnsVerified
             isContact: d.contactDetails.isContact
             trustStatus: d.contactDetails.trustStatus
+            isBlocked: d.contactDetails.isBlocked
             imageSize: ProfileHeader.ImageSize.Middle
             loading: d.loadingContactDetails
         }

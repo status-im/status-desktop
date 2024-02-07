@@ -9,6 +9,7 @@ Row {
 
     property bool isContact: false
     property int trustIndicator: StatusContactVerificationIcons.TrustedType.None
+    property bool isBlocked
     property bool tiny: true
 
     property StatusAssetSettings mutualConnectionIcon: StatusAssetSettings {
@@ -38,10 +39,26 @@ Row {
         bgWidth: root.tiny ? 10 : 16
         bgHeight: root.tiny ? 10 : 16
         bgRadius: bgWidth / 2
-        bgColor: root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
+        bgColor: root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified ? Theme.palette.successColor1 : Theme.palette.dangerColor1
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {
             source: trustContactIcon.name ? "../../assets/img/icons/" + trustContactIcon.name + ".svg": ""
+            visible: false
+            cache: false
+        }
+    }
+
+    property StatusAssetSettings blockedContactIcon: StatusAssetSettings {
+        name: root.isBlocked ? "cancel" : ""
+        color: Theme.palette.dangerColor1
+        width: Math.min(bgWidth, dummyImage.width)
+        height: Math.min(bgHeight, dummyImage.height)
+        bgWidth: root.tiny ? 10 : 16
+        bgHeight: root.tiny ? 10 : 16
+        bgRadius: bgWidth / 2
+        // Only used to get implicit width and height from the actual image
+        property Image dummyImage: Image {
+            source: blockedContactIcon.name ? "../../assets/img/icons/" + blockedContactIcon.name + ".svg": ""
             visible: false
             cache: false
         }
@@ -62,28 +79,38 @@ Row {
 
     StatusToolTip {
         text: {
+            if (root.isBlocked)
+                return qsTr("Blocked")
             if (root.isContact) {
                 if (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified)
-                    return qsTr("Verified contact")
+                    return qsTr("ID verified contact")
                 if (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Untrustworthy)
-                    return qsTr("Untrustworthy contact")
+                    return qsTr("Untrusted contact")
                 return qsTr("Contact")
             }
             if (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Untrustworthy)
-                return qsTr("Untrustworthy")
+                return qsTr("Untrusted")
             return ""
         }
 
         visible: hoverHandler.hovered && text
     }
 
+    // blocked
     StatusRoundIcon {
-        visible: root.isContact && root.trustIndicator !== StatusContactVerificationIcons.TrustedType.Verified
-        asset: root.mutualConnectionIcon
+        visible: root.isBlocked
+        asset: root.blockedContactIcon
     }
 
+    // (un)trusted
     StatusRoundIcon {
-        visible: root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None
+        visible: !root.isBlocked && root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None
         asset: root.trustContactIcon
     }
- }
+
+    // contact?
+    StatusRoundIcon {
+        visible: !root.isBlocked && root.isContact && root.trustIndicator !== StatusContactVerificationIcons.TrustedType.Verified
+        asset: root.mutualConnectionIcon
+    }
+}

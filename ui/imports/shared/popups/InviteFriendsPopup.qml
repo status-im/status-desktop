@@ -5,8 +5,6 @@ import utils 1.0
 StatusModal {
     id: root
 
-    property var rootStore
-
     headerSettings.title: qsTr("Download Status link")
     height: 156
 
@@ -15,7 +13,7 @@ StatusModal {
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
-            root.rootStore.copyToClipboard(Constants.downloadLink)
+            Utils.copyToClipboard(Constants.downloadLink)
             tooltip.visible = !tooltip.visible
         }
         width: parent.width
