@@ -102,6 +102,9 @@ SplitView {
         onReceiveRequested: logs.logEvent("onReceiveRequested", ["symbol"], arguments)
         onSwitchToCommunityRequested: logs.logEvent("onSwitchToCommunityRequested", ["communityId"], arguments)
         onManageTokensRequested: logs.logEvent("onManageTokensRequested")
+        isUpdating: ctrlUpdatingCheckbox.checked
+        isFetching: ctrlFetchingCheckbox.checked
+        isError: ctrlErrorCheckbox.checked
     }
 
     LogsAndControlsPanel {
@@ -133,9 +136,19 @@ SplitView {
             }
 
             CheckBox {
-                id: loadingCheckbox
+                id: ctrlUpdatingCheckbox
                 checked: false
-                text: "loading"
+                text: "isUpdating"
+            }
+            CheckBox {
+                id: ctrlFetchingCheckbox
+                checked: false
+                text: "isFetching"
+            }
+            CheckBox {
+                id: ctrlErrorCheckbox
+                checked: false
+                text: "isError"
             }
 
             ColumnLayout {

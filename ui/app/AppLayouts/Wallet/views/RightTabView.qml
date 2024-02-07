@@ -186,6 +186,9 @@ RightTabBaseView {
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,
                                                                                       Constants.walletSettingsSubsection.manageCollectibles)
+                        isFetching: RootStore.collectiblesStore.areCollectiblesFetching
+                        isUpdating: RootStore.collectiblesStore.areCollectiblesUpdating
+                        isError: RootStore.collectiblesStore.areCollectiblesError
                     }
                 }
                 Component {

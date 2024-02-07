@@ -38,6 +38,10 @@ QtObject {
                                         qsTr("%1 community collectibles are now visible").arg(communityName), "", "checkmark-circle",
                                         false, Constants.ephemeralNotificationType.success, "")
     }
+    readonly property bool areCollectiblesFetching: !!root._allCollectiblesModel ? root._allCollectiblesModel.isFetching : true
+    readonly property bool areCollectiblesUpdating: !!root._allCollectiblesModel ? root._allCollectiblesModel.isUpdating : false
+    readonly property bool areCollectiblesError: !!root._allCollectiblesModel ? root._allCollectiblesModel.isError : false
+
 
     /* The following are used to display the detailed view of a collectible */
     readonly property var detailedCollectible: Global.appIsReady ? walletSection.collectibleDetailsController.detailedEntry : null

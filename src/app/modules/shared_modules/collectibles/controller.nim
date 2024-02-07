@@ -130,7 +130,7 @@ QtObject:
     var offset = 0
     if not self.fetchFromStart:
       if self.loadType.isPaginated():
-        offset = self.model.getCollectiblesCount()
+        offset = self.model.getCount()
       else:
         offset = self.tempItems.len
     self.fetchFromStart = false
