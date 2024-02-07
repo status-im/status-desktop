@@ -11,17 +11,19 @@ from gui.main_window import MainWindow
 from gui.screens.settings import SettingsScreen
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
                  'Account view interactions: Edit Status default account')
 @pytest.mark.case(704433)
 @pytest.mark.parametrize('new_name', [
     pytest.param(''.join(random.choices(string.ascii_letters +
-                                        string.digits, k=40)))
+                                        string.digits, k=20)))
 ])
 def test_settings_edit_status_account(main_screen: MainWindow, new_name):
     with step('Open profile and wallet setting and check the keypairs list is not empty'):
-            settings = main_screen.left_panel.open_settings().left_panel.open_wallet_settings()
-            assert settings.get_keypairs_names !=0, f'Keypairs are not displayed'
+        settings = main_screen.left_panel.open_settings().left_panel.open_wallet_settings()
+        assert settings.get_keypairs_names != 0, f'Keypairs are not displayed'
 
     with step('Verify Status keypair title'):
         status_keypair_title = settings.get_keypairs_names()[0]
