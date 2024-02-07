@@ -26,6 +26,10 @@ StatusScrollView {
     // id, name, image, color, owner properties expected
     required property var communityDetails
 
+    readonly property bool saveEnabled: root.isFullyFilled
+                     && !root.permissionDuplicated
+                     && !root.permissionTypeLimitReached
+
     property int viewWidth: 560 // by design
     property bool isEditState: false
 
@@ -619,9 +623,7 @@ StatusScrollView {
 
             visible: !root.isEditState && root.showChannelSelector
             text: qsTr("Create permission")
-            enabled: root.isFullyFilled
-                     && !root.permissionDuplicated
-                     && !root.permissionTypeLimitReached
+            enabled: root.saveEnabled
 
             onClicked: root.createPermissionClicked()
         }

@@ -118,8 +118,7 @@ StackView {
             implicitWidth: 0
             title: isEditState ? qsTr("Edit permission") : qsTr("New permission")
 
-            property alias isDirty: editPermissionView.dirty
-            property alias isFullyFilled: editPermissionView.isFullyFilled
+            property alias isSaveEnabled: editPermissionView.saveEnabled
             property alias isPrivateToEditValue: editPermissionView.isPrivate
             property alias permissionTypeToEdit: editPermissionView.permissionType
             property alias holdingsToEditModel: editPermissionView.selectedHoldingsModel
@@ -186,8 +185,12 @@ StackView {
                         if (holdings.rowCount() !== 0 && !dirtyValues.holdingsRequired)
                             continue
 
+                        const channelsModel = showChannelSelector ?
+                                              dirtyValues.selectedChannelsModel :
+                                              selectedChannelsModel
+
                         if (same(dirtyValues.selectedHoldingsModel, holdings)
-                                && same(dirtyValues.selectedChannelsModel, channels)
+                                && same(channelsModel, channels)
                                 && dirtyValues.permissionType === permissionType)
                             return true
                     }
@@ -277,10 +280,7 @@ StackView {
                 saveChangesText: qsTr("Update permission")
                 cancelChangesText: qsTr("Revert changes")
 
-                saveChangesButtonEnabled:
-                    !editPermissionView.permissionDuplicated
-                    && !editPermissionView.permissionTypeLimitReached
-                    && editPermissionView.isFullyFilled
+                saveChangesButtonEnabled: editPermissionView.saveEnabled
 
                 onSaveChangesClicked: {
                     editPermissionView.saveChanges()
