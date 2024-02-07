@@ -140,7 +140,7 @@ rpc(getTransfersForIdentities, "wallet"):
 rpc(getWalletToken, "wallet"):
   accounts: seq[string]
 
-rpc(getWalletTokenBalances, "wallet"):
+rpc(fetchOrGetCachedWalletBalances, "wallet"):
   accounts: seq[string]
 
 rpc(fetchMarketValues, "wallet"):

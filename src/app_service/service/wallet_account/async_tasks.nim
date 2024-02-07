@@ -91,7 +91,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     "storeResult": false
   }
   try:
-    let response = backend.getWalletTokenBalances(arg.accounts)
+    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts)
     output["result"] = response.result
     output["storeResult"] = %* arg.storeResult
   except Exception as e:
