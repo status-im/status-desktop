@@ -421,7 +421,6 @@ QVariantMap WritableProxyModel::toVariantMap() const
     return result;
 }
 
-
 QVariantList WritableProxyModel::getInsertedItems() const
 {
     if (!d->dirty || !sourceModel())
@@ -444,6 +443,7 @@ QVariantList WritableProxyModel::getInsertedItems() const
 
     return result;
 }
+
 QVariantList WritableProxyModel::getEditedItems() const
 {
     if (!d->dirty || !sourceModel())
@@ -466,6 +466,7 @@ QVariantList WritableProxyModel::getEditedItems() const
 
     return result;
 }
+
 QVariantList WritableProxyModel::getRemovedItems() const
 {
     if (!d->dirty || !sourceModel())
@@ -490,17 +491,40 @@ QVariantList WritableProxyModel::getRemovedItems() const
 
 bool WritableProxyModel::insert(int at, const QVariantMap& data)
 {
+    if(!sourceModel())
+        return false;
+
     auto rowCount = this->rowCount();
 
     if (at < 0 || at > rowCount)
         return false;
 
-    auto success = insertRows(at, 1);
+    beginInsertRows({}, at, at);
 
-    if (success)
-        set(at, data);
+    auto roleNames = this->roleNames();
+    QMap<int/*role*/, QVariant/*value*/> rowMap;
+    
+    for (auto it = data.begin(); it != data.end(); ++it)
+    {
+        auto role = roleNames.key(it.key().toUtf8(), -1);
+        if (role == -1)
+            continue;
 
-    return success;
+        rowMap.insert(role, it.value());
+    }
+
+    d->adjustInsertedRowsBy(at, 1);
+
+    auto index = createIndex(at, 0);
+    d->insertedRows.insert(index, rowMap);
+
+    d->createProxyToSourceRowMap();
+
+    endInsertRows();
+
+    setDirty(true);
+
+    return true;
 }
 
 bool WritableProxyModel::append(const QVariantMap& data)
