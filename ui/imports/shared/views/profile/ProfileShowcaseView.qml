@@ -25,7 +25,6 @@ Control {
     property var profileStore
     property var walletStore
     property var networkConnectionStore
-    property var communitiesModel
 
     signal closeRequested()
 
@@ -303,10 +302,10 @@ Control {
                     }
 
                     StatusToolTip {
-                        visible: hhandler.hovered && (!!model.name || !!model.description)
+                        visible: hhandler.hovered && (!!model.name || !!model.collectionName)
                         text: {
                             const name = model.name
-                            const descr = model.description
+                            const descr = model.collectionName
                             const sep = !!name && !!descr ? "<br>" : ""
                             return `<b>${name}</b>${sep}${descr}`
                         }
@@ -365,7 +364,8 @@ Control {
 
                     width: GridView.view.cellWidth - Style.current.halfPadding
                     height: GridView.view.cellHeight - Style.current.halfPadding
-                    title: LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
+                    title: model.name
+                    //subTitle: LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance)
                     statusListItemTitle.font.weight: Font.Medium
                     tertiaryTitle: qsTr("%1% today %2")
                       .arg(LocaleUtils.numberToLocaleString(changePct24hour, changePct24hour === 0 ? 0 : 2)).arg(arrow)

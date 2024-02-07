@@ -1,8 +1,6 @@
 import QtQuick 2.15
 
-import SortFilterProxyModel 0.2
 import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import Storybook 1.0
 import Models 1.0
@@ -15,7 +13,23 @@ QtObject {
     readonly property var groupedAccountsAssetsModel: GroupedAccountsAssetsModel {}
     property var assetsWithFilteredBalances
     readonly property var tokensBySymbolModel: TokensBySymbolModel {}
-    readonly property CommunitiesModel communityModel: CommunitiesModel{}
+    readonly property var communityModel: ListModel {
+        Component.onCompleted: append([{
+            communityId: "ddls",
+            communityName: "Doodles",
+            communityImage: ModelsData.collectibles.doodles
+        },
+        {
+            communityId: "sox",
+            communityName: "Socks",
+            communityImage: ModelsData.icons.socks
+        },
+        {
+            communityId: "ast",
+            communityName: "Astafarians",
+            communityImage: ModelsData.icons.dribble
+        }])
+    }
 
     // renaming tokens by symbol key so that can be used to join models
     readonly property var renamedTokensBySymbolModel: RolesRenamingModel {

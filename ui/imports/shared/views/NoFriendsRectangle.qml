@@ -15,7 +15,6 @@ Item {
 
     property string text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
     property alias textColor: noContacts.color
-    property var rootStore
 
     StatusBaseText {
         id: noContacts
@@ -40,7 +39,6 @@ Item {
     Component {
         id: inviteFriendsPopup
         InviteFriendsPopup {
-            rootStore: noContactsRect.rootStore
             destroyOnClose: true
         }
     }

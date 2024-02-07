@@ -14,7 +14,6 @@ StatusDialog {
     property var profileStore
     property var contactsStore
     property var networkConnectionStore
-    property var communitiesModel
 
     width: 640
     padding: 0
@@ -27,7 +26,6 @@ StatusDialog {
         profileStore: root.profileStore
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore
-        communitiesModel: root.communitiesModel
         onCloseRequested: root.close()
     }
 }

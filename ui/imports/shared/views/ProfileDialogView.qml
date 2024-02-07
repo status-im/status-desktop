@@ -34,7 +34,6 @@ Pane {
     property var contactsStore
     property var walletStore: WalletNS.RootStore
     property var networkConnectionStore
-    property var communitiesModel
 
     property var dirtyValues: ({})
     property bool dirty: false
@@ -121,10 +120,6 @@ Pane {
                     d.reload()
             }
         }
-
-        readonly property var timer: Timer {
-            id: timer
-        }
     }
 
     function reload() {
@@ -157,6 +152,7 @@ Pane {
         }
     }
 
+    // TODO a popup here instead of buttons
     Component {
         id: btnAcceptContactRequestComponent
         ColumnLayout {
@@ -165,7 +161,7 @@ Pane {
             StatusBaseText {
                 color: Theme.palette.baseColor1
                 font.pixelSize: 13
-                text: qsTr("Respond to contact request")
+                text: qsTr("Review contact request")
             }
 
             AcceptRejectOptionsButtonsPanel {
@@ -208,19 +204,27 @@ Pane {
         id: btnUnblockUserComponent
         StatusButton {
             size: StatusButton.Size.Small
-            text: qsTr("Unblock User")
+            text: qsTr("Unblock")
             onClicked: Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
         }
     }
 
     Component {
         id: txtPendingContactRequestComponent
-        StatusBaseText {
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Theme.palette.baseColor1
-            verticalAlignment: Text.AlignVCenter
-            text: qsTr("Contact Request Pending...")
+        RowLayout {
+            StatusIcon {
+                icon: "history"
+                width: 16
+                height: width
+                color: Theme.palette.baseColor1
+            }
+            StatusBaseText {
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                color: Theme.palette.baseColor1
+                verticalAlignment: Text.AlignVCenter
+                text: qsTr("Contact Request Pending…")
+            }
         }
     }
 
@@ -239,7 +243,7 @@ Pane {
         id: btnRespondToIdRequestComponent
         StatusButton {
             size: StatusButton.Size.Small
-            text: qsTr("Respond to ID Request")
+            text: qsTr("Respond to ID verification request")
             objectName: "respondToIDRequest_StatusItem"
             onClicked: {
                 Global.openIncomingIDRequestPopup(root.publicKey,
@@ -256,6 +260,17 @@ Pane {
             root.contactsStore.removeTrustStatus(root.publicKey)
             close()
             d.reload()
+        }
+    }
+
+    Component {
+        id: shareProfileCmp
+        ShareProfileDialog {
+            destroyOnClose: true
+            title: d.isCurrentUser ? qsTr("Share your profile") : qsTr("%1's profile").arg(d.mainDisplayName)
+            publicKey: root.publicKey
+            qrCode: root.profileStore.getQrCodeSource(Utils.getCompressedPk(root.publicKey))
+            linkToProfile: d.linkToProfile
         }
     }
 
@@ -281,85 +296,36 @@ Pane {
                 image: root.dirty ? root.dirtyValues.profileLargeImage
                                   : Utils.addTimestampToURL(d.contactDetails.largeImage)
                 interactive: false
-                imageWidth: 80
+                imageWidth: 90
                 imageHeight: imageWidth
                 ensVerified: d.contactDetails.ensVerified
             }
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 4
+            Item { Layout.fillWidth: true }
+
+            // TODO a Loader with additional secondary buttons
+            StatusFlatButton {
                 Layout.alignment: Qt.AlignTop
-                spacing: 4
-                Item {
-                    id: contactRow
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height
-                    StatusBaseText {
-                        id: contactName
-                        anchors.left: parent.left
-                        width: Math.min(implicitWidth, contactRow.width - verificationIcons.width - verificationIcons.anchors.leftMargin)
-                        objectName: "ProfileDialog_displayName"
-                        font.bold: true
-                        font.pixelSize: 22
-                        elide: Text.ElideRight
-                        text: root.dirty ? root.dirtyValues.displayName
-                                         : d.mainDisplayName
-                    }
-                    StatusContactVerificationIcons {
-                        id: verificationIcons
-                        anchors.left: contactName.right
-                        anchors.leftMargin: Style.current.halfPadding
-                        anchors.verticalCenter: contactName.verticalCenter
-                        objectName: "ProfileDialog_userVerificationIcons"
-                        visible: !d.isCurrentUser
-                        isContact: d.isContact
-                        trustIndicator: d.contactDetails.trustStatus
-                        tiny: false
-                    }
-                }
-                StatusBaseText {
-                    id: contactSecondaryName
-                    font.pixelSize: 12
-                    color: Theme.palette.baseColor1
-                    text: "(%1)".arg(d.optionalDisplayName)
-                    visible: !!d.userNickName
-                }
-                EmojiHash {
-                    objectName: "ProfileDialog_userEmojiHash"
-                    publicKey: root.publicKey
-                }
-                RowLayout {
-                    StatusBaseText {
-                        font.pixelSize: 12
-                        color: Theme.palette.baseColor1
-                        text: Utils.getElidedCompressedPk(root.publicKey)
-                    }
-                    StatusFlatButton {
-                        size: StatusFlatButton.Size.Tiny
-                        icon.name: "copy"
-                        enabled: !d.timer.running
-
-                        onClicked: {
-                            copyKeyTooltip.text = qsTr("Copied")
-                            root.profileStore.copyToClipboard(Utils.getCompressedPk(root.publicKey))
-                            d.timer.setTimeout(function() {
-                                copyKeyTooltip.text = qsTr("Copy Chat Key")
-                            }, 1500);
-                        }
-
-                        StatusToolTip {
-                            id: copyKeyTooltip
-                            text: qsTr("Copy Chat Key")
-                            visible: parent.hovered || d.timer.running
-                        }
-                    }
-                }
+                Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
+                visible: d.isCurrentUser && !root.readOnly
+                size: StatusButton.Size.Small
+                text: qsTr("Share Profile")
+                onClicked: Global.openPopup(shareProfileCmp)
             }
 
             Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
+                HoverHandler {
+                    id: actionButtonHoverHandler
+                    enabled: root.readOnly
+                }
+
+                StatusToolTip {
+                    text: qsTr("Not available in preview mode")
+                    visible: actionButtonHoverHandler.hovered
+                }
+
                 sourceComponent: {
                     // current user
                     if (d.isCurrentUser)
@@ -373,6 +339,10 @@ Pane {
                     if (d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy)
                         return btnBlockUserComponent
 
+                    // mutual contact
+                    if (d.isContact || d.contactRequestState === Constants.ContactRequestState.Mutual)
+                        return btnSendMessageComponent
+
                     // depend on contactRequestState
                     switch (d.contactRequestState) {
                     case Constants.ContactRequestState.Sent:
@@ -385,7 +355,7 @@ Pane {
                         } else if (!d.isTrusted && d.isVerificationRequestReceived) {
                             return btnRespondToIdRequestComponent
                         }
-                        return btnSendMessageComponent
+                        break
                     }
                     case Constants.ContactRequestState.None:
                     case Constants.ContactRequestState.Dismissed:
@@ -422,7 +392,7 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Verify Identity")
+                        text: qsTr("Request ID verification")
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked &&
                                  d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
@@ -433,8 +403,9 @@ Pane {
                                                           popup => popup.accepted.connect(d.reload))
                         }
                     }
+                    // TODO Mark as ID verified
                     StatusAction {
-                        text: qsTr("ID Request Pending...")
+                        text: qsTr("Review ID verification reply")
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
                         onTriggered: {
@@ -444,7 +415,7 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Rename")
+                        text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
                             moreMenu.close()
@@ -453,28 +424,39 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Copy Link to Profile")
+                        text: qsTr("Show QR code")
+                        icon.name: "qr"
+                        enabled: !d.isCurrentUser
+                        onTriggered: {
+                            moreMenu.close()
+                            Global.openPopup(shareProfileCmp)
+                        }
+                    }
+                    StatusAction {
+                        text: qsTr("Copy link to profile")
                         icon.name: "copy"
                         onTriggered: {
                             moreMenu.close()
                             root.profileStore.copyToClipboard(d.linkToProfile)
                         }
                     }
+                    StatusMenuSeparator {}
+                    // TODO Remove nickname
                     StatusAction {
-                        text: qsTr("Unblock User")
-                        icon.name: "remove-circle"
+                        text: qsTr("Unblock user")
+                        icon.name: "cancel"
+                        type: StatusAction.Type.Danger
                         enabled: d.isBlocked
                         onTriggered: {
                             moreMenu.close()
                             Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
                         }
                     }
-                    StatusMenuSeparator {}
                     StatusAction {
-                        text: qsTr("Mark as Untrustworthy")
+                        text: qsTr("Mark as untrusted")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
-                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.unknown
+                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.unknown && !d.isBlocked
                         onTriggered: {
                             moreMenu.close()
                             if (d.isContact && !d.isTrusted && d.isVerificationRequestReceived)
@@ -485,9 +467,10 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Remove Untrustworthy Mark")
+                        text: qsTr("Remove untrusted mark")
                         icon.name: "warning"
-                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
+                        type: StatusAction.Type.Danger
+                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
                             moreMenu.close()
                             root.contactsStore.removeTrustStatus(root.publicKey)
@@ -495,7 +478,7 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Remove Identity Verification")
+                        text: qsTr("Remove ID verification")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && d.isTrusted
@@ -505,7 +488,7 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Remove Contact")
+                        text: qsTr("Remove contact")
                         icon.name: "remove-contact"
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
@@ -515,7 +498,7 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Block User")
+                        text: qsTr("Block user")
                         icon.name: "cancel"
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
@@ -528,14 +511,79 @@ Pane {
             }
         }
 
-        StatusDialogDivider {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: -column.anchors.leftMargin
-            Layout.rightMargin: -column.anchors.rightMargin
-            Layout.topMargin: -column.spacing
-            Layout.bottomMargin: -column.spacing
-            opacity: scrollView.atYBeginning ? 0 : 1
-            Behavior on opacity { OpacityAnimator {} }
+            spacing: 4
+            Item {
+                id: contactRow
+                Layout.fillWidth: true
+                Layout.preferredHeight: childrenRect.height
+                StatusBaseText {
+                    id: contactName
+                    anchors.left: parent.left
+                    width: Math.min(implicitWidth, contactRow.width - verificationIcons.width - verificationIcons.anchors.leftMargin)
+                    objectName: "ProfileDialog_displayName"
+                    font.bold: true
+                    font.pixelSize: 22
+                    elide: Text.ElideRight
+                    text: root.dirty ? root.dirtyValues.displayName
+                                     : d.mainDisplayName
+                }
+                StatusContactVerificationIcons {
+                    id: verificationIcons
+                    anchors.left: contactName.right
+                    anchors.leftMargin: Style.current.halfPadding
+                    anchors.verticalCenter: contactName.verticalCenter
+                    objectName: "ProfileDialog_userVerificationIcons"
+                    visible: !d.isCurrentUser
+                    isContact: d.isContact
+                    trustIndicator: d.contactDetails.trustStatus
+                    isBlocked: d.isBlocked
+                    tiny: false
+                }
+            }
+            RowLayout {
+                spacing: Style.current.halfPadding
+                StatusBaseText {
+                    id: contactSecondaryName
+                    color: Theme.palette.baseColor1
+                    text: d.optionalDisplayName
+                    visible: !!d.userNickName
+                }
+                Rectangle {
+                    Layout.preferredWidth: 4
+                    Layout.preferredHeight: 4
+                    radius: width/2
+                    color: Theme.palette.baseColor1
+                    visible: contactSecondaryName.visible
+                }
+                StatusBaseText {
+                    color: Theme.palette.baseColor1
+                    text: Utils.getElidedCompressedPk(root.publicKey)
+                }
+                CopyButton {
+                    Layout.leftMargin: -4
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    textToCopy: Utils.getCompressedPk(root.publicKey)
+                    StatusToolTip {
+                        text: qsTr("Copy Chat Key")
+                        visible: parent.hovered
+                    }
+                }
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.halfPadding
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                text: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
+            }
+            EmojiHash {
+                Layout.topMargin: Style.current.halfPadding
+                objectName: "ProfileDialog_userEmojiHash"
+                publicKey: root.publicKey
+                oneRow: true
+            }
         }
 
         StatusScrollView {
@@ -551,117 +599,15 @@ Pane {
                 width: scrollView.availableWidth
                 spacing: 20
 
-                ProfileBioSocialsPanel {
-                    Layout.fillWidth: true
-                    Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
-                    Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
-                    bio: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
-                    userSocialLinksJson: root.readOnly ? root.profileStore.temporarySocialLinksJson
-                                                       : d.contactDetails.socialLinks
-                }
-
-                GridLayout {
-                    Layout.fillWidth: true
-                    Layout.leftMargin: column.anchors.leftMargin
-                    Layout.rightMargin: column.anchors.rightMargin
-                    flow: GridLayout.TopToBottom
-                    rowSpacing: Style.current.halfPadding
-                    columnSpacing: Style.current.bigPadding
-                    visible: d.isCurrentUser
-                    enabled: visible
-                    columns: 2
-                    rows: 4
-
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        text: qsTr("Link to Profile")
-                        font.pixelSize: 13
-                    }
-
-                    StatusBaseInput {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-                        leftPadding: Style.current.padding
-                        rightPadding: Style.current.halfPadding
-                        topPadding: 0
-                        bottomPadding: 0
-                        placeholder.rightPadding: Style.current.halfPadding
-                        placeholderText: d.linkToProfile
-                        placeholderTextColor: Theme.palette.directColor1
-                        edit.readOnly: true
-                        rightComponent: StatusButton {
-                            id: copyLinkBtn
-                            anchors.verticalCenter: parent.verticalCenter
-                            borderColor: Theme.palette.primaryColor1
-                            size: StatusBaseButton.Size.Tiny
-                            text: qsTr("Copy")
-                            onClicked: {
-                                text = qsTr("Copied")
-                                root.profileStore.copyToClipboard(d.linkToProfile)
-                                d.timer.setTimeout(function() {
-                                    copyLinkBtn.text = qsTr("Copy")
-                                }, 2000);
-                            }
-                        }
-                    }
-
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        Layout.topMargin: Style.current.smallPadding
-                        text: qsTr("Emoji Hash")
-                        font.pixelSize: 13
-                    }
-
-                    StatusBaseInput {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-                        leftPadding: Style.current.padding
-                        rightPadding: Style.current.halfPadding
-                        topPadding: 0
-                        bottomPadding: 0
-                        edit.readOnly: true
-                        leftComponent: EmojiHash {
-                            publicKey: root.publicKey
-                            oneRow: !root.readOnly
-                        }
-                        rightComponent: StatusButton {
-                            id: copyHashBtn
-                            anchors.verticalCenter: parent.verticalCenter
-                            borderColor: Theme.palette.primaryColor1
-                            size: StatusBaseButton.Size.Tiny
-                            text: qsTr("Copy")
-                            onClicked: {
-                                root.profileStore.copyToClipboard(Utils.getEmojiHashAsJson(root.publicKey).join("").toString())
-                                text = qsTr("Copied")
-                                d.timer.setTimeout(function() {
-                                    copyHashBtn.text = qsTr("Copy")
-                                }, 2000);
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.rowSpan: 4
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: height
-                        Layout.alignment: Qt.AlignCenter
-                        color: "transparent"
-                        border.width: 1
-                        border.color: Theme.palette.baseColor2
-                        radius: Style.current.halfPadding
-
-                        Image {
-                            anchors.centerIn: parent
-                            asynchronous: true
-                            fillMode: Image.PreserveAspectFit
-                            width: 170
-                            height: width
-                            mipmap: true
-                            smooth: false
-                            source: root.profileStore.getQrCodeSource(Utils.getCompressedPk(root.profileStore.pubkey))
-                        }
-                    }
-                }
+                // TODO own tab in Showcase
+                // ProfileBioSocialsPanel {
+                //     Layout.fillWidth: true
+                //     Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
+                //     Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
+                //     bio: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
+                //     userSocialLinksJson: root.readOnly ? root.profileStore.temporarySocialLinksJson
+                //                                        : d.contactDetails.socialLinks
+                // }
 
                 StatusTabBar {
                     id: showcaseTabBar
@@ -701,7 +647,6 @@ Pane {
                     profileStore: root.profileStore
                     walletStore: root.walletStore
                     networkConnectionStore: root.networkConnectionStore
-                    communitiesModel: root.communitiesModel
 
                     onCloseRequested: root.closeRequested()
                 }

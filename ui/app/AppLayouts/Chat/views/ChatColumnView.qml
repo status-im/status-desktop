@@ -184,7 +184,6 @@ Item {
     EmptyChatPanel {
         anchors.fill: parent
         visible: root.activeChatId === "" || root.chatsCount == 0
-        rootStore: root.rootStore
         onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
     }
 

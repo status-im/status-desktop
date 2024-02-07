@@ -26,6 +26,7 @@ Item {
     property url previewIcon: icon
     property int trustStatus
     property bool isContact: false
+    property bool isBlocked
     property bool isCurrentUser
     property bool userIsEnsVerified
     property rect cropRect
@@ -211,6 +212,7 @@ Item {
                 visible: !root.isCurrentUser && !root.isBridgedAccount
                 isContact: root.isContact
                 trustIndicator: root.trustStatus
+                isBlocked: root.isBlocked
             }
 
             Loader {
@@ -279,16 +281,16 @@ Item {
         StatusMenu {
 
             StatusAction {
-                text: qsTr("Select different image")
+                text: !!root.icon ? qsTr("Select different image") : qsTr("Select image")
                 assetSettings.name: "image"
                 onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
             }
 
             StatusAction {
-                text: qsTr("Use an NFT")
+                text: qsTr("Use a collectible")
                 assetSettings.name: "nft-profile"
                 onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
-                enabled: false // TODO enable this with the profile showcase
+                enabled: false // TODO enable this with the profile showcase (#13418)
             }
 
             StatusMenuSeparator {}

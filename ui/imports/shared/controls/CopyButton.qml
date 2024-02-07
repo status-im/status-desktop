@@ -12,6 +12,8 @@ StatusIcon {
 
     required property string textToCopy
 
+    readonly property bool hovered: mouseArea.containsMouse
+
     icon: "copy"
     color: mouseArea.containsMouse? Theme.palette.primaryColor1 : Theme.palette.baseColor1
 

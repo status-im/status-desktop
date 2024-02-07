@@ -242,6 +242,5 @@ Item {
         id: noContactsRect
         visible: showContactList && existingContacts.count === 0
         anchors.centerIn: parent
-        rootStore: root.rootStore
     }
 }

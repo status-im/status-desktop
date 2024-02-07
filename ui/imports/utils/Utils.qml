@@ -573,7 +573,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        return StatusQUtils.Utils.elideText(publicKey, 5, 3)
+        return StatusQUtils.Utils.elideText(publicKey, 3, 6)
     }
 
     function getElidedCommunityPK(publicKey) {
@@ -588,7 +588,7 @@ QtObject {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return getElidedPk(compressedPk, 6, 3)
+        return getElidedPk(compressedPk)
     }
 
     function elideIfTooLong(str, maxLength) {
