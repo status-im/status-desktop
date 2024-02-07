@@ -114,7 +114,6 @@ proc hasGas*(self: Service, accountAddress: string, chainId: int, nativeGasSymbo
         if balance.account == accountAddress and balance.chainId == chainId:
           if(self.currencyService.parseCurrencyValue(nativeGasSymbol, balance.balance) >= requiredGas):
             return true
-            break
   return false
 
 proc getCurrency*(self: Service): string =

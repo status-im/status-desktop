@@ -233,3 +233,8 @@ QtObject:
   QtProperty[bool] walletReady:
     read = getWalletReady
     notify = walletReadyChanged
+
+  proc getRpcStats*(self: View): string {.slot.} =
+    return self.delegate.getRpcStats()
+  proc resetRpcStats*(self: View) {.slot.} =
+    self.delegate.resetRpcStats()

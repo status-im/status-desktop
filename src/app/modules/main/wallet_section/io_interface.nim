@@ -114,3 +114,9 @@ method destroyKeypairImportPopup*(self: AccessInterface) {.base.} =
 
 method hasPairedDevices*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getRpcStats*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resetRpcStats*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

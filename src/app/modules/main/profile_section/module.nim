@@ -23,6 +23,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/node/service as node_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -85,7 +86,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   networkService: network_service.Service,
   keycardService: keycard_service.Service,
   keychainService: keychain_service.Service,
-  tokenService: token_service.Service
+  tokenService: token_service.Service,
+  nodeService: node_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -112,7 +114,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     privacyService, accountsService, walletAccountService, keychainService)
 
   result.walletModule = wallet_module.newModule(result, events, accountsService, walletAccountService, settingsService,
-    networkService, devicesService)
+    networkService, devicesService, nodeService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 

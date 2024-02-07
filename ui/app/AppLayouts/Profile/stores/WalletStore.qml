@@ -148,4 +148,12 @@ QtObject {
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
         accountsModule.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
     }
+
+    function getRpcStats() {
+        return root.walletModule.getRpcStats()
+    }
+
+    function resetRpcStats() {
+        root.walletModule.resetRpcStats()
+    }
 }
