@@ -538,48 +538,39 @@ QtObject {
         readonly property list<StatusValidator> displayName: [
             StatusValidator {
                 name: "startsWithSpaceValidator"
-                validate: function (t) { return !t.startsWith(" ") }
-                errorMessage: qsTr("Usernames starting with whitespace are not allowed")
+                validate: function (t) { return !(t.startsWith(" ") || t.endsWith(" "))}
+                errorMessage: qsTr("Display Names can’t start or end with a space")
             },
             StatusRegularExpressionValidator {
                 regularExpression: regularExpressions.alphanumericalExpanded
-                errorMessage: errorMessages.alphanumericalExpandedRegExp
+                errorMessage: qsTr("Invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             },
             StatusMinLengthValidator {
                 minLength: keypair.nameLengthMin
-                errorMessage: qsTr("Username must be at least %n character(s)", "", keypair.nameLengthMin)
-            },
-            StatusValidator {
-                name: "endsWithSpaceValidator"
-                validate: function (t) { return !t.endsWith(" ") }
-                errorMessage: qsTr("Usernames ending with whitespace are not allowed")
+                errorMessage: qsTr("Display Names must be at least %n character(s) long", "", keypair.nameLengthMin)
             },
             // TODO: Create `StatusMaxLengthValidator` in StatusQ
             StatusValidator {
                 name: "maxLengthValidator"
                 validate: function (t) { return t.length <= keypair.nameLengthMax }
-                errorMessage: qsTr("%n character(s) username limit", "", keypair.nameLengthMax)
+                errorMessage: qsTr("Display Names can’t be longer than %n character(s)", "", keypair.nameLengthMax)
             },
             StatusValidator {
                 name: "endsWith-ethValidator"
-                validate: function (t) { return !t.endsWith("-eth") }
-                errorMessage: qsTr("Usernames ending with '-eth' are not allowed")
-            },
-            StatusValidator {
-                name: "endsWith_ethValidator"
-                validate: function (t) { return !t.endsWith("_eth") }
-                errorMessage: qsTr("Usernames ending with '_eth' are not allowed")
-            },
-            StatusValidator {
-                name: "endsWith.ethValidator"
-                validate: function (t) { return !t.endsWith(".eth") }
-                errorMessage: qsTr("Usernames ending with '.eth' are not allowed")
+                validate: function (t) { return !(t.endsWith("-eth") || t.endsWith("_eth") || t.endsWith(".eth")) }
+                errorMessage: qsTr("Display Names can’t end in “.eth”, “_eth” or “-eth”")
             },
             StatusValidator {
                 name: "isAliasValidator"
                 validate: function (t) { return !globalUtils.isAlias(t) }
-                errorMessage: qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
+                errorMessage: qsTr("Adjective-animal Display Name formats are not allowed")
             }
+            // https://github.com/status-im/status-desktop/issues/13434
+            // StatusValidator {
+            //     name: "isDuplicateInComunitiesValidator"
+            //     validate: function(t) { return !globalUtils.isDuplicatedInComunities(t) }
+            //     errorMessage: qsTr("This Display Name is already in use in one of your joined communities")
+            // }
         ]
     }
 
