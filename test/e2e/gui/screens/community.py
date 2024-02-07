@@ -332,9 +332,15 @@ class LeftPanel(QObject):
         driver.mouseClick(self.find_category_in_list(category_name).object)
 
     @allure.step('Open more options')
-    def open_more_options(self):
+    def open_more_options(self, attempts: int = 2):
         self._arrow_button.click()
-        self._more_button.click()
+        try:
+            self._more_button.click()
+        except LookupError as err:
+            if attempts:
+                return self._more_button.click(attempts - 1)
+            else:
+                raise err
         return self
 
     @allure.step('Get visibility state of delete item')
