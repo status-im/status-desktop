@@ -34,6 +34,9 @@ ColumnLayout {
     required property string networkFilters
     property bool sendEnabled: true
     property bool filterVisible
+    property bool isFetching: false // Indicates if a collectibles page is being loaded from the backend
+    property bool isUpdating: false // Indicates if the collectibles list is being updated
+    property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
     signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
     signal sendRequested(string symbol)
@@ -53,8 +56,68 @@ ColumnLayout {
 
         readonly property bool isCustomView: cmbTokenOrder.currentValue === SortOrderComboBox.TokenOrderCustom
 
-        readonly property bool hasCollectibles: nonCommunityModel.count
-        readonly property bool hasCommunityCollectibles: communityModel.count
+        readonly property var sourceModel: root.controller.sourceModel
+        readonly property bool isLoading: root.isUpdating || root.isFetching
+
+        onIsLoadingChanged: {
+            d.loadingItemsModel.refresh()
+        }
+
+        readonly property var loadingItemsModel: ListModel {
+            Component.onCompleted: {
+                refresh()
+            }
+
+            function refresh() {
+                clear()
+                if (d.isLoading) {
+                    for (let i = 0; i < 10; i++) {
+                        append({ isLoading: true })
+                    }
+                }
+            }
+        }
+
+        readonly property var communityModel: CustomSFPM {
+            isCommunity: true
+        }
+
+        readonly property var communityModelWithLoadingItems: ConcatModel {
+            sources: [
+                SourceModel {
+                    model: d.communityModel
+                    markerRoleValue: "communityModel"
+                },
+                SourceModel {
+                    model: d.loadingItemsModel
+                    markerRoleValue: "loadingItemsModel"
+                }
+            ]
+
+            markerRoleName: "sourceGroup"
+        }
+
+        readonly property var nonCommunityModel: CustomSFPM {
+            isCommunity: false
+        }
+
+        readonly property var nonCommunityModelWithLoadingItems: ConcatModel {
+            sources: [
+                SourceModel {
+                    model: d.nonCommunityModel
+                    markerRoleValue: "nonCommunityModel"
+                },
+                SourceModel {
+                    model: d.loadingItemsModel
+                    markerRoleValue: "loadingItemsModel"
+                }
+            ]
+
+            markerRoleName: "sourceGroup"
+        }
+
+        readonly property bool hasCollectibles: d.nonCommunityModel.count || d.loadingItemsModel.count
+        readonly property bool hasCommunityCollectibles: d.communityModel.count || d.loadingItemsModel.count
 
         readonly property bool onlyOneType: !hasCollectibles || !hasCommunityCollectibles
 
@@ -75,7 +138,7 @@ ColumnLayout {
         id: customFilter
         property bool isCommunity
 
-        sourceModel: root.controller.sourceModel
+        sourceModel: d.sourceModel
         proxyRoles: JoinRole {
             name: "groupName"
             roleNames: ["collectionName", "communityName"]
@@ -123,16 +186,6 @@ ColumnLayout {
                 enabled: !d.isCustomView
             }
         ]
-    }
-
-    CustomSFPM {
-        id: communityModel
-
-        isCommunity: true
-    }
-
-    CustomSFPM {
-        id: nonCommunityModel
     }
 
     Settings {
@@ -268,7 +321,7 @@ ColumnLayout {
             width: doubleFlickable.width
             cellHeight: d.communityCellHeight
 
-            model: communityModel
+            model: d.communityModelWithLoadingItems
         }
 
         flickable2: CustomGridView {
@@ -302,7 +355,7 @@ ColumnLayout {
             width: doubleFlickable.width
             cellHeight: d.cellHeight
 
-            model: nonCommunityModel
+            model: d.nonCommunityModelWithLoadingItems
         }
     }
 

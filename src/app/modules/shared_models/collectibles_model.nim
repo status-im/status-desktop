@@ -31,8 +31,6 @@ type
     CommunityColor
     CommunityPrivilegesLevel
 
-const loadingItemsCount = 10
-
 QtObject:
   type
     Model* = ref object of QAbstractListModel
@@ -41,11 +39,6 @@ QtObject:
       isFetching: bool
       isUpdating: bool
       isError: bool
-      hasLoadingItems: bool
-
-  proc appendLoadingItems(self: Model)
-  proc removeLoadingItems(self: Model)
-  proc checkLoadingItems(self: Model)
 
   proc delete(self: Model) =
     self.items = @[]
@@ -62,21 +55,14 @@ QtObject:
     result.isUpdating = false
     result.isFetching = false
     result.isError = false
-    result.hasLoadingItems = true
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
-  proc getCollectiblesCount*(self: Model): int =
-    return self.items.len
-
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
-    var count = self.items.len
-    if self.hasLoadingItems:
-      count += loadingItemsCount
-    return count
+    return self.items.len
     
   QtProperty[int] count:
     read = getCount
@@ -93,7 +79,6 @@ QtObject:
       return
     self.isFetching = value
     self.isFetchingChanged()
-    self.checkLoadingItems()
 
   proc isUpdatingChanged(self: Model) {.signal.}
   proc getIsUpdating*(self: Model): bool {.slot.} =
@@ -106,7 +91,6 @@ QtObject:
       return
     self.isUpdating = isUpdating
     self.isUpdatingChanged()
-    self.checkLoadingItems()
 
   proc isErrorChanged(self: Model) {.signal.}
   proc getIsError*(self: Model): bool {.slot.} =
@@ -131,7 +115,6 @@ QtObject:
       return
     self.hasMore = hasMore
     self.hasMoreChanged()
-    self.checkLoadingItems()
 
   method canFetchMore*(self: Model, parent: QModelIndex): bool =
     return self.hasMore
@@ -220,14 +203,6 @@ QtObject:
         result = newQVariant(item.getCommunityColor())
       of CollectibleRole.CommunityPrivilegesLevel:
         result = newQVariant(item.getCommunityPrivilegesLevel())
-    else:
-      # Loading item
-      case enumRole:
-      of CollectibleRole.IsLoading:
-        result = newQVariant(true)
-      else:
-        error "Invalid role for loading item"
-        result = newQVariant()
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -287,48 +262,6 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc appendLoadingItems(self: Model) =
-    if self.hasLoadingItems:
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    # Start after the last real item
-    let startIdx = self.items.len
-    # End after loadingItemsCount
-    let endIdx = startIdx + loadingItemsCount - 1
-
-    self.beginInsertRows(parentModelIndex, startIdx, endIdx)
-    self.hasLoadingItems = true
-    self.endInsertRows()
-    self.countChanged()
-
-  proc removeLoadingItems(self: Model) =
-    if not self.hasLoadingItems:
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    # Start after the last real item
-    let startIdx = self.items.len
-    # End after loadingItemsCount
-    let endIdx = startIdx + loadingItemsCount - 1
-  
-    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
-    self.hasLoadingItems = false
-    self.endRemoveRows()
-    self.countChanged()
-
-  proc checkLoadingItems(self: Model) =
-    # If fetch is in progress or we have more items in the DB, show loading items
-    let showLoadingItems = self.isUpdating or self.isFetching or self.hasMore
-    if showLoadingItems:
-      self.appendLoadingItems()
-    else:
-      self.removeLoadingItems()
-
   proc getItems*(self: Model): seq[CollectiblesEntry] =
     return self.items
 
@@ -341,7 +274,7 @@ QtObject:
   proc setItems*(self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool) =
     if offset == 0:
       self.removeCollectibleItems()
-    elif offset != self.getCollectiblesCount():
+    elif offset != self.getCount():
       error "invalid offset"
       return
 
