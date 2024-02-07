@@ -69,8 +69,6 @@ QtObject:
       of ModelRole.TokensCount:
         result = newQVariant(item.tokensCount)
 
-  proc modelsAboutToUpdate*(self: SourcesOfTokensModel) =
-      self.beginResetModel()
-
   proc modelsUpdated*(self: SourcesOfTokensModel) =
+      self.beginResetModel()
       self.endResetModel()

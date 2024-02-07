@@ -128,12 +128,9 @@ QtObject:
       of ModelRole.MarketDetailsLoading:
         result = newQVariant(self.delegate.getTokensMarketValuesLoading())
 
-
-  proc modelsAboutToUpdate*(self: FlatTokensModel) =
-    self.tokenMarketDetails = @[]
-    self.beginResetModel()
-
   proc modelsUpdated*(self: FlatTokensModel) =
+    self.beginResetModel()
+    self.tokenMarketDetails = @[]
     for token in self.delegate.getFlatTokensList():
       let symbol = if token.communityId.isEmptyOrWhitespace: token.symbol
                    else: ""

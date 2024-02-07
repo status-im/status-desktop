@@ -116,11 +116,6 @@ QtObject:
     read = getTokensBySymbolModel
     notify = tokensBySymbolModelChanged
 
-  proc modelsAboutToUpdate*(self: View) =
-    self.sourcesOfTokensModel.modelsAboutToUpdate()
-    self.flatTokensModel.modelsAboutToUpdate()
-    self.tokensBySymbolModel.modelsAboutToUpdate()
-
   proc modelsUpdated*(self: View) =
     self.sourcesOfTokensModel.modelsUpdated()
     self.flatTokensModel.modelsUpdated()

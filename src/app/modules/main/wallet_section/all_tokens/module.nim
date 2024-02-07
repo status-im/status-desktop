@@ -49,8 +49,6 @@ method load*(self: Module) =
     self.controller.rebuildMarketData()
 
   # Passing on the events for changes in model to abstract model
-  self.events.on(SIGNAL_TOKENS_LIST_ABOUT_TO_BE_UPDATED) do(e: Args):
-    self.view.modelsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.view.modelsUpdated()
     self.view.setTokenListUpdatedAt(self.controller.getTokenListUpdatedAt())

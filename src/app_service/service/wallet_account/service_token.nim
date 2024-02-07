@@ -80,9 +80,6 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
   for waddress in accounts:
     self.updateAssetsLoadingState(waddress, true)
 
-  # this is emited so that the models can know that an update is about to happen
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED, Args())
-
   let arg = BuildTokensTaskArg(
     tptr: cast[ByteAddress](prepareTokensTask),
     vptr: cast[ByteAddress](self.vptr),
