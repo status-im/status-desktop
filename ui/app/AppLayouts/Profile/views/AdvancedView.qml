@@ -34,6 +34,7 @@ SettingsContentBase {
 
     property MessagingStore messagingStore
     property AdvancedStore advancedStore
+    property WalletStore walletStore
 
     Item {
         id: advancedContainer
@@ -430,6 +431,14 @@ SettingsContentBase {
                     Global.openPopup(changeNumberOfLogsArchived)
                 }
             }
+
+            StatusSettingsLineButton {
+                id: rpcStatsButton
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("RPC statistics")
+                onClicked: rpcStatsModal.open()
+            }
         }
 
         FleetsModal {
@@ -617,6 +626,13 @@ SettingsContentBase {
             onVelocityChanged: root.advancedStore.setScrollVelocity(value)
             onDecelerationChanged: root.advancedStore.setScrollDeceleration(value)
             onCustomScrollingChanged: root.advancedStore.setCustomScrollingEnabled(enabled)
+        }
+
+        RPCStatsModal {
+            id: rpcStatsModal
+
+            walletStore: root.walletStore
+            title: rpcStatsButton.text
         }
     }
 }

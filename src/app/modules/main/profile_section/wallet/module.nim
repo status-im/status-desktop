@@ -15,6 +15,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/settings/service as settings_service
 import app_service/service/devices/service as devices_service
+import app_service/service/node/service as node_service
 
 logScope:
   topics = "profile-section-wallet-module"
@@ -33,6 +34,7 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     devicesService: devices_service.Service
+    nodeService: node_service.Service
     accountsModule: accounts_module.AccessInterface
     networksModule: networks_module.AccessInterface
     keypairImportModule: keypair_import_module.AccessInterface
@@ -44,11 +46,12 @@ proc newModule*(
   walletAccountService: wallet_account_service.Service,
   settingsService: settings_service.Service,
   networkService: network_service.Service,
-  devicesService: devices_service.Service
+  devicesService: devices_service.Service,
+  nodeService: node_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, events, walletAccountService)
+  result.controller = controller.newController(result, events, walletAccountService, nodeService)
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.events = events
@@ -133,3 +136,9 @@ method hasPairedDevices*(self: Module): bool =
 method onLocalPairingStatusUpdate*(self: Module, data: LocalPairingStatus) =
   if data.state == LocalPairingState.Finished:
     self.view.emitHasPairedDevicesChangedSignal()
+
+method getRpcStats*(self: Module): string =
+  return self.controller.getRpcStats()
+
+method resetRpcStats*(self: Module) =
+  self.controller.resetRpcStats()

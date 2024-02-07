@@ -55,3 +55,8 @@ QtObject:
   QtProperty[bool] hasPairedDevices:
     read = getHasPairedDevices
     notify = hasPairedDevicesChanged
+
+  proc getRpcStats(self: View): string {.slot.} =
+    return self.delegate.getRpcStats()
+  proc resetRpcStats(self: View) {.slot.} =
+    self.delegate.resetRpcStats()

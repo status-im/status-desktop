@@ -57,3 +57,9 @@ method hasPairedDevices*(self: AccessInterface): bool {.base.} =
 
 method onLocalPairingStatusUpdate*(self: AccessInterface, data: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getRpcStats*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resetRpcStats*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

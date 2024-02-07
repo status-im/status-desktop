@@ -69,3 +69,17 @@ QtObject:
     proc peerCount*(self: Service): int = self.peers.len
 
     proc isConnected*(self: Service): bool = self.connected
+
+    proc getRpcStats*(self: Service): string =
+      try:
+        return status_node.getRpcStats()
+      except Exception as e:
+        let errDescription = e.msg
+        error "error: ", errDescription
+
+    proc resetRpcStats*(self: Service) =
+      try:
+        status_node.resetRpcStats()
+      except Exception as e:
+        let errDescription = e.msg
+        error "error: ", errDescription

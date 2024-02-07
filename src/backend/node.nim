@@ -14,3 +14,9 @@ proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 
 proc sendRPCMessageRaw*(inputJSON: string): string {.raises: [Exception].} =
     result = callPrivateRPCRaw(inputJSON)
+
+proc getRpcStats*(): string {.raises: [Exception].} =
+    result = callPrivateRPCNoDecode("rpcstats_getStats")
+
+proc resetRpcStats*() {.raises: [Exception].} =
+    discard callPrivateRPCNoDecode("rpcstats_reset")

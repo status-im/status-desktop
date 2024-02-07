@@ -445,3 +445,9 @@ method hasPairedDevices*(self: Module): bool =
 proc onLocalPairingStatusUpdate*(self: Module, data: LocalPairingStatus) =
   if data.state == LocalPairingState.Finished:
     self.view.emitHasPairedDevicesChangedSignal()
+
+method getRpcStats*(self: Module): string =
+  return self.view.getRpcStats()
+
+method resetRpcStats*(self: Module) =
+  self.view.resetRpcStats()

@@ -40,6 +40,20 @@ proc makePrivateRpcCall*(
     error "error doing rpc request", methodName = methodName, exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc makePrivateRpcCallNoDecode*(
+  methodName: string, inputJSON: JsonNode
+): string {.raises: [RpcException].} =
+  if DB_BLOCKED_DUE_TO_PROFILE_MIGRATION:
+    debug "DB blocked due to profile migration, unable to proceed with the rpc call", rpc_method=methodName
+    raise newException(RpcException, "db closed due to profile migration")
+  try:
+    debug "NewBE_callPrivateRPCNoDecode", rpc_method=methodName
+    result = status_go.callPrivateRPC($inputJSON)
+
+  except Exception as e:
+    error "error doing rpc request", methodName = methodName, exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc callPrivateRPCWithChainId*(
   methodName: string, chainId: int, payload = %* []
 ): RpcResponse[JsonNode] {.raises: [RpcException, ValueError, Defect, SerializationError].} =
@@ -60,6 +74,16 @@ proc callPrivateRPC*(
     "params": %payload
   }
   return makePrivateRpcCall(methodName, inputJSON)
+
+proc callPrivateRPCNoDecode*(
+  methodName: string, payload = %* []
+): string {.raises: [RpcException].} =
+  let inputJSON = %* {
+    "jsonrpc": "2.0",
+    "method": methodName,
+    "params": %payload
+  }
+  return makePrivateRpcCallNoDecode(methodName, inputJSON)
 
 proc migrateKeyStoreDir*(account: string, hashedPassword: string, oldKeystoreDir: string, multiaccountKeystoreDir: string)
   {.raises: [RpcException, ValueError, Defect, SerializationError].} =

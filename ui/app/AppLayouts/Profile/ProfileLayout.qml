@@ -293,6 +293,7 @@ StatusSectionLayout {
 
                 messagingStore: root.store.messagingStore
                 advancedStore: root.store.advancedStore
+                walletStore: root.store.walletStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }
