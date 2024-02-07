@@ -52,22 +52,22 @@ SplitView {
     handle: Item { }
 
     /*!
-        \qmlproperty Item StatusAppLayout::leftPanel
+        \qmlproperty Item StatusSectionLayout::leftPanel
         This property holds the left panel of the component.
     */
     property Item leftPanel
     /*!
-        \qmlproperty Item StatusAppLayout::centerPanel
+        \qmlproperty Item StatusSectionLayout::centerPanel
         This property holds the center panel of the component.
     */
     property Item centerPanel
     /*!
-        \qmlproperty Component StatusAppLayout::rightPanel
+        \qmlproperty Component StatusSectionLayout::rightPanel
         This property holds the right panel of the component.
     */
     property Component rightPanel
     /*!
-        \qmlproperty Component StatusAppLayout::footer
+        \qmlproperty Item StatusSectionLayout::footer
         This property holds the footer of the component.
     */
     property Item footer
@@ -77,47 +77,54 @@ SplitView {
     */
     property Item headerBackground
     /*!
-        \qmlproperty bool StatusAppLayout::showRightPanel
+        \qmlproperty bool StatusSectionLayout::showRightPanel
         This property sets the right panel component's visibility to true/false.
         Default value is false.
     */
     property bool showRightPanel: false
+
     /*!
-        \qmlproperty bool StatusAppLayout::showHeader
+        \qmlproperty int StatusSectionLayout::rightPanelWidth
+        This property sets the right panel component's width.
+        Default value is 250.
+    */
+    property int rightPanelWidth: 250
+    /*!
+        \qmlproperty bool StatusSectionLayout::showHeader
         This property sets the header component's visibility to true/false.
         Default value is true.
     */
     property bool showHeader: true
 
     /*!
-        \qmlproperty alias StatusAppLayout::notificationCount
+        \qmlproperty alias StatusSectionLayout::notificationCount
         This property holds a reference to the notificationCount property of the
         header component.
     */
     property alias notificationCount: statusToolBar.notificationCount
 
     /*!
-        \qmlproperty alias StatusAppLayout::hasUnseenNotifications
+        \qmlproperty alias StatusSectionLayout::hasUnseenNotifications
         This property holds a reference to the hasUnseenNotifications property of the
         header component.
     */
     property alias hasUnseenNotifications: statusToolBar.hasUnseenNotifications
 
     /*!
-        \qmlproperty alias StatusAppLayout::backButtonName
+        \qmlproperty alias StatusSectionLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
     */
     property alias backButtonName: statusToolBar.backButtonName
 
     /*!
-        \qmlproperty alias StatusAppLayout::headerContent
+        \qmlproperty alias StatusSectionLayout::headerContent
         This property holds a reference to the custom header content of
         the header component.
     */
     property alias headerContent: statusToolBar.headerContent
     /*!
-        \qmlproperty alias StatusAppLayout::notificationButton
+        \qmlproperty alias StatusSectionLayout::notificationButton
         This property holds a reference to the notification button of the header
         component.
     */
@@ -176,7 +183,7 @@ SplitView {
             Item {
                 id: headerBackgroundSlot
                 anchors.top: parent.top
-		// Needed cause I see a gap otherwise
+                // Needed cause I see a gap otherwise
                 anchors.topMargin: -3
                 width: visible ? parent.width : 0
                 height: visible ? childrenRect.height : 0
@@ -212,7 +219,7 @@ SplitView {
     }
 
     Control {
-        SplitView.preferredWidth: root.showRightPanel ? 250 : 0
+        SplitView.preferredWidth: root.showRightPanel ? root.rightPanelWidth : 0
         SplitView.minimumWidth: root.showRightPanel ? 58 : 0
         opacity: root.showRightPanel ? 1.0 : 0.0
         visible: (opacity > 0.1)

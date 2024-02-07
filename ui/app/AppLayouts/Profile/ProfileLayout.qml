@@ -1,11 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-import shared.stores 1.0 as SharedStores
+import shared.stores 1.0
 import shared.popups.keycard 1.0
 import shared.stores.send 1.0
 
@@ -15,6 +16,7 @@ import AppLayouts.Wallet.stores 1.0
 import "stores"
 import "popups"
 import "views"
+import "views/profile"
 
 import StatusQ.Core 0.1
 import StatusQ.Layout 0.1
@@ -36,7 +38,7 @@ StatusSectionLayout {
     required property TransactionStore transactionStore
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
-    required property SharedStores.CurrenciesStore currencyStore
+    required property CurrenciesStore currencyStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -74,6 +76,10 @@ StatusSectionLayout {
         readonly property int leftMargin: 64
 
         readonly property int contentWidth: 560
+        readonly property int rightPanelWidth: 768
+
+        readonly property bool isProfilePanelActive: profileContainer.currentIndex === Constants.settingsSubsection.profile
+        readonly property bool sideBySidePreviewAvailable: root.Window.width >= 1840 // design
     }
 
     headerBackground: AccountHeaderGradient {
@@ -137,6 +143,7 @@ StatusSectionLayout {
                 communitiesModel: root.store.communitiesList
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
+                sideBySidePreview: d.sideBySidePreviewAvailable
             }
         }
 
@@ -227,7 +234,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 languageStore: root.store.languageStore
-                currencyStore: SharedStores.RootStore.currencyStore
+                currencyStore: root.currencyStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
             }
@@ -403,6 +410,16 @@ StatusSectionLayout {
                 }
             }
         }
+    }
+
+    showRightPanel: d.isProfilePanelActive && d.sideBySidePreviewAvailable
+    rightPanelWidth: d.rightPanelWidth
+    rightPanel: MyProfilePreview {
+        profileStore: root.store.profileStore
+        contactsStore: root.store.contactsStore
+        networkConnectionStore: root.networkConnectionStore
+        dirtyValues: d.isProfilePanelActive ? profileContainer.currentItem.dirtyValues : ({})
+        dirty: d.isProfilePanelActive ? profileContainer.currentItem.dirty : false
     }
 
     Connections {

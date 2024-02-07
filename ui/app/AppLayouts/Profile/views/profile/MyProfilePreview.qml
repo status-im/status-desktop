@@ -28,7 +28,7 @@ Item {
     SharedViews.ProfileDialogView {
         id: profilePreview
         anchors.fill: parent
-        anchors.margins: 24
+        anchors.margins: 64
         readOnly: true
     }
 

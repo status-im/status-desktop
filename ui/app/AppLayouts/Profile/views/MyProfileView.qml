@@ -35,17 +35,18 @@ SettingsContentBase {
 
     property var communitiesModel
 
-    titleRowComponentLoader.sourceComponent: RowLayout {
-        StatusButton {
-            objectName: "profileSettingsChangePasswordButton"
-            text: qsTr("Change Password")
-            onClicked: Global.openPopup(changePasswordModal)
-            enabled: !userProfile.isKeycardUser
-        }
-        StatusButton {
-            text: qsTr("Preview")
-            onClicked: Global.openPopup(profilePreview)
-        }
+    property bool sideBySidePreview
+
+    property QtObject dirtyValues: QtObject {
+        property string displayName: descriptionPanel.displayName.text
+        property string bio: descriptionPanel.bio.text
+        property url profileLargeImage: profileHeader.previewIcon
+    }
+
+    titleRowComponentLoader.sourceComponent: StatusButton {
+        text: qsTr("Preview")
+        onClicked: Global.openPopup(profilePreview)
+        visible: !root.sideBySidePreview
     }
 
     dirty: (!descriptionPanel.isEnsName &&

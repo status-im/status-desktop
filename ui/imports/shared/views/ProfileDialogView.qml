@@ -36,13 +36,13 @@ Pane {
     property var networkConnectionStore
     property var communitiesModel
 
-    property QtObject dirtyValues: null
+    property var dirtyValues: ({})
     property bool dirty: false
 
     signal closeRequested()
 
     padding: 0
-    topPadding: 40
+    topPadding: 32
 
     background: StatusDialogBackground {
         id: background
