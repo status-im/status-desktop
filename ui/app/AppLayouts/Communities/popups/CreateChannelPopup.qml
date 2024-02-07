@@ -784,7 +784,7 @@ StatusStackModal {
                         onClicked: {
                             channelToAddPermission.clear();
                             channelToAddPermission.append({"key": root.chatId, "name": nameInput.text});
-                            const propertiess = {
+                            const properties = {
                                 channelsToEditModel: channelToAddPermission,
                                 header: null,
                                 topPadding: -root.subHeaderPadding - 8,
@@ -792,7 +792,7 @@ StatusStackModal {
                                 rightPadding: 16,
                                 viewWidth: scrollView.availableWidth - 32
                             };
-                            editPermissionView.pushEditView(propertiess);
+                            editPermissionView.pushEditView(properties);
                             d.currentPage = CreateChannelPopup.CurrentPage.ChannelPermissions;
                         }
                     }
@@ -896,20 +896,23 @@ StatusStackModal {
             initialPage.topPadding: 0
             initialPage.leftPadding: 0
             viewWidth: scrollView.availableWidth - 32
-            readonly property string nextButtonText: !!currentItem.permissionKeyToEdit ?
-                                                         qsTr("Update permission") : qsTr("Create permission")
-            readonly property string stackTitleText: !!currentItem.permissionKeyToEdit ?
-                                                         qsTr("Edit #%1 permission").arg(nameInput.text) : qsTr("New #%1 permission").arg(nameInput.text)
-            readonly property string deleteButtonText: !!currentItem.permissionKeyToEdit ?
-                                                           qsTr("Revert changes") : ""
-            readonly property bool canGoNext: !!currentItem && currentItem.isDirty && currentItem.isFullyFilled ? currentItem.isDirty && currentItem.isFullyFilled : false
-            readonly property bool deleteButtonEnabled: editPermissionView.canGoNext
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             permissionsModel: d.channelEditModel.channelPermissionsModel
             channelsModel: d.channelEditModel.liveChannelsModel
             communityDetails: d.communityDetails
             showChannelSelector: false
+
+            readonly property string nextButtonText: !!currentItem.permissionKeyToEdit ?
+                                                         qsTr("Update permission") : qsTr("Create permission")
+            readonly property string stackTitleText: !!currentItem.permissionKeyToEdit ?
+                                                         qsTr("Edit #%1 permission").arg(nameInput.text) : qsTr("New #%1 permission").arg(nameInput.text)
+            readonly property string deleteButtonText: !!currentItem.permissionKeyToEdit ?
+                                                           qsTr("Revert changes") : ""
+            readonly property bool canGoNext: !!currentItem && !!currentItem.isSaveEnabled ? currentItem.isSaveEnabled : false
+
+            readonly property bool deleteButtonEnabled: editPermissionView.canGoNext
+            
             readonly property var nextDeleteAction: function () {
                 if (!!currentItem.permissionKeyToEdit) {
                     currentItem.resetChanges();
