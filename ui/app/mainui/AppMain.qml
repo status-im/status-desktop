@@ -716,7 +716,9 @@ Item {
                     tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
                     checked: model.active
                     badge.value: model.notificationsCount
-                    badge.visible: model.hasNotification
+                    badge.visible: model.sectionType === Constants.appSection.profile &&
+                                   appMain.rootStore.contactStore.receivedContactRequestsModel.count ? true // pending CR request
+                                                                                                     : model.hasNotification
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                     badge.border.width: 2
                     onClicked: {
