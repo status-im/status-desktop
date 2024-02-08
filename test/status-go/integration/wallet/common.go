@@ -37,13 +37,13 @@ func setupAccountsAndTransactions(t *testing.T) (td testUserData, close func()) 
 	require.Greater(t, len(watchAccounts), 0)
 
 	return testUserData{
-		opAccounts[0],
-		watchAccounts[0],
-		conf.HashedPassword,
-		eventQueue,
-	}, func() {
-		helpers.Logout(t)
-	}
+			opAccounts[0],
+			watchAccounts[0],
+			conf.HashedPassword,
+			eventQueue,
+		}, func() {
+			helpers.Logout(t)
+		}
 }
 
 // sendTransaction generates multi_transactions and pending entries then it creates and publishes a transaction
