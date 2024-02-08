@@ -286,6 +286,8 @@ StatusStackModal {
             d.currentPage = (d.currentPage === CreateChannelPopup.CurrentPage.DiscordImportUploadStart) ?
                         CreateChannelPopup.CurrentPage.DiscordImportUploadFile : CreateChannelPopup.CurrentPage.ChannelDetails
         }
+
+        Layout.minimumWidth: implicitWidth
     }
 
 

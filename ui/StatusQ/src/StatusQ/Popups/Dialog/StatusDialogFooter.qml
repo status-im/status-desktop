@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -31,7 +31,10 @@ Rectangle {
 
         Repeater {
             model: root.leftButtons
-            onItemAdded: item.Layout.fillHeight = true
+            onItemAdded: {
+                item.Layout.fillHeight = true
+                item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+            }
         }
 
         Item {
@@ -40,7 +43,10 @@ Rectangle {
 
         Repeater {
             model: root.rightButtons
-            onItemAdded: item.Layout.fillHeight = true
+            onItemAdded: {
+                item.Layout.fillHeight = true
+                item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+            }
         }
     }
 

@@ -132,6 +132,7 @@ StatusDialog {
 
     footer: StatusDialogFooter {
         spacing: Style.current.padding
+
         rightButtons: ObjectModel {
             StatusFlatButton {
                 id: rejectBtn
@@ -149,7 +150,11 @@ StatusDialog {
             }
         }
         leftButtons: ObjectModel {
-            StatusBackButton { id: backButton }
+            StatusBackButton {
+                id: backButton
+
+                Layout.minimumWidth: implicitWidth
+            }
         }
     }
 

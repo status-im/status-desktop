@@ -1,5 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -79,6 +80,8 @@ StatusModal {
             onClicked: {
                 contentItem.pop()
             }
+
+            Layout.minimumWidth: implicitWidth
         }
     ]
 }
