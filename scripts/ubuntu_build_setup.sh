@@ -24,7 +24,7 @@ function install_release_dependencies {
   echo "Install release dependencies"
   mkdir -p /usr/local/bin
   LINUXDEPLOYQT='linuxdeployqt-20230423-8428c59-x86_64.AppImage'
-  curl -L "https://status-misc.ams3.digitaloceanspaces.com/desktop/${LINUXDEPLOYQT}"
+  curl -L "https://status-misc.ams3.digitaloceanspaces.com/desktop/${LINUXDEPLOYQT}" \
     -o /usr/local/bin/linuxdeployqt
   chmod a+x /usr/local/bin/linuxdeployqt
 
