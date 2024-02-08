@@ -135,7 +135,7 @@ StatusSectionLayout {
                     objectName: "createCommunityButton"
                     Layout.preferredHeight: 38
                     verticalPadding: 0
-                    text: qsTr("Create New Community")
+                    text: qsTr("Create community")
                     onClicked: {
                         Global.openPopup(chooseCommunityCreationTypePopupComponent)
                     }
