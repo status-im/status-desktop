@@ -1,4 +1,5 @@
-import QtQuick 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -58,8 +59,9 @@ QtObject {
             id: backButton
             visible: root.sharedKeycardModule.currentState.displayBackButton
             enabled: !root.disableActionPopupButtons
-            height: Constants.keycard.general.footerButtonsHeight
-            width: height
+
+            Layout.minimumWidth: implicitWidth
+
             onClicked: {
                 root.sharedKeycardModule.currentState.doBackAction()
             }

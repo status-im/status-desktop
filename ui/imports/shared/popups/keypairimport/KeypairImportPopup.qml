@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
@@ -150,8 +151,9 @@ StatusModal {
         StatusBackButton {
             id: backButton
             visible: root.store.currentState.displayBackButton
-            height: Constants.keypairImportPopup.footerButtonsHeight
-            width: height
+
+            Layout.minimumWidth: implicitWidth
+
             onClicked: {
                 root.store.currentState.doBackAction()
             }

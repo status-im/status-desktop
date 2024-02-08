@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
@@ -201,8 +202,9 @@ StatusModal {
             objectName: "AddAccountPopup-BackButton"
             visible: root.store.currentState.displayBackButton
             enabled: !root.store.disablePopup
-            height: Constants.addAccountPopup.footerButtonsHeight
-            width: height
+
+            Layout.minimumWidth: implicitWidth
+
             onClicked: {
                 if (root.store.currentState.stateType === Constants.addAccountPopup.state.confirmAddingNewMasterKey) {
                     root.store.addingNewMasterKeyConfirmed = false
