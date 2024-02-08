@@ -147,14 +147,17 @@ StatusDialog {
                 text: qsTr("Community key")
                 color: Theme.palette.directColor1
             }
-
-            StatusTextArea {
-                id: keyInput
+            StatusScrollView {
+                padding: 0 // use our own (StatusTextArea) padding
                 Layout.fillWidth: true
                 Layout.preferredHeight: 108
-                placeholderText: "0x0..."
-                wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
-                onTextChanged: d.importErrorMessage = ""
+                StatusTextArea {
+                    id: keyInput
+                    anchors.fill: parent
+                    placeholderText: "0x0..."
+                    wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
+                    onTextChanged: d.importErrorMessage = ""
+                }
             }
             RowLayout {
                 Layout.fillWidth: true
