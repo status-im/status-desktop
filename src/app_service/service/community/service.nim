@@ -358,6 +358,10 @@ QtObject:
       var receivedData = DiscordCommunityImportCancelledSignal(e)
       self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_CANCELED, CommunityIdArgs(communityId: receivedData.communityId))
 
+    self.events.on(SignalType.DiscordCommunityImportCleanedUp.event) do(e: Args):
+      var receivedData = DiscordCommunityImportCleanedUpSignal(e)
+      self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: receivedData.communityId))
+
     self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
       var receivedData = DiscordChannelImportFinishedSignal(e)
       self.events.emit(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED, CommunityChatIdArgs(chatId: receivedData.channelId, communityId: receivedData.communityId))

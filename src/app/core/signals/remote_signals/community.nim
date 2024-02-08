@@ -50,6 +50,9 @@ type DiscordChannelImportProgressSignal* = ref object of Signal
 type DiscordCommunityImportCancelledSignal* = ref object of Signal
   communityId*: string
 
+type DiscordCommunityImportCleanedUpSignal* = ref object of Signal
+  communityId*: string
+
 type DiscordCommunityImportFinishedSignal* = ref object of Signal
   communityId*: string
 
@@ -153,6 +156,11 @@ proc fromEvent*(T: type DiscordCommunityImportFinishedSignal, event: JsonNode): 
 proc fromEvent*(T: type DiscordCommunityImportCancelledSignal, event: JsonNode): DiscordCommunityImportCancelledSignal =
   result = DiscordCommunityImportCancelledSignal()
   result.signalType = SignalType.DiscordCommunityImportCancelled
+  result.communityId = event["event"]{"communityId"}.getStr()
+
+proc fromEvent*(T: type DiscordCommunityImportCleanedUpSignal, event: JsonNode): DiscordCommunityImportCleanedUpSignal =
+  result = DiscordCommunityImportCleanedUpSignal()
+  result.signalType = SignalType.DiscordCommunityImportCleanedUp
   result.communityId = event["event"]{"communityId"}.getStr()
 
 proc fromEvent*(T: type DiscordChannelImportFinishedSignal, event: JsonNode): DiscordChannelImportFinishedSignal =
