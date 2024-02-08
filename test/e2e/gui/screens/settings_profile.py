@@ -23,36 +23,38 @@ class ProfileSettingsView(QObject):
         self._bio_text_field = TextEdit('bio_TextEdit')
         self._add_more_links_label = TextLabel('addMoreSocialLinks')
         self._links_list = QObject('linksView')
+        self._web_tab_button = Button('profileTabBar_Web_StatusTabButton')
+        self._identity_tab_button = Button('profileTabBar_Identity_StatusTabButton')
 
     @property
     @allure.step('Get display name')
     def display_name(self) -> str:
-        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        self._identity_tab_button.click()
         return self._display_name_text_field.text
 
     @allure.step('Set user name')
     def set_name(self, value: str):
-        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        self._identity_tab_button.click()
         self._display_name_text_field.text = value
         self.save_changes()
 
     @property
     @allure.step('Get bio')
     def bio(self) -> str:
-        self._scroll_view.vertical_scroll_to(self._bio_text_field)
+        self._identity_tab_button.click()
         return self._bio_text_field.text
 
     @bio.setter
     @allure.step('Set bio')
     def bio(self, value: str):
-        self._scroll_view.vertical_scroll_to(self._bio_text_field)
+        self._identity_tab_button.click()
         self._bio_text_field.text = value
         self.save_changes()
 
     @property
     @allure.step('Get social links')
     def social_links(self) -> dict:
-        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        self._web_tab_button.click()
         links = {}
         for link_name in walk_children(
                 driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
@@ -81,6 +83,7 @@ class ProfileSettingsView(QObject):
 
     @allure.step('Verify social links')
     def verify_social_links(self, links):
+        self._web_tab_button.click()
         twitter = links[0]
         personal_site = links[1]
         github = links[2]
@@ -102,7 +105,7 @@ class ProfileSettingsView(QObject):
 
     @allure.step('Open social links form')
     def open_social_links_popup(self):
-        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        self._web_tab_button.click()
         self._add_more_links_label.click()
         return SocialLinksPopup().wait_until_appears()
 

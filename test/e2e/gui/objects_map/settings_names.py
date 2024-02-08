@@ -125,6 +125,9 @@ change_password_button = {"container": statusDesktop_mainWindow, "type": "Status
 bio_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "bioInput", "type": "StatusInput", "visible": True}
 bio_TextEdit = {"container": bio_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 addMoreSocialLinks = {"container": statusDesktop_mainWindow, "objectName": "addMoreSocialLinks", "type": "StatusLinkText", "visible": True}
+mainWindow_profileTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, "id": "profileTabBar", "type": "StatusTabBar", "unnamed": 1, "visible": True}
+profileTabBar_Web_StatusTabButton = {"checkable": True, "container": mainWindow_profileTabBar_StatusTabBar, "objectName": "webTabButton", "type": "StatusTabButton", "visible": True}
+profileTabBar_Identity_StatusTabButton = {"checkable": True, "container": mainWindow_profileTabBar_StatusTabBar, "objectName": "identityTabButton", "type": "StatusTabButton", "visible": True}
 
 # Syncing Settings View
 mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
