@@ -29,7 +29,7 @@ def keys_screen(main_window) -> KeysView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @pytest.mark.case(703421)
-@pytest.mark.critical
+# @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/13483
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(

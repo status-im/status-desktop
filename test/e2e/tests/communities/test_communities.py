@@ -12,7 +12,7 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@pytest.mark.critical
+# @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/13483
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
 @pytest.mark.case(703084)
 @pytest.mark.parametrize('params', [constants.community_params])

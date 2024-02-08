@@ -11,10 +11,11 @@ from . import marks
 pytestmark = marks
 
 
+# TODO: https://github.com/status-im/status-desktop/issues/13483
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703226', 'Add category')
 @pytest.mark.case(703226)
 @pytest.mark.parametrize('category_name, general_checkbox', [
-    pytest.param('Category in general', True, marks=pytest.mark.critical),
+    pytest.param('Category in general', True),
     pytest.param('Category out of general', False)
 ])
 def test_create_community_category(main_screen: MainWindow, category_name, general_checkbox):
