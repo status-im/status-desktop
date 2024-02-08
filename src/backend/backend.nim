@@ -111,6 +111,13 @@ type
     hash*: string
     address*: string
 
+proc fromJson*(t: JsonNode, T: typedesc[TransactionIdentity]): T {.inline.} =
+  result = TransactionIdentity(
+    chainId: if t.hasKey("chainId"): t["chainId"].getInt() else: 0,
+    hash: if t.hasKey("hash"): t["hash"].getStr() else: "",
+    address: if t.hasKey("address"): t["address"].getStr() else: "",
+  )
+
 proc hash*(ti: TransactionIdentity): Hash =
   var h: Hash = 0
   h = h !& hash(ti.chainId)

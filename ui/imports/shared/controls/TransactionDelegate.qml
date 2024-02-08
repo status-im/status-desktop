@@ -158,7 +158,7 @@ StatusListItem {
         bgWidth: width + 2
         bgHeight: height + 2
         bgRadius: bgWidth / 2
-        bgColor: Style.current.name === Constants.lightThemeName && Constants.isDefaultTokenIcon(root.tokenImage) ?
+        bgColor: d.lightTheme && Constants.isDefaultTokenIcon(root.tokenImage) ?
                      Theme.palette.white : "transparent"
         color: "transparent"
         isImage: !loading
@@ -174,6 +174,9 @@ StatusListItem {
         property int titlePixelSize: 15
         property int subtitlePixelSize: 13
         property bool showRetryButton: false
+
+        readonly property bool isLightTheme: Style.current.name === Constants.lightThemeName
+        property color animatedBgColor
     }
 
     function getDetailsString(detailsObj) {
@@ -530,6 +533,12 @@ StatusListItem {
     rightPadding: 16
     enabled: !loading
     loading: !isModelDataValid
+    color: {
+        if (bgColorAnimation.running) {
+            return d.animatedBgColor
+        }
+        return sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
+    }
 
     statusListItemIcon.active: (loading || root.asset.name)
     asset {
@@ -863,4 +872,29 @@ StatusListItem {
             }
         }
     ]
+
+    ColorAnimation {
+        id: bgColorAnimation
+
+        target: d
+        property: "animatedBgColor"
+        from: d.isLightTheme ? "#33869eff" : "#1a4360df"
+        to: "transparent"
+        duration: 1000
+        alwaysRunToEnd: true
+
+        onStopped: {
+            modelData.doneHighlighting()
+        }
+    }
+    // Add a delay before the animation to make it easier to notice when scrolling
+    Timer {
+        id: delayAnimation
+        interval: 250
+        running: root.visible && isModelDataValid && modelData.highlight
+        repeat: false
+        onTriggered: {
+            bgColorAnimation.start()
+        }
+    }
 }

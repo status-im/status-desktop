@@ -32,8 +32,8 @@ QtObject {
     property var marketValueStore: TokenMarketValuesStore{}
     property var allNetworks: networksModule.all
 
-    function resetFilter() {
-        walletSectionInst.activityController.updateFilter()
+    function resetActivityData() {
+        walletSectionInst.activityController.resetActivityData()
     }
 
     // TODO remove all these by linking chainId for networks and activity using LeftJoinModel
@@ -160,7 +160,7 @@ QtObject {
         walletSectionInst.activityController.loadMoreItems()
     }
 
-    function updateTransactionFilter() {
+    function updateTransactionFilterIfDirty() {
         if (transactionActivityStatus.isFilterDirty)
             walletSectionInst.activityController.updateFilter()
     }

@@ -64,7 +64,7 @@ ColumnLayout {
         target: RootStore.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            RootStore.updateTransactionFilter()
+            RootStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
             WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
@@ -90,13 +90,7 @@ ColumnLayout {
 
         property bool firstSectionHeaderLoaded: false
 
-        property double lastRefreshTime
         readonly property int maxSecondsBetweenRefresh: 3
-        function refreshData() {
-            RootStore.resetFilter()
-            d.lastRefreshTime = Date.now()
-            newTransactions.visible = false
-        }
 
         property string openTxDetailsHash
 
@@ -272,49 +266,14 @@ ColumnLayout {
 
             text: qsTr("New transactions")
 
-            visible: false
-            onClicked: d.refreshData()
+            visible: RootStore.newDataAvailable && !RootStore.loadingHistoryTransactions
+            onClicked: RootStore.resetActivityData()
 
             icon.name: "arrow-up"
 
             radius: 36
             type: StatusButton.Primary
             size: StatusBaseButton.Size.Tiny
-        }
-
-        Connections {
-            target: RootStore
-
-            function onNewDataAvailableChanged() {
-                if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
-                    // Show `New transactions` button only when filter is applied
-                    if (!WalletStores.RootStore.currentActivityFiltersStore.filtersSet) {
-                        d.refreshData()
-                        return
-                    }
-
-                    newTransactions.visible = RootStore.newDataAvailable
-                    return
-                }
-
-                if (showRefreshButtonTimer.running) {
-                    if (!RootStore.newDataAvailable) {
-                        showRefreshButtonTimer.stop()
-                        newTransactions.visible = false
-                    }
-                } else if(RootStore.newDataAvailable) {
-                    showRefreshButtonTimer.start()
-                }
-            }
-        }
-
-        Timer {
-            id: showRefreshButtonTimer
-
-            interval: 2000
-            running: false
-            repeat: false
-            onTriggered: newTransactions.visible = RootStore.newDataAvailable
         }
     }
 

@@ -20,13 +20,7 @@ QtObject:
       eventHandlers: Table[string, EventCallbackProc]
       walletEventHandlers: Table[string, WalletEventCallbackProc]
 
-      # Ignore events older than this relevantTimestamp
-      relevantTimestamp: int
-      subscribedAddresses: HashSet[string]
-      subscribedChainIDs: HashSet[int]
-      newDataAvailableFn: proc()
-
-      requestId: int
+      sessionId: Option[int32]
 
   proc setup(self: EventsHandler) =
     self.QObject.setup
@@ -40,6 +34,9 @@ QtObject:
   proc onFilteringUpdateDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityFilteringUpdate] = handler
 
+  proc onFilteringSessionUpdated*(self: EventsHandler, handler: EventCallbackProc) =
+    self.eventHandlers[backend_activity.eventActivitySessionUpdated] = handler
+
   proc onGetRecipientsDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityGetRecipientsDone] = handler
 
@@ -49,13 +46,10 @@ QtObject:
   proc onGetCollectiblesDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityGetCollectiblesDone] = handler
 
-  proc onNewDataAvailable*(self: EventsHandler, handler: proc()) =
-    self.newDataAvailableFn = handler
-
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 
-    if data.requestId.isSome and data.requestId.get() != self.requestId:
+    if not data.requestId.isSome() or not self.sessionId.isSome() or data.requestId.get() != self.sessionId.get():
       return
 
     if self.walletEventHandlers.hasKey(data.eventType):
@@ -66,55 +60,13 @@ QtObject:
       let responseJson = parseJson(data.message)
       callback(responseJson)
 
-  proc setupWalletEventHandlers(self: EventsHandler) =
-    let newDataAvailableCallback = proc (data: WalletSignal) =
-      if self.newDataAvailableFn == nil:
-        return
-
-      if data.at > 0 and self.relevantTimestamp > 0 and data.at < self.relevantTimestamp:
-        return
-
-      # Check chain, if any was reported
-      if len(self.subscribedChainIDs) > 0 and data.chainID > 0:
-        var contains = false
-        for chainID in self.subscribedChainIDs:
-          if data.chainID == chainID:
-            contains = true
-            break
-        if not contains:
-          return
-
-      var contains = data.accounts.len == 0
-      # Check addresses if any was reported
-      for address in data.accounts:
-        if address in self.subscribedAddresses:
-          contains = true
-          break
-
-      if not contains:
-        return
-
-      self.newDataAvailableFn()
-
-    # TODO #12120: Replace these specific events with incremental updates events
-    self.walletEventHandlers[EventNewTransfers] = newDataAvailableCallback
-    self.walletEventHandlers[EventPendingTransactionUpdate] = newDataAvailableCallback
-    self.walletEventHandlers[EventMTTransactionUpdate] = newDataAvailableCallback
-
-  proc newEventsHandler*(requestId: int, events: EventEmitter): EventsHandler =
+  proc newEventsHandler*(events: EventEmitter): EventsHandler =
     new(result, delete)
 
     result.events = events
     result.eventHandlers = initTable[string, EventCallbackProc]()
 
-    result.subscribedAddresses = initHashSet[string]()
-    result.subscribedChainIDs = initHashSet[int]()
-
-    result.requestId = requestId
-
     result.setup()
-
-    result.setupWalletEventHandlers()
 
     # Register for wallet events
     let eventsHandler = result
@@ -122,15 +74,15 @@ QtObject:
         eventsHandler.handleApiEvents(e)
     )
 
-  proc updateRelevantTimestamp*(self: EventsHandler, timestamp: int) =
-    self.relevantTimestamp = timestamp
+  proc getSessionId*(self: EventsHandler): int32 =
+    self.sessionId.get(-1)
 
-  proc updateSubscribedAddresses*(self: EventsHandler, addresses: seq[string]) =
-    self.subscribedAddresses.clear()
-    for address in addresses:
-      self.subscribedAddresses.incl(address)
+  proc setSessionId*(self: EventsHandler, sessionId: int32) =
+    self.sessionId = some(sessionId)
 
-  proc updateSubscribedChainIDs*(self: EventsHandler, chainIDs: seq[int]) =
-    self.subscribedChainIDs.clear()
-    for chainID in chainIDs:
-      self.subscribedChainIDs.incl(chainID)
+  proc hasSessionId*(self: EventsHandler): bool =
+    self.sessionId.isSome()
+
+  proc clearSessionId*(self: EventsHandler) =
+    self.sessionId = none(int32)
+
