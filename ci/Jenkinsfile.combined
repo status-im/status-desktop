@@ -60,15 +60,6 @@ pipeline {
         stage('Linux/E2E/old') { steps { script {
           linux_e2e = jenkins.Build('status-desktop/systems/linux/x86_64/tests-e2e-old')
         } } }
-        stage('Linux/E2E/new') { steps { script {
-          linux_e2e = build(
-            job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
-            parameters: jenkins.mapToParams([
-              BUILD_SOURCE:       linux_x86_64.fullProjectName, 
-              TESTRAIL_RUN_NAME:  utils.pkgFilename()
-            ]),
-          )
-        } } }
       }
     }
     stage('Publish') {
