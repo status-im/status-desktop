@@ -9,7 +9,7 @@ import StatusQ.Popups 0.1
 
 
 Rectangle {
-    id: statusModalFooter
+    id: root
 
     property list<Item> leftButtons
     property list<StatusBaseButton> rightButtons
@@ -22,15 +22,21 @@ Rectangle {
     onLeftButtonsChanged: {
         for (let idx in leftButtons) {
             leftButtons[idx].parent = leftButtonsLayout
+            leftButtons[idx].Layout.fillWidth
+                    = Qt.binding(() => root.width < root.implicitWidth)
         }
     }
 
     onRightButtonsChanged: {
         for (let idx in rightButtons) {
             rightButtons[idx].parent = rightButtonsLayout
+            rightButtons[idx].Layout.fillWidth
+                    = Qt.binding(() => root.width < root.implicitWidth)
         }
     }
 
+    implicitWidth: rootLayout.implicitWidth + rootLayout.anchors.leftMargin
+                   + rootLayout.anchors.rightMargin
     implicitHeight: rootLayout.implicitHeight + 30
 
     RowLayout {
@@ -45,19 +51,20 @@ Rectangle {
         RowLayout {
             id: leftButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            visible: statusModalFooter.showFooter
+            visible: root.showFooter
 
             spacing: 16
         }
 
         Item {
             Layout.fillWidth: true
+            Layout.minimumWidth: 16
         }
 
         RowLayout {
             id: rightButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-            visible: statusModalFooter.showFooter
+            visible: root.showFooter
 
             spacing: 16
         }
@@ -70,7 +77,7 @@ Rectangle {
         color: parent.color
 
         StatusModalDivider {
-            visible: (statusModalFooter.leftButtons.length || statusModalFooter.rightButtons.length) && rootLayout.height > 1
+            visible: (root.leftButtons.length || root.rightButtons.length) && rootLayout.height > 1
             anchors.top: parent.top
             width: parent.width
         }
