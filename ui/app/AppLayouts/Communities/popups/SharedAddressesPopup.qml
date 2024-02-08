@@ -1,6 +1,6 @@
 import QtQuick 2.15
-import QtQml.Models 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -94,6 +94,8 @@ StatusDialog {
                 onClicked: {
                     d.displaySigningPanel = false
                 }
+
+                Layout.minimumWidth: implicitWidth
             }
         }
     }
