@@ -4,7 +4,6 @@
 package wallet
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -42,13 +41,14 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 	// Wait for EventActivitySessionUpdated signal triggered by the first EventPendingTransactionUpdate
 	update, err := helpers.WaitForWalletEventGetPayload[activity.SessionUpdate](td.eventQueue, activity.EventActivitySessionUpdated, 60*time.Second)
 	require.NoError(t, err)
-	require.NotNil(t, update.HasNewEntries)
-	require.True(t, *update.HasNewEntries)
+	require.NotNil(t, update.HasNewOnTop)
+	require.True(t, *update.HasNewOnTop)
 
-	// TODO #12120 check EventActivitySessionUpdated due to transactions.EventPendingTransactionStatusChanged
-	// statusPayload, err := helpers.WaitForWalletEventGetPayload[transactions.StatusChangedPayload](td.eventQueue, , 60*time.Second)
+	// TODO #12120 check EventActivitySessionUpdated due to EventPendingTransactionStatusChanged
+	// statusPayload, err := helpers.WaitForWalletEventGetPayload[transactions.StatusChangedPayload](td.eventQueue, activity.EventActivitySessionUpdated, 60*time.Second)
 	// require.NoError(t, err)
-	// require.Equal(t, transactions.Success, statusPayload.Status)
+	// require.NotNil(t, update.HasNewOnTop)
+	// require.True(t, *update.HasNewOnTop)
 
 	// Start history download to cleanup pending transactions
 	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.sender.Address, td.recipient.Address}})
@@ -65,16 +65,13 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 		120*time.Second,
 		func(e *walletevent.Event) bool {
 			if e.Type == activity.EventActivitySessionUpdated {
-				var parsedPayload activity.SessionUpdate
-				err := json.Unmarshal(([]byte)(e.Message), &parsedPayload)
+				update, err = walletevent.GetPayload[activity.SessionUpdate](*e)
 				require.NoError(t, err)
-				update = &parsedPayload
 
-				// TODO #12120 enable after implementing remove and update
-				// require.NotNil(t, update.HasNewEntries)
-				// require.True(t, *update.HasNewEntries)
-				// require.NotNil(t, update.Removed)
-				// require.True(t, *update.Removed)
+				require.NotNil(t, update.HasNewOnTop)
+				require.True(t, *update.HasNewOnTop)
+				//require.NotNil(t, update.Removed)
+				//require.True(t, *update.Removed)
 				return false
 			} else if e.Type == transfer.EventFetchingHistoryError {
 				require.Fail(t, "History download failed")
@@ -87,12 +84,12 @@ func TestActivityIncrementalUpdates_NoFilterNewPendingTransactions(t *testing.T)
 		[]walletevent.EventType{activity.EventActivitySessionUpdated, transfer.EventFetchingHistoryError},
 	)
 	require.NoError(t, err)
-	require.NotNil(t, update, "EventActivitySessionUpdated signal WASN'T triggered by the second EventPendingTransactionUpdate during history download")
-	require.NotNil(t, update.HasNewEntries)
-	require.True(t, *update.HasNewEntries)
+	require.NotNil(t, update, "EventActivitySessionUpdated signal was triggered by the second EventPendingTransactionUpdate during history download")
+	require.NotNil(t, update.HasNewOnTop)
+	require.True(t, *update.HasNewOnTop)
 
 	// Start history download to cleanup pending transactions
-	_, err = helpers.CallPrivateMethodAndGetT[interface{}]("wallet_resetFilterSession", []interface{}{sessionID, 3})
+	_, err = helpers.CallPrivateMethodAndGetT[interface{}]("wallet_resetActivityFilterSession", []interface{}{sessionID, 3})
 	require.NoError(t, err)
 
 	updatedRes, err := helpers.WaitForWalletEventsGetMap(td.eventQueue, []walletevent.EventType{activity.EventActivityFilteringDone}, 1*time.Second)

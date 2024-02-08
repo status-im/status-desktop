@@ -50,11 +50,6 @@ logScope:
 export io_interface
 
 type
-  ActivityID = enum
-    History
-    Temporary0
-    Temporary1
-
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
@@ -145,28 +140,26 @@ proc newModule*(
   result.transactionService = transactionService
   result.activityDetailsController = activity_detailsc.newController(currencyService)
   result.activityController = activityc.newController(
-    int32(ActivityID.History), 
-    result.activityDetailsController, 
+    result.activityDetailsController,
     currencyService,
     tokenService,
-    savedAddressService, 
+    savedAddressService,
     events)
   result.tmpActivityControllers = [
     activityc.newController(
-      int32(ActivityID.Temporary0),
       result.activityDetailsController,
       currencyService,
       tokenService,
       savedAddressService,
       events),
     activityc.newController(
-      int32(ActivityID.Temporary1),
       result.activityDetailsController,
       currencyService,
       tokenService,
       savedAddressService,
       events)
   ]
+
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 

@@ -7,6 +7,8 @@ import app/global/global_singleton
 
 import app_service/service/currency/service
 
+import app/modules/shared/wallet_utils
+
 import web3/ethtypes as eth
 
 # Additional data needed to build an Entry, which is
@@ -17,13 +19,10 @@ type
     inAmount*: float64
     outAmount*: float64
 
-  AmountToCurrencyConvertor* = proc (amount: UInt256, symbol: string): CurrencyAmount
-
 # Used to display an activity history header entry in the QML UI
 QtObject:
   type
     ActivityEntry* = ref object of QObject
-      valueConvertor: AmountToCurrencyConvertor
       metadata: backend.ActivityEntry
       extradata: ExtraData
 
@@ -32,6 +31,9 @@ QtObject:
 
       nftName: string
       nftImageURL: string
+
+      # true for entries that were changed/added in the current session
+      highlight: bool
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -42,31 +44,60 @@ QtObject:
   proc isInTransactionType(self: ActivityEntry): bool =
     return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
 
-  proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
+  proc extractCurrencyAmount(self: ActivityEntry, currencyService: Service): CurrencyAmount =
+    let amount = if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
+    let symbol = if self.isInTransactionType(): self.metadata.symbolIn.get("") else: self.metadata.symbolOut.get("")
+    return currencyAmountToItem(
+      currencyService.parseCurrencyValue(symbol, amount),
+      currencyService.getCurrencyFormat(symbol),
+    )
+
+  proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, currencyService: Service): ActivityEntry =
     new(result, delete)
-    result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
     result.noAmount = newCurrencyAmount()
-    result.amountCurrency = valueConvertor(
-      if result.isInTransactionType(): metadata.amountIn else: metadata.amountOut,
-      if result.isInTransactionType(): metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
-    )
+
+    result.amountCurrency = result.extractCurrencyAmount(currencyService)
+
+    result.highlight = metadata.isNew
+
     result.setup()
 
-  proc newTransactionActivityEntry*(metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
+  proc newTransactionActivityEntry*(metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, currencyService: Service): ActivityEntry =
     new(result, delete)
-    result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
-
-    result.amountCurrency = valueConvertor(
-      if result.isInTransactionType(): metadata.amountIn else: metadata.amountOut,
-      if result.isInTransactionType(): metadata.symbolIn.get("") else: metadata.symbolOut.get(""),
-    )
     result.noAmount = newCurrencyAmount()
 
+    result.amountCurrency = result.extractCurrencyAmount(currencyService)
+
+    result.highlight = metadata.isNew
+
     result.setup()
+
+  proc buildMultiTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+    if metadata.symbolIn.isSome():
+      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+    if metadata.symbolOut.isSome():
+      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
+
+  proc buildTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+    if metadata.symbolIn.isSome() or metadata.amountIn > 0:
+      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
+    if metadata.symbolOut.isSome() or metadata.amountOut > 0:
+      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
+
+  proc newActivityEntry*(backendEntry: backend.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
+    var ae: entry.ActivityEntry
+    case backendEntry.getPayloadType():
+      of MultiTransaction:
+        let extraData = buildMultiTransactionExtraData(backendEntry, currencyService)
+        ae = newMultiTransactionActivityEntry(backendEntry, extraData, currencyService)
+      of SimpleTransaction, PendingTransaction:
+        let extraData = buildTransactionExtraData(backendEntry, currencyService)
+        ae = newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
+    return ae
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
     return self.metadata.getPayloadType() == backend.PayloadType.MultiTransaction
@@ -278,6 +309,20 @@ QtObject:
     if self.metadata.communityId.isSome():
       return self.metadata.communityId.unsafeGet()
     return ""
-  
+
   QtProperty[string] communityId:
     read = getCommunityId
+
+  proc highlightChanged*(self: ActivityEntry) {.signal.}
+
+  proc getHighlight*(self: ActivityEntry): bool {.slot.} =
+    return self.highlight
+
+  proc doneHighlighting*(self: ActivityEntry) {.slot.} =
+    if self.highlight:
+      self.highlight = false
+      self.highlightChanged()
+
+  QtProperty[bool] highlight:
+    read = getHighlight
+    notify = highlightChanged
