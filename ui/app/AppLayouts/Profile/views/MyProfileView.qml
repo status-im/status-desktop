@@ -65,32 +65,38 @@ SettingsContentBase {
         id: profileTabBar
 
         StatusTabButton {
+            objectName: "identityTabButton"
             width: implicitWidth
             leftPadding: 0
             text: qsTr("Identity")
         }
 
         StatusTabButton {
+            objectName: "communitiesTabButton"
             width: implicitWidth
             text: qsTr("Communities")
         }
 
         StatusTabButton {
+            objectName: "accountsTabButton"
             width: implicitWidth
             text: qsTr("Accounts")
         }
 
         StatusTabButton {
+            objectName: "collectiblesTabButton"
             width: implicitWidth
             text: qsTr("Collectibles")
         }
 
         StatusTabButton {
+            objectName: "assetsTabButton"
             width: implicitWidth
             text: qsTr("Assets")
         }
 
         StatusTabButton {
+            objectName: "webTabButton"
             width: implicitWidth
             text: qsTr("Web")
         }
