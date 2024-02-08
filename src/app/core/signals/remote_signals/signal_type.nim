@@ -48,6 +48,7 @@ type SignalType* {.pure.} = enum
   DiscordCommunityImportFinished = "community.discordCommunityImportFinished"
   DiscordCommunityImportProgress = "community.discordCommunityImportProgress"
   DiscordCommunityImportCancelled = "community.discordCommunityImportCancelled"
+  DiscordCommunityImportCleanedUp = "community.discordCommunityImportCleanedUp"
   DiscordChannelImportFinished = "community.discordChannelImportFinished"
   DiscordChannelImportProgress = "community.discordChannelImportProgress"
   DiscordChannelImportCancelled = "community.discordChannelImportCancelled"

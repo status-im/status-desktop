@@ -117,6 +117,7 @@ QtObject:
       of SignalType.DiscordCommunityImportFinished: DiscordCommunityImportFinishedSignal.fromEvent(jsonSignal)
       of SignalType.DiscordCommunityImportProgress: DiscordCommunityImportProgressSignal.fromEvent(jsonSignal)
       of SignalType.DiscordCommunityImportCancelled: DiscordCommunityImportCancelledSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportCleanedUp: DiscordCommunityImportCleanedUpSignal.fromEvent(jsonSignal)
       of SignalType.DiscordChannelImportFinished: DiscordChannelImportFinishedSignal.fromEvent(jsonSignal)
       of SignalType.DiscordChannelImportProgress: DiscordChannelImportProgressSignal.fromEvent(jsonSignal)
       of SignalType.DiscordChannelImportCancelled: DiscordChannelImportCancelledSignal.fromEvent(jsonSignal)

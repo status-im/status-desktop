@@ -1062,8 +1062,6 @@ method communityLeft*[T](self: Module[T], communityId: string) =
     echo "main-module, unexisting community key to leave: ", communityId
     return
 
-  self.channelGroupModules.del(communityId)
-
   self.view.model().removeItem(communityId)
 
   singletonInstance.localAccountSensitiveSettings.removeSectionChatRecord(communityId)

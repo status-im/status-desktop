@@ -38,12 +38,12 @@ StatusScrollView {
             visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings ||
                      d.status === DiscordImportProgressContents.ImportStatus.StoppedWithErrors
             type: StatusButton.Danger
-            text: root.importingSingleChannel ? qsTr("Delete channel & restart import") : qsTr("Delete community & restart import")
+            text: root.importingSingleChannel ? qsTr("Delete channel & restart import") : qsTr("Close & restart import")
             onClicked: {
                 if (root.importingSingleChannel) {
-                    Global.openPopup(deleteAndRestartConfirmationPopupCmp)
+                    Global.openPopup(deleteChannelAndRestartConfirmationPopupCmp)
                 } else {
-                    // TODO do similar for community import
+                    root.store.resetImport()
                     root.close()
                 }
             }
@@ -370,9 +370,9 @@ StatusScrollView {
     }
 
     Component {
-        id: deleteAndRestartConfirmationPopupCmp
+        id: deleteChannelAndRestartConfirmationPopupCmp
         ConfirmationDialog {
-            id: deleteAndRestartConfirmationPopup
+            id: deleteChannelAndRestartConfirmationPopup
             headerSettings.title: qsTr("Are you sure you want to delete the channel?")
             confirmationText: qsTr("Your new Status channel will be deleted and all information entered will be lost.")
             showCancelButton: true
@@ -381,11 +381,11 @@ StatusScrollView {
             cancelButtonLabel: qsTr("Cancel")
             onConfirmButtonClicked: {
                 root.store.removeImportedDiscordChannel()
-                deleteAndRestartConfirmationPopup.close()
+                deleteChannelAndRestartConfirmationPopup.close()
                 root.close()
             }
             onCancelButtonClicked: {
-                deleteAndRestartConfirmationPopup.close()
+                deleteChannelAndRestartConfirmationPopup.close()
             }
             onClosed: {
                 destroy()

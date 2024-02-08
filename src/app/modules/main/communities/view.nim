@@ -655,6 +655,9 @@ QtObject:
     self.delegate.removeCommunityChat(self.discordImportedChannelCommunityId, self.discordImportedChannelId)
     self.resetDiscordImport(true)
 
+  proc resetImport*(self: View) {.slot.} =
+    self.resetDiscordImport(true)
+
   proc toggleDiscordCategory*(self: View, id: string, selected: bool) {.slot.} =
     if selected:
       self.discordCategoriesModel.selectItem(id)
