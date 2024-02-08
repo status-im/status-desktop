@@ -7,11 +7,13 @@ import (
 	"testing"
 	"time"
 
+	eth "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
 	"github.com/status-im/status-desktop/test/status-go/integration/helpers"
 
 	"github.com/status-im/status-go/eth-node/types"
+	"github.com/status-im/status-go/services/wallet/transfer"
 	"github.com/status-im/status-go/services/wallet/walletevent"
 	"github.com/status-im/status-go/transactions"
 )
@@ -23,21 +25,44 @@ func TestPendingTx_NotificationStatus(t *testing.T) {
 
 	sendTransaction(t, td)
 
-	// Start history download ...
-	_, err := helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.sender.Address, td.recipient.Address}})
-	require.NoError(t, err)
-
-	// ... and wait for the new transaction download to trigger deletion from pending_transactions
-	updatePayloads, err := helpers.WaitForWalletEvents[transactions.PendingTxUpdatePayload](
+	// Wait for transaction to be included in block
+	confirmationPayloads, err := helpers.WaitForWalletEventsGetMap(
 		td.eventQueue, []walletevent.EventType{
 			transactions.EventPendingTransactionUpdate,
-			transactions.EventPendingTransactionUpdate,
+			transactions.EventPendingTransactionStatusChanged,
 		},
 		60*time.Second,
 	)
 	require.NoError(t, err)
 
-	// Validate that we received both add and delete event
-	require.False(t, updatePayloads[0].Deleted)
-	require.True(t, updatePayloads[1].Deleted)
+	// Validate that we received update event
+	for _, payload := range confirmationPayloads {
+		if payload.EventName == transactions.EventPendingTransactionUpdate {
+			require.False(t, payload.JsonData["deleted"].(bool))
+		} else {
+			require.Equal(t, transactions.Success, payload.JsonData["status"].(transactions.TxStatus))
+		}
+	}
+
+	// Start history download ...
+	_, err = helpers.CallPrivateMethod("wallet_checkRecentHistoryForChainIDs", []interface{}{[]uint64{5}, []types.Address{td.sender.Address, td.recipient.Address}})
+	require.NoError(t, err)
+
+	downloadDoneFn := helpers.WaitForTxDownloaderToFinishForAccountsCondition(t, []eth.Address{eth.Address(td.sender.Address), eth.Address(td.recipient.Address)})
+
+	// ... and wait for the new transaction download to trigger deletion from pending_transactions
+	_, err = helpers.WaitForWalletEventsWithOptionals(
+		td.eventQueue,
+		[]walletevent.EventType{transfer.EventRecentHistoryReady},
+		60*time.Second,
+		func(e *walletevent.Event) bool {
+			if e.Type == transfer.EventFetchingHistoryError {
+				require.Fail(t, "History download failed")
+				return false
+			}
+			return downloadDoneFn(e)
+		},
+		[]walletevent.EventType{transfer.EventFetchingHistoryError},
+	)
+	require.NoError(t, err)
 }
