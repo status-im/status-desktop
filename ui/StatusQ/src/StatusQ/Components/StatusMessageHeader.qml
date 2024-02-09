@@ -45,7 +45,7 @@ Item {
             objectName: "StatusMessageHeader_DisplayName"
             verticalAlignment: Text.AlignVCenter
             Layout.fillWidth: true
-            Layout.maximumWidth: implicitWidth
+            Layout.maximumWidth: Math.ceil(implicitWidth)
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium
             font.underline: mouseArea.containsMouse
