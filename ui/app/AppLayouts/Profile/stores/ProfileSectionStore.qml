@@ -94,6 +94,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.profile,
                        text: qsTr("Profile"),
                        icon: "profile"})
+            append({subsection: Constants.settingsSubsection.password,
+                       text: qsTr("Password"),
+                       icon: "profile"})
             append({subsection: Constants.settingsSubsection.keycard,
                        text: qsTr("Keycard"),
                        icon: "keycard"})

@@ -59,6 +59,7 @@ Loader {
                            root.asset.bgColor
                 image.fillMode: Image.PreserveAspectCrop
             }
+
             Loader {
                 anchors.centerIn: parent
                 active: root.asset.imgStatus === Image.Error ||

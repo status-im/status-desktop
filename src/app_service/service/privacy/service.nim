@@ -5,11 +5,14 @@ import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 
 import ../../../app/core/eventemitter
+import ../../../app/core/tasks/[qt, threadpool]
 
 import ../../../backend/eth as status_eth
 import ../../../backend/privacy as status_privacy
 
 import ../../common/utils as common_utils
+
+include ./async_tasks
 
 logScope:
   topics = "privacy-service"
@@ -27,6 +30,7 @@ QtObject:
     events: EventEmitter
     settingsService: settings_service.Service
     accountsService: accounts_service.Service
+    threadpool: threadpool.ThreadPool
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -58,6 +62,36 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getDefaultAccount", errName = e.name, errDesription = e.msg
 
+  proc onChangeDatabasePasswordResponse(self: Service, responseStr: string) {.slot.} =
+    var data = OperationSuccessArgs(success: false, errorMsg: "")
+    try:
+      let response = responseStr.parseJson
+
+      # nim runtime error
+      let error = response["error"].getStr
+      if error != "":
+        data.errorMsg = error
+        self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
+        return;
+
+      let result = response["result"]
+
+      if(result.contains("error")):
+        let errMsg = result["error"].getStr
+        if(errMsg.len == 0):
+          data.success = true
+        else:
+          # backend runtime error
+          data.errorMsg = errMsg
+          error "error: ", procName="changePassword", errDesription = errMsg
+
+    except Exception as e:
+      error "error: ", procName="changePassword", errName = e.name, errDesription = e.msg
+      data.errorMsg = e.msg
+    
+    self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
+
+
   proc changePassword*(self: Service, password: string, newPassword: string) =
     try:
       var data = OperationSuccessArgs(success: false, errorMsg: "")
@@ -76,16 +110,15 @@ QtObject:
         return
 
       let loggedInAccount = self.accountsService.getLoggedInAccount()
-      let response = status_privacy.changeDatabasePassword(loggedInAccount.keyUid, common_utils.hashPassword(password), common_utils.hashPassword(newPassword))
-
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          data.success = true
-        else:
-          error "error: ", procName="changePassword", errDesription = errMsg
-
-      self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
+      let arg = ChangeDatabasePasswordTaskArg(
+        tptr: cast[ByteAddress](changeDatabasePasswordTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onChangeDatabasePasswordResponse",
+        accountId: loggedInAccount.keyUid,
+        currentPassword: common_utils.hashPassword(password),
+        newPassword: common_utils.hashPassword(newPassword)
+      )
+      self.threadpool.start(arg)
 
     except Exception as e:
       error "error: ", procName="changePassword", errName = e.name, errDesription = e.msg

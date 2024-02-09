@@ -38,7 +38,7 @@ ModalPopup {
             type: StatusBaseButton.Type.Danger
             text: qsTr("Restart")
             anchors.bottom: parent.bottom
-            onClicked: Qt.quit()
+            onClicked: Utils.restartApplication();
         }
     }
 }

@@ -67,6 +67,9 @@ method mnemonicBackedUp*(self: Module) =
   self.view.emitMnemonicBackedUpSignal()
 
 method onPasswordChanged*(self: Module, success: bool, errorMsg: string) =
+  if singletonInstance.localAccountSettings.getStoreToKeychainValue() != LS_VALUE_NEVER:
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
+
   self.view.emitPasswordChangedSignal(success, errorMsg)
 
 method getMnemonic*(self: Module): string =

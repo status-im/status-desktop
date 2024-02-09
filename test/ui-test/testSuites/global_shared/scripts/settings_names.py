@@ -12,21 +12,22 @@ _EXTRA_MENU_ITEM_OBJ_NAME = "-ExtraMenuItem"
 # These values are used to determine the dynamic `objectName` of the subsection item instead of using "design" properties like `text`.
 class SettingsSubsection(Enum):
     PROFILE: str = "0" + _MAIN_MENU_ITEM_OBJ_NAME
-    CONTACTS: str = "1" + _MAIN_MENU_ITEM_OBJ_NAME
-    ENS_USERNAMES: str = "2" + _MAIN_MENU_ITEM_OBJ_NAME
-    MESSAGING: str = "3" + _APP_MENU_ITEM_OBJ_NAME
-    WALLET: str = "4" + _APP_MENU_ITEM_OBJ_NAME
-    APPEARANCE: str = "5" + _SETTINGS_MENU_ITEM_OBJ_NAME
-    LANGUAGE: str = "6" + _SETTINGS_MENU_ITEM_OBJ_NAME
-    NOTIFICATIONS: str = "7" + _SETTINGS_MENU_ITEM_OBJ_NAME
-    DEVICE_SETTINGS: str = "8" + _SETTINGS_MENU_ITEM_OBJ_NAME
-    BROWSER: str = "9" + _APP_MENU_ITEM_OBJ_NAME
-    ADVANCED: str = "10" + _SETTINGS_MENU_ITEM_OBJ_NAME
-    ABOUT: str = "11" + _EXTRA_MENU_ITEM_OBJ_NAME
-    COMMUNITY: str = "12" + _APP_MENU_ITEM_OBJ_NAME
-    KEYCARD: str = "13" + _MAIN_MENU_ITEM_OBJ_NAME
-    SIGNOUT: str = "16" + _EXTRA_MENU_ITEM_OBJ_NAME
-    BACKUP_SEED: str = "17" + _MAIN_MENU_ITEM_OBJ_NAME
+    PASSWORD: str = "1" + _MAIN_MENU_ITEM_OBJ_NAME
+    CONTACTS: str = "2" + _MAIN_MENU_ITEM_OBJ_NAME
+    ENS_USERNAMES: str = "3" + _MAIN_MENU_ITEM_OBJ_NAME
+    MESSAGING: str = "4" + _APP_MENU_ITEM_OBJ_NAME
+    WALLET: str = "5" + _APP_MENU_ITEM_OBJ_NAME
+    APPEARANCE: str = "6" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    LANGUAGE: str = "7" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    NOTIFICATIONS: str = "8" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    DEVICE_SETTINGS: str = "9" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    BROWSER: str = "10" + _APP_MENU_ITEM_OBJ_NAME
+    ADVANCED: str = "11" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    ABOUT: str = "12" + _EXTRA_MENU_ITEM_OBJ_NAME
+    COMMUNITY: str = "13" + _APP_MENU_ITEM_OBJ_NAME
+    KEYCARD: str = "14" + _MAIN_MENU_ITEM_OBJ_NAME
+    SIGNOUT: str = "17" + _EXTRA_MENU_ITEM_OBJ_NAME
+    BACKUP_SEED: str = "18" + _MAIN_MENU_ITEM_OBJ_NAME
 
 # Main:
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}

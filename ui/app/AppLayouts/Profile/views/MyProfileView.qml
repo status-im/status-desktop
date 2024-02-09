@@ -234,19 +234,6 @@ SettingsContentBase {
             }
 
             Component {
-                id: changePasswordModal
-                ChangePasswordModal {
-                    privacyStore: root.privacyStore
-                    onPasswordChanged: Global.openPopup(successPopup)
-                }
-            }
-
-            Component {
-                id: successPopup
-                ChangePasswordSuccessModal {}
-            }
-
-            Component {
                 id: profilePreview
                 ProfileDialog {
                     publicKey: root.contactsStore.myPublicKey

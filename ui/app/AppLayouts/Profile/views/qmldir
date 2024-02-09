@@ -1,7 +1,8 @@
 AboutView 1.0 AboutView.qml
-LanguageView 1.0 LanguageView.qml
 AppearanceView 1.0 AppearanceView.qml
-NotificationsView 1.0 NotificationsView.qml
-CommunitiesView 1.0 CommunitiesView.qml
 BrowserView 1.0 BrowserView.qml
+ChangePasswordView 1.0 ChangePasswordView.qml
+CommunitiesView 1.0 CommunitiesView.qml
+LanguageView 1.0 LanguageView.qml
+NotificationsView 1.0 NotificationsView.qml
 SyncingView 1.0 SyncingView.qml

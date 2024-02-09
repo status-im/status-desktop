@@ -371,6 +371,12 @@ void dos_qguiapplication_quit()
     QMetaObject::invokeMethod(qGuiApp, "quit", Qt::QueuedConnection);
 }
 
+void dos_qguiapplication_restart()
+{
+    QProcess::startDetached(QCoreApplication::applicationFilePath());
+    dos_qguiapplication_quit();
+}
+
 void dos_qguiapplication_icon(const char *filename)
 {
     qGuiApp->setWindowIcon(QIcon(filename));
