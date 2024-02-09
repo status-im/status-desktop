@@ -164,9 +164,15 @@ pipeline {
       } } }
     }
   }
+
   post {
     always { script {
       archiveArtifacts('aut/*.log')
+
+      /* Needed to categorize types of errors and add environment section in allure report. */
+      sh 'cp ext/allure_files/categories.json allure-results'
+      sh 'cp ext/allure_files/environment.properties allure-results'
+
       allure([
         results: [[path: 'allure-results']],
         reportBuildPolicy: 'ALWAYS',
