@@ -40,6 +40,16 @@ QtObject:
     read = getCount
     notify = countChanged
 
+  proc hiddenCountChanged(self: ProfileShowcaseCommunitiesModel) {.signal.}
+  proc getHiddenCount(self: ProfileShowcaseCommunitiesModel): int {.slot.} =
+    result = 0
+    for i, item in self.items:
+      if item.showcaseVisibility == ProfileShowcaseVisibility.ToNoOne:
+        result += 1
+  QtProperty[int] hiddenCount:
+    read = getHiddenCount
+    notify = hiddenCountChanged
+
   proc recalcOrder(self: ProfileShowcaseCommunitiesModel) =
     for order, item in self.items:
       item.order = order
@@ -117,6 +127,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseCommunitiesModel, item: ProfileShowcaseCommunityItem) =
@@ -129,6 +140,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index)
+      self.hiddenCountChanged()
 
   proc upsertItemJson(self: ProfileShowcaseCommunitiesModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseCommunityItem())
@@ -151,6 +163,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc clear*(self: ProfileShowcaseCommunitiesModel) {.slot.} =
@@ -166,6 +179,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc removeEntry*(self: ProfileShowcaseCommunitiesModel, id: string) {.slot.} =
@@ -202,6 +216,7 @@ QtObject:
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
       self.baseModelFilterConditionsMayHaveChanged()
+      self.hiddenCountChanged()
 
   proc setVisibility*(self: ProfileShowcaseCommunitiesModel, id: string, visibility: int) {.slot.} =
     let index = self.findIndexForCommunity(id)
