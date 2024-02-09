@@ -2,6 +2,7 @@ import QtQuick 2.14
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 
 /*!
    \qmltype StatusMemberListItem
@@ -113,7 +114,7 @@ StatusListItem {
         function composeShortKeyChat(pubKey) {
             if (!pubKey)
                 return ""
-            return pubKey.substring(0, 5) + "..." + pubKey.substring(pubKey.length - 3)
+            return Utils.elideText(pubKey, 3, 6)
         }
     }
 
