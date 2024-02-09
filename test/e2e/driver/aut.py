@@ -76,25 +76,26 @@ class AUT:
 
     def kill_process(self):
         if self.pid is None:
-            LOG.warning('No PID availale for AUT.')
+            LOG.warning('No PID available for AUT.')
             return
         local_system.kill_process_with_retries(self.pid)
         self.pid = None
 
     @allure.step('Attach Squish to Test Application')
-    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+    def attach(self):
         LOG.info('Attaching to AUT: localhost:%d', self.port)
-        try:
-            SquishServer().add_attachable_aut(self.aut_id, self.port)
-            if self.ctx is None:
-                self.ctx = context.attach(self.aut_id, timeout_sec)
-            squish.setApplicationContext(self.ctx)
-            assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
-        except Exception as err:
-            LOG.error('Failed to attach AUT: %s', err)
-            self.stop()
-            raise err
-        LOG.info('Succesfully attached AUT!')
+        for i in range(3):
+            try:
+                SquishServer().add_attachable_aut(self.aut_id, self.port)
+                if self.ctx is None:
+                    self.ctx = context.get_context(self.aut_id)
+                squish.setApplicationContext(self.ctx)
+                assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
+            except Exception as err:
+                LOG.error('Failed to attach AUT: %s', err)
+                self.stop()
+                raise err
+        LOG.info('Successfully attached AUT!')
         return self
 
     @allure.step('Start AUT')
@@ -120,7 +121,7 @@ class AUT:
 
     @allure.step('Close application')
     def stop(self):
-        LOG.info('Stoping AUT: %s', self.path)
+        LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
         self.kill_process()
 
@@ -132,7 +133,7 @@ class AUT:
         return self
 
     @allure.step('Waiting for port')
-    def wait(self, timeout: int = 1, retries: int = 10):
+    def wait(self, timeout: int = 3, retries: int = 10):
         LOG.info('Waiting for AUT port localhost:%d...', self.port)
         try:
             wait_for_port('localhost', self.port, timeout, retries)
