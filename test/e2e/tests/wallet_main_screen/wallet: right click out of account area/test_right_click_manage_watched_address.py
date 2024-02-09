@@ -11,19 +11,21 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @pytest.mark.critical
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026',
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703100',
                  'Manage a watch-only account from context menu option')
-@pytest.mark.case(703026)
+@pytest.mark.case(703100)
 @pytest.mark.parametrize('address, name, color, emoji, emoji_unicode, new_name, new_color,'
                          'new_emoji, new_emoji_unicode', [
                              pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                                           'sunglasses', '1f60e', 'AccWatch1edited', '#216266', 'thumbsup', '1f44d')
                          ])
-def test_manage_watch_only_account_context_menu(main_screen: MainWindow, address: str, color: str, emoji: str,
-                                                emoji_unicode: str,
-                                                name: str, new_name: str, new_color: str, new_emoji: str,
-                                                new_emoji_unicode: str):
+def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWindow, address: str, color: str, emoji: str,
+                                                            emoji_unicode: str,
+                                                            name: str, new_name: str, new_color: str, new_emoji: str,
+                                                            new_emoji_unicode: str):
     with step('Open wallet main screen and close signing phrase dialog'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()

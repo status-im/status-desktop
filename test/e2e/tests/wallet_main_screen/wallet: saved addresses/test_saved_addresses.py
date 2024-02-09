@@ -18,7 +18,7 @@ pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703021', 'Manage a saved address')
-@pytest.mark.case(703021)
+@pytest.mark.case(703021, 704987, 704988)
 @pytest.mark.parametrize('name, address, new_name',
                          [
                              pytest.param(
