@@ -30,6 +30,7 @@ Control {
     property string showcasePlaceholderBanner
     property Component draggableDelegateComponent
     property Component showcaseDraggableDelegateComponent
+    property Component additionalComponent
 
     signal showcaseEntryChanged()
 
@@ -335,6 +336,13 @@ Control {
                     root.updateBaseModelFilters()
                 }
             }
+        }
+
+        Loader {
+            id: additionalComponent
+
+            Layout.fillWidth: true
+            sourceComponent: root.additionalComponent
         }
 
         Item { Layout.fillHeight: true }
