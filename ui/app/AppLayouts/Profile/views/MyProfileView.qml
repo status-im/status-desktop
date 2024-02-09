@@ -219,12 +219,16 @@ SettingsContentBase {
             // assets
             ProfileShowcaseAssetsPanel {
                 id: profileShowcaseAssetsPanel
+
                 baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
                 showcaseModel: root.profileStore.profileShowcaseAssetsModel
-                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+                addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
                 formatCurrencyAmount: function(amount, symbol) {
                     return root.currencyStore.formatCurrencyAmount(amount, symbol)
                 }
+
+                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+                onNavigateToAccountsTab: profileTabBar.currentIndex = 2
             }
 
             // web
