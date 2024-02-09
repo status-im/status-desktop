@@ -31,7 +31,7 @@ StatusMenu {
         if (root.selectedUserPublicKey === "" || isMe) {
             return {}
         }
-        return Utils.getContactDetailsAsJson(root.selectedUserPublicKey);
+        return Utils.getContactDetailsAsJson(root.selectedUserPublicKey, true, true);
     }
     readonly property bool isContact: {
         return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
@@ -100,6 +100,10 @@ StatusMenu {
         icon: root.selectedUserIcon
         trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus
                                                                   : Constants.trustStatus.unknown
+        Binding on onlineStatus {
+            value: contactDetails.onlineStatus
+            when: !root.isMe
+        }
         isContact: root.isContact
         isBlocked: root.isBlockedContact
         isCurrentUser: root.isMe

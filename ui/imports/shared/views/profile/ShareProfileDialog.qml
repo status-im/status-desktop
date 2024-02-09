@@ -53,6 +53,7 @@ StatusDialog {
             topPadding: 0
             bottomPadding: 0
             placeholder.rightPadding: Style.current.halfPadding
+            placeholder.elide: Text.ElideMiddle
             placeholderText: root.linkToProfile
             placeholderTextColor: Theme.palette.directColor1
             edit.readOnly: true

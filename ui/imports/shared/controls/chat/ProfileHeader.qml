@@ -25,6 +25,7 @@ Item {
     property string icon
     property url previewIcon: icon
     property int trustStatus
+    property int onlineStatus: Constants.onlineStatus.unknown
     property bool isContact: false
     property bool isBlocked
     property bool isCurrentUser
@@ -121,6 +122,7 @@ Item {
                 imageHeight: imageWidth
                 ensVerified: root.userIsEnsVerified
                 loading: root.loading
+                onlineStatus: root.onlineStatus
                 isBridgedAccount: root.isBridgedAccount
             }
 
@@ -279,7 +281,6 @@ Item {
         id: editImageMenuComponent
 
         StatusMenu {
-
             StatusAction {
                 text: !!root.icon ? qsTr("Select different image") : qsTr("Select image")
                 assetSettings.name: "image"

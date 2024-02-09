@@ -406,6 +406,7 @@ QtObject {
     }
 
     readonly property QtObject onlineStatus: QtObject{
+        readonly property int unknown: -1
         readonly property int inactive: 0
         readonly property int online: 1
     }

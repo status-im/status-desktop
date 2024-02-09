@@ -9,7 +9,7 @@ Loader {
     property string name: ""
     property int dZ: 100
 
-    // Badge color properties must be set if badgeItem.visible = true
+    // Badge color properties must be set if badge.visible = true
     property alias badge: statusBadge
 
     property alias bridgeBadge: bridgeBadge

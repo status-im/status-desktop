@@ -53,7 +53,7 @@ SplitView {
 
     // mainModuleInst mock
     QtObject {
-        function getContactDetailsAsJson(publicKey, getVerificationRequest=false) {
+        function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
             return JSON.stringify({ displayName: displayName.text,
                                       optionalName: "",
                                       displayIcon: "",
@@ -84,7 +84,8 @@ SplitView {
                                                          text: "__github",
                                                          url: "https://github.com/status-im",
                                                          icon: "github"
-                                                     }])
+                                                     }]),
+                                      onlineStatus: ctrlOnlineStatus.currentValue
                                   })
         }
         Component.onCompleted: {
@@ -352,6 +353,17 @@ SplitView {
                             { value: Constants.trustStatus.unknown, text: "unknown" },
                             { value: Constants.trustStatus.trusted, text: "trusted" },
                             { value: Constants.trustStatus.untrustworthy, text: "untrustworthy" }
+                        ]
+                    }
+                    Label { text: "onlineStatus" }
+                    ComboBox {
+                        id: ctrlOnlineStatus
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: Constants.onlineStatus.unknown, text: "unknown" },
+                            { value: Constants.onlineStatus.inactive, text: "inactive" },
+                            { value: Constants.onlineStatus.online, text: "online" }
                         ]
                     }
                 }

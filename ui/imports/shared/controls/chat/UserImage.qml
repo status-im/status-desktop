@@ -22,6 +22,7 @@ Loader {
     property bool ensVerified: false
     property bool loading: false
     property bool isBridgedAccount: false
+    property int onlineStatus: Constants.onlineStatus.unknown
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey, ensVerified)
@@ -42,6 +43,20 @@ Loader {
             ringSpecModel: root.showRing ? root.colorHash : undefined
         }
         loading: root.loading
+
+        badge.visible: root.onlineStatus !== Constants.onlineStatus.unknown && !root.isBridgedAccount
+        badge.width: root.imageWidth/4
+        badge.height: root.imageWidth/4
+        badge.border.width: 0.05 * root.imageWidth
+        badge.border.color: Theme.palette.statusBadge.foregroundColor
+        badge.color: {
+            if (root.onlineStatus === Constants.onlineStatus.online)
+                return Style.current.green
+            return Style.current.midGrey
+        }
+        badge.anchors.rightMargin: badge.border.width/2
+        badge.anchors.bottomMargin: badge.border.width/2
+
         bridgeBadge.visible: root.isBridgedAccount
         bridgeBadge.image.source: Style.svg("discord-bridge")
 
