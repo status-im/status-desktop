@@ -8,6 +8,8 @@ import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet.controls 1.0
+
 import utils 1.0
 
 StatusDraggableListItem {
@@ -31,6 +33,12 @@ StatusDraggableListItem {
     dragAxis: Drag.XAndYAxis
 
     actions: [
+        ManageTokensCommunityTag {
+            Layout.maximumWidth: root.width *.4
+            visible: showcaseObj && !!showcaseObj.communityId
+            text: showcaseObj && !! showcaseObj.communityName ? showcaseObj.communityName : ""
+            asset.name: showcaseObj && !!showcaseObj.communityImage ? showcaseObj.communityImage : ""
+        },
         StatusRoundButton {
             icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)
             Layout.preferredWidth: 58
