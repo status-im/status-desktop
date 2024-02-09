@@ -13,6 +13,8 @@ import utils 1.0
 import Storybook 1.0
 import Models 1.0
 
+import StatusQ 0.1
+
 SplitView {
     id: root
 
@@ -36,7 +38,8 @@ SplitView {
                 collectionName: "Super Nitro Toluen (with pink bg)",
                 backgroundColor: "pink",
                 imageUrl: ModelsData.collectibles.custom,
-                isLoading: false
+                isLoading: false,
+                communityId: "ddls"
             },
             {
                 uid: "34545656768",
@@ -52,7 +55,8 @@ SplitView {
                 collectionName: "",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty2Big,
-                isLoading: false
+                isLoading: false,
+                communityId: "sox"
             },
             {
                 uid: "12345645459537432",
@@ -60,7 +64,8 @@ SplitView {
                 collectionName: "Super Kitties",
                 backgroundColor: "oink",
                 imageUrl: ModelsData.collectibles.kitty3Big,
-                isLoading: false
+                isLoading: false,
+                communityId: "ast"
             },
             {
                 uid: "691",
@@ -84,6 +89,38 @@ SplitView {
     }
 
     ListModel {
+        id: communityModel
+
+        readonly property var data: [
+                {
+                    communityId: "ddls",
+                    communityName: "Doodles",
+                    communityImage: ModelsData.collectibles.doodles
+                },
+                {
+                    communityId: "sox",
+                    communityName: "Socks",
+                    communityImage: ModelsData.icons.socks
+                },
+                {
+                    communityId: "ast",
+                    communityName: "Astafarians",
+                    communityImage: ModelsData.icons.dribble
+                }
+            ]
+        Component.onCompleted: append(data)
+    }
+
+    LeftJoinModel {
+        id: leftJoinModel
+
+        leftModel: collectiblesModel
+        rightModel: communityModel
+
+        joinRole: "communityId"
+    }
+
+    ListModel {
         id: inShowcaseCollectiblesModel
 
         signal baseModelFilterConditionsMayHaveChanged()
@@ -92,7 +129,7 @@ SplitView {
             if (visibility === Constants.ShowcaseVisibility.NoOne) {
                 remove(index)
             } else {
-                 get(index).showcaseVisibility = visibility
+                get(index).showcaseVisibility = visibility
             }
         }
 
@@ -124,7 +161,7 @@ SplitView {
         ProfileShowcaseCollectiblesPanel {
             id: showcasePanel
             width: 500
-            baseModel: collectiblesModel
+            baseModel: leftJoinModel
             showcaseModel: inShowcaseCollectiblesModel
         }
     }
