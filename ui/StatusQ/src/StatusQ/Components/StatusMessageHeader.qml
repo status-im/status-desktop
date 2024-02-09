@@ -121,7 +121,7 @@ Item {
                 visible: text
                 elide: Text.ElideMiddle
                 color: Theme.palette.baseColor1
-                text: Utils.elideText(root.tertiaryDetail, 5, 3)
+                text: Utils.elideText(root.tertiaryDetail, 3, 6)
             }
         }
 
