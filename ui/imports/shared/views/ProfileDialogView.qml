@@ -49,10 +49,10 @@ Pane {
 
     QtObject {
         id: d
-        property var contactDetails: Utils.getContactDetailsAsJson(root.publicKey)
+        property var contactDetails: Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser)
 
         function reload() {
-            contactDetails = Utils.getContactDetailsAsJson(root.publicKey)
+            contactDetails = Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser)
         }
 
         readonly property bool isCurrentUser: root.profileStore.pubkey === root.publicKey
@@ -299,6 +299,11 @@ Pane {
                 imageWidth: 90
                 imageHeight: imageWidth
                 ensVerified: d.contactDetails.ensVerified
+
+                Binding on onlineStatus {
+                    value: d.contactDetails.onlineStatus
+                    when: !d.isCurrentUser
+                }
             }
 
             Item { Layout.fillWidth: true }
@@ -577,6 +582,7 @@ Pane {
                 Layout.topMargin: Style.current.halfPadding
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
+                visible: !!text
             }
             EmojiHash {
                 Layout.topMargin: Style.current.halfPadding
