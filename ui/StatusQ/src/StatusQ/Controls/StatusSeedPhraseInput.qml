@@ -97,12 +97,16 @@ Item {
         The corresponding handler is \c onEditClicked
     */
     signal editClicked()
+    /*!
+        \qmlsignal editingFinished
+        This signal is emitted when the text edit loses focus.
+    */
+    signal editingFinished()
 
     function setWord(seedWord) {
         let seedWordTrimmed = seedWord.trim()
         seedWordInput.input.edit.text = seedWordTrimmed
         seedWordInput.input.edit.cursorPosition = seedWordInput.text.length
-        seedSuggestionsList.model = 0
         root.doneInsertingWord(seedWordTrimmed)
     }
 
@@ -134,72 +138,77 @@ Item {
             d.isInputValidWord = false
             filteredList.clear();
             let textToCheck = text.trim().toLowerCase()
-            if (textToCheck !== "") {
-                for (var i = 0; i < inputList.count; i++) {
-                    if (inputList.get(i).seedWord.startsWith(textToCheck)) {
-                        filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
-                        if(inputList.get(i).seedWord === textToCheck)
-                            d.isInputValidWord = true
-                    }
+
+            if (textToCheck === "") {
+                return;
+            }
+            
+            for (var i = 0; i < inputList.count; i++) {
+                if (inputList.get(i).seedWord.startsWith(textToCheck)) {
+                    filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
+                    if(inputList.get(i).seedWord === textToCheck)
+                        d.isInputValidWord = true
                 }
-                seedSuggestionsList.model = filteredList;
-                if (filteredList.count === 1 && input.edit.keyEvent !== Qt.Key_Backspace
-                        && input.edit.keyEvent !== Qt.Key_Delete
-                        && filteredList.get(0).seedWord.trim() === textToCheck) {
-                    seedWordInput.input.edit.cursorPosition = textToCheck.length;
-                    seedSuggestionsList.model = 0;
-                    root.doneInsertingWord(textToCheck);
-                }
-            } else {
-                seedSuggestionsList.model = 0;
+            }
+
+            if (filteredList.count === 1 && input.edit.keyEvent !== Qt.Key_Backspace
+                    && input.edit.keyEvent !== Qt.Key_Delete
+                    && filteredList.get(0).seedWord.trim() === textToCheck) {
+                seedWordInput.input.edit.cursorPosition = textToCheck.length;
+                filteredList.clear();
+                root.doneInsertingWord(textToCheck);
             }
         }
         onKeyPressed: {
-            if (input.edit.keyEvent === Qt.Key_Tab || input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
-                if (!!text && seedSuggestionsList.count > 0) {
-                    root.setWord(filteredList.get(seedSuggestionsList.currentIndex).seedWord)
-                    event.accepted = true
-                    return
+            switch (input.edit.keyEvent) {
+                case Qt.Key_Tab:
+                case Qt.Key_Return:
+                case Qt.Key_Enter: {
+                    if (!!text && filteredList.count > 0) {
+                        root.setWord(filteredList.get(seedSuggestionsList.currentIndex).seedWord)
+                        event.accepted = true
+                        return
+                    }
+                    break;
+                }
+                case Qt.Key_Down: {
+                    seedSuggestionsList.incrementCurrentIndex()
+                    input.edit.keyEvent = null
+                    break;
+                }
+                case Qt.Key_Up: {
+                    seedSuggestionsList.decrementCurrentIndex()
+                    input.edit.keyEvent = null
+                    break;
+                }
+                case Qt.Key_Space: {
+                    event.accepted = !event.text.match(/^[a-zA-Z]$/)
+                    break;
                 }
             }
-            if (input.edit.keyEvent === Qt.Key_Down) {
-                seedSuggestionsList.incrementCurrentIndex()
-                input.edit.keyEvent = null
-            }
-            if (input.edit.keyEvent === Qt.Key_Up) {
-                seedSuggestionsList.decrementCurrentIndex()
-                input.edit.keyEvent = null
-            }
+            
             root.keyPressed(event);
         }
         onEditClicked: {
             root.editClicked();
         }
-        // Consider word inserted if input looses focus while a valid word is present ("user" clicks outside)
-        Connections {
-            target: seedWordInput.input.edit
-            function onActiveFocusChanged() {
-                if (!seedWordInput.input.edit.activeFocus && d.isInputValidWord) {
-                    // There are so many side effects regarding focus and doneInsertingWord that we need to reset this flag not to be processed again.
-                    d.isInputValidWord = false
-                    root.doneInsertingWord(root.text.trim())
-                }
-            }
+
+        onEditingFinished: {
+            root.editingFinished();
         }
     }
 
-    Item {
+    Popup {
         id: suggListContainer
-        width: seedSuggestionsList.width
-        height: (((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34) + 16
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-        anchors.top: seedWordInput.bottom
-        anchors.topMargin: 4
-        visible: ((seedSuggestionsList.count > 0) && seedWordInput.input.edit.activeFocus)
-        Rectangle {
+        contentWidth: seedSuggestionsList.width
+        contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34 + 16
+        x: 16
+        y: seedWordInput.height + 4
+        topPadding: 8
+        bottomPadding: 8
+        visible: ((filteredList.count > 0) && seedWordInput.input.edit.activeFocus)
+        background: Rectangle {
             id: statusMenuBackgroundContent
-            anchors.fill: parent
             color: Theme.palette.statusMenu.backgroundColor
             radius: 8
             layer.enabled: true
@@ -219,9 +228,7 @@ Item {
             width: ((seedSuggestionsList.contentItem.childrenRect.width + 24) > root.width) ? root.width
                     : (seedSuggestionsList.contentItem.childrenRect.width + 24)
             anchors.top: parent.top
-            anchors.topMargin: 8
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
 
             onCountChanged: {
                 seedSuggestionsList.currentIndex = 0
@@ -229,6 +236,7 @@ Item {
 
             clip: true
             ScrollBar.vertical: ScrollBar { }
+            model: root.filteredList
             delegate: Item {
                 id: txtDelegate
                 width: suggWord.contentWidth

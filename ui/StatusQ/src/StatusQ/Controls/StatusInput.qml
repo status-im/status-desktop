@@ -215,6 +215,11 @@ Item {
         This signal is emitted when the text edit is clicked.
     */
     signal editClicked()
+    /*!
+        \qmlsignal editingFinished
+        This signal is emitted when the text edit loses focus.
+    */
+    signal editingFinished()
 
     /*!
        \qmltype ValidationMode
@@ -452,6 +457,9 @@ Item {
             }
             onEditChanged: {
                 root.editClicked();
+            }
+            onEditingFinished: {
+                root.editingFinished()
             }
         }
 
