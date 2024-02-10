@@ -21,6 +21,7 @@ class LeftPanel(QObject):
         super().__init__('mainWindow_LeftTabView')
         self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
         self._scroll = Scroll('scrollView_Flickable')
+        self._settings_section_back_up_seed_option = QObject('settingsBackUpSeedPhraseOption')
 
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
@@ -30,8 +31,7 @@ class LeftPanel(QObject):
 
     @allure.step('Check back up seed option menu item presence')
     def check_back_up_seed_option_present(self):
-        self._settings_section_template.real_name['objectName'] = '17-MainMenuItem'
-        return self._settings_section_template.is_visible
+        return self._settings_section_back_up_seed_option.exists
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
@@ -68,7 +68,7 @@ class LeftPanel(QObject):
 
     @allure.step('Choose back up seed phrase in settings')
     def open_back_up_seed_phrase(self) -> BackUpYourSeedPhrasePopUp:
-        self._open_settings('17-MainMenuItem')
+        self._open_settings('18-MainMenuItem')
         return BackUpYourSeedPhrasePopUp()
 
     @allure.step('Open syncing settings')

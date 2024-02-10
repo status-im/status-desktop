@@ -12,6 +12,8 @@ mainWindow_Settings_StatusNavigationPanelHeadline = {"container": mainWindow_Lef
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_LeftTabView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollView_StatusScrollView, "type": "StatusNavigationListItem", "visible": True}
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
+mainWindow_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusScrollView", "unnamed": 1, "visible": True}
+settingsBackUpSeedPhraseOption = {"container": mainWindow_ScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
 # Communities View
 mainWindow_CommunitiesView = {"container": statusDesktop_mainWindow, "type": "CommunitiesView", "unnamed": 1, "visible": True}
