@@ -73,7 +73,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open syncing settings')
     def open_syncing_settings(self, attempts: int = 2) -> SyncingSettingsView:
-        self._open_settings('8-MainMenuItem')
+        self._open_settings('9-MainMenuItem')
         try:
             return SyncingSettingsView().wait_until_appears()
         except (AssertionError, LookupError) as ec:
