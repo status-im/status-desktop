@@ -12,6 +12,7 @@ from gui.screens.settings_messaging import MessagingSettingsView
 from gui.screens.settings_profile import ProfileSettingsView
 from gui.screens.settings_syncing import SyncingSettingsView
 from gui.screens.settings_wallet import WalletSettingsView
+from gui.screens.settings_password import ChangePasswordView
 from gui.components.settings.sign_out_popup import SignOutPopup
 
 
@@ -65,6 +66,11 @@ class LeftPanel(QObject):
     def open_profile_settings(self) -> ProfileSettingsView:
         self._open_settings('0-MainMenuItem')
         return ProfileSettingsView()
+
+    @allure.step('Open password settings')
+    def open_password_settings(self) -> ChangePasswordView:
+        self._open_settings('1-MainMenuItem')
+        return ChangePasswordView()
 
     @allure.step('Choose back up seed phrase in settings')
     def open_back_up_seed_phrase(self) -> BackUpYourSeedPhrasePopUp:

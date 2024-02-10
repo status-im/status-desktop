@@ -19,7 +19,6 @@ class ProfileSettingsView(QObject):
         self._scroll_view = Scroll('settingsContentBaseScrollView_Flickable')
         self._display_name_text_field = TextEdit('displayName_TextEdit')
         self._save_button = Button('settingsSave_StatusButton')
-        self._change_password_button = Button('change_password_button')
         self._bio_text_field = TextEdit('bio_TextEdit')
         self._add_more_links_label = TextLabel('addMoreSocialLinks')
         self._links_list = QObject('linksView')
@@ -113,7 +112,3 @@ class ProfileSettingsView(QObject):
     def save_changes(self):
         self._save_button.click()
 
-    @allure.step('Open change password form')
-    def open_change_password_popup(self):
-        self._change_password_button.click()
-        return ChangePasswordPopup().wait_until_appears()

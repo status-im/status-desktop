@@ -131,6 +131,9 @@ mainWindow_profileTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, 
 profileTabBar_Web_StatusTabButton = {"checkable": True, "container": mainWindow_profileTabBar_StatusTabBar, "objectName": "webTabButton", "type": "StatusTabButton", "visible": True}
 profileTabBar_Identity_StatusTabButton = {"checkable": True, "container": mainWindow_profileTabBar_StatusTabBar, "objectName": "identityTabButton", "type": "StatusTabButton", "visible": True}
 
+# Password view
+mainWindow_PasswordView = {"container": statusDesktop_mainWindow, "type": "ChangePasswordView", "unnamed": 1, "visible": True}
+
 # Syncing Settings View
 mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
 settings_Setup_Syncing_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}

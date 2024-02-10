@@ -307,12 +307,15 @@ mainWindow_Turn_off_Button = {"checkable": False, "container": statusDesktop_mai
 ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
 ephemeralNotificationList_StatusToastMessage = {"container": ephemeral_Notification_List, "objectName": "statusToastMessage", "type": "StatusToastMessage"}
 
-# Change password popup
-change_password_menu_current_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}
-change_password_menu_new_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
-change_password_menu_new_password_confirm = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
-change_password_menu_submit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
-change_password_success_menu_sign_out_quit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordSuccessModalSignOutAndQuitButton", "type": "StatusButton", "visible": True}
+# Change password view
+
+settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+change_password_menu_current_password = {"container": settingsContentBase_ScrollView, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}
+change_password_menu_new_password = {"container": settingsContentBase_ScrollView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+change_password_menu_new_password_confirm = {"container": settingsContentBase_ScrollView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
+change_password_menu_change_password_button = {"container": settingsContentBase_ScrollView, "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
+reEncryptRestartButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
+reEncryptionComplete = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
 
 # Social Links Popup
 socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}
