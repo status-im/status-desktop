@@ -35,12 +35,12 @@ class LeftPanel(QObject):
 
     @allure.step('Open messaging settings')
     def open_messaging_settings(self) -> 'MessagingSettingsView':
-        self._open_settings('3-AppMenuItem')
+        self._open_settings('4-AppMenuItem')
         return MessagingSettingsView()
 
     @allure.step('Open communities settings')
     def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
-        self._open_settings('12-AppMenuItem')
+        self._open_settings('13-AppMenuItem')
         try:
             return CommunitiesSettingsView()
         except Exception as ex:
@@ -89,13 +89,13 @@ class LeftPanel(QObject):
 
     @allure.step('Open keycard settings')
     def open_keycard_settings(self) -> KeycardSettingsView:
-        self._open_settings('13-MainMenuItem')
+        self._open_settings('14-MainMenuItem')
         return KeycardSettingsView()
 
     @allure.step('Open ENS usernames settings')
     def open_ens_usernames_settings(self) -> ENSSettingsView:
         time.sleep(1)
-        self._open_settings('2-MainMenuItem')
+        self._open_settings('3-MainMenuItem')
         return ENSSettingsView()
 
 
