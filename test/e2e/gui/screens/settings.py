@@ -84,7 +84,7 @@ class LeftPanel(QObject):
 
     @allure.step('Choose sign out and quit in settings')
     def open_sign_out_and_quit(self):
-        self._open_settings('16-ExtraMenuItem')
+        self._open_settings('17-ExtraMenuItem')
         return SignOutPopup()
 
     @allure.step('Open keycard settings')
