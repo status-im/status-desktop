@@ -51,7 +51,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open wallet settings')
     def open_wallet_settings(self, attempts: int = 2) -> WalletSettingsView:
-        self._open_settings('4-AppMenuItem')
+        self._open_settings('5-AppMenuItem')
         time.sleep(0.5)
         try:
             return WalletSettingsView()
