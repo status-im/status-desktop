@@ -7,7 +7,7 @@ QtObject {
     property var privacyModule
 
     // Module Properties
-    property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
+    property bool mnemonicBackedUp: !!root.privacyModule? root.privacyModule.mnemonicBackedUp : false
 
     function changePassword(password, newPassword) {
         root.privacyModule.changePassword(password, newPassword)

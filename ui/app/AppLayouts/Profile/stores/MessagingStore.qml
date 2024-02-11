@@ -8,18 +8,18 @@ QtObject {
     property var syncModule
     property var wakuModule
 
-    property var mailservers: syncModule.model
-    property var wakunodes: wakuModule.model
+    property var mailservers: !!root.syncModule? root.syncModule.model : null
+    property var wakunodes: !!root.wakuModule? root.wakuModule.model : null
 
-    property bool useMailservers: syncModule.useMailservers
+    property bool useMailservers: !!root.syncModule? root.syncModule.useMailservers : false
 
     function toggleUseMailservers(value) {
         root.syncModule.useMailservers = value
     }
 
     // Module Properties
-    property bool automaticMailserverSelection: syncModule.automaticSelection
-    property string activeMailserver: syncModule.activeMailserver
+    property bool automaticMailserverSelection: !!root.syncModule? root.syncModule.automaticSelection : false
+    property string activeMailserver: !!root.syncModule? root.syncModule.activeMailserver : ""
 
     function getMailserverNameForNodeAddress(nodeAddress) {
         return root.syncModule.getMailserverNameForNodeAddress(nodeAddress)

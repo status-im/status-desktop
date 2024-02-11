@@ -61,6 +61,8 @@ QtObject:
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
   proc getTotalCurrencyBalance(self: View): QVariant {.slot.} =
+    if self.totalCurrencyBalance.isNil:
+      return newQVariant()
     return newQVariant(self.totalCurrencyBalance)
 
   QtProperty[QVariant] totalCurrencyBalance:

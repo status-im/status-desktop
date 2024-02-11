@@ -7,7 +7,7 @@ QtObject {
 
     property var ensUsernamesModule
 
-    property var ensUsernamesModel: root.ensUsernamesModule ? ensUsernamesModule.model : []
+    property var ensUsernamesModel: root.ensUsernamesModule ? root.ensUsernamesModule.model : null
 
     readonly property QtObject currentChainEnsUsernamesModel: SortFilterProxyModel {
         sourceModel: root.ensUsernamesModel
@@ -20,7 +20,7 @@ QtObject {
     property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
     property string icon: !!Global.userProfile? Global.userProfile.icon : ""
     property string preferredUsername: !!Global.userProfile? Global.userProfile.preferredName : ""
-    readonly property string chainId: mainModule.appNetworkId
+    readonly property string chainId: !!mainModule? mainModule.appNetworkId : ""
 
     property string username: !!Global.userProfile? Global.userProfile.username : ""
 

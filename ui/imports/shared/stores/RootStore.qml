@@ -7,27 +7,27 @@ QtObject {
     id: root
 
     property var profileSectionModuleInst: profileSectionModule
-    property var privacyModule: profileSectionModuleInst.privacyModule
+    property var privacyModule: !!profileSectionModuleInst? profileSectionModuleInst.privacyModule : null
     property var userProfileInst: !!Global.userProfile? Global.userProfile : null
     property var walletSectionInst: Global.appIsReady && !!walletSection? walletSection : null
     property var appSettingsInst: Global.appIsReady && !!appSettings? appSettings : null
     property var accountSensitiveSettings: Global.appIsReady && !!localAccountSensitiveSettings? localAccountSensitiveSettings : null
     property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
-    property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
+    property bool isWalletEnabled: Global.appIsReady && !!mainModule? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
     property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false
     property bool gifUnfurlingEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.gifUnfurlingEnabled : false
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property string currentCurrency: Global.appIsReady? walletSectionInst.currentCurrency : ""
+    property string currentCurrency: Global.appIsReady && !!walletSectionInst? walletSectionInst.currentCurrency : ""
 
-    readonly property var transactionActivityStatus: Global.appIsReady ? walletSectionInst.activityController.status : null
+    readonly property var transactionActivityStatus: Global.appIsReady && !!walletSectionInst? walletSectionInst.activityController.status : null
 
-    property var historyTransactions: Global.appIsReady? walletSectionInst.activityController.model : null
-    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSectionInst.activityController.status.loadingData
-    readonly property bool newDataAvailable: Global.appIsReady && walletSectionInst.activityController.status.newDataAvailable
-    property bool isNonArchivalNode: Global.appIsReady && walletSectionInst.isNonArchivalNode
+    property var historyTransactions: Global.appIsReady && !!walletSectionInst? walletSectionInst.activityController.model : null
+    readonly property bool loadingHistoryTransactions: Global.appIsReady && !!walletSectionInst && walletSectionInst.activityController.status.loadingData
+    readonly property bool newDataAvailable: Global.appIsReady && !!walletSectionInst && walletSectionInst.activityController.status.newDataAvailable
+    property bool isNonArchivalNode: Global.appIsReady && !!walletSectionInst && walletSectionInst.isNonArchivalNode
 
     property var marketValueStore: TokenMarketValuesStore{}
     property var allNetworks: networksModule.all
@@ -216,13 +216,13 @@ QtObject {
         return walletSectionInst.activityController.activityDetails
     }
 
-    property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
+    property bool marketHistoryIsLoading: Global.appIsReady && !!walletSectionAllTokens? walletSectionAllTokens.marketHistoryIsLoading : false
 
     function fetchHistoricalBalanceForTokenAsJson(address, allAddresses, tokenSymbol, currencySymbol, timeIntervalEnum) {
         if (Global.appIsReady)
             walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, allAddresses, tokenSymbol, currencySymbol, timeIntervalEnum)
     }
 
-    property bool balanceHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.balanceHistoryIsLoading : false
+    property bool balanceHistoryIsLoading: Global.appIsReady && !!walletSectionAllTokens? walletSectionAllTokens.balanceHistoryIsLoading : false
 
 }

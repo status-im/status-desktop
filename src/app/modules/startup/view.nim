@@ -125,17 +125,12 @@ QtObject:
   proc getAppState(self: View): int {.slot.} =
     return self.appState.int
   proc setAppState*(self: View, state: AppState) =
-    if(self.appState == state):
-      return
     self.appState = state
     self.appStateChanged(self.appState.int)
   QtProperty[int] appState:
     read = getAppState
     notify = appStateChanged
 
-  proc logOut*(self: View) {.signal.}
-  proc emitLogOut*(self: View) =
-    self.logOut()
 
   proc generatedAccountsModelChanged*(self: View) {.signal.}
   proc getGeneratedAccountsModel(self: View): QVariant {.slot.} =

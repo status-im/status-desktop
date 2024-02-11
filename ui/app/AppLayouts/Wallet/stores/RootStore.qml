@@ -27,7 +27,7 @@ QtObject {
     }
 
     /* This property holds address of currently selected account in Wallet Main layout  */
-    readonly property var addressFilters: walletSection.addressFilters
+    readonly property var addressFilters: !!walletSection? walletSection.addressFilters : null
     /* This property holds networks currently selected in the Wallet Main layout  */
     readonly property var networkFilters: networksModule.enabledChainIds
 
@@ -37,9 +37,9 @@ QtObject {
     property string backButtonName: ""
     property var overview: walletSectionOverview
     property bool balanceLoading: overview.balanceLoading
-    property var accounts: walletSectionAccounts.accounts
-    property var receiveAccounts: walletSectionSend.accounts
-    property var selectedReceiveAccount: walletSectionSend.selectedReceiveAccount
+    property var accounts: !!walletSectionAccounts? walletSectionAccounts.accounts : null
+    property var receiveAccounts: !!walletSectionSend? walletSectionSend.accounts : null
+    property var selectedReceiveAccount: !!walletSectionSend? walletSectionSend.selectedReceiveAccount : null
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -48,20 +48,20 @@ QtObject {
     property var mainModuleInst: mainModule
     property var walletSectionInst: walletSection
     property var walletSectionSavedAddressesInst: walletSectionSavedAddresses
-    property var totalCurrencyBalance: walletSectionInst.totalCurrencyBalance
-    property var activityController: walletSectionInst.activityController
-    property var tmpActivityController: walletSectionInst.tmpActivityController
-    property string signingPhrase: walletSectionInst.signingPhrase
-    property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
-    property var walletConnectController: walletSectionInst.walletConnectController
+    property var totalCurrencyBalance: !!root.walletSectionInst? root.walletSectionInst.totalCurrencyBalance : null
+    property var activityController: !!root.walletSectionInst? root.walletSectionInst.activityController : null
+    property var tmpActivityController: !!root.walletSectionInst? root.walletSectionInst.tmpActivityController : null
+    property string signingPhrase: !!root.walletSectionInst? root.walletSectionInst.signingPhrase : ""
+    property string mnemonicBackedUp: !!root.walletSectionInst? root.walletSectionInst.isMnemonicBackedUp : ""
+    property var walletConnectController: !!root.walletSectionInst? root.walletSectionInst.walletConnectController : null
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
-    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+    readonly property bool areTestNetworksEnabled: !!networksModule? networksModule.areTestNetworksEnabled : false
+    readonly property bool isSepoliaEnabled: !!networksModule? networksModule.isSepoliaEnabled?? false : false
 
     property var savedAddresses: SortFilterProxyModel {
-        sourceModel: walletSectionSavedAddresses.model
+        sourceModel: !!walletSectionSavedAddresses? walletSectionSavedAddresses.model : null
         filters: [
             ValueFilter {
                 roleName: "isTest"
@@ -136,15 +136,15 @@ QtObject {
         return d.chainColors[chainShortName]
     }
 
-    property var layer1Networks: networksModule.layer1
-    property var layer2Networks: networksModule.layer2
-    property var enabledNetworks: networksModule.enabled
-    property var allNetworks: networksModule.all
+    property var layer1Networks: !!networksModule? networksModule.layer1 : null
+    property var layer2Networks: !!networksModule? networksModule.layer2 : null
+    property var enabledNetworks: !!networksModule? networksModule.enabled : null
+    property var allNetworks: !!networksModule? networksModule.all : null
     onAllNetworksChanged: {
         d.initChainColors(allNetworks)
     }
 
-    property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
+    property var cryptoRampServicesModel: !!walletSectionBuySellCrypto? walletSectionBuySellCrypto.model : null
 
     function resetCurrentViewedHolding(type) {
         currentViewedHoldingID = ""

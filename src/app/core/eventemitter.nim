@@ -14,6 +14,8 @@ proc createEventEmitter*(): EventEmitter =
   result.new
   result.events = initTable[string, OrderedTable[UUID, Handler]]()
 
+proc reset*(this: EventEmitter) =
+  this.events = initTable[string, OrderedTable[UUID, Handler]]()
 
 proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): void =
   if this.events.hasKey(name):

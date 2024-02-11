@@ -364,6 +364,8 @@ QtObject:
         if found:
           continue
         let responseTokens = backend.getTokens(network.chainId)
+        if responseTokens.result.isNil or responseTokens.result.kind == JNull:
+          continue
         let default_tokens = Json.decode($responseTokens.result, seq[TokenDto], allowUnknownFields = true)
         self.tokens[network.chainId] = default_tokens.filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId

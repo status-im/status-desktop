@@ -64,8 +64,6 @@ method onQuinaryActionClicked*(self: AccessInterface) {.base.} =
 method startUpUIRaised*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method emitLogOut*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
 
 method getImportedAccount*(self: AccessInterface): GeneratedAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -218,6 +216,7 @@ method removeMockedKeycardAction*(self: AccessInterface) {.base.} =
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
+    c.logoutUser()
     c.startupDidLoad()
     c.userLoggedIn()
     c.finishAppLoading()

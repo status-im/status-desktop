@@ -90,6 +90,8 @@ QtObject:
 
   proc selectedSenderAccountChanged*(self: View) {.signal.}
   proc getSelectedSenderAccount(self: View): QVariant {.slot.} =
+    if self.selectedSenderAccount == nil:
+      return newQVariant()
     return newQVariant(self.selectedSenderAccount)
   proc setSelectedSenderAccount*(self: View, account: AccountItem) =
     self.selectedSenderAccount = account
@@ -104,6 +106,8 @@ QtObject:
 
   proc selectedReceiveAccountChanged*(self: View) {.signal.}
   proc getSelectedReceiveAccount(self: View): QVariant {.slot.} =
+    if self.selectedReceiveAccount == nil:
+      return newQVariant()
     return newQVariant(self.selectedReceiveAccount)
   proc setSelectetReceiveAccount*(self: View, account: AccountItem) =
     self.selectedReceiveAccount = account

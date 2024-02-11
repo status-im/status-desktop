@@ -141,7 +141,6 @@ proc init*(self: Controller) =
     self.events.emit("nodeStopped", Args())
     self.accountsService.clear()
     self.cleanTmpData()
-    self.delegate.emitLogOut()
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.NodeReady.event) do(e:Args):

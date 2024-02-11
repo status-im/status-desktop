@@ -26,7 +26,7 @@ QtObject:
     result.setup()
     result.events = events
 
-  # This method might be called with `ChroniclesLogs` event from `nim_status_client`. 
+  # This method might be called with `ChroniclesLogs` event from `nim_status_client`.
   # In such case we must not log anything to prevent recursive calls.
   # I tried to make a better solution, but ended up with such workaround, check out PR for more details.
   proc processSignal(self: SignalsManager, statusSignal: string, allowLogging: bool) =

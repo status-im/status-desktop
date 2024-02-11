@@ -16,25 +16,25 @@ QtObject {
     property string profileLargeImage: !!Global.userProfile? Global.userProfile.largeImage : ""
     property string icon: !!Global.userProfile? Global.userProfile.icon : ""
     property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
-    property var privacyStore: profileSectionModule.privacyModule
+    property var privacyStore: !!profileSectionModule? profileSectionModule.privacyModule : null
     readonly property string keyUid: !!Global.userProfile ? Global.userProfile.keyUid : ""
     readonly property bool isKeycardUser: !!Global.userProfile ? Global.userProfile.isKeycardUser : false
 
-    readonly property string bio: profileModule.bio
-    readonly property string socialLinksJson: profileModule.socialLinksJson
-    readonly property var socialLinksModel: profileModule.socialLinksModel
-    readonly property var temporarySocialLinksModel: profileModule.temporarySocialLinksModel // for editing purposes
-    readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
-    readonly property bool socialLinksDirty: profileModule.socialLinksDirty
+    readonly property string bio: !!root.profileModule? root.profileModule.bio : ""
+    readonly property string socialLinksJson: !!root.profileModule? root.profileModule.socialLinksJson : ""
+    readonly property var socialLinksModel: !!root.profileModule? root.profileModule.socialLinksModel : null
+    readonly property var temporarySocialLinksModel: !!root.profileModule? root.profileModule.temporarySocialLinksModel : null // for editing purposes
+    readonly property var temporarySocialLinksJson: !!root.profileModule? root.profileModule.temporarySocialLinksJson : null
+    readonly property bool socialLinksDirty: !!root.profileModule? root.profileModule.socialLinksDirty : false
 
-    readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
+    readonly property bool isWalletEnabled: Global.appIsReady && !!mainModule? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
-    readonly property var collectiblesModel: profileModule.collectiblesModel
+    readonly property var collectiblesModel: !!root.profileModule? root.profileModule.collectiblesModel : null
 
-    readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
-    readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
-    readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
-    readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+    readonly property var profileShowcaseCommunitiesModel: !!root.profileModule? root.profileModule.profileShowcaseCommunitiesModel : null
+    readonly property var profileShowcaseAccountsModel: !!root.profileModule? root.profileModule.profileShowcaseAccountsModel : null
+    readonly property var profileShowcaseCollectiblesModel: !!root.profileModule? root.profileModule.profileShowcaseCollectiblesModel : null
+    readonly property var profileShowcaseAssetsModel: !!root.profileModule? root.profileModule.profileShowcaseAssetsModel : null
 
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {

@@ -6,18 +6,18 @@ QtObject {
     id: root
 
     property var walletModule
-    property var accountsModule: root.walletModule.accountsModule
-    property var networksModule: root.walletModule.networksModule
-    property var collectibles: root.walletModule.collectiblesModel
+    property var accountsModule: !!root.walletModule? root.walletModule.accountsModule : null
+    property var networksModule: !!root.walletModule? root.walletModule.networksModule : null
+    property var collectibles: !!root.walletModule? root.walletModule.collectiblesModel : null
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
-    property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
+    property var dappList: Global.appIsReady && !!dappPermissionsModule? dappPermissionsModule.dapps : null
 
-    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+    readonly property bool areTestNetworksEnabled: !!root.networksModule? root.networksModule.areTestNetworksEnabled : false
+    readonly property bool isSepoliaEnabled: !!root.networksModule? root.networksModule.isSepoliaEnabled : false
 
-    readonly property var networks: networksModule.networks
-    readonly property var combinedNetworks: networksModule.combinedNetworks
+    readonly property var networks: !!root.networksModule? root.networksModule.networks : null
+    readonly property var combinedNetworks: !!root.networksModule? root.networksModule.combinedNetworks : null
     property var selectedAccount
 
     function toggleTestNetworksEnabled(){
@@ -25,8 +25,8 @@ QtObject {
     }
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
-    property var accounts: Global.appIsReady? accountsModule.accounts : null
-    property var originModel: accountsModule.keyPairModel
+    property var accounts: Global.appIsReady && !!root.accountsModule? accountsModule.accounts : null
+    property var originModel: !!root.accountsModule? root.accountsModule.keyPairModel : null
 
     property string userProfilePublicKey: userProfile.pubKey
 

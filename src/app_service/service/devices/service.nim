@@ -110,6 +110,9 @@ QtObject:
   proc init*(self: Service) =
     self.doConnect()
 
+  proc setWalletAccountService*(self: Service, walletAccountService: wallet_account_service.Service) =
+    self.walletAccountService = walletAccountService
+
   proc asyncLoadDevices*(self: Service) =
     let arg = AsyncLoadDevicesTaskArg(
       tptr: cast[ByteAddress](asyncLoadDevicesTask),
@@ -242,7 +245,10 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc validateKeyUids*(self: Service, keyUids: seq[string], validateForExport: bool): tuple[finalKeyUids: seq[string], err: string] =
+  proc validateKeyUids(self: Service, keyUids: seq[string], validateForExport: bool): tuple[finalKeyUids: seq[string], err: string] =
+    if self.walletAccountService.isNil:
+      result.err = "wallet account service is not initialized"
+      return
     if keyUids.len > 0:
       for keyUid in keyUids:
         let kp = self.walletAccountService.getKeypairByKeyUid(keyUid)
@@ -313,6 +319,9 @@ QtObject:
       return (response, "")
 
   proc inputConnectionStringForImportingKeystoreFinished*(self: Service, responseJson: string) {.slot.} =
+    if self.walletAccountService.isNil:
+      info "wallet account service is not initialized"
+      return
     try:
       let jsonObj = responseJson.parseJson
       if jsonObj.hasKey("error") and jsonObj["error"].getStr.len == 0:
