@@ -38,10 +38,12 @@ StatusListView {
         asset.isImage: true
         border.width: 1
         border.color: Theme.palette.baseColor5
+        highlighted: viewButton.hovered
         components: [
             StatusFlatButton {
-                text: qsTr("View")
+                id: viewButton
 
+                text: qsTr("View")
                 onClicked: keyFilter.value = model.key
             }
         ]
@@ -49,7 +51,7 @@ StatusListView {
 
     footer: Item {
         width: parent.width
-        height: root.count > 0 ? shapeRect.implicitHeight + 40 : shapeRect.implicitHeight
+        height: root.count > 0 ? shapeRect.implicitHeight + 20 : shapeRect.implicitHeight
 
         ShapeRectangle {
             id: shapeRect
