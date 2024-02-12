@@ -59,4 +59,4 @@ def test_pin_and_unpin_message_in_community(main_screen: MainWindow, community_p
     with step('Verify that the message was unpinned'):
         assert not message.message_is_pinned
         assert message.user_name_in_pinned_message == ''
-        assert messages_screen.tool_bar.is_pin_message_tooltip_visible
+        assert not messages_screen.tool_bar.is_pin_message_tooltip_visible

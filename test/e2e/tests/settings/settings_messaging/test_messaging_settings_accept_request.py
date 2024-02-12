@@ -37,7 +37,7 @@ def test_messaging_settings_accepting_request(multiple_instance, user_data_one, 
             aut_two.attach()
             main_window.prepare()
             profile_popup = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
-            chat_key = profile_popup.get_chat_key_from_profile_link
+            chat_key = profile_popup.copy_chat_key
             profile_popup.close()
             main_window.hide()
 

@@ -111,9 +111,11 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
 
     with step('Open user profile from online identifier and check the data'):
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
-        assert profile_popup.user_name == user_name, \
-            f'Display name in user profile is wrong, current: {profile_popup.user_name}, expected: {user_name}'
-        assert profile_popup.get_chat_key_from_profile_link == chat_key, \
-            f'Chat key in user profile is wrong, current: {profile_popup.get_chat_key_from_profile_link}, expected: {chat_key}'
+        profile_popup_user_name = profile_popup.user_name
+        profile_popup_chat_key = profile_popup.copy_chat_key
+        assert profile_popup_user_name == user_name, \
+            f'Display name in user profile is wrong, current: {profile_popup_user_name}, expected: {user_name}'
+        assert profile_popup_chat_key == chat_key, \
+            f'Chat key in user profile is wrong, current: {profile_popup_chat_key}, expected: {chat_key}'
         assert profile_popup.get_emoji_hash == emoji_hash_public_key, \
             f'Public keys should match when they dont'

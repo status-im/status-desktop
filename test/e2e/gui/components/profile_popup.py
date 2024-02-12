@@ -20,7 +20,7 @@ class ProfilePopup(BasePopup):
         self._edit_profile_button = Button('ProfilePopup_editButton')
         self._chat_key_text_label = TextLabel('https_status_app_StatusBaseText')
         self._emoji_hash = QObject('profileDialog_userEmojiHash_EmojiHash')
-        self._chat_key_copy_button = Button('copy_icon_StatusIcon')
+        self._chat_key_copy_button = Button('copy_icon_CopyButton')
 
     @property
     @allure.step('Get profile image')

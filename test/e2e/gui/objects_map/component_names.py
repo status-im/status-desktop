@@ -62,8 +62,7 @@ ProfilePopup_SendContactRequestButton = {"container": statusDesktop_mainWindow_o
 profileDialog_userEmojiHash_EmojiHash = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_userEmojiHash", "type": "EmojiHash", "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBaseText", "unnamed": 1, "visible": True}
-copy_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "StatusIcon", "visible": True}
-
+copy_icon_CopyButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "CopyButton", "visible": True}
 
 # Welcome Status Popup
 betaConsent_StatusModal = {"container": statusDesktop_mainWindow_overlay, "objectName": "desktopBetaStatusModal", "type": "StatusModal", "visible": True}
