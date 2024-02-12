@@ -42,6 +42,7 @@ SplitView {
             anchors.centerIn: parent
 
             width: 400
+            height: 600
 
             assets: txStore.processedAssetsModel
             collectibles: WalletNestedCollectiblesModel {}

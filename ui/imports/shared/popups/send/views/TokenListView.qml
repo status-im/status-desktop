@@ -75,90 +75,73 @@ Item {
             rightModel: d.renamedAllNetworksModel
             joinRole: "chainId"
         }
+
+        readonly property bool isBrowsingTypeERC20: root.browsingHoldingType === Constants.TokenType.ERC20
     }
 
-    implicitWidth: contentLayout.implicitWidth
-    implicitHeight: contentLayout.implicitHeight
+    StatusBaseText {
+        id: label
+        anchors.top: parent.top
+        elide: Text.ElideRight
+        text: qsTr("Token to send")
+        font.pixelSize: 13
+        color: Theme.palette.directColor1
+    }
 
-    ColumnLayout {
-        id: contentLayout
+    Rectangle {
+        anchors.top: label.bottom
+        anchors.topMargin: 8
+        width: parent.width
+        height: parent.height
 
-        anchors.fill: parent
-        spacing: 8
+        color: Theme.palette.indirectColor1
+        radius: 8
 
-        StatusBaseText {
-            id: label
-            elide: Text.ElideRight
-            text: qsTr("Token to send")
-            font.pixelSize: 13
-            color: Theme.palette.directColor1
-        }
+        ColumnLayout {
+            id: column
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: column.height
+            anchors.fill: parent
+            anchors.topMargin: root.onlyAssets ? 0 : 20
 
-            color: Theme.palette.indirectColor1
-            radius: 8
+            StatusTabBar {
+                visible: !root.onlyAssets
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
+                currentIndex: d.holdingTypes.indexOf(root.browsingHoldingType)
 
-            Column {
-                id: column
-                width: parent.width
-                topPadding: root.onlyAssets ? 0 : 20
-
-                StatusTabBar {
-                    visible: !root.onlyAssets
-                    height: 40
-                    width: parent.width
-                    currentIndex: d.holdingTypes.indexOf(root.browsingHoldingType)
-
-                    onCurrentIndexChanged: {
-                        if (currentIndex >= 0) {
-                            root.browsingHoldingType = d.holdingTypes[currentIndex]
-                        }
-                    }
-
-                    Repeater {
-                        id: tabLabelsRepeater
-                        model: d.tabsModel
-
-                        StatusTabButton {
-                            text: modelData
-                            width: implicitWidth
-                        }
+                onCurrentIndexChanged: {
+                    if (currentIndex >= 0) {
+                        root.browsingHoldingType = d.holdingTypes[currentIndex]
                     }
                 }
 
-                StatusListView {
-                    id: tokenList
+                Repeater {
+                    id: tabLabelsRepeater
+                    model: d.tabsModel
 
-                    width: parent.width
-                    height: tokenList.contentHeight
-
-                    header: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenHeader : collectibleHeader
-                    model: root.browsingHoldingType === Constants.TokenType.ERC20 ? root.assets : collectiblesModel
-                    delegate: root.browsingHoldingType === Constants.TokenType.ERC20 ? tokenDelegate : collectiblesDelegate
-                    section {
-                        property: "isCommunityAsset"
-                        delegate: Loader {
-                            width: ListView.view.width
-                            required property string section
-                            sourceComponent: root.browsingHoldingType === Constants.TokenType.ERC20 && section === "true" ? sectionDelegate : null
-                        }
+                    StatusTabButton {
+                        text: modelData
+                        width: implicitWidth
                     }
                 }
+            }
 
-                Component {
-                    id: sectionDelegate
-                    AssetsSectionDelegate {
-                        width: parent.width
-                        onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+            StatusListView {
+                id: tokenList
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                header: d.isBrowsingTypeERC20 ? tokenHeader : collectibleHeader
+                model: d.isBrowsingTypeERC20 ? root.assets : collectiblesModel
+                delegate: d.isBrowsingTypeERC20 ? tokenDelegate : collectiblesDelegate
+                section {
+                    property: "isCommunityAsset"
+                    delegate: Loader {
+                        width: ListView.view.width
+                        required property string section
+                        sourceComponent: d.isBrowsingTypeERC20 && section === "true" ? sectionDelegate : null
                     }
-                }
-
-                Component {
-                    id: communityInfoPopupCmp
-                    CommunityAssetsInfoPopup {}
                 }
             }
         }
@@ -185,7 +168,7 @@ Item {
             width: ListView.view.width
             selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
-                leftModel: model.balances
+                leftModel: !!model & !!model.balances ? model.balances : nil
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
@@ -242,5 +225,18 @@ Item {
                 onTextChanged: Qt.callLater(d.updateCollectibleSearchText, text)
             }
         }
+    }
+
+    Component {
+        id: sectionDelegate
+        AssetsSectionDelegate {
+            width: parent.width
+            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+        }
+    }
+
+    Component {
+        id: communityInfoPopupCmp
+        CommunityAssetsInfoPopup {}
     }
 }

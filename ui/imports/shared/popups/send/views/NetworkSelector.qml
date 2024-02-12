@@ -15,8 +15,6 @@ import "../controls"
 Item {
     id: root
 
-    implicitHeight: visible ? tabBar.height + stackLayout.height + Style.current.xlPadding : 0
-
     property var store
     property var currencyStore : store.currencyStore
     property var selectedAccount
@@ -33,8 +31,12 @@ Item {
     property bool isERC721Transfer: false
     property var toNetworksList
     property int errorType: Constants.NoError
+    property var bestRoutes
+    property double totalFeesInFiat
 
     signal reCalculateSuggestedRoute()
+
+    implicitHeight: childrenRect.height
 
     QtObject {
         id: d
@@ -75,8 +77,8 @@ Item {
                 id: networksSimpleRoutingPage
                 anchors.top: parent.top
                 anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.margins: Style.current.padding
-                width: stackLayout.width  - Style.current.bigPadding
                 isBridgeTx: root.isBridgeTx
                 isERC721Transfer: root.isERC721Transfer
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
@@ -106,8 +108,8 @@ Item {
                 id: advancedNetworkRoutingPage
                 anchors.top: parent.top
                 anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.margins: Style.current.padding
-                width: stackLayout.width - Style.current.xlPadding
                 store: root.store
                 customMode: tabBar.currentIndex === 2
                 selectedAccount: root.selectedAccount
@@ -127,5 +129,20 @@ Item {
                 }
             }
         }
+    }
+
+    FeesView {
+        id: fees
+        width: parent.width
+        anchors.top: stackLayout.bottom
+        anchors.topMargin: Style.current.bigPadding
+        visible: root.advancedOrCustomMode
+
+        selectedTokenSymbol: root.selectedAsset.symbol
+        isLoading: root.isLoading
+        bestRoutes: root.bestRoutes
+        store: root.store
+        gasFiatAmount: root.totalFeesInFiat
+        errorType: root.errorType
     }
 }

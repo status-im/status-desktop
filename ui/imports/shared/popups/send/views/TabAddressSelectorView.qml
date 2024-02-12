@@ -23,8 +23,6 @@ import "../views"
 
 Item {
     id: root
-    clip: true
-    implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height : 0
 
     property var selectedAccount
     property var store
@@ -46,44 +44,36 @@ Item {
         width: parent.width
 
         StatusTabButton {
-            id: assetBtn
             width: implicitWidth
             text: qsTr("Saved")
         }
         StatusTabButton {
-            id: collectiblesBtn
             width: implicitWidth
             objectName: "myAccountsTab"
             text: qsTr("My Accounts")
         }
         StatusTabButton {
-            id: historyBtn
             width: implicitWidth
             text: qsTr("Recent")
         }
     }
 
-    StackLayout {
-        id: stackLayout
+    // To-do adapt to new design and make block white/black once the list items etc support new color scheme
+    Rectangle {
         anchors.top: accountSelectionTabBar.bottom
         anchors.topMargin: -5
-        height: currentIndex === 0 ? savedAddresses.height: currentIndex === 1 ? myAccounts.height : recents.height
+        height: parent.height - accountSelectionTabBar.height
         width: parent.width
-        currentIndex: accountSelectionTabBar.currentIndex
+        color: Theme.palette.indirectColor1
+        radius: 8
 
-        // To-do adapt to new design and make block white/balck once the list items etc support new color scheme
-        Rectangle {
-            Layout.maximumWidth: parent.width
-            Layout.maximumHeight : savedAddresses.height
-            color: Theme.palette.indirectColor1
-            radius: 8
+        StackLayout {
+            currentIndex: accountSelectionTabBar.currentIndex
+
+            anchors.fill: parent
 
             StatusListView {
                 id: savedAddresses
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                implicitWidth: parent.width
-                height: savedAddresses.contentHeight
 
                 model: root.store.savedAddressesModel
                 header: savedAddresses.count > 0 ? search : nothingInList
@@ -115,21 +105,10 @@ Item {
                     }
                 }
             }
-        }
-        Rectangle {
-            id: myAccountsRect
-            Layout.maximumWidth: parent.width
-            Layout.maximumHeight: myAccounts.height
-            color: Theme.palette.indirectColor1
-            radius: 8
 
             StatusListView {
                 id: myAccounts
                 objectName: "myAccountsList"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                width: parent.width
-                height: myAccounts.contentHeight
 
                 delegate: WalletAccountListItem {
                     implicitWidth: ListView.view.width
@@ -147,43 +126,9 @@ Item {
 
                 model: root.store.accounts
             }
-        }
-
-        Rectangle {
-            id: recentsRect
-            Layout.maximumWidth: parent.width
-            Layout.maximumHeight : recents.height
-            color: Theme.palette.indirectColor1
-            radius: 8
-
-            onVisibleChanged: {
-                if (visible) {
-                    updateRecentsActivity()
-                }
-            }
-
-            Connections {
-                target: root
-                function onSelectedAccountChanged() {
-                    if (visible) {
-                        recentsRect.updateRecentsActivity()
-                    }
-                }
-            }
-
-            function updateRecentsActivity() {
-                if(root.selectedAccount) {
-                    root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address], false))
-                }
-                root.store.tmpActivityController.updateFilter()
-            }
 
             StatusListView {
                 id: recents
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                width: parent.width
-                height: recents.contentHeight
 
                 header: StatusBaseText {
                     height: visible ? 56 : 0
@@ -230,6 +175,28 @@ Item {
                 }
 
                 model: root.store.tmpActivityController.model
+
+                onVisibleChanged: {
+                    if (visible) {
+                        updateRecentsActivity()
+                    }
+                }
+
+                Connections {
+                    target: root
+                    function onSelectedAccountChanged() {
+                        if (visible) {
+                            recents.updateRecentsActivity()
+                        }
+                    }
+                }
+
+                function updateRecentsActivity() {
+                    if(root.selectedAccount) {
+                        root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address], false))
+                    }
+                    root.store.tmpActivityController.updateFilter()
+                }
             }
         }
     }

@@ -29,7 +29,16 @@ Rectangle {
         verticalOffset: 2
         radius: 16
         samples: 17
-        color: Theme.palette.dropShadow
+        color: Theme.palette.directColor7
+    }      
+
+    // This to have the square edges on top
+    Rectangle {
+      anchors.top: footer.top
+      anchors.left: footer.left
+      anchors.right: footer.right
+      color: footer.color
+      height: footer.radius
     }
 
     RowLayout {
