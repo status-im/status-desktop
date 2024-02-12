@@ -23,6 +23,11 @@ proc newStatusFoundation*(fleetConfig: string): StatusFoundation =
   result.threadpool = newThreadPool()
   result.signalsManager = newSignalsManager(result.events)
 
+proc reset*(self: StatusFoundation) =
+  self.threadpool.teardown()
+  self.threadpool = newThreadPool()
+  self.events.reset()
+
 proc delete*(self: StatusFoundation) =
   self.threadpool.teardown()
   self.fleetConfiguration.delete()

@@ -178,9 +178,6 @@ proc moveToAppEncryptionProcessState[T](self: Module[T]) =
 method startUpUIRaised*[T](self: Module[T]) =
   self.view.startUpUIRaised()
 
-method emitLogOut*[T](self: Module[T]) =
-  self.view.emitLogOut()
-
 method onBackActionClicked*[T](self: Module[T]) =
   self.onSharedKeycarModuleFlowTerminated(lastStepInTheCurrentFlow = true)
   let currStateObj = self.view.currentStartupStateObj()
@@ -391,7 +388,7 @@ method startAppAfterDelay*[T](self: Module[T]) =
   self.moveToStartupState()
 
 proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupErrorType) =
-  self.delegate.logout()
+  self.delegate.logoutUser()
   if self.controller.isSelectedLoginAccountKeycardAccount() and
     errType == StartupErrorType.ConvertToRegularAccError:
       self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
@@ -410,7 +407,7 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
   if currStateObj.isNil:
     error "cannot determine current startup state", procName="onProfileConverted"
     quit() # quit the app
-  self.delegate.logout()
+  self.delegate.logoutUser()
   self.moveToStartupState()
   self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
 

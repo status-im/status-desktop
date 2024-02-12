@@ -26,15 +26,21 @@ OnboardingBasePage {
         root.startupStore.backAction()
     }
 
-    function unload() {
-        loader.sourceComponent  = undefined
+    function load() {
+        loader.sourceComponent = Qt.binding(() => {
+                                                return d.evaluateState(root.startupStore.currentStartupState.stateType)
+                                            })
     }
 
-    Loader {
-        id: loader
-        anchors.fill: parent
-        sourceComponent: {
-            switch (root.startupStore.currentStartupState.stateType) {
+    function unload() {
+        loader.sourceComponent = undefined
+    }
+
+    QtObject {
+        id: d
+
+        function evaluateState(stateType) {
+            switch (stateType) {
             case Constants.startupState.allowNotifications:
                 return allowNotificationsViewComponent
 
@@ -145,8 +151,14 @@ OnboardingBasePage {
         }
     }
 
+    Loader {
+        id: loader
+        anchors.fill: parent
+        sourceComponent: d.evaluateState(root.startupStore.currentStartupState.stateType)
+    }
+
     Connections {
-        target: root.startupStore.startupModuleInst
+        target: !!root.startupStore.startupModuleInst? root.startupStore.startupModuleInst : null
         function onStartupError(error: string, errType: int) {
             msgDialog.errType = errType
             if (errType === Constants.startupErrorType.setupAccError) {

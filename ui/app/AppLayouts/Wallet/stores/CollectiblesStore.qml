@@ -44,9 +44,9 @@ QtObject {
 
 
     /* The following are used to display the detailed view of a collectible */
-    readonly property var detailedCollectible: Global.appIsReady ? walletSection.collectibleDetailsController.detailedEntry : null
-    readonly property var detailedCollectibleStatus: Global.appIsReady ? walletSection.collectibleDetailsController.status : null
-    readonly property bool isDetailedCollectibleLoading: Global.appIsReady ? walletSection.collectibleDetailsController.isDetailedEntryLoading : true
+    readonly property var detailedCollectible: Global.appIsReady && !!walletSection? walletSection.collectibleDetailsController.detailedEntry : null
+    readonly property var detailedCollectibleStatus: Global.appIsReady && !!walletSection? walletSection.collectibleDetailsController.status : null
+    readonly property bool isDetailedCollectibleLoading: Global.appIsReady && !!walletSection? walletSection.collectibleDetailsController.isDetailedEntryLoading : true
 
     function getDetailedCollectible(chainId, contractAddress, tokenId) {
         walletSection.collectibleDetailsController.getDetailedCollectible(chainId, contractAddress, tokenId)

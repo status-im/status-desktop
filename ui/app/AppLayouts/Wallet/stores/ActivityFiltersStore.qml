@@ -8,10 +8,10 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var transactionsList: walletSection.activityController.model
+    property var transactionsList: !!walletSection && !!walletSection.activityController? walletSection.activityController.model : null
 
     property bool autoUpdateFilter: true
-    property var activityController: walletSection.activityController
+    property var activityController: !!walletSection? walletSection.activityController : null
     readonly property bool filtersSet: selectedTime !== Constants.TransactionTimePeriod.All ||
                                 typeFilters.length !== 0 ||
                                 statusFilters.length !== 0 ||
@@ -78,7 +78,9 @@ QtObject {
     // If noLimitTimestamp or double timestamp value otherwise
     property double fromTimestamp: 0
     property double toTimestamp: 0
-    readonly property double currentActivityStartTimestamp: activityController.status.startTimestamp * 1000.0
+    readonly property double currentActivityStartTimestamp: !!root.activityController && !!root.activityController.status?
+                                                                activityController.status.startTimestamp * 1000.0
+                                                              : 1000.0
     function setSelectedTimestamp(selcTime) {
         selectedTime = selcTime
         switch(selectedTime) {
@@ -196,9 +198,12 @@ QtObject {
     }
 
     // Collectibles Filters
-    property var collectiblesList: activityController.collectiblesModel
+    property var collectiblesList: !!root.activityController? root.activityController.collectiblesModel : null
     property var collectiblesFilter: []
-    readonly property bool loadingCollectibles: activityController.status.loadingCollectibles ? activityController.status.loadingCollectibles : false
+    readonly property bool loadingCollectibles: !!root.activityController && !!root.activityController.status?
+                                           root.activityController.status.loadingCollectibles?? false
+                                         : false
+
     function updateCollectiblesModel() {
         activityController.updateCollectiblesModel()
     }
@@ -214,8 +219,10 @@ QtObject {
             activityController.updateFilter()
     }
 
-    property var recentsList: activityController.recipientsModel
-    property bool loadingRecipients: activityController.status.loadingRecipients
+    property var recentsList: !!activityController? activityController.recipientsModel : null
+    property bool loadingRecipients: !!root.activityController && !!root.activityController.status?
+                                         root.activityController.status.loadingRecipients
+                                       : false
     property var recentsFilters: []
     function updateRecipientsModel() {
         activityController.updateRecipientsModel()
@@ -228,8 +235,8 @@ QtObject {
             activityController.updateFilter()
     }
 
-    property var savedAddressesModel: walletSectionSavedAddresses.model
-    property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    property var savedAddressesModel: !!walletSectionSavedAddresses? walletSectionSavedAddresses.model : null
+    property bool areTestNetworksEnabled: !!networksModule? networksModule.areTestNetworksEnabled : false
     property var savedAddressList: SortFilterProxyModel {
         sourceModel: savedAddressesModel
         filters: [

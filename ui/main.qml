@@ -17,6 +17,7 @@ import AppLayouts.Onboarding 1.0
 
 import StatusQ 0.1 // Force import StatusQ plugin to load all StatusQ resources
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 StatusWindow {
     property bool appIsReady: false
@@ -34,7 +35,7 @@ StatusWindow {
         Qt.application.displayName = qsTr("Status Desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
-        Qt.application.version = aboutModule.getCurrentVersion()
+        Qt.application.version = typeof aboutModule !== "undefined" && !!aboutModule? aboutModule.getCurrentVersion() : ""
         return Qt.application.displayName
     }
     visible: true
@@ -94,6 +95,9 @@ StatusWindow {
 
     QtObject {
         id: d
+
+        property var startupModuleInst: !!startupModule? startupModule : null
+
         property int previousApplicationState: -1
 
         property var mockedKeycardControllerWindow
@@ -108,7 +112,7 @@ StatusWindow {
                 if (c.status === Component.Ready) {
                     d.mockedKeycardControllerWindow = c.createObject(applicationWindow, {
                                                                          "relatedModule": startupOnboarding.visible?
-                                                                                              startupModule :
+                                                                                              d.startupModuleInst :
                                                                                               mainModule
                                                                      })
                     if (d.mockedKeycardControllerWindow) {
@@ -116,6 +120,97 @@ StatusWindow {
                         d.mockedKeycardControllerWindow.requestActivate()
                     }
                 }
+            }
+        }
+
+        function connectToStartupModule() {
+            if (!d.startupModuleInst) {
+                return
+            }
+            d.startupModuleInst.startUpUIRaised.connect(d.onStartUpUIRaised)
+            d.startupModuleInst.appStateChanged.connect(d.onAppStateChanged)
+            if (typeof mainModule !== "undefined" && !!mainModule) {
+                mainModule.startupModuleReadyAfterLogOut.disconnect(d.connectToStartupModule)
+            }
+        }
+
+        function disconnectToStartupModule() {
+            if (!d.startupModuleInst) {
+                return
+            }
+            d.startupModuleInst.startUpUIRaised.disconnect(d.onStartUpUIRaised)
+            d.startupModuleInst.appStateChanged.disconnect(d.onAppStateChanged)
+        }
+
+        function waitForStartupModuleReadySignalAfterLogOut() {
+            mainModule.startupModuleReadyAfterLogOut.connect(d.connectToStartupModule)
+        }
+
+        function onStartUpUIRaised() {
+            applicationWindow.appIsReady = true;
+            applicationWindow.storeAppState();
+
+            d.runMockedKeycardControllerWindow()
+        }
+
+        function onAppStateChanged(state) {
+            if(state === Constants.appState.startup) {
+                // we're here only in case of error when we're returning from the app loading state
+                loader.sourceComponent = undefined
+                appLoadingAnimation.active = false
+                appLoggingOutAnimation.active = false
+                startupOnboarding.load()
+                startupOnboarding.visible = true
+
+
+
+//                d.disconnectToStartupModule()
+
+//                loader.sourceComponent = undefined
+//                startupOnboarding.visible = false
+//                appLoadingAnimation.active = false
+//                Global.appIsReady = false
+            }
+            else if(state === Constants.appState.appLoading) {
+                loader.sourceComponent = undefined
+                appLoadingAnimation.active = false
+                appLoadingAnimation.active = true
+                startupOnboarding.visible = false
+            }
+            else if(state === Constants.appState.main) {
+                // We set main module to the Global singleton once user is logged in and we move to the main app.
+                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                if (!appLoadingAnimation.runningProgressAnimation) {
+                    mainModule.fakeLoadingScreenFinished()
+                }
+                Global.userProfile = userProfile
+                Global.appIsReady = true
+
+                loader.sourceComponent = app
+
+                if(localAccountSensitiveSettings.recentEmojis === "") {
+                    localAccountSensitiveSettings.recentEmojis = [];
+                }
+                if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
+                    localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
+                }
+                if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
+                    localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+                }
+                startupOnboarding.unload()
+                startupOnboarding.visible = false
+
+                Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+                Style.changeFontSize(localAccountSensitiveSettings.fontSize)
+                Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
+
+                d.runMockedKeycardControllerWindow()
+            } else if(state === Constants.appState.appEncryptionProcess) {
+                loader.sourceComponent = undefined
+                appLoadingAnimation.active = true
+                appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
+                startupOnboarding.visible = false
             }
         }
     }
@@ -168,65 +263,20 @@ StatusWindow {
         }
     }
 
-    //TODO remove direct backend access
     Connections {
-        target: startupModule
+        target: Global
+        function onLogoutUser() {
 
-        function onStartUpUIRaised() {
-            applicationWindow.appIsReady = true;
-            applicationWindow.storeAppState();
+            appLoggingOutAnimation.active = true
 
-            d.runMockedKeycardControllerWindow()
-        }
+            d.disconnectToStartupModule()
 
-        function onAppStateChanged(state) {
-            if(state === Constants.appState.startup) {
-                // we're here only in case of error when we're returning from the app loading state
-                loader.sourceComponent = undefined
-                appLoadingAnimation.active = false
-                startupOnboarding.visible = true
-            }
-            else if(state === Constants.appState.appLoading) {
-                loader.sourceComponent = undefined
-                appLoadingAnimation.active = false
-                appLoadingAnimation.active = true
-                startupOnboarding.visible = false
-            }
-            else if(state === Constants.appState.main) {
-                // We set main module to the Global singleton once user is logged in and we move to the main app.
-                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-                if (!appLoadingAnimation.runningProgressAnimation) {
-                    mainModule.fakeLoadingScreenFinished()
-                }
-                Global.userProfile = userProfile
-                Global.appIsReady = true
-
-                loader.sourceComponent = app
-
-                if(localAccountSensitiveSettings.recentEmojis === "") {
-                    localAccountSensitiveSettings.recentEmojis = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
-                }
-                startupOnboarding.unload()
-                startupOnboarding.visible = false
-
-                Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
-                Style.changeFontSize(localAccountSensitiveSettings.fontSize)
-                Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
-
-                d.runMockedKeycardControllerWindow()
-            } else if(state === Constants.appState.appEncryptionProcess) {
-                loader.sourceComponent = undefined
-                appLoadingAnimation.active = true
-                appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
-                startupOnboarding.visible = false
-            }
+            loader.sourceComponent = undefined
+            startupOnboarding.visible = false
+            appLoadingAnimation.active = false
+            Global.appIsReady = false
+            d.waitForStartupModuleReadySignalAfterLogOut()
+            mainModule.logOut()
         }
     }
 
@@ -298,6 +348,8 @@ StatusWindow {
         Global.applicationWindow = this;
         Style.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
+        d.connectToStartupModule();
+
         restoreAppState();
     }
 
@@ -367,10 +419,24 @@ StatusWindow {
 
     Component {
         id: app
-        AppMain {
-            sysPalette: systemPalette
-            visible: !appLoadingAnimation.active
+
+        Rectangle {
+            color: Theme.palette.statusAppLayout.backgroundColor
+
+            StatusButton {
+                anchors.centerIn: parent
+                text: "logout"
+                onClicked: {
+                    Global.logoutUser()
+                }
+
+            }
         }
+
+//        AppMain {
+//            sysPalette: systemPalette
+//            visible: !appLoadingAnimation.active
+//        }
     }
 
     Loader {
@@ -388,6 +454,16 @@ StatusWindow {
                     mainModule.fakeLoadingScreenFinished()
                 }
             }
+        }
+    }
+
+    Loader {
+        id: appLoggingOutAnimation
+        property bool runningProgressAnimation: false
+        anchors.fill: parent
+        active: false
+        sourceComponent: SplashScreen {
+            text: qsTr("Logging out...")
         }
     }
 

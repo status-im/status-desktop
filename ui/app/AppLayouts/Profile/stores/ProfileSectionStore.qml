@@ -16,56 +16,56 @@ QtObject {
 
     property var sendModalPopup
 
-    readonly property bool fetchingUpdate: aboutModuleInst.fetching
+    readonly property bool fetchingUpdate: !!root.aboutModuleInst? root.aboutModuleInst.fetching : false
 
     property ContactsStore contactsStore: ContactsStore {
-        contactsModule: profileSectionModuleInst.contactsModule
+        contactsModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.contactsModule : null
     }
 
     property AdvancedStore advancedStore: AdvancedStore {
-        walletModule: profileSectionModuleInst.walletModule
-        advancedModule: profileSectionModuleInst.advancedModule
+        walletModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.walletModule : null
+        advancedModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.advancedModule : null
     }
 
     property MessagingStore messagingStore: MessagingStore {
-        privacyModule: profileSectionModuleInst.privacyModule
-        syncModule: profileSectionModuleInst.syncModule
-        wakuModule: profileSectionModuleInst.wakuModule
+        privacyModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.privacyModule : null
+        syncModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.syncModule : null
+        wakuModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.wakuModule : null
     }
 
     property DevicesStore devicesStore: DevicesStore {
-        devicesModule: profileSectionModuleInst.devicesModule
+        devicesModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.devicesModule : null
     }
 
     property NotificationsStore notificationsStore: NotificationsStore {
-        notificationsModule: profileSectionModuleInst.notificationsModule
+        notificationsModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.notificationsModule : null
     }
 
     property LanguageStore languageStore: LanguageStore {
-        languageModule: profileSectionModuleInst.languageModule
+        languageModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.languageModule : null
     }
 
     property AppearanceStore appearanceStore: AppearanceStore {
     }
 
     property ProfileStore profileStore: ProfileStore {
-        profileModule: profileSectionModuleInst.profileModule
+        profileModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.profileModule : null
     }
 
     property PrivacyStore privacyStore: PrivacyStore {
-        privacyModule: profileSectionModuleInst.privacyModule
+        privacyModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.privacyModule : null
     }
 
     property EnsUsernamesStore ensUsernamesStore: EnsUsernamesStore {
-        ensUsernamesModule: profileSectionModuleInst.ensUsernamesModule
+        ensUsernamesModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.ensUsernamesModule : null
     }
 
     property WalletStore walletStore: WalletStore {
-        walletModule: profileSectionModuleInst.walletModule
+        walletModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.walletModule : null
     }
 
     property KeycardStore keycardStore: KeycardStore {
-        keycardModule: profileSectionModuleInst.keycardModule
+        keycardModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.keycardModule : null
     }
 
     property var stickersModuleInst: stickersModule
@@ -78,13 +78,13 @@ QtObject {
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
     property var communitiesList: SortFilterProxyModel {
-        sourceModel: root.mainModuleInst.sectionsModel
+        sourceModel: !!root.mainModuleInst? root.mainModuleInst.sectionsModel : null
         filters: ValueFilter {
             roleName: "sectionType"
             value: Constants.appSection.community
         }
     }
-    property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
+    property var communitiesProfileModule: !!root.profileSectionModuleInst? root.profileSectionModuleInst.communitiesModule : null
 
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {

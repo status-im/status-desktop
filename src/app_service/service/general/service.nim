@@ -1,10 +1,10 @@
 import NimQml, os, json, chronicles
 
-import ../../../backend/mailservers as status_mailservers
-import ../../../backend/general as status_general
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
-import ../../../constants as app_constants
+import backend/mailservers as status_mailservers
+import backend/general as status_general
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
+import constants as app_constants
 
 import ../accounts/dto/accounts
 

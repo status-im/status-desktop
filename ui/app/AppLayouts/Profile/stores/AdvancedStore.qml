@@ -6,7 +6,7 @@ QtObject {
 
     property var advancedModule
     property var walletModule
-    property var networksModule: root.walletModule.networksModule
+    property var networksModule: !!root.walletModule? root.walletModule.networksModule : null
 
     // Advanced Module Properties
     property string fleet: advancedModule? advancedModule.fleet : ""
@@ -38,7 +38,7 @@ QtObject {
     readonly property real scrollVelocity: localAppSettings.scrollVelocity
     readonly property real scrollDeceleration: localAppSettings.scrollDeceleration
 
-    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+    readonly property bool isSepoliaEnabled: !!root.networksModule? networksModule.isSepoliaEnabled : false
 
     function logDir() {
         if(!root.advancedModule)

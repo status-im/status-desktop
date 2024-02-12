@@ -6,7 +6,7 @@ QtObject {
 
     property var notificationsModule
 
-    property var exemptionsModel: notificationsModule.exemptionsModel
+    property var exemptionsModel: !!root.notificationsModule? root.notificationsModule.exemptionsModel : null
 
     function sendTestNotification(title, message) {
         root.notificationsModule.sendTestNotification(title, message)

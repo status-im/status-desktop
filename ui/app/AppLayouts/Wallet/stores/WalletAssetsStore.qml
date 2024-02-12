@@ -48,7 +48,7 @@ QtObject {
     in communitiesModule.model so that it can be easily
     joined with the Account Assets model */
     readonly property var _renamedCommunitiesModel: RolesRenamingModel {
-        sourceModel: communitiesModule.model
+        sourceModel: !!communitiesModule? communitiesModule.model : null
         mapping: [
             RoleRename {
                 from: "id"
@@ -79,7 +79,7 @@ QtObject {
     /* This model joins the "Tokens by symbol model combined with Community details"
     and "Grouped Account Assets Model" by tokenskey */
     property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
-        leftModel: walletSectionAssets.groupedAccountAssetsModel
+        leftModel: !!walletSectionAssets? walletSectionAssets.groupedAccountAssetsModel : null
         rightModel: _jointTokensBySymbolModel
         joinRole: "tokensKey"
     }

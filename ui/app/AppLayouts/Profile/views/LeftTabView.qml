@@ -76,9 +76,9 @@ Item {
         confirmButtonObjectName: "signOutConfirmation"
         headerSettings.title: qsTr("Sign out")
         confirmationText: qsTr("Make sure you have your account password and seed phrase stored. Without them you can lock yourself out of your account and lose funds.")
-        confirmButtonLabel: qsTr("Sign out & Quit")
+        confirmButtonLabel: qsTr("Sign out")
         onConfirmButtonClicked: {
-            Qt.quit()
+            Global.logoutUser()
         }
     }
 }

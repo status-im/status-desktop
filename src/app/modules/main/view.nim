@@ -61,6 +61,13 @@ QtObject:
     # In some point, here, we will setup some exposed main module related things.
     self.delegate.viewDidLoad()
 
+  proc logOut*(self: View) {.slot.} =
+    self.delegate.logOut()
+
+  proc startupModuleReadyAfterLogOut*(self: View) {.signal.}
+  proc emitStartupModuleReadyAfterLogOutSignal*(self: View) =
+    self.startupModuleReadyAfterLogOut()
+
   proc appNetworkChanged*(self: View) {.signal.}
   proc getAppNetworkId*(self: View): int {.slot.} =
     return self.delegate.getAppNetwork().chainId

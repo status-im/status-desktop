@@ -43,6 +43,12 @@ method load*(
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method logOut*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method emitStartupModuleReadyAfterLogOutSignal*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getAppNetwork*(self: AccessInterface): NetworkDto =
   raise newException(ValueError, "No implementation available")
 
@@ -420,4 +426,5 @@ method checkIfAddressWasCopied*(self: AccessInterface, value: string) {.base.} =
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
+    c.logoutUser()
     c.mainDidLoad()

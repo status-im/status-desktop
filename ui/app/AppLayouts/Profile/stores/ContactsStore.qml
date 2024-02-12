@@ -11,10 +11,10 @@ QtObject {
 
     property string myPublicKey: !!Global.userProfile? Global.userProfile.pubKey : ""
 
-    property var myContactsModel: contactsModule.myMutualContactsModel
-    property var blockedContactsModel: contactsModule.blockedContactsModel
-    property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
-    property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
+    property var myContactsModel: !!root.contactsModule? root.contactsModule.myMutualContactsModel : null
+    property var blockedContactsModel: !!root.contactsModule? root.contactsModule.blockedContactsModel : null
+    property var receivedContactRequestsModel: !!root.contactsModule? root.contactsModule.receivedContactRequestsModel : null
+    property var sentContactRequestsModel: !!root.contactsModule? root.contactsModule.sentContactRequestsModel : null
 
     // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
 //    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel

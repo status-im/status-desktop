@@ -5,7 +5,7 @@ import # vendor libs
   json_serialization, json, chronicles, taskpools
 
 import # status-desktop libs
-  ./common 
+  ./common
 
 export common, json_serialization, taskpools
 
@@ -18,7 +18,7 @@ type
   ThreadSafeTaskArg* = distinct cstring
 
 proc safe*[T: TaskArg](taskArg: T): ThreadSafeTaskArg =
-  var 
+  var
     strArgs = taskArg.encode()
     res = cast[cstring](allocShared(strArgs.len + 1))
 
@@ -29,9 +29,8 @@ proc safe*[T: TaskArg](taskArg: T): ThreadSafeTaskArg =
 proc toString*(input: ThreadSafeTaskArg): string =
   result = $(input.cstring)
   deallocShared input.cstring
-  
+
 proc teardown*(self: ThreadPool) =
-  self.pool.syncAll() 
   self.pool.shutdown()
 
 proc newThreadPool*(): ThreadPool =
@@ -42,7 +41,7 @@ proc newThreadPool*(): ThreadPool =
 proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall.} =
   let taskArg = safeTaskArg.toString()
   var parsed: JsonNode
-  
+
   try:
     parsed = parseJson(taskArg)
   except CatchableError as e:
@@ -50,7 +49,7 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall.} =
     return
 
   let messageType = parsed{"$type"}.getStr
-    
+
   debug "[threadpool task thread] initiating task", messageType=messageType,
     threadid=getThreadId(), task=taskArg
 

@@ -30,7 +30,7 @@ QtObject {
         return 0;
     }
 
-    readonly property string currentCurrency: Global.appIsReady ? walletSection.currentCurrency : ""
+    readonly property string currentCurrency: Global.appIsReady && !!walletSection? walletSection.currentCurrency : ""
     readonly property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
     readonly property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol ?? Qt.locale().currencySymbol(Locale.CurrencySymbol)
 

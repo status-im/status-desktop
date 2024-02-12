@@ -258,6 +258,12 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
 
+method logOut*[T](self: Module[T]) =
+  self.delegate.logoutUser()
+
+method emitStartupModuleReadyAfterLogOutSignal*[T](self: Module[T]) =
+  self.view.emitStartupModuleReadyAfterLogOutSignal()
+
 method getAppNetwork*[T](self: Module[T]): NetworkDto =
   return self.controller.getAppNetwork()
 
