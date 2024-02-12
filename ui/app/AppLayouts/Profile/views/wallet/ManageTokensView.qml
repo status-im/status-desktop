@@ -147,6 +147,8 @@ Item {
         Component {
             id: advancedTab
             ColumnLayout {
+                id: advancedTabColumn
+
                 spacing: 8
                 StatusListItem {
                     Layout.fillWidth: true
@@ -197,7 +199,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 64
                     Layout.topMargin: 18
-                    Layout.bottomMargin: 18
+                    Layout.bottomMargin: -6
                     StatusBaseText {
                         Layout.fillWidth: true
                         text: qsTr("Token lists")
@@ -206,6 +208,7 @@ Item {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
                         text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.tokenListUpdatedAt * 1000)).arg(LocaleUtils.formatTime(root.tokenListUpdatedAt, Locale.ShortFormat))
+                        font.pixelSize: Style.current.additionalTextSize
                         color: Style.current.darkGrey
                     }
                 }
