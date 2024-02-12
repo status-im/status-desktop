@@ -4,6 +4,8 @@ import QtGraphicalEffects 1.15
 
 import utils 1.0
 
+import shared.controls 1.0
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -16,6 +18,8 @@ Rectangle {
     property bool saveChangesButtonEnabled: false
     property bool saveForLaterButtonVisible
     property alias saveChangesText: saveChangesButton.text
+    property alias saveChangesTooltipText: saveChangesButton.tooltipText
+    property alias saveChangesTooltipVisible: saveChangesButton.enabled
     property alias saveForLaterText: saveForLaterButton.text
     property alias cancelChangesText: cancelChangesButton.text
     property alias changesDetectedText: changesDetectedTextItem.text
@@ -139,11 +143,13 @@ Rectangle {
             onClicked: root.saveForLaterClicked()
         }
 
-        StatusButton {
+        DisabledTooltipButton {
             id: saveChangesButton
             objectName: "settingsDirtyToastMessageSaveButton"
-            enabled: root.active && root.saveChangesButtonEnabled
+            buttonType: DisabledTooltipButton.Normal
             text: qsTr("Save changes")
+            enabled: false
+            interactive: root.active && root.saveChangesButtonEnabled
             onClicked: root.saveChangesClicked()
         }
     }

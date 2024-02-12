@@ -57,6 +57,9 @@ SettingsContentBase {
             priv.hasAnyProfileShowcaseChanges
     saveChangesButtonEnabled: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
+    toast.saveChangesTooltipVisible: root.dirty
+    toast.saveChangesTooltipText: qsTr("Invalid changes made to Identity")
+
     onResetChangesClicked: priv.reset()
 
     onSaveChangesClicked: priv.save()
