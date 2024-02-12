@@ -9,6 +9,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.views.chat 1.0
 
 StatusDialog {
     id: root
@@ -37,6 +38,18 @@ StatusDialog {
             mipmap: true
             smooth: false
             source: root.qrCode
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                cursorShape: Qt.PointingHandCursor
+                onClicked: qrContextMenu.popup()
+            }
+
+            ImageContextMenu {
+                id: qrContextMenu
+                imageSource: root.qrCode
+            }
         }
 
         StatusBaseText {
