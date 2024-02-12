@@ -38,6 +38,16 @@ QtObject:
     read = getCount
     notify = countChanged
 
+  proc hiddenCountChanged(self: ProfileShowcaseAssetsModel) {.signal.}
+  proc getHiddenCount(self: ProfileShowcaseAssetsModel): int {.slot.} =
+    result = 0
+    for i, item in self.items:
+      if item.showcaseVisibility == ProfileShowcaseVisibility.ToNoOne:
+        result += 1
+  QtProperty[int] hiddenCount:
+    read = getHiddenCount
+    notify = hiddenCountChanged
+
   proc recalcOrder(self: ProfileShowcaseAssetsModel) =
     for order, item in self.items:
       item.order = order
@@ -110,6 +120,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseAssetsModel, item: ProfileShowcaseAssetItem) =
@@ -122,6 +133,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index)
+      self.hiddenCountChanged()
 
   proc upsertItemJson(self: ProfileShowcaseAssetsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAssetItem())
@@ -144,6 +156,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc clear*(self: ProfileShowcaseAssetsModel) {.slot.} =
@@ -159,6 +172,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc removeEntry*(self: ProfileShowcaseAssetsModel, symbol: string) {.slot.} =
@@ -195,6 +209,7 @@ QtObject:
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
       self.baseModelFilterConditionsMayHaveChanged()
+      self.hiddenCountChanged()
 
   proc setVisibility*(self: ProfileShowcaseAssetsModel, symbol: string, visibility: int) {.slot.} =
     let index = self.findIndexForAsset(symbol)

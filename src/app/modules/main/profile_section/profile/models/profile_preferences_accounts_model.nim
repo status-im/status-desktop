@@ -36,6 +36,16 @@ QtObject:
     read = getCount
     notify = countChanged
 
+  proc hiddenCountChanged(self: ProfileShowcaseAccountsModel) {.signal.}
+  proc getHiddenCount(self: ProfileShowcaseAccountsModel): int {.slot.} =
+    result = 0
+    for i, item in self.items:
+      if item.showcaseVisibility == ProfileShowcaseVisibility.ToNoOne:
+        result += 1
+  QtProperty[int] hiddenCount:
+    read = getHiddenCount
+    notify = hiddenCountChanged
+
   proc recalcOrder(self: ProfileShowcaseAccountsModel) =
     for order, item in self.items:
       item.order = order
@@ -102,6 +112,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc upsertItemImpl(self: ProfileShowcaseAccountsModel, item: ProfileShowcaseAccountItem) =
@@ -114,6 +125,7 @@ QtObject:
       let index = self.createIndex(ind, 0, nil)
       defer: index.delete
       self.dataChanged(index, index)
+      self.hiddenCountChanged()
 
   proc upsertItemJson(self: ProfileShowcaseAccountsModel, itemJson: string) {.slot.} =
     self.upsertItemImpl(itemJson.parseJson.toProfileShowcaseAccountItem())
@@ -136,6 +148,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc clear*(self: ProfileShowcaseAccountsModel) {.slot.} =
@@ -151,6 +164,7 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+    self.hiddenCountChanged()
     self.baseModelFilterConditionsMayHaveChanged()
 
   proc removeEntry*(self: ProfileShowcaseAccountsModel, address: string) {.slot.} =
@@ -187,6 +201,7 @@ QtObject:
       defer: index.delete
       self.dataChanged(index, index, @[ModelRole.ShowcaseVisibility.int])
       self.baseModelFilterConditionsMayHaveChanged()
+      self.hiddenCountChanged()
 
   proc setVisibility*(self: ProfileShowcaseAccountsModel, address: string, visibility: int) {.slot.} =
     let index = self.findIndexForAccount(address)
