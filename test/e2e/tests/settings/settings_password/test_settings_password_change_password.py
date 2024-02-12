@@ -21,7 +21,7 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed_password',
                          [pytest.param(constants.user.user_account_one,
                                        constants.user.user_account_one_changed_password)])
-#@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/13013')
+@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/13013')
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings'):
         settings_scr = main_screen.left_panel.open_settings()
@@ -32,7 +32,7 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
     with step('Fill in the change password form and submit'):
         password_view.change_password(user_account.password, user_account_changed_password.password)
 
-    with step('Re-encrypt'):
+    with step('Click re-encrypt data button and then restart'):
         ChangePasswordPopup().click_re_encrypt_data_restart_button()
 
     with step('Verify the application process is not running'):
