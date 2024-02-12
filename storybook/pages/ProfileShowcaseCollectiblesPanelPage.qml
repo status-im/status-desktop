@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
@@ -92,22 +93,22 @@ SplitView {
         id: communityModel
 
         readonly property var data: [
-                {
-                    communityId: "ddls",
-                    communityName: "Doodles",
-                    communityImage: ModelsData.collectibles.doodles
-                },
-                {
-                    communityId: "sox",
-                    communityName: "Socks",
-                    communityImage: ModelsData.icons.socks
-                },
-                {
-                    communityId: "ast",
-                    communityName: "Astafarians",
-                    communityImage: ModelsData.icons.dribble
-                }
-            ]
+            {
+                communityId: "ddls",
+                communityName: "Doodles",
+                communityImage: ModelsData.collectibles.doodles
+            },
+            {
+                communityId: "sox",
+                communityName: "Socks",
+                communityImage: ModelsData.icons.socks
+            },
+            {
+                communityId: "ast",
+                communityName: "Astafarians",
+                communityImage: ModelsData.icons.dribble
+            }
+        ]
         Component.onCompleted: append(data)
     }
 
@@ -163,6 +164,9 @@ SplitView {
             width: 500
             baseModel: leftJoinModel
             showcaseModel: inShowcaseCollectiblesModel
+            addAccountsButtonVisible: !hasAllAccountsChecker.checked
+
+            onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseCollectiblesPanel::onNavigateToAccountsTab")
         }
     }
 
@@ -174,9 +178,20 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Button {
-            text: "Reset (clear settings)"
-            onClicked: showcasePanel.settings.reset()
+        ColumnLayout {
+            Button {
+                text: "Reset (clear settings)"
+
+                onClicked: showcasePanel.settings.reset()
+            }
+
+            CheckBox {
+                id: hasAllAccountsChecker
+
+                text: "Has the user already shared all of their accounts"
+                checked: true
+            }
+
         }
     }
 }
@@ -186,3 +201,4 @@ SplitView {
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14609-235560&t=RkXAEv3G6mp3EUvl-0
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14729-235696&t=RkXAEv3G6mp3EUvl-0
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14729-237604&t=RkXAEv3G6mp3EUvl-0
+// https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?type=design&node-id=2460%3A37407&mode=design&t=IMh6iN4JPD7OQbJI-1
