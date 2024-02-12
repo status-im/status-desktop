@@ -24,7 +24,7 @@ Rectangle {
 
     radius: 13
     color: Theme.palette.indirectColor1
-    height: columnLayout.height + feesIcon.height
+    implicitHeight: columnLayout.height + feesIcon.height
 
     RowLayout {
         id: feesLayout

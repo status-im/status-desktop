@@ -41,7 +41,7 @@ RowLayout {
         Layout.preferredWidth: root.width
         spacing: 4
         StatusBaseText {
-            Layout.maximumWidth: 410
+            Layout.maximumWidth: parent.width
             font.pixelSize: 15
             font.weight: Font.Medium
             color: Theme.palette.directColor1
@@ -49,7 +49,7 @@ RowLayout {
             wrapMode: Text.WordWrap
         }
         StatusBaseText {
-            Layout.maximumWidth: 410
+            Layout.maximumWidth: parent.width
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: isBridgeTx ? qsTr("Choose the network to bridge token to") :
@@ -81,7 +81,6 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
-            Layout.rightMargin: Style.current.padding
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
         }
