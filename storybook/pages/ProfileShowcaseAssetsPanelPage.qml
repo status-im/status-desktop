@@ -86,7 +86,7 @@ SplitView {
                             stripTrailingZeroes: false})
             }
 
-            onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseAccountsPanel::onNavigateToAccountsTab")
+            onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseAssetsPanel::onNavigateToAccountsTab")
         }
     }
 

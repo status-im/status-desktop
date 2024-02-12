@@ -216,7 +216,10 @@ SettingsContentBase {
                 id: profileShowcaseCollectiblesPanel
                 baseModel: root.profileStore.collectiblesModel
                 showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+                addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+
                 onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+                onNavigateToAccountsTab: profileTabBar.currentIndex = 2
             }
 
             // assets

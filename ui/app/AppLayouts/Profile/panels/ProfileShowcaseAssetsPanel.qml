@@ -57,31 +57,10 @@ ProfileShowcasePanel {
     Component {
         id: addMoreAccountsComponent
 
-        ColumnLayout {
-            spacing: Style.current.halfPadding
-            visible: root.addAccountsButtonVisible
-
-            Separator {
-                Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
-                Layout.bottomMargin: Style.current.padding
-            }
-
-            StatusBaseText {
-                Layout.alignment: Qt.AlignHCenter
-
-                font.pixelSize: Style.current.additionalTextSize
-                text: qsTr("Don’t see some of your assets?")
-            }
-
-            StatusFlatButton {
-                Layout.alignment: Qt.AlignHCenter
-
-                font.pixelSize: Style.current.additionalTextSize
-                text: qsTr("Add accounts to showcase")
-
-                onClicked: root.navigateToAccountsTab()
-            }
+        AddMoreAccountsLink {
+             visible: root.addAccountsButtonVisible
+             text: qsTr("Don’t see some of your assets?")
+             onClicked: root.navigateToAccountsTab()
         }
     }
 }
