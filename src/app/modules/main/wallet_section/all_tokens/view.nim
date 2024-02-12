@@ -203,8 +203,8 @@ QtObject:
   proc getDisplayAssetsBelowBalanceThreshold(self: View): QVariant {.slot.} =
     return newQVariant(self.delegate.getDisplayAssetsBelowBalanceThreshold())
 
-  proc setDisplayAssetsBelowBalanceThreshold(self: View, threshold: QVariant) {.slot.} =
-    if not self.delegate.setDisplayAssetsBelowBalanceThreshold(threshold.int64Val()):
+  proc setDisplayAssetsBelowBalanceThreshold(self: View, threshold: int) {.slot.} =
+    if not self.delegate.setDisplayAssetsBelowBalanceThreshold(int64(threshold)):
       error "Failed to set displayAssetsBelowBalanceThreshold"
       return
     self.displayAssetsBelowBalanceThresholdChanged()

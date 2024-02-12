@@ -24,6 +24,11 @@ Rectangle {
     property alias cancelChangesText: cancelChangesButton.text
     property alias changesDetectedText: changesDetectedTextItem.text
 
+    readonly property string defaultChangesDetectedText: qsTr("Changes detected")
+    readonly property string defaultSaveChangesText: qsTr("Save changes")
+    readonly property string defaultSaveForLaterText: qsTr("Save for later")
+    readonly property string defaultCancelChangesText: qsTr("Cancel")
+
     property Flickable flickable: null
 
     enum Type {
@@ -123,12 +128,12 @@ Rectangle {
             padding: 8
             horizontalAlignment: Text.AlignHCenter
             color: Theme.palette.directColor1
-            text: qsTr("Changes detected")
+            text: root.defaultChangesDetectedText
         }
 
         StatusButton {
             id: cancelChangesButton
-            text: qsTr("Cancel")
+            text: root.defaultCancelChangesText
             enabled: root.active
             visible: root.cancelButtonVisible
             type: StatusBaseButton.Type.Danger
@@ -137,7 +142,7 @@ Rectangle {
 
         StatusFlatButton {
             id: saveForLaterButton
-            text: qsTr("Save for later")
+            text: root.defaultSaveForLaterText
             enabled: root.active && root.saveChangesButtonEnabled
             visible: root.saveForLaterButtonVisible
             onClicked: root.saveForLaterClicked()
@@ -147,7 +152,7 @@ Rectangle {
             id: saveChangesButton
             objectName: "settingsDirtyToastMessageSaveButton"
             buttonType: DisabledTooltipButton.Normal
-            text: qsTr("Save changes")
+            text: root.defaultSaveChangesText
             enabled: root.active && root.saveChangesButtonEnabled
             interactive: root.active && root.saveChangesButtonEnabled
             onClicked: root.saveChangesClicked()

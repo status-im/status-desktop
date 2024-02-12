@@ -272,8 +272,16 @@ QtObject {
         }
     }
 
+    readonly property Connections tokensStoreConnections: Connections {
+        target: tokensStore
+        function onDisplayAssetsBelowBalanceThresholdChanged() {
+            processedAssetsModel.displayAssetsBelowBalanceThresholdAmount = tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
+        }
+    }
+
     // Model prepared to provide filtered and sorted assets as per the advanced Settings in token management
     property var processedAssetsModel: SortFilterProxyModel {
+        property real displayAssetsBelowBalanceThresholdAmount: tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount()
         sourceModel: __assetsWithFilteredBalances
         proxyRoles: [
             FastExpressionRole {
@@ -317,10 +325,10 @@ QtObject {
                 expression: {
                     if (model.isCommunityAsset)
                         return true
-                    return model.currentCurrencyBalance > tokensStore.balanceThresholdAmount
+                    return model.currentCurrencyBalance > processedAssetsModel.displayAssetsBelowBalanceThresholdAmount
                 }
                 expectedRoles: ["isCommunityAsset", "currentCurrencyBalance"]
-                enabled: tokensStore.balanceThresholdEnabled
+                enabled: tokensStore.displayAssetsBelowBalance
             }
         ]
         sorters: RoleSorter {

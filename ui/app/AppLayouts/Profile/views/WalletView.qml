@@ -58,19 +58,24 @@ SettingsContentBase {
     }
 
     dirty: manageTokensView.dirty
-    ignoreDirty: stackContainer.currentIndex === manageTokensViewIndex
+    ignoreDirty: stackContainer.currentIndex === manageTokensViewIndex && !manageTokensView.advancedTabVisible
+
     saveChangesButtonEnabled: dirty
     toast.type: SettingsDirtyToastMessage.Type.Info
-    toast.cancelButtonVisible: false
-    toast.saveForLaterButtonVisible: dirty
-    toast.saveChangesText: qsTr("Apply to my Wallet")
-    toast.changesDetectedText: qsTr("New custom sort order created")
+    toast.cancelButtonVisible: manageTokensView.advancedTabVisible
+    toast.saveForLaterButtonVisible: !manageTokensView.advancedTabVisible
+    toast.saveChangesText: manageTokensView.advancedTabVisible ? toast.defaultSaveChangesText : qsTr("Apply to my Wallet")
+    toast.changesDetectedText: manageTokensView.advancedTabVisible ? toast.defaultChangesDetectedText : qsTr("New custom sort order created")
 
     onSaveForLaterClicked: {
         manageTokensView.saveChanges()
     }
     onSaveChangesClicked: {
-        manageTokensView.saveChanges()
+        if (manageTokensView.advancedTabVisible) {
+            // Save changes only when tab is active
+            manageTokensView.saveChanges()
+            return
+        }
 
         let sectionLink = "%1/%2/".arg(Constants.appSection.wallet).arg(WalletLayout.LeftPanelSelection.AllAddresses)
 
@@ -313,6 +318,7 @@ SettingsContentBase {
             implicitHeight: root.availableHeight
             Layout.fillWidth: true
 
+            tokensStore: root.tokensStore
             tokenListUpdatedAt: tokensStore.tokenListUpdatedAt
             assetsController: root.assetsStore.assetsController
             collectiblesController: root.collectiblesStore.collectiblesController
