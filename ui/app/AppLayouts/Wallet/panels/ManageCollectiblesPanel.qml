@@ -33,6 +33,7 @@ DoubleFlickableWithFolding {
     clip: true
 
     ScrollBar.vertical: StatusScrollBar {
+        id: scrollbar
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
@@ -40,7 +41,7 @@ DoubleFlickableWithFolding {
     flickable1: ManageTokensListViewBase {
         objectName: "communityTokensListView"
 
-        width: root.width
+        width: (root.width-scrollbar.width)
 
         model: root.controller.arrangeByCommunity
                ? communityGroupedModel : communityNonGroupedModel
@@ -64,7 +65,7 @@ DoubleFlickableWithFolding {
     flickable2: ManageTokensListViewBase {
         objectName: "otherTokensListView"
 
-        width: root.width
+        width: (root.width-scrollbar.width)
 
         model: root.controller.arrangeByCollection
                ? otherGroupedModel : otherNonGroupedModel

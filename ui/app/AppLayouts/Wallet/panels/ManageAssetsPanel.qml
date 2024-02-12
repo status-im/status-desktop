@@ -42,13 +42,14 @@ DoubleFlickableWithFolding {
     }
 
     ScrollBar.vertical: StatusScrollBar {
+        id: scrollbar
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
 
     flickable1: ManageTokensListViewBase {
         model: root.controller.regularTokensModel
-        width: root.width
+        width: (root.width-scrollbar.width)
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -75,7 +76,7 @@ DoubleFlickableWithFolding {
     }
 
     flickable2: ManageTokensListViewBase {
-        width: root.width
+        width: (root.width-scrollbar.width)
 
         model: root.controller.arrangeByCommunity ? communityGroupedModel
                                                   : communityNonGroupedModel
