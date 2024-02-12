@@ -26,6 +26,7 @@ type
   SavedAddressArgs* = ref object of Args
     name*: string
     address*: string
+    isTestAddress*: bool
     errorMsg*: string
 
 QtObject:
@@ -55,8 +56,16 @@ QtObject:
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e:Args):
       var data = MessageSignal(e)
-      if(len(data.savedAddresses) > 0):
-        self.updateAddresses(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
+      for sa in data.savedAddresses:
+        let arg = SavedAddressArgs(
+          name: sa.name,
+          address: sa.address,
+          isTestAddress: sa.isTest,
+        )
+        if sa.removed:
+          self.updateAddresses(SIGNAL_SAVED_ADDRESS_DELETED, arg)
+        else:
+          self.updateAddresses(SIGNAL_SAVED_ADDRESS_UPDATED, arg)
 
     self.fetchSavedAddressesAndResolveEnsNames()
 
@@ -131,6 +140,7 @@ QtObject:
 
       arg.name = rpcResponseObj{"name"}.getStr
       arg.address = rpcResponseObj{"address"}.getStr
+      arg.isTestAddress = rpcResponseObj{"isTestAddress"}.getBool
     except Exception as e:
       error "onSavedAddressCreatedOrUpdated", msg = e.msg
       arg.errorMsg = e.msg
@@ -156,6 +166,7 @@ QtObject:
         raise newException(CatchableError, "invalid response")
 
       arg.address = rpcResponseObj{"address"}.getStr
+      arg.isTestAddress = rpcResponseObj{"isTestAddress"}.getBool
     except Exception as e:
       error "onDeleteSavedAddress", msg = e.msg
       arg.errorMsg = e.msg

@@ -1,5 +1,6 @@
 import io_interface
 import app/core/eventemitter
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/saved_address/service as saved_address_service
 
 type
@@ -22,16 +23,19 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.delegate.loadSavedAddresses()
+
   self.events.on(SIGNAL_SAVED_ADDRESSES_UPDATED) do(e:Args):
     self.delegate.loadSavedAddresses()
 
   self.events.on(SIGNAL_SAVED_ADDRESS_UPDATED) do(e:Args):
     let args = SavedAddressArgs(e)
-    self.delegate.savedAddressUpdated(args.name, args.address, args.errorMsg)
+    self.delegate.savedAddressUpdated(args.name, args.address, args.isTestAddress, args.errorMsg)
 
   self.events.on(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):
     let args = SavedAddressArgs(e)
-    self.delegate.savedAddressDeleted(args.address, args.errorMsg)
+    self.delegate.savedAddressDeleted(args.address, args.isTestAddress, args.errorMsg)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.savedAddressService.areTestNetworksEnabled()

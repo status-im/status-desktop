@@ -27,13 +27,15 @@ proc checkForEnsNameAndUpdate(chainId: int, savedAddress: var SavedAddressDto, u
     not savedAddress.isTest and chainId != Mainnet:
       return
   try:
+    var ensName: string
     try:
       let ensResponse = backend.getName(chainId, savedAddress.address)
-      if updateCriteria == UpdateCriteria.OnlyIfDifferent and savedAddress.ens == ensResponse.result.getStr():
-        return
-      savedAddress.ens = ensResponse.result.getStr()
+      ensName = ensResponse.result.getStr()
     except:
-      savedAddress.ens = ""
+      ensName = ""
+    if updateCriteria == UpdateCriteria.OnlyIfDifferent and savedAddress.ens == ensName:
+      return
+    savedAddress.ens = ensName
     return backend.upsertSavedAddress(savedAddress)
   except Exception as e:
     raise newException(RpcException, e.msg)
@@ -69,6 +71,7 @@ const upsertSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     "response": "",
     "name": %* arg.name,
     "address": %* arg.address,
+    "isTestAddress": %* arg.isTestAddress,
     "ens": %* arg.ens,
     "error": "",
   }
@@ -95,6 +98,7 @@ const deleteSavedAddressTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
   var response = %* {
     "response": "",
     "address": %* arg.address,
+    "isTestAddress": %* arg.isTestAddress,
     "error": "",
   }
   try:

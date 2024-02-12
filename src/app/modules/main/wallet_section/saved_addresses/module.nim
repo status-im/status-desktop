@@ -70,13 +70,17 @@ method updatePreferredChains*(self: Module, address: string, chainShortNames: st
 method deleteSavedAddress*(self: Module, address: string) =
   self.controller.deleteSavedAddress(address)
 
-method savedAddressUpdated*(self: Module, name: string, address: string, errorMsg: string) =
-  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
+method savedAddressUpdated*(self: Module, name: string, address: string, isTestAddress: bool, errorMsg: string) =
+  if isTestAddress != self.controller.areTestNetworksEnabled():
+    return
+  let item = self.view.getModel().getItemByAddress(address, isTestAddress)
   self.loadSavedAddresses()
   self.view.savedAddressAddedOrUpdated(item.isEmpty(), name, address, errorMsg)
 
-method savedAddressDeleted*(self: Module, address: string, errorMsg: string) =
-  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
+method savedAddressDeleted*(self: Module, address: string, isTestAddress: bool, errorMsg: string) =
+  if isTestAddress != self.controller.areTestNetworksEnabled():
+    return
+  let item = self.view.getModel().getItemByAddress(address, isTestAddress)
   self.loadSavedAddresses()
   self.view.savedAddressDeleted(item.getName(), address, errorMsg)
 
