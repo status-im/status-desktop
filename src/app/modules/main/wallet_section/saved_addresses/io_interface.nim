@@ -27,10 +27,10 @@ method updatePreferredChains*(self: AccessInterface, address: string, chainShort
 method deleteSavedAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressUpdated*(self: AccessInterface, name: string, address: string, errorMsg: string) {.base.} =
+method savedAddressUpdated*(self: AccessInterface, name: string, address: string, isTestAddress: bool, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
+method savedAddressDeleted*(self: AccessInterface, address: string, isTestAddress: bool, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method savedAddressNameExists*(self: AccessInterface, name: string): bool {.base.} =

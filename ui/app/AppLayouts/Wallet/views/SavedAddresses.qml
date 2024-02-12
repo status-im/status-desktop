@@ -83,7 +83,7 @@ ColumnLayout {
     }
 
     Item {
-        visible: noSavedAddresses.visible || emptySearchResult.visible || loadingIndicator.visible
+        visible: noSavedAddresses.visible || emptySearchResult.visible
         Layout.fillWidth: true
         Layout.fillHeight: true
     }

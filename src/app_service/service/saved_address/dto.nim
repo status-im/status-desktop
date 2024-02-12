@@ -10,6 +10,7 @@ type
     colorId*: string
     chainShortNames*: string
     isTest*: bool
+    removed*: bool
     createdAt*: int64
 
 proc toSavedAddressDto*(jsonObj: JsonNode): SavedAddressDto =
@@ -22,6 +23,7 @@ proc toSavedAddressDto*(jsonObj: JsonNode): SavedAddressDto =
   discard jsonObj.getProp("chainShortNames", result.chainShortNames)
   discard jsonObj.getProp("isTest", result.isTest)
   discard jsonObj.getProp("createdAt", result.createdAt)
+  discard jsonObj.getProp("removed", result.removed)
 
 proc toJsonNode*(self: SavedAddressDto): JsonNode =
   result = %* {
@@ -32,4 +34,5 @@ proc toJsonNode*(self: SavedAddressDto): JsonNode =
     "chainShortNames": self.chainShortNames,
     "isTest": self.isTest,
     "createdAt": self.createdAt,
+    "removed": self.removed
   }

@@ -456,6 +456,7 @@ QtObject:
     let newValue = not self.settings.testNetworksEnabled
     if(self.saveSetting(KEY_TEST_NETWORKS_ENABLED, newValue)):
       self.settings.testNetworksEnabled = newValue
+      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
       return true
     return false
 
