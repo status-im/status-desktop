@@ -89,6 +89,14 @@ class AUT:
                 SquishServer().add_attachable_aut(self.aut_id, self.port)
                 if self.ctx is None:
                     self.ctx = context.get_context(self.aut_id)
+                else:
+                    if self.ctx is None:
+                        for j in range(3):
+                            try:
+                                context.get_context(self.aut_id)
+                            except AttributeError:
+                                continue
+
                 squish.setApplicationContext(self.ctx)
                 assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
             except Exception as err:
