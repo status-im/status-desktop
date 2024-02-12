@@ -12,6 +12,7 @@ ColumnLayout {
 
     property var networksModule
     property var combinedNetwork
+    property var networkRPCChanged
 
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
     signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
@@ -44,6 +45,7 @@ ColumnLayout {
         EditNetworkForm {
             network: !!root.combinedNetwork ? root.combinedNetwork.prod: null
             networksModule: root.networksModule
+            networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
         }
@@ -54,6 +56,7 @@ ColumnLayout {
         EditNetworkForm {
             network: !!root.combinedNetwork ? root.combinedNetwork.test: null
             networksModule: root.networksModule
+            networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
         }
