@@ -254,6 +254,7 @@ SettingsContentBase {
             Layout.fillHeight: true
             Layout.fillWidth: true
             networksModule: root.walletStore.networksModule
+            networkRPCChanged: root.walletStore.networkRPCChanged
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
                 root.walletStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl, revertToDefault)

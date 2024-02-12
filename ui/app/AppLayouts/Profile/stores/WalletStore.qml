@@ -20,6 +20,8 @@ QtObject {
     readonly property var combinedNetworks: networksModule.combinedNetworks
     property var selectedAccount
 
+    property var networkRPCChanged: ({}) // add network id to the object if changed
+
     function toggleTestNetworksEnabled(){
         networksModule.toggleTestNetworksEnabled()
     }
