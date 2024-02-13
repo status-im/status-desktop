@@ -223,6 +223,12 @@ QtObject:
       of "communityColor": result = item.getCommunityColor()
       of "communityPrivilegesLevel": result = $item.getCommunityPrivilegesLevel()
 
+  proc resetCollectibleItems(self: Model, newItems: seq[CollectiblesEntry] = @[]) =
+    self.beginResetModel()
+    self.items = newItems
+    self.endResetModel()
+    self.countChanged()
+
   proc appendCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
     if len(newItems) == 0:
       return
@@ -239,23 +245,58 @@ QtObject:
     self.items.insert(newItems, startIdx)
     self.endInsertRows()
     self.countChanged()
-  
-  proc removeCollectibleItems(self: Model) =
-    if self.items.len <= 0:
+
+  proc removeCollectibleItem(self: Model, idx: int) =
+    if idx < 0 or idx >= self.items.len:
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
-  
-    # Start from the beginning
-    let startIdx = 0
-    # End at the last real item
-    let endIdx = startIdx + self.items.len - 1
-  
-    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
-    self.items = @[]
+
+    self.beginRemoveRows(parentModelIndex, idx, idx)
+    self.items.delete(idx)
     self.endRemoveRows()
     self.countChanged()
+  
+  proc updateCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
+    if len(self.items) == 0:
+      # Current list is empty, just replace with new list
+      self.resetCollectibleItems(newItems)
+      return
+    
+    if len(newItems) == 0:
+      # New list is empty, just remove all items
+      self.resetCollectibleItems()
+      return
+
+    var newTable = initTable[string, int](len(newItems))
+    for i in 0 ..< len(newItems):
+      newTable.add(newItems[i].getID(), i)
+
+    # Needs to be built in sequential index order
+    var oldIndicesToRemove: seq[int] = @[]
+    for idx in 0 ..< len(self.items):
+      let uid = self.items[idx].getID()
+      if not newTable.hasKey(uid):
+        # Item in old list but not in new -> Must remove
+        oldIndicesToRemove.add(idx)
+      else:
+        # Item both in old and new lists -> Nothing to do in the current list,
+        # remove from the new list so it only holds new items.
+        newTable.del(uid)
+
+    if len(oldIndicesToRemove) > 0:
+      var removedItems = 0
+      for idx in oldIndicesToRemove:
+        let updatedIdx = idx - removedItems
+        self.removeCollectibleItem(updatedIdx)
+        removedItems += 1
+      self.countChanged()
+
+    var newItemsToAdd: seq[CollectiblesEntry] = @[]
+    for uid, idx in newTable:
+      newItemsToAdd.add(newItems[idx])
+    self.appendCollectibleItems(newItemsToAdd)
 
   proc getItems*(self: Model): seq[CollectiblesEntry] =
     return self.items
@@ -268,16 +309,24 @@ QtObject:
 
   proc setItems*(self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool) =
     if offset == 0:
-      self.removeCollectibleItems()
+      self.resetCollectibleItems(newItems)
     elif offset != self.getCount():
       error "invalid offset"
       return
-
-    self.appendCollectibleItems(newItems)
+    else:
+      self.appendCollectibleItems(newItems)
     self.setHasMore(hasMore)
 
-  proc itemsUpdated(self: Model) {.signal.}
-  proc updateItems*(self: Model, updates: seq[backend_collectibles.Collectible]) =
+  # Checks the diff between the current list and the new list, appends new items,
+  # removes missing items.
+  # We assume the order of the items in the input could change, and we don't care
+  # about the order of the items in the model.
+  proc updateItems*(self: Model, newItems: seq[CollectiblesEntry]) =
+    self.updateCollectibleItems(newItems)
+    self.setHasMore(false)
+
+  proc itemsDataUpdated(self: Model) {.signal.}
+  proc updateItemsData*(self: Model, updates: seq[backend_collectibles.Collectible]) =
     var anyUpdated = false
     for i in countdown(self.items.high, 0):
       let entry = self.items[i]
@@ -290,7 +339,7 @@ QtObject:
           anyUpdated = true
           break
     if anyUpdated:
-      self.itemsUpdated()
+      self.itemsDataUpdated()
 
   proc getImageUrl*(self: Model, id: string): string {.slot.} =
     for item in self.items:
