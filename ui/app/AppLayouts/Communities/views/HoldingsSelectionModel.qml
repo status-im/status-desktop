@@ -37,11 +37,20 @@ SortFilterProxyModel {
                 return item ? item.symbol || item.shortName || item.name : ""
             }
 
+            function getDecimals(type, key) {
+                if (type !== Constants.TokenType.ERC20) {
+                    return 0
+                }
+                const item = PermissionsHelpers.getTokenByKey(assetsModel, key)
+                return item.decimals
+            }
+
             function getText(type, key, amount) {
                 const name = getName(type, key)
+                const decimals = getDecimals(type, key)
 
                 return PermissionsHelpers.setHoldingsTextFormat(
-                            type, name, amount)
+                            type, name, amount, decimals)
             }
 
             // Direct call for singleton function is not handled properly by

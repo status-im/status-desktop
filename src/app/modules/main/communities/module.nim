@@ -549,6 +549,7 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
 
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
     infiniteSupply: bool): TokenListItem =
+  let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
   result = initTokenListItem(
     key = token.symbol,
     name = token.name,
@@ -559,6 +560,7 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     communityId = communityId,
     supply,
     infiniteSupply,
+    communityTokenDecimals
   )
 
 proc buildTokensAndCollectiblesFromCommunities(self: Module) =
@@ -613,6 +615,7 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
       communityId = token.communityId,
       image = "",
       category = ord(TokenListItemCategory.General),
+      decimals = token.decimals
     )
     tokenListItems.add(tokenListItem)
 
