@@ -9,18 +9,19 @@ from gui.components.profile_popup import ProfilePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class OnlineIdentifier(QObject):
 
     def __init__(self):
-        super(OnlineIdentifier, self).__init__('onlineIdentifierProfileHeader')
-        self._always_active_button = Button('userContextmenu_AlwaysActiveButton')
-        self._inactive_button = Button('userContextmenu_InActiveButton')
-        self._automatic_button = Button('userContextmenu_AutomaticButton')
-        self._view_my_profile_button = Button('userContextMenu_ViewMyProfileAction')
-        self._user_name_text_label = TextLabel('userLabel_StyledText')
-        self._identicon_ring = QObject('o_StatusIdenticonRing')
+        super(OnlineIdentifier, self).__init__(names.onlineIdentifierProfileHeader)
+        self._always_active_button = Button(names.userContextmenu_AlwaysActiveButton)
+        self._inactive_button = Button(names.userContextmenu_InActiveButton)
+        self._automatic_button = Button(names.userContextmenu_AutomaticButton)
+        self._view_my_profile_button = Button(names.userContextMenu_ViewMyProfileAction)
+        self._user_name_text_label = TextLabel(names.userLabel_StyledText)
+        self._identicon_ring = QObject(names.o_StatusIdenticonRing)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -63,4 +64,3 @@ class OnlineIdentifier(QObject):
                 self.open_profile_popup_from_online_identifier(attempts - 1)
             else:
                 raise ex
-

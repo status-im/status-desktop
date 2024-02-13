@@ -8,25 +8,26 @@ from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class BackUpYourSeedPhrasePopUp(BasePopup):
 
     def __init__(self):
         super(BackUpYourSeedPhrasePopUp, self).__init__()
-        self._i_have_a_pen_and_paper_check_box = CheckBox('mainWallet_AddEditAccountPopup_HavePenAndPaperCheckBox')
+        self._i_have_a_pen_and_paper_check_box = CheckBox(names.mainWallet_AddEditAccountPopup_HavePenAndPaperCheckBox)
         self._i_know_where_i_ll_store_it_check_box = CheckBox(
-            'mainWallet_AddEditAccountPopup_StoringSeedPhraseConfirmedCheckBox')
+            names.mainWallet_AddEditAccountPopup_StoringSeedPhraseConfirmedCheckBox)
         self._i_am_ready_to_write_down_seed_phrase_check_box = CheckBox(
-            'mainWallet_AddEditAccountPopup_SeedPhraseWrittenCheckBox')
-        self._primary_button = Button('mainWallet_AddEditAccountPopup_PrimaryButton')
-        self._reveal_seed_phrase_button = Button('mainWallet_AddEditAccountPopup_RevealSeedPhraseButton')
-        self._seed_phrase_panel = QObject('confirmSeedPhrasePanel_StatusSeedPhraseInput')
-        self._seed_phrase_word_component = QObject('mainWallet_AddEditAccountPopup_EnterSeedPhraseWordComponent')
-        self._prove_word_seed_phrase_text_edit = TextEdit('mainWallet_AddEditAccountPopup_EnterSeedPhraseWord')
-        self._acknowledge_check_box = CheckBox('mainWallet_AddEditAccountPopup_SeedBackupAknowledgeCheckBox')
-        self._seed_phrase_name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_GeneratedSeedPhraseKeyName')
-        self._complete_and_delete_button = Button('completeAndDeleteSeedPhraseButton')
+            names.mainWallet_AddEditAccountPopup_SeedPhraseWrittenCheckBox)
+        self._primary_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
+        self._reveal_seed_phrase_button = Button(names.mainWallet_AddEditAccountPopup_RevealSeedPhraseButton)
+        self._seed_phrase_panel = QObject(names.confirmSeedPhrasePanel_StatusSeedPhraseInput)
+        self._seed_phrase_word_component = QObject(names.mainWallet_AddEditAccountPopup_EnterSeedPhraseWordComponent)
+        self._prove_word_seed_phrase_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_EnterSeedPhraseWord)
+        self._acknowledge_check_box = CheckBox(names.mainWallet_AddEditAccountPopup_SeedBackupAknowledgeCheckBox)
+        self._seed_phrase_name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_GeneratedSeedPhraseKeyName)
+        self._complete_and_delete_button = Button(names.completeAndDeleteSeedPhraseButton)
 
     @allure.step('Set have pen and paper checkbox')
     def set_have_pen_and_paper(self, value: bool):

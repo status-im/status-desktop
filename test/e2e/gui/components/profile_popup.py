@@ -7,20 +7,20 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 from gui.screens.settings_profile import ProfileSettingsView
-from scripts.tools.image import Image
 
 
 class ProfilePopup(BasePopup):
 
     def __init__(self):
         super(ProfilePopup, self).__init__()
-        self._profile_image = QObject('ProfileHeader_userImage')
-        self._user_name_label = TextLabel('ProfilePopup_displayName')
-        self._edit_profile_button = Button('ProfilePopup_editButton')
-        self._chat_key_text_label = TextLabel('https_status_app_StatusBaseText')
-        self._emoji_hash = QObject('profileDialog_userEmojiHash_EmojiHash')
-        self._chat_key_copy_button = Button('copy_icon_CopyButton')
+        self._profile_image = QObject(names.ProfileHeader_userImage)
+        self._user_name_label = TextLabel(names.ProfilePopup_displayName)
+        self._edit_profile_button = Button(names.ProfilePopup_editButton)
+        self._chat_key_text_label = TextLabel(names.https_status_app_StatusBaseText)
+        self._emoji_hash = QObject(names.profileDialog_userEmojiHash_EmojiHash)
+        self._chat_key_copy_button = Button(names.copy_icon_CopyButton)
 
     @property
     @allure.step('Get profile image')

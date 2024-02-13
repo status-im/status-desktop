@@ -7,12 +7,14 @@ from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
+
 
 class ENSSettingsView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_EnsWelcomeView')
-        self._start_button = Scroll('mainWindow_Start_StatusButton')
+        super().__init__(names.mainWindow_EnsWelcomeView)
+        self._start_button = Scroll(names.mainWindow_Start_StatusButton)
 
     @allure.step('Start purhasing ens username')
     def start(self):
@@ -23,10 +25,10 @@ class ENSSettingsView(QObject):
 class ENSSearchView(QObject):
 
     def __init__(self):
-        super(ENSSearchView, self).__init__('mainWindow_EnsSearchView')
-        self._username_text_field = TextEdit('mainWindow_ensUsernameInput_StyledTextField')
-        self._next_button = Button('mainWindow_ensNextButton_StatusRoundButton')
-        self._ens_text_note = QObject('ens_StatusBaseText')
+        super(ENSSearchView, self).__init__(names.mainWindow_EnsSearchView)
+        self._username_text_field = TextEdit(names.mainWindow_ensUsernameInput_StyledTextField)
+        self._next_button = Button(names.mainWindow_ensNextButton_StatusRoundButton)
+        self._ens_text_note = QObject(names.ens_StatusBaseText)
 
     @allure.step('Enter user name to text field')
     def enter_user_name(self, name: str):
@@ -46,9 +48,9 @@ class ENSSearchView(QObject):
 class ENSTermsAndConditionsView(QObject):
 
     def __init__(self):
-        super(ENSTermsAndConditionsView, self).__init__('mainWindow_EnsTermsAndConditionsView')
-        self._agree_terms_checkbox = TextEdit('sview_ensAgreeTerms_StatusCheckBox')
-        self._register_button = Button('mainWindow_Register_StatusButton')
+        super(ENSTermsAndConditionsView, self).__init__(names.mainWindow_EnsTermsAndConditionsView)
+        self._agree_terms_checkbox = TextEdit(names.sview_ensAgreeTerms_StatusCheckBox)
+        self._register_button = Button(names.mainWindow_Register_StatusButton)
 
     @allure.step('Get registered button enabled state')
     def is_register_button_enabled(self) -> bool:
@@ -70,4 +72,4 @@ class ENSTermsAndConditionsView(QObject):
 class ENSRegisteredView(QObject):
 
     def __init__(self):
-        super(ENSRegisteredView, self).__init__('mainWindow_EnsRegisteredView')
+        super(ENSRegisteredView, self).__init__(names.mainWindow_EnsRegisteredView)

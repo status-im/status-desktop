@@ -20,8 +20,8 @@ from gui.screens.settings import *
 class MessagingSettingsView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_MessagingView')
-        self._contacts_button = Button('contactsListItem_btn_StatusContactRequestsIndicatorListItem')
+        super().__init__(names.mainWindow_MessagingView)
+        self._contacts_button = Button(names.contactsListItem_btn_StatusContactRequestsIndicatorListItem)
 
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
@@ -48,15 +48,15 @@ class ContactItem:
             if str(getattr(child, 'id', '')) == 'iconOrImage':
                 self.icon = Image(driver.objectMap.realName(child))
             elif str(getattr(child, 'id', '')) == 'menuButton':
-                self._open_canvas_button = Button(name='', real_name=driver.objectMap.realName(child))
+                self._open_canvas_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'objectName', '')) == 'checkmark-circle-icon':
-                self._accept_button = Button(name='', real_name=driver.objectMap.realName(child))
+                self._accept_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'objectName', '')) == 'close-circle-icon':
-                self._reject_button = Button(name='', real_name=driver.objectMap.realName(child))
+                self._reject_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'id', '')) == 'statusListItemTitle':
                 self.contact = str(child.text)
             elif str(getattr(child, 'objectName', '')) == 'chat-icon':
-                self._chat_button = Button(name='', real_name=driver.objectMap.realName(child))
+                self._chat_button = Button(real_name=driver.objectMap.realName(child))
 
     @allure.step('Accept request')
     def accept(self) -> MessagesScreen:
@@ -86,22 +86,22 @@ class ContactItem:
 class ContactsSettingsView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_ContactsView')
-        self._contact_request_button = Button('mainWindow_Send_contact_request_to_chat_key_StatusButton')
-        self._pending_request_tab = Button('contactsTabBar_Pending_Requests_StatusTabButton')
-        self._contacts_tab = Button('contactsTabBar_Contacts_StatusTabButton')
-        self._contacts_items_list = List('settingsContentBaseScrollView_ContactListPanel')
-        self._pending_request_sent_panel = QObject('settingsContentBaseScrollView_sentRequests_ContactsListPanel')
+        super().__init__(names.mainWindow_ContactsView)
+        self._contact_request_button = Button(names.mainWindow_Send_contact_request_to_chat_key_StatusButton)
+        self._pending_request_tab = Button(names.contactsTabBar_Pending_Requests_StatusTabButton)
+        self._contacts_tab = Button(names.contactsTabBar_Contacts_StatusTabButton)
+        self._contacts_items_list = List(names.settingsContentBaseScrollView_ContactListPanel)
+        self._pending_request_sent_panel = QObject(names.settingsContentBaseScrollView_sentRequests_ContactsListPanel)
         self._pending_request_received_panel = QObject(
-            'settingsContentBaseScrollView_receivedRequests_ContactsListPanel')
-        self._contacts_panel = QObject('settingsContentBaseScrollView_mutualContacts_ContactsListPanel')
-        self._invite_friends_button = QObject('settingsContentBaseScrollView_Invite_friends_StatusButton')
-        self._no_friends_item = QObject('settingsContentBaseScrollView_NoFriendsRectangle')
+            names.settingsContentBaseScrollView_receivedRequests_ContactsListPanel)
+        self._contacts_panel = QObject(names.settingsContentBaseScrollView_mutualContacts_ContactsListPanel)
+        self._invite_friends_button = QObject(names.settingsContentBaseScrollView_Invite_friends_StatusButton)
+        self._no_friends_item = QObject(names.settingsContentBaseScrollView_NoFriendsRectangle)
         # more options on contact
-        self._verify_identity_item = QObject('verify_Identity_StatusMenuItem')
-        self._respond_to_id_request_item = QObject('respond_to_ID_Request_StatusMenuItem')
-        self._view_profile_item = QObject('view_Profile_StatusMenuItem')
-        self._respond_to_id_request_button = Button('settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton')
+        self._verify_identity_item = QObject(names.verify_Identity_StatusMenuItem)
+        self._respond_to_id_request_item = QObject(names.respond_to_ID_Request_StatusMenuItem)
+        self._view_profile_item = QObject(names.view_Profile_StatusMenuItem)
+        self._respond_to_id_request_button = Button(names.settingsContentBaseScrollView_Respond_to_ID_Request_StatusFlatButton)
 
     @property
     @allure.step('Get contact items')

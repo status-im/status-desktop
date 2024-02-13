@@ -10,20 +10,21 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class ProfileSettingsView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_MyProfileView')
-        self._scroll_view = Scroll('settingsContentBaseScrollView_Flickable')
-        self._display_name_text_field = TextEdit('displayName_TextEdit')
-        self._save_button = Button('settingsSave_StatusButton')
-        self._bio_text_field = TextEdit('bio_TextEdit')
-        self._add_more_links_label = TextLabel('addMoreSocialLinks')
-        self._links_list = QObject('linksView')
-        self._web_tab_button = Button('profileTabBar_Web_StatusTabButton')
-        self._identity_tab_button = Button('profileTabBar_Identity_StatusTabButton')
+        super().__init__(names.mainWindow_MyProfileView)
+        self._scroll_view = Scroll(names.settingsContentBaseScrollView_Flickable)
+        self._display_name_text_field = TextEdit(names.displayName_TextEdit)
+        self._save_button = Button(names.settingsSave_StatusButton)
+        self._bio_text_field = TextEdit(names.bio_TextEdit)
+        self._add_more_links_label = TextLabel(names.addMoreSocialLinks)
+        self._links_list = QObject(names.linksView)
+        self._web_tab_button = Button(names.profileTabBar_Web_StatusTabButton)
+        self._identity_tab_button = Button(names.profileTabBar_Identity_StatusTabButton)
 
     @property
     @allure.step('Get display name')

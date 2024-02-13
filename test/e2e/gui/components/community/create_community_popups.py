@@ -13,6 +13,7 @@ from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 from gui.screens.community import CommunityScreen
 
 LOG = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class CreateCommunitiesBanner(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._crete_community_button = Button('create_new_StatusButton')
+        self._crete_community_button = Button(names.create_new_StatusButton)
 
     def open_create_community_popup(self) -> 'CreateCommunityPopup':
         self._crete_community_button.click()
@@ -33,22 +34,22 @@ class CreateCommunityPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._scroll = Scroll('o_Flickable')
-        self._name_text_edit = TextEdit('createCommunityNameInput_TextEdit')
-        self._description_text_edit = TextEdit('createCommunityDescriptionInput_TextEdit')
-        self._add_logo_button = Button('addButton_StatusRoundButton2')
-        self._add_banner_button = Button('addButton_StatusRoundButton')
-        self._select_color_button = Button('StatusPickerButton')
-        self._choose_tag_button = Button('choose_tags_StatusPickerButton')
-        self._archive_support_checkbox = CheckBox('archiveSupportToggle_StatusCheckBox')
-        self._request_to_join_checkbox = CheckBox('requestToJoinToggle_StatusCheckBox')
-        self._pin_messages_checkbox = CheckBox('pinMessagesToggle_StatusCheckBox')
-        self._next_button = Button('createCommunityNextBtn_StatusButton')
-        self._intro_text_edit = TextEdit('createCommunityIntroMessageInput_TextEdit')
-        self._outro_text_edit = TextEdit('createCommunityOutroMessageInput_TextEdit')
-        self._create_community_button = Button('createCommunityFinalBtn_StatusButton')
-        self._cropped_image_logo_item = QObject('croppedImageLogo')
-        self._cropped_image_banner_item = QObject('croppedImageBanner')
+        self._scroll = Scroll(names.o_Flickable)
+        self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
+        self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)
+        self._add_logo_button = Button(names.addButton_StatusRoundButton2)
+        self._add_banner_button = Button(names.addButton_StatusRoundButton)
+        self._select_color_button = Button(names.StatusPickerButton)
+        self._choose_tag_button = Button(names.choose_tags_StatusPickerButton)
+        self._archive_support_checkbox = CheckBox(names.archiveSupportToggle_StatusCheckBox)
+        self._request_to_join_checkbox = CheckBox(names.requestToJoinToggle_StatusCheckBox)
+        self._pin_messages_checkbox = CheckBox(names.pinMessagesToggle_StatusCheckBox)
+        self._next_button = Button(names.createCommunityNextBtn_StatusButton)
+        self._intro_text_edit = TextEdit(names.createCommunityIntroMessageInput_TextEdit)
+        self._outro_text_edit = TextEdit(names.createCommunityOutroMessageInput_TextEdit)
+        self._create_community_button = Button(names.createCommunityFinalBtn_StatusButton)
+        self._cropped_image_logo_item = QObject(names.croppedImageLogo)
+        self._cropped_image_banner_item = QObject(names.croppedImageBanner)
 
     @property
     @allure.step('Get community name')

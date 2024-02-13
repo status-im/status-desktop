@@ -8,6 +8,7 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.slider import Slider
+from gui.objects_map import names
 
 shift_image = namedtuple('Shift', ['left', 'right', 'top', 'bottom'])
 
@@ -16,10 +17,10 @@ class PictureEditPopup(BasePopup):
 
     def __init__(self):
         super(PictureEditPopup, self).__init__()
-        self._zoom_slider = Slider('o_StatusSlider')
-        self._view = QObject('cropSpaceItem_Item')
-        self._make_picture_button = Button('make_picture_StatusButton')
-        self._slider_handler = QObject('o_DropShadow')
+        self._zoom_slider = Slider(names.o_StatusSlider)
+        self._view = QObject(names.cropSpaceItem_Item)
+        self._make_picture_button = Button(names.make_picture_StatusButton)
+        self._slider_handler = QObject(names.o_DropShadow)
 
     @allure.step('Make picture')
     def make_picture(

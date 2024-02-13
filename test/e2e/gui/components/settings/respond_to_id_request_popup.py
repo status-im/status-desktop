@@ -6,18 +6,19 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class RespondToIDRequestPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._message_input = QObject('messageInput_StatusInput')
-        self._answer_to_verification_request_field = TextEdit('edit_TextEdit')
-        self._send_answer_button = Button('send_Answer_StatusButton')
-        self._refuse_verification_button = Button('refuse_Verification_StatusButton')
-        self._change_answer_button = Button('change_answer_StatusFlatButton')
-        self._close_button = Button('close_StatusButton')
+        self._message_input = QObject(names.messageInput_StatusInput)
+        self._answer_to_verification_request_field = TextEdit(names.edit_TextEdit)
+        self._send_answer_button = Button(names.send_Answer_StatusButton)
+        self._refuse_verification_button = Button(names.refuse_Verification_StatusButton)
+        self._change_answer_button = Button(names.change_answer_StatusFlatButton)
+        self._close_button = Button(names.close_StatusButton)
 
     @property
     @allure.step('Get message note from identity verification request')

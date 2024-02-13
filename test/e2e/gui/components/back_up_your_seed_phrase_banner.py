@@ -2,13 +2,14 @@ import allure
 
 from gui.elements.button import Button
 from gui.elements.object import QObject
+from gui.objects_map import names
 
 
 class BackUpSeedPhraseBanner(QObject):
     def __init__(self):
-        super(BackUpSeedPhraseBanner, self).__init__('mainWindow_secureYourSeedPhraseBanner_ModuleWarning')
-        self._back_up_seedBanner = QObject('mainWindow_secureYourSeedPhraseBanner_ModuleWarning')
-        self._back_up_seedButton = Button('mainWindow_secureYourSeedPhraseBanner_Button')
+        super(BackUpSeedPhraseBanner, self).__init__(names.mainWindow_secureYourSeedPhraseBanner_ModuleWarning)
+        self._back_up_seedBanner = QObject(names.mainWindow_secureYourSeedPhraseBanner_ModuleWarning)
+        self._back_up_seedButton = Button(names.mainWindow_secureYourSeedPhraseBanner_Button)
 
     @allure.step('Verify banner presence')
     def does_back_up_seed_banner_exist(self):

@@ -7,15 +7,16 @@ from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class CategoryPopup(BasePopup):
 
     def __init__(self):
         super(CategoryPopup, self).__init__()
-        self._name_text_edit = TextEdit('createOrEditCommunityCategoryNameInput_TextEdit')
-        self._channel_item_checkbox = CheckBox('channelItemCheckbox_StatusCheckBox')
-        self._channels_view = QObject('createOrEditCommunityCategoryChannelList_StatusListView')
+        self._name_text_edit = TextEdit(names.createOrEditCommunityCategoryNameInput_TextEdit)
+        self._channel_item_checkbox = CheckBox(names.channelItemCheckbox_StatusCheckBox)
+        self._channels_view = QObject(names.createOrEditCommunityCategoryChannelList_StatusListView)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
@@ -41,7 +42,7 @@ class NewCategoryPopup(CategoryPopup):
 
     def __init__(self):
         super(NewCategoryPopup, self).__init__()
-        self._create_button = Button('create_StatusButton')
+        self._create_button = Button(names.create_StatusButton)
 
     @allure.step('Create category')
     def create(self, name: str, checkbox_state: bool):
@@ -56,8 +57,8 @@ class EditCategoryPopup(CategoryPopup):
 
     def __init__(self):
         super(EditCategoryPopup, self).__init__()
-        self._delete_button = Button('delete_Category_StatusButton')
-        self._save_button = Button('save_StatusButton')
+        self._delete_button = Button(names.delete_Category_StatusButton)
+        self._save_button = Button(names.save_StatusButton)
 
     @allure.step('Click save in edit category popup')
     def save(self):

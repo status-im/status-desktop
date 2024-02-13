@@ -6,6 +6,7 @@ import allure
 import configs
 from constants.wallet import *
 import driver
+from gui.objects_map import names
 from gui.screens.settings_wallet import *
 from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
@@ -24,27 +25,27 @@ GENERATED_PAGES_LIMIT = 20
 class AccountPopup(BasePopup):
     def __init__(self):
         super(AccountPopup, self).__init__()
-        self._scroll = Scroll('o_Flickable')
-        self._name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountName')
-        self._emoji_button = Button('mainWallet_AddEditAccountPopup_AccountEmojiPopupButton')
-        self._color_radiobutton = QObject('color_StatusColorRadioButton')
-        self._popup_header_title = TextLabel('mainWallet_AddEditAccountPopup_HeaderTitle')
+        self._scroll = Scroll(names.o_Flickable)
+        self._name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountName)
+        self._emoji_button = Button(names.mainWallet_AddEditAccountPopup_AccountEmojiPopupButton)
+        self._color_radiobutton = QObject(names.color_StatusColorRadioButton)
+        self._popup_header_title = TextLabel(names.mainWallet_AddEditAccountPopup_HeaderTitle)
         # origin
-        self._origin_combobox = QObject('mainWallet_AddEditAccountPopup_SelectedOrigin')
-        self._watched_address_origin_item = QObject("mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc")
-        self._new_master_key_origin_item = QObject('mainWallet_AddEditAccountPopup_OriginOptionNewMasterKey')
-        self._existing_origin_item = QObject('addAccountPopup_OriginOption_StatusListItem')
-        self._use_keycard_button = QObject('mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption')
+        self._origin_combobox = QObject(names.mainWallet_AddEditAccountPopup_SelectedOrigin)
+        self._watched_address_origin_item = QObject(names.mainWallet_AddEditAccountPopup_OriginOptionWatchOnlyAcc)
+        self._new_master_key_origin_item = QObject(names.mainWallet_AddEditAccountPopup_OriginOptionNewMasterKey)
+        self._existing_origin_item = QObject(names.addAccountPopup_OriginOption_StatusListItem)
+        self._use_keycard_button = QObject(names.mainWallet_AddEditAccountPopup_MasterKey_GoToKeycardSettingsOption)
         # derivation
-        self._address_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress')
-        self._add_account_button = Button('mainWallet_AddEditAccountPopup_PrimaryButton')
-        self._edit_derivation_path_button = Button('mainWallet_AddEditAccountPopup_EditDerivationPathButton')
-        self._derivation_path_combobox_button = Button('mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton')
-        self._derivation_path_list_item = QObject('mainWallet_AddEditAccountPopup_derivationPath')
-        self._reset_derivation_path_button = Button('mainWallet_AddEditAccountPopup_ResetDerivationPathButton')
-        self._derivation_path_text_edit = TextEdit('mainWallet_AddEditAccountPopup_DerivationPathInput')
-        self._address_combobox_button = Button('mainWallet_AddEditAccountPopup_GeneratedAddressComponent')
-        self._non_eth_checkbox = CheckBox('mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox')
+        self._address_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_AccountWatchOnlyAddress)
+        self._add_account_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
+        self._edit_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_EditDerivationPathButton)
+        self._derivation_path_combobox_button = Button(names.mainWallet_AddEditAccountPopup_PreDefinedDerivationPathsButton)
+        self._derivation_path_list_item = QObject(names.mainWallet_AddEditAccountPopup_derivationPath)
+        self._reset_derivation_path_button = Button(names.mainWallet_AddEditAccountPopup_ResetDerivationPathButton)
+        self._derivation_path_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_DerivationPathInput)
+        self._address_combobox_button = Button(names.mainWallet_AddEditAccountPopup_GeneratedAddressComponent)
+        self._non_eth_checkbox = CheckBox(names.mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox)
 
     def verify_account_popup_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._popup_header_title.exists, timeout_msec)
@@ -143,11 +144,11 @@ class AccountPopup(BasePopup):
 class EditAccountFromSettingsPopup(BasePopup):
     def __init__(self):
         super(EditAccountFromSettingsPopup, self).__init__()
-        self._change_name_button = Button('editWalletSettings_renameButton')
-        self._account_name_input = TextEdit('editWalletSettings_AccountNameInput')
-        self._emoji_selector = QObject('editWalletSettings_EmojiSelector')
-        self._color_radiobutton = QObject('editWalletSettings_ColorSelector')
-        self._emoji_item = QObject('editWalletSettings_EmojiItem')
+        self._change_name_button = Button(names.editWalletSettings_renameButton)
+        self._account_name_input = TextEdit(names.editWalletSettings_AccountNameInput)
+        self._emoji_selector = QObject(names.editWalletSettings_EmojiSelector)
+        self._color_radiobutton = QObject(names.editWalletSettings_ColorSelector)
+        self._emoji_item = QObject(names.editWalletSettings_EmojiItem)
 
     @allure.step('Click Change name button')
     def click_change_name_button(self):
@@ -182,18 +183,18 @@ class AddNewAccountPopup(BasePopup):
 
     def __init__(self):
         super(AddNewAccountPopup, self).__init__()
-        self._import_private_key_button = Button('mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption')
-        self._private_key_text_edit = TextEdit('mainWallet_AddEditAccountPopup_PrivateKey')
-        self._private_key_name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_PrivateKeyName')
-        self._continue_button = Button('mainWallet_AddEditAccountPopup_PrimaryButton')
-        self._import_seed_phrase_button = Button('mainWallet_AddEditAccountPopup_MasterKey_ImportSeedPhraseOption')
-        self._generate_master_key_button = Button('mainWallet_AddEditAccountPopup_MasterKey_GenerateSeedPhraseOption')
-        self._seed_phrase_12_words_button = Button("mainWallet_AddEditAccountPopup_12WordsButton")
-        self._seed_phrase_18_words_button = Button("mainWallet_AddEditAccountPopup_18WordsButton")
-        self._seed_phrase_24_words_button = Button("mainWallet_AddEditAccountPopup_24WordsButton")
-        self._seed_phrase_word_text_edit = TextEdit('mainWallet_AddEditAccountPopup_SPWord')
+        self._import_private_key_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption)
+        self._private_key_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_PrivateKey)
+        self._private_key_name_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_PrivateKeyName)
+        self._continue_button = Button(names.mainWallet_AddEditAccountPopup_PrimaryButton)
+        self._import_seed_phrase_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_ImportSeedPhraseOption)
+        self._generate_master_key_button = Button(names.mainWallet_AddEditAccountPopup_MasterKey_GenerateSeedPhraseOption)
+        self._seed_phrase_12_words_button = Button(names.mainWallet_AddEditAccountPopup_12WordsButton)
+        self._seed_phrase_18_words_button = Button(names.mainWallet_AddEditAccountPopup_18WordsButton)
+        self._seed_phrase_24_words_button = Button(names.mainWallet_AddEditAccountPopup_24WordsButton)
+        self._seed_phrase_word_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_SPWord)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
-            'mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName')
+            names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
 
     @allure.step('Import private key')
     def import_private_key(self, private_key: str) -> str:
@@ -231,9 +232,9 @@ class AddNewAccountPopup(BasePopup):
 class GeneratedAddressesList(QObject):
 
     def __init__(self):
-        super(GeneratedAddressesList, self).__init__('statusDesktop_mainWindow_overlay_popup2')
-        self._address_list_item = QObject('addAccountPopup_GeneratedAddress')
-        self._paginator_page = QObject('page_StatusBaseButton')
+        super(GeneratedAddressesList, self).__init__(names.statusDesktop_mainWindow_overlay_popup2)
+        self._address_list_item = QObject(names.addAccountPopup_GeneratedAddress)
+        self._paginator_page = QObject(names.page_StatusBaseButton)
 
     @property
     @allure.step('Load generated addresses list')

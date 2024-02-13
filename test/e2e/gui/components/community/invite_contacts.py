@@ -8,17 +8,18 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class InviteContactsPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._member_item = QObject('o_StatusMemberListItem')
-        self._next_button = Button('next_StatusButton')
-        self._message_text_edit = TextEdit('communityProfilePopupInviteMessagePanel_MessageInput_TextEdit')
-        self._invited_member_item = QObject('o_StatusMemberListItem_2')
-        self._send_button = Button('send_1_invite_StatusButton')
+        self._member_item = QObject(names.o_StatusMemberListItem)
+        self._next_button = Button(names.next_StatusButton)
+        self._message_text_edit = TextEdit(names.communityProfilePopupInviteMessagePanel_MessageInput_TextEdit)
+        self._invited_member_item = QObject(names.o_StatusMemberListItem_2)
+        self._send_button = Button(names.send_1_invite_StatusButton)
 
     @property
     @allure.step('Get contacts')

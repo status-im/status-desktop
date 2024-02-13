@@ -9,26 +9,27 @@ from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class BackUpYourSeedPhrasePopUp(BasePopup):
 
     def __init__(self):
         super(BackUpYourSeedPhrasePopUp, self).__init__()
-        self._i_have_a_pen_and_paper_check_box = CheckBox('i_have_a_pen_and_paper_StatusCheckBox')
-        self._i_know_where_i_ll_store_it_check_box = CheckBox('i_know_where_I_ll_store_it_StatusCheckBox')
-        self._i_am_ready_to_write_down_seed_phrase_check_box = CheckBox('i_am_ready_to_write_down_StatusCheckBox')
-        self._not_now_button = Button('not_Now_StatusButton')
-        self._confirm_seed_phrase_button = Button('confirm_Seed_Phrase_StatusButton')
-        self._reveal_seed_phrase_button = Button('reveal_seed_phrase_StatusButton')
-        self._continue_button = Button('continue_StatusButton')
-        self._seed_phrase_panel = QObject('backup_seed_phrase_popup_StatusSeedPhraseInput_placeholder')
-        self._seed_phrase_first_word_component = QObject('confirmFirstWord')
-        self._prove_first_word_seed_phrase_text_edit = TextEdit('confirmFirstWord_inputText')
-        self._seed_phrase_second_word_component = QObject('confirmSecondWord')
-        self._prove_second_word_seed_phrase_text_edit = TextEdit('confirmSecondWord_inputText')
-        self._acknowledge_check_box = CheckBox('i_acknowledge_StatusCheckBox')
-        self._complete_and_delete_button = Button('completeAndDeleteSeedPhraseButton')
+        self._i_have_a_pen_and_paper_check_box = CheckBox(names.i_have_a_pen_and_paper_StatusCheckBox)
+        self._i_know_where_i_ll_store_it_check_box = CheckBox(names.i_know_where_I_ll_store_it_StatusCheckBox)
+        self._i_am_ready_to_write_down_seed_phrase_check_box = CheckBox(names.i_am_ready_to_write_down_StatusCheckBox)
+        self._not_now_button = Button(names.not_Now_StatusButton)
+        self._confirm_seed_phrase_button = Button(names.confirm_Seed_Phrase_StatusButton)
+        self._reveal_seed_phrase_button = Button(names.reveal_seed_phrase_StatusButton)
+        self._continue_button = Button(names.continue_StatusButton)
+        self._seed_phrase_panel = QObject(names.backup_seed_phrase_popup_StatusSeedPhraseInput_placeholder)
+        self._seed_phrase_first_word_component = QObject(names.confirmFirstWord)
+        self._prove_first_word_seed_phrase_text_edit = TextEdit(names.confirmFirstWord_inputText)
+        self._seed_phrase_second_word_component = QObject(names.confirmSecondWord)
+        self._prove_second_word_seed_phrase_text_edit = TextEdit(names.confirmSecondWord_inputText)
+        self._acknowledge_check_box = CheckBox(names.i_acknowledge_StatusCheckBox)
+        self._complete_and_delete_button = Button(names.completeAndDeleteSeedPhraseButton)
 
     @allure.step('Set have pen and paper checkbox')
     def set_have_pen_and_paper(self, value: bool):

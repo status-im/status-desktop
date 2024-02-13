@@ -12,7 +12,7 @@ from datetime import datetime
 from configs.system import IS_LIN
 from driver import context
 from driver.server import SquishServer
-from gui.objects_map import statusDesktop_mainWindow
+from gui.objects_map.names import statusDesktop_mainWindow
 from scripts.utils import system_path, local_system
 from scripts.utils.system_path import SystemPath
 from scripts.utils.wait_for_port import wait_for_port

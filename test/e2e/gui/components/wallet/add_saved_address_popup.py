@@ -6,27 +6,28 @@ from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class AddSavedAddressPopup(BasePopup):
     def __init__(self):
         super(AddSavedAddressPopup, self).__init__()
-        self._name_text_edit = TextEdit('mainWallet_Saved_Addreses_Popup_Name_Input')
-        self._save_add_address_button = Button('mainWallet_Saved_Addreses_Popup_Address_Add_Button')
-        self._add_networks_selector = QObject('mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag')
-        self._add_networks_button = Button('mainWallet_Saved_Addreses_Popup_Add_Network_Button')
+        self._name_text_edit = TextEdit(names.mainWallet_Saved_Addreses_Popup_Name_Input)
+        self._save_add_address_button = Button(names.mainWallet_Saved_Addreses_Popup_Address_Add_Button)
+        self._add_networks_selector = QObject(names.mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag)
+        self._add_networks_button = Button(names.mainWallet_Saved_Addreses_Popup_Add_Network_Button)
         self._ethereum_mainnet_checkbox = CheckBox(
-            'mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox')
+            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox)
         self._optimism_mainnet_checkbox = CheckBox(
-            'mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox')
+            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox)
         self._arbitrum_mainnet_checkbox = CheckBox(
-            'mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox')
+            names.mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox)
         self._ethereum_mainnet_network_tag = QObject(
-            'mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag')
+            names.mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag)
         self._optimism_mainnet_network_tag = QObject(
-            'mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag')
+            names.mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag)
         self._arbitrum_mainnet_network_tag = QObject(
-            'mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag')
+            names.mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag)
 
     @allure.step('Set ethereum mainnet network checkbox')
     def set_ethereum_mainnet_network(self, value: bool):
@@ -63,7 +64,7 @@ class AddSavedAddressPopup(BasePopup):
 class AddressPopup(AddSavedAddressPopup):
     def __init__(self):
         super(AddressPopup, self).__init__()
-        self._address_text_edit = TextEdit('mainWallet_Saved_Addreses_Popup_Address_Input_Edit')
+        self._address_text_edit = TextEdit(names.mainWallet_Saved_Addreses_Popup_Address_Input_Edit)
 
     @allure.step('Add saved address')
     def add_saved_address(self, name: str, address: str):
@@ -88,7 +89,7 @@ class EditSavedAddressPopup(AddSavedAddressPopup):
 
     def __init__(self):
         super(EditSavedAddressPopup, self).__init__()
-        self._address_text_label = TextLabel('mainWallet_Saved_Addreses_Popup_Address_Input_Edit')
+        self._address_text_label = TextLabel(names.mainWallet_Saved_Addreses_Popup_Address_Input_Edit)
 
     @allure.step('Edit saved address')
     def edit_saved_address(self, new_name: str, address: str):

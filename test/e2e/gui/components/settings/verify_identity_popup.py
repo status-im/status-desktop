@@ -5,15 +5,16 @@ import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class VerifyIdentityPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._message_input = QObject('messageInput_StatusInput')
-        self._identity_verification_text_field = TextEdit('profileSendContactRequestModal_sayWhoYouAreInput_TextEdit')
-        self._send_verification_button = TextEdit('send_verification_request_StatusButton')
+        self._message_input = QObject(names.messageInput_StatusInput)
+        self._identity_verification_text_field = TextEdit(names.profileSendContactRequestModal_sayWhoYouAreInput_TextEdit)
+        self._send_verification_button = TextEdit(names.send_verification_request_StatusButton)
 
     @property
     @allure.step('Get message note from identity verification request')

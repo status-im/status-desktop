@@ -6,7 +6,7 @@ import allure
 
 import configs
 import driver
-from gui import objects_map
+from gui.objects_map import names
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -14,19 +14,9 @@ LOG = logging.getLogger(__name__)
 
 class QObject:
 
-    def __init__(self, name, real_name: [str, dict] = None):
-        self.symbolic_name = name
-        if real_name:
-            self.real_name = real_name
-        else:
-            self.real_name = getattr(objects_map, name)
+    def __init__(self, real_name: [str, dict] = None):
+        self.real_name = real_name
         self._image = Image(self.real_name)
-
-    def __str__(self):
-        return f'{type(self).__qualname__}({self.symbolic_name})'
-
-    def __repr__(self):
-        return f'{type(self).__qualname__}({self.symbolic_name})'
 
     @property
     @allure.step('Get object {0}')

@@ -20,6 +20,7 @@ from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.window import Window
 from gui.mocked_keycard_controller import MockedKeycardController
+from gui.objects_map import names
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.messages import MessagesScreen
@@ -34,14 +35,14 @@ LOG = logging.getLogger(__name__)
 class LeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__('mainWindow_StatusAppNavBar')
-        self._profile_button = Button('mainWindow_ProfileNavBarButton')
-        self._messages_button = Button('messages_navbar_StatusNavBarTabButton')
-        self._communities_portal_button = Button('communities_Portal_navbar_StatusNavBarTabButton')
-        self._community_template_button = Button('statusCommunityMainNavBarListView_CommunityNavBarButton')
-        self._settings_button = Button('settings_navbar_StatusNavBarTabButton')
-        self._wallet_button = Button('wallet_navbar_StatusNavBarTabButton')
-        self._community_invite_people_context_item = QObject('invite_People_StatusMenuItem')
+        super(LeftPanel, self).__init__(names.mainWindow_StatusAppNavBar)
+        self._profile_button = Button(names.mainWindow_ProfileNavBarButton)
+        self._messages_button = Button(names.messages_navbar_StatusNavBarTabButton)
+        self._communities_portal_button = Button(names.communities_Portal_navbar_StatusNavBarTabButton)
+        self._community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
+        self._settings_button = Button(names.settings_navbar_StatusNavBarTabButton)
+        self._wallet_button = Button(names.wallet_navbar_StatusNavBarTabButton)
+        self._community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
 
     @property
     @allure.step('Get communities names')
@@ -163,7 +164,7 @@ class LeftPanel(QObject):
 class MainWindow(Window):
 
     def __init__(self):
-        super(MainWindow, self).__init__('statusDesktop_mainWindow')
+        super(MainWindow, self).__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
     # TODO: we need to handle all the issues with keycard mock var before using keycard  window in tests

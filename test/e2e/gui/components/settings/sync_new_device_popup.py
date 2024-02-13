@@ -5,17 +5,18 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class SyncNewDevicePopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._copy_button = Button('copy_SyncCodeStatusButton')
-        self._done_button = Button('done_SyncCodeStatusButton')
-        self._sync_code_field = TextEdit('syncCodeInput_StatusPasswordInput')
-        self._close_button = Button('close_StatusButton')
-        self._error_message = QObject('errorView_SyncingErrorMessage')
+        self._copy_button = Button(names.copy_SyncCodeStatusButton)
+        self._done_button = Button(names.done_SyncCodeStatusButton)
+        self._sync_code_field = TextEdit(names.syncCodeInput_StatusPasswordInput)
+        self._close_button = Button(names.close_StatusButton)
+        self._error_message = QObject(names.errorView_SyncingErrorMessage)
 
     @property
     @allure.step('Get primary error message')

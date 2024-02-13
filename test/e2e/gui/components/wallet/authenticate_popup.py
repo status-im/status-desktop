@@ -3,14 +3,15 @@ import allure
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class AuthenticatePopup(QObject):
 
     def __init__(self):
-        super(AuthenticatePopup, self).__init__('contextMenu_PopupItem')
-        self._password_text_edit = TextEdit('sharedPopup_Password_Input')
-        self._primary_button = Button('sharedPopup_Primary_Button')
+        super(AuthenticatePopup, self).__init__(names.contextMenu_PopupItem)
+        self._password_text_edit = TextEdit(names.sharedPopup_Password_Input)
+        self._primary_button = Button(names.sharedPopup_Primary_Button)
 
     @allure.step('Authenticate action with password')
     def authenticate(self, password: str, attempt: int = 2):

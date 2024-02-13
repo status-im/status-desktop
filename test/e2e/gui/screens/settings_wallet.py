@@ -21,21 +21,22 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class WalletSettingsView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_WalletView')
-        self._wallet_settings_add_new_account_button = Button('settings_Wallet_MainView_AddNewAccountButton')
-        self._wallet_network_button = Button('settings_Wallet_MainView_Networks')
-        self._account_order_button = Button('settingsContentBaseScrollView_accountOrderItem_StatusListItem')
-        self._saved_addresses_button = Button('settingsContentBaseScrollView_savedAddressesItem_StatusListItem')
-        self._status_account_in_keypair = QObject('settingsWalletAccountDelegate_Status_account')
-        self._wallet_account_from_keypair = QObject('settingsWalletAccountDelegate')
-        self._wallet_settings_keypair_item = QObject('settingsWalletKeyPairDelegate')
-        self._wallet_settings_total_balance_item = QObject('settingsWalletAccountTotalBalance')
-        self._wallet_settings_total_balance_toggle = CheckBox('settingsWalletAccountTotalBalanceToggle')
+        super().__init__(names.mainWindow_WalletView)
+        self._wallet_settings_add_new_account_button = Button(names.settings_Wallet_MainView_AddNewAccountButton)
+        self._wallet_network_button = Button(names.settings_Wallet_MainView_Networks)
+        self._account_order_button = Button(names.settingsContentBaseScrollView_accountOrderItem_StatusListItem)
+        self._saved_addresses_button = Button(names.settingsContentBaseScrollView_savedAddressesItem_StatusListItem)
+        self._status_account_in_keypair = QObject(names.settingsWalletAccountDelegate_Status_account)
+        self._wallet_account_from_keypair = QObject(names.settingsWalletAccountDelegate)
+        self._wallet_settings_keypair_item = QObject(names.settingsWalletKeyPairDelegate)
+        self._wallet_settings_total_balance_item = QObject(names.settingsWalletAccountTotalBalance)
+        self._wallet_settings_total_balance_toggle = CheckBox(names.settingsWalletAccountTotalBalanceToggle)
 
     @allure.step('Open add account pop up in wallet settings')
     def open_add_account_pop_up(self, attempts: int = 2) -> 'AccountPopup':
@@ -109,19 +110,19 @@ class WalletSettingsView(QObject):
 class AccountDetailsView(WalletSettingsView):
     def __init__(self):
         super(AccountDetailsView, self).__init__()
-        self._back_button = Button('main_toolBar_back_button')
-        self._edit_account_button = Button('walletAccountViewEditAccountButton')
-        self._remove_account_button = Button('walletAccountViewRemoveAccountButton')
-        self._wallet_account_title = TextLabel('walletAccountViewAccountName')
-        self._wallet_account_emoji = QObject('walletAccountViewAccountEmoji')
-        self._wallet_account_details_label = TextLabel('walletAccountViewDetailsLabel')
-        self._wallet_account_balance = QObject('walletAccountViewBalance')
-        self._wallet_account_keypair_item = QObject('walletAccountViewKeypairItem')
-        self._wallet_account_address = QObject('walletAccountViewAddress')
-        self._wallet_account_origin = TextLabel('walletAccountViewOrigin')
-        self._wallet_account_derivation_path = QObject('walletAccountViewDerivationPath')
-        self._wallet_account_stored = TextLabel('walletAccountViewStored')
-        self._wallet_preferred_networks = QObject('walletAccountViewPreferredNetworks')
+        self._back_button = Button(names.main_toolBar_back_button)
+        self._edit_account_button = Button(names.walletAccountViewEditAccountButton)
+        self._remove_account_button = Button(names.walletAccountViewRemoveAccountButton)
+        self._wallet_account_title = TextLabel(names.walletAccountViewAccountName)
+        self._wallet_account_emoji = QObject(names.walletAccountViewAccountEmoji)
+        self._wallet_account_details_label = TextLabel(names.walletAccountViewDetailsLabel)
+        self._wallet_account_balance = QObject(names.walletAccountViewBalance)
+        self._wallet_account_keypair_item = QObject(names.walletAccountViewKeypairItem)
+        self._wallet_account_address = QObject(names.walletAccountViewAddress)
+        self._wallet_account_origin = TextLabel(names.walletAccountViewOrigin)
+        self._wallet_account_derivation_path = QObject(names.walletAccountViewDerivationPath)
+        self._wallet_account_stored = TextLabel(names.walletAccountViewStored)
+        self._wallet_preferred_networks = QObject(names.walletAccountViewPreferredNetworks)
 
     @allure.step('Click Edit button')
     def click_edit_account_button(self):
@@ -192,8 +193,8 @@ class AccountDetailsView(WalletSettingsView):
 class SavedAddressesWalletSettings(WalletSettingsView):
     def __init__(self):
         super(SavedAddressesWalletSettings, self).__init__()
-        self.add_new_address_button = Button('settings_Wallet_SavedAddresses_AddAddressButton')
-        self.saved_address_item = QObject('settings_Wallet_SavedAddress_ItemDelegate')
+        self.add_new_address_button = Button(names.settings_Wallet_SavedAddresses_AddAddressButton)
+        self.saved_address_item = QObject(names.settings_Wallet_SavedAddress_ItemDelegate)
 
     @allure.step('Click add new address button')
     def open_add_saved_address_popup(self, attempt: int = 2) -> 'AddressPopup':
@@ -216,20 +217,20 @@ class NetworkWalletSettings(WalletSettingsView):
 
     def __init__(self):
         super(NetworkWalletSettings, self).__init__()
-        self._testnet_text_item = QObject('settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText')
-        self._testnet_mode_toggle = Button('settings_Wallet_NetworksView_TestNet_Toggle')
-        self._testnet_mode_title = TextLabel('settings_Wallet_NetworksView_TestNet_Toggle_Title')
-        self._back_button = Button('main_toolBar_back_button')
-        self._mainnet_network_item = QObject('networkSettingsNetworks_Mainnet')
-        self._mainnet_goerli_network_item = QObject('networkSettingsNetworks_Mainnet_Goerli')
-        self._mainnet_goerli_network_item_test_label = TextLabel('networkSettingsNetowrks_Mainnet_Testlabel')
-        self._optimism_network_item = QObject('networkSettingsNetworks_Optimism')
-        self._optimism_goerli_network_item = QObject('networkSettingsNetworks_Optimism_Goerli')
-        self._arbitrum_network_item = QObject('networkSettingsNetworks_Arbitrum')
-        self._arbitrum__goerli_network_item = QObject('networkSettingsNetworks_Arbitrum_Goerli')
-        self._wallet_network_item_template = QObject('settingsContentBaseScrollView_WalletNetworkDelegate_template')
-        self._wallet_network_item_goerli_sensor = QObject('networkSettingsNetworks_Mainnet_Goerli_sensor')
-        self._wallet_network_item_goerli_testlabel = TextLabel('networkSettingsNetowrks_Mainnet_Testlabel')
+        self._testnet_text_item = QObject(names.settingsContentBaseScrollView_Goerli_testnet_active_StatusBaseText)
+        self._testnet_mode_toggle = Button(names.settings_Wallet_NetworksView_TestNet_Toggle)
+        self._testnet_mode_title = TextLabel(names.settings_Wallet_NetworksView_TestNet_Toggle_Title)
+        self._back_button = Button(names.main_toolBar_back_button)
+        self._mainnet_network_item = QObject(names.networkSettingsNetworks_Mainnet)
+        self._mainnet_goerli_network_item = QObject(names.networkSettingsNetworks_Mainnet_Goerli)
+        self._mainnet_goerli_network_item_test_label = TextLabel(names.networkSettingsNetowrks_Mainnet_Testlabel)
+        self._optimism_network_item = QObject(names.networkSettingsNetworks_Optimism)
+        self._optimism_goerli_network_item = QObject(names.networkSettingsNetworks_Optimism_Goerli)
+        self._arbitrum_network_item = QObject(names.networkSettingsNetworks_Arbitrum)
+        self._arbitrum__goerli_network_item = QObject(names.networkSettingsNetworks_Arbitrum_Goerli)
+        self._wallet_network_item_template = QObject(names.settingsContentBaseScrollView_WalletNetworkDelegate_template)
+        self._wallet_network_item_goerli_sensor = QObject(names.networkSettingsNetworks_Mainnet_Goerli_sensor)
+        self._wallet_network_item_goerli_testlabel = TextLabel(names.networkSettingsNetowrks_Mainnet_Testlabel)
 
     @allure.step('Check networks item title')
     def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
@@ -274,22 +275,22 @@ class NetworkWalletSettings(WalletSettingsView):
 class EditNetworkSettings(WalletSettingsView):
     def __init__(self):
         super(EditNetworkSettings, self).__init__()
-        self._live_network_tab = Button('editNetworkLiveButton')
-        self._test_network_tab = Button('editNetworkTestButton')
-        self._network_name = TextEdit('editNetworkNameInput')
-        self._network_short_name = TextEdit('editNetworkShortNameInput')
-        self._network_chaid_id = TextEdit('editNetworkChainIdInput')
-        self._network_native_token_symbol = TextEdit('editNetworkSymbolInput')
-        self._network_main_json_rpc_url = TextEdit('editNetworkMainRpcInput')
-        self._network_failover_json_rpc_url = TextEdit('editNetworkFailoverRpcUrlInput')
-        self._network_block_explorer = TextEdit('editNetworkExplorerInput')
-        self._network_acknowledgment_checkbox = CheckBox('editNetworkAknowledgmentCheckbox')
-        self._network_revert_to_default = Button('editNetworkRevertButton')
-        self._network_save_changes = Button('editNetworkSaveButton')
-        self._network_edit_view_back_button = Button('main_toolBar_back_button')
-        self._network_edit_scroll = Scroll('settingsContentBaseScrollView_Flickable')
-        self._network_edit_main_rpc_url_error_message = QObject('mainRpcUrlInputObject')
-        self._network_edit_failover_rpc_url_error_message = QObject('failoverRpcUrlInputObject')
+        self._live_network_tab = Button(names.editNetworkLiveButton)
+        self._test_network_tab = Button(names.editNetworkTestButton)
+        self._network_name = TextEdit(names.editNetworkNameInput)
+        self._network_short_name = TextEdit(names.editNetworkShortNameInput)
+        self._network_chaid_id = TextEdit(names.editNetworkChainIdInput)
+        self._network_native_token_symbol = TextEdit(names.editNetworkSymbolInput)
+        self._network_main_json_rpc_url = TextEdit(names.editNetworkMainRpcInput)
+        self._network_failover_json_rpc_url = TextEdit(names.editNetworkFailoverRpcUrlInput)
+        self._network_block_explorer = TextEdit(names.editNetworkExplorerInput)
+        self._network_acknowledgment_checkbox = CheckBox(names.editNetworkAknowledgmentCheckbox)
+        self._network_revert_to_default = Button(names.editNetworkRevertButton)
+        self._network_save_changes = Button(names.editNetworkSaveButton)
+        self._network_edit_view_back_button = Button(names.main_toolBar_back_button)
+        self._network_edit_scroll = Scroll(names.settingsContentBaseScrollView_Flickable)
+        self._network_edit_main_rpc_url_error_message = QObject(names.mainRpcUrlInputObject)
+        self._network_edit_failover_rpc_url_error_message = QObject(names.failoverRpcUrlInputObject)
 
     @allure.step('Select Live Network tab')
     def click_live_network_tab(self):
@@ -489,10 +490,10 @@ class EditAccountOrderSettings(WalletSettingsView):
 
     def __init__(self):
         super(EditAccountOrderSettings, self).__init__()
-        self._account_item = QObject('settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem')
-        self._accounts_list = QObject('statusDesktop_mainWindow')
-        self._text_item = QObject('settingsContentBaseScrollView_StatusBaseText')
-        self._back_button = Button('main_toolBar_back_button')
+        self._account_item = QObject(names.settingsContentBaseScrollView_draggableDelegate_StatusDraggableListItem)
+        self._accounts_list = QObject(names.statusDesktop_mainWindow)
+        self._text_item = QObject(names.settingsContentBaseScrollView_StatusBaseText)
+        self._back_button = Button(names.main_toolBar_back_button)
 
     @property
     @allure.step('Get edit account order recommendations')
@@ -507,7 +508,7 @@ class EditAccountOrderSettings(WalletSettingsView):
     def accounts(self) -> typing.List[wallet_account_list_item]:
         _accounts = []
         for account_item in driver.findAllObjects(self._account_item.real_name):
-            element = QObject(name='', real_name=driver.objectMap.realName(account_item))
+            element = QObject(real_name=driver.objectMap.realName(account_item))
             name = str(account_item.title)
             icon_color = None
             icon_emoji = None

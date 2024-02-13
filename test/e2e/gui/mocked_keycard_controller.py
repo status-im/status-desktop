@@ -9,30 +9,31 @@ from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.window import Window
+from gui.objects_map import names
 
 
 class MockedKeycardController(Window):
 
     def __init__(self):
-        super(MockedKeycardController, self).__init__('QQuickApplicationWindow')
-        self._plugin_reader_button = Button('plugin_Reader_StatusButton')
-        self._unplug_reader_button = Button('unplug_Reader_StatusButton')
-        self._insert_keycard_1_button = Button('insert_Keycard_1_StatusButton')
-        self._insert_keycard_2_button = Button('insert_Keycard_2_StatusButton')
-        self._remove_keycard_button = Button('remove_Keycard_StatusButton')
-        self._reader_state_button = Button('set_initial_reader_state_StatusButton')
-        self._keycard_state_button = Button('set_initial_keycard_state_StatusButton')
-        self._register_keycard_button = Button('register_Keycard_StatusButton')
-        self._reader_unplugged_item = QObject('reader_Unplugged_StatusMenuItem')
-        self._keycard_not_inserted_item = QObject('keycard_Not_Inserted_StatusMenuItem')
-        self._keycard_inserted_item = QObject('keycard_Inserted_StatusMenuItem')
-        self._custom_keycard_item = QObject('custom_Keycard_StatusMenuItem')
-        self._not_status_keycard_item = QObject('not_Status_Keycard_StatusMenuItem')
-        self._empty_keycard_item = QObject('empty_Keycard_StatusMenuItem')
-        self._max_slots_reached_item = QObject('max_Pairing_Slots_Reached_StatusMenuItem')
-        self._mnemonic_metadata_item = QObject('keycard_With_Mnemonic_Metadata_StatusMenuItem')
-        self._field_object = QObject('keycard_edit_TextEdit')
-        self._scroll = Scroll('keycardFlickable')
+        super(MockedKeycardController, self).__init__(names.QQuickApplicationWindow)
+        self._plugin_reader_button = Button(names.plugin_Reader_StatusButton)
+        self._unplug_reader_button = Button(names.unplug_Reader_StatusButton)
+        self._insert_keycard_1_button = Button(names.insert_Keycard_1_StatusButton)
+        self._insert_keycard_2_button = Button(names.insert_Keycard_2_StatusButton)
+        self._remove_keycard_button = Button(names.remove_Keycard_StatusButton)
+        self._reader_state_button = Button(names.set_initial_reader_state_StatusButton)
+        self._keycard_state_button = Button(names.set_initial_keycard_state_StatusButton)
+        self._register_keycard_button = Button(names.register_Keycard_StatusButton)
+        self._reader_unplugged_item = QObject(names.reader_Unplugged_StatusMenuItem)
+        self._keycard_not_inserted_item = QObject(names.keycard_Not_Inserted_StatusMenuItem)
+        self._keycard_inserted_item = QObject(names.keycard_Inserted_StatusMenuItem)
+        self._custom_keycard_item = QObject(names.custom_Keycard_StatusMenuItem)
+        self._not_status_keycard_item = QObject(names.not_Status_Keycard_StatusMenuItem)
+        self._empty_keycard_item = QObject(names.empty_Keycard_StatusMenuItem)
+        self._max_slots_reached_item = QObject(names.max_Pairing_Slots_Reached_StatusMenuItem)
+        self._mnemonic_metadata_item = QObject(names.keycard_With_Mnemonic_Metadata_StatusMenuItem)
+        self._field_object = QObject(names.keycard_edit_TextEdit)
+        self._scroll = Scroll(names.keycardFlickable)
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._plugin_reader_button.exists, timeout_msec)
@@ -86,7 +87,7 @@ class MockedKeycardController(Window):
     @allure.step('Input custom keycard details to custom text field')
     def input_custom_keycard_details(self, details: str, index: int):
         fields = self.get_text_fields
-        self._scroll.vertical_scroll_to(QObject(name='', real_name=driver.objectMap.realName(fields[index])))
+        self._scroll.vertical_scroll_to(QObject(real_name=driver.objectMap.realName(fields[index])))
         driver.type(fields[index], details)
         time.sleep(1)
 

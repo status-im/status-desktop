@@ -6,19 +6,20 @@ from gui.components.settings.keycard_popup import KeycardPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
+from gui.objects_map import names
 
 
 class KeycardSettingsView(QObject):
 
     def __init__(self):
-        super(KeycardSettingsView, self).__init__('mainWindow_KeycardView')
-        self._scroll = Scroll('settingsContentBaseScrollView_Flickable')
-        self._setup_keycard_with_existing_account_button = Button('setupFromExistingKeycardAccount_StatusListItem')
-        self._create_new_keycard_account_button = Button('createNewKeycardAccount_StatusListItem')
-        self._import_restore_via_seed_phrase_button = Button('importRestoreKeycard_StatusListItem')
-        self._import_from_keycard_button = Button('importFromKeycard_StatusListItem')
-        self._check_whats_on_keycard_button = Button('checkWhatsNewKeycard_StatusListItem')
-        self._factory_reset_keycard_button = Button('factoryResetKeycard_StatusListItem')
+        super(KeycardSettingsView, self).__init__(names.mainWindow_KeycardView)
+        self._scroll = Scroll(names.settingsContentBaseScrollView_Flickable)
+        self._setup_keycard_with_existing_account_button = Button(names.setupFromExistingKeycardAccount_StatusListItem)
+        self._create_new_keycard_account_button = Button(names.createNewKeycardAccount_StatusListItem)
+        self._import_restore_via_seed_phrase_button = Button(names.importRestoreKeycard_StatusListItem)
+        self._import_from_keycard_button = Button(names.importFromKeycard_StatusListItem)
+        self._check_whats_on_keycard_button = Button(names.checkWhatsNewKeycard_StatusListItem)
+        self._factory_reset_keycard_button = Button(names.factoryResetKeycard_StatusListItem)
 
     @allure.step('Check that keycard screen displayed')
     def check_keycard_screen_loaded(self):

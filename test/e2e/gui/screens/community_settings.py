@@ -15,26 +15,27 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 from scripts.tools.image import Image
 
 
 class CommunitySettingsScreen(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_communityLoader_Loader')
+        super().__init__(names.mainWindow_communityLoader_Loader)
         self.left_panel = LeftPanel()
 
 
 class LeftPanel(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_communityColumnView_CommunityColumnView')
-        self._back_to_community_button = Button('mainWindow_communitySettingsBackToCommunityButton_StatusBaseText')
-        self._overview_button = Button('overview_StatusNavigationListItem')
-        self._members_button = Button('members_StatusNavigationListItem')
-        self._permissions_button = Button('permissions_StatusNavigationListItem')
-        self._tokens_button = Button('tokens_StatusNavigationListItem')
-        self._airdrops_button = Button('airdrops_StatusNavigationListItem')
+        super().__init__(names.mainWindow_communityColumnView_CommunityColumnView)
+        self._back_to_community_button = Button(names.mainWindow_communitySettingsBackToCommunityButton_StatusBaseText)
+        self._overview_button = Button(names.overview_StatusNavigationListItem)
+        self._members_button = Button(names.members_StatusNavigationListItem)
+        self._permissions_button = Button(names.permissions_StatusNavigationListItem)
+        self._tokens_button = Button(names.tokens_StatusNavigationListItem)
+        self._airdrops_button = Button(names.airdrops_StatusNavigationListItem)
 
     @allure.step('Open community main view')
     def back_to_community(self):
@@ -71,10 +72,10 @@ class LeftPanel(QObject):
 class OverviewView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_OverviewSettingsPanel')
-        self._name_text_label = TextLabel('communityOverviewSettingsCommunityName_StatusBaseText')
-        self._description_text_label = TextLabel('communityOverviewSettingsCommunityDescription_StatusBaseText')
-        self._edit_button = Button('mainWindow_Edit_Community_StatusButton')
+        super().__init__(names.mainWindow_OverviewSettingsPanel)
+        self._name_text_label = TextLabel(names.communityOverviewSettingsCommunityName_StatusBaseText)
+        self._description_text_label = TextLabel(names.communityOverviewSettingsCommunityDescription_StatusBaseText)
+        self._edit_button = Button(names.mainWindow_Edit_Community_StatusButton)
 
     @property
     @allure.step('Get community name')
@@ -102,25 +103,25 @@ class OverviewView(QObject):
 class EditCommunityView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_communityEditPanelScrollView_EditSettingsPanel')
-        self._scroll = Scroll('communityEditPanelScrollView_Flickable')
-        self._name_text_edit = TextEdit('communityEditPanelScrollView_communityNameInput_TextEdit')
-        self._description_text_edit = TextEdit('communityEditPanelScrollView_communityDescriptionInput_TextEdit')
-        self._logo = QObject('communityEditPanelScrollView_image_StatusImage')
-        self._add_logo_button = Button('communityEditPanelScrollView_editButton_StatusRoundButton')
-        self._banner = QObject('communityEditPanelScrollView_image_StatusImage_2')
-        self._add_banner_button = Button('communityEditPanelScrollView_editButton_StatusRoundButton_2')
-        self._select_color_button = Button('communityEditPanelScrollView_StatusPickerButton')
-        self._choose_tag_button = Button('communityEditPanelScrollView_Choose_StatusPickerButton')
-        self._tag_item = QObject('communityEditPanelScrollView_StatusCommunityTag')
-        self._archive_support_checkbox = CheckBox('communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox')
-        self._request_to_join_checkbox = CheckBox('communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox')
-        self._pin_messages_checkbox = CheckBox('communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox')
-        self._intro_text_edit = TextEdit('communityEditPanelScrollView_editCommunityIntroInput_TextEdit')
-        self._outro_text_edit = TextEdit('communityEditPanelScrollView_editCommunityOutroInput_TextEdit')
-        self._save_changes_button = Button('mainWindow_Save_changes_StatusButton')
-        self._cropped_image_edit_logo_item = QObject('croppedImageEditLogo')
-        self._cropped_image_edit_banner_item = QObject('croppedImageEditBanner')
+        super().__init__(names.mainWindow_communityEditPanelScrollView_EditSettingsPanel)
+        self._scroll = Scroll(names.communityEditPanelScrollView_Flickable)
+        self._name_text_edit = TextEdit(names.communityEditPanelScrollView_communityNameInput_TextEdit)
+        self._description_text_edit = TextEdit(names.communityEditPanelScrollView_communityDescriptionInput_TextEdit)
+        self._logo = QObject(names.communityEditPanelScrollView_image_StatusImage)
+        self._add_logo_button = Button(names.communityEditPanelScrollView_editButton_StatusRoundButton)
+        self._banner = QObject(names.communityEditPanelScrollView_image_StatusImage_2)
+        self._add_banner_button = Button(names.communityEditPanelScrollView_editButton_StatusRoundButton_2)
+        self._select_color_button = Button(names.communityEditPanelScrollView_StatusPickerButton)
+        self._choose_tag_button = Button(names.communityEditPanelScrollView_Choose_StatusPickerButton)
+        self._tag_item = QObject(names.communityEditPanelScrollView_StatusCommunityTag)
+        self._archive_support_checkbox = CheckBox(names.communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox)
+        self._request_to_join_checkbox = CheckBox(names.communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox)
+        self._pin_messages_checkbox = CheckBox(names.communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox)
+        self._intro_text_edit = TextEdit(names.communityEditPanelScrollView_editCommunityIntroInput_TextEdit)
+        self._outro_text_edit = TextEdit(names.communityEditPanelScrollView_editCommunityOutroInput_TextEdit)
+        self._save_changes_button = Button(names.mainWindow_Save_changes_StatusButton)
+        self._cropped_image_edit_logo_item = QObject(names.croppedImageEditLogo)
+        self._cropped_image_edit_banner_item = QObject(names.croppedImageEditBanner)
 
     @property
     @allure.step('Get community name')
@@ -244,8 +245,8 @@ class EditCommunityView(QObject):
 class MembersView(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_MembersSettingsPanel')
-        self._member_list_item = QObject('memberItem_StatusMemberListItem')
+        super().__init__(names.mainWindow_MembersSettingsPanel)
+        self._member_list_item = QObject(names.memberItem_StatusMemberListItem)
 
     @property
     @allure.step('Get community members')
@@ -255,16 +256,16 @@ class MembersView(QObject):
 
 class TokensView(QObject):
     def __init__(self):
-        super(TokensView, self).__init__('mainWindow_mintPanel_MintTokensSettingsPanel')
-        self._mint_token_button = Button('mainWindow_Mint_token_StatusButton')
-        self._welcome_image = QObject('welcomeSettingsTokens_Image')
-        self._welcome_title = TextLabel('welcomeSettingsTokens_Title')
-        self._welcome_subtitle = TextLabel('welcomeSettingsTokensSubtitle')
-        self._welcome_checklist_1 = TextLabel('checkListText_0_Tokens')
-        self._welcome_checklist_2 = TextLabel('checkListText_1_Tokens')
-        self._welcome_checklist_3 = TextLabel('checkListText_2_Tokens')
-        self._get_started_infobox = QObject('mint_Owner_Tokens_InfoBoxPanel')
-        self._mint_owner_token_button = Button('mint_Owner_Tokens_StatusButton')
+        super(TokensView, self).__init__(names.mainWindow_mintPanel_MintTokensSettingsPanel)
+        self._mint_token_button = Button(names.mainWindow_Mint_token_StatusButton)
+        self._welcome_image = QObject(names.welcomeSettingsTokens_Image)
+        self._welcome_title = TextLabel(names.welcomeSettingsTokens_Title)
+        self._welcome_subtitle = TextLabel(names.welcomeSettingsTokensSubtitle)
+        self._welcome_checklist_1 = TextLabel(names.checkListText_0_Tokens)
+        self._welcome_checklist_2 = TextLabel(names.checkListText_1_Tokens)
+        self._welcome_checklist_3 = TextLabel(names.checkListText_2_Tokens)
+        self._get_started_infobox = QObject(names.mint_Owner_Tokens_InfoBoxPanel)
+        self._mint_owner_token_button = Button(names.mint_Owner_Tokens_StatusButton)
 
     @property
     @allure.step('Get mint token button enable state')
@@ -311,16 +312,16 @@ class TokensView(QObject):
 
 class AirdropsView(QObject):
     def __init__(self):
-        super(AirdropsView, self).__init__('mainWindow_airdropPanel_AirdropsSettingsPanel')
-        self._new_airdrop_button = Button('mainWindow_New_Airdrop_StatusButton')
-        self._welcome_image = QObject('welcomeSettingsAirdrops_Image')
-        self._welcome_title = TextLabel('welcomeSettingsAirdrops_Title')
-        self._welcome_subtitle = TextLabel('welcomeSettingsAirdrops_Subtitle')
-        self._welcome_checklist_1 = TextLabel('checkListText_0_Airdrops')
-        self._welcome_checklist_2 = TextLabel('checkListText_1_Airdrops')
-        self._welcome_checklist_3 = TextLabel('checkListText_2_Airdrops')
-        self._get_started_infobox = QObject('infoBox_StatusInfoBoxPanel')
-        self._mint_owner_token_button = Button('mint_Owner_token_Airdrops_StatusButton')
+        super(AirdropsView, self).__init__(names.mainWindow_airdropPanel_AirdropsSettingsPanel)
+        self._new_airdrop_button = Button(names.mainWindow_New_Airdrop_StatusButton)
+        self._welcome_image = QObject(names.welcomeSettingsAirdrops_Image)
+        self._welcome_title = TextLabel(names.welcomeSettingsAirdrops_Title)
+        self._welcome_subtitle = TextLabel(names.welcomeSettingsAirdrops_Subtitle)
+        self._welcome_checklist_1 = TextLabel(names.checkListText_0_Airdrops)
+        self._welcome_checklist_2 = TextLabel(names.checkListText_1_Airdrops)
+        self._welcome_checklist_3 = TextLabel(names.checkListText_2_Airdrops)
+        self._get_started_infobox = QObject(names.infoBox_StatusInfoBoxPanel)
+        self._mint_owner_token_button = Button(names.mint_Owner_token_Airdrops_StatusButton)
 
     @property
     @allure.step('Get new airdrop button enable state')
@@ -367,14 +368,14 @@ class AirdropsView(QObject):
 
 class PermissionsIntroView(QObject):
     def __init__(self):
-        super(PermissionsIntroView, self).__init__('o_IntroPanel')
-        self._add_new_permission_button = Button('add_new_permission_button')
-        self._welcome_image = QObject('community_welcome_screen_image')
-        self._welcome_title = TextLabel('community_welcome_screen_title')
-        self._welcome_subtitle = TextLabel('community_welcome_screen_subtitle')
-        self._welcome_checklist_1 = TextLabel('community_welcome_screen_checkList_element1')
-        self._welcome_checklist_2 = TextLabel('community_welcome_screen_checkList_element2')
-        self._welcome_checklist_3 = TextLabel('community_welcome_screen_checkList_element3')
+        super(PermissionsIntroView, self).__init__(names.o_IntroPanel)
+        self._add_new_permission_button = Button(names.add_new_permission_button)
+        self._welcome_image = QObject(names.community_welcome_screen_image)
+        self._welcome_title = TextLabel(names.community_welcome_screen_title)
+        self._welcome_subtitle = TextLabel(names.community_welcome_screen_subtitle)
+        self._welcome_checklist_1 = TextLabel(names.community_welcome_screen_checkList_element1)
+        self._welcome_checklist_2 = TextLabel(names.community_welcome_screen_checkList_element2)
+        self._welcome_checklist_3 = TextLabel(names.community_welcome_screen_checkList_element3)
 
     @property
     @allure.step('Get permission welcome image path')
@@ -411,23 +412,23 @@ class PermissionsIntroView(QObject):
 
 class PermissionsSettingsView(QObject):
     def __init__(self):
-        super(PermissionsSettingsView, self).__init__('mainWindow_PermissionsSettingsPanel')
-        self._who_holds_checkbox = CheckBox('editPermissionView_whoHoldsSwitch_StatusSwitch')
-        self._who_holds_asset_field = TextEdit('edit_TextEdit')
-        self._who_holds_amount_field = TextEdit('inputValue_StyledTextField')
-        self._asset_item = QObject('o_TokenItem')
-        self._is_allowed_to_option_button = Button('customPermissionListItem')
-        self._in_general_button = Button('communityItem_CommunityListItem')
-        self._hide_permission_checkbox = CheckBox('editPermissionView_switchItem_StatusSwitch')
-        self._create_permission_button = Button('editPermissionView_Create_permission_StatusButton')
-        self._add_button = Button('add_StatusButton')
-        self._who_holds_list_item = QObject('editPermissionView_Who_holds_StatusItemSelector')
-        self._is_allowed_to_list_item = QObject('editPermissionView_Is_allowed_to_StatusFlowSelector')
-        self._in_list_item = QObject('editPermissionView_In_StatusItemSelector')
-        self._tag_item = QObject('o_StatusListItemTag')
-        self._who_holds_tag = QObject('whoHoldsTagListItem')
-        self._is_allowed_tag = QObject('isAllowedTagListItem')
-        self._in_community_in_channel_tag = QObject('inCommunityTagListItem')
+        super(PermissionsSettingsView, self).__init__(names.mainWindow_PermissionsSettingsPanel)
+        self._who_holds_checkbox = CheckBox(names.editPermissionView_whoHoldsSwitch_StatusSwitch)
+        self._who_holds_asset_field = TextEdit(names.edit_TextEdit)
+        self._who_holds_amount_field = TextEdit(names.inputValue_StyledTextField)
+        self._asset_item = QObject(names.o_TokenItem)
+        self._is_allowed_to_option_button = Button(names.customPermissionListItem)
+        self._in_general_button = Button(names.communityItem_CommunityListItem)
+        self._hide_permission_checkbox = CheckBox(names.editPermissionView_switchItem_StatusSwitch)
+        self._create_permission_button = Button(names.editPermissionView_Create_permission_StatusButton)
+        self._add_button = Button(names.add_StatusButton)
+        self._who_holds_list_item = QObject(names.editPermissionView_Who_holds_StatusItemSelector)
+        self._is_allowed_to_list_item = QObject(names.editPermissionView_Is_allowed_to_StatusFlowSelector)
+        self._in_list_item = QObject(names.editPermissionView_In_StatusItemSelector)
+        self._tag_item = QObject(names.o_StatusListItemTag)
+        self._who_holds_tag = QObject(names.whoHoldsTagListItem)
+        self._is_allowed_tag = QObject(names.isAllowedTagListItem)
+        self._in_community_in_channel_tag = QObject(names.inCommunityTagListItem)
 
     @allure.step('Get titles of Who holds tags')
     def get_who_holds_tags_titles(self) -> typing.List[str]:

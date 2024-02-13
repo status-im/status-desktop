@@ -5,6 +5,7 @@ import allure
 from gui.components.back_up_your_seed_phrase_popup import BackUpYourSeedPhrasePopUp
 from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
+from gui.objects_map import names
 from gui.screens.settings_communities import CommunitiesSettingsView
 from gui.screens.settings_ens_usernames import ENSSettingsView
 from gui.screens.settings_keycard import KeycardSettingsView
@@ -19,10 +20,10 @@ from gui.components.settings.sign_out_popup import SignOutPopup
 class LeftPanel(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_LeftTabView')
-        self._settings_section_template = QObject('scrollView_MenuItem_StatusNavigationListItem')
-        self._scroll = Scroll('scrollView_Flickable')
-        self._settings_section_back_up_seed_option = QObject('settingsBackUpSeedPhraseOption')
+        super().__init__(names.mainWindow_LeftTabView)
+        self._settings_section_template = QObject(names.scrollView_MenuItem_StatusNavigationListItem)
+        self._scroll = Scroll(names.scrollView_Flickable)
+        self._settings_section_back_up_seed_option = QObject(names.settingsBackUpSeedPhraseOption)
 
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
@@ -108,5 +109,5 @@ class LeftPanel(QObject):
 class SettingsScreen(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_ProfileLayout')
+        super().__init__(names.mainWindow_ProfileLayout)
         self.left_panel = LeftPanel()

@@ -5,6 +5,7 @@ import allure
 import driver
 from gui.elements.text_edit import TextEdit
 from gui.elements.window import Window
+from gui.objects_map import names
 from scripts.utils.system_path import SystemPath
 
 LOG = logging.getLogger(__name__)
@@ -13,8 +14,8 @@ LOG = logging.getLogger(__name__)
 class OpenFileDialog(Window):
 
     def __init__(self):
-        super(OpenFileDialog, self).__init__('chooseAnImageALogo_QQuickWindow')
-        self._file_path_text_edit = TextEdit('titleBar_currentPathField_TextField')
+        super(OpenFileDialog, self).__init__(names.chooseAnImageALogo_QQuickWindow)
+        self._file_path_text_edit = TextEdit(names.titleBar_currentPathField_TextField)
 
     @allure.step('Open file')
     def open_file(self, fp: SystemPath):

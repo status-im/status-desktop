@@ -1,19 +1,19 @@
 import allure
 
-import configs
 import driver
 from constants.settings import PasswordView
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class ChangePasswordPopup(BasePopup):
 
     def __init__(self):
         super(ChangePasswordPopup, self).__init__()
-        self._re_encrypt_data_restart_button = Button('reEncryptRestartButton')
-        self._re_encryption_complete_element = TextLabel('reEncryptionComplete')
+        self._re_encrypt_data_restart_button = Button(names.reEncryptRestartButton)
+        self._re_encryption_complete_element = TextLabel(names.reEncryptionComplete)
 
     def click_re_encrypt_data_restart_button(self):
         """
@@ -28,6 +28,3 @@ class ChangePasswordPopup(BasePopup):
         assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 20000)
         assert getattr(self._re_encrypt_data_restart_button.object, 'text') == PasswordView.RESTART_STATUS.value
         self._re_encrypt_data_restart_button.click()
-
-
-

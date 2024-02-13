@@ -3,16 +3,17 @@ from gui.components.base_popup import BasePopup
 from gui.components.emoji_popup import EmojiPopup
 from gui.elements.button import Button
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class ChannelPopup(BasePopup):
 
     def __init__(self):
         super(ChannelPopup, self).__init__()
-        self._name_text_edit = TextEdit('createOrEditCommunityChannelNameInput_TextEdit')
-        self._description_text_edit = TextEdit('createOrEditCommunityChannelDescriptionInput_TextEdit')
-        self._save_create_button = Button('createOrEditCommunityChannelBtn_StatusButton')
-        self._emoji_button = Button('createOrEditCommunityChannel_EmojiButton')
+        self._name_text_edit = TextEdit(names.createOrEditCommunityChannelNameInput_TextEdit)
+        self._description_text_edit = TextEdit(names.createOrEditCommunityChannelDescriptionInput_TextEdit)
+        self._save_create_button = Button(names.createOrEditCommunityChannelBtn_StatusButton)
+        self._emoji_button = Button(names.createOrEditCommunityChannel_EmojiButton)
 
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         self._name_text_edit.wait_until_appears(timeout_msec)

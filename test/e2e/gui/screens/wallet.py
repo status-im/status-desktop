@@ -16,25 +16,26 @@ from gui.components.wallet.wallet_account_popups import AccountPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 from scripts.utils.decorators import close_exists
 
 
 class WalletScreen(QObject):
 
     def __init__(self):
-        super().__init__('mainWindow_WalletLayout')
+        super().__init__(names.mainWindow_WalletLayout)
         self.left_panel: LeftPanel = LeftPanel()
 
 
 class LeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__('mainWallet_LeftTab')
-        self._saved_addresses_button = Button('mainWallet_Saved_Addresses_Button')
-        self._wallet_account_item = QObject('walletAccount_StatusListItem')
-        self._add_account_button = Button('mainWallet_Add_Account_Button')
-        self._all_accounts_button = Button('mainWallet_All_Accounts_Button')
-        self._all_accounts_balance = TextLabel('mainWallet_All_Accounts_Balance')
+        super(LeftPanel, self).__init__(names.mainWallet_LeftTab)
+        self._saved_addresses_button = Button(names.mainWallet_Saved_Addresses_Button)
+        self._wallet_account_item = QObject(names.walletAccount_StatusListItem)
+        self._add_account_button = Button(names.mainWallet_Add_Account_Button)
+        self._all_accounts_button = Button(names.mainWallet_All_Accounts_Button)
+        self._all_accounts_balance = TextLabel(names.mainWallet_All_Accounts_Balance)
 
     @allure.step('Get total balance visibility state')
     def is_total_balance_visible(self) -> bool:
@@ -138,14 +139,14 @@ class LeftPanel(QObject):
 class SavedAddressesView(QObject):
 
     def __init__(self):
-        super(SavedAddressesView, self).__init__('mainWindow_SavedAddressesView')
-        self._add_new_address_button = Button('mainWallet_Saved_Addresses_Add_Buttton')
-        self._address_list_item = QObject('savedAddressView_Delegate')
-        self._addresses_area = QObject('savedAddresses_area')
-        self._addresses_list_view = QObject('mainWallet_Saved_Addresses_List')
-        self._send_button = Button('send_StatusRoundButton')
-        self._open_menu_button = Button('savedAddressView_Delegate_menuButton')
-        self._saved_address_item = QObject('savedAddressView_Delegate')
+        super(SavedAddressesView, self).__init__(names.mainWindow_SavedAddressesView)
+        self._add_new_address_button = Button(names.mainWallet_Saved_Addresses_Add_Buttton)
+        self._address_list_item = QObject(names.savedAddressView_Delegate)
+        self._addresses_area = QObject(names.savedAddresses_area)
+        self._addresses_list_view = QObject(names.mainWallet_Saved_Addresses_List)
+        self._send_button = Button(names.send_StatusRoundButton)
+        self._open_menu_button = Button(names.savedAddressView_Delegate_menuButton)
+        self._saved_address_item = QObject(names.savedAddressView_Delegate)
 
     @property
     @allure.step('Get saved addresses names')
@@ -195,10 +196,10 @@ class SavedAddressesView(QObject):
 class WalletAccountView(QObject):
 
     def __init__(self):
-        super(WalletAccountView, self).__init__('mainWindow_StatusSectionLayout_ContentItem')
-        self._account_name_text_label = TextLabel('mainWallet_Account_Name')
-        self._addresses_panel = QObject('mainWallet_Address_Panel')
-        self._send_button = Button('mainWindow_Send_Button')
+        super(WalletAccountView, self).__init__(names.mainWindow_StatusSectionLayout_ContentItem)
+        self._account_name_text_label = TextLabel(names.mainWallet_Account_Name)
+        self._addresses_panel = QObject(names.mainWallet_Address_Panel)
+        self._send_button = Button(names.mainWindow_Send_Button)
 
     @property
     @allure.step('Get name of account')

@@ -13,38 +13,38 @@ from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
+from gui.objects_map import names
 
 
 class KeycardPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._keycard_image = QObject('img_Image')
-        self._keycard_popup_header = TextLabel('headerTitle')
-        self._keycard_instruction_text = TextLabel('keycard_reader_instruction_text')
-        self._next_button = Button('nextStatusButton')
-        self._reveal_seed_phrase_button = Button('revealSeedPhraseButton')
-        self._seed_phrase_panel = QObject('seedPhraseWordAtIndex_Placeholder')
-        self._seed_phrase_first_word_component = QObject('word0_StatusInput')
-        self._seed_phrase_second_word_component = QObject('word1_StatusInput')
-        self._seed_phrase_third_word_component = QObject('word2_StatusInput')
-        self._seed_phrase_word_text_edit = TextEdit('statusSeedPhraseInputField_TextEdit')
-        self._seed_phrase_12_words_button = Button('switchTabBar_12_words_StatusSwitchTabButton')
-        self._seed_phrase_18_words_button = Button('switchTabBar_18_words_StatusSwitchTabButton')
-        self._seed_phrase_24_words_button = Button('switchTabBar_24_words_StatusSwitchTabButton')
-        self._field_object = QObject('edit_TextEdit')
-        self._keypair_item = QObject('o_KeyPairItem')
-        self._keypair_on_keycard_item = QObject('o_KeyPairUnknownItem')
-        self._keypair_tag = QObject('o_StatusListItemTag')
-        self._selection_box = QObject('radioButton_StatusRadioButton')
-        self._keycard_init = QObject('o_KeycardInit')
-        self._cancel_button = Button('cancel_StatusButton')
+        self._keycard_image = QObject(names.img_Image)
+        self._keycard_popup_header = TextLabel(names.headerTitle)
+        self._keycard_instruction_text = TextLabel(names.keycard_reader_instruction_text)
+        self._next_button = Button(names.nextStatusButton)
+        self._reveal_seed_phrase_button = Button(names.revealSeedPhraseButton)
+        self._seed_phrase_panel = QObject(names.seedPhraseWordAtIndex_Placeholder)
+        self._seed_phrase_first_word_component = QObject(names.word0_StatusInput)
+        self._seed_phrase_second_word_component = QObject(names.word1_StatusInput)
+        self._seed_phrase_third_word_component = QObject(names.word2_StatusInput)
+        self._seed_phrase_word_text_edit = TextEdit(names.statusSeedPhraseInputField_TextEdit)
+        self._seed_phrase_12_words_button = Button(names.switchTabBar_12_words_StatusSwitchTabButton)
+        self._seed_phrase_18_words_button = Button(names.switchTabBar_18_words_StatusSwitchTabButton)
+        self._seed_phrase_24_words_button = Button(names.switchTabBar_24_words_StatusSwitchTabButton)
+        self._field_object = QObject(names.edit_TextEdit)
+        self._keypair_item = QObject(names.o_KeyPairItem)
+        self._keypair_on_keycard_item = QObject(names.o_KeyPairUnknownItem)
+        self._keypair_tag = QObject(names.o_StatusListItemTag)
+        self._selection_box = QObject(names.radioButton_StatusRadioButton)
+        self._keycard_init = QObject(names.o_KeycardInit)
+        self._cancel_button = Button(names.cancel_StatusButton)
         self._understand_keypair_deleted_checkbox = CheckBox(
-            'i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox')
-        self._emoji_button = QObject('statusSmartIdenticonLetter_StatusLetterIdenticon')
-        self._add_another_account_button = Button('add_another_account_StatusButton')
-        self._secondary_button = Button('secondary_StatusButton')
-        self._color_radiobutton = QObject('color_StatusColorRadioButton')
+            names.i_understand_the_key_pair_on_this_Keycard_will_be_deleted_StatusCheckBox)
+        self._emoji_button = QObject(names.statusSmartIdenticonLetter_StatusLetterIdenticon)
+        self._secondary_button = Button(names.secondary_StatusButton)
+        self._color_radiobutton = QObject(names.color_StatusColorRadioButton)
 
     @property
     @allure.step('Get keycard image source path')
@@ -87,7 +87,7 @@ class KeycardPopup(BasePopup):
     def account_tags(self) -> typing.List[wallet_account_list_item]:
         _account_tags = []
         for account_tag_item in driver.findAllObjects(self._keypair_tag.real_name):
-            element = QObject(name='', real_name=driver.objectMap.realName(account_tag_item))
+            element = QObject(real_name=driver.objectMap.realName(account_tag_item))
             name = str(account_tag_item.title)
             icon_emoji = str(account_tag_item.asset.emoji)
             icon_color = str(account_tag_item.bgColor.name)

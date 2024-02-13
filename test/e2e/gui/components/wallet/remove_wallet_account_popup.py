@@ -4,15 +4,16 @@ import configs
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
+from gui.objects_map import names
 
 
 class RemoveWalletAccountPopup(BasePopup):
 
     def __init__(self):
         super(RemoveWalletAccountPopup, self).__init__()
-        self._confirm_button = Button('mainWallet_Remove_Account_Popup_ConfirmButton')
-        self._cancel_button = Button('mainWallet_Remove_Account_Popup_CancelButton')
-        self._have_pen_paper_checkbox = CheckBox('mainWallet_Remove_Account_Popup_HavePenPaperCheckBox')
+        self._confirm_button = Button(names.mainWallet_Remove_Account_Popup_ConfirmButton)
+        self._cancel_button = Button(names.mainWallet_Remove_Account_Popup_CancelButton)
+        self._have_pen_paper_checkbox = CheckBox(names.mainWallet_Remove_Account_Popup_HavePenPaperCheckBox)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):

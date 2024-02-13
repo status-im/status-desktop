@@ -5,16 +5,17 @@ from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
+from gui.objects_map import names
 
 
 class AuthenticatePopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._content = QObject('keycardSharedPopupContent_KeycardPopupContent')
-        self._passwort_text_edit = TextEdit('password_PlaceholderText')
-        self._authenticate_button = Button('authenticate_StatusButton')
-        self._close_button = Button('headerCloseButton_StatusFlatRoundButton')
+        self._content = QObject(names.keycardSharedPopupContent_KeycardPopupContent)
+        self._passwort_text_edit = TextEdit(names.password_PlaceholderText)
+        self._authenticate_button = Button(names.authenticate_StatusButton)
+        self._close_button = Button(names.headerCloseButton_StatusFlatRoundButton)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):

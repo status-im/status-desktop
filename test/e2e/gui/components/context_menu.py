@@ -1,19 +1,20 @@
 import allure
 
 from gui.elements.object import QObject
+from gui.objects_map import names
 
 
 class ContextMenu(QObject):
 
     def __init__(self):
-        super(ContextMenu, self).__init__('contextMenu_PopupItem')
-        self._menu_item = QObject('contextMenuItem')
-        self._context_add_watched_address_option = QObject('contextMenuItem_AddWatchOnly')
-        self._context_delete_account_option = QObject('contextMenuItem_Delete')
-        self._context_edit_account_option = QObject('contextMenuItem_Edit')
-        self._context_hide_include_in_total_balance = QObject('contextMenuItem_HideInclude')
-        self._context_edit_saved_address_option = QObject('contextSavedAddressEdit')
-        self._context_delete_saved_address_option = QObject('contextSavedAddressDelete')
+        super(ContextMenu, self).__init__(names.contextMenu_PopupItem)
+        self._menu_item = QObject(names.contextMenuItem)
+        self._context_add_watched_address_option = QObject(names.contextMenuItem_AddWatchOnly)
+        self._context_delete_account_option = QObject(names.contextMenuItem_Delete)
+        self._context_edit_account_option = QObject(names.contextMenuItem_Edit)
+        self._context_hide_include_in_total_balance = QObject(names.contextMenuItem_HideInclude)
+        self._context_edit_saved_address_option = QObject(names.contextSavedAddressEdit)
+        self._context_delete_saved_address_option = QObject(names.contextSavedAddressDelete)
 
     @allure.step('Select in context menu')
     def select(self, value: str):
