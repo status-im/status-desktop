@@ -210,7 +210,7 @@ class MainWindow(Window):
     def create_community(self, params: dict) -> CommunityScreen:
         communities_portal = self.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
-        app_screen = create_community_form.create(params)
+        app_screen = create_community_form.create_community(params)
         return app_screen
 
     @allure.step('Wait for notification and get text')

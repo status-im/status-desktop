@@ -119,6 +119,8 @@ class EditCommunityView(QObject):
         self._intro_text_edit = TextEdit('communityEditPanelScrollView_editCommunityIntroInput_TextEdit')
         self._outro_text_edit = TextEdit('communityEditPanelScrollView_editCommunityOutroInput_TextEdit')
         self._save_changes_button = Button('mainWindow_Save_changes_StatusButton')
+        self._cropped_image_edit_logo_item = QObject('croppedImageEditLogo')
+        self._cropped_image_edit_banner_item = QObject('croppedImageEditBanner')
 
     @property
     @allure.step('Get community name')
@@ -145,8 +147,7 @@ class EditCommunityView(QObject):
     def logo(self) -> Image:
         return self._logo.image
 
-    @logo.setter
-    @allure.step('Set community description')
+    @allure.step('Set community logo')
     def logo(self, kwargs: dict):
         self._add_logo_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
@@ -157,12 +158,21 @@ class EditCommunityView(QObject):
     def banner(self) -> Image:
         return self._banner.image
 
-    @banner.setter
-    @allure.step('Set community description')
+    @allure.step('Set community banner')
     def banner(self, kwargs: dict):
         self._add_banner_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
         PictureEditPopup().wait_until_appears().make_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+
+    @allure.step('Set community logo without file upload dialog')
+    def set_logo_without_file_upload_dialog(self, path):
+        self._cropped_image_edit_logo_item.object.cropImage('file://' + str(path))
+        return PictureEditPopup()
+
+    @allure.step('Set community banner without file upload dialog')
+    def set_banner_without_file_upload_dialog(self, path):
+        self._cropped_image_edit_banner_item.object.cropImage('file://' + str(path))
+        return PictureEditPopup()
 
     @property
     @allure.step('Get community color')
@@ -221,6 +231,10 @@ class EditCommunityView(QObject):
 
     @allure.step('Edit community')
     def edit(self, kwargs):
+        self.set_logo_without_file_upload_dialog(kwargs['logo']['fp'])
+        PictureEditPopup().make_picture(None, None)
+        self.set_banner_without_file_upload_dialog(kwargs['banner']['fp'])
+        PictureEditPopup().make_picture(None, None)
         for key in list(kwargs):
             setattr(self, key, kwargs.get(key))
         self._save_changes_button.click()

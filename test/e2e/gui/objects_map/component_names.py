@@ -94,6 +94,8 @@ createCommunityIntroMessageInput_TextEdit = {"container": statusDesktop_mainWind
 createCommunityOutroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityOutroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityFinalBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityFinalBtn", "type": "StatusButton", "visible": True}
 createOrEditCommunityCategoryChannelList_StatusListView = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryChannelList", "type": "StatusListView", "visible": True}
+croppedImageLogo = {"container": statusDesktop_mainWindow_overlay, "objectName": "editCroppedImageItem_Community logo", "type": "EditCroppedImagePanel", "visible": True}
+croppedImageBanner = {"container": statusDesktop_mainWindow_overlay, "objectName": "editCroppedImageItem_Community banner", "type": "EditCroppedImagePanel", "visible": True}
 
 # Community Channel Popup
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}

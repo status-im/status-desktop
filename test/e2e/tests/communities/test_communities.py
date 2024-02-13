@@ -20,7 +20,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
     with step('Create community'):
         communities_portal = main_screen.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
-        community_screen = create_community_form.create(params)
+        community_screen = create_community_form.create_community(params)
 
     with step('Verify community parameters in community overview'):
         with step('Name is correct'):

@@ -10,6 +10,7 @@ from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
+from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.screens.community import CommunityScreen
@@ -46,6 +47,8 @@ class CreateCommunityPopup(BasePopup):
         self._intro_text_edit = TextEdit('createCommunityIntroMessageInput_TextEdit')
         self._outro_text_edit = TextEdit('createCommunityOutroMessageInput_TextEdit')
         self._create_community_button = Button('createCommunityFinalBtn_StatusButton')
+        self._cropped_image_logo_item = QObject('croppedImageLogo')
+        self._cropped_image_banner_item = QObject('croppedImageBanner')
 
     @property
     @allure.step('Get community name')
@@ -83,7 +86,6 @@ class CreateCommunityPopup(BasePopup):
             else:
                 raise err
 
-    @logo.setter
     @allure.step('Set community logo')
     def logo(self, kwargs: dict):
         self._open_logo_file_dialog().open_file(kwargs['fp'])
@@ -94,12 +96,21 @@ class CreateCommunityPopup(BasePopup):
     def banner(self):
         raise NotImplementedError
 
-    @banner.setter
     @allure.step('Set community banner')
     def banner(self, kwargs: dict):
         self._add_banner_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
         PictureEditPopup().wait_until_appears().make_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+
+    @allure.step('Set community logo without file upload dialog')
+    def set_logo_without_file_upload_dialog(self, path):
+        self._cropped_image_logo_item.object.cropImage('file://' + str(path))
+        return PictureEditPopup()
+
+    @allure.step('Set community banner without file upload dialog')
+    def set_banner_without_file_upload_dialog(self, path):
+        self._cropped_image_banner_item.object.cropImage('file://' + str(path))
+        return PictureEditPopup()
 
     @property
     @allure.step('Get community color')
@@ -149,8 +160,12 @@ class CreateCommunityPopup(BasePopup):
     def open_next_form(self):
         self._next_button.click()
 
-    @allure.step('Create community')
-    def create(self, kwargs):
+    @allure.step('Create community without file upload dialog usage')
+    def create_community(self, kwargs):
+        self.set_logo_without_file_upload_dialog(kwargs['logo']['fp'])
+        PictureEditPopup().make_picture(None, None)
+        self.set_banner_without_file_upload_dialog(kwargs['banner']['fp'])
+        PictureEditPopup().make_picture(None, None)
         for key in list(kwargs):
             if key in ['intro', 'outro'] and self._next_button.is_visible:
                 self._next_button.click()

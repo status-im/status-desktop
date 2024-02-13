@@ -271,7 +271,7 @@ class YourProfileView(OnboardingView):
     def verify_profile_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
         assert (getattr(self._view_header_title.object, 'text') ==
-                OnboardingScreensHeaders.YOUR_PROFILE_SCREEN_TITLE.value) , \
+                OnboardingScreensHeaders.YOUR_PROFILE_SCREEN_TITLE.value), \
             f"YourProfileView is not shown or has wrong title, \
             current screen title is {getattr(self._view_header_title.object, 'text')}"
         return self
@@ -350,7 +350,7 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     def verify_emojihash_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
         assert (getattr(self._view_header_title.object, 'text') ==
-                OnboardingScreensHeaders.YOUR_EMOJIHASH_AND_IDENTICON_RING_SCREEN_TITLE.value) , \
+                OnboardingScreensHeaders.YOUR_EMOJIHASH_AND_IDENTICON_RING_SCREEN_TITLE.value), \
             f"YourEmojihashAndIdenticonRingView is not shown or has wrong title, \
             current screen title is {getattr(self._view_header_title.object, 'text')}"
         return self

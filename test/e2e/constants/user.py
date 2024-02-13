@@ -27,8 +27,8 @@ community_params = {
                                    string.digits, k=30)),
     'description': ''.join(random.choices(string.ascii_letters +
                                     string.digits, k=140)),
-    'logo': {'fp': configs.testpath.TEST_FILES / 'tv_signal.png', 'zoom': None, 'shift': None},
-    'banner': {'fp': configs.testpath.TEST_FILES / 'banner.png', 'zoom': None, 'shift': None},
+    'logo': {'fp': configs.testpath.TEST_IMAGES / 'comm_logo.jpeg', 'zoom': None, 'shift': None},
+    'banner': {'fp': configs.testpath.TEST_IMAGES / 'comm_banner.jpeg', 'zoom': None, 'shift': None},
     'intro': ''.join(random.choices(string.ascii_letters +
                                     string.digits, k=200)),
     'outro': ''.join(random.choices(string.ascii_letters +

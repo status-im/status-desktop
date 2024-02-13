@@ -153,6 +153,8 @@ communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox = {"checkable": Tr
 communityEditPanelScrollView_editCommunityIntroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityIntroInput", "type": "TextEdit", "visible": True}
 communityEditPanelScrollView_editCommunityOutroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityOutroInput", "type": "TextEdit", "visible": True}
 mainWindow_Save_changes_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "DisabledTooltipButton", "visible": True}
+croppedImageEditLogo = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCroppedImageItem_Community logo", "type": "EditCroppedImagePanel", "visible": True}
+croppedImageEditBanner = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCroppedImageItem_Community banner", "type": "EditCroppedImagePanel", "visible": True}
 
 # User List Panel
 mainWindow_UserListPanel = {"container": statusDesktop_mainWindow, "type": "UserListPanel", "unnamed": 1, "visible": True}
