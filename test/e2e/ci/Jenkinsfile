@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.1'
+library 'status-jenkins-lib@v1.8.6'
 
 pipeline {
 
@@ -180,6 +180,12 @@ pipeline {
         jdk: '',
       ])
       updateGitHubStatus()
+    } }
+    failure { script {
+      discord.send(
+        header: '**Desktop E2E test failure!**',
+        cred: 'discord-status-desktop-e2e-webhook',
+      )
     } }
     cleanup { cleanWs() }
   }
