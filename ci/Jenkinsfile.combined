@@ -55,8 +55,8 @@ pipeline {
         } } }
       }
     }
-    stage('Tests') {
-      stage('Linux/E2E/new') { steps { script {
+    stage('E2E') {
+      steps { script {
         linux_e2e = build(
           job: 'status-desktop/systems/linux/x86_64/tests-e2e-new',
           parameters: jenkins.mapToParams([
@@ -65,7 +65,7 @@ pipeline {
             TEST_SCOPE_FLAG:    utils.isReleaseBuild() ? '-m=critical' : '',
           ]),
         )
-      } } }
+      } }
     }
     stage('Publish') {
       when { expression { params.PUBLISH } }
