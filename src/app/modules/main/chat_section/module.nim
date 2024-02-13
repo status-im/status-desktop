@@ -19,6 +19,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 import ../../../core/notifications/details as notification_details
+import ../../../../app_service/common/conversion
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
@@ -1307,10 +1308,8 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
     tokenPermission.chatIDs = @[]
 
   let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
-
   for tokenCriteria in tokenCriteriaJsonObj:
 
-    let viewAmount = tokenCriteria{"amount"}.getFloat
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
     if tokenCriteriaDto.`type` == TokenType.ERC20:
       tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenCriteriaDto.symbol)
@@ -1323,7 +1322,7 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
       self.onCommunityTokenPermissionUpdateFailed(communityId)
       return
 
-    tokenCriteriaDto.amount = viewAmount.formatBiggestFloat(ffDecimal)
+    tokenCriteriaDto.amountInWei = tokenCriteria{"amount"}.getStr
     tokenCriteriaDto.contractAddresses = contractAddresses
     tokenPermission.tokenCriteria.add(tokenCriteriaDto)
 

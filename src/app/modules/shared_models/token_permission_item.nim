@@ -80,7 +80,7 @@ proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto, cha
     let tokenCriteriaItem = initTokenCriteriaItem(
       tc.symbol,
       tc.name,
-      tc.amount.parseFloat,
+      tc.amountInWei,
       tc.`type`.int,
       tc.ensPattern,
       false # tokenCriteriaMet will be updated by a call to checkPermissionsToJoin

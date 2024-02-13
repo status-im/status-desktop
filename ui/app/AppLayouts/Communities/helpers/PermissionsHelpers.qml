@@ -82,9 +82,10 @@ QtObject {
         return Internal.PermissionUtils.getUniquePermissionChannels(model, channelKey)
     }
 
-    function setHoldingsTextFormat(type, name, amount) {
-        if (typeof amount === "string")
-            amount = AmountsArithmetic.toNumber(AmountsArithmetic.fromString(amount))
+    function setHoldingsTextFormat(type, name, amount, decimals) {
+        if (typeof amount === "string") {
+            amount = AmountsArithmetic.toNumber(AmountsArithmetic.fromString(amount), decimals)
+        }
 
         switch (type) {
             case Constants.TokenType.ERC20:
