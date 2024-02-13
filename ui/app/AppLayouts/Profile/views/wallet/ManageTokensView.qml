@@ -98,7 +98,7 @@ Item {
             sourceComponent: {
                 switch (tabBar.currentIndex) {
                 case d.assetsTabIndex:
-                    return tokensPanel
+                    return assetsPanel
                 case d.collectiblesTabIndex:
                     return collectiblesPanel
                 case d.hiddenTabIndex:
@@ -110,7 +110,7 @@ Item {
         }
 
         Component {
-            id: tokensPanel
+            id: assetsPanel
             ManageAssetsPanel {
                 getCurrencyAmount: function (balance, symbol) {
                     return root.getCurrencyAmount(balance, symbol)
