@@ -1309,22 +1309,18 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
     let viewAmount = tokenCriteria{"amount"}.getFloat
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
-    let token = self.controller.findTokenBySymbol(tokenCriteriaDto.symbol)
-    if token != nil:
-      if tokenCriteriaDto.`type` == TokenType.ERC20:
-        tokenCriteriaDto.decimals = token.decimals
+    if tokenCriteriaDto.`type` == TokenType.ERC20:
+      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenCriteriaDto.symbol)
 
-      if token.addressPerChainId.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
-        if permissionId == "":
-          self.onCommunityTokenPermissionCreationFailed(communityId)
-          return
-        self.onCommunityTokenPermissionUpdateFailed(communityId)
+    let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
+    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenType.ENS:
+      if permissionId == "":
+        self.onCommunityTokenPermissionCreationFailed(communityId)
         return
+      self.onCommunityTokenPermissionUpdateFailed(communityId)
+      return
 
     tokenCriteriaDto.amount = viewAmount.formatBiggestFloat(ffDecimal)
-    var contractAddresses = initTable[int, string]()
-    for addrPerChain in token.addressPerChainId:
-      contractAddresses[addrPerChain.chainId] = addrPerChain.address
     tokenCriteriaDto.contractAddresses = contractAddresses
     tokenPermission.tokenCriteria.add(tokenCriteriaDto)
 
