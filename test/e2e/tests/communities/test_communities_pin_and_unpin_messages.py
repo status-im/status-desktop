@@ -3,6 +3,7 @@ from datetime import datetime
 import allure
 import pytest
 from allure_commons._allure import step
+from . import marks
 
 import configs
 import constants
@@ -11,6 +12,7 @@ from gui.main_window import MainWindow
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
 
+pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703255',
                  'Edit chat - Add pinned message (when any member can pin is disabled)')
