@@ -49,6 +49,7 @@ Item {
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
 
+    objectName: "editCroppedImageItem_" + root.title
 
     states: [
         State {
