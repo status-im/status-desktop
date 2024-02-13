@@ -6,7 +6,9 @@ import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import shared.controls 1.0
 import utils 1.0
 
 DropArea {
@@ -27,6 +29,8 @@ DropArea {
     readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in the grouped model
     readonly property alias title: groupedCommunityTokenDelegate.title
 
+    readonly property bool unknownCommunityName: model.communityName.startsWith("0x") && model.communityName == model.communityId
+    
     ListView.onRemove: SequentialAnimation {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
         NumberAnimation { target: root; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
@@ -53,7 +57,21 @@ DropArea {
         draggable: true
         spacing: 12
         bgColor: Theme.palette.baseColor4
-        title: root.isCollection ? model.collectionName : model.communityName
+        
+        title: {
+            if (root.isCollection) {
+                return model.collectionName
+            }
+
+            if (root.unknownCommunityName) {
+                if (communityNameArea.hovered) {
+                    return qsTr("Community %1").arg(StatusQUtils.Utils.elideAndFormatWalletAddress(model.communityName))
+                }
+                return qsTr("Unknown community")
+            }
+                    
+            return model.communityName
+        }
 
         visualIndex: index
         dragParent: root.dragParent
@@ -71,30 +89,92 @@ DropArea {
                 color: root.dragEnabled ? Theme.palette.baseColor1 : Theme.palette.baseColor2
             }
 
+            StatusSmartIdenticon {
+                id: identicon
+                Layout.preferredWidth: visible ? 32 : 0
+                Layout.preferredHeight: visible ? 32 : 0
+                asset.width: 32
+                asset.height: 32
+                visible: root.unknownCommunityName
+                asset.name: "help"
+                asset.color: Theme.palette.baseColor1
+                asset.isImage: false
+            }
+
             StatusRoundedImage {
+                visible: !root.unknownCommunityName
                 radius: root.isCollection ? Style.current.radius : height/2
-                Layout.preferredWidth: root.isCollectible ? 44 : 32
-                Layout.preferredHeight: root.isCollectible ? 44 : 32
-                image.source: root.isCollection ? model.imageUrl : model.communityImage // FIXME unify group image
+                Layout.preferredWidth: {
+                    if (!visible){
+                        return 0
+                    }
+                    return root.isCollectible ? 44 : 32
+                }
+                Layout.preferredHeight: {
+                    if (!visible){
+                        return 0
+                    }
+                    return root.isCollectible ? 44 : 32
+                }
+                image.source: {
+                    if(root.isCollection) {
+                        return model.imageUrl
+                    }
+                       
+                    return model.communityImage // FIXME unify group image
+                }
                 showLoadingIndicator: true
                 image.fillMode: Image.PreserveAspectCrop
             }
 
-            StatusBaseText {
+            RowLayout {
+                id: communityNameRow
+                spacing: 2
                 Layout.fillWidth: true
-                text: groupedCommunityTokenDelegate.title
-                elide: Text.ElideRight
-                maximumLineCount: 1
-                font.weight: Font.Medium
+
+                StatusBaseText {
+                    text: groupedCommunityTokenDelegate.title
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                    font.weight: Font.Medium
+                }
+
+                CopyToClipBoardButton {
+                    visible: root.unknownCommunityName && communityNameArea.hovered
+                    icon.height: Theme.primaryTextFontSize
+                    icon.width: Theme.primaryTextFontSize
+                    icon.color: Theme.palette.directColor1
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    color: Style.current.transparent
+                    textToCopy: model.communityName
+                    onCopyClicked: {
+                        Utils.copyToClipboard(textToCopy)
+                    }
+                }
+
+                StatusToolTip {
+                    id: communityNameToolTip
+                    text: qsTr("Community name could not be fetched")
+                    visible: root.unknownCommunityName && communityNameArea.hovered
+                    orientation: StatusToolTip.Orientation.Top
+                }
+
+                HoverHandler {
+                    id: communityNameArea
+                }
             }
+
 
             Item { Layout.fillWidth: true }
 
             ManageTokensCommunityTag {
-                text: root.childCount
+                communityName: root.childCount
+                communityId: ""
                 asset.name: root.isCollectible ? "image" : "token"
                 asset.isImage: false
                 asset.color: Theme.palette.baseColor1
+                loading: false
                 enabled: false
             }
 

@@ -309,6 +309,26 @@ ListModel {
                 },
             ]
         },
+        {
+            uid: "lb#777",
+            chainId: 420,
+            name: "Lonely Turtle #777",
+            collectionUid: "",
+            collectionName: "",
+            communityId: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            communityName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            communityImage: "",
+            imageUrl: "",
+            isLoading: false,
+            backgroundColor: "pink",
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 27
+                },
+            ]
+        },
     ]
 
     Component.onCompleted: {

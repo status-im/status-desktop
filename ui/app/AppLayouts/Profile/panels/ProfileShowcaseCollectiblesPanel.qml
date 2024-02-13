@@ -38,8 +38,9 @@ ProfileShowcasePanel {
         Component {
             id: communityTokenTagComponent
             ManageTokensCommunityTag {
-                text: model && !!model.communityName ? model.communityName : ""
-                asset.name: model && !!model.communityImage ? model.communityImage : ""
+                communityName: model && !!model.communityName ? model.communityName : ""
+                communityId: model && !!model.communityId ? model.communityId : ""
+                communityImage: model && !!model.communityImage ? model.communityImage : ""
                 loading: model && !!model.communityImageLoading ? model.communityImageLoading : false
             }
         }

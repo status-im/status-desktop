@@ -54,7 +54,6 @@ StackView {
     property var accounts // Expected roles: address, name, color, emoji, walletType
     required property var referenceAssetsBySymbolModel
 
-
     // Network related properties:
     property var layer1Networks
     property var layer2Networks
@@ -166,7 +165,6 @@ StackView {
             communityName: root.communityName
             communityId: root.communityId
             anyPrivilegedTokenFailed: root.anyPrivilegedTokenFailed
-
             onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
             onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
             onRetryOwnerTokenClicked: d.retryPrivilegedToken(tokenKey, chainId, accountName, accountAddress)
