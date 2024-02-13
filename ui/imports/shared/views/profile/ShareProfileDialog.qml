@@ -10,6 +10,7 @@ import StatusQ.Popups.Dialog 0.1
 import utils 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
+import shared.controls.chat 1.0
 
 StatusDialog {
     id: root
@@ -17,6 +18,9 @@ StatusDialog {
     required property string publicKey
     required property string qrCode
     required property string linkToProfile
+
+    required property string displayName
+    required property string largeImage
 
     footer: null
 
@@ -29,26 +33,44 @@ StatusDialog {
     contentItem: ColumnLayout {
         spacing: Style.current.halfPadding
 
-        Image {
-            Layout.preferredWidth: 290
-            Layout.preferredHeight: 290
-            Layout.alignment: Qt.AlignHCenter
-            asynchronous: true
-            fillMode: Image.PreserveAspectFit
-            mipmap: true
-            smooth: false
-            source: root.qrCode
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: width
+            color: Theme.palette.white
 
-            MouseArea {
+            Image {
                 anchors.fill: parent
-                acceptedButtons: Qt.RightButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: qrContextMenu.popup()
-            }
+                asynchronous: true
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                smooth: false
+                source: root.qrCode
 
-            ImageContextMenu {
-                id: qrContextMenu
-                imageSource: root.qrCode
+                UserImage {
+                    anchors.centerIn: parent
+                    name: root.displayName
+                    pubkey: root.publicKey
+                    image: root.largeImage
+                    interactive: false
+                    imageWidth: 78
+                    imageHeight: 78
+
+                    // show a hardcoded white ring
+                    showRing: true
+                    colorHash: JSON.stringify([{colorId: 4, segmentLength: 32}])
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: qrContextMenu.popup()
+                }
+
+                ImageContextMenu {
+                    id: qrContextMenu
+                    imageSource: root.qrCode
+                }
             }
         }
 
