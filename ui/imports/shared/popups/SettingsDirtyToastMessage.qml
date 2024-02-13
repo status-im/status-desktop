@@ -148,7 +148,7 @@ Rectangle {
             objectName: "settingsDirtyToastMessageSaveButton"
             buttonType: DisabledTooltipButton.Normal
             text: qsTr("Save changes")
-            enabled: false
+            enabled: root.active && root.saveChangesButtonEnabled
             interactive: root.active && root.saveChangesButtonEnabled
             onClicked: root.saveChangesClicked()
         }
