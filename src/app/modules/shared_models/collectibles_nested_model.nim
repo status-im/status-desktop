@@ -38,7 +38,7 @@ QtObject:
     result.setup
 
     signalConnect(result.flatModel, "countChanged()", result, "refreshItems()")
-    signalConnect(result.flatModel, "itemsUpdated()", result, "refreshItems()")
+    signalConnect(result.flatModel, "itemsDataUpdated()", result, "refreshItems()")
 
   # Forward declaration
   proc refreshItems*(self: Model)

@@ -181,7 +181,7 @@ QtObject:
         self.setTempItems(items, res.offset)
         # If we reached the end of the list, commit the items to the model
         if not res.hasMore:
-          self.model.setItems(self.tempItems, 0, false)
+          self.model.updateItems(self.tempItems)
           self.tempItems = @[]
     except Exception as e:
       error "Error converting activity entries: ", e.msg
@@ -207,7 +207,7 @@ QtObject:
       for jsonCollectible in jsonObj.getElems():
         let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
         collectibles.add(collectible)
-      self.model.updateItems(collectibles)
+      self.model.updateItemsData(collectibles)
       if not self.loadType.isPaginated():
         self.updateTempItems(collectibles)
 
