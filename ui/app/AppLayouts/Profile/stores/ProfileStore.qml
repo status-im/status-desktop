@@ -52,8 +52,8 @@ QtObject {
         return root.profileModule.remove()
     }
 
-    function getQrCodeSource(publicKey) {
-        return globalUtils.qrCode(publicKey)
+    function getQrCodeSource(text) {
+        return globalUtils.qrCode(text)
     }
 
     function copyToClipboard(value) {

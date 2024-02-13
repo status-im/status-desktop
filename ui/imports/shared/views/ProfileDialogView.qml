@@ -269,8 +269,10 @@ Pane {
             destroyOnClose: true
             title: d.isCurrentUser ? qsTr("Share your profile") : qsTr("%1's profile").arg(d.mainDisplayName)
             publicKey: root.publicKey
-            qrCode: root.profileStore.getQrCodeSource(Utils.getCompressedPk(root.publicKey))
             linkToProfile: d.linkToProfile
+            qrCode: root.profileStore.getQrCodeSource(linkToProfile)
+            displayName: userImage.name
+            largeImage: userImage.image
         }
     }
 
@@ -288,6 +290,7 @@ Pane {
             spacing: Style.current.halfPadding
 
             UserImage {
+                id: userImage
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
                 name: root.dirty ? root.dirtyValues.displayName

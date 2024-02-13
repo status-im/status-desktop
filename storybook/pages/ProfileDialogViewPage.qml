@@ -29,7 +29,7 @@ SplitView {
 
         function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
 
-        function getColorHashAsJson(publicKey) {
+        function getColorHashAsJson(publicKey, skipEnsVerification=false) {
             return JSON.stringify([{colorId: 0, segmentLength: 1},
                                    {colorId: 19, segmentLength: 2}])
         }
@@ -61,6 +61,10 @@ SplitView {
 
     // mainModuleInst mock
     QtObject {
+        function isEnsVerified(publicKey) {
+            return ensVerified.checked
+        }
+
         function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
             return JSON.stringify({ displayName: displayName.text,
                                       optionalName: "",
