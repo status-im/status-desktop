@@ -91,8 +91,9 @@ DropArea {
             ManageTokensCommunityTag {
                 Layout.maximumWidth: delegate.width *.4
                 visible: !!model.communityId
-                text: model.communityName
-                asset.name: model && !!model.communityImage ? model.communityImage : ""
+                communityImage: model.communityImage
+                communityName: model.communityName
+                communityId: model.communityId
             },
             ManageTokenMenuButton {
                 id: menuBtn

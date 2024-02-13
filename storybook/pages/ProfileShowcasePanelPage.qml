@@ -125,8 +125,9 @@ SplitView {
                     id: manageTokensCommunityTag
                     ManageTokensCommunityTag {
                         Layout.maximumWidth: delegate.width *.4
-                        text: model ? model.tagText : ""
-                        asset.name: model ? model.tagAsset : ""
+                        communityName: model ? model.tagText : ""
+                        communityId: ""
+                        communityImage: model ? model.tagAsset : ""
                         loading: model ? model.tagLoading : false
                     }
                 }

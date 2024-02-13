@@ -129,15 +129,12 @@ StatusListItem {
             }
             ManageTokensCommunityTag {
                 anchors.right: parent.right
-                text: modelData && !!modelData.communityName ? modelData.communityName : ""
-                name: modelData && !!modelData.communityName ? modelData.communityName : ""
-                asset.name: modelData && !!modelData.communityImage ? modelData.communityImage : ""
+                communityImage: !!modelData ? modelData.communityImage : ""
+                communityName: !!modelData && !!modelData.communityName ? modelData.communityName: ""
+                communityId: !!modelData && !!modelData.communityId ? modelData.communityId : ""
                 asset.letterSize: 12
                 visible: root.isCommunityToken
-                StatusToolTip {
-                    text: modelData ? qsTr("This token was minted by the %1 community").arg(modelData.communityName) : ""
-                    visible: parent.hovered
-                }
+                
                 TapHandler {
                     acceptedButtons: Qt.LeftButton
                     onSingleTapped: root.switchToCommunityRequested(modelData.communityId)

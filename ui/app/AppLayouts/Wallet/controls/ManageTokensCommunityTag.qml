@@ -5,16 +5,21 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import shared.controls 1.0
 import utils 1.0
 
 Control {
     id: root
 
-    property string text
     property alias asset: identicon.asset
-    property alias name: identicon.name
+    property string communityName
+    property string communityId
+    property var communityImage
     property bool loading
+    property bool useLongTextDescription: true
 
     property Component customBackground: Component {
         Rectangle {
@@ -27,6 +32,7 @@ Control {
 
     QtObject {
         id: d
+        readonly property bool unknownCommunityName: !!root.communityName ? root.communityName.startsWith("0x") && root.communityName === root.communityId : false
         property var loadingComponent: Component { LoadingComponent {} }
     }
 
@@ -47,16 +53,59 @@ Control {
             Layout.preferredHeight: visible ? 16 : 0
             asset.width: 16
             asset.height: 16
-            asset.isImage: true
-            visible: !!asset.source
+            visible: root.useLongTextDescription && !!asset.source
+            asset.name: !!root.communityImage ? root.communityImage : "help"
+            asset.isImage: !!root.communityImage
         }
-        StatusBaseText {
+
+        RowLayout {
+            spacing: 2
             Layout.fillWidth: true
-            font.pixelSize: Style.current.tertiaryTextFontSize
-            font.weight: Font.Medium
-            text: root.text
-            elide: Text.ElideRight
-            color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+
+            StatusBaseText {
+                font.pixelSize: Style.current.tertiaryTextFontSize
+                font.weight: Font.Medium
+                text:  {
+                    if (d.unknownCommunityName) {
+                        if (communityNameToolTip.visible) {
+                            if (!root.full) {
+                                return StatusQUtils.Utils.elideAndFormatWalletAddress(root.communityName)
+                            }
+                            return qsTr("Community %1").arg(StatusQUtils.Utils.elideAndFormatWalletAddress(root.communityName))
+                        }
+                        if (!root.full) {
+                            return qsTr("Unknown")
+                        }
+
+                        return qsTr("Unknown community")
+                    }
+                    
+                    return root.communityName
+                }
+                elide: Text.ElideRight
+                color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1                
+            }
+
+            CopyToClipBoardButton {
+                visible: d.unknownCommunityName && root.hovered
+                icon.height: Style.current.tertiaryTextFontSize
+                icon.width: Style.current.tertiaryTextFontSize
+                icon.color: Theme.palette.directColor1
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                color: Style.current.transparent
+                textToCopy: root.communityName
+                onCopyClicked: {
+                    Utils.copyToClipboard(textToCopy)
+                }
+            }           
         }
+    }
+
+    StatusToolTip {
+        id: communityNameToolTip
+        text: qsTr("Community name could not be fetched")
+        visible: d.unknownCommunityName && root.hovered
+        orientation: StatusToolTip.Orientation.Top
     }
 }

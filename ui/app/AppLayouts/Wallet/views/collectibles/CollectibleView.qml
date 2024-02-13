@@ -35,6 +35,11 @@ Control {
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
     property color ornamentColor // Relevant color for these special tokens (community color)
 
+    readonly property var d: QtObject {
+        id: d
+        readonly property bool unknownCommunityName: root.communityName.startsWith("0x") && root.communityId === root.communityName
+    }
+
     signal clicked
     signal rightClicked
     signal switchToCommunityRequested(string communityId)
@@ -154,15 +159,15 @@ Control {
             Layout.leftMargin: Style.current.halfPadding
             Layout.rightMargin: Style.current.halfPadding
             Layout.maximumWidth: parent.width - Layout.leftMargin - Layout.rightMargin
-            text: root.communityName
-            asset.name: root.communityImage
+            communityName: root.communityName
+            communityId: root.communityId
+            communityImage: root.communityImage
             visible: root.isCommunityCollectible
             enabled: !root.isLoading
-            StatusToolTip {
-                text: qsTr("This token was minted by the %1 community").arg(root.communityName)
-                visible: parent.hovered
-            }
+            useLongTextDescription: false
+            
             TapHandler {
+                enabled: !d.unknownCommunityName
                 acceptedButtons: Qt.LeftButton
                 onSingleTapped: root.switchToCommunityRequested(root.communityId)
             }
