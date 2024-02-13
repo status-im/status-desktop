@@ -48,6 +48,7 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         assert '1' in community.members
 
 
+@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/487')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703056', 'Edit community separately')
 @pytest.mark.case(703056)
 @pytest.mark.parametrize('community_params', [
