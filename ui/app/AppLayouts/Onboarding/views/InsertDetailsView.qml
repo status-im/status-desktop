@@ -238,6 +238,7 @@ Item {
 
         ImageCropWorkflow {
             id: cropperModal
+            objectName: "imageCropWorkflow"
             imageFileDialogTitle: qsTr("Choose an image for profile picture")
             title: qsTr("Profile picture")
             acceptButtonText: qsTr("Make this my profile picture")
