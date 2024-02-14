@@ -61,8 +61,21 @@ QtObject {
         root.contactsModule.removeContact(pubKey)
     }
 
-    function changeContactNickname(pubKey, nickname) {
+    function changeContactNickname(pubKey, nickname, displayName, isEdit) {
         root.contactsModule.changeContactNickname(pubKey, nickname)
+
+        let message = ""
+        if (nickname === "") { // removed nickname
+            message = qsTr("Nickname for %1 removed").arg(displayName)
+        } else {
+            if (isEdit)
+                message = qsTr("Nickname for %1 changed").arg(displayName) // changed nickname
+            else
+                message = qsTr("Nickname for %1 added").arg(displayName) // added a new nickname
+        }
+        if (!!message) {
+            Global.displaySuccessToastMessage(message)
+        }
     }
 
     function sendContactRequest(pubKey, message) {

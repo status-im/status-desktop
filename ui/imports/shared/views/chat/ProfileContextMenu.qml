@@ -194,8 +194,7 @@ StatusMenu {
         icon.name: "edit_pencil"
         enabled: !root.isMe && !root.isBridgedAccount
         onTriggered: {
-            Global.openNicknamePopupRequested(root.selectedUserPublicKey, contactDetails.localNickname,
-                                              "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
+            Global.openNicknamePopupRequested(root.selectedUserPublicKey, root.contactDetails)
             root.close()
         }
     }
@@ -204,6 +203,14 @@ StatusMenu {
         visible: blockMenuItem.enabled
                  || markUntrustworthyMenuItem.enabled
                  || removeUntrustworthyMarkMenuItem.enabled
+    }
+
+    StatusAction {
+        text: qsTr("Remove nickname")
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
+        enabled: !root.isMe && !!contactDetails.localNickname
+        onTriggered: root.store.contactsStore.changeContactNickname(root.selectedUserPublicKey, "", root.selectedUserDisplayName, true)
     }
 
     StatusAction {
