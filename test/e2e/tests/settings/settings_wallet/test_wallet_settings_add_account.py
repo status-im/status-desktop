@@ -14,6 +14,8 @@ from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/703598',
                  'Add new account from wallet settings screen')
 @pytest.mark.case(703598)
@@ -21,7 +23,8 @@ pytestmark = marks
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +
-                                                                 string.digits, k=15)), '#2a4af5', 'sunglasses', '1f60e')
+                                                                 string.digits, k=15)), '#2a4af5', 'sunglasses',
+                                          '1f60e')
                          ])
 def test_add_new_account_from_wallet_settings(
         main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):

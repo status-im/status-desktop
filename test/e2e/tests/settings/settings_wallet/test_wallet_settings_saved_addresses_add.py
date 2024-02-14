@@ -24,6 +24,7 @@ pytestmark = marks
                                  '0x8397bc3c5a60a1883174f722403d63a8833312b7')
                          ])
 @pytest.mark.case(704620)
+@pytest.mark.critical
 def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str, name: str):
     with (step('Open wallet settings - Saved addresses section')):
         settings_saved_addresses = \
