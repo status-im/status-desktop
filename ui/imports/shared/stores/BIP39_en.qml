@@ -12,8 +12,10 @@ ListModel {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 root.words = xhr.responseText.split('\n');
                 for (var i = 0; i < root.words.length; i++) {
-                    if (root.words[i] !== "") {
-                        insert(count, {"seedWord": root.words[i]});
+                    let word = root.words[i]
+                    word = word.replace(/\r?\n|\r/, "")
+                    if (word !== "") {
+                        insert(count, {"seedWord": word});
                     }
                 }
             }
