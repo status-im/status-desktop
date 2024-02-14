@@ -19,7 +19,7 @@ class ProfileSettingsView(QObject):
         super().__init__(names.mainWindow_MyProfileView)
         self._scroll_view = Scroll(names.settingsContentBaseScrollView_Flickable)
         self._display_name_text_field = TextEdit(names.displayName_TextEdit)
-        self._save_button = Button(names.settingsSave_StatusButton)
+        self._save_button = Button(names.mainWindow_Save_changes_StatusButton)
         self._bio_text_field = TextEdit(names.bio_TextEdit)
         self._add_more_links_label = TextLabel(names.addMoreSocialLinks)
         self._links_list = QObject(names.linksView)
