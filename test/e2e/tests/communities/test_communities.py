@@ -86,6 +86,7 @@ def test_edit_community_separately(main_screen, community_params):
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
+@pytest.mark.critical
 @pytest.mark.parametrize('params', [
     {
         'name': 'Updated Name',
