@@ -146,6 +146,7 @@ ColumnLayout {
 
     StatusSwitchTabBar {
         id: switchTabBar
+        objectName: "enterSeedPhraseSwitchBar"
         Layout.alignment: Qt.AlignHCenter
         Repeater {
             model: d.tabs
@@ -176,6 +177,7 @@ ColumnLayout {
               "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
         ]
         
+        objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
         clip: false
@@ -235,7 +237,7 @@ ColumnLayout {
         delegate: StatusSeedPhraseInput {
             id: seedWordInput
 
-            textEdit.input.edit.objectName: `statusSeedPhraseInputField${seedWordInput.leftComponentText}`
+            textEdit.input.edit.objectName: `enterSeedPhraseInputField${seedWordInput.leftComponentText}`
             width: (grid.cellWidth - 8)
             height: (grid.cellHeight - 8)
             Behavior on width { NumberAnimation { duration: 180 } }
@@ -328,6 +330,7 @@ ColumnLayout {
 
     StatusBaseText {
         id: invalidSeedTxt
+        objectName: "enterSeedPhraseInvalidSeedText"
         Layout.alignment: Qt.AlignHCenter
         color: Theme.palette.dangerColor1
     }
