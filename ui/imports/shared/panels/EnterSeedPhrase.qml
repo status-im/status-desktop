@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -16,17 +17,26 @@ ColumnLayout {
     //**************************************************************************
     //* This component is not refactored, just pulled out to a shared location *
     //**************************************************************************
-
     spacing: Style.current.padding
     clip: true
 
+    readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
     property var isSeedPhraseValid: function (mnemonic) { return false }
+    property ListModel dictionary: BIP39_en {}
 
     signal submitSeedPhrase()
     signal seedPhraseUpdated(bool valid, string seedPhrase)
 
     function setWrongSeedPhraseMessage(message) {
         invalidSeedTxt.text = message
+        // Validate again the seed phrase
+        // This is needed because the message can be set to empty and the seed phrase is still invalid
+        if (message === "")
+            d.validate()
+    }
+
+    function getSeedPhraseAsString() {
+        return d.buildMnemonicString()
     }
 
     QtObject {
@@ -34,18 +44,18 @@ ColumnLayout {
 
         property bool allEntriesValid: false
         property var mnemonicInput: []
+        property var incorrectWordAtIndex: []
         readonly property var tabs: [12, 18, 24]
-        readonly property ListModel seedPhrases_en: BIP39_en {}
+        readonly property alias seedPhrases_en: root.dictionary
+
+        onIncorrectWordAtIndexChanged: d.validate()
 
         onAllEntriesValidChanged: {
             let mnemonicString = ""
-            if (d.allEntriesValid) {
-                const sortTable = mnemonicInput.sort((a, b) => a.pos - b.pos)
-                for (let i = 0; i < mnemonicInput.length; i++) {
-                    d.checkWordExistence(sortTable[i].seed)
-                    mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ")
-                }
 
+            if (d.allEntriesValid) {
+
+                mnemonicString = buildMnemonicString()
                 if (!Utils.isMnemonic(mnemonicString) || !root.isSeedPhraseValid(mnemonicString)) {
                     root.setWrongSeedPhraseMessage(qsTr("Invalid seed phrase"))
                     d.allEntriesValid = false
@@ -54,25 +64,43 @@ ColumnLayout {
             root.seedPhraseUpdated(d.allEntriesValid, mnemonicString)
         }
 
-        function checkMnemonicLength() {
-            d.allEntriesValid = d.mnemonicInput.length === d.tabs[switchTabBar.currentIndex]
+        function validate() {
+            if (d.incorrectWordAtIndex.length > 0) {
+                invalidSeedTxt.text = qsTr("The phrase you’ve entered is invalid")
+                return
+            }
+
+            invalidSeedTxt.text = ""
         }
 
-        function checkWordExistence(word) {
-            d.allEntriesValid = d.allEntriesValid && d.seedPhrases_en.words.includes(word)
-            if (d.allEntriesValid) {
-                root.setWrongSeedPhraseMessage("")
+        function checkMnemonicLength() {
+            d.allEntriesValid = d.mnemonicInput.length === d.tabs[switchTabBar.currentIndex] && d.incorrectWordAtIndex.length === 0
+        }
+
+        function buildMnemonicString() {
+            const sortTable = mnemonicInput.sort((a, b) => a.pos - b.pos)
+            return sortTable.map(x => x.seed).join(" ")
+        }
+
+        function checkWordExistence(word, pos) {
+            if (word !== "" && !ModelUtils.contains(d.seedPhrases_en, "seedWord", word)) {
+                const incorrectWordAtIndex = d.incorrectWordAtIndex
+                incorrectWordAtIndex.push(pos)
+                d.incorrectWordAtIndex = incorrectWordAtIndex
+                return
             }
-            else {
-                root.setWrongSeedPhraseMessage(qsTr("The phrase you’ve entered is invalid"))
-            }
+            
+            d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
+                return value !== pos
+            })
         }
 
         function pasteWords () {
-            const clipboardText = globalUtils.getFromClipboard()
+            const clipboardText = Utils.getFromClipboard()
+
             // Split words separated by commas and or blank spaces (spaces, enters, tabs)
             const words = clipboardText.trim().split(/[, \s]+/)
-
+            
             let index = d.tabs.indexOf(words.length)
             if (index === -1) {
                 return false
@@ -118,7 +146,8 @@ ColumnLayout {
 
     StatusSwitchTabBar {
         id: switchTabBar
-        Layout.preferredWidth: parent.width
+        objectName: "enterSeedPhraseSwitchBar"
+        Layout.alignment: Qt.AlignHCenter
         Repeater {
             model: d.tabs
             StatusSwitchTabButton {
@@ -130,6 +159,9 @@ ColumnLayout {
         onCurrentIndexChanged: {
             d.mnemonicInput = d.mnemonicInput.filter(function(value) {
                 return value.pos <= d.tabs[switchTabBar.currentIndex]
+            })
+            d.incorrectWordAtIndex = d.incorrectWordAtIndex.filter(function(value) {
+                return value <= d.tabs[switchTabBar.currentIndex]
             })
             d.checkMnemonicLength()
         }
@@ -144,42 +176,46 @@ ColumnLayout {
             ,["1", "5", "9", "13", "17", "21", "2", "6", "10", "14", "18", "22",
               "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
         ]
-        Layout.preferredWidth: parent.width
+        
+        objectName: "enterSeedPhraseGridView"
+        Layout.fillWidth: true
         Layout.preferredHeight: 312
         clip: false
         flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
         interactive: false
-        z: 100000
-        cacheBuffer: 9999
         model: switchTabBar.currentItem.text.substring(0,2)
 
         function addWord(pos, word, ignoreGoingNext = false) {
-            d.mnemonicInput.push({pos: pos, seed: word.replace(/\s/g, '')})
 
-            for (let j = 0; j < d.mnemonicInput.length; j++) {
-                if (d.mnemonicInput[j].pos === pos && d.mnemonicInput[j].seed !== word) {
-                    d.mnemonicInput[j].seed = word
+            const words = d.mnemonicInput
+
+            words.push({pos: pos, seed: word.replace(/\s/g, '')})
+
+            for (let j = 0; j < words.length; j++) {
+                if (words[j].pos === pos && words[j].seed !== word) {
+                    words[j].seed = word
                     break
                 }
             }
             //remove duplicates
-            const valueArr = d.mnemonicInput.map(item => item.pos)
+            const valueArr = words.map(item => item.pos)
             const isDuplicate = valueArr.some((item, idx) => {
                                                   if (valueArr.indexOf(item) !== idx) {
-                                                      d.mnemonicInput.splice(idx, 1)
+                                                      words.splice(idx, 1)
                                                   }
                                                   return valueArr.indexOf(item) !== idx
                                               })
             if (!ignoreGoingNext) {
                 for (let i = 0; i < grid.count; i++) {
-                    if (grid.itemAtIndex(i).mnemonicIndex !== (pos + 1)) {
+                    const item = grid.itemAtIndex(i)
+                    if (!item || item.mnemonicIndex !== (pos + 1)) {
                         continue
                     }
 
-                    grid.currentIndex = grid.itemAtIndex(i).itemIndex
-                    grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus()
+                    grid.currentIndex = item.itemIndex
+                    item.textEdit.input.edit.forceActiveFocus()
 
                     if (grid.currentIndex !== 12) {
                         continue
@@ -192,12 +228,16 @@ ColumnLayout {
                     }
                 }
             }
+            d.mnemonicInput = words
+            d.checkWordExistence(word, pos)
             d.checkMnemonicLength()
+            root.seedPhraseUpdated(d.allEntriesValid, d.buildMnemonicString())
         }
 
         delegate: StatusSeedPhraseInput {
             id: seedWordInput
-            textEdit.input.edit.objectName: `statusSeedPhraseInputField${seedWordInput.leftComponentText}`
+
+            textEdit.input.edit.objectName: `enterSeedPhraseInputField${seedWordInput.leftComponentText}`
             width: (grid.cellWidth - 8)
             height: (grid.cellHeight - 8)
             Behavior on width { NumberAnimation { duration: 180 } }
@@ -218,12 +258,15 @@ ColumnLayout {
             inputList: d.seedPhrases_en
 
             property int itemIndex: index
-            z: (grid.currentIndex === index) ? 150000000 : 0
-            onTextChanged: {
-                d.checkWordExistence(text)
-            }
             onDoneInsertingWord: {
                 grid.addWord(mnemonicIndex, word)
+            }
+            onEditingFinished: {
+                if (text === "") {
+                    return
+                }
+
+                grid.addWord(mnemonicIndex, text, true)
             }
             onEditClicked: {
                 grid.currentIndex = index
@@ -287,7 +330,7 @@ ColumnLayout {
 
     StatusBaseText {
         id: invalidSeedTxt
-        visible: text !== ""
+        objectName: "enterSeedPhraseInvalidSeedText"
         Layout.alignment: Qt.AlignHCenter
         color: Theme.palette.dangerColor1
     }

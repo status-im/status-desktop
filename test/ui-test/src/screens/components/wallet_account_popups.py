@@ -83,7 +83,7 @@ class AddNewAccountPopup(BasePopup):
         else:
             raise RuntimeError("Wrong amount of seed words", len(seed_phrase_words))
         for count, word in enumerate(seed_phrase_words, start=1):
-            self._seed_phrase_word_text_edit.object_name['objectName'] = f'statusSeedPhraseInputField{count}'
+            self._seed_phrase_word_text_edit.object_name['objectName'] = f'enterSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
         seed_phrase_name = ''.join([word[0] for word in seed_phrase_words[:10]])
         self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name

@@ -1,23 +1,17 @@
 import QtQuick 2.13
 
+import StatusQ.Core.Utils 0.1
+
 ListModel {
     id: root
 
-    property var words: []
-
     Component.onCompleted: {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "english.txt");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                root.words = xhr.responseText.split('\n');
-                for (var i = 0; i < root.words.length; i++) {
-                    if (root.words[i] !== "") {
-                        insert(count, {"seedWord": root.words[i]});
-                    }
-                }
+        const words = StringUtils.readTextFile(":/imports/shared/stores/english.txt").split(/\r?\n|\r/);
+        for (var i = 0; i < words.length; i++) {
+            let word = words[i]
+            if (word !== "") {
+                insert(count, {"seedWord": word});
             }
         }
-        xhr.send();
     }
 }

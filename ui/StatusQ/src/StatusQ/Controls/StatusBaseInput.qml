@@ -267,6 +267,11 @@ Item {
          This signal is emitted when the text edit is clicked.
     */
     signal editClicked()
+    /*!
+        \qmlsignal editingFinished
+         This signal is emitted when the text edit loses focus.
+    */
+    signal editingFinished()
 
     onFocusChanged: {
         if(focus) edit.forceActiveFocus()
@@ -368,12 +373,20 @@ Item {
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
                         Keys.onReturnPressed: {
-                            root.keyPressed(event)
                             event.accepted = !multiline && !acceptReturn
+                            // Special case for single line inputs, where we want to accept the return key, but notify the parend
+                            // Enter and return can be used to accept the input
+                            if (event.accepted) {
+                                root.keyPressed(event)
+                            }
                         }
                         Keys.onEnterPressed: {
-                            root.keyPressed(event)
                             event.accepted = !multiline && !acceptReturn
+                            // Special case for single line inputs, where we want to accept the return key, but notify the parend
+                            // Enter and return can be used to accept the input
+                            if (event.accepted) {
+                                root.keyPressed(event)
+                            }
                         }
                         Keys.forwardTo: [root]
                         KeyNavigation.priority: !!root.tabNavItem ? KeyNavigation.BeforeItem : KeyNavigation.AfterItem
@@ -408,6 +421,9 @@ Item {
                                 }
                                 previousText = text
                             }
+                        }
+                        onEditingFinished: {
+                            root.editingFinished()
                         }
 
                         cursorDelegate: StatusCursorDelegate {

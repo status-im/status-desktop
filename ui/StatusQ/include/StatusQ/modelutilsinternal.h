@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <QAbstractItemModel>
 
-class QAbstractItemModel;
 class QJSEngine;
 class QQmlEngine;
 
