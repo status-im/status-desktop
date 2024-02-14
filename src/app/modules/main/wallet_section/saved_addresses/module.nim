@@ -88,13 +88,15 @@ method savedAddressNameExists*(self: Module, name: string): bool =
   return self.view.getModel().nameExists(name, self.controller.areTestNetworksEnabled())
 
 method getSavedAddressAsJson*(self: Module, address: string): string =
-  let item = self.view.getModel().getItemByAddress(address, self.controller.areTestNetworksEnabled())
+  let saDto = self.controller.getSavedAddress(address, ignoreNetworkMode = false)
+  if saDto.isNil:
+    return ""
   let jsonObj = %* {
-    "name": item.getName(),
-    "address": item.getAddress(),
-    "ens": item.getEns(),
-    "colorId": item.getColorId(),
-    "chainShortNames": item.getChainShortNames(),
-    "isTest": item.getIsTest(),
+    "name": saDto.name,
+    "address": saDto.address,
+    "ens": saDto.ens,
+    "colorId": saDto.colorId,
+    "chainShortNames": saDto.chainShortNames,
+    "isTest": saDto.isTest,
   }
   return $jsonObj

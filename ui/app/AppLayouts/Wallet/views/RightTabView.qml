@@ -46,7 +46,7 @@ RightTabBaseView {
             target: walletSection
 
             function onFilterChanged() {
-                root.resetStack()
+                root.resetView()
             }
         }
 
@@ -198,9 +198,9 @@ RightTabBaseView {
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
-                        onLaunchTransactionDetail: function (entry, entryIndex) {
+                        onLaunchTransactionDetail: function (entryIndex) {
                             transactionDetailView.transactionIndex = entryIndex
-                            transactionDetailView.transaction = entry
+                            transactionDetailView.transaction = Qt.binding(() => selectedTransaction)
                             stack.currentIndex = 3
                         }
                     }

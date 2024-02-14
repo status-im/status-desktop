@@ -34,11 +34,22 @@ Item {
     property bool showAllAccounts: false
     readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
-    onTransactionChanged: d.updateTransactionDetails()
+    onTransactionChanged: {
+        d.reEvaluateSender = !d.reEvaluateSender
+        d.reEvaluateRecipient = !d.reEvaluateRecipient
+        d.reEvaluateSender = !d.reEvaluateSender
+        d.reEvaluateRecipient = !d.reEvaluateRecipient
+
+        d.updateTransactionDetails()
+    }
+
     Component.onCompleted: d.updateTransactionDetails()
 
     QtObject {
         id: d
+
+        property bool reEvaluateSender: true
+        property bool reEvaluateRecipient: true
 
         property var details: null
         readonly property bool isDetailsValid: details !== undefined && !!details
@@ -281,7 +292,7 @@ Item {
                         width: parent.width
                         title: d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge ?
                                    qsTr("In") : qsTr("From")
-                        addresses: root.isTransactionValid ? [root.transaction.sender] : []
+                        addresses: root.isTransactionValid && d.reEvaluateSender? [root.transaction.sender] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
@@ -324,7 +335,7 @@ Item {
                     TransactionAddressTile {
                         width: parent.width
                         title: qsTr("To")
-                        addresses: root.isTransactionValid && visible ? [root.transaction.recipient] : []
+                        addresses: root.isTransactionValid && visible && d.reEvaluateRecipient? [root.transaction.recipient] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], [d.networkShortName])

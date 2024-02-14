@@ -82,10 +82,11 @@ QtObject:
   proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
     return self.savedAddresses
 
-  proc getSavedAddress*(self: Service, address: string): SavedAddressDto =
+  proc getSavedAddress*(self: Service, address: string, ignoreNetworkMode: bool = true): SavedAddressDto =
     for sa in self.savedAddresses:
-      if cmpIgnoreCase(sa.address, address) == 0:
-        return sa
+      if cmpIgnoreCase(sa.address, address) == 0 and
+        (ignoreNetworkMode or sa.isTest == self.areTestNetworksEnabled()):
+          return sa
 
   proc updateAddresses(self: Service, signal: string, arg: Args) =
     self.savedAddresses = self.getAddresses()
