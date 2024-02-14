@@ -119,7 +119,7 @@ QtObject:
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
+        error "Error requesting profile showcase for a contact", msg = rpcResponseObj{"error"}
         return
 
       let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()

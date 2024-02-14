@@ -141,16 +141,21 @@ proc toJsonNode*(self: ProfileShowcaseUnverifiedTokenPreference): JsonNode =
 proc toProfileShowcasePreferencesDto*(jsonObj: JsonNode): ProfileShowcasePreferencesDto =
   result = ProfileShowcasePreferencesDto()
 
-  for jsonMsg in jsonObj["communities"]:
-    result.communities.add(jsonMsg.toProfileShowcaseCommunityPreference())
-  for jsonMsg in jsonObj["accounts"]:
-    result.accounts.add(jsonMsg.toProfileShowcaseAccountPreference())
-  for jsonMsg in jsonObj["collectibles"]:
-    result.collectibles.add(jsonMsg.toProfileShowcaseCollectiblePreference())
-  for jsonMsg in jsonObj["verifiedTokens"]:
-    result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedTokenPreference())
-  for jsonMsg in jsonObj["unverifiedTokens"]:
-    result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedTokenPreference())
+  if jsonObj["communities"].kind != JNull:
+    for jsonMsg in jsonObj["communities"]:
+      result.communities.add(jsonMsg.toProfileShowcaseCommunityPreference())
+  if jsonObj["accounts"].kind != JNull:
+    for jsonMsg in jsonObj["accounts"]:
+      result.accounts.add(jsonMsg.toProfileShowcaseAccountPreference())
+  if jsonObj["collectibles"].kind != JNull:
+    for jsonMsg in jsonObj["collectibles"]:
+      result.collectibles.add(jsonMsg.toProfileShowcaseCollectiblePreference())
+  if jsonObj["verifiedTokens"].kind != JNull:
+    for jsonMsg in jsonObj["verifiedTokens"]:
+      result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedTokenPreference())
+  if jsonObj["unverifiedTokens"].kind != JNull:
+    for jsonMsg in jsonObj["unverifiedTokens"]:
+      result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedTokenPreference())
 
 proc toJsonNode*(self: ProfileShowcasePreferencesDto): JsonNode =
   let communities = self.communities.map(entry => entry.toJsonNode())
