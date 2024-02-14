@@ -111,15 +111,6 @@ Pane {
                     d.reload()
             }
         }
-
-        readonly property var conns4: Connections {
-            target: Global
-
-            function onContactRenamed(pubKey) {
-                if (pubKey === root.publicKey)
-                    d.reload()
-            }
-        }
     }
 
     function reload() {
@@ -395,7 +386,6 @@ Pane {
                         enabled: !d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent &&
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
-                            moreMenu.close()
                             Global.openContactRequestPopup(root.publicKey, null)
                         }
                     }
@@ -406,7 +396,6 @@ Pane {
                                  d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
                                  !d.isVerificationRequestReceived
                         onTriggered: {
-                            moreMenu.close()
                             Global.openSendIDRequestPopup(root.publicKey,
                                                           popup => popup.accepted.connect(d.reload))
                         }
@@ -417,7 +406,6 @@ Pane {
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
                         onTriggered: {
-                            moreMenu.close()
                             Global.openOutgoingIDRequestPopup(root.publicKey,
                                                               popup => popup.closed.connect(d.reload))
                         }
@@ -426,9 +414,7 @@ Pane {
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
-                            moreMenu.close()
-                            Global.openNicknamePopupRequested(root.publicKey, d.userNickName,
-                                                              "%1 (%2)".arg(d.optionalDisplayName).arg(Utils.getElidedCompressedPk(root.publicKey)))
+                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails)
                         }
                     }
                     StatusAction {
@@ -436,7 +422,6 @@ Pane {
                         icon.name: "qr"
                         enabled: !d.isCurrentUser
                         onTriggered: {
-                            moreMenu.close()
                             Global.openPopup(shareProfileCmp)
                         }
                     }
@@ -444,19 +429,23 @@ Pane {
                         text: qsTr("Copy link to profile")
                         icon.name: "copy"
                         onTriggered: {
-                            moreMenu.close()
                             root.profileStore.copyToClipboard(d.linkToProfile)
                         }
                     }
                     StatusMenuSeparator {}
-                    // TODO Remove nickname
+                    StatusAction {
+                        text: qsTr("Remove nickname")
+                        icon.name: "delete"
+                        type: StatusAction.Type.Danger
+                        enabled: !d.isCurrentUser && !!d.contactDetails.localNickname
+                        onTriggered: root.contactsStore.changeContactNickname(root.publicKey, "", d.optionalDisplayName, true)
+                    }
                     StatusAction {
                         text: qsTr("Unblock user")
                         icon.name: "cancel"
                         type: StatusAction.Type.Danger
                         enabled: d.isBlocked
                         onTriggered: {
-                            moreMenu.close()
                             Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
                         }
                     }
@@ -466,7 +455,6 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.unknown && !d.isBlocked
                         onTriggered: {
-                            moreMenu.close()
                             if (d.isContact && !d.isTrusted && d.isVerificationRequestReceived)
                                 root.contactsStore.verifiedUntrustworthy(root.publicKey)
                             else
@@ -480,7 +468,6 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
-                            moreMenu.close()
                             root.contactsStore.removeTrustStatus(root.publicKey)
                             d.reload()
                         }
@@ -491,7 +478,6 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && d.isTrusted
                         onTriggered: {
-                            moreMenu.close()
                             removeVerificationConfirmationDialog.open()
                         }
                     }
@@ -501,8 +487,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
-                            Global.removeContactRequested(d.mainDisplayName, root.publicKey);
-                            moreMenu.close();
+                            Global.removeContactRequested(d.mainDisplayName, root.publicKey)
                         }
                     }
                     StatusAction {
@@ -511,7 +496,6 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
                         onTriggered: {
-                            moreMenu.close()
                             Global.blockContactRequested(root.publicKey, d.mainDisplayName)
                         }
                     }

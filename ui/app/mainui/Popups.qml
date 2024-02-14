@@ -60,7 +60,6 @@ QtObject {
         Global.unblockContactRequested.connect(openUnblockContactPopup)
         Global.openChangeProfilePicPopup.connect(openChangeProfilePicPopup)
         Global.openBackUpSeedPopup.connect(openBackUpSeedPopup)
-        Global.openEditDisplayNamePopup.connect(openEditDisplayNamePopup)
         Global.openPinnedMessagesPopupRequested.connect(openPinnedMessagesPopup)
         Global.openCommunityProfilePopupRequested.connect(openCommunityProfilePopup)
         Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
@@ -133,8 +132,8 @@ QtObject {
         openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup}, cb)
     }
 
-    function openNicknamePopup(publicKey: string, nickname: string, subtitle: string) {
-        openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "headerSettings.subTitle": subtitle})
+    function openNicknamePopup(publicKey: string, contactDetails) {
+        openPopup(nicknamePopupComponent, {publicKey, contactDetails})
     }
 
     function openBlockContactPopup(publicKey: string, contactName: string) {
@@ -152,10 +151,6 @@ QtObject {
 
     function openBackUpSeedPopup() {
         openPopup(backupSeedModalComponent)
-    }
-
-    function openEditDisplayNamePopup() {
-        openPopup(displayNamePopupComponent)
     }
 
     function openCommunityProfilePopup(store, community, communitySectionModule) {
@@ -431,15 +426,6 @@ QtObject {
             }
         },
 
-        // FIXME remove, unused
-        Component {
-            id: displayNamePopupComponent
-            DisplayNamePopup {
-                profileStore: rootStore.profileSectionStore.profileStore
-                onClosed: destroy()
-            }
-        },
-
         Component {
             id: downloadPageComponent
             DownloadPage {
@@ -527,9 +513,12 @@ QtObject {
             NicknamePopup {
                 onEditDone: {
                     if (nickname !== newNickname) {
-                        rootStore.contactStore.changeContactNickname(publicKey, newNickname)
-                        Global.contactRenamed(publicKey)
+                        rootStore.contactStore.changeContactNickname(publicKey, newNickname, originalDisplayName, !!nickname)
                     }
+                    close()
+                }
+                onRemoveNicknameRequested: {
+                    rootStore.contactStore.changeContactNickname(publicKey, "", originalDisplayName, true)
                     close()
                 }
                 onClosed: destroy()

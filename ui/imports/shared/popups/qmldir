@@ -1,4 +1,5 @@
 ChatCommandsPopup 1.0 ChatCommandsPopup.qml
+CommonContactDialog 1.0 CommonContactDialog.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
 SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
@@ -16,7 +17,6 @@ UserStatusContextMenu 1.0 UserStatusContextMenu.qml
 ProfileDialog 1.0 ProfileDialog.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
-DisplayNamePopup 1.0 DisplayNamePopup.qml
 SendContactRequestModal 1.0 SendContactRequestModal.qml
 GetSyncCodeInstructionsPopup 1.0 GetSyncCodeInstructionsPopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml

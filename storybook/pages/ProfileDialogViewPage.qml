@@ -116,8 +116,9 @@ SplitView {
         popupParent: root
         rootStore: QtObject {
             property var contactStore: QtObject {
-                function changeContactNickname(publicKey, newNickname) {
-                    logs.logEvent("rootStore::contactStore::changeContactNickname", ["publicKey", "newNickname"], arguments)
+                function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
+                    logs.logEvent("rootStore::contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
+                    localNickname.text = newNickname
                 }
 
                 function blockContact(publicKey) {
@@ -175,7 +176,7 @@ SplitView {
                                 logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
                             }
                             function requestProfileShowcase(publicKey) {
-                                console.warn("STUB: requestProfileShowcase(publicKey)")
+                                logs.logEvent("profileStore::requestProfileShowcase", ["publicKey"], arguments)
                             }
 
                             readonly property var profileShowcaseCommunitiesModel: CommunitiesModel {}
@@ -221,6 +222,11 @@ SplitView {
 
                             function getLinkToProfile(publicKey) {
                                 return Constants.userLinkPrefix + publicKey
+                            }
+
+                            function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
+                                logs.logEvent("contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
+                                localNickname.text = newNickname
                             }
                         }
 
@@ -281,12 +287,13 @@ SplitView {
                     Label { text: "localNickname:" }
                     TextField {
                         id: localNickname
-                        text: "MockNickname"
+                        text: "Nick"
                         placeholderText: "Local Nickname"
                     }
                     Label { text: "displayName:" }
                     TextField {
                         id: displayName
+                        text: "Alex Pella"
                         placeholderText: "Display Name"
                     }
                 }

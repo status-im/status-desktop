@@ -31,13 +31,12 @@ QtObject {
 
     signal openPopupRequested(var popupComponent, var params)
     signal closePopupRequested()
-    signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
+    signal openNicknamePopupRequested(string publicKey, var contactDetails)
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
     signal openBackUpSeedPopup()
     signal openImagePopup(var image, string url)
     signal openProfilePopupRequested(string publicKey, var parentPopup, var cb)
-    signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested()
     signal openSendIDRequestPopup(string publicKey, var cb)
     signal openContactRequestPopup(string publicKey, var cb)
@@ -49,7 +48,6 @@ QtObject {
     signal openDownloadImageDialog(string imageSource)
     signal openExportControlNodePopup(var community)
     signal openImportControlNodePopup(var community)
-    signal contactRenamed(string publicKey)
     signal openTransferOwnershipPopup(string communityId,
                                       string communityName,
                                       string communityLogo,
@@ -130,5 +128,16 @@ QtObject {
         else
             menu.popup()
         return menu
+    }
+
+    function displaySuccessToastMessage(title: string, subTitle = "") {
+        root.displayToastMessage(
+            title,
+            subTitle,
+            "checkmark-circle",
+            false,
+            Constants.ephemeralNotificationType.success,
+            ""
+        )
     }
 }
