@@ -137,8 +137,10 @@ proc newModule*(
   result.transactionService = transactionService
   let collectiblesToTokenConverter = proc(id: string): backend_activity.Token =
     return allCollectiblesModule.getAllCollectiblesModel().getActivityToken(id)
-  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events, collectiblesToTokenConverter)
-  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events, collectiblesToTokenConverter)
+  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService,
+    savedAddressService, events, collectiblesToTokenConverter)
+  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService,
+    savedAddressService, events, collectiblesToTokenConverter)
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 

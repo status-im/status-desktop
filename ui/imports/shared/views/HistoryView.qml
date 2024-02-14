@@ -32,7 +32,9 @@ ColumnLayout {
     property var sendModal
     property bool filterVisible
 
-    signal launchTransactionDetail(var transaction, int entryIndex)
+    property var selectedTransaction
+
+    signal launchTransactionDetail(int entryIndex)
 
     function resetView() {
         if (!!filterPanelLoader.item) {
@@ -430,7 +432,8 @@ ColumnLayout {
                 if (mouse.button === Qt.RightButton) {
                     delegateMenu.openMenu(this, mouse, modelData)
                 } else {
-                    launchTransactionDetail(modelData, index)
+                    root.selectedTransaction = Qt.binding(() => model.activityEntry)
+                    launchTransactionDetail(index)
                 }
             }
         }

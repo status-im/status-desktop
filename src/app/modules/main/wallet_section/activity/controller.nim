@@ -22,6 +22,8 @@ import app_service/common/types
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/saved_address/service as saved_address_service
 
 import app/modules/shared/wallet_utils
 import app/modules/shared_models/currency_amount
@@ -47,6 +49,7 @@ QtObject:
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
       tokenService: token_service.Service
+      savedAddressService: saved_address_service.Service
       activityDetails: ActivityDetails
 
       eventsHandler: EventsHandler
@@ -225,7 +228,29 @@ QtObject:
       error "error requesting oldest activity timestamp: ", resJson.error
       return
 
-  proc setupEventHandlers(self: Controller) =
+  proc checkAllSavedAddresses(self: Controller) =
+    let appNetwork = self.savedAddressService.areTestNetworksEnabled()
+    let addressesToSearchThrough = self.savedAddressService.getSavedAddresses().filter(x => x.isTest == appNetwork)
+    for saDto in addressesToSearchThrough:
+      self.model.refreshItemsContainingAddress(saDto.address)
+
+  proc setupEventHandlers(self: Controller, events: EventEmitter) =
+    # setup in app direct event handlers
+    events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+      self.checkAllSavedAddresses()
+
+    events.on(SIGNAL_SAVED_ADDRESSES_UPDATED) do(e:Args):
+      self.checkAllSavedAddresses()
+
+    events.on(SIGNAL_SAVED_ADDRESS_UPDATED) do(e:Args):
+      let args = SavedAddressArgs(e)
+      self.model.refreshItemsContainingAddress(args.address)
+
+    events.on(SIGNAL_SAVED_ADDRESS_DELETED) do(e:Args):
+      let args = SavedAddressArgs(e)
+      self.model.refreshItemsContainingAddress(args.address)
+
+    # setup other event handlers
     self.eventsHandler.onFilteringDone(proc (jsonObj: JsonNode) =
       self.processResponse(jsonObj)
     )
@@ -271,7 +296,7 @@ QtObject:
         error "error fetching collectibles: ", res.errorCode
         return
 
-      try: 
+      try:
         let items = res.collectibles.map(header => collectibleToItem(header))
         self.collectiblesModel.setItems(items, res.offset, res.hasMore)
       except Exception as e:
@@ -285,6 +310,7 @@ QtObject:
   proc newController*(requestId: int32,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
+                      savedAddressService: saved_address_service.Service,
                       events: EventEmitter,
                       collectiblesConverter: CollectiblesToTokenConverter): Controller =
     new(result, delete)
@@ -294,6 +320,7 @@ QtObject:
     result.recipientsModel = newRecipientsModel()
     result.collectiblesModel = newCollectiblesModel()
     result.tokenService = tokenService
+    result.savedAddressService = savedAddressService
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
     result.eventsHandler = newEventsHandler(result.requestId, events)
@@ -311,7 +338,7 @@ QtObject:
 
     result.setup()
 
-    result.setupEventHandlers()
+    result.setupEventHandlers(events)
 
   proc setFilterStatus*(self: Controller, statusesArrayJsonString: string) {.slot.} =
     let statusesJson = parseJson(statusesArrayJsonString)

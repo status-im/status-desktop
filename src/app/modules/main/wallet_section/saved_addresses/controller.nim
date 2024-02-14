@@ -43,6 +43,9 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
 
+proc getSavedAddress*(self: Controller, address: string, ignoreNetworkMode: bool): SavedAddressDto =
+  return self.savedAddressService.getSavedAddress(address, ignoreNetworkMode)
+
 proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, ens: string, colorId: string,
   chainShortNames: string) =
   self.savedAddressService.createOrUpdateSavedAddress(name, address, ens, colorId, chainShortNames)

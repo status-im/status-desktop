@@ -66,6 +66,14 @@ Item {
 
     implicitHeight: Math.max(44, contentColumn.height) + 12
 
+    onAddressChanged: {
+        d.refresh()
+    }
+
+    Component.onCompleted: {
+        d.refresh()
+    }
+
     QtObject {
         id: d
 
@@ -79,7 +87,7 @@ Item {
         property string walletAddressEmoji
         property string walletAddressColor
 
-        Component.onCompleted: {
+        function refresh() {
             refreshContactData()
             refreshSavedAddressName()
             refreshWalletAddress()
@@ -105,21 +113,6 @@ Item {
             d.walletAddressColor = Utils.getColorForId(!!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : "")
         }
 
-        function getName() {
-            let name = ""
-            if (d.isContact) {
-                name = ProfileUtils.displayName(d.contactData.localNickname, d.contactData.name, d.contactData.displayName, d.contactData.alias)
-            }
-            return name || d.walletAddressName || d.savedAddressName
-        }
-
-        readonly property Connections savedAccountsConnection: Connections {
-            target: !!root.rootStore && !!root.rootStore.savedAddresses ? root.rootStore.savedAddresses.sourceModel ?? null : null
-            function onItemChanged(address) {
-                if (address === root.address)
-                    d.refreshSavedAddressName()
-            }
-        }
 
         readonly property Connections walletAccountsConnection: Connections {
             target: !!root.rootStore ? root.rootStore.accounts ?? null : null
@@ -182,7 +175,13 @@ Item {
                 Layout.fillWidth: true
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
-                text: d.getName()
+                text: {
+                    let name = ""
+                    if (d.isContact) {
+                        name = ProfileUtils.displayName(d.contactData.localNickname, d.contactData.name, d.contactData.displayName, d.contactData.alias)
+                    }
+                    return name || d.walletAddressName || d.savedAddressName
+                }
                 visible: !!text
                 elide: Text.ElideRight
             }
