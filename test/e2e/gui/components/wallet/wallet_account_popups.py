@@ -192,7 +192,7 @@ class AddNewAccountPopup(BasePopup):
         self._seed_phrase_12_words_button = Button(names.mainWallet_AddEditAccountPopup_12WordsButton)
         self._seed_phrase_18_words_button = Button(names.mainWallet_AddEditAccountPopup_18WordsButton)
         self._seed_phrase_24_words_button = Button(names.mainWallet_AddEditAccountPopup_24WordsButton)
-        self._seed_phrase_word_text_edit = TextEdit(names.mainWallet_AddEditAccountPopup_SPWord)
+        self._seed_phrase_word_text_edit = TextEdit(names.mainWindow_statusSeedPhraseInputField_TextEdit)
         self._seed_phrase_phrase_key_name_text_edit = TextEdit(
             names.mainWallet_AddEditAccountPopup_ImportedSeedPhraseKeyName)
 
@@ -216,7 +216,7 @@ class AddNewAccountPopup(BasePopup):
         else:
             raise RuntimeError("Wrong amount of seed words", len(seed_phrase_words))
         for count, word in enumerate(seed_phrase_words, start=1):
-            self._seed_phrase_word_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{count}'
+            self._seed_phrase_word_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{count}'
             self._seed_phrase_word_text_edit.text = word
         seed_phrase_name = ''.join([word[0] for word in seed_phrase_words[:10]])
         self._seed_phrase_phrase_key_name_text_edit.text = seed_phrase_name

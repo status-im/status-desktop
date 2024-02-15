@@ -90,6 +90,7 @@ class ToolBar(QObject):
                 for child in walk_children(item):
                     if getattr(child, 'objectName', '') == 'close-icon':
                         driver.mouseClick(child)
+                        break
 
 
 class Message:

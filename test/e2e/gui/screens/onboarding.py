@@ -226,7 +226,7 @@ class SeedPhraseInputView(OnboardingView):
             raise RuntimeError("Wrong amount of seed words", len(seed_phrase))
 
         for index, word in enumerate(seed_phrase, start=1):
-            self._seed_phrase_input_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{index}'
+            self._seed_phrase_input_text_edit.real_name['objectName'] = f'enterSeedPhraseInputField{index}'
             if autocomplete:
                 word_to_put = word[:-1]
                 self._seed_phrase_input_text_edit.text = word_to_put

@@ -299,7 +299,6 @@ mainWallet_AddEditAccountPopup_RevealSeedPhraseButton = {"container": mainWallet
 mainWallet_AddEditAccountPopup_SeedPhraseWordAtIndex_Placeholder = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "SeedPhraseWordAtIndex-%WORD-INDEX%", "type": "StatusSeedPhraseInput", "visible": True}
 mainWallet_AddEditAccountPopup_EnterSeedPhraseWordComponent = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "AddAccountPopup-EnterSeedPhraseWord", "type": "StatusInput", "visible": True}
 mainWallet_AddEditAccountPopup_EnterSeedPhraseWord = {"container": mainWallet_AddEditAccountPopup_EnterSeedPhraseWordComponent, "type": "TextEdit", "unnamed": 1, "visible": True}
-mainWallet_AddEditAccountPopup_SPWord = {"container": mainWallet_AddEditAccountPopup_Content, "type": "TextEdit", "objectName": RegularExpression("statusSeedPhraseInputField*")}
 mainWallet_AddEditAccountPopup_12WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "12SeedButton", "type": "StatusSwitchTabButton"}
 mainWallet_AddEditAccountPopup_18WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "18SeedButton", "type": "StatusSwitchTabButton"}
 mainWallet_AddEditAccountPopup_24WordsButton = {"container": mainWallet_AddEditAccountPopup_Content, "objectName": "24SeedButton", "type": "StatusSwitchTabButton"}
@@ -861,9 +860,8 @@ switchTabBar_18_words_Button = {"container": mainWindow_SeedPhraseInputView, "ob
                                 "type": "StatusSwitchTabButton"}
 switchTabBar_24_words_Button = {"container": mainWindow_SeedPhraseInputView, "objectName": "24SeedButton",
                                 "type": "StatusSwitchTabButton"}
-mainWindow_statusSeedPhraseInputField_TextEdit = {"container": mainWindow_SeedPhraseInputView,
-                                                  "objectName": "statusSeedPhraseInputField", "type": "TextEdit",
-                                                  "visible": True}
+mainWindow_statusSeedPhraseInputField_TextEdit = {"container": mainWindow_StatusWindow, "objectName": "enterSeedPhraseInputField", "type": "TextEdit", "visible": True}
+
 mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_SeedPhraseInputView,
                                   "objectName": "seedPhraseViewSubmitButton", "text": "Import", "type": "StatusButton",
                                   "visible": True}
