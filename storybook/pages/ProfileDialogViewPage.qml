@@ -124,6 +124,35 @@ SplitView {
         }
     }
 
+    ListModel {
+        id: linksModel
+        ListElement {
+            uuid: "0001"
+            text: "__github"
+            url: "https://github.com/caybro"
+        }
+        ListElement {
+            uuid: "0002"
+            text: "__twitter"
+            url: "https://twitter.com/caybro"
+        }
+        ListElement {
+            uuid: "0003"
+            text: "__personal_site"
+            url: "https://status.im"
+        }
+        ListElement {
+            uuid: "0004"
+            text: "__youtube"
+            url: "https://www.youtube.com/@LukasTinkl"
+        }
+        ListElement {
+            uuid: "0006"
+            text: "__telegram"
+            url: "https://t.me/ltinkl"
+        }
+    }
+
     Logs { id: logs }
 
     Popups {
@@ -281,9 +310,9 @@ SplitView {
 
                     sourceComponent: ProfileDialogView {
                         implicitWidth: 640
+                        enabledNetworks: NetworksModel.allNetworks
 
                         readOnly: ctrlReadOnly.checked
-
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")
@@ -293,8 +322,11 @@ SplitView {
                         showcaseCommunitiesModel: CommunitiesModel {}
                         showcaseAccountsModel: WalletAccountsModel {}
                         showcaseCollectiblesModel: ManageCollectiblesModel {}
-                        showcaseSocialLinksModel: assetsStore.groupedAccountAssetsModel
+                        showcaseSocialLinksModel: linksModel
                         // TODO: showcaseAssetsModel
+
+                        assetsModel: AssetsModel {}
+                        collectiblesModel: CollectiblesModel {}
 
                         profileStore: QtObject {
                             readonly property string pubkey: "0xdeadbeef"

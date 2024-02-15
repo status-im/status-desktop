@@ -26,7 +26,7 @@ GridLayout {
             locale: Qt.locale("en")
             communityId: model.communityId
             loaded: model.available
-            logo: model.logo
+            asset.source: model.logo
             banner: model.banner
             name: model.name
             description: model.description

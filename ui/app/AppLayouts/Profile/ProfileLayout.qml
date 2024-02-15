@@ -150,6 +150,9 @@ StatusSectionLayout {
                 accountsShowcaseModel: root.store.ownShowcaseAccountsModel
                 collectiblesShowcaseModel: root.store.ownShowcaseCollectiblesModel
                 socialLinksShowcaseModel: root.store.ownShowcaseSocialLinksModel
+
+                assetsModel: root.globalStore.globalAssetsModel
+                collectiblesModel: root.globalStore.globalCollectiblesModel
             }
         }
 
