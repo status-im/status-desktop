@@ -81,6 +81,7 @@ method load*(self: Module) =
   self.controller.init()
   self.view.load()
   self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
+  self.view.setIsSepoliaEnabled(self.controller.isSepoliaEnabled())
   self.refreshNetworks()
 
 method isLoaded*(self: Module): bool =
