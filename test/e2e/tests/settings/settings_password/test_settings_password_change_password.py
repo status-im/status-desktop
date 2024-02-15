@@ -14,14 +14,14 @@ pytestmark = marks
 
 
 @pytest.mark.timeout(timeout=180)
-@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
 @pytest.mark.parametrize('user_account, user_account_changed_password',
                          [pytest.param(constants.user.user_account_one,
                                        constants.user.user_account_one_changed_password)])
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/13013')
+@pytest.mark.flaky
+# reason='https://github.com/status-im/status-desktop/issues/13013'
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings'):
         settings_scr = main_screen.left_panel.open_settings()
