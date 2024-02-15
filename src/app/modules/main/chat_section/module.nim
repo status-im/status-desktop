@@ -895,6 +895,7 @@ method onKickedFromCommunity*(self: Module) =
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(communityId))
 
 method onJoinedCommunity*(self: Module) =
+  self.rebuildCommunityTokenPermissionsModel()
   self.view.setAmIMember(true)
   self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(false)
 
