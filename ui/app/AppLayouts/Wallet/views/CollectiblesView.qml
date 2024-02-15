@@ -124,13 +124,26 @@ ColumnLayout {
         readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
 
-        function containsAny(list, filterList) {
-            for (let i = 0; i < list.length; i++) {
-                if (filterList.includes(list[i].toLowerCase())) {
+        function containsAnyAddress(ownership, filterList) {
+            for (let i = 0; i < ownership.count; i++) {
+                let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
+                if (filterList.includes(accountAddress)) {
                     return true
                 }
             }
             return false
+        }
+
+        function getLatestTimestmap(ownership, filterList) {
+            let latest = 0
+            for (let i = 0; i < ownership.count; i++) {
+                let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
+                if (filterList.includes(accountAddress)) {
+                    let txTimestamp = ModelUtils.get(ownership, i, "txTimestamp")
+                    latest = Math.max(latest, txTimestamp)
+                }
+            }
+            return latest
         }
     }
 
@@ -139,17 +152,24 @@ ColumnLayout {
         property bool isCommunity
 
         sourceModel: d.sourceModel
-        proxyRoles: JoinRole {
-            name: "groupName"
-            roleNames: ["collectionName", "communityName"]
-        }
+        proxyRoles: [
+            JoinRole {
+                name: "groupName"
+                roleNames: ["collectionName", "communityName"]
+            },
+            FastExpressionRole {
+                name: "lastTxTimestamp"
+                expression: d.addrFilters, d.getLatestTimestmap(model.ownership, d.addrFilters)
+                expectedRoles: ["ownership"]
+            }
+        ]
         filters: [
             FastExpressionFilter {
                 expression: {
                     d.addrFilters
-                    return d.nwFilters.includes(model.chainId+"") && d.containsAny(model.ownershipAddresses.split(":"), d.addrFilters)
+                    return d.nwFilters.includes(model.chainId+"") && d.containsAnyAddress(model.ownership, d.addrFilters)
                 }
-                expectedRoles: ["chainId", "ownershipAddresses"]
+                expectedRoles: ["chainId", "ownership"]
             },
             FastExpressionFilter {
                 expression: {
@@ -249,7 +269,7 @@ ColumnLayout {
                 id: cmbTokenOrder
                 hasCustomOrderDefined: root.controller.hasSettings
                 model: [
-                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "calendar", sortRoleName: "dateAdded" }, // FIXME sortRoleName #12942
+                    { value: SortOrderComboBox.TokenOrderDateAdded, text: qsTr("Date added"), icon: "calendar", sortRoleName: "lastTxTimestamp" }, // Custom SFPM role
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Collectible name"), icon: "bold", sortRoleName: "name" },
                     { value: SortOrderComboBox.TokenOrderGroupName, text: qsTr("Collection/community name"), icon: "group", sortRoleName: "groupName" }, // Custom SFPM role communityName || collectionName
                     { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" },
