@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-Column {
+ColumnLayout {
     id: root
 
     property alias archiveSupportEnabled: archiveSupportToggle.checked
@@ -22,60 +22,61 @@ Column {
         readonly property int optionHeight: 64
     }
 
-    RowLayout {
+    Item {
         id: archiveSupport
 
-        width: parent.width
-        height: visible ? d.optionHeight : 0
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("Community history service")
-            font.pixelSize: Theme.primaryTextFontSize
-            TapHandler {
-                onTapped: archiveSupportToggle.toggle()
-            }
-        }
+        Layout.preferredWidth: parent.width
+        Layout.preferredHeight: visible ? d.optionHeight : 0
 
         StatusCheckBox {
             id: archiveSupportToggle
+            width: (parent.width-12)
             checked: true
+            leftSide: false
+            padding: 0
+            anchors.verticalCenter: parent.verticalCenter
+            text: qsTr("Community history service")
         }
     }
 
-    RowLayout {
-        width: parent.width
-        height: d.optionHeight
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("Request to join required")
-            font.pixelSize: Theme.primaryTextFontSize
-            TapHandler {
-                onTapped: requestToJoinToggle.toggle()
-            }
-        }
-
-        StatusCheckBox {
-            id: requestToJoinToggle
-        }
-    }
-
-    RowLayout {
-        width: parent.width
-        height: d.optionHeight
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("Any member can pin a message")
-            font.pixelSize: Theme.primaryTextFontSize
-            TapHandler {
-                onTapped: pinMessagesToggle.toggle()
-            }
-        }
+    Item {
+        Layout.preferredWidth: parent.width
+        Layout.preferredHeight: d.optionHeight
 
         StatusCheckBox {
             id: pinMessagesToggle
+            width: (parent.width-12)
+            leftSide: false
+            padding: 0
+            anchors.verticalCenter: parent.verticalCenter
+            text: qsTr("Any member can pin a message")
+        }
+    }
+
+    ColumnLayout {
+        Layout.preferredWidth: parent.width
+        Layout.topMargin: 22
+        spacing: 0
+        StatusCheckBox {
+            id: requestToJoinToggle
+            Layout.fillWidth: true
+            Layout.preferredHeight: 22
+            Layout.alignment: Qt.AlignVCenter
+            Layout.rightMargin: 12
+            text: qsTr("Request to join required")
+            leftSide: false
+            padding: 0
+        }
+
+        StatusBaseText {
+            id: warningText
+            Layout.fillWidth: true
+            Layout.rightMargin: 12
+            visible: requestToJoinToggle.checked
+            wrapMode: Text.WordWrap
+            text: qsTr("Warning: Only token gated communities (or token gated channels inside non-token gated community) are encrypted")
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.warningColor1
         }
     }
 }
