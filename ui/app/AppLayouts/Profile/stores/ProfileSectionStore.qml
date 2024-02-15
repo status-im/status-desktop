@@ -81,6 +81,7 @@ QtObject {
     property bool walletMenuItemEnabled: profileStore.isWalletEnabled
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
+                            
     property var communitiesList: SortFilterProxyModel {
         sourceModel: root.mainModuleInst.sectionsModel
         filters: ValueFilter {

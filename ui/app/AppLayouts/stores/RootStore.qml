@@ -56,7 +56,8 @@ QtObject {
         root.communitiesModuleInst.myRevealedAirdropAddressForCurrentCommunity.toLowerCase()
 
     property var walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
-    property var assetsModel: SortFilterProxyModel {
+    
+    readonly property var globalAssetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
         proxyRoles: FastExpressionRole {
             function tokenIcon(symbol) {
@@ -66,6 +67,22 @@ QtObject {
             expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
             expectedRoles: ["icon", "symbol"]
         }
+    }
+
+    readonly property var globalCollectiblesModel: SortFilterProxyModel {
+        sourceModel: communitiesModuleInst.collectiblesModel
+        proxyRoles: FastExpressionRole {
+            function collectibleIcon(icon) {
+                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+            }
+            name: "iconSource"
+            expression: collectibleIcon(model.icon)
+            expectedRoles: ["icon"]
+        }
+    }
+
+    property var assetsModel: SortFilterProxyModel {
+        sourceModel: globalAssetsModel
         filters: [
             AnyOf {
                 // We accept tokens from this community or general (empty community ID)
@@ -82,15 +99,7 @@ QtObject {
         ]
     }
     property var collectiblesModel: SortFilterProxyModel {
-        sourceModel: communitiesModuleInst.collectiblesModel
-        proxyRoles: FastExpressionRole {
-            function collectibleIcon(icon) {
-                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
-            }
-            name: "iconSource"
-            expression: collectibleIcon(model.icon)
-            expectedRoles: ["icon"]
-        }
+        sourceModel: globalCollectiblesModel
         filters: [
             AnyOf {
                 // We accept tokens from this community or general (empty community ID)

@@ -1267,28 +1267,8 @@ Item {
                         CommunitiesPortalLayout {
                             anchors.fill: parent
                             communitiesStore: appMain.communitiesStore
-                            assetsModel: SortFilterProxyModel {
-                                sourceModel: appMain.communitiesStore.communitiesModuleInst.tokenList
-
-                                proxyRoles: ExpressionRole {
-                                    function tokenIcon(symbol) {
-                                        return Constants.tokenIcon(symbol)
-                                    }
-                                    name: "iconSource"
-                                    expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
-                                }
-                            }
-                            collectiblesModel: SortFilterProxyModel {
-                                sourceModel: appMain.communitiesStore.communitiesModuleInst.collectiblesModel
-
-                                proxyRoles: ExpressionRole {
-                                    function icon(icon) {
-                                        return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
-                                    }
-                                    name: "iconSource"
-                                    expression: icon(model.icon)
-                                }
-                            }
+                            assetsModel: appMain.rootStore.globalAssetsModel
+                            collectiblesModel: appMain.rootStore.globalCollectiblesModel
                             notificationCount: appMain.activityCenterStore.unreadNotificationsCount
                             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
                         }
