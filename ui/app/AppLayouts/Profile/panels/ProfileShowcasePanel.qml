@@ -1,60 +1,267 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml 2.15
 
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Popups 0.1
 
 import shared.controls 1.0
-
 import utils 1.0
 
 import AppLayouts.Profile.controls 1.0
 
-Control {
+DoubleFlickableWithFolding {
     id: root
+
+    readonly property var showcaseRoles: ["showcaseVisibility", "order"]
+
+    required property string keyRole
+    required property var roleNames
+    required property var filterFunc
 
     property var baseModel
     property var showcaseModel
 
-    readonly property var showcaseRoles: ["showcaseVisibility", "order"]
-
-    // to override
-    property string keyRole
-    property var roleNames: []
-    property var filterFunc: (modelData) => true
-    property string hiddenPlaceholderBanner
-    property string showcasePlaceholderBanner
-    property Component draggableDelegateComponent
     property Component showcaseDraggableDelegateComponent
-    property Component additionalComponent
+    property Component hiddenDraggableDelegateComponent
 
-    signal showcaseEntryChanged()
-
-    function reset() {
-        showcaseModel.clear()
-        updateBaseModelFilters()
-    }
-
-    function updateBaseModelFilters() {
-        // Reset base model to update filter conditions
-        hiddenItemsListView.model = null
-        hiddenItemsListView.model = baseModel
-    }
+    property string emptyInShowcasePlaceholderText
+    property string emptyHiddenPlaceholderText
 
     readonly property Connections showcaseUpdateConnections: Connections {
-        target: showcaseModel
+        target: root.showcaseModel
 
         function onBaseModelFilterConditionsMayHaveChanged() {
             root.updateBaseModelFilters()
         }
     }
 
-    background: null
+    function reset() {
+        root.showcaseModel.clear()
+        updateBaseModelFilters()
+    }
 
+    function updateBaseModelFilters() {
+        // Reset base model to update filter conditions
+        hiddenListView.model = null
+        hiddenListView.model = root.baseModel
+    }
+
+    signal showcaseEntryChanged()
+
+    QtObject {
+        id: d
+
+        readonly property int defaultDelegateHeight: 60
+        readonly property int contentSpacing: 12
+        readonly property int strokeMargin: 2
+        readonly property int shapeRectangleHeight: 48
+    }
+
+    clip: true
+
+    ScrollBar.vertical: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.height, root.contentHeight)
+    }
+
+    flickable1: EmptyShapeRectangleFooterListView {
+        id: inShowcaseListView
+
+        model: root.showcaseModel
+        width: root.width
+        placeholderText: root.emptyInShowcasePlaceholderText
+        placeholderHeight: d.shapeRectangleHeight
+
+        header: FoldableHeader {
+            width: ListView.view.width
+            title: qsTr("In showcase")
+            folded: root.flickable1Folded
+
+            onToggleFolding: root.flip1Folding()
+        }
+
+        delegate: DropArea {
+            id: showcaseDelegateRoot
+
+            property int visualIndex: index
+
+            width: ListView.view.width
+            height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
+
+            keys: ["x-status-draggable-showcase-item"]
+            visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
+
+            onEntered: function(drag) {
+                const from = drag.source.visualIndex
+                const to = showcaseDraggableDelegateLoader.item.visualIndex
+                if (to === from)
+                    return
+                root.showcaseEntryChanged()
+                root.showcaseModel.move(from, to, 1)
+                drag.accept()
+            }
+
+            // TODO:
+            // This animation is causing issues when there are no elements in the showcase list.
+            // Reenable it once the refactor of the models and delegates is done (simplified): #13498
+            // ListView.onRemove: SequentialAnimation {
+            //  PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: true }
+            //      NumberAnimation { target: showcaseDelegateRoot; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
+            //      PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: false }
+            // }
+
+            // In showcase delegate item container:
+            Loader {
+                id: showcaseDraggableDelegateLoader
+                width: parent.width
+                sourceComponent: root.showcaseDraggableDelegateComponent
+
+                property var modelData: model
+                property var dragParentData: root
+                property int visualIndexData: index
+            }
+        }
+
+        // TO BE REDEFINED (task #13509): Overlaid at the bottom of the listview
+        DropArea {
+            id: targetDropArea
+            width: parent.width
+            height: inShowcaseListView.count === 0 ? d.shapeRectangleHeight : d.defaultDelegateHeight
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: root.showcaseModel.count ? Style.current.halfPadding : 0
+            keys: ["x-status-draggable-showcase-item-hidden"]
+
+            Rectangle {
+                id: showcaseCombinedDropArea
+                width: parent.width
+                height: parent.height + d.strokeMargin
+                anchors.centerIn: parent
+                color: Theme.palette.baseColor5
+                radius: Style.current.radius
+                visible: parent.containsDrag || dropAreaEveryone.containsDrag || dropAreaContacts.containsDrag || dropAreaVerified.containsDrag
+
+                RowLayout {
+                    width: parent.width - spacing*2
+                    anchors.centerIn: parent
+                    spacing: d.contentSpacing
+                    VisibilityDropArea {
+                        id: dropAreaEveryone
+                        Layout.fillWidth: true
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                        text: qsTr("Everyone")
+                    }
+                    VisibilityDropArea {
+                        id: dropAreaContacts
+                        Layout.fillWidth: true
+                        showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+                        text: qsTr("Contacts")
+                    }
+                    VisibilityDropArea {
+                        id: dropAreaVerified
+                        Layout.fillWidth: true
+                        showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+                        text: qsTr("Verified")
+                    }
+                }
+            }
+        }
+    }
+
+    flickable2: EmptyShapeRectangleFooterListView {
+        id: hiddenListView
+
+        model: root.baseModel
+        width: root.width
+        placeholderText: root.emptyHiddenPlaceholderText
+        placeholderHeight: d.shapeRectangleHeight
+        empty: root.showcaseModel.hiddenCount === 0 && !root.flickable2Folded // TO BE REMOVE: #13498
+
+        header: FoldableHeader {
+            width: ListView.view.width
+            title: qsTr("Hidden")
+            folded: root.flickable2Folded
+
+            onToggleFolding: root.flip2Folding()
+        }
+
+        delegate: DropArea {
+            id: hiddenDelegateRoot
+
+            property int visualIndex: index
+
+            visible: root.filterFunc(model)
+            width: ListView.view.width
+            height: visible && hiddenDraggableDelegateLoader.item ? hiddenDraggableDelegateLoader.item.height : 0
+
+            keys: ["x-status-draggable-showcase-item"]
+
+            onEntered: function(drag) {
+                drag.accept()
+            }
+
+            onDropped: function(drop) {
+                root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
+                root.showcaseEntryChanged()
+            }
+
+            // Hidden delegate item container:
+            Loader {
+                id: hiddenDraggableDelegateLoader
+                width: parent.width
+                sourceComponent: root.hiddenDraggableDelegateComponent
+
+                property var modelData: model
+                property var dragParentData: root
+                property int visualIndexData: hiddenDelegateRoot.visualIndex
+            }
+
+            // Delegate shadow background when dragging:
+            Rectangle {
+                width: parent.width
+                height: d.defaultDelegateHeight
+                anchors.centerIn: parent
+                color: Theme.palette.baseColor5
+                radius: Style.current.radius
+                visible: hiddenDraggableDelegateLoader.item && hiddenDraggableDelegateLoader.item.dragActive
+            }
+        }
+
+        // TO BE REDEFINED (task #13509): Overlaid at the top of the listview
+        DropArea {
+            id: hiddenTargetDropArea
+            width: root.width
+            height: hiddenListView.empty ? d.shapeRectangleHeight : d.defaultDelegateHeight
+            anchors.top: hiddenListView.top
+            anchors.topMargin: hiddenListView.empty ? hiddenListView.headerItem.height : hiddenListView.headerItem.height + Style.current.halfPadding
+            keys: ["x-status-draggable-showcase-item"]
+
+            ShapeRectangle {
+                width: parent.width
+                height: parent.height + d.strokeMargin
+                anchors.centerIn: parent
+                visible: parent.containsDrag
+                path.fillColor: Theme.palette.baseColor5
+                path.strokeColor: "transparent"
+                text: root.emptyHiddenPlaceholderText
+            }
+
+            onEntered: function(drag) {
+                drag.accept()
+            }
+
+            onDropped: function(drop) {
+                root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
+                root.showcaseEntryChanged()
+                root.updateBaseModelFilters()
+            }
+        }
+    }
+
+    // TO BE REDEFINED (task #13509)
     component VisibilityDropArea: AbstractButton {
         id: visibilityDropAreaLocal
 
@@ -89,7 +296,7 @@ Control {
                     var tmpObj = Object()
                     root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
                     tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
-                    showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+                    root.showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
                     root.showcaseEntryChanged()
                 }
             }
@@ -100,12 +307,14 @@ Control {
                 width: Math.min(parent.width, implicitWidth)
                 anchors.centerIn: parent
                 spacing: visibilityDropAreaLocal.spacing
+
                 StatusIcon {
                     width: 20
-                    height: 20
+                    height: width
                     icon: ProfileUtils.visibilityIcon(visibilityDropAreaLocal.showcaseVisibility)
                     color: visibilityDropAreaLocal.icon.color
                 }
+
                 StatusBaseText {
                     Layout.fillWidth: true
                     font.pixelSize: 13
@@ -116,235 +325,5 @@ Control {
                 }
             }
         }
-    }
-
-    QtObject {
-        id: d
-
-        readonly property int defaultDelegateHeight: 60
-        readonly property int contentSpacing: 12
-        readonly property int strokeMargin: 2
-    }
-
-    contentItem: ColumnLayout {
-        spacing: d.contentSpacing
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("In showcase")
-            color: Theme.palette.baseColor1
-            font.pixelSize: 13
-            font.weight: Font.Medium
-        }
-
-        StatusListView {
-            id: showcaseItemsListView
-            Layout.fillWidth: true
-            Layout.minimumHeight: Math.floor(targetDropArea.height + targetDropArea.anchors.bottomMargin)
-            model: showcaseModel
-            implicitHeight: contentHeight
-            interactive: false
-
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
-
-            delegate: DropArea {
-                id: showcaseDelegateRoot
-
-                property int visualIndex: index
-
-                ListView.onRemove: SequentialAnimation {
-                    PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: true }
-                    NumberAnimation { target: showcaseDelegateRoot; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
-                    PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: false }
-                }
-
-                width: ListView.view.width
-                height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
-
-                keys: ["x-status-draggable-showcase-item"]
-
-                visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
-
-                onEntered: function(drag) {
-                    const from = drag.source.visualIndex
-                    const to = showcaseDraggableDelegateLoader.item.visualIndex
-                    if (to === from)
-                        return
-                    root.showcaseEntryChanged()
-                    showcaseModel.move(from, to, 1)
-                    drag.accept()
-                }
-
-                Loader {
-                    id: showcaseDraggableDelegateLoader
-                    width: parent.width
-                    sourceComponent: root.showcaseDraggableDelegateComponent
-
-                    property var modelData: model
-                    property var dragParentData: root
-                    property int visualIndexData: index
-                }
-            }
-
-            // overlaid at the bottom of the listview
-            DropArea {
-                id: targetDropArea
-                width: parent.width
-                height: d.defaultDelegateHeight
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: showcaseModel.count ? Style.current.halfPadding : 0
-                keys: ["x-status-draggable-showcase-item-hidden"]
-
-                ShapeRectangle {
-                    anchors.fill: parent
-                    anchors.margins: d.strokeMargin
-                    visible: !showcaseModel.count && !showcaseCombinedDropArea.visible
-                    text: root.hiddenPlaceholderBanner
-                }
-
-                Rectangle {
-                    id: showcaseCombinedDropArea
-                    width: parent.width
-                    height: parent.height + d.strokeMargin
-                    anchors.centerIn: parent
-                    color: Theme.palette.baseColor5
-                    radius: Style.current.radius
-                    visible: parent.containsDrag || dropAreaEveryone.containsDrag || dropAreaContacts.containsDrag || dropAreaVerified.containsDrag
-
-                    RowLayout {
-                        width: parent.width - spacing*2
-                        anchors.centerIn: parent
-                        spacing: d.contentSpacing
-                        VisibilityDropArea {
-                            id: dropAreaEveryone
-                            Layout.fillWidth: true
-                            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
-                            text: qsTr("Everyone")
-                        }
-                        VisibilityDropArea {
-                            id: dropAreaContacts
-                            Layout.fillWidth: true
-                            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-                            text: qsTr("Contacts")
-                        }
-                        VisibilityDropArea {
-                            id: dropAreaVerified
-                            Layout.fillWidth: true
-                            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                            text: qsTr("Verified")
-                        }
-                    }
-                }
-            }
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.halfPadding
-            text: qsTr("Hidden")
-            color: Theme.palette.baseColor1
-            font.pixelSize: 13
-            font.weight: Font.Medium
-        }
-
-        StatusListView {
-            id: hiddenItemsListView
-            Layout.fillWidth: true
-            Layout.minimumHeight: empty ? Math.floor(hiddenTargetDropArea.height + hiddenTargetDropArea.anchors.topMargin)
-                                        : d.defaultDelegateHeight * Math.min(count, 4)
-            implicitHeight: contentHeight
-            interactive: false
-
-            model: root.baseModel
-
-            readonly property bool empty: !contentHeight
-
-            displaced: Transition {
-                NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
-            }
-
-            delegate: DropArea {
-                id: delegateRoot
-
-                property int visualIndex: index
-
-                visible: root.filterFunc(model)
-                width: ListView.view.width
-                height: visible && draggableDelegateLoader.item ? draggableDelegateLoader.item.height : 0
-
-                keys: ["x-status-draggable-showcase-item"]
-
-                onEntered: function(drag) {
-                    drag.accept()
-                }
-
-                onDropped: function(drop) {
-
-                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
-                    root.showcaseEntryChanged()
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: d.defaultDelegateHeight
-                    anchors.centerIn: parent
-                    color: Theme.palette.baseColor5
-                    radius: Style.current.radius
-                    visible: draggableDelegateLoader.item && draggableDelegateLoader.item.dragActive
-                }
-
-                Loader {
-                    id: draggableDelegateLoader
-                    width: parent.width
-                    sourceComponent: root.draggableDelegateComponent
-
-                    property var modelData: model
-                    property var dragParentData: root
-                    property int visualIndexData: delegateRoot.visualIndex
-                }
-            }
-
-            // overlaid at the top of the listview
-            DropArea {
-                id: hiddenTargetDropArea
-                width: parent.width
-                height: d.defaultDelegateHeight
-                anchors.top: parent.top
-                anchors.topMargin: !hiddenItemsListView.empty ? Style.current.halfPadding : 0
-                keys: ["x-status-draggable-showcase-item"]
-
-                ShapeRectangle {
-                    readonly property bool stroked: hiddenItemsListView.empty && !parent.containsDrag
-
-                    anchors.fill: parent
-                    anchors.margins: d.strokeMargin
-                    visible: hiddenItemsListView.empty || parent.containsDrag
-                    path.fillColor: stroked ? "transparent" : Theme.palette.baseColor5
-                    path.strokeColor: stroked ? Theme.palette.baseColor2 : "transparent"
-                    text: root.showcasePlaceholderBanner
-                }
-
-                onEntered: function(drag) {
-                    drag.accept()
-                }
-
-                onDropped: function(drop) {
-                    showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
-                    root.showcaseEntryChanged()
-                    root.updateBaseModelFilters()
-                }
-            }
-        }
-
-        Loader {
-            id: additionalComponent
-
-            Layout.fillWidth: true
-            sourceComponent: root.additionalComponent
-        }
-
-        Item { Layout.fillHeight: true }
     }
 }

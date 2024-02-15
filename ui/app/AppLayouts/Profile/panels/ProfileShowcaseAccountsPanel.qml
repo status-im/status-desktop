@@ -12,10 +12,10 @@ ProfileShowcasePanel {
     keyRole: "address"
     roleNames: ["address", "name", "walletType", "emoji", "colorId"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItemInShowcase(modelData.address)
-    hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
-    showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")
+    emptyInShowcasePlaceholderText: qsTr("Accounts here will show on your profile")
+    emptyHiddenPlaceholderText: qsTr("Accounts here will be hidden from your profile")
 
-    draggableDelegateComponent: AccountShowcaseDelegate {
+    hiddenDraggableDelegateComponent: AccountShowcaseDelegate {
         Drag.keys: ["x-status-draggable-showcase-item-hidden"]
         showcaseObj: modelData
         dragParent: dragParentData

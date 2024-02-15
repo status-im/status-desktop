@@ -1,11 +1,13 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
 
 import mainui 1.0
 import AppLayouts.Profile.panels 1.0
+import AppLayouts.Profile.controls 1.0
 import shared.stores 1.0
 
 import utils 1.0
@@ -24,6 +26,10 @@ SplitView {
         popupParent: root
         rootStore: QtObject {}
         communityTokensStore: CommunityTokensStore {}
+    }
+
+    ListModel {
+        id: emptyModel
     }
 
     ListModel {
@@ -49,15 +55,6 @@ SplitView {
                         color: "peach"
                     },
                     {
-                        id: "0x0003",
-                        name: "Test community invisible",
-                        joined: false,
-                        memberRole: Constants.memberRole.none,
-                        isControlNode: false,
-                        image: "",
-                        color: "red"
-                    },
-                    {
                         id: "0x0004",
                         name: "Test community 3",
                         joined: true,
@@ -81,13 +78,15 @@ SplitView {
     ListModel {
         id: inShowcaseCommunitiesModel
 
+        property int hiddenCount: emptyModelChecker.checked ? 0 : communitiesModel.count - count
+
         signal baseModelFilterConditionsMayHaveChanged()
 
         function setVisibilityByIndex(index, visibility) {
             if (visibility === Constants.ShowcaseVisibility.NoOne) {
                 remove(index)
             } else {
-                 get(index).showcaseVisibility = visibility
+                get(index).showcaseVisibility = visibility
             }
         }
 
@@ -116,10 +115,11 @@ SplitView {
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
+
         ProfileShowcaseCommunitiesPanel {
             id: showcasePanel
             width: 500
-            baseModel: communitiesModel
+            baseModel: emptyModelChecker.checked ? emptyModel : communitiesModel
             showcaseModel: inShowcaseCommunitiesModel
         }
     }
@@ -132,9 +132,20 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Button {
-            text: "Reset (clear settings)"
-            onClicked: showcasePanel.settings.reset()
+        ColumnLayout {
+            Button {
+                text: "Reset (clear settings)"
+                onClicked: showcasePanel.reset()
+            }
+
+            CheckBox {
+                id: emptyModelChecker
+
+                text: "Empty model"
+                checked: false
+
+                onClicked: showcasePanel.reset()
+            }
         }
     }
 }
