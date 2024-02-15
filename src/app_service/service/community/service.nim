@@ -700,6 +700,12 @@ QtObject:
                 permissionUpdated = true
                 break
 
+          if tokenPermission.chatIds.len == prevTokenPermission.chatIds.len:
+            for chatID in tokenPermission.chatIds:
+              if not (chatID in prevTokenPermission.chatIds):
+                permissionUpdated = true
+                break
+
           if permissionUpdated:
             self.communities[community.id].tokenPermissions[id] = tokenPermission
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED,
