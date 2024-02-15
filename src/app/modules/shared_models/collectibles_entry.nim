@@ -242,16 +242,6 @@ QtObject:
     read = getOwnershipModel
     notify = ownershipChanged
 
-  proc ownershipAddressesChanged*(self: CollectiblesEntry) {.signal.}
-  proc getOwnershipAddresses*(self: CollectiblesEntry): string {.slot.} =
-    if not self.hasOwnership():
-      return ""
-    return self.getOwnership().map(o => o.address).join(":")
-
-  QtProperty[string] ownershipAddresses:
-    read = getOwnershipAddresses
-    notify = ownershipAddressesChanged
-
   proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
   proc getCommunityID*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData():

@@ -28,7 +28,18 @@ ListModel {
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240:0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 1
+                },
+                {
+                    accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                    balance: 1,
+                    txTimestamp: 2
+                },
+            ]
         },
         {
             uid: "pp23",
@@ -42,7 +53,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/s/raw/files/ba2811bb5cd0bed67529d69fa92ef5aa.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 3
+                },
+            ]
         },
         {
             uid: "34545656768",
@@ -56,7 +73,13 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty1Big,
             isLoading: true,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                    balance: 1,
+                    txTimestamp: 3
+                },
+            ]
         },
         {
             uid: "123456",
@@ -70,7 +93,13 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty2Big,
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 6
+                },
+            ]
         },
         {
             uid: "12345645459537432",
@@ -84,7 +113,18 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty3Big,
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240:0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 50
+                },
+                {
+                    accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                    balance: 1,
+                    txTimestamp: 10
+                },
+            ]
         },
         {
             uid: "pp21",
@@ -98,7 +138,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                    balance: 1,
+                    txTimestamp: 16
+                },
+            ]
         },
         {
             uid: "lp#666a",
@@ -112,7 +158,13 @@ ListModel {
             imageUrl: "",
             isLoading: false,
             backgroundColor: "pink",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 19
+                },
+            ]
         },
     ]
 
@@ -129,7 +181,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/gae/qPfQjj4P1w0xVQXAmQJLmQ4ZtLFAJU6oiH69Lsny82LFbipLAgXhHKrcLBx2U09SmRnzeHY0ygz-3NIb-JegE_hWrZquFeL-qUPXPdw",
             isLoading: false,
             backgroundColor: "pink",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 20
+                },
+            ]
         },
         {
             uid: "691",
@@ -143,7 +201,13 @@ ListModel {
             imageUrl: "https://assets.killabears.com/content/killabears/gif/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.gif",
             isLoading: true,
             backgroundColor: "navy",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 21
+                },
+            ]
         },
         {
             uid: "8876",
@@ -157,7 +221,13 @@ ListModel {
             imageUrl: "https://assets.killabears.com/content/killabears/transparent-512/2385-86ba13cc6945ed0aea7c32a363a96be2f218898358745ae07b947452cb7e4e79.png",
             isLoading: false,
             backgroundColor: "pink",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 22
+                },
+            ]
         },
         {
             uid: "fp#3195",
@@ -171,7 +241,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/s/raw/files/59ad1f2e3c5eb5d4b62c06e200076514.png",
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 23
+                },
+            ]
         },
         {
             uid: "fp#4297",
@@ -185,7 +261,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/gae/K4_vmYtXAqU6LTnGDliLtJZc4UPmf9jUlk09_FDbXvSKKyUARyyV9RQEgXdb5bjje5OE9j9ZryC5pzcwBwH7TDOIl8oq7D2tSJ7p",
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 25
+                },
+            ]
         },
         {
             uid: "fp#909",
@@ -199,7 +281,13 @@ ListModel {
             imageUrl: "https://i.seadn.io/gae/cR-Bjmb6DsrywCJMOqEBPkkrMHjbTzeRSAKIvLpd7i8ss6raYZ3-doh8oF2z8bJsnmfC1oR3kllz6UxMfFaYAKdXYzXlhfVsDHo6bg",
             isLoading: false,
             backgroundColor: "",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 26
+                },
+            ]
         },
         {
             uid: "lb#666",
@@ -213,7 +301,13 @@ ListModel {
             imageUrl: "",
             isLoading: false,
             backgroundColor: "pink",
-            ownershipAddresses: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: 1,
+                    txTimestamp: 27
+                },
+            ]
         },
     ]
 
