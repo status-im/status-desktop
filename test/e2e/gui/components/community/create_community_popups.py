@@ -90,7 +90,7 @@ class CreateCommunityPopup(BasePopup):
     @allure.step('Set community logo')
     def logo(self, kwargs: dict):
         self._open_logo_file_dialog().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().make_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
 
     @property
     @allure.step('Get community banner')
@@ -101,7 +101,7 @@ class CreateCommunityPopup(BasePopup):
     def banner(self, kwargs: dict):
         self._add_banner_button.click()
         OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().make_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
+        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None), kwargs.get('shift', None))
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
@@ -164,9 +164,9 @@ class CreateCommunityPopup(BasePopup):
     @allure.step('Create community without file upload dialog usage')
     def create_community(self, kwargs):
         self.set_logo_without_file_upload_dialog(kwargs['logo']['fp'])
-        PictureEditPopup().make_picture(None, None)
+        PictureEditPopup().set_zoom_shift_for_picture(None, None)
         self.set_banner_without_file_upload_dialog(kwargs['banner']['fp'])
-        PictureEditPopup().make_picture(None, None)
+        PictureEditPopup().set_zoom_shift_for_picture(None, None)
         for key in list(kwargs):
             if key in ['intro', 'outro'] and self._next_button.is_visible:
                 self._next_button.click()

@@ -9,6 +9,8 @@ from gui.components.settings.changes_detected_popup import ChangesDetectedToastM
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703006',
                  'Set display name, bio and social links')
 @pytest.mark.case(703006)

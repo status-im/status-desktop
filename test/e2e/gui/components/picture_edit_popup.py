@@ -23,7 +23,7 @@ class PictureEditPopup(BasePopup):
         self._slider_handler = QObject(names.o_DropShadow)
 
     @allure.step('Make picture')
-    def make_picture(
+    def set_zoom_shift_for_picture(
             self,
             zoom: int = None,
             shift: shift_image = None

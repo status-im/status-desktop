@@ -10,7 +10,7 @@ from . import marks
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.picture_edit_popup import shift_image
+from gui.components.picture_edit_popup import shift_image, PictureEditPopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, KeysView
 
@@ -29,7 +29,7 @@ def keys_screen(main_window) -> KeysView:
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @pytest.mark.case(703421)
-# @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/13483
+@pytest.mark.critical
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(
@@ -59,9 +59,8 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             f'Error message {profile_view.get_error_message} is present when it should not'
 
     with step('Click plus button and add user picture'):
-        if user_image is not None:
-            profile_picture_popup = profile_view.set_user_image(configs.testpath.TEST_IMAGES / user_image)
-            profile_picture_popup.make_picture(zoom=zoom, shift=shift)
+        profile_view.set_profile_picture(configs.testpath.TEST_IMAGES / user_image)
+        PictureEditPopup().set_zoom_shift_for_picture(zoom=zoom, shift=shift)
         # TODO: find a way to verify the picture is there (changed to the custom one)
         assert profile_view.get_profile_image is not None, f'Profile picture was not set / applied'
         assert profile_view.is_identicon_ring_visible, f'Identicon ring is not present when it should'

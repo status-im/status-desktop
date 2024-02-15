@@ -268,6 +268,7 @@ class YourProfileView(OnboardingView):
         self._clear_icon = QObject(names.mainWindow_clear_icon_StatusIcon)
         self._identicon_ring = QObject(names.mainWindow_IdenticonRing)
         self._view_header_title = TextLabel(names.mainWindow_Header_Title)
+        self._image_crop_workflow = QObject(names.profileImageCropper)
 
     def verify_profile_view_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         driver.waitFor(lambda: self._view_header_title.exists, timeout_msec)
@@ -311,7 +312,13 @@ class YourProfileView(OnboardingView):
         self._clear_icon.click()
         return self
 
-    @allure.step('Set user image')
+    @allure.step('Set profile picture without file upload dialog')
+    def set_profile_picture(self, path) -> PictureEditPopup:
+        image_cropper = driver.waitForObjectExists(self._image_crop_workflow.real_name)
+        image_cropper.cropImage(('file://' + str(path)))
+        return PictureEditPopup()
+
+    @allure.step('Set profile picture with file dialog upload')
     def set_user_image(self, fp: SystemPath) -> PictureEditPopup:
         allure.attach(name='User image', body=fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
         self._upload_picture_button.hover()
