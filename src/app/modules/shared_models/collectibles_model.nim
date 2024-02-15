@@ -24,7 +24,6 @@ type
     CollectionSlug
     IsLoading
     Ownership
-    OwnershipAddresses
     # Community-related roles
     CommunityId
     CommunityName
@@ -146,7 +145,6 @@ QtObject:
       CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.IsLoading.int:"isLoading",
       CollectibleRole.Ownership.int:"ownership",
-      CollectibleRole.OwnershipAddresses.int:"ownershipAddresses",
       CollectibleRole.CommunityId.int:"communityId",
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
@@ -193,8 +191,6 @@ QtObject:
         result = newQVariant(false)
       of CollectibleRole.Ownership:
         result = newQVariant(item.getOwnershipModel())
-      of CollectibleRole.OwnershipAddresses:
-        result = newQVariant(item.getOwnershipAddresses())
       of CollectibleRole.CommunityId:
         result = newQVariant(item.getCommunityId())
       of CollectibleRole.CommunityName:
@@ -222,7 +218,6 @@ QtObject:
       of "collectionName": result = item.getCollectionName()
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
-      of "ownershipAddresses": result = item.getOwnershipAddresses()
       of "communityId": result = item.getCommunityID()
       of "communityName": result = item.getCommunityName()
       of "communityColor": result = item.getCommunityColor()
