@@ -238,6 +238,8 @@ Item {
 
         ImageCropWorkflow {
             id: cropperModal
+            // is needed for e2e to access the crop function
+            anchors.fill: parent
             objectName: "imageCropWorkflow"
             imageFileDialogTitle: qsTr("Choose an image for profile picture")
             title: qsTr("Profile picture")
