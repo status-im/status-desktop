@@ -406,9 +406,7 @@ SettingsContentBase {
                 text: qsTr("Enable Sepolia as Test Network")
                 isSwitch: true
                 switchChecked: root.advancedStore.isSepoliaEnabled
-                onClicked: {
-                    root.advancedStore.toggleIsSepoliaEnabled()
-                }
+                onClicked: Global.openPopup(enableSepoliaConfirmationDialogComponent)
             }
 
             StatusSettingsLineButton {
@@ -451,6 +449,26 @@ SettingsContentBase {
             WakuNodesModal {
                 messagingStore: root.messagingStore
                 advancedStore: root.advancedStore
+            }
+        }
+
+        Component {
+            id: enableSepoliaConfirmationDialogComponent
+            ConfirmationDialog {
+                property bool mode: false
+
+                id: confirmDialog
+                destroyOnClose: true
+                showCancelButton: true
+                confirmationText: qsTr("Are you sure you want to toggle sepolia? The app will be restarted.")
+                onConfirmButtonClicked: {
+                    root.advancedStore.toggleIsSepoliaEnabled()
+                    close()
+                    Qt.quit()
+                }
+                onCancelButtonClicked: {
+                    close()
+                }
             }
         }
 
