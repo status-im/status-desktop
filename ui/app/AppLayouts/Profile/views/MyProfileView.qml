@@ -51,10 +51,10 @@ SettingsContentBase {
 
     dirty: (!descriptionPanel.isEnsName &&
             descriptionPanel.displayName.text !== profileStore.displayName) ||
-            descriptionPanel.bio.text !== profileStore.bio ||
-            profileStore.socialLinksDirty ||
-            profileHeader.icon !== profileStore.profileLargeImage ||
-            priv.hasAnyProfileShowcaseChanges
+           descriptionPanel.bio.text !== profileStore.bio ||
+           profileStore.socialLinksDirty ||
+           profileHeader.icon !== profileStore.profileLargeImage ||
+           priv.hasAnyProfileShowcaseChanges
     saveChangesButtonEnabled: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
     toast.saveChangesTooltipVisible: root.dirty
@@ -149,109 +149,108 @@ SettingsContentBase {
         }
     }
 
-    ColumnLayout {
-        width: root.contentWidth
+    StackLayout {
+        id: stackLayout
 
-        StackLayout {
-            id: stackLayout
-            currentIndex: profileTabBar.currentIndex
+        width: contentWidth
+        height: contentHeight
+        currentIndex: profileTabBar.currentIndex
 
-            // identity
-            ColumnLayout {
-                objectName: "myProfileSettingsView"
-                ProfileHeader {
-                    id: profileHeader
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+        // identity
+        ColumnLayout {
+            objectName: "myProfileSettingsView"
+            ProfileHeader {
+                id: profileHeader
+                Layout.fillWidth: true
+                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Style.current.padding
 
-                    store: root.profileStore
+                store: root.profileStore
 
-                    displayName: profileStore.name
-                    pubkey: profileStore.pubkey
-                    icon: profileStore.profileLargeImage
-                    imageSize: ProfileHeader.ImageSize.Big
+                displayName: profileStore.name
+                pubkey: profileStore.pubkey
+                icon: profileStore.profileLargeImage
+                imageSize: ProfileHeader.ImageSize.Big
 
-                    displayNameVisible: false
-                    pubkeyVisible: false
-                    emojiHashVisible: false
-                    editImageButtonVisible: true
-                }
-
-                ProfileDescriptionPanel {
-                    id: descriptionPanel
-
-                    readonly property bool isEnsName: profileStore.preferredName
-
-                    Layout.fillWidth: true
-
-                    displayName.focus: !isEnsName
-                    displayName.input.edit.readOnly: isEnsName
-                    displayName.text: profileStore.name
-                    displayName.validationMode: StatusInput.ValidationMode.Always
-                    displayName.validators: isEnsName ? [] : Constants.validators.displayName
-                    bio.text: profileStore.bio
-                }
+                displayNameVisible: false
+                pubkeyVisible: false
+                emojiHashVisible: false
+                editImageButtonVisible: true
             }
 
-            // communities
-            ProfileShowcaseCommunitiesPanel {
-                id: profileShowcaseCommunitiesPanel
-                baseModel: root.communitiesModel
-                showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
-                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-            }
+            ProfileDescriptionPanel {
+                id: descriptionPanel
 
-            // accounts
-            ProfileShowcaseAccountsPanel {
-                id: profileShowcaseAccountsPanel
-                baseModel: root.walletStore.accounts
-                showcaseModel: root.profileStore.profileShowcaseAccountsModel
-                currentWallet: root.walletStore.overview.mixedcaseAddress
-                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-            }
+                readonly property bool isEnsName: profileStore.preferredName
 
-            // collectibles
-            ProfileShowcaseCollectiblesPanel {
-                id: profileShowcaseCollectiblesPanel
-                baseModel: root.profileStore.collectiblesModel
-                showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+                Layout.fillWidth: true
+
+                displayName.focus: !isEnsName
+                displayName.input.edit.readOnly: isEnsName
+                displayName.text: profileStore.name
+                displayName.validationMode: StatusInput.ValidationMode.Always
+                displayName.validators: isEnsName ? [] : Constants.validators.displayName
+                bio.text: profileStore.bio
+            }
+        }
+
+        // communities
+        ProfileShowcaseCommunitiesPanel {
+            id: profileShowcaseCommunitiesPanel
+            baseModel: root.communitiesModel
+            showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+        }
+
+        // accounts
+        ProfileShowcaseAccountsPanel {
+            id: profileShowcaseAccountsPanel
+            baseModel: root.walletStore.accounts
+            showcaseModel: root.profileStore.profileShowcaseAccountsModel
+            currentWallet: root.walletStore.overview.mixedcaseAddress
+            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+        }
+
+        // collectibles
+        ProfileShowcaseCollectiblesPanel {
+            id: profileShowcaseCollectiblesPanel
+            baseModel: root.profileStore.collectiblesModel
+            showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
                 addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
 
                 onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
                 onNavigateToAccountsTab: profileTabBar.currentIndex = 2
+        }
+
+        // assets
+        ProfileShowcaseAssetsPanel {
+            id: profileShowcaseAssetsPanel
+
+            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
+            showcaseModel: root.profileStore.profileShowcaseAssetsModel
+            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+            formatCurrencyAmount: function(amount, symbol) {
+                return root.currencyStore.formatCurrencyAmount(amount, symbol)
             }
 
-            // assets
-            ProfileShowcaseAssetsPanel {
-                id: profileShowcaseAssetsPanel
+            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            onNavigateToAccountsTab: profileTabBar.currentIndex = 2
+        }
 
-                baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
-                showcaseModel: root.profileStore.profileShowcaseAssetsModel
-                addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
-                formatCurrencyAmount: function(amount, symbol) {
-                    return root.currencyStore.formatCurrencyAmount(amount, symbol)
-                }
+        // web
+        ProfileSocialLinksPanel {
+            profileStore: root.profileStore
+            socialLinksModel: root.profileStore.temporarySocialLinksModel
+        }
 
-                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-                onNavigateToAccountsTab: profileTabBar.currentIndex = 2
-            }
-
-            // web
-            ProfileSocialLinksPanel {
+        Component {
+            id: profilePreview
+            ProfileDialog {
+                publicKey: root.contactsStore.myPublicKey
                 profileStore: root.profileStore
-                socialLinksModel: root.profileStore.temporarySocialLinksModel
-            }
-
-            Component {
-                id: profilePreview
-                ProfileDialog {
-                    publicKey: root.contactsStore.myPublicKey
-                    profileStore: root.profileStore
-                    contactsStore: root.contactsStore
-                    networkConnectionStore: root.networkConnectionStore
-                    onClosed: destroy()
-                }
+                contactsStore: root.contactsStore
+                networkConnectionStore: root.networkConnectionStore
+                onClosed: destroy()
             }
         }
     }
