@@ -545,6 +545,9 @@ QtObject {
                 showcaseCollectiblesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCollectiblesModel : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
                 showcaseSocialLinksModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseSocialLinksModel : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
                 
+                assetsModel: rootStore.globalAssetsModel
+                collectiblesModel: rootStore.globalCollectiblesModel
+
                 onOpened: {
                     isCurrentUser ? rootStore.profileSectionStore.requestOwnShowcase()
                                   : rootStore.profileSectionStore.requestContactShowcase(publicKey)

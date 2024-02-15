@@ -34,6 +34,7 @@ Pane {
     property var contactsStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
+    property alias enabledNetworks: showcaseView.enabledNetworks
 
     property var dirtyValues: ({})
     property bool dirty: false
@@ -43,6 +44,9 @@ Pane {
     property var showcaseCollectiblesModel
     property var showcaseSocialLinksModel
     property var showcaseAssetsModel
+
+    property alias assetsModel: showcaseView.globalAssetsModel
+    property alias collectiblesModel: showcaseView.globalCollectiblesModel
 
     signal closeRequested()
 
@@ -601,6 +605,10 @@ Pane {
                     //     width: implicitWidth
                     //     text: qsTr("Assets")
                     // }
+                    StatusTabButton {
+                        width: implicitWidth
+                        text: qsTr("Web")
+                    }
                 }
 
                 // Profile Showcase
@@ -618,7 +626,7 @@ Pane {
                     communitiesModel: root.showcaseCommunitiesModel
                     accountsModel: root.showcaseAccountsModel
                     collectiblesModel: root.showcaseCollectiblesModel
-                    // socialLinksModel: root.showcaseSocialLinksModel
+                    socialLinksModel: root.showcaseSocialLinksModel
                     // assetsModel: root.showcaseAssetsModel
 
                     onCloseRequested: root.closeRequested()

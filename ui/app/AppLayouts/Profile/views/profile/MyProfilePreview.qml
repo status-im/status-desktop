@@ -18,6 +18,8 @@ Item {
     property alias showcaseSocialLinksModel: profilePreview.showcaseSocialLinksModel
     property alias showcaseAssetsModel: profilePreview.showcaseAssetsModel
 
+    property alias assetsModel: profilePreview.assetsModel
+    property alias collectiblesModel: profilePreview.collectiblesModel
 
     implicitHeight: profilePreview.implicitHeight 
                         + profilePreview.anchors.topMargin 
