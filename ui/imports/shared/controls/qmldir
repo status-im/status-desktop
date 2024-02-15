@@ -10,7 +10,9 @@ CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 CurrencyAmountInput 1.0 CurrencyAmountInput.qml
 DisabledTooltipButton 1.0 DisabledTooltipButton.qml
 EmojiHash 1.0 EmojiHash.qml
+EmptyShapeRectangleFooterListView 1.0 EmptyShapeRectangleFooterListView.qml
 ErrorDetails 1.0 ErrorDetails.qml
+FoldableHeader 1.0 FoldableHeader.qml
 FormGroup 1.0 FormGroup.qml
 GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
 GetSyncCodeMobileInstructions 1.0 GetSyncCodeMobileInstructions.qml
