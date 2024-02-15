@@ -78,16 +78,21 @@ proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
 
   discard jsonObj.getProp("contactId", result.contactId)
 
-  for jsonMsg in jsonObj["communities"]:
-    result.communities.add(jsonMsg.toProfileShowcaseCommunity())
-  for jsonMsg in jsonObj["accounts"]:
-    result.accounts.add(jsonMsg.toProfileShowcaseAccount())
-  for jsonMsg in jsonObj["collectibles"]:
-    result.collectibles.add(jsonMsg.toProfileShowcaseCollectible())
-  for jsonMsg in jsonObj["verifiedTokens"]:
-    result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedToken())
-  for jsonMsg in jsonObj["unverifiedTokens"]:
-    result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedToken())
+  if jsonObj["communities"].kind != JNull:
+    for jsonMsg in jsonObj["communities"]:
+      result.communities.add(jsonMsg.toProfileShowcaseCommunity())
+  if jsonObj["accounts"].kind != JNull:
+    for jsonMsg in jsonObj["accounts"]:
+      result.accounts.add(jsonMsg.toProfileShowcaseAccount())
+  if jsonObj["collectibles"].kind != JNull:
+    for jsonMsg in jsonObj["collectibles"]:
+      result.collectibles.add(jsonMsg.toProfileShowcaseCollectible())
+  if jsonObj["verifiedTokens"].kind != JNull:
+    for jsonMsg in jsonObj["verifiedTokens"]:
+      result.verifiedTokens.add(jsonMsg.toProfileShowcaseVerifiedToken())
+  if jsonObj["unverifiedTokens"].kind != JNull:
+    for jsonMsg in jsonObj["unverifiedTokens"]:
+      result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedToken())
 
 proc `%`*(x: ProfileShowcaseAccount): JsonNode =
   result = newJobject()
