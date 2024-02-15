@@ -8,7 +8,7 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
-import "internals"
+import shared.controls 1.0
 
 DoubleFlickableWithFolding {
     id: root
@@ -37,7 +37,7 @@ DoubleFlickableWithFolding {
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
 
-    flickable1: ManageTokensListViewBase {
+    flickable1: EmptyShapeRectangleFooterListView {
         objectName: "communityTokensListView"
 
         width: root.width
@@ -61,7 +61,7 @@ DoubleFlickableWithFolding {
         placeholderText: qsTr("Your community minted collectibles will appear here")
     }
 
-    flickable2: ManageTokensListViewBase {
+    flickable2: EmptyShapeRectangleFooterListView {
         objectName: "otherTokensListView"
 
         width: root.width

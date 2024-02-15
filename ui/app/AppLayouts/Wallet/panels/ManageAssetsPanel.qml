@@ -8,7 +8,7 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
-import "internals"
+import shared.controls 1.0
 
 DoubleFlickableWithFolding {
     id: root
@@ -46,7 +46,7 @@ DoubleFlickableWithFolding {
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
 
-    flickable1: ManageTokensListViewBase {
+    flickable1: EmptyShapeRectangleFooterListView {
         model: root.controller.regularTokensModel
         width: root.width
 
@@ -74,7 +74,7 @@ DoubleFlickableWithFolding {
         placeholderText: qsTr("Your assets will appear here")
     }
 
-    flickable2: ManageTokensListViewBase {
+    flickable2: EmptyShapeRectangleFooterListView {
         width: root.width
 
         model: root.controller.arrangeByCommunity ? communityGroupedModel
