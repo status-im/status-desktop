@@ -562,10 +562,6 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module) =
   let communityTokens = self.controller.getAllCommunityTokens()
   let communities = self.controller.getAllCommunities()
   for community in communities:
-    if not community.isOwner and not community.isTokenMaster:
-      # No need to include those tokens, we do not manage that community
-      continue
-
     for tokenMetadata in community.communityTokensMetadata:
       # Set fallback supply to infinite in case we don't have it
       var supply = "1"
