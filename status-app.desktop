@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Status
+Comment=Status is a free, open-source super app
+Exec="PATH/TO/status.AppImage" --uri=%U
+Terminal=false
+Type=Application
+TryExec=PATH/TO/status.AppImage

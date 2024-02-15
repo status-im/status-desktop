@@ -1,0 +1,33 @@
+id: org.status.status-app
+runtime: org.kde.Platform
+runtime-version: '5.15-23.08'
+sdk: org.kde.Sdk
+command: start-status
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=dri
+  - --filesystem=xdg-config
+modules:
+  - name: status-app
+    buildsystem: simple
+    build-commands:
+      - ./Status.AppImage --appimage-extract
+      - mkdir -p "${FLATPAK_DEST}/status"
+      - cp -r squashfs-root/* "${FLATPAK_DEST}/status"
+      # - mv "${FLATPAK_DEST}/status/usr/share/icons" "${FLATPAK_DEST}/share"
+      # - install -Dm644 "${FLATPAK_DEST}/status/Zettlr.desktop" "${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop"
+      # - desktop-file-edit --set-key=Exec --set-value="start-zettlr" "${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop"
+      - install -Dm 755 start-status.sh "${FLATPAK_DEST}/bin/start-status"
+
+
+      # - install -D Status.AppImage /app/bin/Status.AppImage
+    sources:
+      - type: file
+        path: ./pkg/Status.AppImage
+      - type: script
+        dest-filename: start-status.sh
+        commands:
+          - /app/status/AppRun "$@" -V=1
