@@ -685,6 +685,9 @@ QVector<int> ConcatModel::mapFromSourceRoles(
         int sourceIndex, const QVector<int>& sourceRoles) const
 {
     QVector<int> mapped;
+    if (sourceIndex < 0 || sourceIndex >= m_rolesMappingFromSource.size())
+        return mapped;
+
     mapped.reserve(sourceRoles.size());
 
     auto& mapping = m_rolesMappingFromSource[sourceIndex];
