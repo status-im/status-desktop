@@ -9,11 +9,11 @@ ProfileShowcasePanel {
 
     keyRole: "id"
     roleNames: ["id", "name", "memberRole", "image", "color"].concat(showcaseRoles)
-    filterFunc: (modelData) => modelData.joined && !showcaseModel.hasItemInShowcase(modelData.id)
-    hiddenPlaceholderBanner: qsTr("Communities here will show on your profile")
-    showcasePlaceholderBanner: qsTr("Communities here will be hidden from your profile")
+    filterFunc: (modelData) => modelData.joined && !root.showcaseModel.hasItemInShowcase(modelData.id)
+    emptyInShowcasePlaceholderText: qsTr("Drag communities here to display in showcase")
+    emptyHiddenPlaceholderText: qsTr("Communities here will be hidden from your Profile")
 
-    draggableDelegateComponent: CommunityShowcaseDelegate {
+    hiddenDraggableDelegateComponent: CommunityShowcaseDelegate {
         Drag.keys: ["x-status-draggable-showcase-item-hidden"]
         showcaseObj: modelData
         dragParent: dragParentData
@@ -22,7 +22,7 @@ ProfileShowcasePanel {
             var tmpObj = Object()
             root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
             tmpObj.showcaseVisibility = value
-            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+            root.showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
             root.showcaseEntryChanged()
         }
     }
@@ -34,7 +34,7 @@ ProfileShowcasePanel {
         dragAxis: Drag.YAxis
         showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
         onShowcaseVisibilityRequested: {
-            showcaseModel.setVisibility(showcaseObj.id, value)
+            root.showcaseModel.setVisibility(showcaseObj.id, value)
             root.showcaseEntryChanged()
         }
     }

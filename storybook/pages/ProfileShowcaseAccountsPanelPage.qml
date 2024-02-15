@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
@@ -29,6 +30,10 @@ SplitView {
     readonly property string currentWallet: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
 
     ListModel {
+        id: emptyModel
+    }
+
+    ListModel {
         id: accountsModel
 
         ListElement {
@@ -52,17 +57,12 @@ SplitView {
             emoji: "🇸🇰"
             walletType: "watch"
         }
-        ListElement {
-            name: "Keycard"
-            address: "0xdeadbeef"
-            colorId: "turquoise"
-            emoji: ""
-            walletType: "key"
-        }
     }
 
     ListModel {
         id: inShowcaseAccountsModel
+
+        property int hiddenCount: emptyModelChecker.checked ? 0 : accountsModel.count - count
 
         signal baseModelFilterConditionsMayHaveChanged()
 
@@ -102,7 +102,7 @@ SplitView {
         ProfileShowcaseAccountsPanel {
             id: showcasePanel
             width: 500
-            baseModel: accountsModel
+            baseModel: emptyModelChecker.checked ? emptyModel : accountsModel
             showcaseModel: inShowcaseAccountsModel
             currentWallet: root.currentWallet
         }
@@ -116,15 +116,25 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Button {
-            text: "Reset (clear settings)"
-            onClicked: showcasePanel.settings.reset()
+        ColumnLayout {
+            Button {
+                text: "Reset (clear settings)"
+                onClicked: showcasePanel.reset()
+            }
+
+            CheckBox {
+                id: emptyModelChecker
+
+                text: "Empty model"
+                checked: false
+
+                onClicked: showcasePanel.reset()
+            }
         }
     }
 }
 
 // category: Panels
 
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14580-339549&t=RkXAEv3G6mp3EUvl-0
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14729-233846&t=RkXAEv3G6mp3EUvl-0
-// https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14609-237740&t=RkXAEv3G6mp3EUvl-0
+// https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?type=design&node-id=2460%3A40333&mode=design&t=Zj3tcx9uj05XHYti-1
+// https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?type=design&node-id=2460%3A40362&mode=design&t=Zj3tcx9uj05XHYti-1

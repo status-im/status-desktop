@@ -66,7 +66,7 @@ Shape {
             id: description
             color: root.textColor
             text: root.text
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             visible: !!text
         }
     }

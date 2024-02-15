@@ -34,7 +34,13 @@ SplitView {
     }
 
     ListModel {
+        id: emptyModel
+    }
+
+    ListModel {
         id: inShowcaseAssetsModel
+
+        property int hiddenCount: emptyModelChecker.checked ? 0 : walletAssetStore.groupedAccountsAssetsModel.count - count
 
         signal baseModelFilterConditionsMayHaveChanged()
 
@@ -75,7 +81,7 @@ SplitView {
         ProfileShowcaseAssetsPanel {
             id: showcasePanel
             width: 500
-            baseModel: walletAssetStore.groupedAccountAssetsModel
+            baseModel: emptyModelChecker.checked ? emptyModel : walletAssetStore.groupedAccountAssetsModel
             showcaseModel: inShowcaseAssetsModel
             addAccountsButtonVisible: !hasAllAccountsChecker.checked
 
@@ -110,6 +116,15 @@ SplitView {
 
                 text: "Has the user already shared all of their accounts"
                 checked: true
+            }
+
+            CheckBox {
+                id: emptyModelChecker
+
+                text: "Empty model"
+                checked: false
+
+                onClicked: showcasePanel.reset()
             }
         }
     }

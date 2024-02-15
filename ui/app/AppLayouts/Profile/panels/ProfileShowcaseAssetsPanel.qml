@@ -21,10 +21,10 @@ ProfileShowcasePanel {
     keyRole: "symbol"
     roleNames: ["symbol", "name", "address", "communityId", "enabledNetworkBalance", "decimals"].concat(showcaseRoles)
     filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
-    hiddenPlaceholderBanner: qsTr("Assets here will show on your profile")
-    showcasePlaceholderBanner: qsTr("Assets here will be hidden from your profile")
+    emptyInShowcasePlaceholderText: qsTr("Assets here will show on your profile")
+    emptyHiddenPlaceholderText: qsTr("Assets here will be hidden from your profile")
 
-    draggableDelegateComponent: AssetShowcaseDelegate {
+    hiddenDraggableDelegateComponent: AssetShowcaseDelegate {
         Drag.keys: ["x-status-draggable-showcase-item-hidden"]
         showcaseObj: modelData
         dragParent: dragParentData
@@ -52,15 +52,17 @@ ProfileShowcasePanel {
             root.showcaseEntryChanged()
         }
     }
-    additionalComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-    Component {
-        id: addMoreAccountsComponent
+// TODO: Issue #13590
+//    additionalComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-        AddMoreAccountsLink {
-             visible: root.addAccountsButtonVisible
-             text: qsTr("Don’t see some of your assets?")
-             onClicked: root.navigateToAccountsTab()
-        }
-    }
+//    Component {
+//        id: addMoreAccountsComponent
+
+//        AddMoreAccountsLink {
+//             visible: root.addAccountsButtonVisible
+//             text: qsTr("Don’t see some of your assets?")
+//             onClicked: root.navigateToAccountsTab()
+//        }
+//    }
 }

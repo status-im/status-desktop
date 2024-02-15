@@ -19,10 +19,10 @@ ProfileShowcasePanel {
     keyRole: "uid"
     roleNames: ["uid", "chainId", "tokenId", "contractAddress", "communityId", "name", "collectionName", "backgroundColor", "imageUrl"].concat(showcaseRoles)
     filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.uid)
-    hiddenPlaceholderBanner: qsTr("Collectibles here will show on your profile")
-    showcasePlaceholderBanner: qsTr("Collectibles here will be hidden from your profile")
+    emptyInShowcasePlaceholderText: qsTr("Collectibles here will show on your profile")
+    emptyHiddenPlaceholderText: qsTr("Collectibles here will be hidden from your profile")
 
-    draggableDelegateComponent: CollectibleShowcaseDelegate {
+    hiddenDraggableDelegateComponent: CollectibleShowcaseDelegate {
         Drag.keys: ["x-status-draggable-showcase-item-hidden"]
         showcaseObj: modelData
         dragParent: dragParentData
@@ -47,15 +47,17 @@ ProfileShowcasePanel {
             root.showcaseEntryChanged()
         }
     }
-    additionalComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-    Component {
-        id: addMoreAccountsComponent
+// TODO: Issue #13590
+//    additionalComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-        AddMoreAccountsLink {
-             visible: root.addAccountsButtonVisible
-             text: qsTr("Don’t see some of your collectibles?")
-             onClicked: root.navigateToAccountsTab()
-        }
-    }
+//    Component {
+//        id: addMoreAccountsComponent
+
+//        AddMoreAccountsLink {
+//             visible: root.addAccountsButtonVisible
+//             text: qsTr("Don’t see some of your collectibles?")
+//             onClicked: root.navigateToAccountsTab()
+//        }
+//    }
 }

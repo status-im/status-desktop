@@ -30,6 +30,10 @@ SplitView {
     }
 
     ListModel {
+        id: emptyModel
+    }
+
+    ListModel {
         id: collectiblesModel
 
         readonly property var data: [
@@ -124,6 +128,8 @@ SplitView {
     ListModel {
         id: inShowcaseCollectiblesModel
 
+        property int hiddenCount: emptyModelChecker.checked ? 0 : collectiblesModel.count - count
+
         signal baseModelFilterConditionsMayHaveChanged()
 
         function setVisibilityByIndex(index, visibility) {
@@ -162,7 +168,7 @@ SplitView {
         ProfileShowcaseCollectiblesPanel {
             id: showcasePanel
             width: 500
-            baseModel: leftJoinModel
+            baseModel: emptyModelChecker.checked ? emptyModel : leftJoinModel
             showcaseModel: inShowcaseCollectiblesModel
             addAccountsButtonVisible: !hasAllAccountsChecker.checked
 
@@ -190,6 +196,15 @@ SplitView {
 
                 text: "Has the user already shared all of their accounts"
                 checked: true
+            }
+
+            CheckBox {
+                id: emptyModelChecker
+
+                text: "Empty model"
+                checked: false
+
+                onClicked: showcasePanel.reset()
             }
 
         }
