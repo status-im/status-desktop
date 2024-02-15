@@ -2183,16 +2183,6 @@ QtObject:
         response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
 
       if response.result != nil and response.result.kind != JNull:
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_ADDED].pairs():
-          let p = permission.toCommunityTokenPermissionDto()
-          self.communities[communityId].tokenPermissions[permissionId] = p
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
-
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
-          let p = permission.toCommunityTokenPermissionDto()
-          self.communities[communityId].tokenPermissions[permissionId] = p
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
-
         return
 
       var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED
@@ -2207,16 +2197,6 @@ QtObject:
     try:
       let response = status_go.deleteCommunityTokenPermission(communityId, permissionId)
       if response.result != nil and response.result.kind != JNull:
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_REMOVED].pairs():
-          if self.communities[communityId].tokenPermissions.hasKey(permissionId):
-            self.communities[communityId].tokenPermissions.del(permissionId)
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED, CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId))
-
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
-          let p = permission.toCommunityTokenPermissionDto()
-          self.communities[communityId].tokenPermissions[permissionId] = p
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
-
         return
 
       var tokenPermission = CommunityTokenPermissionDto()
