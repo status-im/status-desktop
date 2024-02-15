@@ -22,7 +22,7 @@ import StatusQ.Core.Theme 0.1
             locale: "en"
             communityId: model.communityId
             loaded: model.available
-            logo: model.icon
+            asset.source: model.icon
             name: model.name
             description: model.description
             members: model.members
@@ -37,6 +37,31 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: root
 
+    property int cardSize: StatusCommunityCard.Size.Big
+    enum Size {
+        Big,
+        Small
+    }
+    /*!
+       \qmlproperty bool StatusCommunityCard::memberCountVisible
+       This property sets the member's count visibility.
+    */
+    property bool memberCountVisible: true
+    /*!
+       \qmlproperty bool StatusCommunityCard::hovered
+       This property indicates whether the card contains mouse.
+    */
+    property bool hovered: sensor.containsMouse
+    /*!
+       \qmlproperty int StatusCommunityCard::titleFontSize
+       This property holds the title's font size.
+    */
+    property int titleFontSize: 19
+    /*!
+       \qmlproperty int StatusCommunityCard::descriptionFontSize
+       This property holds the description's font size.
+    */
+    property int descriptionFontSize: 15
     /*!
        \qmlproperty string StatusCommunityCard::communityId
        This property holds the community identifier value.
@@ -47,11 +72,6 @@ Rectangle {
        This property holds a boolean value that represents if the community information is loaded or not.
     */
     property bool loaded: true
-    /*!
-       \qmlproperty url StatusCommunityCard::logo
-       This property holds the community logo source.
-    */
-    property url logo: ""
     /*!
        \qmlproperty string StatusCommunityCard::name
        This property holds the community name.
@@ -123,6 +143,28 @@ Rectangle {
     property alias rigthHeaderComponent: rightHeaderLoader.sourceComponent
 
     /*!
+       \qmlproperty Item StatusCommunityCard::bottomRowComponent
+       This property holds an extra info bottom row component that will be displayed on bottom left of the card.
+       Example: Community token permissions row.
+    */
+    property alias bottomRowComponent: bottomRowLoader.sourceComponent
+    /*!
+       \qmlproperty color StatusCommunityCard::descriptionFontColor
+       This property holds the description font color.
+       If not provided, default value in Light Theme is "#000000" and in Dark Theme is "#FFFFFF".
+    */
+    property color descriptionFontColor: Theme.palette.directColor1
+
+    /*!
+       \qmlproperty StatusAssetSettings StatusCommunityCard::asset
+       This property holds the card's asset settings for the logo image.
+    */
+    property StatusAssetSettings asset: StatusAssetSettings {
+        height: 40
+        width: 40
+    }
+
+    /*!
         \qmlsignal StatusCommunityCard::clicked(string communityId)
         This signal is emitted when the card item is clicked.
     */
@@ -131,11 +173,12 @@ Rectangle {
     QtObject {
         id: d
         readonly property int cardWidth: 335
-        readonly property int bannerHeigth: 64
-        readonly property int cardHeigth: 190
-        readonly property int totalHeigth: 230
+        readonly property int bannerHeight: (root.cardSize === StatusCommunityCard.Size.Big) ? 64 : 55
+        readonly property int cardHeigth: (root.cardSize === StatusCommunityCard.Size.Big) ? 190 : 119
+        readonly property int totalHeigth:  (root.cardSize === StatusCommunityCard.Size.Big) ? 230 : 144
         readonly property int margins: 12
-        readonly property int bannerRadius: 20
+        readonly property int bannerRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 20 : 16
+        readonly property int bannerRadiusHovered: (root.cardSize === StatusCommunityCard.Size.Big) ? 30 : 16
         readonly property int cardRadius: 16
         readonly property color cardColor: Theme.palette.name === "light" ? Theme.palette.indirectColor1 : Theme.palette.baseColor2
         readonly property color fontColor: Theme.palette.directColor1
@@ -169,7 +212,7 @@ Rectangle {
         source: root
         horizontalOffset: 0
         verticalOffset: 2
-        radius: sensor.containsMouse ? 30 : d.bannerRadius
+        radius: sensor.containsMouse ? d.bannerRadiusHovered : d.bannerRadius
         samples: 25
         spread: 0
         color: sensor.containsMouse ? Theme.palette.backdropColor : Theme.palette.dropShadow
@@ -181,7 +224,7 @@ Rectangle {
 
         anchors.top: parent.top
         width: parent.width
-        height: d.bannerHeigth
+        height: d.bannerHeight
 
         Rectangle {
             id: mask
@@ -220,10 +263,10 @@ Rectangle {
     Rectangle {
         z: content.z + 1
         anchors.top: parent.top
-        anchors.topMargin: 16
+        anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 16 : 8
         anchors.left: parent.left
         anchors.leftMargin: 12
-        width: 48
+        width: root.asset.width + 4
         height: width
         radius: width / 2
         color: root.loaded ? d.cardColor : d.loadingColor1
@@ -233,7 +276,7 @@ Rectangle {
             anchors.centerIn: parent
             width: parent.width - 4
             height: width
-            image.source: root.logo
+            image.source: root.asset.source
             color: "transparent"
         }
     } // End of community logo
@@ -244,8 +287,8 @@ Rectangle {
         z: banner.z + 1
         visible: root.loaded
         anchors.top: parent.top
-        anchors.topMargin: 40
-        width: d.cardWidth
+        anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 40 : 23
+        width: parent.width
         height: d.cardHeigth
         color: d.cardColor
         radius: d.cardRadius
@@ -262,27 +305,29 @@ Rectangle {
 
         // Community info
         ColumnLayout {
-            anchors.fill: parent
-            anchors.topMargin: 32
+            anchors.top: parent.top
+            anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 32 : 26
+            anchors.left: parent.left
             anchors.leftMargin: d.margins
+            anchors.right: parent.right
             anchors.rightMargin: d.margins
-            anchors.bottomMargin: d.margins
-            clip: true
-            spacing: 6
+            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 6 : 0
             StatusBaseText {
                 Layout.alignment: Qt.AlignVCenter
+                Layout.fillWidth: true
                 text: root.name
                 font.weight: Font.Bold
-                font.pixelSize: 19
+                font.pixelSize: root.titleFontSize
                 color: d.fontColor
+                elide: Text.ElideRight
             }
             StatusBaseText {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 text: root.description
-                font.pixelSize: 15
+                font.pixelSize: root.descriptionFontSize
                 lineHeight: 1.2
-                color: d.fontColor
+                color: root.descriptionFontColor
                 maximumLineCount: 2
                 wrapMode: Text.WordWrap
                 elide: Text.ElideRight
@@ -290,17 +335,18 @@ Rectangle {
             }
         }
         ColumnLayout {
-            anchors.fill: parent
-            anchors.topMargin: 116
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
             anchors.leftMargin: d.margins
+            anchors.right: parent.right
             anchors.rightMargin: d.margins
             anchors.bottomMargin: d.margins
-            clip: true
-            spacing: 18
+            spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 18 : 0
             Row {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 20
                 // Members
+                visible: root.memberCountVisible
                 Row {
                     height: membersTxt.height
                     spacing: 4
@@ -338,39 +384,46 @@ Rectangle {
                 }
             }
 
-            StatusRollArea {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
+            // Bottom Row extra info component
+            Loader {
+                id: bottomRowLoader
+                Layout.fillWidth: (!!item && item.width===0)
+                Layout.preferredHeight: 24
+                active: ((root.categories.count > 0) || !!root.bottomRowComponent)
+                sourceComponent: tagsListComponent
+            }
 
-                visible: root.categories.count > 0
-                arrowsGradientColor: d.cardColor
+            Component {
+                id: tagsListComponent
+                StatusRollArea {
+                    arrowsGradientColor: d.cardColor
 
-                // TODO: Replace by `StatusListItemTagRow` - To be done!
-                content: Row {
-                    spacing: 8
-                    clip: true
+                    // TODO: Replace by `StatusListItemTagRow` - To be done!
+                    content: Row {
+                        spacing: 8
+                        clip: true
 
-                    Repeater {
-                        model: root.categories
-                        delegate: StatusListItemTag {
-                            bgColor: "transparent"
-                            bgRadius: 20
-                            bgBorderColor: Theme.palette.baseColor2
-                            height: 24
-                            closeButtonVisible: false
-                            asset.emoji: model.emoji
-                            asset.width: 24
-                            asset.height: 24
-                            asset.color: "transparent"
-                            asset.isLetterIdenticon: true
-                            title: model.name
-                            titleText.font.pixelSize: 13
-                            titleText.color: d.fontColor
+                        Repeater {
+                            model: root.categories
+                            delegate: StatusListItemTag {
+                                bgColor: "transparent"
+                                bgRadius: 20
+                                bgBorderColor: Theme.palette.baseColor2
+                                height: 24
+                                closeButtonVisible: false
+                                asset.emoji: model.emoji
+                                asset.width: 24
+                                asset.height: 24
+                                asset.color: "transparent"
+                                asset.isLetterIdenticon: true
+                                title: model.name
+                                titleText.font.pixelSize: 13
+                                titleText.color: d.fontColor
+                            }
                         }
                     }
                 }
             }
-
         }
     } // End of content card
 
@@ -378,8 +431,8 @@ Rectangle {
     Rectangle {
         visible: !root.loaded
         anchors.top: parent.top
-        anchors.topMargin: 40
-        width: d.cardWidth
+        anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 40 : 23
+        width: parent.width
         height: d.cardHeigth
         color: d.cardColor
         radius: d.cardRadius

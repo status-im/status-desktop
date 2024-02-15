@@ -38,6 +38,9 @@ SettingsContentBase {
     property alias collectiblesShowcaseModel: showcaseModels.collectiblesSourceModel
     property alias socialLinksShowcaseModel: showcaseModels.socialLinksSourceModel
 
+    property var assetsModel
+    property var collectiblesModel
+
     property bool sideBySidePreview
     property bool toastClashesWithDirtyBubble
     readonly property alias sideBySidePreviewComponent: myProfilePreviewComponent
@@ -400,6 +403,9 @@ SettingsContentBase {
                 showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
                 showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
                 //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
+
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
             }
         }
 
@@ -417,6 +423,9 @@ SettingsContentBase {
                 showcaseCollectiblesModel: priv.showcaseModels.collectiblesVisibleModel
                 showcaseSocialLinksModel: priv.showcaseModels.socialLinksVisibleModel
                 //showcaseAssetsModel: priv.showcaseModels.assetsVisibleModel
+
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
             }
         }
 

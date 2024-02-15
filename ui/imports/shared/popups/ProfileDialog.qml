@@ -23,6 +23,9 @@ StatusDialog {
     property alias showcaseSocialLinksModel: profileView.showcaseSocialLinksModel
     property alias showcaseAssetsModel: profileView.showcaseAssetsModel
 
+    property alias assetsModel: profileView.assetsModel
+    property alias collectiblesModel: profileView.collectiblesModel
+    
     property alias dirtyValues: profileView.dirtyValues
     property alias dirty: profileView.dirty
 

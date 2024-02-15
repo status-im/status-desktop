@@ -19,12 +19,13 @@ ListModel {
         {
             uid: "123",
             chainId: 5,
+            userHas: 9,
             name: "Punx not dead!",
             collectionUid: "",
             collectionName: "",
             communityId: "",
             communityName: "",
-            communityImage: "",
+            communityImage: ModelsData.icons.status,
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
             backgroundColor: "",
@@ -44,6 +45,7 @@ ListModel {
         {
             uid: "pp23",
             chainId: 5,
+            userHas: 0,
             name: "pepepunk#23",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
@@ -64,6 +66,7 @@ ListModel {
         {
             uid: "34545656768",
             chainId: 420,
+            userHas: 1,
             name: "Kitty 1",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -84,6 +87,7 @@ ListModel {
         {
             uid: "123456",
             chainId: 420,
+            userHas: 0,
             name: "Kitty 2",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -104,6 +108,7 @@ ListModel {
         {
             uid: "12345645459537432",
             chainId: 421613,
+            userHas: 0,
             name: "Big Kitty",
             collectionUid: "KT",
             collectionName: "Kitties",
@@ -129,6 +134,7 @@ ListModel {
         {
             uid: "pp21",
             chainId: 421613,
+            userHas: 0,
             name: "pepepunk#21",
             collectionUid: "pepepunks",
             collectionName: "Pepepunks",
@@ -149,6 +155,7 @@ ListModel {
         {
             uid: "lp#666a",
             chainId: 421613,
+            userHas: 0,
             name: "Lonely Panda #666",
             collectionUid: "lpan_collection",
             collectionName: "Lonely Panda Collection",
