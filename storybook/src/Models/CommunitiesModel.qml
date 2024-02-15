@@ -19,7 +19,9 @@ ListModel {
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" } ],
                     membersCount: 1,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0002",
@@ -36,7 +38,9 @@ ListModel {
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" } ],
                     membersCount: 3,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0003",
@@ -48,12 +52,14 @@ ListModel {
                     spectated: true,
                     memberRole: Constants.memberRole.none,
                     isControlNode: false,
-                    image: ModelsData.icons.coinbase,
+                    image: ModelsData.icons.dragonereum,
                     color: "red",
                     muted: false,
                     members: [ { pubKey: "0xdeadbeef" } ],
                     membersCount: 1,
-                    loading: false
+                    loading: false,
+                    permissionsModel: PermissionsModel.moreThanTwoInitialShortPermissionsModel,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0004",
@@ -65,12 +71,14 @@ ListModel {
                     spectated: false,
                     memberRole: Constants.memberRole.none,
                     isControlNode: false,
-                    image: "",
+                    image: ModelsData.icons.coinbase,
                     color: "whitesmoke",
                     muted: true,
                     members: [],
                     membersCount: 0,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0005",
@@ -87,7 +95,9 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 4,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0006",
@@ -104,7 +114,9 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }],
                     membersCount: 1,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 },
                 {
                     id: "0x0007",
@@ -120,7 +132,9 @@ ListModel {
                     muted: false,
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 2,
-                    loading: false
+                    loading: false,
+                    permissionsModel: null,
+                    allTokenRequirementsMet: false
                 }
                ])
 }

@@ -34,6 +34,10 @@ Pane {
     property var contactsStore
     property var walletStore: WalletNS.RootStore
     property var networkConnectionStore
+    property var enabledNetworks
+    property var socialLinks
+    property var assetsModel
+    property var collectiblesModel
 
     property var dirtyValues: ({})
     property bool dirty: false
@@ -591,10 +595,14 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
-                    // StatusTabButton {
-                    //     width: implicitWidth
-                    //     text: qsTr("Assets")
-                    // }
+                    StatusTabButton {
+                        width: implicitWidth
+                        text: qsTr("Assets")
+                    }
+                    StatusTabButton {
+                        width: implicitWidth
+                        text: qsTr("Web")
+                    }
                 }
 
                 // Profile Showcase
@@ -602,6 +610,8 @@ Pane {
                     Layout.fillWidth: true
                     Layout.topMargin: -column.spacing
                     Layout.preferredHeight: 300
+                    enabledNetworks: root.enabledNetworks
+                    socialLinks: root.socialLinks
 
                     currentTabIndex: showcaseTabBar.currentIndex
                     publicKey: root.publicKey
@@ -613,6 +623,8 @@ Pane {
                     
                     livePreview: root.dirty
                     livePreviewValues: root.dirtyValues
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
 
                     onCloseRequested: root.closeRequested()
                 }

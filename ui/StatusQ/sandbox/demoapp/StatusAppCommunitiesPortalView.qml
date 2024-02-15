@@ -100,7 +100,7 @@ StatusSectionLayout {
                             locale: Qt.locale("es")
                             communityId: model.communityId
                             loaded: model.available
-                            logo: model.logo
+                            asset.source: model.logo
                             name: model.name
                             description: model.description
                             members: model.members
@@ -138,7 +138,7 @@ StatusSectionLayout {
                             locale: Qt.locale("es")
                             communityId: model.communityId
                             loaded: model.available
-                            logo: model.logo
+                            asset.source: model.logo
                             name: model.name
                             description: model.description
                             members: model.members

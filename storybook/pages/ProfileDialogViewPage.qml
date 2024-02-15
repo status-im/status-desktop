@@ -124,6 +124,45 @@ SplitView {
         }
     }
 
+    ListModel {
+        id: linksModel
+        ListElement {
+            uuid: "0001"
+            text: "__github"
+            url: "https://github.com/caybro"
+            linkType: 3 // Constants.socialLinkType.github
+            icon: "github"
+        }
+        ListElement {
+            uuid: "0002"
+            text: "__twitter"
+            url: "https://twitter.com/caybro"
+            linkType: 1 // Constants.socialLinkType.twitter
+            icon: "twitter"
+        }
+        ListElement {
+            uuid: "0003"
+            text: "__personal_site"
+            url: "https://status.im"
+            linkType: 2 // Constants.socialLinkType.personalSite
+            icon: "language"
+        }
+        ListElement {
+            uuid: "0004"
+            text: "__youtube"
+            url: "https://www.youtube.com/@LukasTinkl"
+            linkType: 4 // Constants.socialLinkType.youtube
+            icon: "youtube"
+        }
+        ListElement {
+            uuid: "0006"
+            text: "__telegram"
+            url: "https://t.me/ltinkl"
+            linkType: 6 // Constants.socialLinkType.telegram
+            icon: "telegram"
+        }
+    }
+
     Logs { id: logs }
 
     Popups {
@@ -281,9 +320,12 @@ SplitView {
 
                     sourceComponent: ProfileDialogView {
                         implicitWidth: 640
+                        enabledNetworks: NetworksModel.allNetworks
+                        socialLinks: linksModel
+                        assetsModel: AssetsModel {}
+                        collectiblesModel: CollectiblesModel {}
 
                         readOnly: ctrlReadOnly.checked
-
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")

@@ -74,7 +74,7 @@ StatusScrollView {
 
             communityId: model.id
             loaded: model.available
-            logo: model.icon
+            asset.source: model.icon
             banner: model.banner
             communityColor: model.color
             name: model.name
