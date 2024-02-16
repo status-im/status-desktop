@@ -636,3 +636,9 @@ proc getOwnerTokenAddressFromPermissions*(self: CommunityDto): (int, string) =
       for ch, add in addresses.pairs:
         return (ch, add)
   return (0, "")
+
+proc findOwner*(self: CommunityDto): ChatMember =
+  for member in self.members:
+    if member.role == MemberRole.Owner:
+      return member
+  raise newException(ValueError, "No owner found in members list")
