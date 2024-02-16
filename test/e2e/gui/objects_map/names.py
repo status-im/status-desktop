@@ -230,6 +230,7 @@ mainWallet_AddEditAccountPopup_AccountEmoji = {"container": statusDesktop_mainWi
 o_StatusDialogBackground = {"container": statusDesktop_mainWindow_overlay, "type": "StatusDialogBackground", "unnamed": 1, "visible": True}
 delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "type": "StatusButton", "visible": True}
 confirm_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "confirmDeleteCategoryButton", "type": "StatusButton", "visible": True}
+confirm_permission_delete_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "id": "confirmButton", "type": "StatusButton", "unnamed": 1, "visible": True}
 
 # Authenticate Popup
 keycardSharedPopupContent_KeycardPopupContent = {"container": statusDesktop_mainWindow_overlay, "objectName": "KeycardSharedPopupContent", "type": "KeycardPopupContent", "visible": True}
@@ -727,6 +728,12 @@ mainWindow_PermissionsSettingsPanel = {"container": statusDesktop_mainWindow, "t
 whoHoldsTagListItem = {"container": mainWindow_PermissionsView, "objectName": "whoHoldsStatusListItem", "type": "StatusListItemTag", "visible": True}
 isAllowedTagListItem = {"container": mainWindow_PermissionsView, "objectName": "isAllowedStatusListItem", "type": "StatusListItemTag", "visible": True}
 inCommunityTagListItem = {"container": mainWindow_PermissionsView, "objectName": "inCommunityStatusListItem", "type": "StatusListItemTag", "visible": True}
+edit_pencil_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "edit_pencil-icon", "type": "StatusIcon", "visible": True}
+delete_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "delete-icon", "type": "StatusIcon", "visible": True}
+hide_icon_StatusIcon = {"container": mainWindow_PermissionsView, "objectName": "hide-icon", "type": "StatusIcon", "visible": True}
+editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage = {"container": mainWindow_editPermissionView_EditPermissionView, "id": "settingsDirtyToastMessage", "type": "SettingsDirtyToastMessage", "unnamed": 1, "visible": True}
+update_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+isAllowedToEditPermissionView_StatusListItemTag = {"container": mainWindow_editPermissionView_EditPermissionView, "type": "StatusListItemTag", "unnamed": 1, "visible": True}
 
 # Edit Community
 mainWindow_communityEditPanelScrollView_EditSettingsPanel = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "EditSettingsPanel", "visible": True}
@@ -750,6 +757,7 @@ communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox = {"checkable": Tr
 communityEditPanelScrollView_editCommunityIntroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityIntroInput", "type": "TextEdit", "visible": True}
 communityEditPanelScrollView_editCommunityOutroInput_TextEdit = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCommunityOutroInput", "type": "TextEdit", "visible": True}
 mainWindow_Save_changes_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "DisabledTooltipButton", "visible": True}
+editPermissionView_Save_changes_StatusButton = {"container": mainWindow_editPermissionView_EditPermissionView, "objectName": "settingsDirtyToastMessageSaveButton", "type": "DisabledTooltipButton", "visible": True}
 croppedImageEditLogo = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCroppedImageItem_Community logo", "type": "EditCroppedImagePanel", "visible": True}
 croppedImageEditBanner = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCroppedImageItem_Community banner", "type": "EditCroppedImagePanel", "visible": True}
 

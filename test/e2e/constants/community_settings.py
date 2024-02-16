@@ -31,3 +31,5 @@ class AirdropsElements(Enum):
 
 class ToastMessages(Enum):
     CREATE_PERMISSION_TOAST = 'Community permission created'
+    UPDATE_PERMISSION_TOAST = 'Community permission updated'
+    DELETE_PERMISSION_TOAST = 'Community permission updated'

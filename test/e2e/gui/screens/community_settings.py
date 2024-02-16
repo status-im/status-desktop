@@ -114,7 +114,8 @@ class EditCommunityView(QObject):
         self._select_color_button = Button(names.communityEditPanelScrollView_StatusPickerButton)
         self._choose_tag_button = Button(names.communityEditPanelScrollView_Choose_StatusPickerButton)
         self._tag_item = QObject(names.communityEditPanelScrollView_StatusCommunityTag)
-        self._archive_support_checkbox = CheckBox(names.communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox)
+        self._archive_support_checkbox = CheckBox(
+            names.communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox)
         self._request_to_join_checkbox = CheckBox(names.communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox)
         self._pin_messages_checkbox = CheckBox(names.communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox)
         self._intro_text_edit = TextEdit(names.communityEditPanelScrollView_editCommunityIntroInput_TextEdit)
@@ -376,6 +377,14 @@ class PermissionsIntroView(QObject):
         self._welcome_checklist_1 = TextLabel(names.community_welcome_screen_checkList_element1)
         self._welcome_checklist_2 = TextLabel(names.community_welcome_screen_checkList_element2)
         self._welcome_checklist_3 = TextLabel(names.community_welcome_screen_checkList_element3)
+        self._edit_permission_button = QObject(names.edit_pencil_icon_StatusIcon)
+        self._delete_permission_button = QObject(names.delete_icon_StatusIcon)
+        self._hide_icon = QObject(names.hide_icon_StatusIcon)
+
+    @property
+    @allure.step('Get hide icon visibility')
+    def is_hide_icon_visible(self) -> bool:
+        return self._hide_icon.is_visible
 
     @property
     @allure.step('Get permission welcome image path')
@@ -409,6 +418,15 @@ class PermissionsIntroView(QObject):
     def is_add_new_permission_button_present(self) -> bool:
         return self._add_new_permission_button.exists
 
+    @allure.step('Open edit permission view')
+    def open_edit_permission_view(self):
+        self._edit_permission_button.click()
+        return PermissionsSettingsView().wait_until_appears()
+
+    @allure.step('Click delete permission button')
+    def click_delete_permission(self):
+        self._delete_permission_button.click()
+
 
 class PermissionsSettingsView(QObject):
     def __init__(self):
@@ -429,6 +447,7 @@ class PermissionsSettingsView(QObject):
         self._who_holds_tag = QObject(names.whoHoldsTagListItem)
         self._is_allowed_tag = QObject(names.isAllowedTagListItem)
         self._in_community_in_channel_tag = QObject(names.inCommunityTagListItem)
+        self._is_allowed_to_edit_tag = QObject(names.isAllowedToEditPermissionView_StatusListItemTag)
 
     @allure.step('Get titles of Who holds tags')
     def get_who_holds_tags_titles(self) -> typing.List[str]:
@@ -459,21 +478,32 @@ class PermissionsSettingsView(QObject):
             self._asset_item.click()
             self._who_holds_asset_field.wait_until_hidden()
             self._who_holds_amount_field.text = amount
-            self._add_button.click()
+            self.click_add_button()
 
     @allure.step('Choose option from Is allowed to context menu')
     def set_is_allowed_to(self, name):
         self.open_is_allowed_to_context_menu()
         self._is_allowed_to_option_button.real_name['objectName'] = name
         self._is_allowed_to_option_button.wait_until_appears().click()
-        self._add_button.click()
+        self.click_add_button()
 
     @allure.step('Choose channel from In context menu')
     def set_in(self, in_general):
         if in_general == '#general':
             self.open_in_context_menu()
             self._in_general_button.wait_until_appears().click()
-            self._add_button.click()
+            self.click_add_button()
+
+    @allure.step('Click add button')
+    def click_add_button(self, attempt: int = 2):
+        self._add_button.click()
+        try:
+            self._add_button.wait_until_hidden()
+        except AssertionError as err:
+            if attempt:
+                self.click_add_button(attempt - 1)
+            else:
+                raise err
 
     @allure.step('Click create permission')
     def create_permission(self):
@@ -503,3 +533,14 @@ class PermissionsSettingsView(QObject):
                 driver.mouseClick(child)
                 return
         raise LookupError('Add button for in not found')
+
+    @allure.step('Switch hide permission checkbox')
+    def switch_hide_permission_checkbox(self, state):
+        self._hide_permission_checkbox.set(state)
+
+    @allure.step('Change allowed to option from permission')
+    def set_allowed_to_from_permission(self, name):
+        self._is_allowed_to_edit_tag.click()
+        self._is_allowed_to_option_button.real_name['objectName'] = name
+        self._is_allowed_to_option_button.wait_until_appears().click()
+        self.click_add_button()

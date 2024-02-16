@@ -5,7 +5,7 @@ from . import marks
 
 import constants
 from driver.aut import AUT
-from gui.components.settings.changes_detected_popup import ChangesDetectedToastMessage
+from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
 
 pytestmark = marks

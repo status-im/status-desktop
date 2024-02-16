@@ -22,10 +22,15 @@ class DeletePopup(BasePopup):
                 raise ex
 
 
-
-
 class DeleteCategoryPopup(DeletePopup):
 
     def __init__(self):
         super().__init__()
         self._delete_button = Button(names.confirm_StatusButton)
+
+
+class DeletePermissionPopup(DeletePopup):
+
+    def __init__(self):
+        super().__init__()
+        self._delete_button = Button(names.confirm_permission_delete_StatusButton)
