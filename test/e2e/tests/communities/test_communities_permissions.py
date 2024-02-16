@@ -25,8 +25,7 @@ pytestmark = marks
     'checkbox_state, first_asset, second_asset, amount, allowed_to, in_channel, asset_title, second_asset_title, '
     'allowed_to_title',
     [
-        pytest.param(True, 'Dai Stablecoin', False, '10', 'becomeMember', False, '10 DAI', False, 'Become member',
-                     marks=pytest.mark.critical),
+        pytest.param(True, 'Dai Stablecoin', False, '10', 'becomeMember', False, '10 DAI', False, 'Become member',),
         pytest.param(True, 'Ether', False, '1', 'becomeAdmin', False, '1 ETH', False, 'Become an admin',
                      marks=pytest.mark.critical),
         pytest.param(True, 'Ether', 'Dai Stablecoin', '10', 'viewAndPost', '#general', '10 ETH', '10 DAI',
