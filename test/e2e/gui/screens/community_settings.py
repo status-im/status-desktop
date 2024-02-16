@@ -450,20 +450,37 @@ class PermissionsSettingsView(QObject):
         self._is_allowed_to_edit_tag = QObject(names.isAllowedToEditPermissionView_StatusListItemTag)
 
     @allure.step('Get titles of Who holds tags')
-    def get_who_holds_tags_titles(self) -> typing.List[str]:
-        who_holds_tags = [str(tag.title) for tag in driver.findAllObjects(self._who_holds_tag.real_name)]
-        return who_holds_tags
+    def get_who_holds_tags_titles(self, attempt: int = 2) -> typing.List[str]:
+        try:
+            return [str(tag.title) for tag in driver.findAllObjects(self._who_holds_tag.real_name)]
+        except AttributeError as er:
+            if attempt:
+                time.sleep(1)
+                return self.get_who_holds_tags_titles(attempt - 1)
+            else:
+                raise er
 
     @allure.step('Get titles of Is Allowed tags')
-    def get_is_allowed_tags_titles(self) -> typing.List[str]:
-        is_allowed_tags = [str(tag.title) for tag in driver.findAllObjects(self._is_allowed_tag.real_name)]
-        return is_allowed_tags
+    def get_is_allowed_tags_titles(self, attempt: int = 2) -> typing.List[str]:
+        try:
+            return [str(tag.title) for tag in driver.findAllObjects(self._is_allowed_tag.real_name)]
+        except AttributeError as er:
+            if attempt:
+                time.sleep(1)
+                return self.get_is_allowed_tags_titles(attempt - 1)
+            else:
+                raise er
 
     @allure.step('Get title of inCommunity tag')
-    def get_in_community_in_channel_tags_titles(self) -> typing.List[str]:
-        in_community_in_channel_tags = [str(tag.title) for tag in
-                                        driver.findAllObjects(self._in_community_in_channel_tag.real_name)]
-        return in_community_in_channel_tags
+    def get_in_community_in_channel_tags_titles(self, attempt: int = 2) -> typing.List[str]:
+        try:
+            return [str(tag.title) for tag in driver.findAllObjects(self._in_community_in_channel_tag.real_name)]
+        except AttributeError as er:
+            if attempt:
+                time.sleep(1)
+                return self.get_in_community_in_channel_tags_titles(attempt - 1)
+            else:
+                raise er
 
     @allure.step('Set state of who holds checkbox')
     def set_who_holds_checkbox_state(self, state):

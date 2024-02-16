@@ -2,6 +2,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import configs
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
 from gui.components.delete_popup import DeletePermissionPopup
 from gui.components.toast_message import ToastMessage
@@ -62,16 +63,21 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
 
     with step('Created permission is displayed on permission page'):
         if asset_title is not False:
-            assert driver.waitFor(lambda: asset_title in permissions_settings.get_who_holds_tags_titles())
+            assert driver.waitFor(lambda: asset_title in permissions_settings.get_who_holds_tags_titles(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if second_asset_title is not False:
-            assert driver.waitFor(lambda: second_asset_title in permissions_settings.get_who_holds_tags_titles())
+            assert driver.waitFor(lambda: second_asset_title in permissions_settings.get_who_holds_tags_titles(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if allowed_to_title is not False:
-            assert driver.waitFor(lambda: allowed_to_title in permissions_settings.get_is_allowed_tags_titles())
+            assert driver.waitFor(lambda: allowed_to_title in permissions_settings.get_is_allowed_tags_titles(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if in_channel is False:
             assert driver.waitFor(
-                lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles())
+                lambda: params['name'] in permissions_settings.get_in_community_in_channel_tags_titles(),
+                configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         if in_channel:
-            assert driver.waitFor(lambda: in_channel in permissions_settings.get_in_community_in_channel_tags_titles())
+            assert driver.waitFor(lambda: in_channel in permissions_settings.get_in_community_in_channel_tags_titles(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Edit permission'):
         edit_permission_view = permissions_intro_view.open_edit_permission_view()
@@ -88,14 +94,14 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
         changes_popup.update_permission()
         if allowed_to is 'becomeAdmin' and checkbox_state is True:
             if asset_title is not False:
-                assert driver.waitFor(lambda: asset_title not in permissions_settings.get_who_holds_tags_titles())
+                assert driver.waitFor(lambda: asset_title not in permissions_settings.get_who_holds_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if second_asset_title is not False:
                 assert driver.waitFor(
-                    lambda: second_asset_title not in permissions_settings.get_who_holds_tags_titles())
+                    lambda: second_asset_title not in permissions_settings.get_who_holds_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         elif checkbox_state is False:
-            assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles())
+            assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         else:
-            assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible)
+            assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
         messages = ToastMessage().get_toast_messages
