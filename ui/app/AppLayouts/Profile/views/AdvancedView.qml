@@ -18,6 +18,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1
 
 import "../stores"
 import "../controls"
@@ -81,6 +82,23 @@ SettingsContentBase {
                     localAccountSensitiveSettings.quitOnClose = !checked
                 }
             }
+
+            /*
+            This is an example of how the FeatureFlag can be used on a new 
+            Feature implementation.
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                visible: FeatureFlags.nimbusVerificationProxyEnabled
+                text: qsTr("Mainnet data verified by Nimbus")
+                isSwitch: true
+                switchChecked: root.advancedStore.isNimbusProxyEnabled
+                onClicked: {
+                    Global.openPopup(enableNimbusProxyComponent)
+                }
+            }
+            */
 
             StatusBaseText {
                 anchors.left: parent.left

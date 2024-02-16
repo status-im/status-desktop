@@ -19,3 +19,4 @@ singleton ModelUtils 0.1 ModelUtils.qml
 singleton OperatorsUtils 0.1 OperatorsUtils.qml
 singleton StringUtils 0.1 StringUtils.qml
 singleton Utils 0.1 Utils.qml
+singleton FeatureFlags 0.1 FeatureFlags.qml

@@ -201,6 +201,7 @@
         <file>StatusQ/Core/Utils/emojiList.js</file>
         <file>StatusQ/Core/Utils/qmldir</file>
         <file>StatusQ/Core/Utils/xss.js</file>
+        <file>StatusQ/Core/Utils/FeatureFlags.qml</file>
         <file>StatusQ/Core/qmldir</file>
         <file>StatusQ/Layout/StatusAppNavBar.qml</file>
         <file>StatusQ/Layout/StatusMainLayout.qml</file>
