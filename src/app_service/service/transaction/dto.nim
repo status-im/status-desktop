@@ -18,6 +18,7 @@ type
     StickersBuy
     Bridge
     ERC721Transfer
+    ERC1155Transfer
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
