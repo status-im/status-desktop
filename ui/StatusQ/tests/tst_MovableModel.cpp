@@ -47,11 +47,11 @@ private slots:
         MovableModel model;
         model.setSourceModel(sourceModel);
 
-        QCOMPARE(model.detached(), false);
+        QCOMPARE(model.synced(), true);
         QVERIFY(isSame(&model, sourceModel));
     }
 
-    void detachTest()
+    void desyncOrderTest()
     {
         QQmlEngine engine;
 
@@ -67,16 +67,16 @@ private slots:
         MovableModel model;
         model.setSourceModel(sourceModel);
 
-        QSignalSpy detachChangedSpy(&model, &MovableModel::detachedChanged);
-        model.detach();
+        QSignalSpy syncedChangedSpy(&model, &MovableModel::syncedChanged);
+        model.desyncOrder();
 
-        QCOMPARE(detachChangedSpy.count(), 1);
-        QCOMPARE(model.detached(), true);
+        QCOMPARE(syncedChangedSpy.count(), 1);
+        QCOMPARE(model.synced(), false);
         QVERIFY(isSame(&model, sourceModel));
 
         model.setSourceModel(nullptr);
-        QCOMPARE(detachChangedSpy.count(), 2);
-        QCOMPARE(model.detached(), false);
+        QCOMPARE(syncedChangedSpy.count(), 2);
+        QCOMPARE(model.synced(), true);
         QCOMPARE(model.rowCount(), 0);
     }
 
@@ -98,7 +98,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
 
         ModelSignalsSpy signalsSpy(&model);
         ModelSignalsSpy referenceSignalsSpy(sourceModelCopy);
@@ -150,7 +150,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
 
         ModelSignalsSpy signalsSpy(&model);
         ModelSignalsSpy referenceSignalsSpy(sourceModelCopy);
@@ -202,7 +202,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
 
         ModelSignalsSpy signalsSpy(&model);
         ModelSignalsSpy referenceSignalsSpy(sourceModelCopy);
@@ -249,7 +249,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
 
         ModelSignalsSpy signalsSpy(&model);
         ModelSignalsSpy referenceSignalsSpy(sourceModelCopy);
@@ -299,7 +299,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(&sfpm);
-        model.detach();
+        model.desyncOrder();
 
         model.move(2, 1);
         sourceModelCopy.move(2, 1);
@@ -340,7 +340,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
         model.move(4, 1);
 
         SnapshotModel snapshot(model);
@@ -459,7 +459,7 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel);
-        model.detach();
+        model.desyncOrder();
 
         ModelSignalsSpy signalsSpy(&model);
 
@@ -594,12 +594,12 @@ private slots:
 
         MovableModel model;
         model.setSourceModel(sourceModel1);
-        model.detach();
+        model.desyncOrder();
 
-        QCOMPARE(model.detached(), true);
+        QCOMPARE(model.synced(), false);
 
         ModelSignalsSpy signalsSpy(&model);
-        QSignalSpy detachChangedSpy(&model, &MovableModel::detachedChanged);
+        QSignalSpy syncedChangedSpy(&model, &MovableModel::syncedChanged);
 
         model.setSourceModel(sourceModel2);
 
@@ -607,14 +607,14 @@ private slots:
         QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
         QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
 
-        QCOMPARE(detachChangedSpy.count(), 1);
-        QCOMPARE(model.detached(), false);
+        QCOMPARE(syncedChangedSpy.count(), 1);
+        QCOMPARE(model.synced(), true);
         QCOMPARE(model.rowCount(), 2);
 
         QVERIFY(isSame(&model, sourceModel2));
     }
 
-    void attachTest()
+    void syncOrderTest()
     {
         QQmlEngine engine;
 
@@ -632,7 +632,7 @@ private slots:
 
         {
             ModelSignalsSpy signalsSpy(&model);
-            model.attach();
+            model.syncOrder();
             QCOMPARE(signalsSpy.count(), 0);
         }
 
@@ -640,26 +640,26 @@ private slots:
 
         {
             ModelSignalsSpy signalsSpy(&model);
-            model.attach();
+            model.syncOrder();
             QCOMPARE(signalsSpy.count(), 0);
         }
 
-        model.detach();
+        model.desyncOrder();
         sourceModel.move(0, 2, 2);
 
         QVERIFY(!isSame(&model, sourceModel));
 
         ModelSignalsSpy signalsSpy(&model);
-        QSignalSpy detachChangedSpy(&model, &MovableModel::detachedChanged);
+        QSignalSpy syncedChangedSpy(&model, &MovableModel::syncedChanged);
 
-        model.attach();
+        model.syncOrder();
 
         QCOMPARE(signalsSpy.count(), 2);
         QCOMPARE(signalsSpy.layoutAboutToBeChangedSpy.count(), 1);
         QCOMPARE(signalsSpy.layoutChangedSpy.count(), 1);
 
-        QCOMPARE(detachChangedSpy.count(), 1);
-        QCOMPARE(model.detached(), false);
+        QCOMPARE(syncedChangedSpy.count(), 1);
+        QCOMPARE(model.synced(), true);
 
         QVERIFY(isSame(&model, sourceModel));
     }

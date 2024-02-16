@@ -119,7 +119,7 @@ Item {
             Layout.fillHeight: true
 
             Label {
-                text: "DETACHED-ORDER MODEL"
+                text: "MOVABLE MODEL (press to drag&drop)"
 
                 font.bold: true
                 font.pixelSize: 17
@@ -234,15 +234,23 @@ Item {
         }
 
         Button {
-            text: "detach order explicitely"
+            text: "desynchronize"
 
             onClicked: {
-                movableModel.detach()
+                movableModel.desyncOrder()
+            }
+        }
+
+        Button {
+            text: "synchronize"
+
+            onClicked: {
+                movableModel.syncOrder()
             }
         }
 
         Label {
-            text: "Detached: " + movableModel.detached
+            text: "Synchronized: " + movableModel.synced
         }
     }
 }
