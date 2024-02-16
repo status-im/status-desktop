@@ -332,6 +332,10 @@ Pane {
                     if (d.isBlocked)
                         return btnUnblockUserComponent
 
+                    // accept incoming CR
+                    if (d.contactRequestState === Constants.ContactRequestState.Received)
+                        return btnAcceptContactRequestComponent
+
                     // block user
                     if (d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy)
                         return btnBlockUserComponent
@@ -345,7 +349,7 @@ Pane {
                     case Constants.ContactRequestState.Sent:
                         return txtPendingContactRequestComponent
                     case Constants.ContactRequestState.Received:
-                        return btnAcceptContactRequestComponent
+                        break // handled above
                     case Constants.ContactRequestState.Mutual: {
                         if (d.incomingVerificationStatus === Constants.verificationStatus.declined) {
                             return btnBlockUserComponent
@@ -451,13 +455,9 @@ Pane {
                         text: qsTr("Mark as untrusted")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
-                        enabled: d.contactDetails.trustStatus === Constants.trustStatus.unknown && !d.isBlocked
+                        enabled: d.contactDetails.trustStatus !== Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
-                            if (d.isContact && !d.isTrusted && d.isVerificationRequestReceived)
-                                root.contactsStore.verifiedUntrustworthy(root.publicKey)
-                            else
-                                root.contactsStore.markUntrustworthy(root.publicKey)
-                            d.reload()
+                            Global.markAsUntrustedRequested(root.publicKey, d.contactDetails)
                         }
                     }
                     StatusAction {
@@ -467,7 +467,6 @@ Pane {
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
                         onTriggered: {
                             root.contactsStore.removeTrustStatus(root.publicKey)
-                            d.reload()
                         }
                     }
                     StatusAction {

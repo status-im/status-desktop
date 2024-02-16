@@ -56,6 +56,7 @@ QtObject {
         Global.openImagePopup.connect(openImagePopup)
         Global.openProfilePopupRequested.connect(openProfilePopup)
         Global.openNicknamePopupRequested.connect(openNicknamePopup)
+        Global.markAsUntrustedRequested.connect(openMarkAsUntrustedPopup)
         Global.blockContactRequested.connect(openBlockContactPopup)
         Global.unblockContactRequested.connect(openUnblockContactPopup)
         Global.openChangeProfilePicPopup.connect(openChangeProfilePicPopup)
@@ -134,6 +135,10 @@ QtObject {
 
     function openNicknamePopup(publicKey: string, contactDetails) {
         openPopup(nicknamePopupComponent, {publicKey, contactDetails})
+    }
+
+    function openMarkAsUntrustedPopup(publicKey: string, contactDetails) {
+        openPopup(markAsUntrustedComponent, {publicKey, contactDetails})
     }
 
     function openBlockContactPopup(publicKey: string, contactName: string) {
@@ -511,12 +516,31 @@ QtObject {
             NicknamePopup {
                 onEditDone: {
                     if (nickname !== newNickname) {
-                        rootStore.contactStore.changeContactNickname(publicKey, newNickname, originalDisplayName, !!nickname)
+                        rootStore.contactStore.changeContactNickname(publicKey, newNickname, optionalDisplayName, !!nickname)
                     }
                     close()
                 }
                 onRemoveNicknameRequested: {
-                    rootStore.contactStore.changeContactNickname(publicKey, "", originalDisplayName, true)
+                    rootStore.contactStore.changeContactNickname(publicKey, "", optionalDisplayName, true)
+                    close()
+                }
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: markAsUntrustedComponent
+            MarkAsUntrustedPopup {
+                onAccepted: {
+                    rootStore.contactStore.markUntrustworthy(publicKey)
+                    if (removeIDVerification)
+                        rootStore.contactStore.cancelVerificationRequest(publicKey)
+                    if (removeContact) {
+                        rootStore.contactStore.removeContact(publicKey)
+                        Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
+                    } else {
+                        Global.displayToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
+                    }
                     close()
                 }
                 onClosed: destroy()

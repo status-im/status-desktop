@@ -106,6 +106,7 @@ QtObject {
 
     function cancelVerificationRequest(pubKey) {
         root.contactsModule.cancelVerificationRequest(pubKey);
+        Global.displaySuccessToastMessage(qsTr("ID verification request cancelled"))
     }
 
     function declineVerificationRequest(pubKey) {

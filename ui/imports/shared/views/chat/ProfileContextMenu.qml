@@ -222,8 +222,8 @@ StatusMenu {
         text: qsTr("Mark as untrusted")
         icon.name: "warning"
         type: StatusAction.Type.Danger
-        enabled: !root.isMe && root.userTrustIsUnknown && !root.isBridgedAccount && !root.isBlockedContact
-        onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
+        enabled: !root.isMe && !root.userIsUntrustworthy && !root.isBridgedAccount && !root.isBlockedContact
+        onTriggered: Global.markAsUntrustedRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 
     StatusAction {

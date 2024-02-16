@@ -139,6 +139,16 @@ SplitView {
                 function sendVerificationRequest(publicKey, challenge) {
                     logs.logEvent("rootStore::contactStore::sendVerificationRequest", ["publicKey", "challenge"], arguments)
                 }
+
+                function markUntrustworthy(publicKey) {
+                    logs.logEvent("rootStore::contactStore::markUntrustworthy", ["publicKey"], arguments)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
+                }
+
+                function removeContact(publicKey) {
+                    logs.logEvent("rootStore::contactStore::removeContact", ["publicKey"], arguments)
+                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
+                }
             }
         }
         communityTokensStore: CommunityTokensStore {}
@@ -222,6 +232,7 @@ SplitView {
 
                             function removeTrustStatus(publicKey) {
                                 logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
+                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
                             }
 
                             function verifiedUntrustworthy(publicKey) {
