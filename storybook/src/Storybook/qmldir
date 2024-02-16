@@ -4,6 +4,7 @@ FigmaLinksCache 1.0 FigmaLinksCache.qml
 FigmaPreviewWindow 1.0 FigmaPreviewWindow.qml
 FilteredPagesList 1.0 FilteredPagesList.qml
 FlickableImage 1.0 FlickableImage.qml
+GenericListView 1.0 GenericListView.qml
 HotComponentFromSource 1.0 HotComponentFromSource.qml
 HotLoader 1.0 HotLoader.qml
 HotReloader 1.0 HotReloader.qml
