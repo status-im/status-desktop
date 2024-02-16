@@ -3,6 +3,7 @@ import random
 import string
 
 import allure
+import psutil
 import pytest
 from allure import step
 from . import marks
@@ -28,8 +29,11 @@ def keys_screen(main_window) -> KeysView:
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
-@pytest.mark.case(703421)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
+@pytest.mark.case(703421, 703010)
 @pytest.mark.critical
+@pytest.mark.flaky
+# reason='https://github.com/status-im/status-desktop/issues/13013'
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
         ''.join((random.choice(
@@ -44,7 +48,7 @@ def keys_screen(main_window) -> KeysView:
         5,
         shift_image(0, 1000, 1000, 0))
 ])
-def test_generate_new_keys(main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
+def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen, user_name: str, password, user_image: str, zoom: int, shift):
 
     with step('Click generate new keys and open profile view'):
         profile_view = keys_screen.generate_new_keys()
@@ -118,3 +122,14 @@ def test_generate_new_keys(main_window, keys_screen, user_name: str, password, u
             f'Chat key in user profile is wrong, current: {profile_popup_chat_key}, expected: {chat_key}'
         assert profile_popup.get_emoji_hash == emoji_hash_public_key, \
             f'Public keys should match when they dont'
+
+    with step('Click left panel and open settings'):
+        main_window.left_panel.click()
+        settings = main_window.left_panel.open_settings()
+
+    with step('Click sign out and quit in settings'):
+        sign_out_screen = settings.left_panel.open_sign_out_and_quit()
+        sign_out_screen.sign_out_and_quit()
+
+    with step('Check the application process is not running'):
+        psutil.Process(aut.pid).wait(timeout=10)
