@@ -56,7 +56,7 @@ StatusDialog {
                 sender: root.messageDetails.sender
                 amISender: root.messageDetails.amISender
                 messageOriginInfo: root.messageDetails.messageOriginInfo
-                tertiaryDetail: Utils.getElidedCompressedPk(sender.id)
+                tertiaryDetail: Utils.getCompressedPk(sender.id)
                 timestamp: root.timestamp
             }
 

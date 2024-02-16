@@ -143,10 +143,7 @@ StatusMenu {
         objectName: "sendContactRequest_StatusItem"
         enabled: !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest && !root.isBridgedAccount
-        onTriggered: {
-            Global.openContactRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
+        onTriggered: Global.openContactRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
     }
 
     StatusAction {
@@ -159,10 +156,7 @@ StatusMenu {
                                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
                                 && !root.hasActiveReceivedVerificationRequestFrom
                                 && !root.isBridgedAccount
-        onTriggered: {
-            Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
+        onTriggered: Global.openSendIDRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
     }
     // TODO Mark as ID verified
     StatusAction {
@@ -193,10 +187,7 @@ StatusMenu {
         text: contactDetails.localNickname ? qsTr("Edit nickname") : qsTr("Add nickname")
         icon.name: "edit_pencil"
         enabled: !root.isMe && !root.isBridgedAccount
-        onTriggered: {
-            Global.openNicknamePopupRequested(root.selectedUserPublicKey, root.contactDetails)
-            root.close()
-        }
+        onTriggered: Global.openNicknamePopupRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 
     StatusMenuSeparator {

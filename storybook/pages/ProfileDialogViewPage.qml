@@ -78,10 +78,10 @@ SplitView {
                                       localNickname: localNickname.text,
                                       thumbnailImage: "",
                                       largeImage: userImage.checked ? Style.png("status-logo") : "",
-                                      isContact: isContact.checked,
-                                      isBlocked: isBlocked.checked,
+                                      isContact: ctrlIsContact.checked,
+                                      isBlocked: ctrlIsBlocked.checked,
                                       isSyncing: false,
-                                      trustStatus: trustStatus.currentValue,
+                                      trustStatus: ctrlTrustStatus.currentValue,
                                       verificationStatus: Constants.verificationStatus.unverified,
                                       incomingVerificationStatus: Constants.verificationStatus.unverified,
                                       contactRequestState: ctrlContactRequestState.currentValue,
@@ -122,11 +122,22 @@ SplitView {
                 }
 
                 function blockContact(publicKey) {
-                    logs.logEvent("rootStore::contactsStore::blockContact", ["publicKey"], arguments)
+                    logs.logEvent("rootStore::contactStore::blockContact", ["publicKey"], arguments)
+                    ctrlIsBlocked.checked = true
                 }
 
                 function unblockContact(publicKey) {
-                    logs.logEvent("rootStore::contactsStore::unblockContact", ["publicKey"], arguments)
+                    logs.logEvent("rootStore::contactStore::unblockContact", ["publicKey"], arguments)
+                    ctrlIsBlocked.checked = false
+                }
+
+                function sendContactRequest(publicKey, message) {
+                    logs.logEvent("rootStore::contactStore::sendContactRequest", ["publicKey", "message"], arguments)
+                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Sent)
+                }
+
+                function sendVerificationRequest(publicKey, challenge) {
+                    logs.logEvent("rootStore::contactStore::sendVerificationRequest", ["publicKey", "challenge"], arguments)
                 }
             }
         }
@@ -194,6 +205,7 @@ SplitView {
 
                             function markUntrustworthy(publicKey) {
                                 logs.logEvent("contactsStore::markUntrustworthy", ["publicKey"], arguments)
+                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
                             }
 
                             function removeContact(publicKey) {
@@ -338,7 +350,7 @@ SplitView {
                     Layout.fillWidth: true
                     enabled: !switchOwnProfile.checked
                     CheckBox {
-                        id: isContact
+                        id: ctrlIsContact
                         enabled: true
                         checked: ctrlContactRequestState.currentValue === Constants.ContactRequestState.Mutual
                         text: "isContact"
@@ -356,7 +368,7 @@ SplitView {
                         ]
                     }
                     CheckBox {
-                        id: isBlocked
+                        id: ctrlIsBlocked
                         text: "isBlocked"
                     }
                 }
@@ -365,7 +377,7 @@ SplitView {
                     enabled: !switchOwnProfile.checked
                     Label { text: "trustStatus:" }
                     ComboBox {
-                        id: trustStatus
+                        id: ctrlTrustStatus
                         textRole: "text"
                         valueRole: "value"
                         model: [

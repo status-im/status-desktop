@@ -80,6 +80,7 @@ QtObject {
 
     function sendContactRequest(pubKey, message) {
         root.contactsModule.sendContactRequest(pubKey, message)
+        Global.displaySuccessToastMessage(qsTr("Contact request sent"))
     }
 
     function acceptContactRequest(pubKey, contactRequestId) {
@@ -100,6 +101,7 @@ QtObject {
 
     function sendVerificationRequest(pubKey, challenge) {
         root.contactsModule.sendVerificationRequest(pubKey, challenge);
+        Global.displaySuccessToastMessage(qsTr("ID verification request sent"))
     }
 
     function cancelVerificationRequest(pubKey) {

@@ -60,25 +60,23 @@ CommonContactDialog {
         font.pixelSize: Theme.tertiaryTextFontSize
     }
 
-    footer: StatusDialogFooter {
-        rightButtons: ObjectModel {
-            StatusFlatButton {
-                visible: !d.editMode
-                text: qsTr("Cancel")
-                onClicked: root.close()
-            }
-            StatusFlatButton {
-                visible: d.editMode
-                borderColor: "transparent"
-                type: StatusBaseButton.Type.Danger
-                text: qsTr("Remove nickname")
-                onClicked: root.removeNicknameRequested()
-            }
-            StatusButton {
-                enabled: root.nickname !== nicknameInput.text && nicknameInput.valid
-                text: d.editMode ? qsTr("Change nickname") : qsTr("Add nickname")
-                onClicked: root.editDone(nicknameInput.text)
-            }
+    rightButtons: ObjectModel {
+        StatusFlatButton {
+            visible: !d.editMode
+            text: qsTr("Cancel")
+            onClicked: root.close()
+        }
+        StatusFlatButton {
+            visible: d.editMode
+            borderColor: "transparent"
+            type: StatusBaseButton.Type.Danger
+            text: qsTr("Remove nickname")
+            onClicked: root.removeNicknameRequested()
+        }
+        StatusButton {
+            enabled: root.nickname !== nicknameInput.text && nicknameInput.valid
+            text: d.editMode ? qsTr("Change nickname") : qsTr("Add nickname")
+            onClicked: root.editDone(nicknameInput.text)
         }
     }
 }

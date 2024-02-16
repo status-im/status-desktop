@@ -1,9 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
@@ -18,19 +20,15 @@ StatusDialog {
 
     default property alias content: contentLayout.children
 
-    readonly property string originalDisplayName: d.optionalDisplayName
+    property ObjectModel rightButtons
+
+    readonly property string mainDisplayName: ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
+                                                                       contactDetails.displayName, contactDetails.alias)
+    readonly property string optionalDisplayName: ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias)
 
     width: 480
     horizontalPadding: 16
     verticalPadding: 20
-
-    QtObject {
-        id: d
-
-        readonly property string mainDisplayName: ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
-                                                                           contactDetails.displayName, contactDetails.alias)
-        readonly property string optionalDisplayName: ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias)
-    }
 
     contentItem: ColumnLayout {
         RowLayout {
@@ -38,7 +36,7 @@ StatusDialog {
             spacing: Style.current.padding
 
             UserImage {
-                name: d.mainDisplayName
+                name: root.mainDisplayName
                 pubkey: root.publicKey
                 image: Utils.addTimestampToURL(contactDetails.largeImage)
                 interactive: false
@@ -64,7 +62,7 @@ StatusDialog {
                         font.bold: true
                         font.pixelSize: 17
                         elide: Text.ElideRight
-                        text: d.mainDisplayName
+                        text: root.mainDisplayName
                     }
                     StatusContactVerificationIcons {
                         id: verificationIcons
@@ -83,7 +81,7 @@ StatusDialog {
                         id: contactSecondaryName
                         color: Theme.palette.baseColor1
                         font.pixelSize: 13
-                        text: d.optionalDisplayName
+                        text: root.optionalDisplayName
                         visible: !!contactDetails.localNickname
                     }
                     Rectangle {
@@ -97,6 +95,13 @@ StatusDialog {
                         font.pixelSize: 13
                         color: Theme.palette.baseColor1
                         text: Utils.getElidedCompressedPk(root.publicKey)
+                        HoverHandler {
+                            id: keyHoverHandler
+                        }
+                        StatusToolTip {
+                            text: Utils.getCompressedPk(root.publicKey)
+                            visible: keyHoverHandler.hovered
+                        }
                     }
                 }
                 EmojiHash {
@@ -116,5 +121,9 @@ StatusDialog {
         ColumnLayout {
             id: contentLayout
         }
+    }
+
+    footer: StatusDialogFooter {
+        rightButtons: root.rightButtons
     }
 }
