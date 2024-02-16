@@ -19,7 +19,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
                  'Manage community: Adding new permissions, Editing permissions, Deleting permission')
-@pytest.mark.case(703632, 703162, 705016)
+@pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.parametrize('params', [constants.community_params])
 @pytest.mark.parametrize(
     'checkbox_state, first_asset, second_asset, amount, allowed_to, in_channel, asset_title, second_asset_title, '
