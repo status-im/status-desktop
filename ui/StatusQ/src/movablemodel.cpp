@@ -20,41 +20,7 @@ void MovableModel::setSourceModel(QAbstractItemModel* sourceModel)
         disconnect(m_sourceModel, nullptr, this, nullptr);
 
     m_sourceModel = sourceModel;
-
-    if (sourceModel != nullptr) {
-        connect(sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this,
-                &MovableModel::beginInsertRows);
-
-        connect(sourceModel, &QAbstractItemModel::rowsInserted, this,
-                &MovableModel::endInsertRows);
-
-        connect(sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this,
-                &MovableModel::beginRemoveRows);
-
-        connect(sourceModel, &QAbstractItemModel::rowsRemoved, this,
-                &MovableModel::endRemoveRows);
-
-        connect(sourceModel, &QAbstractItemModel::rowsAboutToBeMoved, this,
-                &MovableModel::beginMoveRows);
-
-        connect(sourceModel, &QAbstractItemModel::rowsMoved, this,
-                &MovableModel::endMoveRows);
-
-        connect(sourceModel, &QAbstractItemModel::dataChanged, this,
-                &MovableModel::dataChanged);
-
-        connect(sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this,
-                &MovableModel::layoutAboutToBeChanged);
-
-        connect(sourceModel, &QAbstractItemModel::layoutChanged, this,
-                &MovableModel::layoutChanged);
-
-        connect(sourceModel, &QAbstractItemModel::modelAboutToBeReset, this,
-                &MovableModel::beginResetModel);
-
-        connect(sourceModel, &QAbstractItemModel::modelReset, this,
-                &MovableModel::endResetModel);
-    }
+    connectSignalsForAttachedState();
 
     emit sourceModelChanged();
 
@@ -213,6 +179,23 @@ void MovableModel::detach()
     emit detachedChanged();
 }
 
+void MovableModel::attach()
+{
+    if (!m_detached || m_sourceModel == nullptr)
+        return;
+
+    emit layoutAboutToBeChanged();
+
+    auto sourceModel = m_sourceModel;
+
+    disconnect(m_sourceModel, nullptr, this, nullptr);
+    connectSignalsForAttachedState();
+
+    resetInternalData();
+
+    emit layoutChanged();
+}
+
 void MovableModel::move(int from, int to, int count)
 {
     const int rows = rowCount();
@@ -277,4 +260,43 @@ void MovableModel::resetInternalData()
         m_detached = false;
         emit detachedChanged();
     }
+}
+
+void MovableModel::connectSignalsForAttachedState()
+{
+    if (m_sourceModel == nullptr)
+        return;
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this,
+            &MovableModel::beginInsertRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this,
+            &MovableModel::endInsertRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this,
+            &MovableModel::beginRemoveRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this,
+            &MovableModel::endRemoveRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeMoved, this,
+            &MovableModel::beginMoveRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::rowsMoved, this,
+            &MovableModel::endMoveRows);
+
+    connect(m_sourceModel, &QAbstractItemModel::dataChanged, this,
+            &MovableModel::dataChanged);
+
+    connect(m_sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this,
+            &MovableModel::layoutAboutToBeChanged);
+
+    connect(m_sourceModel, &QAbstractItemModel::layoutChanged, this,
+            &MovableModel::layoutChanged);
+
+    connect(m_sourceModel, &QAbstractItemModel::modelAboutToBeReset, this,
+            &MovableModel::beginResetModel);
+
+    connect(m_sourceModel, &QAbstractItemModel::modelReset, this,
+            &MovableModel::endResetModel);
 }

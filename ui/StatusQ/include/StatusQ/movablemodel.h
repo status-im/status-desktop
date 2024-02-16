@@ -23,6 +23,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void detach();
+    Q_INVOKABLE void attach();
     Q_INVOKABLE void move(int from, int to, int count = 1);
     Q_INVOKABLE QVector<int> order() const;
 
@@ -37,6 +38,8 @@ protected slots:
 
 private:
     QPointer<QAbstractItemModel> m_sourceModel;
+
+    void connectSignalsForAttachedState();
 
     bool m_detached = false;
     std::vector<QPersistentModelIndex> m_indexes;

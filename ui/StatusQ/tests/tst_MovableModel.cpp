@@ -571,6 +571,98 @@ private slots:
         // QTest::failOnWarning(QRegularExpression(".?")); // Qt 6.3
         sourceModel.move(0, 0, 2);
     }
+
+    void resetSourceTest() {
+        QQmlEngine engine;
+
+        auto source1 = R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])";
+
+        auto source2 = R"([
+            { "name_": "A", "subname_": "a1" },
+            { "name_": "A", "subname_": "a2" }
+        ])";
+
+        ListModelWrapper sourceModel1(engine, source1);
+        ListModelWrapper sourceModel2(engine, source2);
+
+        MovableModel model;
+        model.setSourceModel(sourceModel1);
+        model.detach();
+
+        QCOMPARE(model.detached(), true);
+
+        ModelSignalsSpy signalsSpy(&model);
+        QSignalSpy detachChangedSpy(&model, &MovableModel::detachedChanged);
+
+        model.setSourceModel(sourceModel2);
+
+        QCOMPARE(signalsSpy.count(), 2);
+        QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+        QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+
+        QCOMPARE(detachChangedSpy.count(), 1);
+        QCOMPARE(model.detached(), false);
+        QCOMPARE(model.rowCount(), 2);
+
+        QVERIFY(isSame(&model, sourceModel2));
+    }
+
+    void attachTest()
+    {
+        QQmlEngine engine;
+
+        auto source = R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+        MovableModel model;
+
+        {
+            ModelSignalsSpy signalsSpy(&model);
+            model.attach();
+            QCOMPARE(signalsSpy.count(), 0);
+        }
+
+        model.setSourceModel(sourceModel);
+
+        {
+            ModelSignalsSpy signalsSpy(&model);
+            model.attach();
+            QCOMPARE(signalsSpy.count(), 0);
+        }
+
+        model.detach();
+        sourceModel.move(0, 2, 2);
+
+        QVERIFY(!isSame(&model, sourceModel));
+
+        ModelSignalsSpy signalsSpy(&model);
+        QSignalSpy detachChangedSpy(&model, &MovableModel::detachedChanged);
+
+        model.attach();
+
+        QCOMPARE(signalsSpy.count(), 2);
+        QCOMPARE(signalsSpy.layoutAboutToBeChangedSpy.count(), 1);
+        QCOMPARE(signalsSpy.layoutChangedSpy.count(), 1);
+
+        QCOMPARE(detachChangedSpy.count(), 1);
+        QCOMPARE(model.detached(), false);
+
+        QVERIFY(isSame(&model, sourceModel));
+    }
 };
 
 QTEST_MAIN(TestMovableModel)
