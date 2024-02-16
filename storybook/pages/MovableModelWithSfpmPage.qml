@@ -460,13 +460,19 @@ Item {
             }
 
             Button {
-                text: "detach order explicitely"
+                text: "desynchronize"
 
-                onClicked: movableModel.detach()
+                onClicked: movableModel.desyncOrder()
+            }
+
+            Button {
+                text: "synchronize"
+
+                onClicked: movableModel.syncOrder()
             }
 
             Label {
-                text: `Detached: <b>${movableModel.detached}</b>`
+                text: `Synchronized: <b>${movableModel.synced}</b>`
             }
         }
     }

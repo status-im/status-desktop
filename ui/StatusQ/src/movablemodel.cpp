@@ -34,7 +34,7 @@ QAbstractItemModel* MovableModel::sourceModel() const
 
 int MovableModel::rowCount(const QModelIndex &parent) const
 {
-    if (m_detached)
+    if (!m_synced)
         return m_indexes.size();
 
     if (m_sourceModel == nullptr)
@@ -48,7 +48,7 @@ QVariant MovableModel::data(const QModelIndex &index, int role) const
     if (!checkIndex(index, CheckIndexOption::IndexIsValid))
         return {};
 
-    if (m_detached)
+    if (!m_synced)
         return m_indexes.at(index.row()).data(role);
 
     if (m_sourceModel == nullptr)
@@ -65,9 +65,9 @@ QHash<int, QByteArray> MovableModel::roleNames() const
     return m_sourceModel->roleNames();
 }
 
-void MovableModel::detach()
+void MovableModel::desyncOrder()
 {
-    if (m_detached || m_sourceModel == nullptr)
+    if (!m_synced || m_sourceModel == nullptr)
         return;
 
     disconnect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this,
@@ -175,13 +175,13 @@ void MovableModel::detach()
     for (auto i = 0; i < count; i++)
         m_indexes.emplace_back(m_sourceModel->index(i, 0));
 
-    m_detached = true;
-    emit detachedChanged();
+    m_synced = false;
+    emit syncedChanged();
 }
 
-void MovableModel::attach()
+void MovableModel::syncOrder()
 {
-    if (!m_detached || m_sourceModel == nullptr)
+    if (m_synced || m_sourceModel == nullptr)
         return;
 
     emit layoutAboutToBeChanged();
@@ -212,8 +212,8 @@ void MovableModel::move(int from, int to, int count)
     const int sourceLast = from + count - 1;
     const int destinationRow = to < from ? to : to + count;
 
-    if (!m_detached)
-        detach();
+    if (m_synced)
+        desyncOrder();
 
     beginMoveRows({}, sourceFirst, sourceLast, {}, destinationRow);
 
@@ -236,7 +236,7 @@ QVector<int> MovableModel::order() const
 {
     QVector<int> order(rowCount());
 
-    if (m_detached)
+    if (!m_synced)
         std::transform(m_indexes.begin(), m_indexes.end(), order.begin(),
                        [](auto& idx) { return idx.row(); });
     else
@@ -245,9 +245,9 @@ QVector<int> MovableModel::order() const
     return order;
 }
 
-bool MovableModel::detached() const
+bool MovableModel::synced() const
 {
-    return m_detached;
+    return m_synced;
 }
 
 void MovableModel::resetInternalData()
@@ -256,9 +256,9 @@ void MovableModel::resetInternalData()
 
     m_indexes.clear();
 
-    if (m_detached) {
-        m_detached = false;
-        emit detachedChanged();
+    if (!m_synced) {
+        m_synced = true;
+        emit syncedChanged();
     }
 }
 

@@ -11,7 +11,7 @@ class MovableModel : public QAbstractListModel
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel
                WRITE setSourceModel NOTIFY sourceModelChanged)
 
-    Q_PROPERTY(bool detached READ detached NOTIFY detachedChanged)
+    Q_PROPERTY(bool synced READ synced NOTIFY syncedChanged)
 public:
     explicit MovableModel(QObject *parent = nullptr);
 
@@ -22,16 +22,16 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void detach();
-    Q_INVOKABLE void attach();
+    Q_INVOKABLE void desyncOrder();
+    Q_INVOKABLE void syncOrder();
     Q_INVOKABLE void move(int from, int to, int count = 1);
     Q_INVOKABLE QVector<int> order() const;
 
-    bool detached() const;
+    bool synced() const;
 
 signals:
     void sourceModelChanged();
-    void detachedChanged();
+    void syncedChanged();
 
 protected slots:
     void resetInternalData();
@@ -41,6 +41,6 @@ private:
 
     void connectSignalsForAttachedState();
 
-    bool m_detached = false;
+    bool m_synced = true;
     std::vector<QPersistentModelIndex> m_indexes;
 };
