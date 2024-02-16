@@ -468,13 +468,16 @@ QtObject:
         chainID = selectedRoutes[0].fromNetwork.chainID
 
       var tokenSymbol = ""
-      let token = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
-      if token != nil:
-        tokenSymbol = token.symbol
+      if sendType == ERC721Transfer or sendType == ERC1155Transfer:
+        tokenSymbol = assetKey
+      else:
+        let token = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
+        if token != nil:
+          tokenSymbol = token.symbol
 
-      let network = self.networkService.getNetwork(chainID)
-      if network.nativeCurrencySymbol == tokenSymbol:
-        isEthTx = true
+        let network = self.networkService.getNetwork(chainID)
+        if network.nativeCurrencySymbol == tokenSymbol:
+          isEthTx = true
 
       if(isEthTx):
         self.transferEth(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword)
