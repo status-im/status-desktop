@@ -157,15 +157,14 @@ QtObject {
         openPopup(communityProfilePopup, { store: store, community: community, communitySectionModule: communitySectionModule})
     }
 
-    function openSendIDRequestPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
-        const mainDisplayName = ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name, contactDetails.displayName, contactDetails.alias)
+    function openSendIDRequestPopup(publicKey, contactDetails, cb) {
         openPopup(sendIDRequestPopupComponent, {
-            userPublicKey: publicKey,
+            publicKey: publicKey,
             contactDetails: contactDetails,
-            title: qsTr("Verify %1's Identity").arg(mainDisplayName),
-            challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(mainDisplayName),
-            buttonText: qsTr("Send verification request")
+            title: qsTr("Request ID verification"),
+            labelText: qsTr("Ask a question only they can answer"),
+            challengeText: qsTr("Ask your question..."),
+            buttonText: qsTr("Request ID verification")
         }, cb)
     }
 
@@ -201,13 +200,12 @@ QtObject {
         openPopup(inviteFriendsToCommunityPopup, { community: community, communitySectionModule: communitySectionModule }, cb)
     }
 
-    function openContactRequestPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
+    function openContactRequestPopup(publicKey, contactDetails, cb) {
+        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey, false)
         const popupProperties = {
-            userPublicKey: publicKey,
-            contactDetails: contactDetails
+            publicKey: publicKey,
+            contactDetails: details
         }
-
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
 
@@ -393,7 +391,7 @@ QtObject {
             id: sendIDRequestPopupComponent
             SendContactRequestModal {
                 rootStore: root.rootStore
-                onAccepted: root.rootStore.profileSectionStore.contactsStore.sendVerificationRequest(userPublicKey, message)
+                onAccepted: rootStore.contactStore.sendVerificationRequest(publicKey, message)
                 onClosed: destroy()
             }
         },
@@ -413,7 +411,7 @@ QtObject {
 
             SendContactRequestModal {
                 rootStore: root.rootStore
-                onAccepted: root.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
+                onAccepted: rootStore.contactStore.sendContactRequest(publicKey, message)
                 onClosed: destroy()
             }
         },

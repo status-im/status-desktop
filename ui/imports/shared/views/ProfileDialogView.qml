@@ -174,10 +174,8 @@ Pane {
         StatusButton {
             objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
-            text: qsTr("Send Contact Request")
-            onClicked: {
-                Global.openContactRequestPopup(root.publicKey, null)
-            }
+            text: qsTr("Send contact request")
+            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails, null)
         }
     }
 
@@ -214,7 +212,7 @@ Pane {
                 font.weight: Font.Medium
                 color: Theme.palette.baseColor1
                 verticalAlignment: Text.AlignVCenter
-                text: qsTr("Contact Request Pending…")
+                text: qsTr("Contact Request Pending")
             }
         }
     }
@@ -386,7 +384,7 @@ Pane {
                         enabled: !d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent &&
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
-                            Global.openContactRequestPopup(root.publicKey, null)
+                            Global.openContactRequestPopup(root.publicKey, d.contactDetails, null)
                         }
                     }
                     StatusAction {
@@ -396,7 +394,7 @@ Pane {
                                  d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
                                  !d.isVerificationRequestReceived
                         onTriggered: {
-                            Global.openSendIDRequestPopup(root.publicKey,
+                            Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
                                                           popup => popup.accepted.connect(d.reload))
                         }
                     }
@@ -552,6 +550,13 @@ Pane {
                 StatusBaseText {
                     color: Theme.palette.baseColor1
                     text: Utils.getElidedCompressedPk(root.publicKey)
+                    HoverHandler {
+                        id: keyHoverHandler
+                    }
+                    StatusToolTip {
+                        text: Utils.getCompressedPk(root.publicKey)
+                        visible: keyHoverHandler.hovered
+                    }
                 }
                 CopyButton {
                     Layout.leftMargin: -4
