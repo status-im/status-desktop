@@ -229,6 +229,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     if (len(message.albumId) == 0): @[] else: @[message.id],
     message.albumImagesCount,
     message.bridgeMessage,
+    message.quotedMessage.bridgeMessage,
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

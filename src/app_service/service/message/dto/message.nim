@@ -72,6 +72,7 @@ type QuotedMessage* = object
   contentType*: ContentType
   deleted*: bool
   discordMessage*: DiscordMessage
+  bridgeMessage*: BridgeMessage
   albumImages*: seq[string]
   albumImagesCount*: int
 
@@ -206,6 +207,10 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   var discordMessageObj: JsonNode
   if(jsonObj.getProp("discordMessage", discordMessageObj)):
     result.discordMessage = toDiscordMessage(discordMessageObj)
+
+  var bridgeMessageObj: JsonNode
+  if(jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
+    result.bridgeMessage = toBridgeMessage(bridgeMessageObj)
   
   var quotedImagesArr: JsonNode
   if jsonObj.getProp("albumImages", quotedImagesArr):

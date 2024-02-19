@@ -207,6 +207,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
       if (len(message.albumId) == 0): @[] else: @[message.id],
       message.albumImagesCount,
       message.bridgeMessage,
+      message.quotedMessage.bridgeMessage
       )
 
     self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
@@ -286,6 +287,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     albumMessageIds = @[],
     albumImagesCount = 0,
     BridgeMessage(),
+    BridgeMessage(),
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -352,6 +354,7 @@ proc createChatIdentifierItem(self: Module): Item =
     albumMessageIds = @[],
     albumImagesCount = 0,
     bridgeMessage = BridgeMessage(),
+    quotedBridgeMessage = BridgeMessage(),
   )
 
 proc checkIfMessageLoadedAndScroll(self: Module) =
