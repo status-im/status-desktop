@@ -112,7 +112,7 @@ SplitView {
                 }
 
                 Label {
-                    text: "StatusFlatButton (no Primary variant)"
+                    text: "StatusFlatButton"
                     Layout.columnSpan: 4
                     font.bold: true
                 }
@@ -238,7 +238,7 @@ SplitView {
                     Label { text: "Type:" }
                     ComboBox {
                         id: ctrlType
-                        model: ["Normal", "Danger", "Primary", "Warning"] // enum StatusBaseButton.Type.xxx
+                        model: ["Normal", "Danger", "Primary", "Warning", "Success"] // enum StatusBaseButton.Type.xxx
                     }
                 }
                 RowLayout {
