@@ -16,9 +16,13 @@ import utils 1.0
 
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.stores 1.0
+
 
 Item {
     id: root
+
+    required property TokensStore tokensStore
 
     required property double tokenListUpdatedAt
     required property var assetsController
@@ -35,20 +39,15 @@ Item {
 
     property alias currentIndex: tabBar.currentIndex
 
-    readonly property bool dirty: {
-        if (!loader.item)
-            return false
-        if (tabBar.currentIndex > d.hiddenTabIndex)
-            return false
-        // FIXME take advanced settings into account here too (#13178)
-        return loader.item && loader.item.dirty
-    }
+    readonly property bool dirty: !!loader.item && loader.item.dirty
+    readonly property bool advancedTabVisible: tabBar.currentIndex === d.advancedTabIndex
 
     function saveChanges() {
-        if (tabBar.currentIndex > d.hiddenTabIndex)
-            return
-        // FIXME save advanced settings (#13178)
         loader.item.saveSettings()
+    }
+
+    function resetChanges() {
+        loader.item.resetChanges()
     }
 
     QtObject {
@@ -147,7 +146,34 @@ Item {
         Component {
             id: advancedTab
             ColumnLayout {
-                id: advancedTabColumn
+                id: advancedSettings
+
+                function saveSettings() {
+                    if (showCommunityAssetsSwitch.checked !== root.tokensStore.showCommunityAssetsInSend)
+                        root.tokensStore.toggleShowCommunityAssetsInSend()
+                    if (displayThresholdSwitch.checked !== root.tokensStore.displayAssetsBelowBalance)
+                        root.tokensStore.toggleDisplayAssetsBelowBalance()
+                    const rawAmount = currencyAmount.value * Math.pow(10, thresholdCurrency.displayDecimals)
+                    if (rawAmount !== thresholdCurrency.amount) {
+                        root.tokensStore.setDisplayAssetsBelowBalanceThreshold(rawAmount)
+                    }
+                    dirty = false
+                }
+
+                function resetChanges() {
+                    showCommunityAssetsSwitch.checked = root.tokensStore.showCommunityAssetsInSend
+                    displayThresholdSwitch.checked = root.tokensStore.displayAssetsBelowBalance
+                    currencyAmount.value = getDisplayThresholdAmount()
+                    dirty = false
+                }
+
+                function getDisplayThresholdAmount() {
+                    return thresholdCurrency.amount / Math.pow(10, thresholdCurrency.displayDecimals)
+                }
+
+                property bool dirty: false
+
+                property var thresholdCurrency: root.tokensStore.getDisplayAssetsBelowBalanceThresholdCurrency()
 
                 spacing: 8
                 StatusListItem {
@@ -157,9 +183,13 @@ Item {
                     components: [
                         StatusSwitch {
                             id: showCommunityAssetsSwitch
-                            checked: true // FIXME integrate with backend (#13178)
+                            checked: root.tokensStore.showCommunityAssetsInSend
                             onCheckedChanged: {
-                                // FIXME integrate with backend (#13178)
+                                if (!advancedSettings.dirty && checked === root.tokensStore.showCommunityAssetsInSend) {
+                                    // Skipping initial value
+                                    return
+                                }
+                                advancedSettings.dirty = true
                             }
                         }
                     ]
@@ -176,15 +206,27 @@ Item {
 
                     components: [
                         CurrencyAmountInput {
+                            id: currencyAmount
                             enabled: displayThresholdSwitch.checked
                             currencySymbol: SharedStores.RootStore.currencyStore.currentCurrency
-                            value: 0.10 // FIXME integrate with backend (#13178)
+                            value: advancedSettings.getDisplayThresholdAmount()
+                            onValueChanged: {
+                                if (!advancedSettings.dirty && advancedSettings.getDisplayThresholdAmount() === value) {
+                                    // Skipping initial value
+                                    return
+                                }
+                                advancedSettings.dirty = true
+                            }
                         },
                         StatusSwitch {
                             id: displayThresholdSwitch
-                            checked: false // FIXME integrate with backend (#13178)
+                            checked: root.tokensStore.displayAssetsBelowBalance
                             onCheckedChanged: {
-                                // FIXME integrate with backend (#13178)
+                                if (!advancedSettings.dirty && checked === root.tokensStore.displayAssetsBelowBalance) {
+                                    // Skipping initial value
+                                    return
+                                }
+                                advancedSettings.dirty = true
                             }
                         }
                     ]

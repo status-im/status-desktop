@@ -103,6 +103,37 @@ QtObject {
 
     // Property and methods below are used to apply advanced token management settings to the SendModal
     readonly property bool showCommunityAssetsInSend: root._allTokensModule.showCommunityAssetWhenSendingTokens
-    readonly property bool balanceThresholdEnabled: root._allTokensModule.displayAssetsBelowBalance
-    readonly property real balanceThresholdAmount: root._allTokensModule.displayAssetsBelowBalanceThreshold
+    readonly property bool displayAssetsBelowBalance: root._allTokensModule.displayAssetsBelowBalance
+
+    signal displayAssetsBelowBalanceThresholdChanged()
+
+    function getDisplayAssetsBelowBalanceThresholdCurrency() {
+        return root._allTokensModule.displayAssetsBelowBalanceThreshold
+    }
+
+    function getDisplayAssetsBelowBalanceThresholdDisplayAmount() {
+        const thresholdCurrency = getDisplayAssetsBelowBalanceThresholdCurrency()
+        return thresholdCurrency.amount / Math.pow(10, thresholdCurrency.displayDecimals)
+    }
+
+    function setDisplayAssetsBelowBalanceThreshold(rawValue) {
+        // rawValue - raw amount (multiplied by displayDecimals)`
+        root._allTokensModule.setDisplayAssetsBelowBalanceThreshold(rawValue)
+    }
+
+    function toggleShowCommunityAssetsInSend() {
+        root._allTokensModule.toggleShowCommunityAssetWhenSendingTokens()
+    }
+
+    function toggleDisplayAssetsBelowBalance() {
+        root._allTokensModule.toggleDisplayAssetsBelowBalance()
+    }
+
+    readonly property Connections allTokensConnections: Connections {
+        target: root._allTokensModule
+
+        function onDisplayAssetsBelowBalanceThresholdChanged() {
+            root.displayAssetsBelowBalanceThresholdChanged()
+        }
+    }
 }

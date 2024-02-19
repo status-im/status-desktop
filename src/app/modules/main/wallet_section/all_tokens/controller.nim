@@ -16,6 +16,7 @@ type
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
     settingsService: settings_service.Service
+    displayAssetsBelowBalanceThreshold: CurrencyAmount
 
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -113,7 +114,8 @@ proc toggleDisplayAssetsBelowBalance*(self: Controller): bool =
 
 proc getDisplayAssetsBelowBalanceThreshold*(self: Controller): CurrencyAmount =
   let amount = float64(self.settingsService.displayAssetsBelowBalanceThreshold())
-  return newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
+  self.displayAssetsBelowBalanceThreshold = newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
+  return self.displayAssetsBelowBalanceThreshold
 
 proc setDisplayAssetsBelowBalanceThreshold*(self: Controller, threshold: int64): bool =
   return self.settingsService.setDisplayAssetsBelowBalanceThreshold(threshold)
