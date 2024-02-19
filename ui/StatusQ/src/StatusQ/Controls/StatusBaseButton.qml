@@ -20,7 +20,8 @@ Button {
         Normal,
         Danger,
         Primary,
-        Warning
+        Warning,
+        Success
     }
 
     enum TextPosition {

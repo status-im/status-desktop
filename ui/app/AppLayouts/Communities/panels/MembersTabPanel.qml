@@ -211,11 +211,9 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         opacity: acceptButtonVisible
                         text: qsTr("Accept")
+                        type: StatusBaseButton.Type.Success
                         icon.name: "checkmark-circle"
                         icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
-                        normalColor: Theme.palette.successColor2
-                        hoverColor: Theme.palette.successColor3
-                        textColor: Theme.palette.successColor1
                         loading: model.requestToJoinLoading
                         enabled: !acceptPendingButtonVisible
                         onClicked: root.acceptRequestToJoin(model.requestToJoinId)
