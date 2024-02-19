@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import allure
 import pytest
 from allure_commons._allure import step
@@ -15,7 +13,7 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-# @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/13483
+@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703630', 'Create community')
 @pytest.mark.case(703630)
 @pytest.mark.parametrize('params', [constants.community_params])
@@ -100,12 +98,13 @@ def test_create_community(user_account, main_screen: MainWindow, params):
     }
 ])
 def test_edit_community(main_screen: MainWindow, params):
-    main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
-                                 constants.community_params['intro'], constants.community_params['outro'],
-                                 constants.community_params['logo']['fp'], constants.community_params['banner']['fp'])
+    community_params = constants.community_params
+    main_screen.create_community(community_params['name'], community_params['description'],
+                                 community_params['intro'], community_params['outro'],
+                                 community_params['logo']['fp'], community_params['banner']['fp'])
 
     with step('Edit community'):
-        community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
+        community_screen = main_screen.left_panel.select_community(community_params['name'])
         community_setting = community_screen.left_panel.open_community_settings()
         edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
         edit_community_form.edit(params['name'], params['description'],

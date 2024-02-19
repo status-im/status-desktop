@@ -15,7 +15,9 @@ from . import marks
                          [('Channel', 'Description', 'sunglasses', '😎', '#4360df')])
 def test_create_community_channel(main_screen: MainWindow, channel_name, channel_description, channel_emoji,
                                   channel_emoji_image, channel_color):
-    main_screen.create_community(constants.community_params)
+    main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                 constants.community_params['intro'], constants.community_params['outro'],
+                                 constants.community_params['logo']['fp'], constants.community_params['banner']['fp'])
     community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
     community_screen.create_channel(channel_name, channel_description, channel_emoji)
 
@@ -35,7 +37,10 @@ def test_create_community_channel(main_screen: MainWindow, channel_name, channel
 def test_edit_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
                                 channel_color):
     with step('Create simple community'):
-        main_screen.create_community(constants.community_params)
+        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                     constants.community_params['intro'], constants.community_params['outro'],
+                                     constants.community_params['logo']['fp'],
+                                     constants.community_params['banner']['fp'])
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
 
     with step('Verify General channel is present for recently created community'):
@@ -65,7 +70,10 @@ def test_edit_community_channel(main_screen, channel_name, channel_description, 
 @pytest.mark.case(703051)
 def test_delete_community_channel(main_screen):
     with step('Create simple community'):
-        main_screen.create_community(constants.community_params)
+        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                     constants.community_params['intro'], constants.community_params['outro'],
+                                     constants.community_params['logo']['fp'],
+                                     constants.community_params['banner']['fp'])
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
 
     with step('Delete channel'):

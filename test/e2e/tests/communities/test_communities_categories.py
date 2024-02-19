@@ -19,7 +19,9 @@ pytestmark = marks
     pytest.param('Category out of general', False)
 ])
 def test_create_community_category(main_screen: MainWindow, category_name, general_checkbox):
-    main_screen.create_community(constants.community_params)
+    main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                 constants.community_params['intro'], constants.community_params['outro'],
+                                 constants.community_params['logo']['fp'], constants.community_params['banner']['fp'])
     community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
     community_screen.create_category(category_name, general_checkbox)
 
@@ -34,7 +36,9 @@ def test_create_community_category(main_screen: MainWindow, category_name, gener
 ])
 def test_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
                                    channel_description, channel_emoji):
-    main_screen.create_community(constants.community_params)
+    main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                 constants.community_params['intro'], constants.community_params['outro'],
+                                 constants.community_params['logo']['fp'], constants.community_params['banner']['fp'])
     community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
     community_screen.create_category(category_name, general_checkbox)
 
@@ -70,7 +74,10 @@ def test_edit_community_category(main_screen: MainWindow, category_name, general
                                  channel_description, channel_emoji, second_channel_name, second_channel_description,
                                  second_channel_emoji):
     with step('Create community and select it'):
-        main_screen.create_community(constants.community_params)
+        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                     constants.community_params['intro'], constants.community_params['outro'],
+                                     constants.community_params['logo']['fp'],
+                                     constants.community_params['banner']['fp'])
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
 
     with step('Create community category and verify that it displays correctly'):
@@ -150,7 +157,10 @@ def test_member_role_cannot_delete_category(main_screen: MainWindow):
                          [pytest.param('Category in general', True)])
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
     with step('Create community and select it'):
-        main_screen.create_community(constants.community_params)
+        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                     constants.community_params['intro'], constants.community_params['outro'],
+                                     constants.community_params['logo']['fp'],
+                                     constants.community_params['banner']['fp'])
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
 
     with step('Create community category and verify that it displays correctly'):

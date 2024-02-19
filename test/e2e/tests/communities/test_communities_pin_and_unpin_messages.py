@@ -14,6 +14,7 @@ from gui.screens.messages import MessagesScreen
 
 pytestmark = marks
 
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703255',
                  'Edit chat - Add pinned message (when any member can pin is disabled)')
 @pytest.mark.case(703255, 703256)
@@ -28,7 +29,10 @@ pytestmark = marks
 ])
 def test_pin_and_unpin_message_in_community(main_screen: MainWindow, community_params, user_account):
     with step('Create community'):
-        main_screen.create_community(constants.community_params)
+        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                     constants.community_params['intro'], constants.community_params['outro'],
+                                     constants.community_params['logo']['fp'],
+                                     constants.community_params['banner']['fp'])
 
     with step('Go to edit community and check that pin message checkbox is not checked'):
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])

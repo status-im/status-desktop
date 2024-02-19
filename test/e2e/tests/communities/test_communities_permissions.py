@@ -25,7 +25,7 @@ pytestmark = marks
     'checkbox_state, first_asset, second_asset, amount, allowed_to, in_channel, asset_title, second_asset_title, '
     'allowed_to_title',
     [
-        pytest.param(True, 'Dai Stablecoin', False, '10', 'becomeMember', False, '10 DAI', False, 'Become member',),
+        pytest.param(True, 'Dai Stablecoin', False, '10', 'becomeMember', False, '10 DAI', False, 'Become member', ),
         pytest.param(True, 'Ether', False, '1', 'becomeAdmin', False, '1 ETH', False, 'Become an admin',
                      marks=pytest.mark.critical),
         pytest.param(True, 'Ether', 'Dai Stablecoin', '10', 'viewAndPost', '#general', '10 ETH', '10 DAI',
@@ -37,7 +37,9 @@ pytestmark = marks
 def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkbox_state: bool, first_asset,
                                          second_asset, amount, allowed_to: str, in_channel, asset_title,
                                          second_asset_title, allowed_to_title: str):
-    main_screen.create_community(params)
+    main_screen.create_community(params['name'], params['description'],
+                                 params['intro'], params['outro'],
+                                 params['logo']['fp'], params['banner']['fp'])
 
     with step('Open add new permission page'):
         community_screen = main_screen.left_panel.select_community(params['name'])
@@ -93,14 +95,18 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
         changes_popup.update_permission()
         if allowed_to is 'becomeAdmin' and checkbox_state is True:
             if asset_title is not False:
-                assert driver.waitFor(lambda: asset_title not in permissions_settings.get_who_holds_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(lambda: asset_title not in permissions_settings.get_who_holds_tags_titles(),
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             if second_asset_title is not False:
                 assert driver.waitFor(
-                    lambda: second_asset_title not in permissions_settings.get_who_holds_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                    lambda: second_asset_title not in permissions_settings.get_who_holds_tags_titles(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         elif checkbox_state is False:
-            assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: 'Become member' in permissions_settings.get_is_allowed_tags_titles(),
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         else:
-            assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     with step('Check toast message for edited permission'):
         messages = ToastMessage().get_toast_messages

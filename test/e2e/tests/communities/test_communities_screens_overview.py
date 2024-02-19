@@ -11,13 +11,19 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',
+                 'Manage community: Manage Permissions screen overview')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703199',
+                 'Manage community: Manage Mint Tokens screen overview')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703200',
                  'Manage community: Manage Airdrops screen overview')
-@pytest.mark.case(703200)
+@pytest.mark.case(703198, 703199, 703200)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_manage_community_screens_overview(main_screen: MainWindow, params):
     with step('Create community'):
-        main_screen.create_community(params)
+        main_screen.create_community(params['name'], params['description'],
+                                     params['intro'], params['outro'],
+                                     params['logo']['fp'], params['banner']['fp'])
 
     with step('Open airdrops view from community settings'):
         community_screen = main_screen.left_panel.select_community(params['name'])

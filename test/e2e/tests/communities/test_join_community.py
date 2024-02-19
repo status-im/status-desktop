@@ -14,6 +14,7 @@ from gui.main_window import MainWindow
 
 pytestmark = marks
 
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703510)
 @pytest.mark.parametrize('user_data_one, user_data_two', [
@@ -64,7 +65,9 @@ def test_join_community_via_owner_invite(multiple_instance, user_data_one, user_
         with step(f'User {user_one.name}, create community and {user_two.name}'):
             aut_one.attach()
             main_window.prepare()
-            main_window.create_community(community_params)
+            main_window.create_community(community_params['name'], community_params['description'],
+                                         community_params['intro'], community_params['outro'],
+                                         community_params['logo']['fp'], community_params['banner']['fp'])
             main_window.left_panel.invite_people_in_community([user_two.name], 'Message', community_params['name'])
             main_window.hide()
 
