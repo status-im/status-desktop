@@ -46,8 +46,8 @@ StatusDialog {
     }
 
     function setOldAirdropAddress(oldAirdropAddress) {
+        d.oldAirdropAddress = oldAirdropAddress
         if (!d.displaySigningPanel && !!loader.item) {
-            d.oldAirdropAddress = oldAirdropAddress
             loader.item.setOldAirdropAddress(oldAirdropAddress)
         }
     }
