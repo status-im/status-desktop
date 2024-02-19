@@ -203,11 +203,7 @@ Column {
             delegate: ActivityFilterTagItem {
                 tagPrimaryLabel.text: {
                     let savedAddress = root.store.getSavedAddress(modelData)
-                     if (!!savedAddress.ens) {
-                         return savedAddress.ens
-                     }
-
-                     return savedAddress.chainShortNames + StatusQUtils.Utils.elideText(modelData,6,4)
+                    return savedAddress.name
                 }
                 onClosed: activityFilterStore.toggleSavedAddress(modelData)
             }

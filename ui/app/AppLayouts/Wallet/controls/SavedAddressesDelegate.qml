@@ -29,7 +29,18 @@ StatusListItem {
     property bool areTestNetworksEnabled: false
     property bool isSepoliaEnabled: false
 
+    property int usage: SavedAddressesDelegate.Usage.Delegate
+    property bool showButtons: sensor.containsMouse
+
+    property alias sendButton: sendButton
+
+    signal aboutToOpenPopup()
     signal openSendModal(string recipient)
+
+    enum Usage {
+        Delegate,
+        Item
+    }
 
     implicitWidth: ListView.view ? ListView.view.width : 0
 
@@ -65,7 +76,6 @@ StatusListItem {
     statusListItemIcon.hoverEnabled: true
 
     statusListItemComponentsSlot.spacing: 0
-    property bool showButtons: sensor.containsMouse
 
     QtObject {
         id: d
@@ -74,8 +84,22 @@ StatusListItem {
         readonly property var preferredSharedNetworkNamesArray: root.chainShortNames.split(":").filter(Boolean)
     }
 
+    onClicked: {
+        if (root.usage === SavedAddressesDelegate.Usage.Item) {
+            return
+        }
+        Global.openSavedAddressActivityPopup({
+                                                 name: root.name,
+                                                 address: root.address,
+                                                 chainShortNames: root.chainShortNames,
+                                                 ens: root.ens,
+                                                 colorId: root.colorId
+                                              })
+    }
+
     components: [
         StatusRoundButton {
+            id: sendButton
             visible: !!root.name && root.showButtons
             type: StatusRoundButton.Type.Quinary
             radius: 8
@@ -138,6 +162,9 @@ StatusListItem {
             objectName: "editSavedAddress"
             assetSettings.name: "pencil-outline"
             onTriggered: {
+                if (root.usage === SavedAddressesDelegate.Usage.Item) {
+                    root.aboutToOpenPopup()
+                }
                 Global.openAddEditSavedAddressesPopup({
                                                           edit: true,
                                                           address: menu.address,
@@ -167,6 +194,9 @@ StatusListItem {
             objectName: "showQrSavedAddressAction"
             assetSettings.name: "qr"
             onTriggered: {
+                if (root.usage === SavedAddressesDelegate.Usage.Item) {
+                    root.aboutToOpenPopup()
+                }
                 Global.openShowQRPopup({
                                            showSingleAccount: true,
                                            showForSavedAddress: true,
@@ -186,6 +216,9 @@ StatusListItem {
             objectName: "viewActivitySavedAddressAction"
             assetSettings.name: "wallet"
             onTriggered: {
+                if (root.usage === SavedAddressesDelegate.Usage.Item) {
+                    root.aboutToOpenPopup()
+                }
                 Global.changeAppSectionBySectionType(Constants.appSection.wallet,
                                                      WalletLayout.LeftPanelSelection.AllAddresses,
                                                      WalletLayout.RightPanelSelection.Activity,
@@ -235,6 +268,9 @@ StatusListItem {
             assetSettings.name: "delete"
             objectName: "deleteSavedAddress"
             onTriggered: {
+                if (root.usage === SavedAddressesDelegate.Usage.Item) {
+                    root.aboutToOpenPopup()
+                }
                 Global.openDeleteSavedAddressesPopup({
                                                          name: menu.name,
                                                          address: menu.address,

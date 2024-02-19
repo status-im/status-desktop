@@ -5,3 +5,4 @@ ActivityTypeFilterSubMenu 1.0 filterSubMenus/ActivityTypeFilterSubMenu.qml
 ReceiveModal 1.0 ReceiveModal.qml
 AddEditSavedAddressPopup 1.0 AddEditSavedAddressPopup.qml
 RemoveSavedAddressPopup 1.0 RemoveSavedAddressPopup.qml
+SavedAddressActivityPopup 1.0 SavedAddressActivityPopup.qml

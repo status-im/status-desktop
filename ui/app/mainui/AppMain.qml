@@ -374,6 +374,10 @@ Item {
         function onOpenShowQRPopup(params) {
             showQR.open(params)
         }
+
+        function onOpenSavedAddressActivityPopup(params) {
+            savedAddressActivity.open(params)
+        }
     }
 
     Connections {
@@ -1949,6 +1953,39 @@ Item {
 
             onClosed: {
                 showQR.close()
+            }
+        }
+    }
+
+
+    Loader {
+        id: savedAddressActivity
+
+        active: false
+
+        property var params
+
+        function open(params = {}) {
+            savedAddressActivity.params = params
+            savedAddressActivity.active = true
+        }
+
+        function close() {
+            savedAddressActivity.active = false
+        }
+
+        onLoaded: {
+            savedAddressActivity.item.initWithParams(savedAddressActivity.params)
+            savedAddressActivity.item.open()
+        }
+
+        sourceComponent: WalletPopups.SavedAddressActivityPopup {
+            networkConnectionStore: appMain.networkConnectionStore
+            contactsStore: appMain.rootStore.contactStore
+            sendModalPopup: sendModal
+
+            onClosed: {
+                savedAddressActivity.close()
             }
         }
     }
