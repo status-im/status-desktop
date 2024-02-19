@@ -43,6 +43,7 @@ StatusListItem {
     property var modelData
     property string timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
     property bool showAllAccounts: false
+    property bool displayValues: true
 
     required property var rootStore
     required property var walletRootStore
@@ -527,7 +528,6 @@ StatusListItem {
     rightPadding: 16
     enabled: !loading
     loading: !isModelDataValid
-    color: sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
 
     statusListItemIcon.active: (loading || root.asset.name)
     asset {
@@ -681,7 +681,7 @@ StatusListItem {
     // Right side components
     components: [
         Loader {
-            active: !headerStatusLoader.active
+            active: root.displayValues && !headerStatusLoader.active
             visible: active
             sourceComponent: ColumnLayout {
                 StatusTextWithLoadingState {

@@ -29,10 +29,16 @@ ColumnLayout {
 
     property var overview
     property bool showAllAccounts: false
+    property bool displayValues: true
     property var sendModal
     property bool filterVisible
+    property bool disableShadowOnScroll: false
+    property bool hideVerticalScrollbar: false
+    property int firstItemOffset: 0
 
     property var selectedTransaction
+
+    property real yPosition: transactionListRoot.visibleArea.yPosition * transactionListRoot.contentHeight
 
     signal launchTransactionDetail(int entryIndex)
 
@@ -43,7 +49,6 @@ ColumnLayout {
     }
 
     Component.onCompleted: {
-        filterPanelLoader.active = true
         if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
@@ -69,7 +74,8 @@ ColumnLayout {
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
 
         readonly property int loadingSectionWidth: 56
-        readonly property int topSectionMargin: 20
+
+        property bool firstSectionHeaderLoaded: false
 
         property double lastRefreshTime
         readonly property int maxSecondsBetweenRefresh: 3
@@ -82,18 +88,21 @@ ColumnLayout {
 
     StyledText {
         id: nonArchivalNodeError
+        Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
-
+        Layout.topMargin: root.firstItemOffset
         visible: RootStore.isNonArchivalNode
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.danger
+        wrapMode: Text.WordWrap
     }
 
     ShapeRectangle {
         id: noTxs
         Layout.fillWidth: true
         Layout.preferredHeight: 42
+        Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
         visible: !d.isInitialLoading && !WalletStores.RootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
@@ -114,18 +123,18 @@ ColumnLayout {
     }
 
     Item {
+        id: transactionListWrapper
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Style.current.padding : 0
-        Layout.bottomMargin: Style.current.padding
         Layout.fillWidth: true
         Layout.fillHeight: true
 
         Rectangle { // Shadow behind delegates when scrolling
-            anchors.top: topListSeparator.bottom
+            anchors.top: parent.top
             width: parent.width
             height: 4
             color: Style.current.separator
-            visible: topListSeparator.visible
+            visible: !root.disableShadowOnScroll && !transactionListRoot.atYBeginning
         }
 
         StatusListView {
@@ -177,42 +186,18 @@ ColumnLayout {
                 }
             }
 
-            delegate: transactionDelegate
+            delegate: transactionDelegateComponent
 
             headerPositioning: ListView.OverlayHeader
             footer: footerComp
 
-            ScrollBar.vertical: StatusScrollBar {}
-
-            section.property: "date"
-            topMargin: d.isInitialLoading ? 0 : -d.topSectionMargin // Top margin for first section. Section cannot have different sizes
-            section.delegate: ColumnLayout {
-                id: sectionDelegate
-
-                width: ListView.view.width
-                height: 58
-                spacing: 0
-
-                required property string section
-
-                Separator {
-                    Layout.fillWidth: true
-                    Layout.topMargin: d.topSectionMargin
-                    implicitHeight: 1
-                }
-
-                StatusBaseText {
-                    id: sectionText
-                    Layout.alignment: Qt.AlignBottom
-                    leftPadding: Style.current.padding
-                    bottomPadding: Style.current.halfPadding
-                    text: parent.section
-                    font.pixelSize: 13
-                    verticalAlignment: Qt.AlignBottom
-                }
+            ScrollBar.vertical: StatusScrollBar {
+                policy: root.hideVerticalScrollbar? ScrollBar.AlwaysOff : ScrollBar.AsNeeded
             }
 
-            visibleArea.onYPositionChanged: tryFetchMoreTransactions()
+            visibleArea.onYPositionChanged: {
+                tryFetchMoreTransactions()
+            }
 
             Connections {
                 target: RootStore
@@ -261,13 +246,6 @@ ColumnLayout {
             type: StatusButton.Primary
             size: StatusBaseButton.Size.Tiny
         }
-
-        Separator {
-            id: topListSeparator
-            width: parent.width
-            visible: !transactionListRoot.atYBeginning
-        }
-
 
         Connections {
             target: RootStore
@@ -418,23 +396,74 @@ ColumnLayout {
     }
 
     Component {
-        id: transactionDelegate
-        TransactionDelegate {
+        id: transactionDelegateComponent
+        ColumnLayout {
+            id: transactionDelegate
+
             required property var model
             required property int index
+
+            readonly property bool displaySectionHeader: index === 0 || model.date !== txModel.get(index - 1).date
+            readonly property bool displaySectionFooter: index === txModel.count-1  || model.date !== txModel.get(index + 1).date
+
             width: ListView.view.width
-            modelData: model.activityEntry
-            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-            rootStore: RootStore
-            walletRootStore: WalletStores.RootStore
-            showAllAccounts: root.showAllAccounts
-            onClicked: {
-                if (mouse.button === Qt.RightButton) {
-                    delegateMenu.openMenu(this, mouse, modelData)
-                } else {
-                    root.selectedTransaction = Qt.binding(() => model.activityEntry)
-                    launchTransactionDetail(index)
+            spacing: 0
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: root.firstItemOffset
+                visible: transactionDelegate.index === 0 && root.firstItemOffset > 0
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: childrenRect.height
+                visible: transactionDelegate.displaySectionHeader
+                color: Theme.palette.statusModal.backgroundColor
+
+                ColumnLayout {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    width: parent.width
+                    spacing: Style.current.halfPadding
+
+                    Separator {
+                        Layout.fillWidth: true
+                        implicitHeight: 1
+                    }
+
+                    StatusBaseText {
+                        leftPadding: Style.current.padding
+                        bottomPadding: Style.current.halfPadding
+                        text: transactionDelegate.model.date
+                        font.pixelSize: 13
+                    }
                 }
+            }
+
+            TransactionDelegate {
+                Layout.fillWidth: true
+                modelData: transactionDelegate.model.activityEntry
+                timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
+                rootStore: RootStore
+                walletRootStore: WalletStores.RootStore
+                showAllAccounts: root.showAllAccounts
+                displayValues: root.displayValues
+                onClicked: {
+                    if (mouse.button === Qt.RightButton) {
+                        delegateMenu.openMenu(this, mouse, modelData)
+                    } else {
+                        root.selectedTransaction = Qt.binding(() => transactionDelegate.model.activityEntry)
+                        launchTransactionDetail(transactionDelegate.index)
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 20
+                visible: transactionDelegate.displaySectionFooter
+                color: Theme.palette.statusModal.backgroundColor
             }
         }
     }
@@ -504,6 +533,11 @@ ColumnLayout {
                 text: qsTr("Back to most recent transaction")
                 visible: footerColumn.allActivityLoaded && transactionListRoot.contentHeight > transactionListRoot.height
                 onClicked: transactionListRoot.positionViewAtBeginning()
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Style.current.halfPadding
             }
         }
     }
