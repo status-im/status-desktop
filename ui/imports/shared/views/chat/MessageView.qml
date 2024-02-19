@@ -154,7 +154,7 @@ Loader {
             selectedUserPublicKey: isReply ? quotedMessageFrom : root.senderId,
             selectedUserDisplayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             selectedUserIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
-            isBridgedAccount: root.isBridgeMessage
+            isBridgedAccount: isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -825,7 +825,7 @@ Loader {
                         height: 20
                         name: quotedMessageAuthorDetailsThumbnailImage
                         assetSettings.isImage: quotedMessageAuthorDetailsThumbnailImage
-                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
+                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified && (root.quotedMessageContentType !== Constants.messageContentType.bridgeMessageType)
                         pubkey: sender.id
                         colorId: Utils.colorIdForPubkey(sender.id)
                         colorHash: quotedMessageAuthorDetailsColorHash

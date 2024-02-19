@@ -123,6 +123,7 @@ proc initItem*(
     albumMessageIds: seq[string],
     albumImagesCount: int,
     bridgeMessage: BridgeMessage,
+    quotedBridgeMessage: BridgeMessage,
     ): Item =
   result = Item()
   result.id = id
@@ -189,6 +190,12 @@ proc initItem*(
   else:
     result.quotedMessageAuthorDisplayName = quotedMessageAuthorDetails.dto.userDefaultDisplayName()
     result.quotedMessageAuthorAvatar = quotedMessageAuthorDetails.dto.image.thumbnail
+
+  if quotedMessageContentType == ContentType.BridgeMessage:
+    result.quotedMessageAuthorDisplayName = quotedBridgeMessage.userName
+    result.quotedMessageAuthorAvatar = quotedBridgeMessage.userAvatar
+    result.quotedMessageText = quotedBridgeMessage.content
+    result.quotedMessageParsedText = quotedBridgeMessage.content
 
   if contentType == ContentType.DiscordMessage:
 
@@ -269,6 +276,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     albumMessageIds = @[],
     albumImagesCount = 0,
     bridgeMessage = BridgeMessage(),
+    quotedBridgeMessage = BridgeMessage(),
   )
 
 proc `$`*(self: Item): string =
