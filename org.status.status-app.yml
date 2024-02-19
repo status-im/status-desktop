@@ -5,18 +5,20 @@ sdk: org.kde.Sdk
 command: start-status
 finish-args:
   - --share=ipc
+  - --share=network
   - --socket=fallback-x11
   - --socket=wayland
   - --socket=pulseaudio
   - --device=dri
-  - --filesystem=xdg-config
+  - --filesystem=home
+  # - --env=LD_LIBRARY_PATH="/home/jonathan/Qt5.15/5.15.2/gcc_64/lib:/home/jonathan/dev/status-desktop/vendor/status-go/build/bin:/home/jonathan/dev/status-desktop/vendor/status-keycard-go/build/libkeycard"
 modules:
   - name: status-app
     buildsystem: simple
     build-commands:
       - ./Status.AppImage --appimage-extract
-      - mkdir -p "${FLATPAK_DEST}/status"
-      - cp -r squashfs-root/* "${FLATPAK_DEST}/status"
+      - mkdir -p "${FLATPAK_DEST}/status2"
+      - cp -r squashfs-root/* "${FLATPAK_DEST}/status2"
       # - mv "${FLATPAK_DEST}/status/usr/share/icons" "${FLATPAK_DEST}/share"
       # - install -Dm644 "${FLATPAK_DEST}/status/Zettlr.desktop" "${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop"
       # - desktop-file-edit --set-key=Exec --set-value="start-zettlr" "${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop"
