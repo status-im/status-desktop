@@ -11,6 +11,7 @@ QtObject {
 
     property var contactsStore
     property var communityTokensStore
+    property var walletStore
 
     property var networkConnectionStore
 

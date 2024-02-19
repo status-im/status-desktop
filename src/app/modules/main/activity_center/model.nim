@@ -20,6 +20,7 @@ type
     Author
     RepliedMessage
     ChatType
+    TokenData
 
 QtObject:
   type
@@ -87,6 +88,7 @@ QtObject:
       of NotifRoles.Accepted: result = newQVariant(activityNotificationItem.accepted.bool)
       of NotifRoles.RepliedMessage: result = newQVariant(activityNotificationItem.repliedMessageItem)
       of NotifRoles.ChatType: result = newQVariant(activityNotificationItem.chatType.int)
+      of NotifRoles.TokenData: result = newQVariant(activityNotificationItem.tokenDataItem)
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -106,7 +108,8 @@ QtObject:
       NotifRoles.Dismissed.int: "dismissed",
       NotifRoles.Accepted.int: "accepted",
       NotifRoles.RepliedMessage.int: "repliedMessage",
-      NotifRoles.ChatType.int: "chatType"
+      NotifRoles.ChatType.int: "chatType",
+      NotifRoles.TokenData.int: "tokenData"
     }.toTable
 
   proc markActivityCenterNotificationUnread*(self: Model, notificationId: string) =

@@ -129,12 +129,21 @@ QtObject {
         }
 
         // Community token received in the user wallet:
-        function onCommunityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, symbol) {
+        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
 
             // Some error control:
             if(tokenType !== Constants.TokenType.ERC20 && tokenType !== Constants.TokenType.ERC721) {
                 console.warn("Community token Received: Unexpected token type while creating a toast message: " + tokenType)
                 return
+            }
+
+            // Double check if balance is string, then strip ending zeros (e.g. 1.0 -> 1)
+            if (typeof balance === 'string' && balance.endsWith('0')) {
+                balance = parseFloat(balance)
+                if (isNaN(balance))
+                    balance = "1"
+                // Cast to Number to drop trailing zeros
+                balance = Number(balance).toString()
             }
 
             var data = {

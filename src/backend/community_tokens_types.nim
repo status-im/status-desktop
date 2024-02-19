@@ -18,8 +18,9 @@ type
     communityName*: string
     communityColor*: string
     communityImage*: string
-    balance*: int
+    amount*: float
     txHash*: string
+    isFirst*: bool
 
 proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): CommunityTokenReceivedPayload {.inline.}=
   let addressField = "address"
@@ -28,7 +29,8 @@ proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): Communi
   discard t.getProp("image", result.image)
   discard t.getProp("chainId", result.chainId)
   discard t.getProp("txHash", result.txHash)
-  result.balance = t{"balance"}.getInt()
+  discard t.getProp("isFirst", result.isFirst)
+  discard t.getProp("amount", result.amount)
 
   fromJson(t[addressField], addressField, result.address)
 

@@ -1,6 +1,6 @@
 import NimQml, Tables, json, stint, sequtils
 
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view, ./controller, ./token_data_item
 import ../io_interface as delegate_interface
 import ./item as notification_item
 import ../../shared_models/message_item as msg_item
@@ -175,6 +175,19 @@ method convertToItems*(
         if (notification.notificationType == ActivityCenterNotificationType.ContactVerification):
           repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
 
+      var tokenDataItem = token_data_item.newTokenDataItem(
+          notification.tokenData.chainId,
+          notification.tokenData.txHash,
+          notification.tokenData.walletAddress,
+          notification.tokenData.isFirst,
+          notification.tokenData.communiyId,
+          notification.tokenData.amount,
+          notification.tokenData.name,
+          notification.tokenData.symbol,
+          notification.tokenData.imageUrl,
+          notification.tokenData.tokenType
+      )
+
       let chatDetails = self.controller.getChatDetails(notification.chatId)
 
       return notification_item.initItem(
@@ -193,7 +206,8 @@ method convertToItems*(
         notification.accepted,
         messageItem,
         repliedMessageItem,
-        chatDetails.chatType
+        chatDetails.chatType,
+        tokenDataItem
       )
     )
 

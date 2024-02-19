@@ -34,12 +34,11 @@ QtObject {
     signal communityOwnershipDeclined(string communityName)
     signal sendOwnerTokenStateChanged(string tokenName, int status, string url)
     signal ownerTokenReceived(string communityId, string communityName)
-    signal communityTokenReceived(string name, string image,
+    signal communityTokenReceived(string name, string symbol, string image,
                                   string communityId, string communityName,
                                   string balance, int chainId,
                                   string txHash, bool isFirst,
-                                  int tokenType, string walletAccountName,
-                                  string symbol)
+                                  int tokenType, string walletAccountName)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -137,18 +136,8 @@ QtObject {
             root.ownerTokenReceived(communityId, communityName)
         }
 
-        function onCommunityTokenReceived(name, image, communityId, communityName, communityColor /*Unused, can be removed*/, balance, chainId, txHash/*, isFirst, tokenType, walletAccountName, symbol*/) {
-            // TODO BACKEND: #13250
-            // ** `isFirst` property will be true if it's the first time the user receives a community asset and  a community collectible
-            // ** `tokenType` property will determine if the received minted token is an ERC20 or an ERC720
-            // ** `walletAccountName` property will provide the wallet account name where the token was received
-            // ** `symbol` property will provide the token symbol
-
-            var isFirst = false
-            var tokenType = Constants.TokenType.ERC20
-            var walletAccountName = "Status account"
-            var symbol = "NON"
-            root.communityTokenReceived(name, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, symbol)
+        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
+            root.communityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName)
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {

@@ -334,8 +334,8 @@ method onAirdropStateChanged*(self: Module, communityId: string, tokenName: stri
 method onOwnerTokenReceived*(self: Module, communityId: string, communityName: string, chainId: int, contractAddress: string) =
   self.view.emitOwnerTokenReceived(communityId, communityName, chainId, contractAddress)
 
-method onCommunityTokenReceived*(self: Module, name: string, image: string, communityId: string, communityName: string, communityColor: string, balance: string, chainId: int, txHash: string) =
-  self.view.emitCommunityTokenReceived(name, image, communityId, communityName, communityColor, balance, chainId, txHash)
+method onCommunityTokenReceived*(self: Module, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string) =
+  self.view.emitCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, accountName)
 
 method onSetSignerStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
   let communityDto = self.controller.getCommunityById(communityId)
