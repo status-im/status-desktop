@@ -1453,6 +1453,7 @@ Item {
                     communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
+                    walletStore: WalletStore.RootStore
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore

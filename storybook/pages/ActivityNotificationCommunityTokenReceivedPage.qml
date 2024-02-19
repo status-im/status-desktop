@@ -13,6 +13,9 @@ SplitView {
 
     orientation: Qt.Vertical
 
+    readonly property int assetType: 1
+    readonly property int collectibleType: 2
+
     Logs { id: logs }
 
     Popups {
@@ -70,7 +73,7 @@ SplitView {
 
             // Notification type related properties:
             isFirstTokenReceived: true
-            isAssetType: true
+            tokenType: root.assetType
 
             // Token related properties:
             tokenAmount: assetMock.amount
@@ -97,7 +100,7 @@ SplitView {
 
             // Notification type related properties:
             isFirstTokenReceived: false
-            isAssetType: true
+            tokenType: root.assetType
 
             // Token related properties:
             tokenAmount: assetMock.amount
@@ -124,7 +127,7 @@ SplitView {
 
             // Notification type related properties:
             isFirstTokenReceived: true
-            isAssetType: false
+            tokenType: root.assetType
 
             // Token related properties:
             tokenAmount: collectibleMock.amount
@@ -151,7 +154,7 @@ SplitView {
 
             // Notification type related properties:
             isFirstTokenReceived: false
-            isAssetType: false
+            tokenType: root.collectibleType
 
             // Token related properties:
             tokenAmount: collectibleMock.amount

@@ -13,24 +13,41 @@ import AppLayouts.Wallet 1.0
 ActivityNotificationBase {
     id: root
 
+    property var community: null
+    property var store: null
+
+    property var tokenData: root.notification.tokenData
+
     // Community properties:
     required property string communityId
     required property string communityName
     required property string communityImage
 
     // Notification type related properties:
-    property bool isFirstTokenReceived: root.notification.isFirstTokenReceived
-    property bool isAssetType: root.notification.tokenType === Constants.TokenType.ERC20
+    property bool isFirstTokenReceived: root.tokenData.isFirst
+    readonly property bool isAssetType: root.tokenType === Constants.TokenType.ERC20
 
     // Token related properties:
-    property string tokenAmount: root.notification.tokenAmount
-    property string tokenName: root.notification.tokenName
-    property string tokenSymbol: root.notification.tokenSymbol
-    property string tokenImage: root.notification.tokenImage
+    property string tokenAmount: {
+        let amount = root.tokenData.amount
+        // Double check if balance is string, then strip ending zeros (e.g. 1.0 -> 1)
+        if (typeof amount === 'string' && amount.endsWith('0')) {
+            amount = parseFloat(root.tokenData.amount)
+            if (isNaN(amount))
+                amount = "1"
+            // Cast to Number to drop trailing zeros
+            amount = Number(amount).toString()
+        }
+        return amount
+    }
+    property string tokenName: root.tokenData.name
+    property string tokenSymbol: root.tokenData.symbol
+    property string tokenImage: root.tokenData.imageUrl
+    property int tokenType: root.tokenData.tokenType
 
     // Wallet related:
-    property string walletAccountName: root.notification.walletAccountName
-    property string txHash: root.notification.txHash
+    property string walletAccountName: !!root.store ? root.store.walletStore.getNameForWalletAddress(root.tokenData.walletAddress) : ""
+    property string txHash: root.tokenData.txHash
 
     QtObject {
         id: d
@@ -99,7 +116,7 @@ ActivityNotificationBase {
                                                    root.tokenSymbol,
                                                    root.tokenName,
                                                    root.tokenAmount,
-                                                   root.notification.tokenType,
+                                                   root.tokenType,
                                                    root.tokenImage);
             }
             else {

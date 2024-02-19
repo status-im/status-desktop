@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils
+import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, strformat
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -174,12 +174,49 @@ type
   CommunityTokenReceivedArgs* =  ref object of Args
     name*: string
     image*: string
+    collectibleId*: CollectibleUniqueID
     communityId*: string
     communityName*: string
-    communityColor*: string
     chainId*: int
-    balance*: int
+    amount*: float64
     txHash*: string
+    symbol*: string
+    isFirst*: bool
+    tokenType*: int
+    accountAddress*: string
+    accountName*: string
+
+proc `$`*(self: CommunityTokenReceivedArgs): string =
+  return fmt"""CommunityTokenReceivedArgs(
+    name: {self.name}
+    image: {self.image}
+    communityId: {self.communityId}
+    communityName: {self.communityName}
+    chainId: {self.chainId}
+    amount: {self.amount}
+    txHash: {self.txHash}
+    symbol: {self.symbol}
+    isFirst: {self.isFirst}
+    tokenType: {self.tokenType}
+    accountAddress: {self.accountAddress}
+    accountName: {self.accountName}
+  )"""
+
+proc toTokenData*(self: CommunityTokenReceivedArgs): string =
+  var dataNode = %* {
+    "chainId": self.chainId,
+    "txHash": self.txHash,
+    "walletAddress": self.accountAddress,
+    "isFirst": self.isFirst,
+    "communityId": self.communityId,
+    "amount": $self.amount,
+    "name": self.name,
+    "symbol": self.symbol,
+    "tokenType": self.tokenType
+  }
+  if not self.collectibleId.isNil:
+    dataNode.add("collectibleId", %self.collectibleId)
+  return $dataNode
 
 type
   FinaliseOwnershipStatusArgs* =  ref object of Args
@@ -293,7 +330,7 @@ QtObject:
     result.tokenOwners1SecTimer.setSingleShot(true)
     signalConnect(result.tokenOwners1SecTimer, "timeout()", result, "onFetchTempTokenOwners()", 2)
 
-  proc processReceivedCollectiblesWalletEvent(self: Service, jsonMessage: string) =
+  proc processReceivedCollectiblesWalletEvent(self: Service, jsonMessage: string, accounts: seq[string]) =
     try:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityCollectiblesReceivedPayload)
@@ -318,31 +355,81 @@ QtObject:
 
           let response = tokens_backend.registerOwnerTokenReceivedNotification(communityId)
           checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+        elif privilegesLevel == PrivilegesLevel.Community:
+          var collectibleName, collectibleImage, txHash, accountName, accountAddress: string
+          var isFirst = false
+          var amount = float64(1.0)
 
+          if len(accounts) > 0:
+            accountAddress = accounts[0]
+            let res = self.walletAccountService.getAccountByAddress(accountAddress)
+            accountName = res.name
+
+          if coll.isFirst.isSome():
+            isFirst = coll.isFirst.get()
+          if coll.latestTxHash.isSome():
+            txHash = coll.latestTxHash.get()
+          if coll.receivedAmount.isSome():
+            amount = coll.receivedAmount.get()
+
+          if coll.collectibleData.isSome():
+            let collData = coll.collectibleData.get()
+            collectibleName = collData.name
+            if collData.imageUrl.isSome():
+              collectibleImage = collData.imageUrl.get()
+
+          let tokenReceivedArgs = CommunityTokenReceivedArgs(
+            collectibleId: id,
+            communityId: communityId, 
+            communityName: communityData.name, 
+            chainId: id.contractID.chainID, 
+            txHash: txHash,
+            name: collectibleName, 
+            amount: amount,
+            image: collectibleImage,
+            isFirst: isFirst,
+            tokenType: int(TokenType.ERC721),
+            accountAddress: accountAddress,
+            accountName: accountName
+          )
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
+          
+          let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId, isFirst, tokenReceivedArgs.toTokenData())
+          checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
     except Exception as e:
-      error "Error registering owner token received notification", msg=e.msg
+      error "Error registering collectibles token received notification", msg=e.msg
 
-  proc processReceivedCommunityTokenWalletEvent(self: Service, jsonMessage: string) =
+  proc processReceivedCommunityTokenWalletEvent(self: Service, jsonMessage: string, accounts: seq[string]) =
     try:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityTokenReceivedPayload)
       if len(tokenDataPayload.communityId) == 0:
         return
 
+      var accountName, accountAddress: string
+      if len(accounts) > 0:
+        accountAddress = accounts[0]
+        let res = self.walletAccountService.getAccountByAddress(accountAddress)
+        accountName = res.name
+
       let communityId = tokenDataPayload.communityId
       let tokenReceivedArgs = CommunityTokenReceivedArgs(
         communityId: communityId, 
         communityName: tokenDataPayload.communityName, 
-        communityColor: tokenDataPayload.communityColor,
         chainId: tokenDataPayload.chainId, 
         txHash: tokenDataPayload.txHash, 
         name: tokenDataPayload.name, 
-        balance: tokenDataPayload.balance,
-        image: tokenDataPayload.image
+        amount: tokenDataPayload.amount,
+        image: tokenDataPayload.image,
+        symbol: tokenDataPayload.symbol,
+        isFirst: tokenDataPayload.isFirst,
+        tokenType: int(TokenType.ERC20),
+        accountAddress: accountAddress,
+        accountName: accountName
       )
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_RECEIVED, tokenReceivedArgs)
       
-      let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId)
+      let response = tokens_backend.registerReceivedCommunityTokenNotification(communityId, tokenDataPayload.isFirst, tokenReceivedArgs.toTokenData())
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
     except Exception as e:
       error "Error registering community token received notification", msg=e.msg
@@ -415,9 +502,9 @@ QtObject:
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       if data.eventType == collectibles_backend.eventCommunityCollectiblesReceived:
-        self.processReceivedCollectiblesWalletEvent(data.message)
+        self.processReceivedCollectiblesWalletEvent(data.message, data.accounts)
       elif data.eventType == tokens_backend.eventCommunityTokenReceived:
-        self.processReceivedCommunityTokenWalletEvent(data.message)
+        self.processReceivedCommunityTokenWalletEvent(data.message, data.accounts)
 
     self.events.on(PendingTransactionTypeDto.SetSignerPublicKey.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)

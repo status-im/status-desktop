@@ -150,3 +150,5 @@ proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcRespo
 
 rpc(registerReceivedCommunityTokenNotification, "wakuext"):
   communityId: string
+  isFirst: bool
+  toTokenData: string

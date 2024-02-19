@@ -3,6 +3,7 @@
 import json, strformat, strutils, stint, json_serialization
 import ../../message/dto/message
 import ../../contacts/dto/contacts
+import token_data
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -28,6 +29,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   SetSignerDeclined = 17
   ShareAccounts = 18
   CommunityTokenReceived = 19
+  FirstCommunityTokenReceived = 20
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -70,6 +72,7 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   dismissed*: bool
   deleted*: bool
   accepted*: bool
+  tokenData*: TokenDataDto
 
 proc `$`*(self: ActivityCenterNotificationDto): string =
   result = fmt"""ActivityCenterNotificationDto(
@@ -85,8 +88,9 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     dismissed: {$self.dismissed},
     deleted: {$self.deleted},
     accepted: {$self.accepted},
-    message: {self.message}
-    replyMessage: {self.replyMessage}
+    message: {self.message},
+    replyMessage: {self.replyMessage},
+    tokenData: {self.tokenData}
     )"""
 
 proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotificationDto =
@@ -138,6 +142,9 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
     for msg in jsonAlbum:
       result.albumMessages.add(toMessageDto(msg))
 
+  if jsonObj.contains("tokenData") and jsonObj{"tokenData"}.kind != JNull:
+    result.tokenData = jsonObj["tokenData"].toTokenDataDto()
+
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotificationDto]) =
   var notifs: seq[ActivityCenterNotificationDto] = @[]
   if rpcResult{"notifications"}.kind != JNull:
@@ -166,7 +173,8 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.SetSignerDeclined.int,
         ActivityCenterNotificationType.OwnershipLost.int,
         ActivityCenterNotificationType.ShareAccounts.int,
-        ActivityCenterNotificationType.CommunityTokenReceived.int
+        ActivityCenterNotificationType.CommunityTokenReceived.int,
+        ActivityCenterNotificationType.FirstCommunityTokenReceived.int
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]

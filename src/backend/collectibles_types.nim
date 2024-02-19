@@ -60,6 +60,9 @@ type
     collectionData*: Option[CollectionData]
     communityData*: Option[CommunityData]
     ownership*: Option[seq[AccountBalance]]
+    isFirst*: Option[bool]
+    latestTxHash*: Option[string]
+    receivedAmount*: Option[float64]
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -297,7 +300,9 @@ proc `$`*(self: Collectible): string =
     collectibleData:{self.collectibleData},
     collectionData:{self.collectionData},
     communityData:{self.communityData},
-    ownership:{self.ownership}
+    ownership:{self.ownership},
+    isFist:{self.isFirst},
+    latestTxHash:{self.latestTxHash}
   )"""
 
 proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
@@ -324,6 +329,21 @@ proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
     result.ownership = some(getAccountBalances(ownershipNode))
   else:
     result.ownership = none(seq[AccountBalance])
+  let isFirstNode = t{"is_first"}
+  if isFirstNode != nil and isFirstNode.kind != JNull:
+    result.isFirst = some(isFirstNode.getBool())
+  else:
+    result.isFirst = none(bool)
+  let latestTxHashNode = t{"latest_tx_hash"}
+  if latestTxHashNode != nil and latestTxHashNode.kind != JNull:
+    result.latestTxHash = some(latestTxHashNode.getStr())
+  else:
+    result.latestTxHash = none(string)
+  let receivedAmountNode = t{"received_amount"}
+  if receivedAmountNode != nil and receivedAmountNode.kind != JNull:
+    result.receivedAmount = some(receivedAmountNode.getFloat())
+  else:
+    result.receivedAmount = none(float64)
 
 proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
   result = @[]

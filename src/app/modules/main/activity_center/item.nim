@@ -3,6 +3,7 @@ import ../../shared_models/message_item_qobject
 import ../../../../app_service/service/activity_center/dto/notification
 import ../../../../app_service/service/chat/dto/chat
 import ../../../../app_service/service/contacts/dto/contacts
+import ./token_data_item
 
 const CONTACT_REQUEST_PENDING_STATE = 1
 
@@ -23,6 +24,7 @@ type Item* = ref object
   messageItem: MessageItem
   repliedMessageItem: MessageItem
   chatType: ChatType
+  tokenDataItem: TokenDataItem
 
 proc initItem*(
   id: string,
@@ -40,7 +42,8 @@ proc initItem*(
   accepted: bool,
   messageItem: MessageItem,
   repliedMessageItem: MessageItem,
-  chatType: ChatType
+  chatType: ChatType,
+  tokenDataItem: TokenDataItem
 ): Item =
   result = Item()
   result.id = id
@@ -59,6 +62,7 @@ proc initItem*(
   result.messageItem = messageItem
   result.repliedMessageItem = repliedMessageItem
   result.chatType = chatType
+  result.tokenDataItem = tokenDataItem
 
 proc `$`*(self: Item): string =
   result = fmt"""activity_center/Item(
@@ -77,6 +81,7 @@ proc `$`*(self: Item): string =
     accepted: {$self.accepted},
     # messageItem: {$self.messageItem},
     # repliedMessageItem: {$self.repliedMessageItem},
+    tokenData: {$self.tokenDataItem}
     ]"""
 
 proc id*(self: Item): string =
@@ -129,3 +134,6 @@ proc messageItem*(self: Item): MessageItem =
 
 proc repliedMessageItem*(self: Item): MessageItem =
   return self.repliedMessageItem
+
+proc tokenDataItem*(self: Item): TokenDataItem =
+  return self.tokenDataItem

@@ -292,6 +292,8 @@ Popup {
             communityName: community ? community.name : ""
             communityImage: community ? community.image : ""
 
+            store: root.store
+
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             onCloseActivityCenter: root.close()
