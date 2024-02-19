@@ -19,7 +19,7 @@ class VerifyIdentityPopup(BasePopup):
     @property
     @allure.step('Get message note from identity verification request')
     def message_note(self) -> str:
-        return str(self._message_input.object.placeholderText)
+        return str(self._message_input.object.label)
 
     @property
     @allure.step('Get send verification button enabled state')
