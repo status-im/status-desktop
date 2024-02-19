@@ -3,6 +3,9 @@ from datetime import datetime
 import allure
 import pytest
 from allure_commons._allure import step
+
+import driver
+from constants import ColorCodes
 from . import marks
 
 import configs.testpath
@@ -13,20 +16,53 @@ pytestmark = marks
 
 
 # @pytest.mark.critical TODO: https://github.com/status-im/status-desktop/issues/13483
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703084', 'Create community')
-@pytest.mark.case(703084)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703630', 'Create community')
+@pytest.mark.case(703630)
 @pytest.mark.parametrize('params', [constants.community_params])
 def test_create_community(user_account, main_screen: MainWindow, params):
-    with step('Create community'):
+    tags_to_set = constants.community_tags[:2]
+    color = ColorCodes.ORANGE.value
+    with step('Open create community popup'):
         communities_portal = main_screen.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
-        community_screen = create_community_form.create_community(params)
+
+    with step('Verify community popup fields'):
+        with step('Next button is disabled'):
+            assert not driver.waitFor(lambda: create_community_form.is_next_button_enabled,
+                                      configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
+                'Next button is enabled'
+
+        with step('Select color and verify that selected color is displayed in colorpicker field'):
+            create_community_form.color = color
+            assert create_community_form.color == color
+
+        with step(
+                'Select tags, verify that count of tags was changed and verify that selected tags are displayed in tags field'):
+            create_community_form.tags = ['Activism', 'Art']
+            assert create_community_form.tags == tags_to_set
+
+        with step('Verify that checkboxes have correct default states'):
+            assert create_community_form.is_archive_checkbox_checked
+            assert not create_community_form.is_pin_messages_checkbox_checked
+            assert not create_community_form.is_request_to_join_checkbox_checked
+
+        community_screen = create_community_form.create_community(params['name'], params['description'],
+                                                                  params['intro'], params['outro'],
+                                                                  params['logo']['fp'], params['banner']['fp'])
 
     with step('Verify community parameters in community overview'):
         with step('Name is correct'):
             assert community_screen.left_panel.name == params['name']
         with step('Members count is correct'):
             assert '1' in community_screen.left_panel.members
+
+    with step('Verify General channel is present for recently created community'):
+        community_screen.verify_channel(
+            'general',
+            'General channel for the community',
+            None,
+            color
+        )
 
     with step('Verify community parameters in community settings view'):
         community_setting = community_screen.left_panel.open_community_settings()
@@ -48,42 +84,6 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         assert '1' in community.members
 
 
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/487')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703056', 'Edit community separately')
-@pytest.mark.case(703056)
-@pytest.mark.parametrize('community_params', [
-    {
-        'name': f'Name_{datetime.now():%H%M%S}',
-        'description': f'Description_{datetime.now():%H%M%S}',
-        'color': '#ff7d46',
-    },
-])
-def test_edit_community_separately(main_screen, community_params):
-    main_screen.create_community(constants.community_params)
-
-    with step('Edit community name'):
-        community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
-        community_setting = community_screen.left_panel.open_community_settings()
-        edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
-        edit_community_form.edit({'name': community_params['name']})
-
-    with step('Name is correct'):
-        overview_setting = community_setting.left_panel.open_overview()
-        assert overview_setting.name == community_params['name']
-    with step('Description is correct'):
-        assert overview_setting.description == constants.community_params['description']
-
-    with step('Edit community name'):
-        edit_community_form = overview_setting.open_edit_community_view()
-        edit_community_form.edit({'description': community_params['description']})
-
-    with step('Name is correct'):
-        overview_setting = community_setting.left_panel.open_overview()
-        assert overview_setting.name == community_params['name']
-    with step('Description is correct'):
-        assert overview_setting.description == community_params['description']
-
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
 @pytest.mark.critical
@@ -100,13 +100,17 @@ def test_edit_community_separately(main_screen, community_params):
     }
 ])
 def test_edit_community(main_screen: MainWindow, params):
-    main_screen.create_community(constants.community_params)
+    main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
+                                 constants.community_params['intro'], constants.community_params['outro'],
+                                 constants.community_params['logo']['fp'], constants.community_params['banner']['fp'])
 
     with step('Edit community'):
         community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
         community_setting = community_screen.left_panel.open_community_settings()
         edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
-        edit_community_form.edit(params)
+        edit_community_form.edit(params['name'], params['description'],
+                                 params['intro'], params['outro'],
+                                 params['logo']['fp'], params['banner']['fp'])
 
     with step('Verify community parameters on settings overview'):
         overview_setting = community_setting.left_panel.open_overview()

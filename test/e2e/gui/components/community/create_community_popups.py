@@ -3,8 +3,10 @@ import typing
 
 import allure
 
+import configs
+import driver
 from gui.components.base_popup import BasePopup
-from gui.components.color_select_popup import ColorSelectPopup
+from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -41,6 +43,7 @@ class CreateCommunityPopup(BasePopup):
         self._add_banner_button = Button(names.addButton_StatusRoundButton)
         self._select_color_button = Button(names.StatusPickerButton)
         self._choose_tag_button = Button(names.choose_tags_StatusPickerButton)
+        self._community_tags_picker_button = Button(names.communityTagsPicker_TagsPicker)
         self._archive_support_checkbox = CheckBox(names.archiveSupportToggle_StatusCheckBox)
         self._request_to_join_checkbox = CheckBox(names.requestToJoinToggle_StatusCheckBox)
         self._pin_messages_checkbox = CheckBox(names.pinMessagesToggle_StatusCheckBox)
@@ -52,23 +55,50 @@ class CreateCommunityPopup(BasePopup):
         self._cropped_image_banner_item = QObject(names.croppedImageBanner)
 
     @property
+    @allure.step('Get next button enabled state')
+    def is_next_button_enabled(self) -> bool:
+        return driver.waitForObjectExists(self._next_button.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
+
+    @property
+    @allure.step('Get archive support checkbox state')
+    def is_archive_checkbox_checked(self) -> bool:
+        self._scroll.vertical_scroll_to(self._archive_support_checkbox)
+        return self._archive_support_checkbox.is_checked
+
+    @property
+    @allure.step('Get request to join checkbox state')
+    def is_request_to_join_checkbox_checked(self) -> bool:
+        self._scroll.vertical_scroll_to(self._request_to_join_checkbox)
+        return self._request_to_join_checkbox.is_checked
+
+    @property
+    @allure.step('Get pin messaged checkbox state')
+    def is_pin_messages_checkbox_checked(self) -> bool:
+        self._scroll.vertical_scroll_to(self._pin_messages_checkbox)
+        return self._pin_messages_checkbox.is_checked
+
+    @property
     @allure.step('Get community name')
     def name(self) -> str:
+        self._scroll.vertical_scroll_to(self._name_text_edit)
         return self._name_text_edit.text
 
     @name.setter
     @allure.step('Set community name')
     def name(self, value: str):
+        self._scroll.vertical_scroll_to(self._name_text_edit)
         self._name_text_edit.text = value
 
     @property
     @allure.step('Get community description')
     def description(self) -> str:
+        self._scroll.vertical_scroll_to(self._description_text_edit)
         return self._description_text_edit.text
 
     @description.setter
     @allure.step('Set community name')
     def description(self, value: str):
+        self._scroll.vertical_scroll_to(self._description_text_edit)
         self._description_text_edit.text = value
 
     @property
@@ -105,18 +135,20 @@ class CreateCommunityPopup(BasePopup):
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
+        self._scroll.vertical_scroll_to(self._add_logo_button)
         self._cropped_image_logo_item.object.cropImage('file://' + str(path))
         return PictureEditPopup()
 
     @allure.step('Set community banner without file upload dialog')
     def set_banner_without_file_upload_dialog(self, path):
+        self._scroll.vertical_scroll_to(self._add_banner_button)
         self._cropped_image_banner_item.object.cropImage('file://' + str(path))
         return PictureEditPopup()
 
     @property
     @allure.step('Get community color')
     def color(self):
-        raise NotImplementedError
+        return self._select_color_button.object.bgColor.name
 
     @color.setter
     @allure.step('Set community color')
@@ -128,7 +160,11 @@ class CreateCommunityPopup(BasePopup):
     @property
     @allure.step('Get community tags')
     def tags(self):
-        raise NotImplementedError
+        tags_string = str(self._community_tags_picker_button.object.selectedTags)
+        symbols = '[]"'
+        for symbol in symbols:
+            tags_string = tags_string.replace(symbol, '')
+        return tags_string.split(',')
 
     @tags.setter
     @allure.step('Set community tags')
@@ -162,15 +198,16 @@ class CreateCommunityPopup(BasePopup):
         self._next_button.click()
 
     @allure.step('Create community without file upload dialog usage')
-    def create_community(self, kwargs):
-        self.set_logo_without_file_upload_dialog(kwargs['logo']['fp'])
+    def create_community(self, name, description, intro, outro, logo, banner):
+        self.name = name
+        self.description = description
+        self.set_logo_without_file_upload_dialog(logo)
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self.set_banner_without_file_upload_dialog(kwargs['banner']['fp'])
+        self.set_banner_without_file_upload_dialog(banner)
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        for key in list(kwargs):
-            if key in ['intro', 'outro'] and self._next_button.is_visible:
-                self._next_button.click()
-            setattr(self, key, kwargs.get(key))
+        self._next_button.click()
+        self.intro = intro
+        self.outro = outro
         self._create_community_button.click()
         self.wait_until_hidden()
         return CommunityScreen().wait_until_appears()

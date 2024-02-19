@@ -5,7 +5,7 @@ import allure
 
 import driver
 from driver.objects_access import walk_children
-from gui.components.color_select_popup import ColorSelectPopup
+from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -232,13 +232,16 @@ class EditCommunityView(QObject):
         return self._pin_messages_checkbox.object.checked
 
     @allure.step('Edit community')
-    def edit(self, kwargs):
-        self.set_logo_without_file_upload_dialog(kwargs['logo']['fp'])
+    def edit(self, name, description, intro, outro, logo, banner):
+        self._scroll.vertical_scroll_to(self._name_text_edit)
+        self.name = name
+        self.description = description
+        self.set_logo_without_file_upload_dialog(logo)
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self.set_banner_without_file_upload_dialog(kwargs['banner']['fp'])
+        self.set_banner_without_file_upload_dialog(banner)
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        for key in list(kwargs):
-            setattr(self, key, kwargs.get(key))
+        self.intro = intro
+        self.outro = outro
         self._save_changes_button.click()
         self.wait_until_hidden()
 

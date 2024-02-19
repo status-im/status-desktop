@@ -50,3 +50,5 @@ private_key_address_pair_1 = wallet_account('2daa36a3abe381a9c01610bf10fda272fbc
 
 ens_user_name = ''.join(
     random.choices(string.digits + string.ascii_lowercase, k=8))
+
+community_tags = ['Activism', 'Art', 'Blockchain', 'Books & blogs', 'Career', 'Collaboration', 'Commerce', 'Culture', 'DAO', 'DIY', 'DeFi', 'Design', 'Education', 'Entertainment', 'Environment', 'Ethereum', 'Event', 'Fantasy', 'Fashion', 'Food', 'Gaming', 'Global', 'Health', 'Hobby', 'Innovation', 'Language', 'Lifestyle', 'Local', 'Love', 'Markets', 'Movies & TV', 'Music', 'NFT', 'NSFW', 'News', 'Non-profit', 'Org', 'Pets', 'Play', 'Podcast', 'Politics', 'Privacy', 'Product', 'Psyche', 'Security', 'Social', 'Software dev', 'Sports', 'Tech', 'Travel', 'Vehicles', 'Web3']
