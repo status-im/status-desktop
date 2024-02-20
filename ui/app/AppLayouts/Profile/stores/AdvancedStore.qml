@@ -13,6 +13,7 @@ QtObject {
     property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false
     property bool isTelemetryEnabled: advancedModule? advancedModule.isTelemetryEnabled : false
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
+    property bool isNimbusProxyEnabled: advancedModule? advancedModule.isNimbusProxyEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
     readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
@@ -87,6 +88,13 @@ QtObject {
             return
 
         root.advancedModule.toggleDebug()
+    }
+
+    function toggleNimbusProxy() {
+        if(!root.advancedModule)
+            return
+
+        root.advancedModule.toggleNimbusProxy()
     }
 
     function setMaxLogBackups(value) {

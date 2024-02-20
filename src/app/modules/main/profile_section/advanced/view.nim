@@ -88,6 +88,16 @@ QtObject:
   proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
 
+  proc isNimbusProxyEnabledChanged*(self: View) {.signal.}
+  proc getIsNimbusProxyEnabled*(self: View): bool {.slot.} =
+    return self.delegate.isNimbusProxyEnabled()
+  QtProperty[bool] isNimbusProxyEnabled:
+    read = getIsNimbusProxyEnabled
+    notify = isNimbusProxyEnabledChanged
+
+  proc toggleNimbusProxy*(self: View) {.slot.} =
+    self.delegate.toggleNimbusProxy()
+
   proc getIsRuntimeLogLevelSet*(self: View): bool {.slot.} =
     return self.delegate.isRuntimeLogLevelSet()
   QtProperty[bool] isRuntimeLogLevelSet:

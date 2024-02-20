@@ -211,6 +211,17 @@ proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
   else:
     return false
 
+proc getNimbusProxyConfig(self: Service): bool =
+  return self.configuration.NimbusProxyConfig.Enabled
+
+proc isNimbusProxyEnabled*(self: Service): bool =
+  return self.getNimbusProxyConfig()
+
+proc setNimbusProxyConfig*(self: Service, value: bool): bool =
+  var newConfiguration = self.configuration
+  newConfiguration.NimbusProxyConfig.Enabled = value
+  return self.saveConfiguration(newConfiguration)
+
 proc isV2LightMode*(self: Service): bool =
    return self.configuration.WakuV2Config.LightClient
 
