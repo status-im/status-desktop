@@ -49,10 +49,10 @@ Pane {
 
     QtObject {
         id: d
-        property var contactDetails: Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser)
+        property var contactDetails: Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser, true)
 
         function reload() {
-            contactDetails = Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser)
+            contactDetails = Utils.getContactDetailsAsJson(root.publicKey, !isCurrentUser, !isCurrentUser, true)
         }
 
         readonly property bool isCurrentUser: root.profileStore.pubkey === root.publicKey
@@ -183,8 +183,8 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             type: StatusBaseButton.Type.Danger
-            text: qsTr("Block User")
-            onClicked: Global.blockContactRequested(root.publicKey, d.mainDisplayName)
+            text: qsTr("Block user")
+            onClicked: Global.blockContactRequested(root.publicKey, d.contactDetails)
         }
     }
 
@@ -192,8 +192,8 @@ Pane {
         id: btnUnblockUserComponent
         StatusButton {
             size: StatusButton.Size.Small
-            text: qsTr("Unblock")
-            onClicked: Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
+            text: qsTr("Unblock user")
+            onClicked: Global.unblockContactRequested(root.publicKey, d.contactDetails)
         }
     }
 
@@ -327,17 +327,13 @@ Pane {
                     if (d.isCurrentUser)
                         return btnEditProfileComponent
 
-                    // blocked contact
+                    // blocked user
                     if (d.isBlocked)
                         return btnUnblockUserComponent
 
                     // accept incoming CR
                     if (d.contactRequestState === Constants.ContactRequestState.Received)
                         return btnAcceptContactRequestComponent
-
-                    // block user
-                    if (d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy)
-                        return btnBlockUserComponent
 
                     // mutual contact
                     if (d.isContact || d.contactRequestState === Constants.ContactRequestState.Mutual)
@@ -435,20 +431,20 @@ Pane {
                     }
                     StatusMenuSeparator {}
                     StatusAction {
+                        text: qsTr("Remove ID verification")
+                        icon.name: "warning"
+                        type: StatusAction.Type.Danger
+                        enabled: d.isContact && d.isTrusted
+                        onTriggered: {
+                            removeVerificationConfirmationDialog.open()
+                        }
+                    }
+                    StatusAction {
                         text: qsTr("Remove nickname")
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
                         enabled: !d.isCurrentUser && !!d.contactDetails.localNickname
                         onTriggered: root.contactsStore.changeContactNickname(root.publicKey, "", d.optionalDisplayName, true)
-                    }
-                    StatusAction {
-                        text: qsTr("Unblock user")
-                        icon.name: "cancel"
-                        type: StatusAction.Type.Danger
-                        enabled: d.isBlocked
-                        onTriggered: {
-                            Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
-                        }
                     }
                     StatusAction {
                         text: qsTr("Mark as untrusted")
@@ -469,15 +465,6 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Remove ID verification")
-                        icon.name: "warning"
-                        type: StatusAction.Type.Danger
-                        enabled: d.isContact && d.isTrusted
-                        onTriggered: {
-                            removeVerificationConfirmationDialog.open()
-                        }
-                    }
-                    StatusAction {
                         text: qsTr("Remove contact")
                         icon.name: "remove-contact"
                         type: StatusAction.Type.Danger
@@ -492,7 +479,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
                         onTriggered: {
-                            Global.blockContactRequested(root.publicKey, d.mainDisplayName)
+                            Global.blockContactRequested(root.publicKey, d.contactDetails)
                         }
                     }
                 }

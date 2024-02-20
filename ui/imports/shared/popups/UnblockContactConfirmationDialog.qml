@@ -1,49 +1,33 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import utils 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
-import "../panels"
-import "./"
+CommonContactDialog {
+    id: root
 
-// TODO: replace with StatusModal
-ModalPopup {
-    id: unblockContactConfirmationDialog
-    height: 237
-    width: 400
+    title: qsTr("Unblock user")
 
-    property string contactAddress: ""
-    property string contactName: ""
-
-    signal unblockButtonClicked()
-
-    title: qsTr("Unblock User")
-
-    StyledText {
-        text: qsTr("Unblocking will allow new messages you received from %1 to reach you.").arg(contactName)
-        font.pixelSize: 15
-        anchors.left: parent.left
-        anchors.right: parent.right
+    StatusBaseText {
+        Layout.fillWidth: true
         wrapMode: Text.WordWrap
+        text: qsTr("Unblocking %1 will allow new messages you receive from %1 to reach you.").arg(mainDisplayName)
     }
 
-
-    footer: Item {
-        id: footerContainer
-        width: parent.width
-        height: children[0].height
-
+    rightButtons: ObjectModel {
+        StatusFlatButton {
+            text: qsTr("Cancel")
+            onClicked: root.close()
+        }
         StatusButton {
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
             type: StatusBaseButton.Type.Danger
-            text: qsTr("Unblock User")
-            anchors.bottom: parent.bottom
-            onClicked: unblockContactConfirmationDialog.unblockButtonClicked()
+            text: qsTr("Unblock")
+            onClicked: root.accepted()
         }
     }
 }
-
