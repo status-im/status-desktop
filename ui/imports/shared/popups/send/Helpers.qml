@@ -67,4 +67,35 @@ QtObject {
 
         return req
     }
+
+    function assetsSectionTitle(sectionNeeded, hasCommunityTokens, isInsideCollection, isERC20List) {
+        let title = ""
+        if (!isInsideCollection) {
+            if (sectionNeeded) {
+                title = qsTr("Community minted")
+            } else {
+                if (!isERC20List) {
+                    // Show "Other" only if there are "Community minted" tokens on the list
+                    if (hasCommunityTokens) {
+                        title = qsTr("Other")
+                    }
+                }
+            }
+        }
+        return title
+    }
+
+    function modelHasCommunityTokens(model, isERC20List) {
+        if (model.count > 0) {
+            let item
+            if (isERC20List) {
+                item = model.get(model.count - 1)
+            } else {
+                item = model.get(0)
+            }
+            return item.isCommunityAsset
+        }
+
+        return false
+    }
 }

@@ -5,6 +5,7 @@ import StatusQ.Core.Theme 0.1
 
 StatusInput {
     property bool showTopBorder: false
+    property bool showBottomBorder: true
 
     placeholderText: qsTr("Search")
     input.implicitHeight: 56
@@ -23,6 +24,7 @@ StatusInput {
         color: Theme.palette.baseColor2
     }
     Rectangle {
+        visible: showBottomBorder
         anchors.bottom: parent.bottom
         height: 1
         width: parent.width

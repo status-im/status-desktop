@@ -71,10 +71,10 @@ QtObject:
   proc getCollectionData(self: CollectiblesEntry): backend.CollectionData =
     return self.data.collectionData.get()
 
-  proc hasCommunityData(self: CollectiblesEntry): bool =
+  proc hasCommunityData*(self: CollectiblesEntry): bool =
     return self.data != nil and isSome(self.data.communityData)
 
-  proc getCommunityData(self: CollectiblesEntry): backend.CommunityData =
+  proc getCommunityData*(self: CollectiblesEntry): backend.CommunityData =
     return self.data.communityData.get()
 
   proc hasOwnership(self: CollectiblesEntry): bool =

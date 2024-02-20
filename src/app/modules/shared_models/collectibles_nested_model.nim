@@ -15,6 +15,7 @@ type
     CollectionUid
     CollectionName
     IsCollection
+    CommunityId
 
 QtObject:
   type
@@ -80,6 +81,7 @@ QtObject:
       CollectiblesNestedRole.CollectionUid.int:"collectionUid",
       CollectiblesNestedRole.CollectionName.int:"collectionName",
       CollectiblesNestedRole.IsCollection.int:"isCollection",
+      CollectiblesNestedRole.CommunityId.int:"communityId",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -107,6 +109,8 @@ QtObject:
       result = newQVariant(item.getCollectionName())
     of CollectiblesNestedRole.IsCollection:
       result = newQVariant(item.getIsCollection())
+    of CollectiblesNestedRole.CommunityId:
+      result = newQVariant(item.getCommunityId())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -120,42 +124,90 @@ QtObject:
       of "collectionUid": result = item.getCollectionId()
       of "collectionName": result = item.getCollectionName()
       of "isCollection": result = $item.getIsCollection()
+      of "communityId": result = item.getCommunityId()
 
   proc getCollectiblesPerCollectionId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
     var collectiblesPerCollection = initTable[string, seq[flat_item.CollectiblesEntry]]()
 
     for item in items:
       let collectionId = item.getCollectionIDAsString()
-      if not collectiblesPerCollection.hasKey(collectionId):
-        collectiblesPerCollection[collectionId] = @[]
-      collectiblesPerCollection[collectionId].add(item)
+      let communityId = item.getCommunityId()
+      if communityId == "":
+        if not collectiblesPerCollection.hasKey(collectionId):
+          collectiblesPerCollection[collectionId] = @[]
+        collectiblesPerCollection[collectionId].add(item)
 
     return collectiblesPerCollection
+
+  proc getCollectiblesPerCommunityId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
+    var collectiblesPerCommunity = initTable[string, seq[flat_item.CollectiblesEntry]]()
+
+    for item in items:
+      let communityId = item.getCommunityId()
+      if communityId != "":
+        if not collectiblesPerCommunity.hasKey(communityId):
+          collectiblesPerCommunity[communityId] = @[]
+        collectiblesPerCommunity[communityId].add(item)
+
+    return collectiblesPerCommunity
+
+  proc getNumberOfCollectiblesInCommunity*(self: Model, commId: string): int {.slot.} =
+    if commId != "":
+      var collectiblesPerCommunity = getCollectiblesPerCommunityId(self.flatModel.getItems())
+      if collectiblesPerCommunity.hasKey(commId):
+        result = collectiblesPerCommunity[commId].len
+
+  proc getNumberOfCollectiblesInCollection*(self: Model, collUid: string): int {.slot.} =
+    if collUid != "":
+      var collectiblesPerCollection = getCollectiblesPerCollectionId(self.flatModel.getItems())
+      if collectiblesPerCollection.hasKey(collUid):
+        result = collectiblesPerCollection[collUid].len
 
   proc refreshItems*(self: Model) {.slot.} =
     self.beginResetModel()
     self.items = @[]
 
-    var collectiblesPerCollection = getCollectiblesPerCollectionId(self.flatModel.getItems())
-    for collectionId, collectionCollectibles in collectiblesPerCollection.pairs:
+    var addCollections = true
+    # Add communities
+    var collectiblesPerCommunity = getCollectiblesPerCommunityId(self.flatModel.getItems())
+    for communityId, communityCollectibles in collectiblesPerCommunity.pairs:
       if self.currentCollectionUid == "":
         # No collection selected
-        # If the collection contains more than 1 collectible, we add a single collection item
-        # Otherwise, we add the collectible
-        if collectionCollectibles.len > 1:
-          let collectionItem = collectibleToCollectionNestedItem(collectionCollectibles[0])
-          self.items.add(collectionItem)
-        else:
-          for collectible in collectionCollectibles:
-            let collectibleItem = collectibleToCollectibleNestedItem(collectible)
-            self.items.add(collectibleItem)
+        if communityCollectibles.len > 0:
+          let communityItem = collectibleToCollectionNestedItem(communityCollectibles[0])
+          self.items.add(communityItem)
       else:
-        if self.currentCollectionUid == collectionId:
-          for collectible in collectionCollectibles:
+        if self.currentCollectionUid == communityId:
+          for collectible in communityCollectibles:
             let collectibleItem = collectibleToCollectibleNestedItem(collectible)
             self.items.add(collectibleItem)
-          # No need to keep looking
+
+          # Inside community folder we dont add collection items
+          addCollections = false
           break
+
+    if addCollections:
+      # Add collections and collection items
+      var collectiblesPerCollection = getCollectiblesPerCollectionId(self.flatModel.getItems())
+      for collectionId, collectionCollectibles in collectiblesPerCollection.pairs:
+        if self.currentCollectionUid == "":
+          # No collection selected
+          # If the collection contains more than 1 collectible, we add a single collection item
+          # Otherwise, we add the collectible
+          if collectionCollectibles.len > 1:
+            let collectionItem = collectibleToCollectionNestedItem(collectionCollectibles[0])
+            self.items.add(collectionItem)
+          else:
+            for collectible in collectionCollectibles:
+              let collectibleItem = collectibleToCollectibleNestedItem(collectible)
+              self.items.add(collectibleItem)
+        else:
+          if self.currentCollectionUid == collectionId:
+            for collectible in collectionCollectibles:
+              let collectibleItem = collectibleToCollectibleNestedItem(collectible)
+              self.items.add(collectibleItem)
+            # No need to keep looking
+            break
 
     self.endResetModel()
     self.countChanged()

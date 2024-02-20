@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 
 import shared.controls 1.0
 import shared.popups 1.0
+import shared.popups.send 1.0
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -67,7 +68,7 @@ Item {
         readonly property var updateSearchText: Backpressure.debounce(root, 1000, function(inputText) {
             searchText = inputText
         })
-    
+
         function isAsset(type) {
             return type === Constants.TokenType.ERC20
         }
@@ -116,6 +117,13 @@ Item {
 
         property var collectibleComboBoxModel: SortFilterProxyModel {
             sourceModel: d.collectibleNetworksJointModel
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "isCommunityAsset"
+                    expression: !!model.communityId
+                    expectedRoles: ["communityId"]
+                }
+            ]
             filters: [
                 ExpressionFilter {
                     expression: {
@@ -123,10 +131,16 @@ Item {
                     }
                 }
             ]
-            sorters: RoleSorter {
-                roleName: "isCollection"
-                sortOrder: Qt.DescendingOrder
-            }
+            sorters: [
+                RoleSorter {
+                    roleName: "isCommunityAsset"
+                    sortOrder: Qt.DescendingOrder
+                },
+                RoleSorter {
+                    roleName: "isCollection"
+                    sortOrder: Qt.DescendingOrder
+                }
+            ]
         }
 
         readonly property string searchPlaceholderText: {
@@ -149,6 +163,7 @@ Item {
         readonly property int collectibleContentIconSize: 28
         readonly property int assetContentTextSize: 28
         readonly property int collectibleContentTextSize: 15
+
     }
 
     HoldingItemSelector {
@@ -158,6 +173,8 @@ Item {
 
         defaultIconSource: Style.png("tokens/DEFAULT-TOKEN@3x")
         placeholderText: d.isCurrentBrowsingTypeAsset ? qsTr("Select token") : qsTr("Select collectible")
+        property bool hasCommunityTokens: false
+
         comboBoxDelegate: Item {
           property var itemModel: model // read 'model' from the delegate's context
           width: loader.width
@@ -181,6 +198,7 @@ Item {
               property var iconUrl: model.iconUrl
               property var networkIconUrl: model.networkIconUrl
               property var collectionUid: model.collectionUid
+              property var communityId: model.communityId
               property var collectionName: model.collectionName
               property var isCollection: model.isCollection
 
@@ -192,24 +210,23 @@ Item {
         itemTextFn: d.isCurrentBrowsingTypeAsset ? d.assetTextFn : d.collectibleTextFn
         itemIconSourceFn: d.isCurrentBrowsingTypeAsset ? d.assetIconSourceFn : d.collectibleIconSourceFn
         comboBoxModel: d.isCurrentBrowsingTypeAsset ? root.assetsModel : d.collectibleComboBoxModel
+        onComboBoxModelChanged: updateHasCommunityTokens()
+
+        function updateHasCommunityTokens() {
+            hasCommunityTokens = Helpers.modelHasCommunityTokens(comboBoxModel, d.isCurrentBrowsingTypeAsset)
+        }
 
         contentIconSize: d.isAsset(d.currentHoldingType) ? d.assetContentIconSize : d.collectibleContentIconSize
         contentTextSize: d.isAsset(d.currentHoldingType) ? d.assetContentTextSize : d.collectibleContentTextSize
         comboBoxListViewSection.property: "isCommunityAsset"
-        comboBoxListViewSection.delegate: Loader {
-                width: ListView.view.width
-                required property string section
-                sourceComponent: d.isCurrentBrowsingTypeAsset && section === "true" ? sectionDelegate : null
-            }
+        comboBoxListViewSection.delegate: AssetsSectionDelegate {
+                            height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
+                            width: ListView.view.width
+                            required property bool section
+                            text: Helpers.assetsSectionTitle(section, holdingItemSelector.hasCommunityTokens, d.isBrowsingCollection, d.isCurrentBrowsingTypeAsset)
+                            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                        }
         comboBoxControl.popup.onClosed: comboBoxControl.popup.contentItem.headerItem.clear()
-    }
-
-    Component {
-        id: sectionDelegate
-        AssetsSectionDelegate {
-            width: parent.width
-            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
-        }
     }
 
     Component {
@@ -263,6 +280,7 @@ Item {
                 name: d.currentBrowsingCollectionName
                 onBackClicked: {
                     if (!d.isCurrentBrowsingTypeAsset) {
+                        searchInput.reset()
                         root.collectiblesModel.currentCollectionUid = ""
                     }
                 }
@@ -325,10 +343,16 @@ Item {
         CollectibleNestedDelegate {
             objectName: "CollectibleSelector_ItemDelegate_" + collectionUid
             width: holdingItemSelector.comboBoxControl.popup.width
+            numItems: isCollection ? (!!communityId ?
+                root.collectiblesModel.getNumberOfCollectiblesInCommunity(communityId) :
+                root.collectiblesModel.getNumberOfCollectiblesInCollection(collectionUid)) : 0
             onItemSelected: {
                 if (isCollection) {
                     d.currentBrowsingCollectionName = collectionName
-                    root.collectiblesModel.currentCollectionUid = collectionUid
+                    if (!!communityId)
+                        root.collectiblesModel.currentCollectionUid = communityId
+                    else
+                        root.collectiblesModel.currentCollectionUid = collectionUid
                 } else {
                     holdingItemSelector.selectedItem = selectedItem
                     d.currentHoldingType = Constants.TokenType.ERC721
