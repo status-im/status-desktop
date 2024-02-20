@@ -9,6 +9,8 @@ import Storybook 1.0
 
 import AppLayouts.Profile.helpers 1.0
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -24,8 +26,33 @@ Item {
     ListModel {
         id: communitiesShowcaseModel
 
-        ListElement { key: "1"; visibility: 1; position: 0 }
-        ListElement { key: "3"; visibility: 2; position: 9 }
+        ListElement {
+            key: "1"
+            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            position: 0
+        }
+        ListElement {
+            key: "3"
+            visibility: Constants.ShowcaseVisibility.Contacts
+            position: 9
+        }
+    }
+
+    ListModel {
+        id: comboBoxModel
+
+        ListElement {
+            text: "verified"
+            value: Constants.ShowcaseVisibility.IdVerifiedContacts
+        }
+        ListElement {
+            text: "contacts"
+            value: Constants.ShowcaseVisibility.Contacts
+        }
+        ListElement {
+            text: "all"
+            value: Constants.ShowcaseVisibility.Everyone
+        }
     }
 
     ProfileShowcaseDirtyState {
@@ -130,17 +157,13 @@ Item {
 
                     RoundButton {
                         text: "❌"
-                        onClicked: dirtyState.setVisibility(model.key, 0)
+                        onClicked: dirtyState.setVisibility(
+                                       model.key,
+                                       Constants.ShowcaseVisibility.NoOne)
                     }
 
                     ComboBox {
-                        id: combo
-
-                        model: ListModel {
-                            ListElement { text: "contacts"; value: 1 }
-                            ListElement { text: "verified"; value: 2 }
-                            ListElement { text: "all"; value: 3 }
-                        }
+                        model: comboBoxModel
 
                         onCurrentValueChanged: {
                             if (!completed || topModel.index < 0)
@@ -174,7 +197,9 @@ Item {
                 insetComponent: Button {
                     text: "unhide"
 
-                    onClicked: dirtyState.setVisibility(model.key, 1)
+                    onClicked: dirtyState.setVisibility(
+                                   model.key,
+                                   Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }
         }

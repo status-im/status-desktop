@@ -25,8 +25,16 @@ ColumnLayout {
     ListModel {
         id: accountsShowcaseModel
 
-        ListElement { key: "1"; visibility: 1; position: 0 }
-        ListElement { key: "3"; visibility: 2; position: 9 }
+        ListElement {
+            key: "1"
+            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            position: 0
+        }
+        ListElement {
+            key: "3"
+            visibility: Constants.ShowcaseVisibility.Contacts
+            position: 9
+        }
     }
 
     ListModel {
@@ -41,9 +49,21 @@ ColumnLayout {
     ListModel {
         id: collectiblesShowcaseModel
 
-        ListElement { key: "1"; visibility: 1; position: 0 }
-        ListElement { key: "2"; visibility: 2; position: 2 }
-        ListElement { key: "3"; visibility: 2; position: 1 }
+        ListElement {
+            key: "1"
+            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            position: 0
+        }
+        ListElement {
+            key: "2"
+            visibility: Constants.ShowcaseVisibility.Contacts
+            position: 2
+        }
+        ListElement {
+            key: "3"
+            visibility: Constants.ShowcaseVisibility.Contacts
+            position: 1
+        }
     }
 
     ProfileShowcaseModels {
@@ -68,12 +88,25 @@ ColumnLayout {
         sourceModel: showcaseModels.collectiblesVisibleModel
     }
 
-    component VisibilityComboBox: ComboBox {
-        model: ListModel {
-            ListElement { text: "contacts"; value: 1 }
-            ListElement { text: "verified"; value: 2 }
-            ListElement { text: "all"; value: 3 }
+    ListModel {
+        id: comboBoxModel
+
+        ListElement {
+            text: "verified"
+            value: Constants.ShowcaseVisibility.IdVerifiedContacts
         }
+        ListElement {
+            text: "contacts"
+            value: Constants.ShowcaseVisibility.Contacts
+        }
+        ListElement {
+            text: "all"
+            value: Constants.ShowcaseVisibility.Everyone
+        }
+    }
+
+    component VisibilityComboBox: ComboBox {
+        model: comboBoxModel
 
         textRole: "text"
         valueRole: "value"
@@ -150,7 +183,8 @@ ColumnLayout {
                     RoundButton {
                         text: "❌"
                         onClicked: showcaseModels.setAccountVisibility(
-                                       model.key, 0)
+                                       model.key,
+                                       Constants.ShowcaseVisibility.NoOne)
                     }
 
                     VisibilityComboBox {
@@ -185,8 +219,10 @@ ColumnLayout {
                 insetComponent: Button {
                     text: "unhide"
 
-                    onClicked: showcaseModels.setAccountVisibility(
-                                   model.key, 1)
+                    onClicked:
+                        showcaseModels.setAccountVisibility(
+                            model.key,
+                            Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }
 
@@ -243,7 +279,8 @@ ColumnLayout {
                     RoundButton {
                         text: "❌"
                         onClicked: showcaseModels.setCollectibleVisibility(
-                                       model.key, 0)
+                                       model.key,
+                                       Constants.ShowcaseVisibility.NoOne)
                     }
 
                     VisibilityComboBox {
@@ -279,8 +316,10 @@ ColumnLayout {
                 insetComponent: Button {
                     text: "unhide"
 
-                    onClicked: showcaseModels.setCollectibleVisibility(
-                                   model.key, 1)
+                    onClicked:
+                        showcaseModels.setCollectibleVisibility(
+                            model.key,
+                            Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }
         }
