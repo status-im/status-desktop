@@ -159,7 +159,7 @@ StatusModal {
                     statusListItemTitle.font.bold: Font.Bold
 
                     areTestNetworksEnabled: WalletStore.RootStore.areTestNetworksEnabled
-                    isSepoliaEnabled: WalletStore.RootStore.isSepoliaEnabled
+                    isGoerliEnabled: WalletStore.RootStore.isGoerliEnabled
 
                     onAboutToOpenPopup: {
                         root.close()

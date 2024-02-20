@@ -13,7 +13,7 @@ QtObject:
       combinedNetworks: CombinedModel
       networks: Model
       areTestNetworksEnabled: bool
-      isSepoliaEnabled: bool
+      isGoerliEnabled: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -47,23 +47,23 @@ QtObject:
     self.areTestNetworksEnabled = not self.areTestNetworksEnabled
     self.areTestNetworksEnabledChanged()
 
-  proc isSepoliaEnabledChanged*(self: View) {.signal.}
+  proc isGoerliEnabledChanged*(self: View) {.signal.}
 
-  proc getIsSepoliaEnabled(self: View): bool {.slot.} =
-    return self.isSepoliaEnabled
+  proc getIsGoerliEnabled(self: View): bool {.slot.} =
+    return self.isGoerliEnabled
 
-  QtProperty[bool] isSepoliaEnabled:
-    read = getIsSepoliaEnabled
-    notify = isSepoliaEnabledChanged
+  QtProperty[bool] isGoerliEnabled:
+    read = getIsGoerliEnabled
+    notify = isGoerliEnabledChanged
 
-  proc setIsSepoliaEnabled*(self: View, isSepoliaEnabled: bool) =
-    self.isSepoliaEnabled = isSepoliaEnabled
-    self.isSepoliaEnabledChanged()
+  proc setIsGoerliEnabled*(self: View, IsGoerliEnabled: bool) =
+    self.isGoerliEnabled = IsGoerliEnabled
+    self.isGoerliEnabledChanged()
 
-  proc toggleIsSepoliaEnabled*(self: View) {.slot.} =
-    self.delegate.toggleIsSepoliaEnabled()
-    self.isSepoliaEnabled = not self.isSepoliaEnabled
-    self.isSepoliaEnabledChanged()
+  proc toggleIsGoerliEnabled*(self: View) {.slot.} =
+    self.delegate.toggleIsGoerliEnabled()
+    self.isGoerliEnabled = not self.isGoerliEnabled
+    self.isGoerliEnabledChanged()
 
   proc networksChanged*(self: View) {.signal.}
   proc getNetworks(self: View): QVariant {.slot.} =

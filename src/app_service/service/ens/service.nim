@@ -422,7 +422,10 @@ QtObject:
       elif txType == PendingTransactionTypeDto.RegisterENS:
         var sntContract: string = ""
         if self.settingsService.areTestNetworksEnabled():
-          sntContract =  STT_CONTRACT_ADDRESS
+          if self.settingsService.isGoerliEnabled():
+            sntContract =  STT_CONTRACT_ADDRESS_GOERLI
+          else:
+            sntContract = STT_CONTRACT_ADDRESS_SEPOLIA
         else:
           sntContract = SNT_CONTRACT_ADDRESS
         let ensUsernameFinal = self.formatUsername(ensUsername, true)

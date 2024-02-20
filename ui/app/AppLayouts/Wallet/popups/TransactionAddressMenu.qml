@@ -33,7 +33,7 @@ StatusMenu {
     property var contactsStore
     property var networkConnectionStore
     property bool areTestNetworksEnabled: false
-    property bool isSepoliaEnabled: false
+    property bool isGoerliEnabled: false
 
     signal openSendModal(address: string)
 
@@ -213,7 +213,7 @@ StatusMenu {
             const type = d.addressType === TransactionAddressMenu.Tx ? Constants.networkExplorerLinks.txPath : Constants.networkExplorerLinks.addressPath
             let link = Constants.networkExplorerLinks.etherscan
             if (areTestNetworksEnabled) {
-                if (root.isSepoliaEnabled) {
+                if (root.isGoerliEnabled) {
                     link = Constants.networkExplorerLinks.sepoliaEtherscan
                 } else {
                     link = Constants.networkExplorerLinks.goerliEtherscan

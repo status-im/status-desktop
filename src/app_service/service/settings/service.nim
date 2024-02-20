@@ -462,13 +462,13 @@ QtObject:
       return true
     return false
 
-  proc isSepoliaEnabled*(self: Service): bool =
-    return self.settings.isSepoliaEnabled
+  proc isGoerliEnabled*(self: Service): bool =
+    return self.settings.isGoerliEnabled
 
-  proc toggleIsSepoliaEnabled*(self: Service): bool =
-    let newValue = not self.settings.isSepoliaEnabled
-    if(self.saveSetting(KEY_IS_SEPOLIA_ENABLED, newValue)):
-      self.settings.isSepoliaEnabled = newValue
+  proc toggleIsGoerliEnabled*(self: Service): bool =
+    let newValue = not self.settings.isGoerliEnabled
+    if(self.saveSetting(KEY_IS_GOERLI_ENABLED, newValue)):
+      self.settings.isGoerliEnabled = newValue
       return true
     return false
 

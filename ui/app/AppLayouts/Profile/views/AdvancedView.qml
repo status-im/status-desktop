@@ -414,9 +414,9 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                text: qsTr("Enable Sepolia as Test Network")
+                text: qsTr("Enable Goerli as Test Network")
                 isSwitch: true
-                switchChecked: root.advancedStore.isSepoliaEnabled
+                switchChecked: root.advancedStore.isGoerliEnabled
                 onClicked: Global.openPopup(enableSepoliaConfirmationDialogComponent)
             }
 
@@ -473,7 +473,7 @@ SettingsContentBase {
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to toggle sepolia? The app will be restarted.")
                 onConfirmButtonClicked: {
-                    root.advancedStore.toggleIsSepoliaEnabled()
+                    root.advancedStore.toggleIsGoerliEnabled()
                     close()
                     Qt.quit()
                 }
