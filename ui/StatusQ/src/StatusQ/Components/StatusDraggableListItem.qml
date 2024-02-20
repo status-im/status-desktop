@@ -218,6 +218,13 @@ ItemDelegate {
     */
     readonly property alias containsMouse: dragHandler.containsMouse
 
+    /*!
+       \qmlproperty bool StatusDraggableListItem::changeColorOnDragActive
+       This property holds if background color will be changed on drag active or not
+       Defaults to "dragActive" (ie background will change on dragActive = true)
+    */
+    property bool changeColorOnDragActive: dragActive
+
     Drag.dragType: Drag.Automatic
     Drag.hotSpot.x: dragHandler.mouseX
     Drag.hotSpot.y: dragHandler.mouseY
@@ -252,7 +259,7 @@ ItemDelegate {
     ]
 
     background: Rectangle {
-        color: root.dragActive && !root.customizable ? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
+        color: root.changeColorOnDragActive && !root.customizable? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
         border.width: root.customizable ? 0 : 1
         border.color: Theme.palette.baseColor2
         radius: root.customizable ? 0 : 8
