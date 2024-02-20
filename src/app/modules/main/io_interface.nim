@@ -14,6 +14,7 @@ import app_service/service/token/service as token_service
 import app_service/service/community_tokens/service as community_tokens_service
 import app_service/service/community_tokens/community_collectible_owner
 import app_service/service/shared_urls/service as urls_service
+import app_service/service/network/service as network_service
 import app_service/service/network/dto as network_dto
 from app_service/common/types import StatusType, ContractTransactionStatus, MembershipRequestState, Shard
 
@@ -98,6 +99,7 @@ method onChannelGroupsLoaded*(
     tokenService: token_service.Service,
     communityTokensService: community_tokens_service.Service,
     sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
   ) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -116,6 +118,7 @@ method onCommunityDataLoaded*(
     tokenService: token_service.Service,
     communityTokensService: community_tokens_service.Service,
     sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
   ){.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -167,6 +170,7 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
     tokenService: token_service.Service,
     communityTokensService: community_tokens_service.Service,
     sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
     setActive: bool = false,
   ) {.base.} =
   raise newException(ValueError, "No implementation available")

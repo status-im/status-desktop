@@ -35,6 +35,7 @@ notarization.log
 status-desktop.log
 nim_status_client.log
 *.csv
+.flatpak-builder
 
 # Squish test ================================================================
 
