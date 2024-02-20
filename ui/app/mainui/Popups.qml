@@ -141,12 +141,12 @@ QtObject {
         openPopup(markAsUntrustedComponent, {publicKey, contactDetails})
     }
 
-    function openBlockContactPopup(publicKey: string, contactName: string) {
-        openPopup(blockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
+    function openBlockContactPopup(publicKey: string, contactDetails) {
+        openPopup(blockContactConfirmationComponent, {publicKey, contactDetails})
     }
 
-    function openUnblockContactPopup(publicKey: string, contactName: string) {
-        openPopup(unblockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
+    function openUnblockContactPopup(publicKey: string, contactDetails) {
+        openPopup(unblockContactConfirmationComponent, {publicKey, contactDetails})
     }
 
     function openChangeProfilePicPopup(cb) {
@@ -546,8 +546,9 @@ QtObject {
         Component {
             id: unblockContactConfirmationComponent
             UnblockContactConfirmationDialog {
-                onUnblockButtonClicked: {
-                    rootStore.contactStore.unblockContact(contactAddress)
+                onAccepted: {
+                    rootStore.contactStore.unblockContact(publicKey)
+                    Global.displaySuccessToastMessage(qsTr("%1 unblocked").arg(mainDisplayName))
                     close()
                 }
                 onClosed: destroy()
@@ -557,8 +558,13 @@ QtObject {
         Component {
             id: blockContactConfirmationComponent
             BlockContactConfirmationDialog {
-                onBlockButtonClicked: {
-                    rootStore.contactStore.blockContact(contactAddress)
+                onAccepted: {
+                    rootStore.contactStore.blockContact(publicKey)
+                    if (removeIDVerification)
+                        rootStore.contactStore.cancelVerificationRequest(publicKey)
+                    if (removeContact)
+                        rootStore.contactStore.removeContact(publicKey)
+                    Global.displaySuccessToastMessage(qsTr("%1 blocked").arg(mainDisplayName))
                     close()
                 }
                 onClosed: destroy()

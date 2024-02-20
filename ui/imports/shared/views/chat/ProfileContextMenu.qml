@@ -211,7 +211,7 @@ StatusMenu {
         icon.name: "cancel"
         type: StatusAction.Type.Danger
         enabled: !root.isMe && root.isBlockedContact && !root.isBridgedAccount
-        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
+        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 
     // TODO Remove ID verification + confirmation dialog
@@ -252,6 +252,6 @@ StatusMenu {
         icon.name: "cancel"
         type: StatusAction.Type.Danger
         enabled: !root.isMe && !root.isBlockedContact && !root.isBridgedAccount
-        onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
+        onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 }

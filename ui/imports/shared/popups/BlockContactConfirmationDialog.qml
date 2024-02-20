@@ -1,48 +1,78 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 
-import StatusQ.Controls 0.1
+CommonContactDialog {
+    id: root
 
-import "../panels"
-import "."
+    readonly property bool removeIDVerification: ctrlRemoveIDVerification.checked
+    readonly property bool removeContact: ctrlRemoveContact.checked
 
-// TODO: replace with StatusModal
-ModalPopup {
-    id: blockContactConfirmationDialog
-    height: 237
-    width: 400
+    title: qsTr("Block user")
 
-    property string contactAddress: ""
-    property string contactName: ""
-
-    signal blockButtonClicked()
-
-    title: qsTr("Block User")
-
-    StyledText {
-        text: qsTr("Blocking will stop new messages from reaching you from %1.").arg(contactName)
-        font.pixelSize: 15
-        anchors.left: parent.left
-        anchors.right: parent.right
-        wrapMode: Text.WordWrap
+    readonly property var d: QtObject {
+        id: d
+        readonly property int outgoingVerificationStatus: contactDetails.verificationStatus
+        readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
+        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying ||
+                                                              incomingVerificationStatus === Constants.verificationStatus.verified
+        readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
+                                          incomingVerificationStatus === Constants.verificationStatus.trusted
     }
 
-    footer: Item {
-        id: footerContainer
-        width: parent.width
-        height: children[0].height
+    StatusBaseText {
+        Layout.fillWidth: true
+        wrapMode: Text.WordWrap
+        lineHeight: 22
+        lineHeightMode: Text.FixedHeight
+        text: qsTr("You will not see %1’s messages but %1 can still see your messages in mutual group chats and communities. %1 will be unable to message you.").arg(mainDisplayName)
+    }
 
+    StatusWarningBox {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.padding
+        icon: "warning"
+        iconColor: Theme.palette.dangerColor1
+        bgColor: Theme.palette.dangerColor1
+        borderColor: Theme.palette.dangerColor2
+        textColor: Theme.palette.directColor1
+        textSize: Theme.secondaryTextFontSize
+        text: qsTr("Blocking a user purges the database of all messages that you’ve previously received from %1 in all contexts. This can take a moment.").arg(mainDisplayName)
+    }
+
+    StatusCheckBox {
+        Layout.topMargin: Style.current.halfPadding
+        id: ctrlRemoveContact
+        visible: contactDetails.isContact
+        checked: visible
+        enabled: false
+        text: qsTr("Remove contact")
+    }
+
+    StatusCheckBox {
+        id: ctrlRemoveIDVerification
+        visible: contactDetails.isContact && !d.isTrusted && d.isVerificationRequestReceived
+        checked: visible
+        enabled: false
+        text: qsTr("Remove ID verification")
+    }
+
+    rightButtons: ObjectModel {
+        StatusFlatButton {
+            text: qsTr("Cancel")
+            onClicked: root.close()
+        }
         StatusButton {
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
             type: StatusBaseButton.Type.Danger
-            text: qsTr("Block User")
-            anchors.bottom: parent.bottom
-            onClicked: blockContactConfirmationDialog.blockButtonClicked()
+            text: qsTr("Block")
+            onClicked: root.accepted()
         }
     }
 }
-

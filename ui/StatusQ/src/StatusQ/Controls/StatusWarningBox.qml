@@ -31,7 +31,7 @@ import StatusQ.Core.Theme 0.1
 Control {
     id: root
     implicitWidth: 614
-    implicitHeight: rowContent.height
+    padding: 16
 
     /*!
         \qmlproperty alias StatusWarningBox::text
@@ -64,7 +64,10 @@ Control {
         This property sets the StatusWarningBox text color.
     */
     property color textColor: Theme.palette.warningColor1
-
+    /*!
+        \qmlproperty int StatusWarningBox::textSize
+        This property sets the StatusWarningBox text pixel size
+    */
     property int textSize: Theme.primaryTextFontSize
 
     background: Rectangle {
@@ -80,33 +83,21 @@ Control {
         }
     }
 
-    contentItem: Item {
-        id: rowContent
-        width: parent.width
-        height: (row.height+32)//xlPadding
-        RowLayout {
-            id: row
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            height: warningText.contentHeight
-            spacing: 6
-            StatusIcon {
-                Layout.alignment: Qt.AlignTop
-                icon: root.icon
-                color: root.iconColor
-            }
-            StatusBaseText {
-                id: warningText
-                Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
-                wrapMode: Text.WordWrap
-                verticalAlignment: Text.AlignVCenter
-                font.pixelSize: root.textSize
-                color: root.textColor
-            }
+    contentItem: RowLayout {
+        spacing: 8
+        StatusIcon {
+            Layout.alignment: Qt.AlignTop
+            icon: root.icon
+            color: root.iconColor
+        }
+        StatusBaseText {
+            id: warningText
+            Layout.fillWidth: true
+            Layout.preferredHeight: contentHeight
+            wrapMode: Text.WordWrap
+            verticalAlignment: Text.AlignVCenter
+            font.pixelSize: root.textSize
+            color: root.textColor
         }
     }
 }
