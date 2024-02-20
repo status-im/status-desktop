@@ -80,7 +80,6 @@ Pane {
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
-        readonly property bool isVerified: outgoingVerificationStatus === Constants.verificationStatus.verified
 
         readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
 
@@ -484,7 +483,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
-                            Global.removeContactRequested(d.mainDisplayName, root.publicKey)
+                            Global.removeContactRequested(root.publicKey, d.contactDetails)
                         }
                     }
                     StatusAction {
