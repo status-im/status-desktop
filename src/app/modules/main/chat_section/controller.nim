@@ -6,6 +6,7 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
@@ -42,6 +43,7 @@ type
     tokenService: token_service.Service
     communityTokensService: community_tokens_service.Service
     sharedUrlsService: shared_urls_service.Service
+    networkService: network_service.Service
 
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
@@ -51,7 +53,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
     gifService: gif_service.Service, mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service, tokenService: token_service.Service,
     communityTokensService: community_tokens_service.Service,
-    sharedUrlsService: shared_urls_service.Service): Controller =
+    sharedUrlsService: shared_urls_service.Service, networkService: network_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -70,6 +72,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.tokenService = tokenService
   result.communityTokensService = communityTokensService
   result.sharedUrlsService = sharedUrlsService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -689,6 +692,11 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
   let token = self.tokenService.findTokenBySymbol(symbol)
   if token != nil:
     for addrPerChain in token.addressPerChainId:
+      # depending on areTestNetworksEnabled (in getNetwork), contractAddresses will
+      # contain mainnets or testnets only
+      let network = self.networkService.getNetwork(addrPerChain.chainId)
+      if network == nil:
+        continue
       contractAddresses[addrPerChain.chainId] = addrPerChain.address
   let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
   if communityToken.address != "":
