@@ -5,6 +5,8 @@ import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
+import utils 1.0
+
 /**
   * Building block for managing temporary state in the "Profile Showcase"
   * functionality. Provides combining raw source model (like e.g. communities
@@ -45,9 +47,15 @@ QObject {
     readonly property alias writable_: writable
     readonly property alias joined_: joined
 
-    component VisibilityFilter: RangeFilter {
-        roleName: "visibility"
-        minimumValue: 1
+    component HiddenFilter: AnyOf {
+        UndefinedFilter {
+            roleName: "visibility"
+        }
+
+        ValueFilter {
+            roleName: "visibility"
+            value: Constants.ShowcaseVisibility.NoOne
+        }
     }
 
     LeftJoinModel {
@@ -60,6 +68,7 @@ QObject {
         id: writable
 
         sourceModel: joined
+        visibilityHidden: Constants.ShowcaseVisibility.NoOne
     }
 
     SortFilterProxyModel {
@@ -68,7 +77,7 @@ QObject {
         sourceModel: writable
         delayed: true
 
-        filters: VisibilityFilter {}
+        filters: HiddenFilter { inverted: true }
         sorters: RoleSorter { roleName: "position" }
     }
 
@@ -78,6 +87,6 @@ QObject {
         sourceModel: writable
         delayed: true
 
-        filters: VisibilityFilter { inverted: true}
+        filters: HiddenFilter {}
     }
 }

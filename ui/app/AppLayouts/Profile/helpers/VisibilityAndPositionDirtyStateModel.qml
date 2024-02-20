@@ -12,6 +12,14 @@ import StatusQ.Core.Utils 0.1
 WritableProxyModel {
     id: root
 
+    /**
+      * "Hidden" is a special type of visibility that requires special
+      * treatment. When the visibility is changed from hidden to other type
+      * of visibility, in addition to changing the visibility, the appropriate
+      * position is also set.
+      */
+    property int visibilityHidden: 0
+
     /* Provides the list of objects representing the current state in the
      * in the following format:
      * [ {
@@ -41,7 +49,8 @@ WritableProxyModel {
             return
 
         // hiding, changing visibility level
-        if (visibility === 0 || (visibility > 0 && oldVisibility > 0)) {
+        if (visibility === visibilityHidden
+                || oldVisibility !== visibilityHidden) {
             set(sourceIdx, { visibility: visibility })
             return
         }
@@ -96,11 +105,13 @@ WritableProxyModel {
             const roles = ["key", "position", "visibility"]
             const keysAndPos = ModelUtils.modelToArray(root, roles)
 
-            return keysAndPos.filter(p => p.visibility)
+            return keysAndPos.filter(p => p.visibility
+                                     && p.visibility !== root.visibilityHidden)
         }
 
         function getVisibility(idx) {
-            return ModelUtils.get(root, idx, "visibility") || 0
+            return ModelUtils.get(root, idx, "visibility")
+                    || root.visibilityHidden
         }
     }
 }

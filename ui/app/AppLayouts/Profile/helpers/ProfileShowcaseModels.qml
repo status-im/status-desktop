@@ -5,6 +5,8 @@ import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
+import utils 1.0
+
 QObject {
     id: root
 
@@ -106,20 +108,25 @@ QObject {
         proxyRoles: FastExpressionRole {
             name: "maxVisibility"
 
-            expression: {
-                const m = root.accountsVisibilityMap
-                const accounts = model.accounts.split(":")
-                const visibilities = accounts.map(e => m[e]).filter(e => e)
+            // singletons cannot be used in expressions
+            readonly property int hidden: Constants.ShowcaseVisibility.NoOne
 
-                return visibilities.length ? Math.min(...visibilities) : 0
+            expression: {
+                const visibilityMap = root.accountsVisibilityMap
+                const accounts = model.accounts.split(":")
+                const visibilities = accounts.map(a => visibilityMap[a]).filter(
+                                       v => v !== undefined)
+
+                return visibilities.length ? Math.min(...visibilities) : hidden
             }
 
             expectedRoles: ["accounts"]
         }
 
-        filters: RangeFilter {
+        filters: ValueFilter {
             roleName: "maxVisibility"
-            minimumValue: 1
+            value: Constants.ShowcaseVisibility.NoOne
+            inverted: true
         }
     }
 
