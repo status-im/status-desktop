@@ -45,25 +45,27 @@ Control {
     */
     property string icon
     /*!
-        \qmlproperty string StatusWarningBox::iconColor
+        \qmlproperty color StatusWarningBox::iconColor
         This property sets the StatusWarningBox icon color.
     */
-    property string iconColor: "transparent"
+    property color iconColor: "transparent"
     /*!
-        \qmlproperty string StatusWarningBox::bgColor
+        \qmlproperty color StatusWarningBox::bgColor
         This property sets the StatusWarningBox background color.
     */
-    property string bgColor: "transparent"
+    property color bgColor: "transparent"
     /*!
-        \qmlproperty string StatusWarningBox::borderColor
+        \qmlproperty color StatusWarningBox::borderColor
         This property sets the StatusWarningBox border color.
     */
-    property string borderColor: Theme.palette.warningColor1
+    property color borderColor: Theme.palette.warningColor1
     /*!
-        \qmlproperty string StatusWarningBox::textColor
+        \qmlproperty color StatusWarningBox::textColor
         This property sets the StatusWarningBox text color.
     */
-    property string textColor: Theme.palette.warningColor1
+    property color textColor: Theme.palette.warningColor1
+
+    property int textSize: Theme.primaryTextFontSize
 
     background: Rectangle {
         radius: 8
@@ -102,7 +104,7 @@ Control {
                 Layout.preferredHeight: contentHeight
                 wrapMode: Text.WordWrap
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: Theme.primaryTextFontSize
+                font.pixelSize: root.textSize
                 color: root.textColor
             }
         }
