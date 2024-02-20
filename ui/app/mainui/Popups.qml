@@ -268,11 +268,8 @@ QtObject {
         openPopup(discordImportProgressDialog, {importingSingleChannel: importingSingleChannel})
     }
 
-    function openRemoveContactConfirmationPopup(displayName, publicKey) {
-        openPopup(removeContactConfirmationDialog, {
-            displayName: displayName,
-            publicKey: publicKey
-        })
+    function openRemoveContactConfirmationPopup(publicKey, contactDetails) {
+        openPopup(removeContactConfirmationDialog, {publicKey, contactDetails})
     }
 
     function openDeleteMessagePopup(messageId, messageStore) {
@@ -346,21 +343,20 @@ QtObject {
     readonly property list<Component> _components: [
         Component {
             id: removeContactConfirmationDialog
-            ConfirmationDialog {
-                property string displayName
-                property string publicKey
-                headerSettings.title: qsTr("Remove '%1' as a contact").arg(displayName)
-                confirmationText: qsTr("This will mean that you and '%1' will no longer be able to send direct messages to each other. You will need to send them a new Contact Request in order to message again. All previous direct messages between you and '%1' will be retained in read-only mode.").arg(displayName)
-                showCancelButton: true
-                cancelBtnType: ""
-                onConfirmButtonClicked: {
-                    rootStore.contactStore.removeContact(publicKey);
-                    close();
+            RemoveContactPopup {
+                onAccepted: {
+                    rootStore.contactStore.removeContact(publicKey)
+                    if (removeIDVerification)
+                        rootStore.contactStore.cancelVerificationRequest(publicKey)
+                    if (markAsUntrusted) {
+                        rootStore.contactStore.markUntrustworthy(publicKey)
+                        Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
+                    } else {
+                        Global.displaySuccessToastMessage(qsTr("%1 removed from contacts").arg(mainDisplayName))
+                    }
+                    close()
                 }
-                onCancelButtonClicked: {
-                    close();
-                }
-                onClosed: { destroy(); }
+                onClosed: destroy()
             }
         },
         Component {
@@ -539,7 +535,7 @@ QtObject {
                         rootStore.contactStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
                     } else {
-                        Global.displayToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
+                        Global.displaySuccessToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
                     }
                     close()
                 }

@@ -242,10 +242,7 @@ StatusMenu {
         icon.name: "remove-contact"
         type: StatusAction.Type.Danger
         enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest && !root.isBridgedAccount
-        onTriggered: {
-            Global.removeContactRequested(root.selectedUserDisplayName, root.selectedUserPublicKey)
-            root.close()
-        }
+        onTriggered: Global.removeContactRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 
     StatusAction {

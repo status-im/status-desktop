@@ -220,14 +220,17 @@ SplitView {
 
                             function removeContact(publicKey) {
                                 logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
+                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
                             }
 
                             function acceptContactRequest(publicKey, contactRequestId) {
                                 logs.logEvent("contactsStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
+                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Mutual)
                             }
 
                             function dismissContactRequest(publicKey, contactRequestId) {
                                 logs.logEvent("contactsStore::dismissContactRequest", ["publicKey, contactRequestId"], arguments)
+                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Dismissed)
                             }
 
                             function removeTrustStatus(publicKey) {
