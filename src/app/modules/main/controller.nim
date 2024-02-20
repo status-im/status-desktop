@@ -127,6 +127,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
     )
 
   self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
@@ -144,6 +145,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
     )
 
   self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
@@ -180,6 +182,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
       setActive = args.fromUserAction
     )
 
@@ -200,6 +203,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
       setActive = args.fromUserAction
     )
     self.delegate.onFinaliseOwnershipStatusChanged(args.isPendingOwnershipRequest, args.community.id)
@@ -226,6 +230,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
       setActive = true
     )
 
@@ -248,6 +253,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.communityTokensService,
       self.sharedUrlsService,
+      self.networksService,
       setActive = false
     )
 
