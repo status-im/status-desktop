@@ -16,7 +16,7 @@ StatusListItem {
     components: [
         StatusBaseText {
             objectName: "testnetLabel_" + network.chainName
-            text: qsTr("Goerli testnet active")
+            text: qsTr("Sepolia testnet active")
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             visible: areTestNetworksEnabled

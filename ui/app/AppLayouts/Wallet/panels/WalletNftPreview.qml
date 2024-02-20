@@ -19,7 +19,7 @@ ColumnLayout {
     property string tokenAddress
     property bool strikethrough: false
     property bool areTestNetworksEnabled: false
-    property bool isSepoliaEnabled: false
+    property bool isGoerliEnabled: false
 
     spacing: Style.current.padding
 
@@ -106,7 +106,7 @@ ColumnLayout {
                     onClicked: {
                         let link = Constants.networkExplorerLinks.etherscan
                         if (areTestNetworksEnabled) {
-                            if (root.isSepoliaEnabled) {
+                            if (root.isGoerliEnabled) {
                                 link = Constants.networkExplorerLinks.sepoliaEtherscan
                             } else {
                                 link = Constants.networkExplorerLinks.goerliEtherscan

@@ -29,7 +29,7 @@ StatusMenu {
                                        preferredSharingChainIds: ""
                                    })
     property bool areTestNetworksEnabled: false
-    property bool isSepoliaEnabled: false
+    property bool isGoerliEnabled: false
     property var preferredSharedNetworkNamesArray
 
     signal copyToClipboard(string address)
@@ -45,7 +45,7 @@ StatusMenu {
         enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
         icon.name: "link"
         onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }
@@ -55,7 +55,7 @@ StatusMenu {
         enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
         icon.name: "link"
         onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }
@@ -65,7 +65,7 @@ StatusMenu {
         enabled: root.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
         icon.name: "link"
         onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isSepoliaEnabled, root.selectedAccount.address?? "")
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }

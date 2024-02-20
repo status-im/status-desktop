@@ -50,11 +50,11 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
 
-proc isSepoliaEnabled*(self: Controller): bool =
-  return self.walletAccountService.isSepoliaEnabled()
+proc isGoerliEnabled*(self: Controller): bool =
+  return self.walletAccountService.isGoerliEnabled()
 
-proc toggleIsSepoliaEnabled*(self: Controller) =
-  self.walletAccountService.toggleIsSepoliaEnabled()
+proc toggleIsGoerliEnabled*(self: Controller) =
+  self.walletAccountService.toggleIsGoerliEnabled()
 
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)

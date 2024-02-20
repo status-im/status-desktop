@@ -27,7 +27,7 @@ StatusListItem {
     property string colorId
     property string chainShortNames
     property bool areTestNetworksEnabled: false
-    property bool isSepoliaEnabled: false
+    property bool isGoerliEnabled: false
 
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
@@ -235,7 +235,7 @@ StatusListItem {
             enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.mainnet)
             icon.name: "link"
             onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }
@@ -245,7 +245,7 @@ StatusListItem {
             enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.arbiscan)
             icon.name: "link"
             onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.arbiscan, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }
@@ -255,7 +255,7 @@ StatusListItem {
             enabled: d.preferredSharedNetworkNamesArray.includes(Constants.networkShortChainNames.optimism)
             icon.name: "link"
             onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isSepoliaEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.optimism, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }

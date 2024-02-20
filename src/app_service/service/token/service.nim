@@ -408,7 +408,10 @@ QtObject:
   proc getStatusTokenKey*(self: Service): string =
     var token: TokenBySymbolItem
     if self.settingsService.areTestNetworksEnabled():
-      token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS)
+      if self.settingsService.isGoerliEnabled():
+        token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_GOERLI)
+      else:
+        token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_SEPOLIA)
     else:
       token = self.getTokenBySymbolByContractAddr(SNT_CONTRACT_ADDRESS)
     if token != nil:

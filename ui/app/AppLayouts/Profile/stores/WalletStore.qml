@@ -14,7 +14,7 @@ QtObject {
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+    readonly property bool isGoerliEnabled: networksModule.isGoerliEnabled
 
     readonly property var networks: networksModule.networks
     readonly property var combinedNetworks: networksModule.combinedNetworks

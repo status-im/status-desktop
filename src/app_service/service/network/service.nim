@@ -156,9 +156,9 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 proc getAppNetwork*(self: Service): NetworkDto =
   var networkId = Mainnet
   if self.settingsService.areTestNetworksEnabled():
-    networkId = Goerli
-    if self.settingsService.isSepoliaEnabled():
-      networkId = Sepolia
+    networkId = Sepolia
+    if self.settingsService.isGoerliEnabled():
+      networkId = Goerli
   let network = self.getNetwork(networkId)
   if network.isNil:
     # we should not be here ever

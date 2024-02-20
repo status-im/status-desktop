@@ -39,7 +39,7 @@ QtObject {
     readonly property real scrollVelocity: localAppSettings.scrollVelocity
     readonly property real scrollDeceleration: localAppSettings.scrollDeceleration
 
-    readonly property bool isSepoliaEnabled: networksModule.isSepoliaEnabled
+    readonly property bool isGoerliEnabled: networksModule.isGoerliEnabled
 
     function logDir() {
         if(!root.advancedModule)
@@ -174,8 +174,8 @@ QtObject {
         localAppSettings.scrollDeceleration = value
     }
 
-    function toggleIsSepoliaEnabled(){
-        networksModule.toggleIsSepoliaEnabled()
+    function toggleIsGoerliEnabled(){
+        networksModule.toggleIsGoerliEnabled()
     }
 
 }

@@ -151,7 +151,7 @@ ColumnLayout {
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
-            isSepoliaEnabled: RootStore.isSepoliaEnabled
+            isGoerliEnabled: RootStore.isGoerliEnabled
             onOpenSendModal: root.sendModal.open(recipient);
 
             states: [

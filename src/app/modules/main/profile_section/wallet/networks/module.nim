@@ -81,7 +81,7 @@ method load*(self: Module) =
   self.controller.init()
   self.view.load()
   self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
-  self.view.setIsSepoliaEnabled(self.controller.isSepoliaEnabled())
+  self.view.setIsGoerliEnabled(self.controller.isGoerliEnabled())
   self.refreshNetworks()
 
 method isLoaded*(self: Module): bool =
@@ -101,8 +101,8 @@ method toggleTestNetworksEnabled*(self: Module) =
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
 
-method toggleIsSepoliaEnabled*(self: Module) = 
-  self.controller.toggleIsSepoliaEnabled()
+method toggleIsGoerliEnabled*(self: Module) = 
+  self.controller.toggleIsGoerliEnabled()
   self.refreshNetworks()
 
 method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =

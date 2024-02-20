@@ -44,7 +44,7 @@ const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
-const KEY_IS_SEPOLIA_ENABLED* = "is-sepolia-enabled?"
+const KEY_IS_GOERLI_ENABLED* = "is-goerli-enabled?"
 const KEY_TOKEN_GROUP_BY_COMMUNITY* = "token-group-by-community?"
 const KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS* = "show-community-asset-when-sending-tokens?"
 const KEY_DISPLAY_ASSETS_BELOW_BALANCE* = "display-assets-below-balance?"
@@ -157,7 +157,7 @@ type
     notificationsVolume*: int
     notificationsMessagePreview*: int
     profileMigrationNeeded*: bool
-    isSepoliaEnabled*: bool
+    isGoerliEnabled*: bool
     tokenGroupByCommunity*: bool
     showCommunityAssetWhenSendingTokens*: bool
     displayAssetsBelowBalance*: bool
@@ -219,7 +219,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
-  discard jsonObj.getProp(KEY_IS_SEPOLIA_ENABLED, result.isSepoliaEnabled)
+  discard jsonObj.getProp(KEY_IS_GOERLI_ENABLED, result.isGoerliEnabled)
   discard jsonObj.getProp(KEY_TOKEN_GROUP_BY_COMMUNITY, result.tokenGroupByCommunity)
   discard jsonObj.getProp(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, result.showCommunityAssetWhenSendingTokens)
   discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE, result.displayAssetsBelowBalance)
