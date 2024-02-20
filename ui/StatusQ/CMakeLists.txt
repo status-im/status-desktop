@@ -111,6 +111,7 @@ add_library(StatusQ SHARED
         include/StatusQ/stringutilsinternal.h
         include/StatusQ/submodelproxymodel.h
         include/StatusQ/sumaggregator.h
+        include/StatusQ/undefinedfilter.h
         include/StatusQ/writableproxymodel.h
         src/QClipboardProxy.cpp
         src/aggregator.cpp
@@ -132,6 +133,7 @@ add_library(StatusQ SHARED
         src/stringutilsinternal.cpp
         src/submodelproxymodel.cpp
         src/sumaggregator.cpp
+        src/undefinedfilter.cpp
         src/writableproxymodel.cpp
 
         # wallet
