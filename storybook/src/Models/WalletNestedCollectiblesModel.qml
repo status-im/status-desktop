@@ -37,6 +37,16 @@ ListModel {
             collectionUid: "custom",
             collectionName: "Custom",
             isCollection: false,
+        },
+        {
+            uid: "ID-Community",
+            chainId: 1,
+            name: "Community owner",
+            iconUrl: ModelsData.collectibles.mana,
+            collectionUid: "comm1",
+            collectionName: "Community collection",
+            isCollection: true,
+            communityId: "ddl"
         }
     ]
 

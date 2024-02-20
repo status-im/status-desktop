@@ -140,7 +140,7 @@ Item {
                     delegate: Loader {
                         width: ListView.view.width
                         required property string section
-                        sourceComponent: d.isBrowsingTypeERC20 && section === "true" ? sectionDelegate : null
+                        sourceComponent: section === "true" ? sectionDelegate : null
                     }
                 }
             }
@@ -149,6 +149,13 @@ Item {
 
     property var collectiblesModel: SortFilterProxyModel {
         sourceModel: d.collectiblesNetworksJointModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            }
+        ]
         filters: [
             ExpressionFilter {
                 expression: {
@@ -156,10 +163,16 @@ Item {
                 }
             }
         ]
-        sorters: RoleSorter {
-            roleName: "isCollection"
-            sortOrder: Qt.DescendingOrder
-        }
+        sorters: [
+            RoleSorter {
+                roleName: "isCommunityAsset"
+                sortOrder: Qt.DescendingOrder
+            },
+            RoleSorter {
+                roleName: "isCollection"
+                sortOrder: Qt.DescendingOrder
+            }
+        ]
     }
 
     Component {
