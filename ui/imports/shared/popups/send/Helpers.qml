@@ -67,4 +67,24 @@ QtObject {
 
         return req
     }
+
+    function assetsSectionTitle(sectionNeeded, hasCommunityTokens, isInsideCollection, isERC20List) {
+        // if we have non-empty section name, setting section's "visible" property to false does not work properly.
+        // So we have to return empty section here if we want to hide it
+        let title = ""
+        if (!isInsideCollection) {
+            if (sectionNeeded) {
+                title = qsTr("Community minted")
+            }
+            else {
+                if (!isERC20List) {
+                    // Show "Other" only if there are "Community minted" tokens on the list
+                    if (hasCommunityTokens) {
+                        title = qsTr("Other")
+                    }
+                }
+            }
+        }
+        return title
+    }
 }

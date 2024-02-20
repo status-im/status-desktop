@@ -37,7 +37,16 @@ ListModel {
             collectionUid: "custom",
             collectionName: "Custom",
             isCollection: false,
-        }
+        },
+        {
+            uid: "ID-Community1",
+            chainId: 1,
+            name: "Community Admin Token",
+            iconUrl: ModelsData.collectibles.mana,
+            collectionUid: "community-uid-1",
+            isCollection: false,
+            communityId: "community-id-1"
+        },
     ]
 
     readonly property var criptoKittiesData: [

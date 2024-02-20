@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQml 2.15
+import QtQuick.Layouts 1.15
 
 import SortFilterProxyModel 0.2
 
@@ -13,6 +14,7 @@ import utils 1.0
 
 import shared.controls 1.0
 import shared.popups 1.0
+import shared.popups.send 1.0
 import "../controls"
 
 Item {
@@ -77,6 +79,7 @@ Item {
         }
 
         readonly property bool isBrowsingTypeERC20: root.browsingHoldingType === Constants.TokenType.ERC20
+        readonly property bool isBrowsingCollection: !isBrowsingTypeERC20 && !!root.collectibles && root.collectibles.currentCollectionUid !== ""
     }
 
     StatusBaseText {
@@ -132,15 +135,73 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                header: d.isBrowsingTypeERC20 ? tokenHeader : collectibleHeader
-                model: d.isBrowsingTypeERC20 ? root.assets : collectiblesModel
-                delegate: d.isBrowsingTypeERC20 ? tokenDelegate : collectiblesDelegate
+                visible: d.isBrowsingTypeERC20
+                header: tokenHeader
+                model: root.assets
+                delegate: tokenDelegate
+
+                property bool hasCommunityTokens: false
+                function updateHasCommunityTokens() {
+                    if (count > 0) {
+                        // For assets community minted tokens are at the end of the list by design.
+                        // It is faster than iterate over all the items and check their isCommunityAsset role
+                        const isCommunityAsset = model.get(count - 1).isCommunityAsset
+                        hasCommunityTokens = hasCommunityTokens || isCommunityAsset
+                    }
+                }
+
+                onCountChanged: updateHasCommunityTokens()
                 section {
                     property: "isCommunityAsset"
                     delegate: Loader {
-                        width: ListView.view.width
-                        required property string section
-                        sourceComponent: d.isBrowsingTypeERC20 && section === "true" ? sectionDelegate : null
+                        required property bool section
+                        width: parent.width
+                        property string sectionTitle: Helpers.assetsSectionTitle(section, tokenList.hasCommunityTokens, d.isBrowsingCollection, d.isBrowsingTypeERC20)
+                        active: !!sectionTitle
+                        sourceComponent: AssetsSectionDelegate {
+                            text: parent.sectionTitle
+                            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                        }
+                    }
+                }
+            }
+
+            // We have a separate listview for collectibles because if we switch models within one listview,
+            // sections are not displayed correctly, if we play with their "visible" or "height" properties
+            // when we want to hide some sections. It feels like sections are not designed to be hidden and
+            // do not hide well in complex scenarios.
+            StatusListView {
+                id: collectiblesList
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                visible: !d.isBrowsingTypeERC20
+                header: collectibleHeader
+                model: collectiblesModel
+                delegate: collectiblesDelegate
+
+                property bool hasCommunityTokens: false
+                onCountChanged: updateHasCommunityTokens()
+
+                function updateHasCommunityTokens() {
+                    if (count > 0) {
+                        const isCommunityAsset = model.get(0).isCommunityAsset
+                        hasCommunityTokens = hasCommunityTokens || isCommunityAsset
+                    }
+                }
+
+                section {
+                    property: "isCommunityAsset"
+                    delegate: Loader {
+                        required property bool section
+                        width: parent.width
+                        property string sectionTitle: Helpers.assetsSectionTitle(section, collectiblesList.hasCommunityTokens, d.isBrowsingCollection, d.isBrowsingTypeERC20)
+                        active: !!sectionTitle
+                        sourceComponent: AssetsSectionDelegate {
+                            text: parent.sectionTitle
+                            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
+                        }
                     }
                 }
             }
@@ -149,6 +210,13 @@ Item {
 
     property var collectiblesModel: SortFilterProxyModel {
         sourceModel: d.collectiblesNetworksJointModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            }
+        ]
         filters: [
             ExpressionFilter {
                 expression: {
@@ -156,10 +224,16 @@ Item {
                 }
             }
         ]
-        sorters: RoleSorter {
-            roleName: "isCollection"
-            sortOrder: Qt.DescendingOrder
-        }
+        sorters: [
+            RoleSorter {
+                roleName: "isCommunityAsset"
+                sortOrder: Qt.DescendingOrder
+            },
+            RoleSorter {
+                roleName: "isCollection"
+                sortOrder: Qt.DescendingOrder
+            }
+        ]
     }
 
     Component {
@@ -168,7 +242,7 @@ Item {
             width: ListView.view.width
             selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
-                leftModel: !!model & !!model.balances ? model.balances : nil
+                leftModel: !!model & !!model.balances ? model.balances : null
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
@@ -186,6 +260,7 @@ Item {
         id: tokenHeader
         SearchBoxWithRightIcon {
             showTopBorder: !root.onlyAssets
+            showBottomBorder: false
             width: ListView.view.width
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateAssetSearchText, text)
@@ -213,7 +288,7 @@ Item {
             spacing: 0
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
-                visible: !!root.collectibles && root.collectibles.currentCollectionUid !== ""
+                visible: d.isBrowsingCollection
                 count: root.collectibles.count
                 name: d.currentBrowsingCollectionName
                 onBackClicked: root.collectibles.currentCollectionUid = ""
@@ -221,17 +296,10 @@ Item {
             SearchBoxWithRightIcon {
                 Layout.fillWidth: true
                 showTopBorder: true
+                showBottomBorder: false
                 placeholderText: qsTr("Search collectibles")
                 onTextChanged: Qt.callLater(d.updateCollectibleSearchText, text)
             }
-        }
-    }
-
-    Component {
-        id: sectionDelegate
-        AssetsSectionDelegate {
-            width: parent.width
-            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
         }
     }
 

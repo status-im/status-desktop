@@ -15,6 +15,7 @@ type
     CollectionUid
     CollectionName
     IsCollection
+    CommunityId
 
 QtObject:
   type
@@ -80,6 +81,7 @@ QtObject:
       CollectiblesNestedRole.CollectionUid.int:"collectionUid",
       CollectiblesNestedRole.CollectionName.int:"collectionName",
       CollectiblesNestedRole.IsCollection.int:"isCollection",
+      CollectiblesNestedRole.CommunityId.int:"communityId",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -107,6 +109,8 @@ QtObject:
       result = newQVariant(item.getCollectionName())
     of CollectiblesNestedRole.IsCollection:
       result = newQVariant(item.getIsCollection())
+    of CollectiblesNestedRole.CommunityId:
+      result = newQVariant(item.getCommunityId())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -120,6 +124,7 @@ QtObject:
       of "collectionUid": result = item.getCollectionId()
       of "collectionName": result = item.getCollectionName()
       of "isCollection": result = $item.getIsCollection()
+      of "communityId": result = item.getCommunityId()
 
   proc getCollectiblesPerCollectionId(items: seq[flat_item.CollectiblesEntry]): Table[string, seq[flat_item.CollectiblesEntry]] =
     var collectiblesPerCollection = initTable[string, seq[flat_item.CollectiblesEntry]]()
@@ -140,10 +145,16 @@ QtObject:
     for collectionId, collectionCollectibles in collectiblesPerCollection.pairs:
       if self.currentCollectionUid == "":
         # No collection selected
-        # If the collection contains more than 1 collectible, we add a single collection item
+        # If the collection contains more than 1 collectible or if collectibles has community data, we add a single collection item
         # Otherwise, we add the collectible
-        if collectionCollectibles.len > 1:
-          let collectionItem = collectibleToCollectionNestedItem(collectionCollectibles[0])
+        var hasCommunityData: bool
+        var collectionItem: nested_item.Item
+        if collectionCollectibles.len > 0:
+          let firstItem = collectionCollectibles[0]
+          hasCommunityData = firstItem.hasCommunityData()
+          collectionItem = collectibleToCollectionNestedItem(firstItem)
+
+        if collectionCollectibles.len > 1 or hasCommunityData:
           self.items.add(collectionItem)
         else:
           for collectible in collectionCollectibles:
