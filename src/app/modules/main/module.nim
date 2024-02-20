@@ -683,6 +683,7 @@ method onChannelGroupsLoaded*[T](
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
   sharedUrlsService: urls_service.Service,
+  networkService: network_service.Service,
 ) =
   self.chatsLoaded = true
   if not self.communityDataLoaded:
@@ -710,6 +711,7 @@ method onChannelGroupsLoaded*[T](
       tokenService,
       communityTokensService,
       sharedUrlsService,
+      networkService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
     self.view.model().addItem(channelGroupItem)
@@ -744,6 +746,7 @@ method onCommunityDataLoaded*[T](
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
   sharedUrlsService: urls_service.Service,
+  networkService: network_service.Service,
 ) =
   self.communityDataLoaded = true
   if not self.chatsLoaded:
@@ -764,6 +767,7 @@ method onCommunityDataLoaded*[T](
     tokenService,
     communityTokensService,
     sharedUrlsService,
+    networkService,
   )
 
 method onChatsLoadingFailed*[T](self: Module[T]) =
@@ -1014,6 +1018,7 @@ method communityJoined*[T](
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service,
   sharedUrlsService: urls_service.Service,
+  networkService: network_service.Service,
   setActive: bool = false,
 ) =
   if self.channelGroupModules.contains(community.id):
@@ -1039,6 +1044,7 @@ method communityJoined*[T](
       tokenService,
       communityTokensService,
       sharedUrlsService,
+      networkService
     )
   let channelGroup = community.toChannelGroupDto()
   self.channelGroupModules[community.id].load()
