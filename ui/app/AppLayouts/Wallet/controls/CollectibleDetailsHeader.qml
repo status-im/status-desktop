@@ -88,7 +88,8 @@ ColumnLayout {
         InformationTag {
             id: networkTag
             readonly property bool isNetworkValid: networkShortName !== ""
-            image.source: isNetworkValid && networkIconURL !== "" ? Style.svg("tiny/" + networkIconURL) : ""
+            asset.name: isNetworkValid && networkIconURL !== "" ? Style.svg("tiny/" + networkIconURL) : ""
+            asset.isImage: true
             tagPrimaryLabel.text: isNetworkValid ? networkShortName : "---"
             tagPrimaryLabel.color: isNetworkValid ? networkColor : "black"
             visible: isNetworkValid

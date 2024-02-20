@@ -8,6 +8,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app/modules/shared_models/currency_amount
 import app_service/service/currency/dto
 import app_service/service/settings/service as settings_service
+import app_service/service/community_tokens/service as community_tokens_service
 
 type
   Controller* = ref object of RootObj
@@ -16,6 +17,7 @@ type
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
     settingsService: settings_service.Service
+    communityTokensService: community_tokens_service.Service
     displayAssetsBelowBalanceThreshold: CurrencyAmount
 
 proc newController*(
@@ -23,7 +25,8 @@ proc newController*(
   events: EventEmitter,
   tokenService: token_service.Service,
   walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service
+  settingsService: settings_service.Service,
+  communityTokensService: community_tokens_service.Service
 ): Controller =
   result = Controller()
   result.events = events
@@ -31,6 +34,7 @@ proc newController*(
   result.tokenService = tokenService
   result.walletAccountService = walletAccountService
   result.settingsService = settingsService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
@@ -84,6 +88,12 @@ proc getTokensDetailsLoading*(self: Controller): bool =
 
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   self.tokenService.getTokensMarketValuesLoading()
+
+proc getCommunityTokenDescription*(self: Controller, addressPerChain: seq[AddressPerChain]): string =
+  self.communityTokensService.getCommunityTokenDescription(addressPerChain)
+
+proc getCommunityTokenDescription*(self: Controller, chainId: int, address: string): string =
+  self.communityTokensService.getCommunityTokenDescription(chainId, address)
 
 proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
   self.tokenService.updateTokenPreferences(tokenPreferencesJson)

@@ -11,6 +11,7 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/dto
 import app_service/service/currency/service
 import app_service/service/settings/service as settings_service
+import app_service/service/community_tokens/service as community_tokens_service
 
 export io_interface
 
@@ -28,13 +29,14 @@ proc newModule*(
   events: EventEmitter,
   tokenService: token_service.Service,
   walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service
+  settingsService: settings_service.Service,
+  communityTokensService: community_tokens_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController(result, events, tokenService, walletAccountService, settingsService)
+  result.controller = controller.newController(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
   result.moduleLoaded = false
   result.addresses = @[]
 
@@ -67,6 +69,8 @@ method load*(self: Module) =
   self.events.on(SIGNAL_TOKEN_PREFERENCES_UPDATED) do(e: Args):
     let args = ResultArgs(e)
     self.view.tokenPreferencesUpdated(args.success)
+  self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
+    self.view.tokensDetailsUpdated()
 
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.view.currencyFormatsUpdated()
@@ -109,6 +113,7 @@ method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
     getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )
@@ -117,6 +122,7 @@ method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSou
   return (
     getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
+    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )

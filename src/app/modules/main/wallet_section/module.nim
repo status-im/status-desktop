@@ -37,6 +37,7 @@ import app_service/service/accounts/service as accounts_service
 import app_service/service/node/service as node_service
 import app_service/service/network_connection/service as network_connection_service
 import app_service/service/devices/service as devices_service
+import app_service/service/community_tokens/service as community_tokens_service
 
 import backend/collectibles as backend_collectibles
 import backend/activity as backend_activity
@@ -107,7 +108,8 @@ proc newModule*(
   keycardService: keycard_service.Service,
   nodeService: node_service.Service,
   networkConnectionService: network_connection_service.Service,
-  devicesService: devices_service.Service
+  devicesService: devices_service.Service,
+  communityTokensService: community_tokens_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -121,7 +123,7 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
-  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService)
+  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
   let allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
   result.allCollectiblesModule = allCollectiblesModule
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,

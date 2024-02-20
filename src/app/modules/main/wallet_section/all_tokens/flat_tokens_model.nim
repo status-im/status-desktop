@@ -114,9 +114,11 @@ QtObject:
       of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
       of ModelRole.Description:
-        let tokenDetails = self.delegate.getTokenDetails(item.symbol)
-        result = if not tokenDetails.isNil: newQVariant(tokenDetails.description)
-          else: newQVariant("")
+        result = if not item.communityId.isEmptyOrWhitespace:
+                  newQVariant(self.delegate.getCommunityTokenDescription(item.chainId, item.address))
+                else:
+                  if self.delegate.getTokensDetailsLoading(): newQVariant("")
+                  else: newQVariant(self.delegate.getTokenDetails(item.symbol).description)
       of ModelRole.WebsiteUrl:
         let tokenDetails = self.delegate.getTokenDetails(item.symbol)
         result = if not tokenDetails.isNil: newQVariant(tokenDetails.assetWebsiteUrl)

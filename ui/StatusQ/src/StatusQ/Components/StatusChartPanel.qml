@@ -122,7 +122,7 @@ Page {
             property bool isTimeRange: false
 
             leftPadding: 0
-            width: implicitWidth
+            width: visible ? implicitWidth: 0
             onClicked: {
                 root.headerTabClicked(privateIdentifier, isTimeRange);
             }
@@ -144,6 +144,7 @@ Page {
             for (var j = 0; j < graphsModel.length; j++) {
                 var graphTab = tabButton.createObject(root, { text: graphsModel[j].text,
                                                               enabled: graphsModel[j].enabled,
+                                                              visible: graphsModel[j].visible,
                                                               isTimeRange: false,
                                                               privateIdentifier: typeof graphsModel[j].id !== "undefined" ? graphsModel[j].id : null});
                 graphsTabBar.addItem(graphTab);

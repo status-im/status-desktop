@@ -23,10 +23,6 @@ RightTabBaseView {
 
     signal launchShareAddressModal()
 
-    headerButton.onClicked: {
-        root.launchShareAddressModal()
-    }
-
     function resetView() {
         stack.currentIndex = 0
         root.currentTabIndex = 0
@@ -37,6 +33,11 @@ RightTabBaseView {
     function resetStack() {
         stack.currentIndex = 0;
     }
+
+    headerButton.onClicked: {
+        root.launchShareAddressModal()
+    }
+    header.visible: stack.currentIndex === 0
 
     StackLayout {
         id: stack

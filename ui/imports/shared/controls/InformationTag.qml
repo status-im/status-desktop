@@ -11,11 +11,10 @@ import utils 1.0
 Control {
     id: root
 
-    property alias image: image
-    property alias iconAsset: iconAsset
     property alias tagPrimaryLabel: tagPrimaryLabel
     property alias tagSecondaryLabel: tagSecondaryLabel
     property alias middleLabel: middleLabel
+    property alias asset: smartIdenticon.asset
     property alias rightComponent: rightComponent.sourceComponent
     property bool loading: false
     property int secondarylabelMaxWidth: 100
@@ -45,18 +44,15 @@ Control {
     contentItem: RowLayout {
         spacing: root.spacing
         visible: !root.loading
-        // FIXME this could be StatusIcon but it can't load images from an arbitrary URL
-        Image {
-            id: image
+        StatusSmartIdenticon {
+            id: smartIdenticon
             Layout.maximumWidth: visible ? 16 : 0
             Layout.maximumHeight: visible ? 16 : 0
-            visible: !!source
-        }
-        StatusIcon {
-            id: iconAsset
-            Layout.maximumWidth: visible ? 16 : 0
-            Layout.maximumHeight: visible ? 16 : 0
-            visible: !!icon
+            asset.width: visible ? 16 : 0
+            asset.height: visible ? 16 : 0
+            asset.bgHeight: visible ? 16 : 0
+            asset.bgWidth: visible ? 16 : 0
+            visible: !!asset.name
         }
         StatusBaseText {
             id: tagPrimaryLabel

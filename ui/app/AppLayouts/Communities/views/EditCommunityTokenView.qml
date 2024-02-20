@@ -171,7 +171,7 @@ StatusScrollView {
             regexValidator.regularExpression: Constants.regularExpressions.ascii
             regexValidator.errorMessage: qsTr("Only A-Z, 0-9 and standard punctuation allowed")
 
-            onTextChanged: root.token.description
+            onTextChanged: root.token.description = text
         }
 
         CustomStatusInput {
