@@ -22,17 +22,12 @@ ColumnLayout {
 
         Item {
             anchors.fill: parent
-            anchors.margins: -1000
-            anchors.bottomMargin: -root.spacing
-
             clip: true
 
             StatusScrollView {
                 id: flick
 
                 anchors.fill: parent
-                anchors.margins: -parent.anchors.margins
-                anchors.bottomMargin: -parent.anchors.bottomMargin
                 contentWidth: availableWidth
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -75,6 +70,7 @@ ColumnLayout {
                             id: txtDesc
                             font.pixelSize: Style.current.primaryTextFontSize
                             horizontalAlignment: Text.AlignHCenter
+                            wrapMode: Text.WordWrap
                             text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
                             Layout.fillWidth: true
                         }
@@ -130,12 +126,12 @@ ColumnLayout {
         }
     }
 
-    Rectangle {
-        color: Theme.palette.statusModal.backgroundColor
+    Item {
         Layout.fillWidth: true
-        Layout.preferredHeight: 60
+        Layout.preferredHeight: (warningText.contentHeight + Style.current.padding)
 
         StyledText {
+            id: warningText
             anchors.fill: parent
             anchors.margins: Style.current.halfPadding
             horizontalAlignment: Text.AlignHCenter
