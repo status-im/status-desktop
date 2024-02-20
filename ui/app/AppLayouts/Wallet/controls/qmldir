@@ -10,3 +10,4 @@ ManageTokenMenuButton 1.0 ManageTokenMenuButton.qml
 ManageTokensCommunityTag 1.0 ManageTokensCommunityTag.qml
 ManageTokensDelegate 1.0 ManageTokensDelegate.qml
 ManageTokensGroupDelegate 1.0 ManageTokensGroupDelegate.qml
+InformationTileAssetDetails 1.0 InformationTileAssetDetails.qml

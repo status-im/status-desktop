@@ -107,7 +107,7 @@ ListModel {
             decimals: 0,
             type: 1,
             communityId: "ddls",
-            description: "",
+            description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout." ,
             websiteUrl: "",
             marketDetails: {
                 marketCap: ({amount: 0, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
@@ -159,7 +159,7 @@ ListModel {
             decimals: 0,
             type: 1,
             communityId: "ddls",
-            description: "",
+            description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. ",
             websiteUrl: "",
             marketDetails: {
                 marketCap: ({amount: 0, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),

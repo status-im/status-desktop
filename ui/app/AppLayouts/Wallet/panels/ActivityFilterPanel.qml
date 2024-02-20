@@ -62,7 +62,7 @@ Column {
                     return qsTr("to")
                 }
             }
-            iconAsset.icon: "history"
+            asset.name: "history"
             visible: activityFilterMenu.selectedTime !== Constants.TransactionTimePeriod.All
             onClosed: activityFilterStore.setSelectedTimestamp(Constants.TransactionTimePeriod.All)
         }
@@ -88,7 +88,7 @@ Column {
                                           console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                           return ""
                                       }
-                iconAsset.icon: switch(activityFilterStore.typeFilters[index]) {
+                asset.name: switch(activityFilterStore.typeFilters[index]) {
                                 case Constants.TransactionType.Send:
                                     return "send"
                                 case Constants.TransactionType.Receive:
@@ -126,7 +126,7 @@ Column {
                                           console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                           return ""
                                       }
-                iconAsset.icon: switch(activityFilterStore.statusFilters[index]) {
+                asset.name: switch(activityFilterStore.statusFilters[index]) {
                                 case Constants.TransactionStatus.Failed:
                                     return Style.svg("transaction/failed")
                                 case Constants.TransactionStatus.Pending:
@@ -139,7 +139,7 @@ Column {
                                     console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                     return ""
                                 }
-                iconAsset.color: "transparent"
+                asset.color: "transparent"
                 onClosed: activityFilterStore.toggleStatus(status, activityFilterMenu.allStatusChecked)
             }
         }
@@ -148,8 +148,8 @@ Column {
             model: activityFilterStore.tokensFilter
             delegate: ActivityFilterTagItem {
                 tagPrimaryLabel.text: modelData
-                iconAsset.icon: Constants.tokenIcon(modelData)
-                iconAsset.color: "transparent"
+                asset.name: Constants.tokenIcon(modelData)
+                asset.color: "transparent"
                 onClosed: activityFilterStore.toggleToken(modelData)
             }
         }
@@ -170,8 +170,8 @@ Column {
                         return "#" + data[2]
                     return ""
                 }
-                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(uid)
-                iconAsset.color: "transparent"
+                asset.name: activityFilterStore.collectiblesList.getImageUrl(uid)
+                asset.color: "transparent"
                 onClosed: activityFilterStore.toggleCollectibles(uid)
 
                 Connections {

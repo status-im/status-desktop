@@ -843,6 +843,20 @@ QtObject:
       if token.chainId == chainId and token.address == address:
         return token
 
+  proc getCommunityTokenDescription*(self: Service, chainId: int, address: string): string =
+    let communityTokens = self.getAllCommunityTokens()
+    for token in communityTokens:
+      if token.chainId == chainId and cmpIgnoreCase(token.address, address) == 0:
+        return token.description
+    return ""
+
+  proc getCommunityTokenDescription*(self: Service, addressPerChain: seq[AddressPerChain]): string =
+    for apC in addressPerChain:
+      let description = self.getCommunityTokenDescription(apC.chainId, apC.address)
+      if not description.isEmptyOrWhitespace:
+        return description
+    return ""
+
   proc getCommunityTokenBurnState*(self: Service, chainId: int, contractAddress: string): ContractTransactionStatus =
     let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
     for transaction in burnTransactions:

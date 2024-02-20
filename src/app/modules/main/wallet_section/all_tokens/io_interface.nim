@@ -10,6 +10,7 @@ type
   FlatTokenModelDataSource* = tuple[
     getFlatTokensList: proc(): var seq[TokenItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
+    getCommunityTokenDescription: proc(chainId: int, address: string): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
   ]
@@ -17,6 +18,7 @@ type
   TokenBySymbolModelDataSource* = tuple[
     getTokenBySymbolList: proc(): var seq[TokenBySymbolItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
+    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
   ]

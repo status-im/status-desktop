@@ -284,6 +284,10 @@ QtObject {
         }
         return ""
     }
+
+    function stripHttpsAndwwwFromUrl(text) {
+        return text.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?(\/)/gim, '')
+    }
 }
 
 

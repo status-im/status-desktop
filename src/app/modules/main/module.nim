@@ -209,7 +209,8 @@ proc newModule*[T](
     result, events, tokenService, collectibleService, currencyService,
     transactionService, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService,
-    keycardService, nodeService, networkConnectionService, devicesService
+    keycardService, nodeService, networkConnectionService, devicesService,
+    communityTokensService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,

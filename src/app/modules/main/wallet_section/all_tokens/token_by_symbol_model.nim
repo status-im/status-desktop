@@ -116,8 +116,11 @@ QtObject:
       of ModelRole.CommunityId:
         result = newQVariant(item.communityId)
       of ModelRole.Description:
-        result = if not item.communityId.isEmptyOrWhitespace or self.delegate.getTokensDetailsLoading() : newQVariant("")
-                 else: newQVariant(self.delegate.getTokenDetails(item.symbol).description)
+        result = if not item.communityId.isEmptyOrWhitespace:
+                  newQVariant(self.delegate.getCommunityTokenDescription(item.addressPerChainId))
+                else:
+                  if self.delegate.getTokensDetailsLoading() : newQVariant("")
+                  else: newQVariant(self.delegate.getTokenDetails(item.symbol).description)
       of ModelRole.WebsiteUrl:
         result = if not item.communityId.isEmptyOrWhitespace or self.delegate.getTokensDetailsLoading() : newQVariant("")
                  else: newQVariant(self.delegate.getTokenDetails(item.symbol).assetWebsiteUrl)

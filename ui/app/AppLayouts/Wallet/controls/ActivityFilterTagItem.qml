@@ -13,7 +13,7 @@ InformationTag {
     tagPrimaryLabel.color: Theme.palette.directColor1
     tagSecondaryLabel.color: Theme.palette.directColor1
     middleLabel.color: Theme.palette.baseColor1
-    iconAsset.color: Theme.palette.primaryColor1
+    asset.color: Theme.palette.primaryColor1
     secondarylabelMaxWidth: 1000
     height: 32
     customBackground: Component {

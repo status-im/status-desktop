@@ -244,7 +244,8 @@ StatusModal {
                         delegate: InformationTag {
                             tagPrimaryLabel.text: model.shortName
                             tagPrimaryLabel.color: model.chainColor
-                            image.source: Style.svg("tiny/" + model.iconUrl)
+                            asset.name: Style.svg("tiny/" + model.iconUrl)
+                            asset.isImage: true
                             visible: d.preferredChainIdsArray.includes(model.chainId.toString())
                         }
                     }

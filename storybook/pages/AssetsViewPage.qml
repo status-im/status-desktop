@@ -131,24 +131,26 @@ SplitView {
             onManageTokensRequested: logs.logEvent("onManageTokensRequested")
         }
 
-        AssetsDetailView {
-            id: detailsView
+        ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            currencyStore: d.currencyStore
-            allNetworksModel: NetworksModel.allNetworks
-            networkFilters: d.networksChainsCurrentlySelected
             Button {
-                anchors.top: parent.top
                 text: "go back"
                 onClicked: stack.currentIndex = 0
+            }
+            AssetsDetailView {
+                id: detailsView
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                currencyStore: d.currencyStore
+                allNetworksModel: NetworksModel.allNetworks
+                networkFilters: d.networksChainsCurrentlySelected
             }
         }
     }
 
     Pane {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
+        SplitView.preferredWidth: 250
 
         ColumnLayout {
             spacing: 12
