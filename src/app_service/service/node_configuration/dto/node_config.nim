@@ -107,6 +107,9 @@ type
     EnableFilterFullNode*: bool
     UseShardAsDefaultTopic*: bool
 
+  NimbusProxyConfig* = object
+    Enabled*: bool
+
   ShhextConfig* = object
     PFSEnabled*: bool
     BackupDisabledDataDir*: string
@@ -230,10 +233,14 @@ type
     RequireTopics*: RequireTopics
     MailServerRegistryAddress*: string
     PushNotificationServerConfig*: PushNotificationServerConfig # not used in the app yet
+    NimbusProxyConfig*: NimbusProxyConfig
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
   discard jsonObj.getProp("URL", result.URL)
+
+proc toNimbusProxyConfig*(jsonObj: JsonNode): NimbusProxyConfig =
+  discard jsonObj.getProp("Enabled", result.Enabled)
 
 proc toNetwork*(jsonObj: JsonNode): Network =
   discard jsonObj.getProp("chainId", result.chainId)
@@ -483,6 +490,10 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   discard jsonObj.getProp("EnableStatusService", result.EnableStatusService)
   discard jsonObj.getProp("EnableNTPSync", result.EnableNTPSync)
   discard jsonObj.getProp("MailServerRegistryAddress", result.MailServerRegistryAddress)
+
+  var nimbusProxyConfigObj: JsonNode
+  if(jsonObj.getProp("NimbusProxyConfig", nimbusProxyConfigObj)):
+    result.NimbusProxyConfig = toNimbusProxyConfig(nimbusProxyConfigObj)
 
   var upstreamConfigObj: JsonNode
   if(jsonObj.getProp("UpstreamConfig", upstreamConfigObj)):

@@ -116,6 +116,18 @@ proc toggleDebug*(self: Controller) =
 
   self.delegate.onDebugToggled()
 
+proc isNimbusProxyEnabled*(self: Controller): bool =
+  return self.nodeConfigurationService.isNimbusProxyEnabled()
+
+proc toggleNimbusProxy*(self: Controller) =
+  let enabled = self.nodeConfigurationService.isNimbusProxyEnabled()
+
+  if(not self.nodeConfigurationService.setNimbusProxyConfig(not enabled)):
+    error "an error occurred, we couldn't toggle nimbus proxy"
+    return
+
+  self.delegate.onNimbusProxyToggled()
+
 proc toggleCommunitiesPortalSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.CommunitiesPortal))
 

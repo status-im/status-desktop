@@ -105,6 +105,15 @@ method toggleDebug*(self: Module) =
 method onDebugToggled*(self: Module) =
   self.view.isDebugEnabledChanged()
 
+method isNimbusProxyEnabled*(self: Module): bool =
+  self.controller.isNimbusProxyEnabled()
+
+method toggleNimbusProxy*(self: Module) =
+  self.controller.toggleNimbusProxy()
+
+method onNimbusProxyToggled*(self: Module) =
+  self.view.isNimbusProxyEnabledChanged()
+
 method isRuntimeLogLevelSet*(self: Module): bool =
   return constants.runtimeLogLevelSet()
 

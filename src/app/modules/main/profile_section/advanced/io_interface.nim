@@ -30,6 +30,9 @@ method onAutoMessageToggled*(self: AccessInterface) {.base.} =
 method onDebugToggled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onNimbusProxyToggled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -67,6 +70,12 @@ method isRuntimeLogLevelSet*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleDebug*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isNimbusProxyEnabled*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleNimbusProxy*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleCommunitiesPortalSection*(self: AccessInterface) {.base.} =
