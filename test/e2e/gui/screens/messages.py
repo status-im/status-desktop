@@ -16,7 +16,7 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import messaging_names, communities_names
 from gui.screens.community import CommunityScreen
 from scripts.tools.image import Image
 
@@ -24,12 +24,12 @@ from scripts.tools.image import Image
 class LeftPanel(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_contactColumnLoader_Loader)
-        self._start_chat_button = Button(names.mainWindow_startChatButton_StatusIconTabButton)
-        self._search_text_edit = TextEdit(names.mainWindow_search_edit_TextEdit)
-        self._scroll = Scroll(names.scrollView_Flickable)
-        self._contacts_list = List(names.chatList_ListView)
-        self._contact_item = QObject(names.scrollView_StatusChatListItem)
+        super().__init__(messaging_names.mainWindow_contactColumnLoader_Loader)
+        self._start_chat_button = Button(messaging_names.mainWindow_startChatButton_StatusIconTabButton)
+        self._search_text_edit = TextEdit(messaging_names.mainWindow_search_edit_TextEdit)
+        self._scroll = Scroll(messaging_names.scrollView_Flickable)
+        self._contacts_list = List(messaging_names.chatList_ListView)
+        self._contact_item = QObject(messaging_names.scrollView_StatusChatListItem)
 
     @property
     @allure.step('Get contacts')
@@ -68,11 +68,11 @@ class LeftPanel(QObject):
 class ToolBar(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_statusToolBar_StatusToolBar)
-        self.pinned_message_tooltip = QObject(names.statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip)
-        self.confirm_button = Button(names.statusToolBar_Confirm_StatusButton)
-        self.status_button = Button(names.statusToolBar_Cancel_StatusButton)
-        self.contact_tag = QObject(names.statusToolBar_StatusTagItem)
+        super().__init__(messaging_names.mainWindow_statusToolBar_StatusToolBar)
+        self.pinned_message_tooltip = QObject(communities_names.statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip)
+        self.confirm_button = Button(messaging_names.statusToolBar_Confirm_StatusButton)
+        self.status_button = Button(messaging_names.statusToolBar_Cancel_StatusButton)
+        self.contact_tag = QObject(messaging_names.statusToolBar_StatusTagItem)
 
     @property
     @allure.step('Get visibility of pin message tooltip')
@@ -161,8 +161,8 @@ class Message:
 class ChatView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_ChatColumnView)
-        self._message_list_item = QObject(names.chatLogView_chatMessageViewDelegate_MessageView)
+        super().__init__(messaging_names.mainWindow_ChatColumnView)
+        self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
 
     @property
     @allure.step('Get messages')
@@ -203,10 +203,10 @@ class ChatView(QObject):
 class CreateChatView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_CreateChatView)
-        self._confirm_button = Button(names.createChatView_confirmBtn)
-        self._cancel_button = Button(names.mainWindow_Cancel_StatusButton)
-        self._create_chat_contacts_list = List(names.createChatView_contactsList)
+        super().__init__(messaging_names.mainWindow_CreateChatView)
+        self._confirm_button = Button(messaging_names.createChatView_confirmBtn)
+        self._cancel_button = Button(messaging_names.mainWindow_Cancel_StatusButton)
+        self._create_chat_contacts_list = List(messaging_names.createChatView_contactsList)
 
     @property
     @allure.step('Get contacts')
@@ -230,15 +230,15 @@ class CreateChatView(QObject):
 class ChatMessagesView(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_ChatMessagesView)
-        self._group_chat_message_item = TextLabel(names.chatLogView_Item)
-        self._group_name_label = TextLabel(names.statusChatInfoButton)
-        self._more_button = Button(names.moreOptionsButton_StatusFlatRoundButton)
-        self._edit_menu_item = QObject(names.edit_name_and_image_StatusMenuItem)
-        self._leave_group_item = QObject(names.leave_group_StatusMenuItem)
-        self._add_remove_item = QObject(names.add_remove_from_group_StatusMenuItem)
-        self._message_input_area = QObject(names.inputScrollView_messageInputField_TextArea)
-        self._message_field = TextEdit(names.inputScrollView_Message_PlaceholderText)
+        super().__init__(messaging_names.mainWindow_ChatMessagesView)
+        self._group_chat_message_item = TextLabel(messaging_names.chatLogView_Item)
+        self._group_name_label = TextLabel(messaging_names.statusChatInfoButton)
+        self._more_button = Button(messaging_names.moreOptionsButton_StatusFlatRoundButton)
+        self._edit_menu_item = QObject(messaging_names.edit_name_and_image_StatusMenuItem)
+        self._leave_group_item = QObject(messaging_names.leave_group_StatusMenuItem)
+        self._add_remove_item = QObject(messaging_names.add_remove_from_group_StatusMenuItem)
+        self._message_input_area = QObject(messaging_names.inputScrollView_messageInputField_TextArea)
+        self._message_field = TextEdit(messaging_names.inputScrollView_Message_PlaceholderText)
 
     @property
     @allure.step('Get group name')
@@ -305,8 +305,8 @@ class ChatMessagesView(QObject):
 
 class MessageQuickActions(QObject):
     def __init__(self):
-        super().__init__(names.chatMessageViewDelegate_StatusMessageQuickActions)
-        self._pin_button = Button(names.chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton)
+        super().__init__(messaging_names.chatMessageViewDelegate_StatusMessageQuickActions)
+        self._pin_button = Button(messaging_names.chatMessageViewDelegate_MessageView_toggleMessagePin_StatusFlatRoundButton)
 
     @allure.step('Toggle pin button')
     def toggle_pin(self):
@@ -316,8 +316,8 @@ class MessageQuickActions(QObject):
 class Members(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_userListPanel_StatusListView)
-        self._member_item = QObject(names.groupUserListPanel_StatusMemberListItem)
+        super().__init__(messaging_names.mainWindow_userListPanel_StatusListView)
+        self._member_item = QObject(messaging_names.groupUserListPanel_StatusMemberListItem)
 
     @property
     @allure.step('Get group members')
@@ -328,7 +328,7 @@ class Members(QObject):
 class MessagesScreen(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_chatView_ChatView)
+        super().__init__(messaging_names.mainWindow_chatView_ChatView)
         self.left_panel = LeftPanel()
         self.tool_bar = ToolBar()
         self.chat = ChatView()

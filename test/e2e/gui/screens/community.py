@@ -17,7 +17,7 @@ from gui.elements.button import Button
 from gui.elements.list import List
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
-from gui.objects_map import names
+from gui.objects_map import names, communities_names, messaging_names
 from gui.screens.community_settings import CommunitySettingsScreen
 from scripts.tools.image import Image
 
@@ -25,7 +25,7 @@ from scripts.tools.image import Image
 class CommunityScreen(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_communityLoader_Loader)
+        super().__init__(communities_names.mainWindow_communityLoader_Loader)
         self.left_panel = LeftPanel()
         self.tool_bar = ToolBar()
         self.chat = Chat()
@@ -90,15 +90,15 @@ class CommunityScreen(QObject):
 class ToolBar(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_statusToolBar_StatusToolBar)
-        self._more_options_button = Button(names.statusToolBar_chatToolbarMoreOptionsButton)
+        super().__init__(communities_names.mainWindow_statusToolBar_StatusToolBar)
+        self._more_options_button = Button(communities_names.statusToolBar_chatToolbarMoreOptionsButton)
         self._options_list = List(names.o_StatusListView)
-        self._edit_channel_context_item = QObject(names.edit_Channel_StatusMenuItem)
-        self._channel_icon = QObject(names.statusToolBar_statusSmartIdenticonLetter_StatusLetterIdenticon)
-        self._channel_name = TextLabel(names.statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
-        self._channel_description = TextLabel(names.statusToolBar_TruncatedTextWithTooltip)
-        self._delete_channel_context_item = QObject(names.delete_Channel_StatusMenuItem)
-        self._channel_header = QObject(names.statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton)
+        self._edit_channel_context_item = QObject(communities_names.edit_Channel_StatusMenuItem)
+        self._channel_icon = QObject(communities_names.statusToolBar_statusSmartIdenticonLetter_StatusLetterIdenticon)
+        self._channel_name = TextLabel(communities_names.statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
+        self._channel_description = TextLabel(communities_names.statusToolBar_TruncatedTextWithTooltip)
+        self._delete_channel_context_item = QObject(communities_names.delete_Channel_StatusMenuItem)
+        self._channel_header = QObject(communities_names.statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton)
 
     @property
     @allure.step('Get channel emoji')
@@ -185,27 +185,27 @@ class CategoryItem:
 class LeftPanel(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_communityColumnView_CommunityColumnView)
-        self._community_info_button = Button(names.mainWindow_communityHeaderButton_StatusChatInfoButton)
-        self._community_logo = QObject(names.mainWindow_identicon_StatusSmartIdenticon)
-        self._name_text_label = TextLabel(names.mainWindow_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
-        self._members_text_label = TextLabel(names.mainWindow_Members_TruncatedTextWithTooltip)
-        self._general_channel_item = QObject(names.scrollView_general_StatusChatListItem)
-        self._add_channels_button = Button(names.add_channels_StatusButton)
-        self._channel_list_item = QObject(names.channel_listItem)
-        self._channel_icon_template = QObject(names.channel_identicon_StatusSmartIdenticon)
-        self._channel_or_category_button = Button(names.mainWindow_createChannelOrCategoryBtn_StatusBaseText)
-        self._create_channel_menu_item = Button(names.create_channel_StatusMenuItem)
-        self._create_category_menu_item = Button(names.create_category_StatusMenuItem)
-        self._join_community_button = Button(names.mainWindow_Join_Community_StatusButton)
-        self._categories_items_list = List(names.scrollView_chatListItems_StatusListView)
-        self._category_list_item = QObject(names.categoryItem_StatusChatListCategoryItem)
-        self._create_category_button = Button(names.add_categories_StatusFlatButton)
-        self._delete_category_item = QObject(names.delete_Category_StatusMenuItem)
-        self._edit_category_item = QObject(names.edit_Category_StatusMenuItem)
-        self._add_channel_inside_category_item = QObject(names.scrollView_addButton_StatusChatListCategoryItemButton)
-        self._more_button = Button(names.scrollView_menuButton_StatusChatListCategoryItemButton)
-        self._arrow_button = Button(names.scrollView_toggleButton_StatusChatListCategoryItemButton)
+        super().__init__(communities_names.mainWindow_communityColumnView_CommunityColumnView)
+        self._community_info_button = Button(communities_names.mainWindow_communityHeaderButton_StatusChatInfoButton)
+        self._community_logo = QObject(communities_names.mainWindow_identicon_StatusSmartIdenticon)
+        self._name_text_label = TextLabel(communities_names.mainWindow_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
+        self._members_text_label = TextLabel(communities_names.mainWindow_Members_TruncatedTextWithTooltip)
+        self._general_channel_item = QObject(communities_names.scrollView_general_StatusChatListItem)
+        self._add_channels_button = Button(communities_names.add_channels_StatusButton)
+        self._channel_list_item = QObject(communities_names.channel_listItem)
+        self._channel_icon_template = QObject(communities_names.channel_identicon_StatusSmartIdenticon)
+        self._channel_or_category_button = Button(communities_names.mainWindow_createChannelOrCategoryBtn_StatusBaseText)
+        self._create_channel_menu_item = Button(communities_names.create_channel_StatusMenuItem)
+        self._create_category_menu_item = Button(communities_names.create_category_StatusMenuItem)
+        self._join_community_button = Button(communities_names.mainWindow_Join_Community_StatusButton)
+        self._categories_items_list = List(communities_names.scrollView_chatListItems_StatusListView)
+        self._category_list_item = QObject(communities_names.categoryItem_StatusChatListCategoryItem)
+        self._create_category_button = Button(communities_names.add_categories_StatusFlatButton)
+        self._delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
+        self._edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
+        self._add_channel_inside_category_item = QObject(communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
+        self._more_button = Button(communities_names.scrollView_menuButton_StatusChatListCategoryItemButton)
+        self._arrow_button = Button(communities_names.scrollView_toggleButton_StatusChatListCategoryItemButton)
 
     @property
     @allure.step('Get community logo')
@@ -265,10 +265,17 @@ class LeftPanel(QObject):
         return CommunitySettingsScreen().wait_until_appears()
 
     @allure.step('Open create channel popup')
-    def open_create_channel_popup(self) -> NewChannelPopup:
-        self._channel_or_category_button.click()
-        self._create_channel_menu_item.click()
-        return NewChannelPopup().wait_until_appears()
+    def open_create_channel_popup(self, attempt: int =2) -> NewChannelPopup:
+        try:
+            self._channel_or_category_button.click()
+            self._create_channel_menu_item.click()
+            return NewChannelPopup().wait_until_appears()
+        except LookupError as er:
+            if attempt:
+                self.open_create_channel_popup(attempt - 1)
+            else:
+                raise er
+
 
     @allure.step('Get visibility state of create channel or category button')
     def is_create_channel_or_category_button_visible(self) -> bool:
@@ -382,11 +389,11 @@ class LeftPanel(QObject):
 class Chat(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_ChatColumnView)
-        self._channel_icon = QObject(names.chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon)
-        self._channel_name_label = TextLabel(names.chatMessageViewDelegate_channelIdentifierNameText_StyledText)
-        self._channel_welcome_label = TextLabel(names.chatMessageViewDelegate_Welcome)
-        self._channel_identifier_view = QObject(names.chatMessageViewDelegate_ChannelIdentifierView)
+        super().__init__(communities_names.mainWindow_ChatColumnView)
+        self._channel_icon = QObject(communities_names.chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon)
+        self._channel_name_label = TextLabel(communities_names.chatMessageViewDelegate_channelIdentifierNameText_StyledText)
+        self._channel_welcome_label = TextLabel(communities_names.chatMessageViewDelegate_Welcome)
+        self._channel_identifier_view = QObject(messaging_names.chatMessageViewDelegate_ChannelIdentifierView)
 
     @property
     @allure.step('Get channel emoji')
@@ -412,8 +419,8 @@ class Chat(QObject):
 class Members(QObject):
 
     def __init__(self):
-        super().__init__(names.mainWindow_UserListPanel)
-        self._member_item = QObject(names.userListPanel_StatusMemberListItem)
+        super().__init__(communities_names.mainWindow_UserListPanel)
+        self._member_item = QObject(communities_names.userListPanel_StatusMemberListItem)
 
     @property
     @allure.step('Get all members')
