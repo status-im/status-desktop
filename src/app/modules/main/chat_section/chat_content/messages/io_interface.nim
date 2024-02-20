@@ -123,7 +123,10 @@ method getNumberOfPinnedMessages*(self: AccessInterface): int {.base.} =
 method deleteMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onMessageDeleted*(self: AccessInterface, messageId, deletedBy: string) {.base.} =
+method onMessageRemoved*(self: AccessInterface, messageId, removedBy: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMessagesDeleted*(self: AccessInterface, messageIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method editMessage*(self: AccessInterface, messageId: string, contentType: int, updatedMsg: string) {.base.} =

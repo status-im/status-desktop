@@ -140,6 +140,10 @@ Popup {
                     return ownerTokenReceivedNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.ShareAccounts:
                     return shareAccountsNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityBanned:
+                    return communityBannedNotificationComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.CommunityUnbanned:
+                    return communityUnbannedNotificationComponent
                 default:
                     return null
                 }
@@ -228,6 +232,32 @@ Popup {
         id: communityKickedNotificationComponent
 
         ActivityNotificationCommunityKicked {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
+        id: communityBannedNotificationComponent
+
+        ActivityNotificationCommunityBanUnban {
+            banned: true
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
+        id: communityUnbannedNotificationComponent
+
+        ActivityNotificationCommunityBanUnban {
+            banned: false
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             store: root.store

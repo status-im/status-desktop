@@ -54,7 +54,8 @@ const SIGNAL_MESSAGES_MARKED_AS_READ* = "messagesMarkedAsRead"
 const SIGNAL_MESSAGE_REACTION_ADDED* = "messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
 const SIGNAL_MESSAGE_REACTION_FROM_OTHERS* = "messageReactionFromOthers"
-const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
+const SIGNAL_MESSAGE_REMOVED* = "messageRemoved"
+const SIGNAL_MESSAGES_DELETED* = "messagesDeleted"
 const SIGNAL_MESSAGE_DELIVERED* = "messageDelivered"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
@@ -111,10 +112,13 @@ type
     reactionId*: string
     reactionFrom*: string
 
-  MessageDeletedArgs* =  ref object of Args
+  MessageRemovedArgs* =  ref object of Args
     chatId*: string
     messageId*: string
     deletedBy*: string
+
+  MessagesDeletedArgs* =  ref object of Args
+    deletedMessages*: Table[string, seq[string]]
 
   MessageDeliveredArgs* = ref object of Args
     chatId*: string
@@ -348,10 +352,14 @@ QtObject:
           self.numOfPinnedMessagesPerChat[chatId] = self.getNumOfPinnedMessages(chatId) - 1
         self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
-  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: seq[RemovedMessageDto]) =
-    for dm in deletedMessages:
-      let data = MessageDeletedArgs(chatId: dm.chatId, messageId: dm.messageId, deletedBy: dm.deletedBy)
-      self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+  proc handleRemovedMessagesUpdate(self: Service, removedMessages: seq[RemovedMessageDto]) =
+    for rm in removedMessages:
+      let data = MessageRemovedArgs(chatId: rm.chatId, messageId: rm.messageId, deletedBy: rm.deletedBy)
+      self.events.emit(SIGNAL_MESSAGE_REMOVED, data)
+
+  proc handleDeletedMessagesUpdate(self: Service, deletedMessages: Table[string, seq[string]]) =
+      let data = MessagesDeletedArgs(deletedMessages: deletedMessages)
+      self.events.emit(SIGNAL_MESSAGES_DELETED, data)
 
   proc handleEmojiReactionsUpdate(self: Service, emojiReactions: seq[ReactionDto]) =
     for r in emojiReactions:
@@ -416,6 +424,9 @@ QtObject:
       # Handling pinned messages updates
       if (receivedData.pinnedMessages.len > 0):
         self.handlePinnedMessagesUpdate(receivedData.pinnedMessages)
+      # Handling removed messages updates
+      if (receivedData.removedMessages.len > 0):
+        self.handleRemovedMessagesUpdate(receivedData.removedMessages)
       # Handling deleted messages updates
       if (receivedData.deletedMessages.len > 0):
         self.handleDeletedMessagesUpdate(receivedData.deletedMessages)
@@ -430,12 +441,12 @@ QtObject:
     self.events.on(SignalType.DiscordCommunityImportFinished.event) do(e: Args):
       var receivedData = DiscordCommunityImportFinishedSignal(e)
       self.handleMessagesReload(receivedData.communityId)
-    
+
     self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
       var receivedData = DiscordChannelImportFinishedSignal(e)
       self.resetMessageCursor(receivedData.channelId)
       self.asyncLoadMoreMessagesForChat(receivedData.channelId)
-    
+
     self.events.on(SIGNAL_CHAT_LEFT) do(e: Args):
       var chatArg = ChatArgs(e)
       self.resetMessageCursor(chatArg.chatId)
@@ -637,7 +648,7 @@ QtObject:
         messageId: responseObj["messageId"].getStr,
         error: responseObj["error"].getStr,
       )
-      
+
       if signalData.error == "":
         signalData.message = responseObj["message"].toMessageDto()
 
@@ -942,7 +953,7 @@ QtObject:
     if responseObj.kind != JObject:
       warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
       return
-  
+
     let errMessage = responseObj["error"].getStr
     if errMessage != "":
       error "asyncUnfurlUrls failed", errMessage
@@ -1057,28 +1068,28 @@ proc deleteMessage*(self: Service, messageId: string) =
   try:
     let response = status_go.deleteMessageAndSend(messageId)
 
-    var deletesMessagesObj: JsonNode
-    if(not response.result.getProp("removedMessages", deletesMessagesObj) or deletesMessagesObj.kind != JArray):
-      error "error: ", procName="deleteMessage", errDesription = "no messages deleted or it's not an array"
+    var removesMessagesObj: JsonNode
+    if(not response.result.getProp("removedMessages", removesMessagesObj) or removesMessagesObj.kind != JArray):
+      error "error: ", procName="removeMessage", errDesription = "no messages remove or it's not an array"
       return
 
-    let deletedMessagesArr = deletesMessagesObj.getElems()
-    if(deletedMessagesArr.len == 0): # an array is returned
-      error "error: ", procName="deleteMessage", errDesription = "array has no message to delete"
+    let removedMessagesArr = removesMessagesObj.getElems()
+    if(removedMessagesArr.len == 0): # an array is returned
+      error "error: ", procName="removeMessage", errDesription = "array has no message to remove"
       return
 
-    let deletedMessageObj = deletedMessagesArr[0]
+    let removedMessageObj = removedMessagesArr[0]
     var chat_Id, message_Id: string
-    if not deletedMessageObj.getProp("chatId", chat_Id) or not deletedMessageObj.getProp("messageId", message_Id):
-      error "error: ", procName="deleteMessage", errDesription = "there is no set chat id or message id in response"
+    if not removedMessageObj.getProp("chatId", chat_Id) or not removedMessageObj.getProp("messageId", message_Id):
+      error "error: ", procName="removeMessage", errDesription = "there is no set chat id or message id in response"
       return
 
-    let data = MessageDeletedArgs(
+    let data = MessageRemovedArgs(
       chatId: chat_Id,
       messageId: message_Id,
       deletedBy: singletonInstance.userProfile.getPubKey(),
     )
-    self.events.emit(SIGNAL_MESSAGE_DELETION, data)
+    self.events.emit(SIGNAL_MESSAGE_REMOVED, data)
 
   except Exception as e:
     error "error: ", procName="deleteMessage", errName = e.name, errDesription = e.msg

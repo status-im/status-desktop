@@ -38,7 +38,9 @@ QtObject {
         OwnershipDeclined = 17,
         ShareAccounts = 18,
         CommunityTokenReceived = 19,
-        FirstCommunityTokenReceived = 20
+        FirstCommunityTokenReceived = 20,
+        CommunityBanned = 21,
+        CommunityUnbanned = 22
     }
 
     enum ActivityCenterReadType {

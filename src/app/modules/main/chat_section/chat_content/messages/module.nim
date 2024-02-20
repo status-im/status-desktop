@@ -378,7 +378,7 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  self.view.setLoading(not self.initialMessagesLoaded or 
+  self.view.setLoading(not self.initialMessagesLoaded or
                        not self.firstUnseenMessageState.initialized or
                        self.firstUnseenMessageState.fetching or
                        self.view.getMessageSearchOngoing())
@@ -564,16 +564,20 @@ method updateContactDetails*(self: Module, contactId: string) =
 method deleteMessage*(self: Module, messageId: string) =
   self.controller.deleteMessage(messageId)
 
-method onMessageDeleted*(self: Module, messageId, deletedBy: string) =
-  var deletedByValue = deletedBy
-  if deletedBy == "":
-    # deletedBy is empty if it was deleted by the sender
+method onMessageRemoved*(self: Module, messageId, removedBy: string) =
+  var removedByValue = removedBy
+  if removedBy == "":
+    # removedBy is empty if it was removed by the sender
     let messageItem = self.view.model().getItemWithMessageId(messageId)
     if messageItem.id == "":
       return
-    deletedByValue = messageItem.senderId
-  var deletedByContactDetails = self.controller.getContactDetails(deletedByValue)
-  self.view.model().messageDeleted(messageId, deletedByValue, deletedByContactDetails)
+    removedByValue = messageItem.senderId
+  var removedByContactDetails = self.controller.getContactDetails(removedByValue)
+  self.view.model().messageRemoved(messageId, removedByValue, removedByContactDetails)
+
+method onMessagesDeleted*(self: Module, messageIds: seq[string]) =
+  for messageId in messageIds:
+    self.view.model().removeItem(messageId)
 
 method editMessage*(self: Module, messageId: string, contentType: int, updatedMsg: string) =
   self.controller.editMessage(messageId, contentType, updatedMsg)
@@ -730,7 +734,7 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
       for j in 0 ..< item.albumMessageIds.len:
         if item.albumMessageIds[j] == message.id:
           return true
-        
+
         var albumImages = item.albumMessageImages
         var albumMessagesIds = item.albumMessageIds
         albumMessagesIds.add(message.id)
@@ -770,21 +774,21 @@ proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver:
 
     if not requestFromMailserver:
       continue
-    
+
     debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver", contactId
     item.linkPreviewModel.onContactDataRequested(contactId)
     self.controller.requestContactInfo(contactId)
-  
+
 proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool) =
   for communityId, url in item.linkPreviewModel.getCommunityLinks().pairs:
     let community = self.controller.getCommunityById(communityId)
-    
+
     if community.id != "":
       item.linkPreviewModel.setCommunityInfo(community)
-    
+
     if not requestFromMailserver:
       continue
-    
+
     debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
     let urlData = self.controller.parseSharedUrl(url)
     item.linkPreviewModel.onCommunityInfoRequested(communityId)

@@ -2059,13 +2059,14 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc asyncBanUserFromCommunity*(self: Service, communityId, pubKey: string) =
+  proc asyncBanUserFromCommunity*(self: Service, communityId, pubKey: string, deleteAllMessages: bool) =
     let arg = AsyncCommunityMemberActionTaskArg(
       tptr: cast[ByteAddress](asyncBanUserFromCommunityTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCommunityMemberActionCompleted",
       communityId: communityId,
       pubKey: pubKey,
+      deleteAllMessages: deleteAllMessages
     )
     self.threadpool.start(arg)
 

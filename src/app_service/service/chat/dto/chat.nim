@@ -240,9 +240,9 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   if(jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
       roles.add(roleObj.getInt)
-  
+
   result.role = MemberRole.None
-  if roles.contains(MemberRole.Owner.int): 
+  if roles.contains(MemberRole.Owner.int):
     result.role = MemberRole.Owner
   elif roles.contains(MemberRole.Admin.int):
     result.role = MemberRole.Admin

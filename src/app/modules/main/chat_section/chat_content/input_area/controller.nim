@@ -131,7 +131,7 @@ proc getChatId*(self: Controller): string =
 
 proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
-  
+
 proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
   self.linkPreviewCurrentMessageSetting = if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
   self.delegate.setAskToEnableLinkPreview(false)
@@ -142,18 +142,18 @@ proc resetLinkPreviews(self: Controller) =
   self.linkPreviewCurrentMessageSetting = self.linkPreviewPersistentSetting
   self.delegate.setAskToEnableLinkPreview(false)
 
-proc sendImages*(self: Controller, 
-                 imagePathsAndDataJson: string, 
-                 msg: string, 
-                 replyTo: string, 
+proc sendImages*(self: Controller,
+                 imagePathsAndDataJson: string,
+                 msg: string,
+                 replyTo: string,
                  preferredUsername: string = "",
                  linkPreviews: seq[LinkPreview]): string =
   self.resetLinkPreviews()
   self.chatService.sendImages(
-    self.chatId, 
-    imagePathsAndDataJson, 
-    msg, 
-    replyTo, 
+    self.chatId,
+    imagePathsAndDataJson,
+    msg,
+    replyTo,
     preferredUsername,
     linkPreviews
   )
@@ -165,10 +165,10 @@ proc sendChatMessage*(self: Controller,
                       preferredUsername: string = "",
                       linkPreviews: seq[LinkPreview]) =
   self.resetLinkPreviews()
-  self.chatService.sendChatMessage(self.chatId, 
-    msg, 
-    replyTo, 
-    contentType, 
+  self.chatService.sendChatMessage(self.chatId,
+    msg,
+    replyTo,
+    contentType,
     preferredUsername,
     linkPreviews
   )
@@ -288,7 +288,7 @@ proc asyncUnfurlUrls(self: Controller, urls: seq[string]) =
 proc asyncUnfurlUnknownUrls(self: Controller, urls: seq[string]) =
   let newUrls = self.linkPreviewCache.unknownUrls(urls)
   self.asyncUnfurlUrls(newUrls)
-    
+
 proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
   return self.linkPreviewCache.linkPreviews(urls)
 

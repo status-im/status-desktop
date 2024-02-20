@@ -600,8 +600,8 @@ proc leaveCommunity*(self: Controller) =
 proc removeUserFromCommunity*(self: Controller, pubKey: string) =
   self.communityService.asyncRemoveUserFromCommunity(self.sectionId, pubKey)
 
-proc banUserFromCommunity*(self: Controller, pubKey: string) =
-  self.communityService.asyncBanUserFromCommunity(self.sectionId, pubKey)
+proc banUserFromCommunity*(self: Controller, pubKey: string, deleteAllMessages: bool) =
+  self.communityService.asyncBanUserFromCommunity(self.sectionId, pubKey, deleteAllMessages)
 
 proc unbanUserFromCommunity*(self: Controller, pubKey: string) =
   self.communityService.asyncUnbanUserFromCommunity(self.sectionId, pubKey)
