@@ -9,6 +9,7 @@ type
     collectionId: string
     collectionName: string
     isCollection: bool
+    communityId: string
 
 proc initItem*(
   id: string,
@@ -17,7 +18,8 @@ proc initItem*(
   iconUrl: string,
   collectionId: string,
   collectionName: string,
-  isCollection: bool
+  isCollection: bool,
+  communityId: string,
 ): Item =
   result.id = id
   result.chainId = chainId
@@ -26,6 +28,7 @@ proc initItem*(
   result.collectionId = collectionId
   result.collectionName = collectionName
   result.isCollection = isCollection
+  result.communityId = communityId
 
 proc `$`*(self: Item): string =
   result = fmt"""CollectiblesNestedEntry(
@@ -36,6 +39,7 @@ proc `$`*(self: Item): string =
     collectionId: {self.collectionId},
     collectionName: {self.collectionName},
     isCollection: {self.isCollection},
+    communityId: {self.communityId},
     ]"""
 
 proc getId*(self: Item): string =
@@ -58,3 +62,6 @@ proc getCollectionName*(self: Item): string =
 
 proc getIsCollection*(self: Item): bool =
   return self.isCollection
+
+proc getCommunityId*(self: Item): string =
+  return self.communityId

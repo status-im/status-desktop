@@ -9,7 +9,8 @@ proc collectibleToCollectibleNestedItem*(flatItem: flat_item.CollectiblesEntry):
     flatItem.getImageURL(),
     flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
-    false
+    false,
+    flatItem.getCommunityID()
   )
 
 proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
@@ -20,5 +21,6 @@ proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): 
     flatItem.getCollectionImageURL(),
     flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
-    true
+    true,
+    flatItem.getCommunityID()
   )

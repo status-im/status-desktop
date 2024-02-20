@@ -41,12 +41,21 @@ StatusListItem {
 
     onClicked: d.selectItem()
 
+    property int numItems
+
     components: [
         StatusRoundedImage {
             width: 20
             height: 20
             image.source: Style.svg("tiny/%1".arg(networkIconUrl))
             visible: !isCollection && root.sensor.containsMouse
+        },
+        StatusBaseText {
+            id: label
+            text: root.numItems
+            font.pixelSize: 13
+            color: Theme.palette.baseColor1
+            visible: isCollection
         },
         StatusIcon {
             icon: "tiny/chevron-right"

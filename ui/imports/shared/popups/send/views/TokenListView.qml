@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQml 2.15
+import QtQuick.Layouts 1.15
 
 import SortFilterProxyModel 0.2
 
@@ -13,6 +14,7 @@ import utils 1.0
 
 import shared.controls 1.0
 import shared.popups 1.0
+import shared.popups.send 1.0
 import "../controls"
 
 Item {
@@ -77,6 +79,7 @@ Item {
         }
 
         readonly property bool isBrowsingTypeERC20: root.browsingHoldingType === Constants.TokenType.ERC20
+        readonly property bool isBrowsingCollection: !isBrowsingTypeERC20 && !!root.collectibles && root.collectibles.currentCollectionUid !== ""
     }
 
     StatusBaseText {
@@ -135,12 +138,21 @@ Item {
                 header: d.isBrowsingTypeERC20 ? tokenHeader : collectibleHeader
                 model: d.isBrowsingTypeERC20 ? root.assets : collectiblesModel
                 delegate: d.isBrowsingTypeERC20 ? tokenDelegate : collectiblesDelegate
+
+                property bool hasCommunityTokens: false
+                function updateHasCommunityTokens() {
+                    hasCommunityTokens = Helpers.modelHasCommunityTokens(model, d.isBrowsingTypeERC20)
+                }
+
+                onModelChanged: updateHasCommunityTokens()
                 section {
                     property: "isCommunityAsset"
-                    delegate: Loader {
-                        width: ListView.view.width
-                        required property string section
-                        sourceComponent: d.isBrowsingTypeERC20 && section === "true" ? sectionDelegate : null
+                    delegate: AssetsSectionDelegate {
+                        required property bool section
+                        width: parent.width
+                        height: !!text ? 52 : 0 // if we bind to some property instead of hardcoded value it wont work nice when switching tabs or going inside collection and back
+                        text: Helpers.assetsSectionTitle(section, tokenList.hasCommunityTokens, d.isBrowsingCollection, d.isBrowsingTypeERC20)
+                        onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
                     }
                 }
             }
@@ -149,6 +161,13 @@ Item {
 
     property var collectiblesModel: SortFilterProxyModel {
         sourceModel: d.collectiblesNetworksJointModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "isCommunityAsset"
+                expression: !!model.communityId
+                expectedRoles: ["communityId"]
+            }
+        ]
         filters: [
             ExpressionFilter {
                 expression: {
@@ -156,10 +175,16 @@ Item {
                 }
             }
         ]
-        sorters: RoleSorter {
-            roleName: "isCollection"
-            sortOrder: Qt.DescendingOrder
-        }
+        sorters: [
+            RoleSorter {
+                roleName: "isCommunityAsset"
+                sortOrder: Qt.DescendingOrder
+            },
+            RoleSorter {
+                roleName: "isCollection"
+                sortOrder: Qt.DescendingOrder
+            }
+        ]
     }
 
     Component {
@@ -168,7 +193,7 @@ Item {
             width: ListView.view.width
             selectedSenderAccount: root.selectedSenderAccount
             balancesModel: LeftJoinModel {
-                leftModel: !!model & !!model.balances ? model.balances : nil
+                leftModel: !!model & !!model.balances ? model.balances : null
                 rightModel: root.networksModel
                 joinRole: "chainId"
             }
@@ -186,6 +211,7 @@ Item {
         id: tokenHeader
         SearchBoxWithRightIcon {
             showTopBorder: !root.onlyAssets
+            showBottomBorder: false
             width: ListView.view.width
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateAssetSearchText, text)
@@ -195,11 +221,17 @@ Item {
         id: collectiblesDelegate
         CollectibleNestedDelegate {
             width: ListView.view.width
+            numItems: isCollection ? (!!communityId ?
+                root.collectibles.getNumberOfCollectiblesInCommunity(communityId) :
+                root.collectibles.getNumberOfCollectiblesInCollection(collectionUid)) : 0
             onItemHovered: root.tokenHovered(selectedItem.uid, Constants.TokenType.ERC721, hovered)
             onItemSelected: {
                 if (isCollection) {
                     d.currentBrowsingCollectionName = collectionName
-                    root.collectibles.currentCollectionUid = collectionUid
+                    if (!!communityId)
+                        root.collectibles.currentCollectionUid = communityId
+                    else
+                        root.collectibles.currentCollectionUid = collectionUid
                 } else {
                     root.tokenSelected(selectedItem.uid, Constants.TokenType.ERC721)
                 }
@@ -213,25 +245,23 @@ Item {
             spacing: 0
             CollectibleBackButtonWithInfo {
                 Layout.fillWidth: true
-                visible: !!root.collectibles && root.collectibles.currentCollectionUid !== ""
+                visible: d.isBrowsingCollection
                 count: root.collectibles.count
                 name: d.currentBrowsingCollectionName
-                onBackClicked: root.collectibles.currentCollectionUid = ""
+                onBackClicked: {
+                    searchBox.reset()
+                    root.collectibles.currentCollectionUid = ""
+                }
             }
             SearchBoxWithRightIcon {
+                id: searchBox
+
                 Layout.fillWidth: true
                 showTopBorder: true
+                showBottomBorder: false
                 placeholderText: qsTr("Search collectibles")
                 onTextChanged: Qt.callLater(d.updateCollectibleSearchText, text)
             }
-        }
-    }
-
-    Component {
-        id: sectionDelegate
-        AssetsSectionDelegate {
-            width: parent.width
-            onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
         }
     }
 
