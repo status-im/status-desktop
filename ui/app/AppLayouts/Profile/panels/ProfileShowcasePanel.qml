@@ -28,6 +28,8 @@ DoubleFlickableWithFolding {
     property Component showcaseDraggableDelegateComponent
     property Component hiddenDraggableDelegateComponent
 
+    property Component additionalFooterComponent
+
     property string emptyInShowcasePlaceholderText
     property string emptyHiddenPlaceholderText
 
@@ -179,6 +181,7 @@ DoubleFlickableWithFolding {
         placeholderText: root.emptyHiddenPlaceholderText
         placeholderHeight: d.shapeRectangleHeight
         empty: root.showcaseModel.hiddenCount === 0 && !root.flickable2Folded // TO BE REMOVE: #13498
+        additionalFooterComponent: root.additionalFooterComponent
 
         header: FoldableHeader {
             width: ListView.view.width
