@@ -47,17 +47,15 @@ ProfileShowcasePanel {
             root.showcaseEntryChanged()
         }
     }
+    additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-// TODO: Issue #13590
-//    additionalComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
+    Component {
+        id: addMoreAccountsComponent
 
-//    Component {
-//        id: addMoreAccountsComponent
-
-//        AddMoreAccountsLink {
-//             visible: root.addAccountsButtonVisible
-//             text: qsTr("Don’t see some of your collectibles?")
-//             onClicked: root.navigateToAccountsTab()
-//        }
-//    }
+        AddMoreAccountsLink {
+             visible: root.addAccountsButtonVisible
+             text: qsTr("Don’t see some of your collectibles?")
+             onClicked: root.navigateToAccountsTab()
+        }
+    }
 }
