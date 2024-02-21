@@ -15,7 +15,7 @@ from gui.elements.object import QObject
 from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
-from gui.objects_map import communities_names
+from gui.objects_map import communities_names, names
 from scripts.tools.image import Image
 
 
@@ -120,7 +120,7 @@ class EditCommunityView(QObject):
         self._pin_messages_checkbox = CheckBox(communities_names.communityEditPanelScrollView_pinMessagesToggle_StatusCheckBox)
         self._intro_text_edit = TextEdit(communities_names.communityEditPanelScrollView_editCommunityIntroInput_TextEdit)
         self._outro_text_edit = TextEdit(communities_names.communityEditPanelScrollView_editCommunityOutroInput_TextEdit)
-        self._save_changes_button = Button(communities_names.mainWindow_Save_changes_StatusButton)
+        self._save_changes_button = Button(names.mainWindow_Save_changes_StatusButton)
         self._cropped_image_edit_logo_item = QObject(communities_names.croppedImageEditLogo)
         self._cropped_image_edit_banner_item = QObject(communities_names.croppedImageEditBanner)
 
