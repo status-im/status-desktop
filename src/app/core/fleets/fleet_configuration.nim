@@ -1,4 +1,4 @@
-import json, typetraits, tables, sequtils
+import json, typetraits, tables, sequtils, strutils
 
 type
   Fleet* {.pure.} = enum
@@ -76,3 +76,9 @@ proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, stri
     result = initTable[string,string]()
     return
   result = self.fleet[$fleet][fleetKey]
+
+proc fleetFromString*(fleet: string): Fleet {.inline.} =
+  try:
+    return parseEnum[Fleet](fleet)
+  except:
+    return Fleet.Undefined
