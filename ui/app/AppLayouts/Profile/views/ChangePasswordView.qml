@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
+import QtQml.Models 2.14
 
 import shared.panels 1.0
 import shared.controls 1.0
@@ -12,6 +13,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Profile.popups 1.0
 
@@ -19,20 +21,81 @@ SettingsContentBase {
     id: root
 
     property var privacyStore
+
+    readonly property bool biometricsEnabled: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+
+    readonly property Connections privacyStoreConnections: Connections {
+        target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
+
+        function onStoreToKeychainError(errorDescription: string) {
+            biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
+        }
+
+        function onStoreToKeychainSuccess() {
+            biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
+        }
+    }
+
     property var passwordStrengthScoreFunction: function () {}
 
-    //TODO https://github.com/status-im/status-desktop/issues/13302
-//    titleRowComponentLoader.sourceComponent: Item {
-//        implicitWidth: 226
-//        implicitHeight: 38
-//        StatusSwitch {
-//            LayoutMirroring.enabled: true
-//            text: qsTr("Enable biometrics")
-//            onToggled: {
-//                //
-//            }
-//        }
-//    }
+    titleRowComponentLoader.sourceComponent: Item {
+        implicitWidth: 226
+        implicitHeight: 38
+        visible: (Qt.platform.os === Constants.mac)
+        StatusSwitch {
+            id: biometricsSwitch
+            LayoutMirroring.enabled: true
+            LayoutMirroring.childrenInherit: true
+            text: qsTr("Enable biometrics")
+            checked: root.biometricsEnabled
+            onToggled: {
+                enableBiometricsPopup.open();
+            }
+            StatusToolTip {
+                x: 15
+                visible: (!root.checked && biometricsSwitch.hovered)
+                text: qsTr("Biometric login and transaction authentication")
+            }
+        }
+        StatusDialog {
+            id: enableBiometricsPopup
+            width: 480
+            title: biometricsSwitch.checked ? qsTr("Enable biometrics") : qsTr("Disable biometrics")
+
+                StatusBaseText {
+                    anchors.fill: parent
+                    anchors.margins: Style.current.padding
+                    verticalAlignment: Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    text: biometricsSwitch.checked ? qsTr("Do you want to enable biometrics for login and transaction authentication?") :
+                                                     qsTr("Are you sure you want to disable biometrics for login and transaction authentication?")
+                }
+
+            footer: StatusDialogFooter {
+                rightButtons: ObjectModel {
+                    StatusFlatButton {
+                        text: qsTr("Cancel")
+                        onClicked: {
+                            enableBiometricsPopup.close();
+                        }
+                    }
+                    StatusButton {
+                        text: biometricsSwitch.checked ? qsTr("Yes, enable biometrics") : qsTr("Yes, disable biometrics")
+                        onClicked: {
+                            if (biometricsSwitch.checked && !biometricsSwitch.biometricsEnabled) {
+                                root.privacyStore.tryStoreToKeyChain();
+                            } else if (!biometricsSwitch.checked) {
+                                root.privacyStore.tryRemoveFromKeyChain();
+                            }
+                        }
+                    }
+                }
+            }
+            onClosed: {
+                biometricsSwitch.checked = Qt.binding(() => { return root.biometricsEnabled });
+            }
+        }
+    }
 
 
     ColumnLayout {
