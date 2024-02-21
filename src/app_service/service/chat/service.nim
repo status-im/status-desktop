@@ -240,6 +240,9 @@ QtObject:
     try:
       let rpcResponseObj = response.parseJson
 
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
       if(rpcResponseObj["channelGroups"].kind == JNull):
         raise newException(RpcException, "No channel groups returned")
 
