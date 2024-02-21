@@ -46,8 +46,8 @@ ActivityNotificationBase {
     property int tokenType: root.tokenData.tokenType
 
     // Wallet related:
-    property string walletAccountName: !!root.store ? root.store.walletStore.getNameForWalletAddress(root.tokenData.walletAddress) : ""
     property string txHash: root.tokenData.txHash
+    property string walletAccountName: !!root.store && !root.isFirstTokenReceived ? root.store.walletStore.getNameForWalletAddress(root.tokenData.walletAddress) : ""
 
     QtObject {
         id: d
@@ -57,8 +57,13 @@ ActivityNotificationBase {
         readonly property string ctaText: root.isFirstTokenReceived ? qsTr("Learn more") : qsTr("Transaction details")
         readonly property string title: root.isFirstTokenReceived ? (root.isAssetType ? qsTr("You received your first community asset") : qsTr("You received your first community collectible")) :
                                                                     qsTr("Tokens received")
-        readonly property string info: root.isFirstTokenReceived ? qsTr("%1 %2 was airdropped to you from the %3 community").arg(root.tokenAmount).arg(d.formattedTokenName).arg(root.communityName) :
-                                                                   qsTr("You were airdropped %1 %2 from %3 to %4").arg(root.tokenAmount).arg(root.tokenName).arg(root.communityName).arg(root.walletAccountName)
+        readonly property string info: {
+            if (root.isFirstTokenReceived) {
+                return qsTr("%1 %2 was airdropped to you from the %3 community").arg(root.tokenAmount).arg(d.formattedTokenName).arg(root.communityName)
+            } else {
+                return qsTr("You were airdropped %1 %2 from %3 to %4").arg(root.tokenAmount).arg(root.tokenName).arg(root.communityName).arg(root.walletAccountName)
+            }
+        }
     }
 
     bodyComponent: RowLayout {
@@ -121,9 +126,10 @@ ActivityNotificationBase {
             }
             else {
                 Global.changeAppSectionBySectionType(Constants.appSection.wallet,
-                                                     WalletLayout.LeftPanelSelection.AllAddresses,
-                                                     WalletLayout.RightPanelSelection.Activity)
-                // TODO: Final navigation to the specific transaction entry --> {transaction: txHash}) --> Issue #13249
+                                                     WalletLayout.LeftPanelSelection.Address,
+                                                     WalletLayout.RightPanelSelection.Activity,
+                                                     {address: root.tokenData.walletAddress,
+                                                     txHash: root.txHash})
             }
         }
     }

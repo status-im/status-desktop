@@ -38,7 +38,8 @@ QtObject {
                                   string communityId, string communityName,
                                   string balance, int chainId,
                                   string txHash, bool isFirst,
-                                  int tokenType, string walletAccountName)
+                                  int tokenType, string walletAccountName,
+                                  string walletAddress)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -136,8 +137,8 @@ QtObject {
             root.ownerTokenReceived(communityId, communityName)
         }
 
-        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
-            root.communityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName)
+        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, walletAccountName, walletAddress) {
+            root.communityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName, walletAccountName, walletAddress)
         }
 
         function onSetSignerStateChanged(communityId, communityName, status, url) {

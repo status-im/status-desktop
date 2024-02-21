@@ -89,10 +89,15 @@ Item {
         if (leftPanelSelection === WalletLayout.LeftPanelSelection.SavedAddresses) {
             d.displaySavedAddresses()
         } else {
+            let address = data.address ?? ""
             if (leftPanelSelection === WalletLayout.LeftPanelSelection.AllAddresses) {
                 d.displayAllAddresses()
             } else if (leftPanelSelection === WalletLayout.LeftPanelSelection.Address) {
-                d.displayAddress(address)
+                if (!!address) {
+                    d.displayAddress(address)
+                } else {
+                    d.displayAllAddresses()
+                }
             }
 
             if (rightPanelSelection !== WalletLayout.RightPanelSelection.Collectibles &&
@@ -105,10 +110,14 @@ Item {
             rightPanelStackView.currentItem.resetView()
             rightPanelStackView.currentItem.currentTabIndex = rightPanelSelection
 
+            let txHash = data.txHash?? ""
             let savedAddress = data.savedAddress?? ""
             if (!!savedAddress) {
                 RootStore.currentActivityFiltersStore.resetAllFilters()
                 RootStore.currentActivityFiltersStore.toggleSavedAddress(savedAddress)
+            } else if (!!txHash) {
+                RootStore.currentActivityFiltersStore.resetAllFilters()
+                RootStore.currentActivityFiltersStore.displayTxDetails(txHash)
             }
         }
     }

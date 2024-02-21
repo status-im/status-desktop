@@ -55,7 +55,7 @@ QtObject:
   proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
   proc setSignerFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
   proc ownerTokenReceived*(self: View, communityId: string, communityName: string, chainId: int, contractAddress: string) {.signal.}
-  proc communityTokenReceived*(self: View, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string) {.signal.}
+  proc communityTokenReceived*(self: View, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string, accountAddress: string) {.signal.}
   proc setSignerStateChanged*(self: View, communityId: string, communityName: string, status: int, url: string) {.signal.}
   proc ownershipNodeLost*(self: View, communityId: string, communityName: string) {.signal.}
   proc sendOwnerTokenStateChanged*(self: View, tokenName: string, status: int, url: string) {.signal.}
@@ -117,8 +117,8 @@ QtObject:
   proc emitOwnerTokenReceived*(self: View, communityId: string, communityName: string, chainId: int, contractAddress: string) =
     self.ownerTokenReceived(communityId, communityName, chainId, contractAddress)
 
-  proc emitCommunityTokenReceived*(self: View, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string) =
-    self.communityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, accountName)
+  proc emitCommunityTokenReceived*(self: View, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string, accountAddress: string) =
+    self.communityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, accountName, accountAddress)
 
   proc emitSetSignerStateChanged*(self: View, communityId: string, communityName: string, status: int, url: string) =
     self.setSignerStateChanged(communityId, communityName, status, url)

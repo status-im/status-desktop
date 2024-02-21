@@ -96,7 +96,7 @@ method removeCommunityToken*(self: AccessInterface, communityId: string, chainId
 method onOwnerTokenReceived*(self: AccessInterface, communityId: string, communityName: string, chainId: int, contractAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenReceived*(self: AccessInterface, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string) {.base.} =
+method onCommunityTokenReceived*(self: AccessInterface, name: string, symbol: string, image: string, communityId: string, communityName: string, balance: string, chainId: int, txHash: string, isFirst: bool, tokenType: int, accountName: string, accountAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSendOwnerTokenStateChanged*(self: AccessInterface, chainId: int, transactionHash: string, tokenName: string, status: ContractTransactionStatus) {.base.} =

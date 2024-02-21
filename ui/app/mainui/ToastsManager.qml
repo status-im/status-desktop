@@ -129,7 +129,7 @@ QtObject {
         }
 
         // Community token received in the user wallet:
-        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAccountName) {
+        function onCommunityTokenReceived(name, symbol, image, communityId, communityName, balance, chainId, txHash, isFirst, tokenType, walletAddress, walletAccountName) {
 
             // Some error control:
             if(tokenType !== Constants.TokenType.ERC20 && tokenType !== Constants.TokenType.ERC721) {
@@ -155,7 +155,8 @@ QtObject {
                 tokenName: name,
                 tokenSymbol: symbol,
                 tokenImage: image,
-                tokenAmount: balance
+                tokenAmount: balance,
+                walletAddress: walletAddress
             }
 
             if(isFirst) {
@@ -217,17 +218,18 @@ QtObject {
             root.sendModalPopup.open()
             return
         case ToastsManager.ActionType.ViewTransactionDetails:
-            var txHash = ""
             if(actionData) {
                 var parsedData = JSON.parse(actionData)
-                txHash = parsedData.txHash
+                const txHash = parsedData.txHash
+                const walletAddress = parsedData.walletAddress
                 Global.changeAppSectionBySectionType(Constants.appSection.wallet,
-                                                     WalletLayout.LeftPanelSelection.AllAddresses,
-                                                     WalletLayout.RightPanelSelection.Activity)
-                // TODO: Final navigation to the specific transaction entry --> {transaction: txHash}) --> Issue #13249
+                                                     WalletLayout.LeftPanelSelection.Address,
+                                                     WalletLayout.RightPanelSelection.Activity,
+                                                     {address: walletAddress,
+                                                     txHash: txHash})
                 return
             }
-            console.warn("Unexpected transaction hash while trying to navigate to the details page: " + txHash)
+            console.warn("Unexpected transaction hash while trying to navigate to the details page")
             return
         case ToastsManager.ActionType.OpenFirstCommunityTokenPopup:
             if(actionData) {
