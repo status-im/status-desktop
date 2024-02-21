@@ -21,6 +21,8 @@ add_library(StatusQTestLib
     src/TestHelpers/modelsignalsspy.h
     src/TestHelpers/modeltestutils.cpp
     src/TestHelpers/modeltestutils.h
+    src/TestHelpers/persistentindexestester.cpp
+    src/TestHelpers/persistentindexestester.h
     src/TestHelpers/snapshotmodel.cpp
     src/TestHelpers/snapshotmodel.h
     src/TestHelpers/testmodel.cpp
