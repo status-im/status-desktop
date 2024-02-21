@@ -129,7 +129,7 @@ proc getFleet*(self: Service): Fleet =
   result = self.settingsService.getFleet()
   if result == Fleet.Undefined:
     let fleetFromNodeConfig = self.configuration.ClusterConfig.Fleet
-    result = parseEnum[Fleet](fleetFromNodeConfig)
+    result = fleetFromString(fleetFromNodeConfig)
 
 proc getFleetAsString*(self: Service): string =
   result = $self.getFleet()
@@ -148,7 +148,7 @@ proc setFleet*(self: Service, fleet: string): bool =
     error "error saving fleet ", procName="setFleet"
     return false
   
-  let fleetType = parseEnum[Fleet](fleet)
+  let fleetType = fleetFromString(fleet)
   var newConfiguration = self.configuration
   newConfiguration.ClusterConfig.Fleet = fleet
   newConfiguration.ClusterConfig.BootNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Bootnodes)

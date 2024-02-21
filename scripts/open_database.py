@@ -1,5 +1,7 @@
 import sys, os, re
 import sqlcipher3
+import readline
+
 from getpass import getpass
 from common import PasswordFunctions
 

@@ -35,7 +35,7 @@ proc init*(self: Controller) =
   discard
 
 proc getFleet*(self: Controller): string =
-  self.nodeConfigurationService.getFleetAsString()
+  return self.nodeConfigurationService.getFleetAsString()
 
 proc changeFleetTo*(self: Controller, fleet: string) =
   if (not self.nodeConfigurationService.setFleet(fleet)):
