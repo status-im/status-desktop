@@ -18,7 +18,7 @@ export stickers_dto
 # Default values:
 const DEFAULT_CURRENCY* = "USD"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
-const DEFAULT_FLEET* = $Fleet.ShardsTest
+const DEFAULT_FLEET* = Fleet.ShardsTest
 
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
@@ -398,7 +398,7 @@ QtObject:
 
   proc getFleet*(self: Service): Fleet =
     let fleetAsString = self.getFleetAsString()
-    return parseEnum[Fleet](fleetAsString)
+    return fleetFromString(fleetAsString)
 
   proc getCurrentUserStatus*(self: Service): CurrentUserStatus =
     self.settings.currentUserStatus
@@ -413,6 +413,8 @@ QtObject:
     return ""
 
   proc pinMailserver*(self: Service, mailserverID: string, fleet: Fleet): bool =
+    if fleet == Fleet.Undefined:
+      return false
     var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
     newMailserverJsonObj[$fleet] = %* mailserverID
     if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
