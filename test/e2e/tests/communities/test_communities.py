@@ -13,7 +13,6 @@ from gui.main_window import MainWindow
 pytestmark = marks
 
 
-@pytest.mark.critical
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703630', 'Create community')
 @pytest.mark.case(703630)
 @pytest.mark.parametrize('params', [constants.community_params])
@@ -35,7 +34,8 @@ def test_create_community(user_account, main_screen: MainWindow, params):
             assert create_community_form.color == color
 
         with step(
-                'Select tags, verify that count of tags was changed and verify that selected tags are displayed in tags field'):
+                'Select tags, verify that count of tags was changed and verify that selected tags are displayed in '
+                'tags field'):
             create_community_form.tags = ['Activism', 'Art']
             assert create_community_form.tags == tags_to_set
 
