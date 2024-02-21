@@ -78,8 +78,8 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
     let response = eth.suggestedFees(arg.chainId).result
     feeTable[arg.chainId] = response.toSuggestedFeesDto()
-    let deployGas = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate().result.getInt
-      else: community_tokens.deployAssetsEstimate().result.getInt
+    let deployGas = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate(arg.chainId, arg.addressFrom).result.getInt
+      else: community_tokens.deployAssetsEstimate(arg.chainId, arg.addressFrom).result.getInt
     
     gasTable[(arg.chainId, "")] = deployGas
     arg.finish(%* {

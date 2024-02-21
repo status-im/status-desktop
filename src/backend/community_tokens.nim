@@ -84,12 +84,12 @@ proc remainingSupply*(chainId: int, contractAddress: string): RpcResponse[JsonNo
   let payload = %* [chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_remainingSupply", payload)
 
-proc deployCollectiblesEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[]
+proc deployCollectiblesEstimate*(chainId: int, addressFrom: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, addressFrom]
   return core.callPrivateRPC("communitytokens_deployCollectiblesEstimate", payload)
 
-proc deployAssetsEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[]
+proc deployAssetsEstimate*(chainId: int, addressFrom: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, addressFrom]
   return core.callPrivateRPC("communitytokens_deployAssetsEstimate", payload)
 
 proc remoteDestructedAmount*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
