@@ -11,6 +11,7 @@
 #include <TestHelpers/listmodelwrapper.h>
 #include <TestHelpers/modelsignalsspy.h>
 #include <TestHelpers/modeltestutils.h>
+#include <TestHelpers/persistentindexestester.h>
 #include <TestHelpers/snapshotmodel.h>
 
 class TestMovableModel : public QObject
@@ -305,6 +306,7 @@ private slots:
         sourceModelCopy.move(2, 1);
 
         ModelSignalsSpy signalsSpy(&model);
+        PersistentIndexesTester indexesTester(&model);
 
         sfpm.setSortRole(1);
         sfpm.sort(0, Qt::DescendingOrder);
@@ -323,6 +325,7 @@ private slots:
         QCOMPARE(sfpm.roleNames().value(1), "subname");
         QVERIFY(isSame(&sfpm, expectedSorted));
         QVERIFY(isSame(&model, sourceModelCopy));
+        QVERIFY(indexesTester.compare());
     }
 
     void insertionTest()
@@ -444,7 +447,48 @@ private slots:
         QCOMPARE(signalsSpy.rowsRemovedSpy.at(1).at(2), 1);
     }
 
-    void dataChangeTest()
+    void dataChangeWhenSyncedTest()
+    {
+        QQmlEngine engine;
+
+        ListModelWrapper sourceModel(engine, R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])");
+
+        MovableModel model;
+        model.setSourceModel(sourceModel);
+
+        ModelSignalsSpy signalsSpy(&model);
+
+        sourceModel.setProperty(1, "subname", "a2_");
+
+        ListModelWrapper expected(engine, R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2_" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])");
+
+        auto subnameRole = roleForName(model.roleNames(), "subname");
+
+        QCOMPARE(signalsSpy.count(), 1);
+        QCOMPARE(signalsSpy.dataChangedSpy.count(), 1);
+        QCOMPARE(signalsSpy.dataChangedSpy.first().at(0).toModelIndex(), model.index(1));
+        QCOMPARE(signalsSpy.dataChangedSpy.first().at(1), model.index(1));
+        QCOMPARE(signalsSpy.dataChangedSpy.first().at(2).value<QVector<int>>(),
+                 {subnameRole});
+
+        QVERIFY(isSame(&model, expected));
+    }
+
+    void dataChangeWhenDesyncedTest()
     {
         QQmlEngine engine;
 
@@ -644,10 +688,12 @@ private slots:
             QCOMPARE(signalsSpy.count(), 0);
         }
 
+        PersistentIndexesTester indexesTester(&model);
+
         model.desyncOrder();
         sourceModel.move(0, 2, 2);
 
-        QVERIFY(!isSame(&model, sourceModel));
+        QVERIFY(isNotSame(&model, sourceModel));
 
         ModelSignalsSpy signalsSpy(&model);
         QSignalSpy syncedChangedSpy(&model, &MovableModel::syncedChanged);
@@ -662,6 +708,51 @@ private slots:
         QCOMPARE(model.synced(), true);
 
         QVERIFY(isSame(&model, sourceModel));
+        QVERIFY(indexesTester.compare());
+    }
+
+    void sortingSyncedTest()
+    {
+        QQmlEngine engine;
+
+        auto source = R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+        ListModelWrapper sourceModelCopy(engine, source);
+
+        QSortFilterProxyModel sfpm;
+        sfpm.setSourceModel(sourceModel);
+
+        MovableModel model;
+        model.setSourceModel(&sfpm);
+
+        ModelSignalsSpy signalsSpy(&model);
+        ModelSignalsSpy signalsSpySfpm(&sfpm);
+
+        PersistentIndexesTester indexesTester(&model);
+
+        sfpm.setSortRole(1);
+        sfpm.sort(0, Qt::DescendingOrder);
+
+        ListModelWrapper expectedSorted(engine, R"([
+            { "name": "C", "subname": "c3" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c1" },
+            { "name": "B", "subname": "b1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "A", "subname": "a1" }
+        ])");
+
+        QCOMPARE(model.synced(), true);
+        QCOMPARE(signalsSpy.count(), signalsSpySfpm.count());
+        QVERIFY(indexesTester.compare());
     }
 };
 
