@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 #include <QSignalSpy>
 
 class ModelSignalsSpy

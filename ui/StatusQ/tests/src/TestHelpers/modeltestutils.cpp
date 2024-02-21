@@ -2,9 +2,10 @@
 
 #include <QDebug>
 
+namespace {
 
 bool isSame(const QAbstractItemModel& model1, const QAbstractItemModel& model2,
-            bool recursive)
+            bool recursive, bool printWarning)
 {
     auto count1 = model1.rowCount();
     auto count2 = model2.rowCount();
@@ -35,15 +36,17 @@ bool isSame(const QAbstractItemModel& model1, const QAbstractItemModel& model2,
                 auto submodel2 = data2.value<QAbstractItemModel*>();
 
                 if (!isSame(*submodel1, *submodel2, true)) {
-                    qDebug() << "submodels are not the same, index:"
-                             << i << roleNames1[role];
+                    if (printWarning)
+                        qWarning() << "submodels are not the same, index:"
+                                   << i << roleNames1[role];
                     return false;
                 }
             } else if (data1 != data2) {
-                qWarning()
-                        << QString("Mismatch at row %1, role '%2'. Model 1: %3, model 2: %4")
-                           .arg(QString::number(i), QString(roleNames1[role]),
-                                data1.toString(), data2.toString());
+                if (printWarning)
+                    qWarning()
+                            << QString("Mismatch at row %1, role '%2'. Model 1: %3, model 2: %4")
+                               .arg(QString::number(i), QString(roleNames1[role]),
+                                    data1.toString(), data2.toString());
                 return false;
             }
         }
@@ -52,8 +55,29 @@ bool isSame(const QAbstractItemModel& model1, const QAbstractItemModel& model2,
     return true;
 }
 
+} // unnamed namespace
+
+bool isSame(const QAbstractItemModel& model1, const QAbstractItemModel& model2,
+            bool recursive)
+{
+    return isSame(model1, model2, recursive, true);
+}
+
 bool isSame(const QAbstractItemModel* model1, const QAbstractItemModel* model2,
             bool recursive)
 {
     return isSame(*model1, *model2, recursive);
 }
+
+bool isNotSame(const QAbstractItemModel& model1, const QAbstractItemModel& model2,
+            bool recursive)
+{
+    return !isSame(model1, model2, recursive, false);
+}
+
+bool isNotSame(const QAbstractItemModel* model1, const QAbstractItemModel* model2,
+            bool recursive)
+{
+    return isNotSame(*model1, *model2, recursive);
+}
+
