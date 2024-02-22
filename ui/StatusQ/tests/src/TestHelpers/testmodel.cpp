@@ -1,5 +1,6 @@
 #include "testmodel.h"
 
+#include <algorithm>
 
 TestModel::TestModel(QList<QPair<QString, QVariantList>> data)
     : m_data(std::move(data))
@@ -80,6 +81,22 @@ void TestModel::remove(int index)
     }
 
     endRemoveRows();
+}
+
+void TestModel::invert()
+{
+    emit layoutAboutToBeChanged();
+
+    for (auto& entry : m_data)
+        std::reverse(entry.second.begin(), entry.second.end());
+
+    const auto persistentIndexes = persistentIndexList();
+    const auto count = rowCount();
+
+    for (const QModelIndex& index: persistentIndexes)
+        changePersistentIndex(index, createIndex(count - index.row() - 1, 0));
+
+    emit layoutChanged();
 }
 
 void TestModel::initRoles()
