@@ -19,7 +19,7 @@ pipeline {
     booleanParam(
       name: 'RELEASE',
       description: 'Decides whether binaries are built with debug symbols.',
-      defaultValue: params.RELEASE ?: false
+      defaultValue: params.RELEASE ?: true
     )
     choice(
       name: 'VERBOSE',
