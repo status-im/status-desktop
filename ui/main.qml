@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
-import Qt.labs.settings 1.0
-import QtQuick.Window 2.12
-import QtQml 2.13
-import QtQuick.Controls.Universal 2.12
+import Qt.labs.settings 1.1
+import QtQuick.Window 2.15
+import QtQml 2.15
+import QtQuick.Controls.Universal 2.15
 
 import utils 1.0
 import shared 1.0
@@ -25,8 +25,8 @@ StatusWindow {
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 1200
-    minimumHeight: 680
+    minimumWidth: 1200 / Screen.devicePixelRatio
+    minimumHeight: 680 / Screen.devicePixelRatio
     color: Style.current.background
     title: {
         // Set application settings
