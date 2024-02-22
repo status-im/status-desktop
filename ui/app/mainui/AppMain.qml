@@ -1269,6 +1269,7 @@ Item {
                             objectName: "walletLayoutReal"
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                            communitiesStore: appMain.communitiesStore
                             emojiPopup: statusEmojiPopup.item
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore

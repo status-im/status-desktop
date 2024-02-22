@@ -273,3 +273,11 @@ QtObject:
 
   QtProperty[QVariant] amountCurrency:
     read = getAmountCurrency
+
+  proc getCommunityId*(self: ActivityEntry): string {.slot.} =
+    if self.metadata.communityId.isSome():
+      return self.metadata.communityId.unsafeGet()
+    return ""
+  
+  QtProperty[string] communityId:
+    read = getCommunityId

@@ -195,6 +195,7 @@ RightTabBaseView {
                     id: historyView
                     HistoryView {
                         overview: RootStore.overview
+                        communitiesStore: root.communitiesStore
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
@@ -250,6 +251,7 @@ RightTabBaseView {
                 }
             }
             showAllAccounts: RootStore.showAllAccounts
+            communitiesStore: root.communitiesStore
             sendModal: root.sendModal
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore

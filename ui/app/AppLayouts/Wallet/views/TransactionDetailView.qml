@@ -27,6 +27,7 @@ Item {
 
     property var overview: WalletStores.RootStore.overview
     property var contactsStore
+    property var communitiesStore
     property var networkConnectionStore
     property var transaction
     property int transactionIndex
@@ -167,6 +168,7 @@ Item {
                     timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
                     rootStore: RootStore
                     walletRootStore: WalletStores.RootStore
+                    community: isModelDataValid && communityId && communitiesStore ? communitiesStore.getCommunityDetailsAsJson(communityId) : null
 
                     onRetryClicked: d.retryTransaction()
                 }

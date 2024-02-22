@@ -11,6 +11,7 @@ FocusScope {
 
     property var store
     property var contactsStore
+    property var communitiesStore
     property var networkConnectionStore
 
     property var sendModal
