@@ -9,6 +9,7 @@ import collectibles_model
 import collectibles_item
 import events_handler
 import status
+import utils
 
 import web3/conversions
 
@@ -36,9 +37,6 @@ const FETCH_BATCH_COUNT_DEFAULT = 10
 const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
 const FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT = 2000
 
-type
-  CollectiblesToTokenConverter* = proc (id: string): backend_activity.Token
-
 QtObject:
   type
     Controller* = ref object of QObject
@@ -64,8 +62,6 @@ QtObject:
       chainIds: seq[int]
 
       requestId: int32
-
-      collectiblesToTokenConverter: CollectiblesToTokenConverter
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -311,8 +307,7 @@ QtObject:
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
-                      events: EventEmitter,
-                      collectiblesConverter: CollectiblesToTokenConverter): Controller =
+                      events: EventEmitter): Controller =
     new(result, delete)
 
     result.requestId = requestId
@@ -333,8 +328,6 @@ QtObject:
     result.addresses = @[]
     result.allAddressesSelected = false
     result.chainIds = @[]
-
-    result.collectiblesToTokenConverter = collectiblesConverter
 
     result.setup()
 
@@ -373,8 +366,12 @@ QtObject:
     var collectibles = newSeq[backend_activity.Token]()
     for i in 0 ..< collectiblesJson.len:
       let uid = collectiblesJson[i].getStr()
-      let token = self.collectiblesToTokenConverter(uid)
-      collectibles.add(token)
+      # TODO: We need the token type here, which is not part of the uid.
+      # We currently don't support filtering ERC1155 tokens anyway, so it's not an issue.
+      # When we have a split model for all collectibles metadata, get the entry from there
+      # to get the token type. Perhaps also add an "UnknownCollectible" TokenType that includes
+      # both ERC721 and ERC1155?
+      collectibles.add(collectibleUidToActivityToken(uid, TokenType.ERC721))
 
     self.currentActivityFilter.collectibles = collectibles
 

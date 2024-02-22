@@ -125,7 +125,7 @@ QtObject:
     var collectiblesPerCollection = initTable[string, seq[flat_item.CollectiblesEntry]]()
 
     for item in items:
-      let collectionId = item.getCollectionID()
+      let collectionId = item.getCollectionIDAsString()
       if not collectiblesPerCollection.hasKey(collectionId):
         collectiblesPerCollection[collectionId] = @[]
       collectiblesPerCollection[collectionId].add(item)
