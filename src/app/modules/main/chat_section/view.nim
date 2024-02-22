@@ -298,8 +298,8 @@ QtObject:
   proc removeUserFromCommunity*(self: View, pubKey: string) {.slot.} =
     self.delegate.removeUserFromCommunity(pubKey)
 
-  proc banUserFromCommunity*(self: View, pubKey: string) {.slot.} =
-    self.delegate.banUserFromCommunity(pubKey)
+  proc banUserFromCommunity*(self: View, pubKey: string, deleteAllMessages: bool) {.slot.} =
+    self.delegate.banUserFromCommunity(pubKey, deleteAllMessages)
 
   proc editCommunity*(self: View, name: string, description: string, introMessage: string, outroMessage: string, access: int,
                       color: string, tags: string, logoJsonData: string, bannerJsonData: string, historyArchiveSupportEnabled: bool,

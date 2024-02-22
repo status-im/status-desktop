@@ -22,7 +22,7 @@ SettingsPage {
 
     signal membershipRequestsClicked()
     signal kickUserClicked(string id)
-    signal banUserClicked(string id)
+    signal banUserClicked(string id, bool deleteAllMessages)
     signal unbanUserClicked(string id)
     signal acceptRequestToJoin(string id)
     signal declineRequestToJoin(string id)
@@ -193,11 +193,7 @@ SettingsPage {
 
         communityName: root.communityName
 
-        onAccepted: {
-            if (mode === KickBanPopup.Mode.Kick)
-                root.kickUserClicked(userId)
-            else
-                root.banUserClicked(userId)
-        }
+        onBanUserClicked: root.banUserClicked(userId, deleteAllMessages)
+        onKickUserClicked: root.kickUserClicked(userId)
     }
 }

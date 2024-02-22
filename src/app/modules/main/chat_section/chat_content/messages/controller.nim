@@ -1,4 +1,4 @@
-import chronicles, uuids, times
+import chronicles, uuids, times, tables
 import io_interface
 
 import ../../../../../../app/global/global_singleton
@@ -182,11 +182,16 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.updateContactDetails(singletonInstance.userProfile.getPubKey())
 
-  self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
-    let args = MessageDeletedArgs(e)
+  self.events.on(SIGNAL_MESSAGE_REMOVED) do(e: Args):
+    let args = MessageRemovedArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.onMessageDeleted(args.messageId, args.deletedBy)
+    self.delegate.onMessageRemoved(args.messageId, args.deletedBy)
+
+  self.events.on(SIGNAL_MESSAGES_DELETED) do(e: Args):
+    let args = MessagesDeletedArgs(e)
+    if self.chatId in args.deletedMessages:
+      self.delegate.onMessagesDeleted(args.deletedMessages[self.chatId])
 
   self.events.on(SIGNAL_MESSAGE_EDITED) do(e: Args):
     let args = MessageEditedArgs(e)
@@ -296,7 +301,7 @@ proc deleteMessage*(self: Controller, messageId: string) =
 
 proc editMessage*(self: Controller, messageId: string, contentType: int, updatedMsg: string) =
   self.messageService.editMessage(messageId, contentType, updatedMsg)
-  
+
 proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId
 

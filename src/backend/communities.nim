@@ -460,10 +460,11 @@ proc declineRequestToJoinCommunity*(requestId: string): RpcResponse[JsonNode] {.
     "id": requestId
   }])
 
-proc banUserFromCommunity*(communityId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].}  =
+proc banUserFromCommunity*(communityId: string, pubKey: string, deleteAllMessages: bool): RpcResponse[JsonNode] {.raises: [Exception].}  =
   return callPrivateRPC("banUserFromCommunity".prefix, %*[{
     "communityId": communityId,
-    "user": pubKey
+    "user": pubKey,
+    "deleteAllMessages": deleteAllMessages,
   }])
 
 proc unbanUserFromCommunity*(communityId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].}  =

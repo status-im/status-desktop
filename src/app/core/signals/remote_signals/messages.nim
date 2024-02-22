@@ -1,4 +1,4 @@
-import json, chronicles
+import json, chronicles, tables
 
 import base
 
@@ -28,7 +28,8 @@ type MessageSignal* = ref object of Signal
   membershipRequests*: seq[CommunityMembershipRequestDto]
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
-  deletedMessages*: seq[RemovedMessageDto]
+  removedMessages*: seq[RemovedMessageDto]
+  deletedMessages*: Table[string, seq[string]]
   removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
@@ -117,7 +118,15 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if e.contains("removedMessages"):
     for jsonRemovedMessage in e["removedMessages"]:
-      signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessageDto())
+      signal.removedMessages.add(jsonRemovedMessage.toRemovedMessageDto())
+
+  if e.contains("deletedMessages"):
+    let deletedMessagesObj = e["deletedMessages"]
+    for chatId, messageIdsArrayJson in deletedMessagesObj:
+      if not signal.deletedMessages.hasKey(chatId):
+        signal.deletedMessages[chatId] = @[]
+      for messageId in messageIdsArrayJson:
+        signal.deletedMessages[chatId].add(messageId.getStr())
 
   if e.contains("removedChats"):
     for removedChatID in e["removedChats"]:
@@ -161,6 +170,5 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("updatedProfileShowcases"):
     for jsonProfileShowcase in e["updatedProfileShowcases"]:
       signal.updatedProfileShowcases.add(jsonProfileShowcase.toProfileShowcaseDto())
-
   result = signal
 

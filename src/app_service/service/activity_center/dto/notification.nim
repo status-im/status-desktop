@@ -30,6 +30,8 @@ type ActivityCenterNotificationType* {.pure.}= enum
   ShareAccounts = 18
   CommunityTokenReceived = 19
   FirstCommunityTokenReceived = 20
+  CommunityBanned = 21
+  CommunityUnbanned = 22
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -174,7 +176,9 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.OwnershipLost.int,
         ActivityCenterNotificationType.ShareAccounts.int,
         ActivityCenterNotificationType.CommunityTokenReceived.int,
-        ActivityCenterNotificationType.FirstCommunityTokenReceived.int
+        ActivityCenterNotificationType.FirstCommunityTokenReceived.int,
+        ActivityCenterNotificationType.CommunityBanned.int,
+        ActivityCenterNotificationType.CommunityUnbanned.int
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]
@@ -186,7 +190,9 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.CommunityInvitation.int,
         ActivityCenterNotificationType.CommunityRequest.int,
         ActivityCenterNotificationType.CommunityMembershipRequest.int,
-        ActivityCenterNotificationType.CommunityKicked.int
+        ActivityCenterNotificationType.CommunityKicked.int,
+        ActivityCenterNotificationType.CommunityBanned.int,
+        ActivityCenterNotificationType.CommunityUnbanned.int
       ]
     of ActivityCenterGroup.Admin:
       return @[ActivityCenterNotificationType.CommunityMembershipRequest.int]

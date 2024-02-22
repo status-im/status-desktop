@@ -1,5 +1,4 @@
-import NimQml
-import json
+import NimQml, tables, json
 import io_interface
 
 import ../../../../../app_service/service/settings/service as settings_service
@@ -153,12 +152,19 @@ proc init*(self: Controller) =
         self.delegate.onMutualContactChanged()
         self.delegate.onContactDetailsUpdated(args.contactId)
 
-  self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
-    let args = MessageDeletedArgs(e)
+  self.events.on(SIGNAL_MESSAGE_REMOVED) do(e: Args):
+    let args = MessageRemovedArgs(e)
     if(self.chatId != args.chatId):
       return
     # remove from pinned messages model
     self.delegate.onUnpinMessage(args.messageId)
+
+  self.events.on(SIGNAL_MESSAGES_DELETED) do(e: Args):
+    let args = MessagesDeletedArgs(e)
+    if self.chatId in args.deletedMessages:
+      for deletedMessage in args.deletedMessages[self.chatId]:
+        # delete from pinned messages model
+        self.delegate.onUnpinMessage(deletedMessage)
 
   self.events.on(SIGNAL_COMMUNITY_CHANNEL_EDITED) do(e:Args):
     let args = CommunityChatArgs(e)

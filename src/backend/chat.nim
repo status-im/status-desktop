@@ -86,9 +86,9 @@ proc sendChatMessage*(
     }
   ])
 
-proc sendImages*(chatId: string, 
-                 images: var seq[string], 
-                 msg: string, 
+proc sendImages*(chatId: string,
+                 images: var seq[string],
+                 msg: string,
                  replyTo: string,
                  preferredUsername: string,
                  linkPreviews: seq[LinkPreview],

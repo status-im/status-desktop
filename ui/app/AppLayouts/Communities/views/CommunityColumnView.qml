@@ -72,6 +72,8 @@ Item {
         property bool invitationPending: root.store.isMyCommunityRequestPending(communityData.id)
 
         property bool joiningCommunityInProgress: false
+
+        onShowJoinButtonChanged: invitationPending = root.store.isMyCommunityRequestPending(communityData.id)
     }
 
     ColumnHeaderPanel {

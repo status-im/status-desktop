@@ -108,7 +108,7 @@ const SIGNAL_CHAT_UPDATE* = "chatUpdate"
 const SIGNAL_CHAT_LEFT* = "channelLeft"
 const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
 const SIGNAL_SENDING_SUCCESS* = "messageSendingSuccess"
-const SIGNAL_MESSAGE_DELETED* = "messageDeleted"
+const SIGNAL_MESSAGE_REMOVE* = "messageRemove"
 const SIGNAL_CHAT_MUTED* = "chatMuted"
 const SIGNAL_CHAT_UNMUTED* = "chatUnmuted"
 const SIGNAL_CHAT_HISTORY_CLEARED* = "chatHistoryCleared"
@@ -271,7 +271,7 @@ QtObject:
         return i
       i.inc()
     return -1
-      
+
   proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
     if communityId == "" or categoryId == "":
       return false
@@ -336,7 +336,7 @@ QtObject:
       self.channelGroups[channelGroupId].chats[index] = self.chats[chat.id]
 
   proc updateMissingFieldsInCommunityChat(self: Service, channelGroupId: string, newChat: ChatDto): ChatDto =
-    
+
     if not self.channelGroups.contains(channelGroupId):
       warn "unknown channel group", channelGroupId
       return
@@ -359,11 +359,11 @@ QtObject:
       # We need to update missing fields in the chats seq before saving
       let newChats = channelGroup.chats.mapIt(self.updateMissingFieldsInCommunityChat(channelGroup.id, it))
       newChannelGroup.chats = newChats
-        
+
     self.channelGroups[channelGroup.id] = newChannelGroup
     for chat in newChannelGroup.chats:
       self.updateOrAddChat(chat)
-  
+
   proc updateChannelMembers*(self: Service, channel: ChatDto) =
     if not self.chats.hasKey(channel.id):
       return
@@ -412,7 +412,8 @@ QtObject:
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
     var (chats, _) = self.processMessageUpdateAfterSend(response)
-    self.events.emit(SIGNAL_MESSAGE_DELETED, MessageArgs(id: messageId, channel: chats[0].id))
+    # TODO: Signal is not handled anywhere
+    self.events.emit(SIGNAL_MESSAGE_REMOVE, MessageArgs(id: messageId, channel: chats[0].id))
 
   proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
     var (chats, _) = self.parseChatResponse(response)
@@ -502,10 +503,10 @@ QtObject:
       error "Error deleting channel", chatId, msg = e.msg
       return
 
-  proc sendImages*(self: Service, 
-                   chatId: string, 
-                   imagePathsAndDataJson: string, 
-                   msg: string, 
+  proc sendImages*(self: Service,
+                   chatId: string,
+                   imagePathsAndDataJson: string,
+                   msg: string,
                    replyTo: string,
                    preferredUsername: string = "",
                    linkPreviews: seq[LinkPreview] = @[]): string =

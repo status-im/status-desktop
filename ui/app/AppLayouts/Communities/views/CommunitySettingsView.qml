@@ -273,7 +273,7 @@ StatusSectionLayout {
             communityName: root.community.name
 
             onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
-            onBanUserClicked: root.rootStore.banUserFromCommunity(id)
+            onBanUserClicked: root.rootStore.banUserFromCommunity(id, deleteAllMessages)
             onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
             onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
             onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)

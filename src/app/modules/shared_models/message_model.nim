@@ -498,7 +498,7 @@ QtObject:
     self.countChanged()
     self.updateMessagesWhenQuotedMessageDeleted(messageId)
 
-  proc messageDeleted*(self: Model, messageId: string, deletedBy: string, deletedByContactDetails: ContactDetails) =
+  proc messageRemoved*(self: Model, messageId: string, deletedBy: string, deletedByContactDetails: ContactDetails) =
     let i = self.findIndexForMessageId(messageId)
     if(i == -1):
       return
@@ -846,7 +846,7 @@ QtObject:
         albumImages.add(messageImage)
         item.albumMessageImages = albumImages
         item.albumMessageIds = albumMessagesIds
-        
+
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.AlbumMessageImages.int])

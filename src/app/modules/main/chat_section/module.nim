@@ -1097,8 +1097,8 @@ method leaveCommunity*(self: Module) =
 method removeUserFromCommunity*(self: Module, pubKey: string) =
   self.controller.removeUserFromCommunity(pubKey)
 
-method banUserFromCommunity*(self: Module, pubKey: string) =
-  self.controller.banUserFromCommunity(pubkey)
+method banUserFromCommunity*(self: Module, pubKey: string, deleteAllMessages: bool) =
+  self.controller.banUserFromCommunity(pubkey, deleteAllMessages)
 
 method unbanUserFromCommunity*(self: Module, pubKey: string) =
   self.controller.unbanUserFromCommunity(pubkey)

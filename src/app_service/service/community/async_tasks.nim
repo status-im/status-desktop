@@ -110,6 +110,7 @@ type
   AsyncCommunityMemberActionTaskArg = ref object of QObjectTaskArg
     communityId: string
     pubKey: string
+    deleteAllMessages: bool
 
 const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
@@ -131,14 +132,15 @@ const asyncRemoveUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe
 const asyncBanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCommunityMemberActionTaskArg](argEncoded)
   try:
-    let response = status_go.banUserFromCommunity(arg.communityId, arg.pubKey)
+    let response = status_go.banUserFromCommunity(arg.communityId, arg.pubKey, arg.deleteAllMessages)
     let tpl: tuple[communityId: string, pubKey: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.pubKey, response, "")
     arg.finish(tpl)
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,
       "communityId": arg.communityId,
-      "pubKey": arg.pubKey
+      "pubKey": arg.pubKey,
+      "deleteAllMessages": arg.deleteAllMessages
     })
 
 const asyncUnbanUserFromCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
