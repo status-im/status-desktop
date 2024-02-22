@@ -61,7 +61,6 @@ StatusListItem {
     readonly property double outFiatValue: isModelDataValid && isMultiTransaction ? rootStore.getFiatValue(outCryptoValue, modelData.outSymbol): 0.0
     readonly property double feeCryptoValue: 0.0 // TODO fill when bridge data is implemented
     readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
-    readonly property string communityName: isModelDataValid && modelData.communityName ? modelData.communityName : ""
     readonly property string networkColor: isModelDataValid ? rootStore.getNetworkColor(modelData.chainId) : ""
     readonly property string networkName: isModelDataValid ? rootStore.getNetworkFullName(modelData.chainId) : ""
     readonly property string networkNameIn: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdIn) : ""
@@ -69,7 +68,12 @@ StatusListItem {
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
-    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && modelData.isCommunityAssetViaAirdrop ? modelData.isCommunityAssetViaAirdrop : false
+    readonly property bool isCommunityAssetViaAirdrop: isModelDataValid && !!communityId && modelData.txType === Constants.TransactionType.Mint
+    readonly property string communityId: isModelDataValid && modelData.communityId ? modelData.communityId : ""
+    property var community: null
+    readonly property bool isCommunityToken: !!community && Object.keys(community).length > 0
+    readonly property string communityImage: isCommunityToken ? community.image : ""
+    readonly property string communityName: isCommunityToken ? community.name : ""
 
     readonly property string transactionValue: {
         if (!isModelDataValid) {
@@ -106,14 +110,6 @@ StatusListItem {
             return modelData.nftImageUrl ? modelData.nftImageUrl : ""
         } else {
             return Constants.tokenIcon(isMultiTransaction ? modelData.outSymbol : modelData.symbol)
-        }
-    }
-
-    readonly property string communityImage: {
-        if (!isModelDataValid || !root.isCommunityAssetViaAirdrop)
-            return ""
-        if (root.isCommunityAssetViaAirdrop) {
-            return modelData.communityImageUrl ? modelData.communityImageUrl : ""
         }
     }
 
@@ -236,7 +232,7 @@ StatusListItem {
         case Constants.TransactionType.Bridge:
         case Constants.TransactionType.ContractDeployment:
         case Constants.TransactionType.Mint:
-            details += getSubtitle(true) + endl2
+            details += getSubtitle(true, true) + endl2
             break
         default:
             details += qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName) + endl2
@@ -488,7 +484,17 @@ StatusListItem {
         return details.replace(/[\r\n\s]*$/, '')
     }
 
-    function getSubtitle(allAccounts) {
+    function getSubtitle(allAccounts, description) {
+        if (root.isCommunityAssetViaAirdrop) {
+            let communityInfo = ""
+            if (!description) {
+                // Showing image only in delegate. In description url shouldn't be showed
+                communityInfo += "<img src='" + root.communityImage + "' width='18' height='18' </img> "
+            }
+            communityInfo += root.communityName
+            return qsTr("%1 (community asset) from %2 via %3").arg(root.transactionValue).arg(communityInfo).arg(root.networkName)
+        }
+
         switch(modelData.txType) {
         case Constants.TransactionType.Receive:
             if (allAccounts)
@@ -670,9 +676,9 @@ StatusListItem {
             return ""
         }
 
-        return root.isCommunityAssetViaAirdrop ? qsTr("%1 (community asset) from %2 %3 via %4").arg(transactionValue).arg("<img src='" + root.communityImage + "'
-                      width='18' height='18' </img>").arg(communityName).arg(networkName) : getSubtitle(root.showAllAccounts)
+        return getSubtitle(root.showAllAccounts, false)
     }
+    statusListItemSubTitle.textFormat: root.isCommunityAssetViaAirdrop ? Text.RichText : Text.AutoText
     statusListItemSubTitle.maximumLoadingStateWidth: 400
     statusListItemSubTitle.customColor: Theme.palette.directColor1
     statusListItemSubTitle.font.pixelSize: root.loading ? d.loadingPixelSize : d.subtitlePixelSize

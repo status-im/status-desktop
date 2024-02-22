@@ -21,6 +21,7 @@ Item {
     property bool hideSignPhraseModal: false
     property var store
     property var contactsStore
+    property var communitiesStore
     property var emojiPopup: null
     property var sendModalPopup
     property var networkConnectionStore
@@ -177,6 +178,7 @@ Item {
         RightTabView {
             store: root.store
             contactsStore: root.contactsStore
+            communitiesStore: root.communitiesStore
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
 

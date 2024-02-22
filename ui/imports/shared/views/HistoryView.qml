@@ -28,6 +28,7 @@ ColumnLayout {
     id: root
 
     property var overview
+    property var communitiesStore
     property bool showAllAccounts: false
     property bool displayValues: true
     property var sendModal
@@ -111,7 +112,7 @@ ColumnLayout {
     Loader {
         id: filterPanelLoader
         active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet)
-        visible: active
+        visible: active && !noTxs.visible
         asynchronous: true
         Layout.fillWidth: true
         sourceComponent: ActivityFilterPanel {
@@ -449,6 +450,7 @@ ColumnLayout {
                 walletRootStore: WalletStores.RootStore
                 showAllAccounts: root.showAllAccounts
                 displayValues: root.displayValues
+                community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         delegateMenu.openMenu(this, mouse, modelData)

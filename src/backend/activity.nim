@@ -285,6 +285,8 @@ type
     chainIdIn*: Option[ChainId]
     transferType*: Option[TransferType]
 
+    communityId*: Option[string]
+
   # Mirrors status-go/services/wallet/activity/activity.go EntryData
   Data* = object
     payloadType*: PayloadType
@@ -312,6 +314,8 @@ type
 
     nftName*: Option[string]
     nftUrl*: Option[string]
+
+    communityId*: Option[string]
 
   # Mirrors services/wallet/activity/service.go ErrorCode
   ErrorCode* = enum
@@ -361,6 +365,7 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const transferTypeField = "transferType"
   const nftNameField = "nftName"
   const nftUrlField = "nftUrl"
+  const communityIdField = "communityId"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
     transaction:  if e.hasKey(transactionField):
@@ -398,6 +403,7 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
 
     nftName: if e.contains(nftNameField): some(e[nftNameField].getStr()) else: none(string),
     nftUrl: if e.contains(nftUrlField): some(e[nftUrlField].getStr()) else: none(string),
+    communityId: if e.contains(communityIdField): some(e[communityIdField].getStr()) else: none(string),
   )
   if e.hasKey(senderField) and e[senderField].kind != JNull:
     var address: eth.Address
@@ -434,6 +440,7 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     chainIdOut: data.chainIdOut,
     chainIdIn: data.chainIdIn,
     transferType: data.transferType,
+    communityId: data.communityId
   )
 
 proc `$`*(self: ActivityEntry): string =
@@ -449,14 +456,15 @@ proc `$`*(self: ActivityEntry): string =
     amountOut* {$self.amountOut},
     amountIn* {$self.amountIn},
     tokenOut* {$self.tokenOut},
-    tokenIn* {$self.tokenIn}
-    symbolOut* {$self.symbolOut}
-    symbolIn* {$self.symbolIn}
-    sender* {$self.sender}
-    recipient* {$self.recipient}
-    chainIdOut* {$self.chainIdOut}
-    chainIdIn* {$self.chainIdIn}
-    transferType* {$self.transferType}
+    tokenIn* {$self.tokenIn},
+    symbolOut* {$self.symbolOut},
+    symbolIn* {$self.symbolIn},
+    sender* {$self.sender},
+    recipient* {$self.recipient},
+    chainIdOut* {$self.chainIdOut},
+    chainIdIn* {$self.chainIdIn},
+    transferType* {$self.transferType},
+    communityId* {$self.communityId}
   )"""
 
 proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inline.} =
