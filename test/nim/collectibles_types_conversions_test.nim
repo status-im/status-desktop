@@ -41,3 +41,25 @@ suite "collectibles types":
     check(oldCommOwners[0].name == newCommOwners[0].name)
     check(oldCommOwners[0].imageSource == newCommOwners[0].imageSource)
     check(oldCommOwners[0].collectibleOwner.address == newCommOwners[0].collectibleOwner.address)
+  
+  test "ContractID string conversion":
+    
+        let oldContractID = ContractID(chainID: 321, address: "0x123")
+        let contractIDString = oldContractID.toString()
+    
+        let newContractID = contractIDString.toContractID()
+    
+        check(oldContractID == newContractID)
+
+  test "CollectibleUniqueID string conversion":
+  
+      let oldUniqueID = CollectibleUniqueID(
+        contractID: ContractID(chainID: 321, address: "0x123"),
+        tokenId: stint.u256(23)
+      )
+      let uniqueIDString = oldUniqueID.toString()
+  
+      let newUniqueID = uniqueIDString.toCollectibleUniqueID()
+  
+      check(oldUniqueID == newUniqueID)
+

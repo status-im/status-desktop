@@ -129,7 +129,7 @@ proc newModule*(
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
-    transactionService, keycardService)
+  transactionService, keycardService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
@@ -137,12 +137,10 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  let collectiblesToTokenConverter = proc(id: string): backend_activity.Token =
-    return allCollectiblesModule.getAllCollectiblesModel().getActivityToken(id)
   result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService,
-    savedAddressService, events, collectiblesToTokenConverter)
+    savedAddressService, events)
   result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService,
-    savedAddressService, events, collectiblesToTokenConverter)
+    savedAddressService, events)
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 

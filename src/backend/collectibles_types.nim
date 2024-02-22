@@ -1,5 +1,5 @@
 import json, strformat, json_serialization
-import stint, Tables, options
+import stint, Tables, options, strutils
 import community_tokens_types
 
 include app_service/common/json_utils
@@ -126,6 +126,13 @@ proc fromJson*(t: JsonNode, T: typedesc[ref ContractID]): ref ContractID {.inlin
   result = new(ContractID)
   result[] = fromJson(t, ContractID)
 
+proc toString*(t: ContractID): string =
+  return fmt"{t.chainID}+{t.address}"
+
+proc toContractID*(t: string): ContractID =
+  var parts = t.split("+")
+  return ContractID(chainID: parts[0].parseInt(), address: parts[1])
+
 # CollectibleUniqueID
 proc `$`*(self: CollectibleUniqueID): string =
   return fmt"""CollectibleUniqueID(
@@ -153,6 +160,19 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleUniqueID]): CollectibleUnique
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleUniqueID]): ref CollectibleUniqueID {.inline.} =
   result = new(CollectibleUniqueID)
   result[] = fromJson(t, CollectibleUniqueID)
+
+proc toString*(t: CollectibleUniqueID): string =
+  return fmt"{t.contractID.chainID}+{t.contractID.address}+{t.tokenID.toString()}"
+
+proc toCollectibleUniqueID*(t: string): CollectibleUniqueID =
+  var parts = t.split("+")
+  return CollectibleUniqueID(
+    contractID: ContractID(
+        chainID: parts[0].parseInt(), 
+        address: parts[1]
+      ),
+    tokenID: stint.parse(parts[2], UInt256)
+  )
 
 # CollectibleTrait
 proc `$`*(self: CollectibleTrait): string =

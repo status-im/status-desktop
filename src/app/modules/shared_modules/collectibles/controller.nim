@@ -9,7 +9,6 @@ import events_handler
 import app/core/eventemitter
 
 import backend/collectibles as backend_collectibles
-import backend/activity as backend_activity
 import app_service/service/network/service as network_service
 
 const FETCH_BATCH_COUNT_DEFAULT = 50
@@ -301,9 +300,6 @@ QtObject:
     self.filter = filter
 
     self.resetModel()
-
-  proc getActivityToken*(self: Controller, id: string): backend_activity.Token =
-    return self.model.getActivityToken(id)
 
   proc getItemForData*(self: Controller, tokenId: string, tokenAddress: string, chainId: int): CollectiblesEntry =
     let uid = self.model.getUidForData(tokenId, tokenAddress, chainId)

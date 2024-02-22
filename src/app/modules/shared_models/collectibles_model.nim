@@ -2,9 +2,7 @@ import NimQml, Tables, strutils, strformat, sequtils, stint, json
 import logging
 
 import ./collectibles_entry
-import web3/ethtypes as eth
 import backend/collectibles as backend_collectibles
-import backend/activity as backend_activity
 import app_service/common/utils as common_utils
 import app_service/common/types
 
@@ -164,7 +162,7 @@ QtObject:
       let item = self.items[index.row]
       case enumRole:
       of CollectibleRole.Uid:
-        result = newQVariant(item.getID())
+        result = newQVariant(item.getIDAsString())
       of CollectibleRole.ChainId:
         result = newQVariant(item.getChainID())
       of CollectibleRole.ContractAddress:
@@ -182,7 +180,7 @@ QtObject:
       of CollectibleRole.BackgroundColor:
         result = newQVariant(item.getBackgroundColor())
       of CollectibleRole.CollectionUid:
-        result = newQVariant(item.getCollectionID())
+        result = newQVariant(item.getCollectionIDAsString())
       of CollectibleRole.CollectionName:
         result = newQVariant(item.getCollectionName())
       of CollectibleRole.CollectionSlug:
@@ -205,7 +203,7 @@ QtObject:
       return
     let item = self.items[index]
     case column:
-      of "uid": result = item.getID()
+      of "uid": result = item.getIDAsString()
       of "chainId": result = $item.getChainID()
       of "contractAddress": result = item.getContractAddress()
       of "tokenId": result = item.getTokenIDAsString()
@@ -214,7 +212,7 @@ QtObject:
       of "mediaType": result = item.getMediaType()
       of "imageUrl": result = item.getImageURL()
       of "backgroundColor": result = item.getBackgroundColor()
-      of "collectionUid": result = item.getCollectionID()
+      of "collectionUid": result = item.getCollectionIDAsString()
       of "collectionName": result = item.getCollectionName()
       of "collectionSlug": result = item.getCollectionSlug()
       of "isLoading": result = $false
@@ -271,12 +269,12 @@ QtObject:
 
     var newTable = initTable[string, int](len(newItems))
     for i in 0 ..< len(newItems):
-      newTable.add(newItems[i].getID(), i)
+      newTable.add(newItems[i].getIDAsString(), i)
 
     # Needs to be built in sequential index order
     var oldIndicesToRemove: seq[int] = @[]
     for idx in 0 ..< len(self.items):
-      let uid = self.items[idx].getID()
+      let uid = self.items[idx].getIDAsString()
       if not newTable.hasKey(uid):
         # Item in old list but not in new -> Must remove
         oldIndicesToRemove.add(idx)
@@ -303,7 +301,7 @@ QtObject:
 
   proc getItemById*(self: Model, id: string): CollectiblesEntry =
     for item in self.items:
-      if(cmpIgnoreCase(item.getID(), id) == 0):
+      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item
     return nil
 
@@ -343,45 +341,20 @@ QtObject:
 
   proc getImageUrl*(self: Model, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item.getImageUrl()
     return ""
 
   proc getName*(self: Model, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item.getName()
     return ""
 
-  proc getActivityToken*(self: Model, id: string): backend_activity.Token =
-    for item in self.items:
-      if(cmpIgnoreCase(item.getID(), id) == 0):
-        result.tokenType = TokenType.ERC721
-        result.chainId = backend_activity.ChainId(item.getChainID())
-        var contract = item.getContractAddress()
-        if len(contract) > 0:
-          var address: eth.Address
-          address = eth.fromHex(eth.Address, contract)
-          result.address = some(address)
-        var tokenId = item.getTokenID()
-        if tokenId > 0:
-          result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
-        return result
-    
-    # Fallback, use data from id
-    var parts = id.split("+")
-    if len(parts) == 3:
-      result.chainId = backend_activity.ChainId(parseInt(parts[0]))
-      result.address = some(eth.fromHex(eth.Address, parts[1]))
-      var tokenIdInt = u256(parseInt(parts[2]))
-      result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenIdInt)))
-
-    return result
-
   proc getUidForData*(self: Model, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getTokenIDAsString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
-        return item.getID()
+      if(cmpIgnoreCase(item.getTokenIDAsString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0) and item.getChainID() == chainId:
+        return item.getIDAsString()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:
       return $chainId & "+" & tokenAddress & "+" & tokenId

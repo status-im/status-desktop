@@ -3,22 +3,22 @@ import ./collectibles_nested_item as nested_item
 
 proc collectibleToCollectibleNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
   return nested_item.initItem(
-    flatItem.getID(),
+    flatItem.getIDAsString(),
     flatItem.getChainID(),
     flatItem.getName(),
     flatItem.getImageURL(),
-    flatItem.getCollectionID(),
+    flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
     false
   )
 
 proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
   return nested_item.initItem(
-    flatItem.getCollectionID(),
+    flatItem.getCollectionIDAsString(),
     flatItem.getChainID(),
     flatItem.getCollectionName(),
     flatItem.getCollectionImageURL(),
-    flatItem.getCollectionID(),
+    flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
     true
   )
