@@ -143,7 +143,7 @@ ColumnLayout {
             id: savedAddressDelegate
             objectName: "savedAddressView_Delegate_" + name
             name: model.name
-            address: model.address
+            address: model.mixedcaseAddress
             chainShortNames: model.chainShortNames
             ens: model.ens
             colorId: model.colorId
