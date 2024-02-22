@@ -5,6 +5,8 @@
 #include <memory>
 
 #include <StatusQ/leftjoinmodel.h>
+
+#include <TestHelpers/persistentindexestester.h>
 #include <TestHelpers/testmodel.h>
 
 class TestLeftJoinModel: public QObject
@@ -387,7 +389,7 @@ private slots:
         }
     }
 
-    // TODO: cover also move and layoutChanged
+    // TODO: cover also move
     void insertRemovePropagationTest()
     {
         TestModel leftModel({
@@ -444,6 +446,63 @@ private slots:
         QCOMPARE(rowsRemovedSpy.first().at(1), 1);
         QCOMPARE(rowsRemovedSpy.first().at(2), 1);
     }
+
+    void layoutChangePropagationTest()
+    {
+        TestModel leftModel({
+           { "title", { "Token 1", "Token 2" }},
+           { "communityId", { "community_1", "community_2" }}
+        });
+
+        TestModel rightModel({
+           { "name", { "Community 1", "Community 2" }},
+           { "communityId", { "community_1", "community_2" }},
+           { "color", { "red", "green" }}
+        });
+
+        LeftJoinModel model;
+        QAbstractItemModelTester tester(&model);
+
+        model.setLeftModel(&leftModel);
+        model.setRightModel(&rightModel);
+        model.setJoinRole("communityId");
+
+        // register types to avoid warnings regarding signal params
+        qRegisterMetaType<QList<QPersistentModelIndex>>();
+        qRegisterMetaType<QAbstractItemModel::LayoutChangeHint>();
+
+        QSignalSpy layoutAboutToBeChangedSpy(
+                    &model, &LeftJoinModel::layoutAboutToBeChanged);
+        QSignalSpy layoutChangedSpy(&model, &LeftJoinModel::layoutChanged);
+        QSignalSpy dataChangedSpy(&model, &LeftJoinModel::dataChanged);
+
+        PersistentIndexesTester indexesTester(&model);
+        leftModel.invert();
+
+        QCOMPARE(layoutAboutToBeChangedSpy.count(), 1);
+        QCOMPARE(layoutChangedSpy.count(), 1);
+        QCOMPARE(dataChangedSpy.count(), 0);
+
+        QVERIFY(indexesTester.compare());
+
+        QCOMPARE(model.rowCount(), 2);
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 2"));
+
+        rightModel.invert();
+
+        QCOMPARE(layoutAboutToBeChangedSpy.count(), 1);
+        QCOMPARE(layoutChangedSpy.count(), 1);
+        QCOMPARE(dataChangedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(1, 0), 0), QString("Token 1"));
+        QCOMPARE(model.data(model.index(0, 0), 0), QString("Token 2"));
+        QCOMPARE(model.data(model.index(1, 0), 2), QString("Community 1"));
+        QCOMPARE(model.data(model.index(0, 0), 2), QString("Community 2"));
+    }
+
 
     void rightModelJoinRoleChangesPropagationTest()
     {

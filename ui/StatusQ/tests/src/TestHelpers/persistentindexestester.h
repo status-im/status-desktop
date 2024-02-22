@@ -19,6 +19,7 @@ class PersistentIndexesTester
 {
 public:
     explicit PersistentIndexesTester(QAbstractItemModel* model);
+    ~PersistentIndexesTester();
 
     void storeIndexesAndData();
     bool compare();

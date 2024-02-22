@@ -10,6 +10,8 @@ PersistentIndexesTester::PersistentIndexesTester(QAbstractItemModel* model)
     storeIndexesAndData();
 }
 
+PersistentIndexesTester::~PersistentIndexesTester() = default;
+
 void PersistentIndexesTester::storeIndexesAndData()
 {
     if (m_model == nullptr) {

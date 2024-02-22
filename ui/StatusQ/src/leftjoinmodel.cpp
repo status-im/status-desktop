@@ -145,19 +145,39 @@ void LeftJoinModel::connectLeftModelSignals()
 
     connect(m_leftModel, &QAbstractItemModel::layoutAboutToBeChanged, this, [this]() {
         emit layoutAboutToBeChanged();
+
+        const auto persistentIndexes = persistentIndexList();
+
+        for (const QModelIndex& persistentIndex: persistentIndexes) {
+            m_proxyIndexes << persistentIndex;
+            Q_ASSERT(persistentIndex.isValid());
+            const auto srcIndex = m_leftModel->index(
+                        persistentIndex.row(),
+                        persistentIndex.column());
+
+            Q_ASSERT(srcIndex.isValid());
+            m_layoutChangePersistentIndexes << srcIndex;
+        }
     });
 
     connect(m_leftModel, &QAbstractItemModel::layoutChanged, this, [this]() {
+        for (int i = 0; i < m_proxyIndexes.size(); ++i) {
+            auto p = m_layoutChangePersistentIndexes.at(i);
+            changePersistentIndex(m_proxyIndexes.at(i), index(
+                                      p.row(), p.column(), p.parent()));
+        }
+
+        m_layoutChangePersistentIndexes.clear();
+        m_proxyIndexes.clear();
+
         emit layoutChanged();
     });
 
-    connect(m_leftModel, &QAbstractItemModel::modelAboutToBeReset, this, [this]() {
-        beginResetModel();
-    });
+    connect(m_leftModel, &QAbstractItemModel::modelAboutToBeReset, this,
+            &LeftJoinModel::beginResetModel);
 
-    connect(m_leftModel, &QAbstractItemModel::modelReset, this, [this]() {
-        endResetModel();
-    });
+    connect(m_leftModel, &QAbstractItemModel::modelReset, this,
+            &LeftJoinModel::endResetModel);
 }
 
 void LeftJoinModel::connectRightModelSignals()
@@ -187,8 +207,6 @@ void LeftJoinModel::connectRightModelSignals()
     connect(m_rightModel, &QAbstractItemModel::rowsInserted, this,
             emitJoinedRolesChanged);
     connect(m_rightModel, &QAbstractItemModel::modelReset, this,
-            emitJoinedRolesChanged);
-    connect(m_rightModel, &QAbstractItemModel::layoutChanged, this,
             emitJoinedRolesChanged);
 }
 
