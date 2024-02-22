@@ -60,4 +60,8 @@ private:
     bool m_initialized = false;
 
     mutable QPersistentModelIndex m_lastUsedRightModelIndex;
+
+    // helpers for handling layoutChanged from source
+    QList<QPersistentModelIndex> m_layoutChangePersistentIndexes;
+    QModelIndexList m_proxyIndexes;
 };
