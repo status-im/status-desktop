@@ -829,6 +829,9 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
   let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
 
+  let tokenMasterPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeTokenMaster.int)
+
   # multiple permissions of the same type act as logical OR
   # so if at least one of them is fulfilled we can mark the view
   # as all lights green
@@ -837,8 +840,14 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
   let adminRequirementMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
 
-  let requiresPermissionToJoin = (adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0
-  let tokenRequirementsMet = if requiresPermissionToJoin: adminRequirementMet or memberRequirementMet else: false
+  let tmRequirementMet = tokenMasterPermissions.len() > 0 and any(tokenMasterPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+
+  let requiresPermissionToJoin = not (tokenMasterPermissions.len() > 0 and tmRequirementMet) and
+    ((adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0)
+  let tokenRequirementsMet = if requiresPermissionToJoin:
+      tmRequirementMet or adminRequirementMet or memberRequirementMet
+    else:
+      false
 
   self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
