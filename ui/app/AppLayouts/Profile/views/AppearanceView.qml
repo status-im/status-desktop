@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls.Universal 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
+import QtQuick.Controls.Universal 2.15
 
 import utils 1.0
 import shared 1.0
@@ -37,19 +38,28 @@ SettingsContentBase {
         appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
     }
 
+    readonly property var priv: QtObject {
+        id: priv
+
+        readonly property real savedDpr: {
+            const scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
+            if (scaleFactorStr === "") {
+                return 1
+            }
+            const scaleFactor = parseFloat(scaleFactorStr)
+            if (isNaN(scaleFactor)) {
+                return 1
+            }
+            return scaleFactor
+        }
+    }
+
     Item {
         id: appearanceContainer
         anchors.left: !!parent ? parent.left : undefined
+        anchors.leftMargin: Style.current.padding
         width: appearanceView.contentWidth - 2 * Style.current.padding
         height: childrenRect.height
-
-        ButtonGroup {
-            id: chatModeSetting
-        }
-
-        ButtonGroup {
-            id: appearanceSetting
-        }
 
         Rectangle {
             id: preview
@@ -128,41 +138,34 @@ SettingsContentBase {
 
         StatusQ.StatusLabeledSlider {
             id: zoomSlider
-            readonly property int initialValue: {
-                let scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
-                if (scaleFactorStr === "") {
-                    return 100
-                }
-                let scaleFactor = parseFloat(scaleFactorStr)
-                if (isNaN(scaleFactor)) {
-                    return 100
-                }
-                return scaleFactor * 100
-            }
+
+            readonly property int initialValue: priv.savedDpr * 100
+            readonly property bool dirty: value !== initialValue
+
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
             from: 50
-            to: 200
-            stepSize: 50
-            model: [ qsTr("50%"), qsTr("100%"), qsTr("150%"), qsTr("200%") ]
+            to: 300
+            stepSize: 25
+            model: [ qsTr("50%"), qsTr("75%"), qsTr("100%"), qsTr("125%"), qsTr("150%"), qsTr("175%"), qsTr("200%"),
+                qsTr("225%"), qsTr("250%"), qsTr("275%"), qsTr("300%")]
             value: initialValue
-            onValueChanged: {
-                if (value !== initialValue) {
-                    appearanceView.appearanceStore.writeTextFile(uiScaleFilePath, value / 100.0)
-                }
+            onMoved: {
+                const uiScale = zoomSlider.value === 100 ? "" // reset to native highdpi
+                                                         : zoomSlider.value / 100.0
+                appearanceView.appearanceStore.writeTextFile(uiScaleFilePath, uiScale)
             }
             onPressedChanged: {
-                if (!pressed && value !== initialValue) {
+                if (!pressed && dirty) {
                     confirmAppRestartModal.open()
                 }
             }
 
             ConfirmAppRestartModal {
                 id: confirmAppRestartModal
-                onClosed: {
-                    zoomSlider.value = zoomSlider.initialValue
-                }
+                onAccepted: Utils.restartApplication();
+                onClosed: zoomSlider.value = zoomSlider.initialValue
             }
         }
 

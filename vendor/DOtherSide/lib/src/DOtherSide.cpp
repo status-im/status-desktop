@@ -166,8 +166,18 @@ void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 
     QFile scaleFile(QString::fromUtf8(uiScaleFilePath));
     if (scaleFile.open(QIODevice::ReadOnly)) {
-        const auto scale = scaleFile.readAll();
-        qputenv("QT_SCALE_FACTOR", scale);
+        const auto scaleStr = scaleFile.readAll();
+        bool ok = false;
+        const auto scale = scaleStr.toDouble(&ok);
+        if (ok) {
+            // we want to scale the app on our own
+            qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0");
+            // workaround for bug/feature when Qt would bail out if the scale is "1" and revert to DPI based scaling
+            constexpr auto unaryScale = 1.1;
+            qputenv("QT_SCREEN_SCALE_FACTORS", QByteArray::number(unaryScale));
+            // compensate for the workaround above so that we get the desired scale factor
+            qputenv("QT_SCALE_FACTOR", QByteArray::number(scale/unaryScale, 'f', 2));
+        }
     }
 }
 
@@ -373,7 +383,7 @@ void dos_qguiapplication_quit()
 
 void dos_qguiapplication_restart()
 {
-    QProcess::startDetached(QCoreApplication::applicationFilePath());
+    QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
     dos_qguiapplication_quit();
 }
 
