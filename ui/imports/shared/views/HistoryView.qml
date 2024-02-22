@@ -48,6 +48,10 @@ ColumnLayout {
         }
     }
 
+    onVisibleChanged: {
+        d.openTxDetailsHash = ""
+    }
+
     Component.onCompleted: {
         if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
@@ -69,6 +73,16 @@ ColumnLayout {
         }
     }
 
+    Connections {
+        target: WalletStores.RootStore.currentActivityFiltersStore
+        enabled: root.visible
+        function onDisplayTxDetails(txHash) {
+            if (!d.openTxDetails(txHash)) {
+                d.openTxDetailsHash = txHash
+            }
+        }
+    }
+
     QtObject {
         id: d
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
@@ -83,6 +97,23 @@ ColumnLayout {
             RootStore.resetFilter()
             d.lastRefreshTime = Date.now()
             newTransactions.visible = false
+        }
+
+        property string openTxDetailsHash
+
+        function openTxDetails(txHash) {
+            // Prevent opening details when loading, that will invalidate the model data
+            if (RootStore.loadingHistoryTransactions) {
+                return false
+            }
+
+            const index = WalletStores.RootStore.currentActivityFiltersStore.transactionsList.getIndex(txHash)
+            if (index < 0)
+                return false
+            const entry = transactionListRoot.itemAtIndex(index)
+            root.selectedTransaction = Qt.binding(() => entry.modelData)
+            root.launchTransactionDetail(index)
+            return true
         }
     }
 
@@ -141,6 +172,16 @@ ColumnLayout {
             id: transactionListRoot
             objectName: "walletAccountTransactionList"
             anchors.fill: parent
+
+            onCountChanged: {
+                if (!!d.openTxDetailsHash && root.visible) {
+                    if (d.openTxDetails(d.openTxDetailsHash)) {
+                        d.openTxDetailsHash = ""
+                    } else {
+                        RootStore.fetchMoreTransactions()
+                    }
+                }
+            }
 
             model: SortFilterProxyModel {
                 id: txModel

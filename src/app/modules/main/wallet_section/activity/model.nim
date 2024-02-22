@@ -128,6 +128,12 @@ QtObject:
     read = getHasMore
     notify = hasMoreChanged
 
+  proc getIndex*(self: Model, txHash: string): int {.slot.} =
+    for i, e in self.entries:
+      if e.getId() == txHash:
+        return i
+    return -1
+    
   proc refreshItemsContainingAddress*(self: Model, address: string) =
     for i in 0..self.entries.high:
       if cmpIgnoreCase(self.entries[i].getSender(), address) == 0 or
