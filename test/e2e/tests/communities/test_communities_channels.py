@@ -18,7 +18,7 @@ pytestmark = marks
 @pytest.mark.parametrize(
     'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
-@pytest.mark.critical
+# @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/535
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
                                 channel_color, new_channel_name, new_channel_description, new_channel_emoji):
     with step('Create simple community'):
