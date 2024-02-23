@@ -26,6 +26,12 @@ StatusDraggableListItem {
         icon.color: Theme.palette.primaryColor1
     }
 
+    height: ProfileUtils.defaultDelegateHeight
+    topInset: 0
+    bottomInset: 0
+    changeColorOnDragActive: false
+    bgColor: Theme.palette.getColor(Theme.palette.statusAppLayout.rightPanelBackgroundColor, 0.7)
+
     icon.width: 40
     icon.height: 40
 

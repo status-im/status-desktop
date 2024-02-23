@@ -5,6 +5,9 @@ import QtQml 2.14
 import StatusQ.Core.Theme 0.1
 
 QtObject {
+
+    readonly property int defaultDelegateHeight: 76
+
     function displayName(nickName, ensName, displayName, aliasName)
     {
         return nickName || ensName || displayName || aliasName
