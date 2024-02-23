@@ -209,8 +209,8 @@ ifeq ($(detected_OS),Darwin)
  endif
 endif
 
-RELEASE ?= false
-ifeq ($(RELEASE),false)
+INCLUDE_DEBUG_SYMBOLS ?= false
+ifeq ($(INCLUDE_DEBUG_SYMBOLS),true)
  # We need `-d:debug` to get Nim's default stack traces
  NIM_PARAMS += -d:debug
  # Enable debugging symbols in DOtherSide, in case we need GDB backtraces
