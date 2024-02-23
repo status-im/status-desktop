@@ -25,6 +25,8 @@ import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
 
+import models/profile_showcase_preferences_item
+
 import backend/collectibles as backend_collectibles
 
 export io_interface
@@ -241,6 +243,29 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
     return
 
+  var communityItems: seq[ProfileShowcasePreferencesItem] = @[]
+  for community in preferences.communities:
+    communityItems.add(initProfileShowcasePreferencesItem(community.communityId, community.showcaseVisibility, community.order))
+  self.view.updateProfileShowcasePreferencesCommunities(communityItems)
+
+  var accountItems: seq[ProfileShowcasePreferencesItem] = @[]
+  for account in preferences.accounts:
+    accountItems.add(initProfileShowcasePreferencesItem(account.address, account.showcaseVisibility, account.order))
+  self.view.updateProfileShowcasePreferencesAccounts(accountItems)
+
+  var collectibleItems: seq[ProfileShowcasePreferencesItem] = @[]
+  for collectible in preferences.collectibles:
+    collectibleItems.add(initProfileShowcasePreferencesItem(collectible.toCombinedCollectibleId(), collectible.showcaseVisibility, collectible.order))
+  self.view.updateProfileShowcasePreferencesCollectibles(collectibleItems)
+
+  var assetItems: seq[ProfileShowcasePreferencesItem] = @[]
+  for token in preferences.verifiedTokens:
+    assetItems.add(initProfileShowcasePreferencesItem(token.symbol, token.showcaseVisibility, token.order))
+  self.view.updateProfileShowcasePreferencesAssets(assetItems)
+
+  # TODO: unverified tokens, social links
+
+  # TODO: remove the code for old models
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
   for communityProfile in preferences.communities:
     let community = self.controller.getCommunityById(communityProfile.communityId)
@@ -275,14 +300,11 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
         collectible, collectibleProfile.showcaseVisibility, collectibleProfile.order))
   self.view.updateProfileShowcaseCollectibles(profileCollectibleItems)
 
-  # TODO: Verified tokens preferences
   var profileAssetItems: seq[ProfileShowcaseAssetItem] = @[]
   for tokenProfile in preferences.verifiedTokens:
     for token in self.controller.getTokenBySymbolList():
       if tokenProfile.symbol == token.symbol:
         profileAssetItems.add(initProfileShowcaseVerifiedToken(token, tokenProfile.showcaseVisibility, tokenProfile.order))
-
-  # TODO: Unverified tokens preferences
   self.view.updateProfileShowcaseAssets(profileAssetItems)
 
 method onCommunitiesUpdated*(self: Module, communities: seq[CommunityDto]) =

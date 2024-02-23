@@ -31,6 +31,12 @@ QtObject {
 
     readonly property var collectiblesModel: profileModule.collectiblesModel
 
+    readonly property var profileShowcasePreferencesCommunitiesModel: profileModule.profileShowcasePreferencesCommunitiesModel
+    readonly property var profileShowcasePreferencesAccountsModel: profileModule.profileShowcasePreferencesAccountsModel
+    readonly property var profileShowcasePreferencesCollectiblesModel: profileModule.profileShowcasePreferencesCollectiblesModel
+    readonly property var profileShowcasePreferencesAssetsModel: profileModule.profileShowcasePreferencesAssetsModel
+
+    // TODO: remove old models
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel

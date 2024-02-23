@@ -1,4 +1,4 @@
-import json, strutils, stint, sequtils, json_serialization
+import json, strutils, strformat, stint, sequtils, json_serialization
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -109,6 +109,9 @@ proc toJsonNode*(self: ProfileShowcaseCollectiblePreference): JsonNode =
     "showcaseVisibility": self.showcaseVisibility.int,
     "order": self.order,
   }
+
+proc toCombinedCollectibleId*(self: ProfileShowcaseCollectiblePreference): string =
+  return fmt"{self.chainId}+{self.contractAddress}+{self.tokenId}"
 
 proc toProfileShowcaseVerifiedTokenPreference*(jsonObj: JsonNode): ProfileShowcaseVerifiedTokenPreference =
   result = ProfileShowcaseVerifiedTokenPreference()

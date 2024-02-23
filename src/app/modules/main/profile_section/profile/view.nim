@@ -4,6 +4,7 @@ import io_interface
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 
+# TODO remove old models
 import models/profile_preferences_communities_model
 import models/profile_preferences_community_item
 import models/profile_preferences_accounts_model
@@ -13,10 +14,14 @@ import models/profile_preferences_collectible_item
 import models/profile_preferences_assets_model
 import models/profile_preferences_asset_item
 
+import models/profile_showcase_preferences_model
+import models/profile_showcase_preferences_item
+
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      # TODO: remove old models
       socialLinksModel: SocialLinksModel
       socialLinksModelVariant: QVariant
       temporarySocialLinksModel: SocialLinksModel # used for editing purposes
@@ -30,8 +35,20 @@ QtObject:
       profileShowcaseAssetsModel: ProfileShowcaseAssetsModel
       profileShowcaseAssetsModelVariant: QVariant
 
+      profileShowcasePreferencesCommunitiesModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesCommunitiesModelVariant: QVariant
+      profileShowcasePreferencesAccountsModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesAccountsModelVariant: QVariant
+      profileShowcasePreferencesCollectiblesModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesCollectiblesModelVariant: QVariant
+      profileShowcasePreferencesAssetsModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesAssetsModelVariant: QVariant
+      profileShowcasePreferencesSocialLinksModel: ProfileShowcasePreferencesModel
+      profileShowcasePreferencesSocialLinksModelVariant: QVariant
+
   proc delete*(self: View) =
     self.QObject.delete
+    # TODO: remove old models
     self.socialLinksModel.delete
     self.socialLinksModelVariant.delete
     self.temporarySocialLinksModel.delete
@@ -45,10 +62,22 @@ QtObject:
     self.profileShowcaseAssetsModel.delete
     self.profileShowcaseAssetsModelVariant.delete
 
+    self.profileShowcasePreferencesCommunitiesModel.delete
+    self.profileShowcasePreferencesCommunitiesModelVariant.delete
+    self.profileShowcasePreferencesAccountsModel.delete
+    self.profileShowcasePreferencesAccountsModelVariant.delete
+    self.profileShowcasePreferencesCollectiblesModel.delete
+    self.profileShowcasePreferencesCollectiblesModelVariant.delete
+    self.profileShowcasePreferencesAssetsModel.delete
+    self.profileShowcasePreferencesAssetsModelVariant.delete
+    self.profileShowcasePreferencesSocialLinksModel.delete
+    self.profileShowcasePreferencesSocialLinksModelVariant.delete
+
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
+    # TODO: remove old models
     result.socialLinksModel = newSocialLinksModel()
     result.socialLinksModelVariant = newQVariant(result.socialLinksModel)
     result.temporarySocialLinksModel = newSocialLinksModel()
@@ -61,6 +90,17 @@ QtObject:
     result.profileShowcaseCollectiblesModelVariant = newQVariant(result.profileShowcaseCollectiblesModel)
     result.profileShowcaseAssetsModel = newProfileShowcaseAssetsModel()
     result.profileShowcaseAssetsModelVariant = newQVariant(result.profileShowcaseAssetsModel)
+
+    result.profileShowcasePreferencesCommunitiesModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesCommunitiesModelVariant = newQVariant(result.profileShowcasePreferencesCommunitiesModel)
+    result.profileShowcasePreferencesAccountsModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesAccountsModelVariant = newQVariant(result.profileShowcasePreferencesAccountsModel)
+    result.profileShowcasePreferencesCollectiblesModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesCollectiblesModelVariant = newQVariant(result.profileShowcasePreferencesCollectiblesModel)
+    result.profileShowcasePreferencesAssetsModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesAssetsModelVariant = newQVariant(result.profileShowcasePreferencesAssetsModel)
+    result.profileShowcasePreferencesSocialLinksModel = newProfileShowcasePreferencesModel()
+    result.profileShowcasePreferencesSocialLinksModelVariant = newQVariant(result.profileShowcasePreferencesSocialLinksModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -174,6 +214,7 @@ QtObject:
   proc emitBioChangedSignal*(self: View) =
     self.bioChanged()
 
+  # TODO: remove old models
   proc getCollectiblesModel(self: View): QVariant {.slot.} =
     return self.delegate.getCollectiblesModel()
 
@@ -204,6 +245,37 @@ QtObject:
   QtProperty[QVariant] profileShowcaseAssetsModel:
     read = getProfileShowcaseAssetsModel
 
+  proc getProfileShowcasePreferencesCommunitiesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesCommunitiesModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesCommunitiesModel:
+    read = getProfileShowcasePreferencesCommunitiesModel
+
+  proc getProfileShowcasePreferencesAccountsModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesAccountsModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesAccountsModel:
+    read = getProfileShowcasePreferencesAccountsModel
+
+  proc getProfileShowcasePreferencesCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesCollectiblesModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesCollectiblesModel:
+    read = getProfileShowcasePreferencesCollectiblesModel
+
+  proc getProfileShowcasePreferencesAssetsModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesAssetsModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesAssetsModel:
+    read = getProfileShowcasePreferencesAssetsModel
+
+  proc getProfileShowcasePreferencesSocialLinksModel(self: View): QVariant {.slot.} =
+    return self.profileShowcasePreferencesSocialLinksModelVariant
+
+  QtProperty[QVariant] profileShowcasePreferencesSocialLinksModel:
+    read = getProfileShowcasePreferencesSocialLinksModel
+
+
   proc storeProfileShowcasePreferences(self: View) {.slot.} =
     let communities = self.profileShowcaseCommunitiesModel.items()
     let accounts = self.profileShowcaseAccountsModel.items()
@@ -230,6 +302,19 @@ QtObject:
   proc getProfileShowcaseCommunities*(self: View): seq[ProfileShowcaseCommunityItem] =
     return self.profileShowcaseCommunitiesModel.items()
 
+  proc updateProfileShowcasePreferencesCommunities*(self: View, items: seq[ProfileShowcasePreferencesItem]) =
+    self.profileShowcasePreferencesCommunitiesModel.setItems(items)
+
+  proc updateProfileShowcasePreferencesAccounts*(self: View, items: seq[ProfileShowcasePreferencesItem]) =
+    self.profileShowcasePreferencesAccountsModel.setItems(items)
+
+  proc updateProfileShowcasePreferencesCollectibles*(self: View, items: seq[ProfileShowcasePreferencesItem]) =
+    self.profileShowcasePreferencesCollectiblesModel.setItems(items)
+
+  proc updateProfileShowcasePreferencesAssets*(self: View, items: seq[ProfileShowcasePreferencesItem]) =
+    self.profileShowcasePreferencesAssetsModel.setItems(items)
+
+  # TODO: remove setters for old models
   proc updateProfileShowcaseCommunities*(self: View, communities: seq[ProfileShowcaseCommunityItem]) =
     self.profileShowcaseCommunitiesModel.reset(communities.sorted((a, b) => cmp(a.order, b.order), SortOrder.Ascending))
 
