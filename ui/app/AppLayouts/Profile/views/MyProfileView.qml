@@ -43,6 +43,15 @@ SettingsContentBase {
         property url profileLargeImage: profileHeader.previewIcon
     }
 
+    enum TabIndex {
+        Identity = 0,
+        Communities = 1,
+        Accounts = 2,
+        Collectibles = 3,
+        Assets = 4,
+        Web = 5
+    }
+
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Preview")
         onClicked: Global.openPopup(profilePreview)
@@ -156,6 +165,13 @@ SettingsContentBase {
         height: contentHeight
         currentIndex: profileTabBar.currentIndex
 
+        onCurrentIndexChanged: {
+            if(root.profileStore.isFirstShowcaseInteraction && currentIndex !== MyProfileView.TabIndex.Identity) {
+                root.profileStore.setIsFirstShowcaseInteraction()
+                Global.openPopup(profileShowcaseInfoPopup)
+            }
+        }
+
         // identity
         ColumnLayout {
             objectName: "myProfileSettingsView"
@@ -216,10 +232,10 @@ SettingsContentBase {
             id: profileShowcaseCollectiblesPanel
             baseModel: root.profileStore.collectiblesModel
             showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
-                addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
 
-                onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-                onNavigateToAccountsTab: profileTabBar.currentIndex = 2
+            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
         }
 
         // assets
@@ -234,7 +250,7 @@ SettingsContentBase {
             }
 
             onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-            onNavigateToAccountsTab: profileTabBar.currentIndex = 2
+            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
         }
 
         // web
@@ -251,6 +267,14 @@ SettingsContentBase {
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 onClosed: destroy()
+            }
+        }
+
+        Component {
+            id: profileShowcaseInfoPopup
+
+            ProfileShowcaseInfoPopup {
+                destroyOnClose: true
             }
         }
     }

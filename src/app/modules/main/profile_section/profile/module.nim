@@ -157,6 +157,9 @@ method storeProfileShowcasePreferences(self: Module,
     revealedAddresses
   )
 
+method setIsFirstShowcaseInteraction(self: Module) =
+  singletonInstance.localAccountSettings.setIsFirstShowcaseInteraction(false)
+
 method requestProfileShowcasePreferences(self: Module) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()
   if self.presentedPublicKey != myPublicKey:

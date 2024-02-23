@@ -35,6 +35,7 @@ QtObject {
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
     readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+    readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
@@ -106,5 +107,9 @@ QtObject {
 
     function requestProfileShowcase(publicKey) {
         root.profileModule.requestProfileShowcase(publicKey)
+    }
+
+    function setIsFirstShowcaseInteraction() {
+        root.profileModule.setIsFirstShowcaseInteraction()
     }
 }

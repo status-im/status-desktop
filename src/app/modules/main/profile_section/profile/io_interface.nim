@@ -63,6 +63,9 @@ method storeProfileShowcasePreferences*(self: AccessInterface,
 method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setIsFirstShowcaseInteraction*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

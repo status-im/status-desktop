@@ -2,6 +2,7 @@ BackupSeedModal 1.0 BackupSeedModal.qml
 SetupSyncingPopup 1.0 SetupSyncingPopup.qml
 AddSocialLinkModal 1.0 AddSocialLinkModal.qml
 ModifySocialLinkModal 1.0 ModifySocialLinkModal.qml
+ProfileShowcaseInfoPopup 1.0 ProfileShowcaseInfoPopup.qml
 RenameKeypairPopup 1.0 RenameKeypairPopup.qml
 RenameAccontModal 1.0 RenameAccontModal.qml
 RemoveKeypairPopup 1.0 RemoveKeypairPopup.qml
