@@ -549,6 +549,8 @@ Item {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
+                isMemberBanned: model.amIBanned
+
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
                 }

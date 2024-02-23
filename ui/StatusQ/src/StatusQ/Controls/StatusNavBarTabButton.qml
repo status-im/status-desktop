@@ -1,13 +1,16 @@
 import QtQuick 2.13
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Theme 0.1
     
 StatusIconTabButton {
     id: statusNavBarTabButton 
     property alias badge: statusBadge
     property alias tooltip: statusTooltip
     property Component popupMenu
+    property bool isMemberBanned: false
 
     StatusToolTip {
         id: statusTooltip
@@ -16,6 +19,25 @@ StatusIconTabButton {
         orientation: StatusToolTip.Orientation.Right
         x: statusNavBarTabButton.width + 16
         y: statusNavBarTabButton.height / 2 - height / 2 + 4
+    }
+
+    StatusRoundIcon {
+        id: banIcon
+        visible: isMemberBanned
+
+        width: 20
+        height: width
+        color: Theme.palette.dangerColor1
+        border.color: Theme.palette.baseColor2
+        border.width: 2
+        anchors.top: parent.top
+        anchors.left: parent.right
+
+        anchors.leftMargin: (width) * -1
+
+        asset.name: "cancel"
+        asset.color: Theme.palette.baseColor2
+        asset.width: 14
     }
 
     StatusBadge {

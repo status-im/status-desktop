@@ -254,6 +254,11 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  var amIbanned = false
+  if myPublicKey in community.pendingAndBannedMembers:
+    amIbanned = community.pendingAndBannedMembers[myPublicKey] == CommunityMemberPendingBanOrKick.Banned
+
   return initCuratedCommunityItem(
     community.id,
     community.name,
@@ -267,6 +272,7 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
     int(community.activeMembersCount),
     community.featuredInDirectory,
     tokenPermissionsItems,
+    amIbanned
   )
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =

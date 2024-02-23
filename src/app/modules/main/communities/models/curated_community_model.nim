@@ -17,6 +17,7 @@ type
     Color
     Tags
     Permissions
+    AmIBanned
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -65,6 +66,7 @@ QtObject:
       ModelRole.Popularity.int:"popularity",
       ModelRole.Tags.int:"tags",
       ModelRole.Permissions.int:"permissionsModel",
+      ModelRole.AmIBanned.int:"amIBanned",
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -102,6 +104,8 @@ QtObject:
         result = newQVariant(item.getPermissionsModel())
       of ModelRole.Featured:
         result = newQVariant(item.getFeatured())
+      of ModelRole.AmIBanned:
+        result = newQVariant(item.getAmIBanned())
 
   proc findIndexById(self: CuratedCommunityModel, id: string): int =
     for i in 0 ..< self.items.len:
