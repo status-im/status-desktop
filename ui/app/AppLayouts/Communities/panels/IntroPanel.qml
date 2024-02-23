@@ -15,10 +15,11 @@ Control {
     property alias subtitle: subtitleItem.text
     property alias checkersModel: checkersItems.model
 
-    readonly property int imageWidth: 256
-    readonly property int imageHeigth: root.imageWidth
+    property int imageWidth: 256
+    property int imageHeigth: root.imageWidth
+    property int imageBottomMargin: 0
 
-    padding : Style.current.padding
+    padding: Style.current.padding
     bottomPadding: Style.current.xlPadding
 
     QtObject {
@@ -46,6 +47,8 @@ Control {
             Layout.preferredWidth: root.imageWidth
             Layout.preferredHeight: root.imageHeigth
             Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: root.imageBottomMargin
+
             fillMode: Image.PreserveAspectFit
             mipmap: true
             cache: false

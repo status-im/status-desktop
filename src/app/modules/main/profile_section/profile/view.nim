@@ -224,6 +224,9 @@ QtObject:
   proc requestProfileShowcasePreferences(self: View) {.slot.} =
     self.delegate.requestProfileShowcasePreferences()
 
+  proc setIsFirstShowcaseInteraction(self: View) {.slot.} =
+    self.delegate.setIsFirstShowcaseInteraction()
+
   proc getProfileShowcaseCommunities*(self: View): seq[ProfileShowcaseCommunityItem] =
     return self.profileShowcaseCommunitiesModel.items()
 
