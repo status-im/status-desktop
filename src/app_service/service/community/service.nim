@@ -519,6 +519,10 @@ QtObject:
     # checking length is sufficient - communityTokensMetadata list can only extend
     return communityTokens.len != prevCommunityTokens.len
 
+  proc updateMemberRole(self: Service, chatId: string, member: ChatMember) =
+    self.events.emit(SIGNAL_CHAT_MEMBER_UPDATED,
+      ChatMemberUpdatedArgs(chatId: chatId, id: member.id, role: member.role, joined: member.joined))
+
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
       let myPublicKey = singletonInstance.userProfile.getPubKey()
@@ -531,15 +535,22 @@ QtObject:
           self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
         return
 
-      let prev_community = self.communities[community.id]
+      let prevCommunity = self.communities[community.id]
+
+      let currOwner = community.findOwner()
+      let prevOwner = prevCommunity.findOwner()
+
+      if currOwner.id != prevOwner.id:
+        for chat in community.chats:
+          self.updateMemberRole(chat.id, currOwner)
 
       # ownership lost
-      if prev_community.isOwner and not community.isOwner:
+      if prevCommunity.isOwner and not community.isOwner:
         self.events.emit(SIGNAL_COMMUNITY_LOST_OWNERSHIP, CommunityIdArgs(communityId: community.id))
         let response = tokens_backend.registerLostOwnershipNotification(community.id)
         checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
-      if self.communityTokensChanged(community, prev_community):
+      if self.communityTokensChanged(community, prevCommunity):
         self.events.emit(SIGNAL_COMMUNITY_TOKENS_CHANGED, nil)
 
       # If there's settings without `id` it means the original
@@ -547,14 +558,14 @@ QtObject:
       # assign the settings we already have, otherwise we risk our
       # settings to be overridden with wrong defaults.
       if community.settings.id == "":
-        community.settings = prev_community.settings
+        community.settings = prevCommunity.settings
 
       var deletedCategories: seq[string] = @[]
 
       # category was added
-      if(community.categories.len > prev_community.categories.len):
+      if(community.categories.len > prevCommunity.categories.len):
         for category in community.categories:
-          if findIndexById(category.id, prev_community.categories) == -1:
+          if findIndexById(category.id, prevCommunity.categories) == -1:
             self.communities[community.id].categories.add(category)
             let chats = self.getChatsInCategory(community, category.id)
 
@@ -562,8 +573,8 @@ QtObject:
               CommunityCategoryArgs(communityId: community.id, category: category, chats: chats))
 
       # category was removed
-      elif(community.categories.len < prev_community.categories.len):
-        for prv_category in prev_community.categories:
+      elif(community.categories.len < prevCommunity.categories.len):
+        for prv_category in prevCommunity.categories:
           if findIndexById(prv_category.id, community.categories) == -1:
             deletedCategories.add(prv_category.id)
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
@@ -571,12 +582,12 @@ QtObject:
 
       # some property has changed
       else:
-        self.checkForCategoryPropertyUpdates(community, prev_community)
+        self.checkForCategoryPropertyUpdates(community, prevCommunity)
 
       # channel was added
-      if(community.chats.len > prev_community.chats.len):
+      if(community.chats.len > prevCommunity.chats.len):
         for chat in community.chats:
-          if findIndexById(chat.id, prev_community.chats) == -1:
+          if findIndexById(chat.id, prevCommunity.chats) == -1:
             self.chatService.updateOrAddChat(chat) # we have to update chats stored in the chat service.
             let data = CommunityChatArgs(chat: chat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
@@ -590,8 +601,8 @@ QtObject:
             )
 
       # channel was removed
-      elif((community.chats.len-removedChats.len) < prev_community.chats.len):
-        for prv_chat in prev_community.chats:
+      elif((community.chats.len-removedChats.len) < prevCommunity.chats.len):
+        for prv_chat in prevCommunity.chats:
           if findIndexById(prv_chat.id, community.chats) == -1:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id,
             chatId: prv_chat.id))
@@ -599,13 +610,13 @@ QtObject:
       else:
         for chat in community.chats:
           # id is present
-          let index = findIndexById(chat.id, prev_community.chats)
+          let index = findIndexById(chat.id, prevCommunity.chats)
           if index == -1:
             continue
           # but something is different
-          let prev_chat = prev_community.chats[index]
+          let prevChat = prevCommunity.chats[index]
           # Handle position changes
-          if chat.position != prev_chat.position:
+          if chat.position != prevChat.position:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED,
               CommunityChatOrderArgs(
                 communityId: community.id,
@@ -614,12 +625,12 @@ QtObject:
             )
 
           # Handle channel was added/removed to/from category
-          if chat.categoryId != prev_chat.categoryId:
+          if chat.categoryId != prevChat.categoryId:
 
             var prevCategoryDeleted = false
             if chat.categoryId == "":
               for catId in deletedCategories:
-                if prev_chat.categoryId == catId:
+                if prevChat.categoryId == catId:
                   prevCategoryDeleted = true
                   break
 
@@ -631,7 +642,7 @@ QtObject:
             )
 
           # Handle name/description changes
-          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color or chat.emoji != prev_chat.emoji:
+          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or chat.emoji != prevChat.emoji:
             var updatedChat = findChatById(chat.id, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
@@ -640,33 +651,33 @@ QtObject:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
           # Handle channel members update
-          if chat.members != prev_chat.members:
+          if chat.members != prevChat.members:
             self.chatService.updateChannelMembers(chat)
 
       # members list was changed
-      if community.members != prev_community.members:
+      if community.members != prevCommunity.members:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED,
         CommunityMembersArgs(communityId: community.id, members: community.members))
 
       # token metadata was added
-      if community.communityTokensMetadata.len > prev_community.communityTokensMetadata.len:
+      if community.communityTokensMetadata.len > prevCommunity.communityTokensMetadata.len:
         for tokenMetadata in community.communityTokensMetadata:
-          if findIndexBySymbol(tokenMetadata.symbol, prev_community.communityTokensMetadata) == -1:
+          if findIndexBySymbol(tokenMetadata.symbol, prevCommunity.communityTokensMetadata) == -1:
             self.communities[community.id].communityTokensMetadata.add(tokenMetadata)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED,
                              CommunityTokenMetadataArgs(communityId: community.id,
                                                         tokenMetadata: tokenMetadata))
 
       # tokenPermission was added
-      if community.tokenPermissions.len > prev_community.tokenPermissions.len:
+      if community.tokenPermissions.len > prevCommunity.tokenPermissions.len:
         for id, tokenPermission in community.tokenPermissions:
-          if not prev_community.tokenPermissions.hasKey(id):
+          if not prevCommunity.tokenPermissions.hasKey(id):
             self.communities[community.id].tokenPermissions[id] = tokenPermission
 
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED,
             CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
-      elif community.tokenPermissions.len < prev_community.tokenPermissions.len:
-        for id, prvTokenPermission in prev_community.tokenPermissions:
+      elif community.tokenPermissions.len < prevCommunity.tokenPermissions.len:
+        for id, prvTokenPermission in prevCommunity.tokenPermissions:
           if not community.tokenPermissions.hasKey(id):
             self.communities[community.id].tokenPermissions.del(id)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
@@ -674,10 +685,10 @@ QtObject:
 
       else:
         for id, tokenPermission in community.tokenPermissions:
-          if not prev_community.tokenPermissions.hasKey(id):
+          if not prevCommunity.tokenPermissions.hasKey(id):
             continue
 
-          let prevTokenPermission = prev_community.tokenPermissions[id]
+          let prevTokenPermission = prevCommunity.tokenPermissions[id]
 
           var permissionUpdated = false
 
