@@ -128,7 +128,7 @@ DoubleFlickableWithFolding {
                 property int visualIndexData: index
 
                 width: parent.width
-                sourceComponent: !dropAreaRow.visible ? root.showcaseDraggableDelegateComponent : emptyDelegate // TODO: Blur delegate issue ##13594
+                sourceComponent: root.showcaseDraggableDelegateComponent
             }
 
             // Delegate shadow background when dragging:
@@ -137,6 +137,14 @@ DoubleFlickableWithFolding {
 
                 visible: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
                 onVisibleChanged: d.isAnyShowcaseDragActive = visible
+            }
+
+            Binding {
+                when: dropAreaRow.visible
+                target: showcaseDraggableDelegateLoader.item
+                property: "blurState"
+                value: true
+                restoreMode: Binding.RestoreBindingOrValue
             }
         }
 
@@ -213,7 +221,7 @@ DoubleFlickableWithFolding {
                 property int visualIndexData: hiddenDelegateRoot.visualIndex
 
                 width: parent.width
-                sourceComponent: !hiddenDropAreaButton.visible ? root.hiddenDraggableDelegateComponent : emptyDelegate // TODO: Blur delegate issue ##13594
+                sourceComponent: root.hiddenDraggableDelegateComponent
             }
 
             // Delegate shadow background when dragging:
@@ -222,7 +230,15 @@ DoubleFlickableWithFolding {
 
                 visible: hiddenDraggableDelegateLoader.item && hiddenDraggableDelegateLoader.item.dragActive
                 onVisibleChanged: d.isAnyHiddenDragActive = visible
-            }        
+            }
+
+            Binding {
+                when: hiddenDropAreaButton.visible
+                target: hiddenDraggableDelegateLoader.item
+                property: "blurState"
+                value: true
+                restoreMode: Binding.RestoreBindingOrValue
+            }
         }
 
         // Overlaid hidden listview content drop area:
@@ -383,17 +399,5 @@ DoubleFlickableWithFolding {
         anchors.centerIn: parent
         color: Theme.palette.baseColor5
         radius: Style.current.radius
-    }
-
-    // TODO: Blur delegate issue ##13594
-    Component {
-        id: emptyDelegate
-        Item {
-
-            property bool dragActive: false
-
-            width: parent.width
-            height: ProfileUtils.defaultDelegateHeight
-        }
     }
 }
