@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.0
+import QtQml 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -17,6 +19,7 @@ StatusDraggableListItem {
 
     property var showcaseObj
     property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+    property bool blurState: false
 
     signal showcaseVisibilityRequested(int value)
 
@@ -25,6 +28,9 @@ StatusDraggableListItem {
         icon.name: ProfileUtils.visibilityIcon(showcaseVisibility)
         icon.color: Theme.palette.primaryColor1
     }
+
+    layer.enabled: root.blurState
+    layer.effect: fastBlur
 
     height: ProfileUtils.defaultDelegateHeight
     topInset: 0
@@ -106,4 +112,13 @@ StatusDraggableListItem {
             }
         }
     ]
+
+    Component {
+        id: fastBlur
+
+        FastBlur {
+            radius: 32
+            transparentBorder: true
+        }
+    }
 }
