@@ -57,10 +57,11 @@ DoubleFlickableWithFolding {
     QtObject {
         id: d
 
-        readonly property int defaultDelegateHeight: 60
-        readonly property int contentSpacing: 12
-        readonly property int strokeMargin: 2
-        readonly property int shapeRectangleHeight: 48
+        readonly property var dragHiddenItemKey: ["x-status-draggable-showcase-item-hidden"]
+        readonly property var dragShowcaseItemKey: ["x-status-draggable-showcase-item"]
+
+        property bool isAnyShowcaseDragActive: false
+        property bool isAnyHiddenDragActive: false
     }
 
     clip: true
@@ -76,7 +77,9 @@ DoubleFlickableWithFolding {
         model: root.showcaseModel
         width: root.width
         placeholderText: root.emptyInShowcasePlaceholderText
-        placeholderHeight: d.shapeRectangleHeight
+        footerHeight: ProfileUtils.defaultDelegateHeight
+        footerContentVisible: !dropAreaRow.visible
+        spacing: Style.current.halfPadding
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -94,7 +97,7 @@ DoubleFlickableWithFolding {
             width: ListView.view.width
             height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
 
-            keys: ["x-status-draggable-showcase-item"]
+            keys: d.dragShowcaseItemKey
             visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
 
             onEntered: function(drag) {
@@ -119,56 +122,44 @@ DoubleFlickableWithFolding {
             // In showcase delegate item container:
             Loader {
                 id: showcaseDraggableDelegateLoader
-                width: parent.width
-                sourceComponent: root.showcaseDraggableDelegateComponent
 
                 property var modelData: model
                 property var dragParentData: root
                 property int visualIndexData: index
+
+                width: parent.width
+                sourceComponent: !dropAreaRow.visible ? root.showcaseDraggableDelegateComponent : emptyDelegate // TODO: Blur delegate issue ##13594
+            }
+
+            // Delegate shadow background when dragging:
+            ShadowDelegate {
+                id: showcaseShadow
+
+                visible: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
+                onVisibleChanged: d.isAnyShowcaseDragActive = visible
             }
         }
 
-        // TO BE REDEFINED (task #13509): Overlaid at the bottom of the listview
+        // Overlaid showcase listview content drop area:
         DropArea {
-            id: targetDropArea
-            width: parent.width
-            height: inShowcaseListView.count === 0 ? d.shapeRectangleHeight : d.defaultDelegateHeight
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.showcaseModel.count ? Style.current.halfPadding : 0
-            keys: ["x-status-draggable-showcase-item-hidden"]
+            width: parent.width
+            height: parent.contentHeight
+            keys: d.dragHiddenItemKey
 
-            Rectangle {
-                id: showcaseCombinedDropArea
+            // Shown at the bottom of the listview
+            VisibilityDropAreaButtonsRow {
+                id: dropAreaRow
+
                 width: parent.width
-                height: parent.height + d.strokeMargin
-                anchors.centerIn: parent
-                color: Theme.palette.baseColor5
-                radius: Style.current.radius
-                visible: parent.containsDrag || dropAreaEveryone.containsDrag || dropAreaContacts.containsDrag || dropAreaVerified.containsDrag
+                height: ProfileUtils.defaultDelegateHeight
+                anchors.bottom: parent.bottom
 
-                RowLayout {
-                    width: parent.width - spacing*2
-                    anchors.centerIn: parent
-                    spacing: d.contentSpacing
-                    VisibilityDropArea {
-                        id: dropAreaEveryone
-                        Layout.fillWidth: true
-                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
-                        text: qsTr("Everyone")
-                    }
-                    VisibilityDropArea {
-                        id: dropAreaContacts
-                        Layout.fillWidth: true
-                        showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-                        text: qsTr("Contacts")
-                    }
-                    VisibilityDropArea {
-                        id: dropAreaVerified
-                        Layout.fillWidth: true
-                        showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                        text: qsTr("Verified")
-                    }
-                }
+                visible: d.isAnyHiddenDragActive ||
+                         parent.containsDrag ||
+                         everyoneContainsDrag ||
+                         contactsContainsDrag ||
+                         verifiedContainsDrag
             }
         }
     }
@@ -179,9 +170,11 @@ DoubleFlickableWithFolding {
         model: root.baseModel
         width: root.width
         placeholderText: root.emptyHiddenPlaceholderText
-        placeholderHeight: d.shapeRectangleHeight
+        footerHeight: ProfileUtils.defaultDelegateHeight
+        footerContentVisible: !hiddenDropAreaButton.visible
         empty: root.showcaseModel.hiddenCount === 0 && !root.flickable2Folded // TO BE REMOVE: #13498
         additionalFooterComponent: root.additionalFooterComponent
+        spacing: Style.current.halfPadding
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -200,7 +193,7 @@ DoubleFlickableWithFolding {
             width: ListView.view.width
             height: visible && hiddenDraggableDelegateLoader.item ? hiddenDraggableDelegateLoader.item.height : 0
 
-            keys: ["x-status-draggable-showcase-item"]
+            keys: d.dragShowcaseItemKey
 
             onEntered: function(drag) {
                 drag.accept()
@@ -214,62 +207,63 @@ DoubleFlickableWithFolding {
             // Hidden delegate item container:
             Loader {
                 id: hiddenDraggableDelegateLoader
-                width: parent.width
-                sourceComponent: root.hiddenDraggableDelegateComponent
 
                 property var modelData: model
                 property var dragParentData: root
                 property int visualIndexData: hiddenDelegateRoot.visualIndex
+
+                width: parent.width
+                sourceComponent: !hiddenDropAreaButton.visible ? root.hiddenDraggableDelegateComponent : emptyDelegate // TODO: Blur delegate issue ##13594
             }
 
             // Delegate shadow background when dragging:
-            Rectangle {
-                width: parent.width
-                height: d.defaultDelegateHeight
-                anchors.centerIn: parent
-                color: Theme.palette.baseColor5
-                radius: Style.current.radius
+            ShadowDelegate {
+                id: hiddenShadow
+
                 visible: hiddenDraggableDelegateLoader.item && hiddenDraggableDelegateLoader.item.dragActive
-            }
+                onVisibleChanged: d.isAnyHiddenDragActive = visible
+            }        
         }
 
-        // TO BE REDEFINED (task #13509): Overlaid at the top of the listview
+        // Overlaid hidden listview content drop area:
         DropArea {
-            id: hiddenTargetDropArea
-            width: root.width
-            height: hiddenListView.empty ? d.shapeRectangleHeight : d.defaultDelegateHeight
-            anchors.top: hiddenListView.top
-            anchors.topMargin: hiddenListView.empty ? hiddenListView.headerItem.height : hiddenListView.headerItem.height + Style.current.halfPadding
-            keys: ["x-status-draggable-showcase-item"]
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.contentHeight
+            keys: d.dragShowcaseItemKey
 
-            ShapeRectangle {
-                width: parent.width
-                height: parent.height + d.strokeMargin
-                anchors.centerIn: parent
-                visible: parent.containsDrag
-                path.fillColor: Theme.palette.baseColor5
-                path.strokeColor: "transparent"
-                text: root.emptyHiddenPlaceholderText
-            }
+            // Shown at the top of the listview
+            VisibilityDropAreaButton {
+                id: hiddenDropAreaButton
 
-            onEntered: function(drag) {
-                drag.accept()
-            }
+                anchors.top: parent.top
+                anchors.topMargin: hiddenListView.headerItem.height + Style.current.padding
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            onDropped: function(drop) {
-                root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
-                root.showcaseEntryChanged()
-                root.updateBaseModelFilters()
+                visible: d.isAnyShowcaseDragActive || parent.containsDrag || hiddenDropAreaButton.containsDrag
+                width: parent.width - Style.current.padding
+                height: ProfileUtils.defaultDelegateHeight - Style.current.padding
+                text: qsTr("Hide")
+                dropAreaKeys: d.dragShowcaseItemKey
+
+                onDropped: {
+                    root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, visibility)
+                    root.showcaseEntryChanged()
+                    root.updateBaseModelFilters()
+                }
             }
         }
     }
 
-    // TO BE REDEFINED (task #13509)
-    component VisibilityDropArea: AbstractButton {
-        id: visibilityDropAreaLocal
+    component VisibilityDropAreaButton: AbstractButton {
+        id: visibilityDropAreaButton
+
+        readonly property alias containsDrag: dropArea.containsDrag
 
         property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
-        readonly property alias containsDrag: dropArea.containsDrag
+        property var dropAreaKeys
+
+        signal dropped(var drop, int visibility)
 
         padding: Style.current.halfPadding
         spacing: padding/2
@@ -277,30 +271,21 @@ DoubleFlickableWithFolding {
         icon.color: Theme.palette.primaryColor1
 
         background: ShapeRectangle {
-            path.strokeColor: dropArea.containsDrag ? "transparent" : Theme.palette.directColor7
-            path.fillColor: dropArea.containsDrag ? Theme.palette.white : "transparent"
+            path.strokeColor: dropArea.containsDrag ? Theme.palette.primaryColor2 : Theme.palette.directColor7
+            path.fillColor: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.baseColor4
 
             DropArea {
                 id: dropArea
+
                 anchors.fill: parent
-                keys: ["x-status-draggable-showcase-item-hidden"]
+                keys: visibilityDropAreaButton.dropAreaKeys
+
                 onEntered: function(drag) {
                     drag.accept()
                 }
 
                 onDropped: function(drop) {
-                    var showcaseObj = drop.source.showcaseObj
-
-                    // need to set total balance for an asset
-                    if (drop.source.totalValue !== undefined) {
-                        showcaseObj.enabledNetworkBalance = drop.source.totalValue
-                    }
-
-                    var tmpObj = Object()
-                    root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
-                    tmpObj.showcaseVisibility = visibilityDropAreaLocal.showcaseVisibility
-                    root.showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
-                    root.showcaseEntryChanged()
+                    visibilityDropAreaButton.dropped(drop, visibilityDropAreaButton.showcaseVisibility)
                 }
             }
         }
@@ -309,24 +294,106 @@ DoubleFlickableWithFolding {
             RowLayout {
                 width: Math.min(parent.width, implicitWidth)
                 anchors.centerIn: parent
-                spacing: visibilityDropAreaLocal.spacing
+                spacing: visibilityDropAreaButton.spacing
 
                 StatusIcon {
                     width: 20
                     height: width
-                    icon: ProfileUtils.visibilityIcon(visibilityDropAreaLocal.showcaseVisibility)
-                    color: visibilityDropAreaLocal.icon.color
+                    icon: ProfileUtils.visibilityIcon(visibilityDropAreaButton.showcaseVisibility)
+                    color: visibilityDropAreaButton.icon.color
                 }
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     font.weight: Font.Medium
                     elide: Text.ElideRight
-                    color: visibilityDropAreaLocal.icon.color
-                    text: visibilityDropAreaLocal.text
+                    color: visibilityDropAreaButton.icon.color
+                    text: visibilityDropAreaButton.text
                 }
             }
+        }
+    }
+
+    component VisibilityDropAreaButtonsRow: Item {
+        id: visibilityDropAreaRow
+
+        readonly property bool everyoneContainsDrag: dropAreaEveryone.containsDrag
+        readonly property bool contactsContainsDrag: dropAreaContacts.containsDrag
+        readonly property bool verifiedContainsDrag: dropAreaVerified.containsDrag
+
+        function dropped(drop, visibility) {
+            var showcaseObj = drop.source.showcaseObj
+
+            // need to set total balance for an asset
+            if (drop.source.totalValue !== undefined) {
+                showcaseObj.enabledNetworkBalance = drop.source.totalValue
+            }
+
+            var tmpObj = Object()
+            root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
+            tmpObj.showcaseVisibility = visibility
+            root.showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
+            root.showcaseEntryChanged()
+        }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: Style.current.halfPadding
+            spacing: Style.current.halfPadding
+
+            VisibilityDropAreaButton {
+                id: dropAreaEveryone
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                text: qsTr("Everyone")
+                dropAreaKeys: d.dragHiddenItemKey
+
+                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
+            }
+
+            VisibilityDropAreaButton {
+                id: dropAreaContacts
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+                text: qsTr("Contacts")
+                dropAreaKeys: d.dragHiddenItemKey
+
+                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
+            }
+
+            VisibilityDropAreaButton {
+                id: dropAreaVerified
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+                text: qsTr("Verified")
+                dropAreaKeys: d.dragHiddenItemKey
+
+                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
+            }
+        }
+    }
+
+    component ShadowDelegate: Rectangle {
+        width: parent.width
+        height: ProfileUtils.defaultDelegateHeight
+        anchors.centerIn: parent
+        color: Theme.palette.baseColor5
+        radius: Style.current.radius
+    }
+
+    // TODO: Blur delegate issue ##13594
+    Component {
+        id: emptyDelegate
+        Item {
+
+            property bool dragActive: false
+
+            width: parent.width
+            height: ProfileUtils.defaultDelegateHeight
         }
     }
 }

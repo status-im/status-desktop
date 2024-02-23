@@ -11,7 +11,8 @@ StatusListView {
     id: root
 
     property string placeholderText
-    property int placeholderHeight: 44
+    property int footerHeight: 44
+    property bool footerContentVisible: true
     property Component additionalFooterComponent
 
     // TO BE REMOVE: #13498
@@ -22,16 +23,21 @@ StatusListView {
     footer: ColumnLayout {
         width: root.width
 
-        ShapeRectangle {
-            id: shapeRectangle
-
-            Layout.preferredHeight: root.placeholderHeight
+        Item {
+            Layout.preferredHeight: root.footerHeight
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.margins: 1
 
-            visible: root.empty// TO BE REPLACE by (#13498):  root.model && root.count === 0
-            text: root.placeholderText
+            visible: root.empty// TO BE REPLACE root.empty in (#13498):  root.empty = root.model && root.count === 0
+
+            ShapeRectangle {
+                id: shapeRectangle
+
+                anchors.fill: parent
+                anchors.margins: 1
+
+                visible: root.footerContentVisible
+                text: root.placeholderText
+            }
         }
 
         Loader {
