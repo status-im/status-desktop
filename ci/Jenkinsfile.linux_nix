@@ -1,11 +1,11 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.3'
+library 'status-jenkins-lib@linux-use-nix'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'windows && x86_64 && qt-5.15.2' }
+  agent { label 'linux && x86_64 && nix-2.14' }
 
   parameters {
     booleanParam(
@@ -33,7 +33,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 60, unit: 'MINUTES')
+    timeout(time: 25, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -49,67 +49,53 @@ pipeline {
   }
 
   environment {
-    TARGET = "windows/${getArch()}"
+    TARGET = "linux/${getArch()}"
     /* Improve make performance */
-    MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
-    /* Explicitly set the QT version */
-    QTDIR = "/c/Qt/5.15.2/msvc2019_64"
-    PATH = "${env.QTDIR}/bin:${env.PATH}"
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
-    /* 7zip archive filename */
-    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
-    /* RFC 3161 timestamping URL for DigiCert */
-    WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
   }
 
   stages {
     stage('Deps') {
-      steps {
-        sh 'make update'
-        sh 'make deps'
-      }
+      steps { script {
+        nix.shell('make update --debug V=1', pure: true)
+        nix.shell('make deps --debug V=1', pure: true)
+      } }
     }
 
     stage('status-go') {
-      steps {
-        sh 'make status-go'
-      }
+      steps { script {
+        nix.shell('make status-go --debug V=1', pure: true)
+      } }
     }
 
     stage('Package') {
       steps { script {
-        windows.bundle("${env.STATUS_CLIENT_EXE} ${env.STATUS_CLIENT_7Z}")
+        linux.bundle('--debug=b tgz-linux', 1, true)
       } }
     }
 
     stage('Parallel Upload') {
-      /* Uploads on Windows are slow. */
       parallel {
-        stage('Upload 7Z') {
+        stage('Upload') {
           steps { script {
-            zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+            jenkins.setBuildDesc(AppImage: env.PKG_URL)
           } }
         }
-        stage('Upload EXE') {
+        stage('Archive') {
           steps { script {
-            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
+            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
           } }
         }
       }
     }
-
-    stage('Archive') {
-      steps { script {
-        archiveArtifacts(env.STATUS_CLIENT_EXE)
-        archiveArtifacts(env.STATUS_CLIENT_7Z)
-        env.PKG_URL = exe_url
-        jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
-      } }
-    }
   }
+
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
@@ -118,8 +104,8 @@ pipeline {
 }
 
 def getArch() {
-    def tokens = Thread.currentThread().getName().split('/')
-    for (def arch in ['x86_64', 'aarch64']) {
-      if (tokens.contains(arch)) { return arch }
-    }
+  def tokens = Thread.currentThread().getName().split('/')
+  for (def arch in ['x86_64', 'aarch64']) {
+    if (tokens.contains(arch)) { return arch }
+  }
 }

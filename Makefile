@@ -564,16 +564,22 @@ endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
-_APPIMAGE_TOOL := appimagetool-x86_64.AppImage
-APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
+ifdef IN_NIX_SHELL
+APPIMAGE_TOOL := appimagetool
+else
+APPIMAGE_TOOL := tmp/linux/tools/appimagetool
+endif
 
+_APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 $(APPIMAGE_TOOL):
+ifndef IN_NIX_SHELL
 	echo -e "\033[92mFetching:\033[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
 	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
-	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
+	mv $(_APPIMAGE_TOOL) $(APPIMAGE_TOOL)
 	chmod +x $(APPIMAGE_TOOL)
+endif
 
 STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
@@ -600,6 +606,7 @@ PRODUCTION_PARAMETERS := -d:production
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
+	chmod -R u+w tmp || true
 	rm -rf tmp/linux/dist
 	mkdir -p tmp/linux/dist/usr/bin
 	mkdir -p tmp/linux/dist/usr/lib
@@ -616,27 +623,75 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp bin/i18n/* tmp/linux/dist/usr/i18n
 	mkdir -p tmp/linux/dist/usr/bin/StatusQ
 	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
+ifdef IN_NIX_SHELL
+	patchelf --set-rpath '$$ORIGIN/../../lib' tmp/linux/dist/usr/bin/StatusQ/libStatusQ.so
+endif
 
 	# Libraries
+ifdef IN_NIX_SHELL
+	mkdir -p tmp/linux/dist/usr/lib/{gstreamer1.0,gstreamer-1.0,nss}
+	mkdir -p tmp/linux/dist/usr/{libexec,resources,translations}
+
+	echo $$GST_PLUGIN_SYSTEM_PATH_1_0 | tr ':' '\n' | sort -u | xargs -I {} find {} -name "*.so" | xargs -I {} cp {} tmp/linux/dist/usr/lib/gstreamer-1.0/
+	cp -r $$GSTREAMER_PATH/libexec/gstreamer-1.0 tmp/linux/dist/usr/lib/gstreamer1.0/
+	cp $$LIBKRB5_PATH/lib/libcom_err.so.3 tmp/linux/dist/usr/lib/libcom_err.so.3
+	cp $$NSS_PATH/lib/{libfreebl3,libfreeblpriv3,libnssckbi,libnssdbm3,libsoftokn3}.{chk,so} tmp/linux/dist/usr/lib/nss/ || true
+
+	cp $$QTWEBENGINE_PATH/libexec/QtWebEngineProcess tmp/linux/dist/usr/libexec/QtWebEngineProcess
+
+	#cp $$QTWEBENGINE_PATH/resources/* tmp/linux/dist/usr/resources/
+	cp $$QTWEBENGINE_PATH/resources/* tmp/linux/dist/usr/bin/
+	cp $$QTWEBENGINE_PATH/resources/* tmp/linux/dist/usr/libexec/
+
+	#cp -r $$QTWEBENGINE_PATH/translations/qtwebengine_locales tmp/linux/dist/usr/translations/
+	cp -r $$QTWEBENGINE_PATH/translations/qtwebengine_locales tmp/linux/dist/usr/bin/
+	cp -r $$QTWEBENGINE_PATH/translations/qtwebengine_locales tmp/linux/dist/usr/libexec/
+
+	chmod -R u+w tmp/linux/dist/usr
+else
 	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
 	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
+endif
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
+
+	# TODO: remove exclude for non-nix build
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs -exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0 -verbose=1 -executable=tmp/linux/dist/usr/libexec/QtWebEngineProcess
+
+ifdef IN_NIX_SHELL
+	patchelf --set-rpath '$$ORIGIN/../../' tmp/linux/dist/usr/lib/gstreamer1.0/gstreamer-1.0/*
+	patchelf --set-rpath '$$ORIGIN' tmp/linux/dist/usr/lib/libcom_err.so.3
+	patchelf --set-rpath '$$ORIGIN/../lib' tmp/linux/dist/usr/libexec/QtWebEngineProcess
+	patchelf --set-rpath '$$ORIGIN' tmp/linux/dist/usr/lib/libstatus.so
+	patchelf --set-rpath '$$ORIGIN/../' tmp/linux/dist/usr/lib/gstreamer-1.0/*
+	patchelf --set-rpath '$$ORIGIN/../' tmp/linux/dist/usr/lib/nss/*.so
+
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/bin/nim_status_client
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/libexec/QtWebEngineProcess
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/lib/libQt5Core.so.5
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 tmp/linux/dist/usr/lib/gstreamer1.0/gstreamer-1.0/*
+endif
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
+ifdef IN_NIX_SHELL
+	patchelf --set-rpath '$$ORIGIN/../../lib' tmp/linux/dist/usr/plugins/platforminputcontexts/libfcitx5platforminputcontextplugin.so
+endif
 
 	rm tmp/linux/dist/AppRun
 	cp AppRun tmp/linux/dist/.
 
 	mkdir -p pkg
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+ifdef IN_NIX_SHELL
+	patchelf --set-interpreter /lib64/ld-linux-x86-64.so.2 $(STATUS_CLIENT_APPIMAGE)
+endif
+
 # if LINUX_GPG_PRIVATE_KEY_FILE is not set then we don't generate a signature
 ifdef LINUX_GPG_PRIVATE_KEY_FILE
 	scripts/sign-linux-file.sh $(STATUS_CLIENT_APPIMAGE)
