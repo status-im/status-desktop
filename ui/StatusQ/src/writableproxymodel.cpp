@@ -5,6 +5,7 @@
 #endif
 #include <memory>
 
+
 template <typename T>
 using IndexedValues = QHash<T /*key*/, QMap<int/*role*/, QVariant/*value*/>>;
 
@@ -34,6 +35,13 @@ public:
     int proxyToSourceRow(int row) const;
     int sourceToProxyRow(int row) const;
     QVector<QPair<int, int>> sourceRowRangesBetween(int start, int end) const;
+
+    // helpers for handling layoutChanged from source
+    QList<QPersistentModelIndex> layoutChangePersistentIndexes;
+    QModelIndexList proxyIndexes;
+
+    void storePersitentIndexes();
+    void updatePersistentIndexes();
 
     //Simple mapping. No sorting, no moving
     //TODO: add mapping for temporarily moved rows
@@ -126,6 +134,33 @@ int WritableProxyModelPrivate::sourceToProxyRow(int row) const
     return -1;
 }
 
+void WritableProxyModelPrivate::storePersitentIndexes()
+{
+    const auto persistentIndexes = q.persistentIndexList();
+
+    for (const QModelIndex& persistentIndex: persistentIndexes) {
+
+        Q_ASSERT(persistentIndex.isValid());
+        const auto srcIndex = q.mapToSource(persistentIndex);
+
+        if (srcIndex.isValid()) {
+            proxyIndexes << persistentIndex;
+            layoutChangePersistentIndexes << srcIndex;
+        }
+    }
+}
+
+void WritableProxyModelPrivate::updatePersistentIndexes()
+{
+    for (int i = 0; i < proxyIndexes.size(); ++i) {
+        q.changePersistentIndex(proxyIndexes.at(i),
+                                q.mapFromSource(layoutChangePersistentIndexes.at(i)));
+    }
+
+    layoutChangePersistentIndexes.clear();
+    proxyIndexes.clear();
+}
+
 void WritableProxyModelPrivate::createProxyToSourceRowMap()
 {
     if (!q.sourceModel())
@@ -142,7 +177,8 @@ void WritableProxyModelPrivate::createProxyToSourceRowMap()
             continue;
         }
 
-        while(removedRows.contains(sourceModel->index(sourceIter, 0)) && sourceIter < sourceModel->rowCount())
+        while(removedRows.contains(sourceModel->index(sourceIter, 0))
+              && sourceIter < sourceModel->rowCount())
             ++sourceIter;
 
         proxyToSourceRowMapping.append(sourceIter);
@@ -620,6 +656,7 @@ void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
     connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &WritableProxyModel::onRowsRemoved);
     connect(sourceModel, &QAbstractItemModel::modelAboutToBeReset, this, &WritableProxyModel::onModelAboutToBeReset);
     connect(sourceModel, &QAbstractItemModel::modelReset, this, &WritableProxyModel::onModelReset);
+    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeMoved, this, &WritableProxyModel::onRowsAboutToBeMoved);
     connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &WritableProxyModel::onRowsMoved);
     connect(sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this, &WritableProxyModel::onLayoutAboutToBeChanged);
     connect(sourceModel, &QAbstractItemModel::layoutChanged, this, &WritableProxyModel::onModelReset);
@@ -927,10 +964,7 @@ void WritableProxyModel::onRowsAboutToBeRemoved(const QModelIndex& parent, int s
         auto sourceIndex = sourceModel()->index(row, 0);
 
         if (d->cache.contains(sourceIndex))
-        {
             d->moveFromCacheToInserted(sourceIndex);
-            continue;
-        }
     }
 
     auto sourceRemoveRanges = d->sourceRowRangesBetween(start, end);
@@ -975,16 +1009,25 @@ void WritableProxyModel::onModelReset()
     endResetModel();
 }
 
+
+void WritableProxyModel::onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
+{
+    if(sourceParent.isValid() || destinationParent.isValid())
+        return;
+
+    emit layoutAboutToBeChanged();
+
+    d->storePersitentIndexes();
+}
+
 void WritableProxyModel::onRowsMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow)
 {
     if(sourceParent.isValid() || destinationParent.isValid())
-    {
         return;
-    }
 
-    emit layoutAboutToBeChanged();
-    d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
+    d->updatePersistentIndexes();
+
     emit layoutChanged();
 }
 
@@ -994,11 +1037,14 @@ void WritableProxyModel::onLayoutAboutToBeChanged(const QList<QPersistentModelIn
         return;
 
     emit layoutAboutToBeChanged();
+
+    d->storePersitentIndexes();
 }
 
 void WritableProxyModel::onLayoutChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint)
 {
-    d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
+    d->updatePersistentIndexes();
+
     emit layoutChanged();
 }
