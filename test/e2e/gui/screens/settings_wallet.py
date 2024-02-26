@@ -236,7 +236,7 @@ class NetworkWalletSettings(WalletSettingsView):
     def get_network_item_attribute_by_id_and_attr_name(self, attribute_name, network_id):
         self._wallet_network_item_template.real_name['objectName'] = RegularExpression(
             f'walletNetworkDelegate_.*_{network_id}')
-        return getattr(self._wallet_network_item_template.object, attribute_name)
+        return str(getattr(self._wallet_network_item_template.object, attribute_name))
 
     @allure.step('Open network to check the details')
     def click_network_item_to_open_edit_view(self, network_id):
