@@ -112,6 +112,7 @@ class AUT:
         self.port = local_system.find_free_port(configs.squish.AUT_PORT, 100)
         command = [
             str(configs.testpath.SQUISH_DIR / 'bin/startaut'),
+            '--verbose',
             f'--port={self.port}',
             str(self.path),
             f'-d={self.app_data}',
