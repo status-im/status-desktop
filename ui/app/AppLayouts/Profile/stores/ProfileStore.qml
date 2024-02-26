@@ -31,16 +31,18 @@ QtObject {
 
     readonly property var collectiblesModel: profileModule.collectiblesModel
 
-    readonly property var profileShowcasePreferencesCommunitiesModel: profileModule.profileShowcasePreferencesCommunitiesModel
-    readonly property var profileShowcasePreferencesAccountsModel: profileModule.profileShowcasePreferencesAccountsModel
-    readonly property var profileShowcasePreferencesCollectiblesModel: profileModule.profileShowcasePreferencesCollectiblesModel
-    readonly property var profileShowcasePreferencesAssetsModel: profileModule.profileShowcasePreferencesAssetsModel
+    readonly property var showcasePreferencesCommunitiesModel: profileModule.showcasePreferencesCommunitiesModel
+    readonly property var showcasePreferencesAccountsModel: profileModule.showcasePreferencesAccountsModel
+    readonly property var showcasePreferencesCollectiblesModel: profileModule.showcasePreferencesCollectiblesModel
+    readonly property var showcasePreferencesAssetsModel: profileModule.showcasePreferencesAssetsModel
+    readonly property var showcasePreferencesSocialLinksModel: profileModule.showcasePreferencesSocialLinksModel
 
     // TODO: remove old models
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
     readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
     onUserDeclinedBackupBannerChanged: {
@@ -103,8 +105,21 @@ QtObject {
         root.profileModule.setBio(bio)
     }
 
+    function getProfileShowcaseSocialLinksLimit() {
+        return root.profileModule.getProfileShowcaseSocialLinksLimit()
+    }
+
+    function getProfileShowcaseEntriesLimit() {
+        return root.profileModule.getProfileShowcaseEntriesLimit()
+    }
+
+    // TODO: remove old API
     function storeProfileShowcasePreferences() {
         root.profileModule.storeProfileShowcasePreferences()
+    }
+
+    function saveProfileShowcasePreferences(json) {
+        root.profileModule.saveProfileShowcasePreferences(json)
     }
 
     function requestProfileShowcasePreferences() {

@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar, json
+import NimQml, chronicles, sequtils, sugar, json, strutils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -20,12 +20,15 @@ import app/modules/shared_models/social_link_item
 import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/modules/shared_models/collectibles_entry
 
+# TODO: remove usage of old models
 import models/profile_preferences_community_item
 import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
 
-import models/profile_showcase_preferences_item
+import models/showcase_preferences_generic_model
+import models/showcase_preferences_social_links_model
+import models/showcase_save_data
 
 import backend/collectibles as backend_collectibles
 
@@ -125,6 +128,13 @@ method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: stri
     return
   self.updateSocialLinks(socialLinks)
 
+method getProfileShowcaseSocialLinksLimit*(self: Module): int =
+  return self.controller.getProfileShowcaseSocialLinksLimit()
+
+method getProfileShowcaseEntriesLimit*(self: Module): int =
+  return self.controller.getProfileShowcaseEntriesLimit()
+
+# TODO: remove old save api
 method storeProfileShowcasePreferences(self: Module,
                                        communities: seq[ProfileShowcaseCommunityItem],
                                        accounts: seq[ProfileShowcaseAccountItem],
@@ -161,6 +171,75 @@ method storeProfileShowcasePreferences(self: Module,
 
 method setIsFirstShowcaseInteraction(self: Module) =
   singletonInstance.localAccountSettings.setIsFirstShowcaseInteraction(false)
+
+method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData) =
+  # TODO: remove this check within old api
+  if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
+    error "Attempt to save preferences with wrong public key"
+    return
+
+  var showcasePreferences = ProfileShowcasePreferencesDto()
+
+  for _, showcaseCommunity in showcase.communities:
+    showcasePreferences.communities.add(ProfileShowcaseCommunityPreference(
+      communityId: showcaseCommunity.showcaseKey,
+      showcaseVisibility: showcaseCommunity.showcaseVisibility,
+      order: showcaseCommunity.showcasePosition
+    ))
+
+  var revealedAddresses: seq[string]
+  for _, showcaseAccount in showcase.accounts:
+    showcasePreferences.accounts.add(ProfileShowcaseAccountPreference(
+      address: showcaseAccount.showcaseKey,
+      showcaseVisibility: showcaseAccount.showcaseVisibility,
+      order: showcaseAccount.showcasePosition
+    ))
+
+    if showcaseAccount.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
+      revealedAddresses.add(showcaseAccount.showcaseKey)
+
+  for _, showcaseCollectible in showcase.collectibles:
+    let parts = showcaseCollectible.showcaseKey.split('+')
+    if len(parts) == 3:
+      showcasePreferences.collectibles.add(ProfileShowcaseCollectiblePreference(
+        chainId: parseInt(parts[0]),
+        contractAddress: parts[1],
+        tokenId: parts[2],
+        showcaseVisibility: showcaseCollectible.showcaseVisibility,
+        order: showcaseCollectible.showcasePosition
+      ))
+    else:
+      error "Wrong collectible combined id provided"
+
+  for _, showcaseAsset in showcase.assets:
+    # TODO: less fragile way to split verified and unverified assets
+    if len(showcaseAsset.showcaseKey) == 3:
+      showcasePreferences.verifiedTokens.add(ProfileShowcaseVerifiedTokenPreference(
+        symbol: showcaseAsset.showcaseKey,
+        showcaseVisibility: showcaseAsset.showcaseVisibility,
+        order: showcaseAsset.showcasePosition
+      ))
+    else:
+      let parts = showcaseAsset.showcaseKey.split('+')
+      if len(parts) == 2:
+        showcasePreferences.unverifiedTokens.add(ProfileShowcaseUnverifiedTokenPreference(
+          chainId: parseInt(parts[0]),
+          contractAddress: parts[1],
+          showcaseVisibility: showcaseAsset.showcaseVisibility,
+          order: showcaseAsset.showcasePosition
+        ))
+      else:
+        error "Wrong unverified asset combined id provided"
+
+  for _, showcaseSocialLink in showcase.socialLinks:
+    showcasePreferences.socialLinks.add(ProfileShowcaseSocialLinkPreference(
+      text: showcaseSocialLink.text,
+      url: showcaseSocialLink.url,
+      showcaseVisibility: showcaseSocialLink.showcaseVisibility,
+      order: showcaseSocialLink.showcasePosition
+    ))
+
+  self.controller.storeProfileShowcasePreferences(showcasePreferences, revealedAddresses)
 
 method requestProfileShowcasePreferences(self: Module) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()
@@ -243,27 +322,56 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
   if self.presentedPublicKey != singletonInstance.userProfile.getPubKey():
     return
 
-  var communityItems: seq[ProfileShowcasePreferencesItem] = @[]
+  var communityItems: seq[ShowcasePreferencesGenericItem] = @[]
   for community in preferences.communities:
-    communityItems.add(initProfileShowcasePreferencesItem(community.communityId, community.showcaseVisibility, community.order))
+    communityItems.add(ShowcasePreferencesGenericItem(
+      showcaseKey: community.communityId,
+      showcaseVisibility: community.showcaseVisibility,
+      showcasePosition: community.order
+    ))
   self.view.updateProfileShowcasePreferencesCommunities(communityItems)
 
-  var accountItems: seq[ProfileShowcasePreferencesItem] = @[]
+  var accountItems: seq[ShowcasePreferencesGenericItem] = @[]
   for account in preferences.accounts:
-    accountItems.add(initProfileShowcasePreferencesItem(account.address, account.showcaseVisibility, account.order))
+    accountItems.add(ShowcasePreferencesGenericItem(
+      showcaseKey: account.address,
+      showcaseVisibility: account.showcaseVisibility,
+      showcasePosition: account.order
+    ))
   self.view.updateProfileShowcasePreferencesAccounts(accountItems)
 
-  var collectibleItems: seq[ProfileShowcasePreferencesItem] = @[]
+  var collectibleItems: seq[ShowcasePreferencesGenericItem] = @[]
   for collectible in preferences.collectibles:
-    collectibleItems.add(initProfileShowcasePreferencesItem(collectible.toCombinedCollectibleId(), collectible.showcaseVisibility, collectible.order))
+    collectibleItems.add(ShowcasePreferencesGenericItem(
+      showcaseKey: collectible.toCombinedCollectibleId(),
+      showcaseVisibility: collectible.showcaseVisibility,
+      showcasePosition: collectible.order
+    ))
   self.view.updateProfileShowcasePreferencesCollectibles(collectibleItems)
 
-  var assetItems: seq[ProfileShowcasePreferencesItem] = @[]
+  var assetItems: seq[ShowcasePreferencesGenericItem] = @[]
   for token in preferences.verifiedTokens:
-    assetItems.add(initProfileShowcasePreferencesItem(token.symbol, token.showcaseVisibility, token.order))
+    assetItems.add(ShowcasePreferencesGenericItem(
+      showcaseKey: token.symbol,
+      showcaseVisibility: token.showcaseVisibility,
+      showcasePosition: token.order
+    ))
+  for token in preferences.unverifiedTokens:
+    assetItems.add(ShowcasePreferencesGenericItem(
+      showcaseKey: token.toCombinedTokenId(),
+      showcaseVisibility: token.showcaseVisibility,
+      showcasePosition: token.order
+    ))
   self.view.updateProfileShowcasePreferencesAssets(assetItems)
 
-  # TODO: unverified tokens, social links
+  var socialLinkItems: seq[ShowcasePreferencesSocialLinkItem] = @[]
+  for socialLink in preferences.socialLinks:
+    socialLinkItems.add(ShowcasePreferencesSocialLinkItem(
+      url: socialLink.url,
+      text: socialLink.text,
+      showcasePosition: socialLink.order
+    ))
+  self.view.updateProfileShowcasePreferencesSocialLinks(socialLinkItems)
 
   # TODO: remove the code for old models
   var profileCommunityItems: seq[ProfileShowcaseCommunityItem] = @[]
@@ -282,10 +390,15 @@ method updateProfileShowcasePreferences(self: Module, preferences: ProfileShowca
 
   # Accounts profile preferences
   var profileAccountItems: seq[ProfileShowcaseAccountItem] = @[]
-  for account in preferences.accounts:
+  for preference in preferences.accounts:
+    let account = self.controller.getAccountByAddress(preference.address)
+    if account == nil:
+      error "Can't find an account with address ", address=preference.address
+      continue
+
     profileAccountItems.add(initProfileShowcaseAccountItem(
       account.address, account.name, account.emoji, account.colorId,
-      account.showcaseVisibility, account.order))
+      preference.showcaseVisibility, preference.order))
   self.view.updateProfileShowcaseAccounts(profileAccountItems)
 
   # Collectibles profile preferences

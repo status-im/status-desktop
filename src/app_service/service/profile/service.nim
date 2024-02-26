@@ -96,7 +96,7 @@ QtObject:
 
   proc setDisplayName*(self: Service, displayName: string) =
     try:
-      let response =  status_accounts.setDisplayName(displayName)
+      let response = status_accounts.setDisplayName(displayName)
       if(not response.error.isNil):
         error "could not set display name"
         return
@@ -178,10 +178,38 @@ QtObject:
     except Exception as e:
       error "Error requesting profile showcase preferences", msg = e.msg
 
-  proc setProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesDto) =
+  proc saveProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesDto) =
+    let arg = SaveProfileShowcasePreferencesTaskArg(
+      preferences: preferences,
+      tptr: cast[ByteAddress](saveProfileShowcasePreferencesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncProfileShowcasePreferencesSaved",
+    )
+    self.threadpool.start(arg)
+
+  proc asyncProfileShowcasePreferencesSaved*(self: Service, rpcResponse: string) {.slot.} =
     try:
-      let response = status_accounts.setProfileShowcasePreferences(preferences.toJsonNode())
-      if not response.error.isNil:
-        error "error saving profile showcase preferences"
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        error "Error saving profile showcase preferences", msg = rpcResponseObj{"error"}
+        return
     except Exception as e:
-      error "error: ", procName="setProfileShowcasePreferences", errName = e.name, errDesription = e.msg
+      error "Error saving profile showcase preferences", msg = e.msg
+
+  proc getProfileShowcaseSocialLinksLimit*(self: Service): int =
+    try:
+      let response = status_accounts.getProfileShowcaseSocialLinksLimit()
+
+      if response.result.kind != JNull:
+        return response.result.getInt
+    except Exception as e:
+      error "Error getting unseen activity center notifications", msg = e.msg
+
+  proc getProfileShowcaseEntriesLimit*(self: Service): int =
+    try:
+      let response = status_accounts.getProfileShowcaseEntriesLimit()
+
+      if response.result.kind != JNull:
+        return response.result.getInt
+    except Exception as e:
+      error "Error getting unseen activity center notifications", msg = e.msg

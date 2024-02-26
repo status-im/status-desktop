@@ -10,6 +10,8 @@ import models/profile_preferences_account_item
 import models/profile_preferences_collectible_item
 import models/profile_preferences_asset_item
 
+import models/showcase_save_data
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -51,6 +53,15 @@ method saveSocialLinks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveProfileShowcasePreferences*(self: AccessInterface, showcase: ShowcaseSaveData) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getProfileShowcaseSocialLinksLimit*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getProfileShowcaseEntriesLimit*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method storeProfileShowcasePreferences*(self: AccessInterface,
