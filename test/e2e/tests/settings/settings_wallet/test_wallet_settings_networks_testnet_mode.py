@@ -41,11 +41,11 @@ def test_switch_testnet_mode(main_screen: MainWindow):
 
     with step('Verify networks are switched to testnets'):
         assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.ETHEREUM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
+                                                                       WalletNetworkNaming.ETHEREUM_SEPOLIA_NETWORK_ID.value) == WalletNetworkNaming.LAYER1_ETHEREUM.value
         assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.OPTIMISM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
+                                                                       WalletNetworkNaming.OPTIMISM_SEPOLIA_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_OPTIMISIM.value
         assert networks.get_network_item_attribute_by_id_and_attr_name('title',
-                                                                       WalletNetworkNaming.ARBITRUM_GOERLI_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
+                                                                       WalletNetworkNaming.ARBITRUM_SEPOLIA_NETWORK_ID.value) == WalletNetworkNaming.LAYER2_ARBITRUM.value
         # TODO: add verificatin for test net label
 
     with step('Turn off Testnet mode in wallet settings'):
