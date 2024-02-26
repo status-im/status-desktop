@@ -37,18 +37,18 @@ class WalletNetworkNaming(Enum):
     LAYER2_OPTIMISIM = 'Optimism'
     LAYER2_ARBITRUM = 'Arbitrum'
     ETHEREUM_MAINNET_NETWORK_ID = 1
-    ETHEREUM_GOERLI_NETWORK_ID = 11155111
+    ETHEREUM_SEPOLIA_NETWORK_ID = 11155111
     OPTIMISM_MAINNET_NETWORK_ID = 10
-    OPTIMISM_GOERLI_NETWORK_ID = 11155420
+    OPTIMISM_SEPOLIA_NETWORK_ID = 11155420
     ARBITRUM_MAINNET_NETWORK_ID = 42161
-    ARBITRUM_GOERLI_NETWORK_ID = 421614
+    ARBITRUM_SEPOLIA_NETWORK_ID = 421614
 
 
 class WalletNetworkDefaultValues(Enum):
     ETHEREUM_LIVE_MAIN = 'https://eth-archival.rpc.grove.city'
-    ETHEREUM_TEST_MAIN = 'https://goerli-archival.rpc.grove.city'
+    ETHEREUM_TEST_MAIN = 'https://sepolia-archival.rpc.grove.city'
     ETHEREUM_LIVE_FAILOVER = 'https://mainnet.infura.io'
-    ETHEREUM_TEST_FAILOVER = 'https://goerli.infura.io'
+    ETHEREUM_TEST_FAILOVER = 'https://sepolia.infura.io'
 
 
 class WalletEditNetworkErrorMessages(Enum):
