@@ -62,6 +62,9 @@ DoubleFlickableWithFolding {
 
         property bool isAnyShowcaseDragActive: false
         property bool isAnyHiddenDragActive: false
+
+        property int additionalHeaderComponentWidth: 350 // by design
+        property int additionalHeaderComponentHeight: 40 // by design
     }
 
     clip: true
@@ -85,6 +88,17 @@ DoubleFlickableWithFolding {
             width: ListView.view.width
             title: qsTr("In showcase")
             folded: root.flickable1Folded
+            rightAdditionalComponent: VisibilityDropAreaButtonsRow {
+                width: d.additionalHeaderComponentWidth
+                height: d.additionalHeaderComponentHeight
+                margins: 0
+                visible: root.flickable1Folded &&
+                         (d.isAnyHiddenDragActive ||
+                          parent.containsDrag ||
+                          everyoneContainsDrag ||
+                          contactsContainsDrag ||
+                          verifiedContainsDrag)
+            }
 
             onToggleFolding: root.flip1Folding()
         }
@@ -162,7 +176,6 @@ DoubleFlickableWithFolding {
                 width: parent.width
                 height: ProfileUtils.defaultDelegateHeight
                 anchors.bottom: parent.bottom
-
                 visible: d.isAnyHiddenDragActive ||
                          parent.containsDrag ||
                          everyoneContainsDrag ||
@@ -188,6 +201,19 @@ DoubleFlickableWithFolding {
             width: ListView.view.width
             title: qsTr("Hidden")
             folded: root.flickable2Folded
+            rightAdditionalComponent: VisibilityDropAreaButton {
+                visible: root.flickable2Folded && (d.isAnyShowcaseDragActive || parent.containsDrag || containsDrag)
+                width: d.additionalHeaderComponentWidth
+                height: d.additionalHeaderComponentHeight
+                rightInset: 1
+                text: qsTr("Hide")
+                dropAreaKeys: d.dragShowcaseItemKey
+
+                onDropped: {
+                    root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, visibility)
+                    root.showcaseEntryChanged()
+                }
+            }
 
             onToggleFolding: root.flip2Folding()
         }
@@ -337,6 +363,7 @@ DoubleFlickableWithFolding {
         readonly property bool everyoneContainsDrag: dropAreaEveryone.containsDrag
         readonly property bool contactsContainsDrag: dropAreaContacts.containsDrag
         readonly property bool verifiedContainsDrag: dropAreaVerified.containsDrag
+        property int margins: Style.current.halfPadding
 
         function dropped(drop, visibility) {
             var showcaseObj = drop.source.showcaseObj
@@ -355,7 +382,7 @@ DoubleFlickableWithFolding {
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: Style.current.halfPadding
+            anchors.margins: visibilityDropAreaRow.margins
             spacing: Style.current.halfPadding
 
             VisibilityDropAreaButton {
