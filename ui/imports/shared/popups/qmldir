@@ -29,3 +29,5 @@ ConfirmExternalLinkPopup 1.0 ConfirmExternalLinkPopup.qml
 CommunityAssetsInfoPopup 1.0 CommunityAssetsInfoPopup.qml
 MarkAsUntrustedPopup 1.0 MarkAsUntrustedPopup.qml
 RemoveContactPopup 1.0 RemoveContactPopup.qml
+MarkAsIDVerifiedDialog 1.0 MarkAsIDVerifiedDialog.qml
+RemoveIDVerificationDialog 1.0 RemoveIDVerificationDialog.qml

@@ -80,6 +80,7 @@ Pane {
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
+        readonly property bool isLocallyTrusted: contactDetails.trustStatus === Constants.trustStatus.trusted
 
         readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
 
@@ -240,14 +241,28 @@ Pane {
         }
     }
 
-    ConfirmationDialog {
-        id: removeVerificationConfirmationDialog
-        headerSettings.title: qsTr("Remove contact verification")
-        confirmationText: qsTr("This will remove the contact's verified status. Please confirm.")
-        onConfirmButtonClicked: {
-            root.contactsStore.removeTrustStatus(root.publicKey)
-            close()
-            d.reload()
+    Component {
+        id: btnRequestIDVerification
+        StatusFlatButton {
+            size: StatusButton.Size.Small
+            text: qsTr("Request ID verification")
+            icon.name: "checkmark-circle"
+            enabled: d.isContact && !d.isBlocked && !d.isLocallyTrusted &&
+                     d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
+                     !d.isVerificationRequestReceived
+            onClicked: {
+                Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
+                                              popup => popup.accepted.connect(d.reload))
+            }
+        }
+    }
+
+    Component {
+        id: btnShareProfile
+        StatusFlatButton {
+            size: StatusButton.Size.Small
+            text: qsTr("Share Profile")
+            onClicked: Global.openPopup(shareProfileCmp)
         }
     }
 
@@ -299,14 +314,18 @@ Pane {
 
             Item { Layout.fillWidth: true }
 
-            // TODO a Loader with additional secondary buttons
-            StatusFlatButton {
+            Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
-                visible: d.isCurrentUser && !root.readOnly
-                size: StatusButton.Size.Small
-                text: qsTr("Share Profile")
-                onClicked: Global.openPopup(shareProfileCmp)
+                sourceComponent: {
+                    if (d.isCurrentUser && !root.readOnly)
+                        return btnShareProfile
+
+                    if (d.isContact && !d.isBlocked && !d.isLocallyTrusted &&
+                            d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
+                            !d.isVerificationRequestReceived)
+                        return btnRequestIDVerification
+                }
             }
 
             Loader {
@@ -387,17 +406,12 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Request ID verification")
+                        text: qsTr("Mark as ID verified")
                         icon.name: "checkmark-circle"
-                        enabled: d.isContact && !d.isBlocked &&
-                                 d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
-                                 !d.isVerificationRequestReceived
-                        onTriggered: {
-                            Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
-                                                          popup => popup.accepted.connect(d.reload))
-                        }
+                        enabled: d.isContact && !d.isBlocked && !(d.isTrusted || d.isLocallyTrusted)
+                        onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, d.contactDetails,
+                                                                      popup => popup.accepted.connect(d.reload))
                     }
-                    // TODO Mark as ID verified
                     StatusAction {
                         text: qsTr("Review ID verification reply")
                         icon.name: "checkmark-circle"
@@ -432,12 +446,11 @@ Pane {
                     StatusMenuSeparator {}
                     StatusAction {
                         text: qsTr("Remove ID verification")
-                        icon.name: "warning"
+                        icon.name: "delete"
                         type: StatusAction.Type.Danger
-                        enabled: d.isContact && d.isTrusted
-                        onTriggered: {
-                            removeVerificationConfirmationDialog.open()
-                        }
+                        enabled: d.isContact && (d.isTrusted || d.isLocallyTrusted)
+                        onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, d.contactDetails,
+                                                                           popup => popup.closed.connect(d.reload))
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")

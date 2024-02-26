@@ -149,6 +149,16 @@ SplitView {
                     logs.logEvent("rootStore::contactStore::removeContact", ["publicKey"], arguments)
                     ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
                 }
+
+                function verifiedTrusted(publicKey) {
+                    logs.logEvent("rootStore::contactStore::verifiedTrusted", ["publicKey"], arguments)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
+                }
+
+                function removeTrustStatus(publicKey) {
+                    logs.logEvent("rootStore::contactStore::removeTrustStatus", ["publicKey"], arguments)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
+                }
             }
         }
         communityTokensStore: CommunityTokensStore {}
@@ -244,6 +254,7 @@ SplitView {
 
                             function verifiedTrusted(publicKey) {
                                 logs.logEvent("contactsStore::verifiedTrusted", ["publicKey"], arguments)
+                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
                             }
 
                             function getLinkToProfile(publicKey) {
