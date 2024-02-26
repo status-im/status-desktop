@@ -66,8 +66,6 @@ pipeline {
   }
 
   environment {
-    QT_QPA_PLATFORMTHEME = 'qt5ct'
-
     SQUISH_DIR = '/opt/squish-runner-7.2.1'
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
