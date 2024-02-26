@@ -102,7 +102,7 @@ Button {
         case StatusBaseButton.Size.Tiny:
             return 5
         case StatusBaseButton.Size.Small:
-            return 10
+            return 8
         case StatusBaseButton.Size.Large:
         default:
             return 11

@@ -79,6 +79,7 @@ StatusMenu {
 
     readonly property bool userTrustIsUnknown: contactDetails && contactDetails.trustStatus === Constants.trustStatus.unknown
     readonly property bool userIsUntrustworthy: contactDetails && contactDetails.trustStatus === Constants.trustStatus.untrustworthy
+    readonly property bool userIsLocallyTrusted: contactDetails && contactDetails.trustStatus === Constants.trustStatus.trusted
 
     signal openProfileClicked(string publicKey)
     signal createOneToOneChat(string communityId, string chatId, string ensName)
@@ -152,13 +153,20 @@ StatusMenu {
         objectName: "verifyIdentity_StatusItem"
         icon.name: "checkmark-circle"
         enabled: !root.isMe && root.isContact
-                                && !root.isBlockedContact
-                                && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
-                                && !root.hasActiveReceivedVerificationRequestFrom
-                                && !root.isBridgedAccount
+                 && !root.isBlockedContact
+                 && !root.userIsLocallyTrusted
+                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
+                 && !root.hasActiveReceivedVerificationRequestFrom
+                 && !root.isBridgedAccount
         onTriggered: Global.openSendIDRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
     }
-    // TODO Mark as ID verified
+    StatusAction {
+        text: qsTr("Mark as ID verified")
+        objectName: "markAsVerified_StatusItem"
+        icon.name: "checkmark-circle"
+        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted)
+        onTriggered: Global.openMarkAsIDVerifiedPopup(root.selectedUserPublicKey, root.contactDetails, null)
+    }
     StatusAction {
         id: pendingIdentityAction
         objectName: "pendingIdentity_StatusItem"
@@ -214,7 +222,14 @@ StatusMenu {
         onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.contactDetails)
     }
 
-    // TODO Remove ID verification + confirmation dialog
+    StatusAction {
+        objectName: "removeIDVerification_StatusItem"
+        text: qsTr("Remove ID verification")
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
+        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && (root.isTrusted || root.userIsLocallyTrusted)
+        onTriggered: Global.openRemoveIDVerificationDialog(root.selectedUserPublicKey, root.contactDetails, null)
+    }
 
     StatusAction {
         id: markUntrustworthyMenuItem

@@ -27,12 +27,15 @@ StatusDialog {
     readonly property string optionalDisplayName: ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias)
 
     width: 480
-    horizontalPadding: 16
-    verticalPadding: 20
+    horizontalPadding: 0
+    topPadding: 20
+    bottomPadding: 0
 
     contentItem: ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             spacing: Style.current.padding
 
             UserImage {
@@ -114,12 +117,21 @@ StatusDialog {
 
         StatusDialogDivider {
             Layout.fillWidth: true
-            Layout.topMargin: 15
-            Layout.bottomMargin: 15
+            Layout.topMargin: Style.current.padding
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
         }
 
-        ColumnLayout {
-            id: contentLayout
+        StatusScrollView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            contentWidth: availableWidth
+            id: scrollView
+
+            ColumnLayout {
+                width: scrollView.availableWidth
+                id: contentLayout
+            }
         }
     }
 

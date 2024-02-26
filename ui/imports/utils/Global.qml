@@ -39,6 +39,8 @@ QtObject {
     signal openProfilePopupRequested(string publicKey, var parentPopup, var cb)
     signal openActivityCenterPopupRequested()
     signal openSendIDRequestPopup(string publicKey, var contactDetails, var cb)
+    signal openMarkAsIDVerifiedPopup(string publicKey, var contactDetails, var cb)
+    signal openRemoveIDVerificationDialog(string publicKey, var contactDetails, var cb)
     signal openContactRequestPopup(string publicKey, var contactDetails, var cb)
     signal markAsUntrustedRequested(string publicKey, var contactDetails)
     signal removeContactRequested(string publicKey, var contactDetails)
