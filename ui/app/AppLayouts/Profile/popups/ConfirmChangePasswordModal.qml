@@ -81,7 +81,7 @@ StatusDialog {
                 title: !d.dbEncryptionInProgress ? qsTr("Re-encryption complete") :
                                                    qsTr("Re-encrypting your data with your new password...")
                 subTitle: !d.dbEncryptionInProgress ? qsTr("Restart Status and log in using your new password") :
-                                                      qsTr("Do not quit the app of turn off your device")
+                                                      qsTr("Do not quit the app or turn off your device")
                 statusListItemSubTitle.customColor: !d.passwordChanged ? Style.current.red : Theme.palette.successColor1
                 statusListItemIcon.active: d.passwordChanged
                 asset.name: "checkmark-circle"

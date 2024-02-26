@@ -170,19 +170,24 @@ StatusMenu {
     StatusAction {
         id: pendingIdentityAction
         objectName: "pendingIdentity_StatusItem"
-        text: isVerificationRequestSent || root.incomingVerificationStatus === Constants.verificationStatus.verified ? qsTr("ID Request Pending...")
-                                                                                                                     : qsTr("Respond to ID Request...")
-        icon.name: "checkmark-circle"
-        enabled: !root.isMe && root.isContact
-                                && !root.isBlockedContact && !root.isTrusted
-                                && (root.hasActiveReceivedVerificationRequestFrom
-                                    || root.isVerificationRequestSent)
-                                && !root.isBridgedAccount
+        text: {
+            if (root.isVerificationRequestSent) {
+                if (root.incomingVerificationStatus !== Constants.verificationStatus.verified)
+                    return qsTr("ID verification pending...")
+                return qsTr("Review ID verification reply")
+            }
+            return qsTr("Reply to ID verification request")
+        }
+        icon.name: root.isVerificationRequestSent && root.incomingVerificationStatus !== Constants.verificationStatus.verified ? "history"
+                                                                                                                               : "checkmark-circle"
+        enabled: !root.isMe && root.isContact && !root.isBridgedAccount && !root.isBlockedContact && !(root.isTrusted || root.userIsLocallyTrusted) &&
+                 (root.hasActiveReceivedVerificationRequestFrom || root.isVerificationRequestSent)
+
         onTriggered: {
-            if (hasActiveReceivedVerificationRequestFrom) {
-                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
+            if (root.hasActiveReceivedVerificationRequestFrom) {
+                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
             } else if (root.isVerificationRequestSent) {
-                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, null)
+                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
             }
 
             root.close()
@@ -199,9 +204,7 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        visible: blockMenuItem.enabled
-                 || markUntrustworthyMenuItem.enabled
-                 || removeUntrustworthyMarkMenuItem.enabled
+        visible: blockMenuItem.enabled || unblockAction.enabled
     }
 
     StatusAction {
@@ -239,6 +242,14 @@ StatusMenu {
         type: StatusAction.Type.Danger
         enabled: !root.isMe && !root.userIsUntrustworthy && !root.isBridgedAccount && !root.isBlockedContact
         onTriggered: Global.markAsUntrustedRequested(root.selectedUserPublicKey, root.contactDetails)
+    }
+
+    StatusAction {
+        text: qsTr("Cancel ID verification request")
+        icon.name: "delete"
+        type: StatusAction.Type.Danger
+        enabled: !root.isMe && root.isContact && !root.isBlockedContact && !root.isBridgedAccount && root.isVerificationRequestSent
+        onTriggered: root.store.contactsStore.cancelVerificationRequest(root.selectedUserPublicKey)
     }
 
     StatusAction {

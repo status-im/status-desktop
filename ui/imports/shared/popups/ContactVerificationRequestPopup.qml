@@ -1,24 +1,21 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Popups.Dialog 0.1
 
-import shared.controls 1.0
 import shared.views.chat 1.0
 
 import utils 1.0
 
-StatusDialog {
+CommonContactDialog {
     id: root
 
-    property var contactsStore
-    property string publicKey
+    required property var contactsStore
 
     signal verificationRefused(string senderPublicKey)
     signal responseSent(string senderPublicKey, string response)
@@ -32,19 +29,16 @@ StatusDialog {
             }
 
             d.senderPublicKey = request.from
-            d.senderDisplayName = request.displayName
-            d.senderIcon = request.icon
             d.challengeText = request.challenge
             d.responseText = request.response
             d.messageTimestamp = request.requestedAt
-            d.responseTimestamp = request.repliedAt
         } catch (e) {
             console.error("Error getting or parsing verification data", e)
         }
     }
 
-    Connections {
-        target: root.contactsStore.receivedContactRequestsModel
+    readonly property var _con: Connections {
+        target: root.contactsStore.receivedContactRequestsModel ?? null
 
         function onItemChanged(pubKey) {
             if (pubKey === root.publicKey)
@@ -52,134 +46,81 @@ StatusDialog {
         }
     }
 
-    QtObject {
+    readonly property var d: QtObject {
         id: d
 
-        property string senderPublicKey: ""
-        property string senderDisplayName: ""
-        property string senderIcon: ""
-        property string challengeText: ""
-        property string responseText: ""
+        property string senderPublicKey
+        property string challengeText
+        property string responseText
         property double messageTimestamp
         property double responseTimestamp
     }
 
-    title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
-    padding: 0
+    title: qsTr("Reply to ID verification request")
 
     onAboutToShow: {
         root.updateVerificationDetails()
-        verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
+        verificationResponse.input.edit.forceActiveFocus()
     }
 
-    StatusScrollView {
-        id: scrollView
-        anchors.fill: parent
-
-        contentWidth: availableWidth
-        implicitWidth: 560
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: msgColumn.implicitHeight + msgColumn.anchors.topMargin + msgColumn.anchors.bottomMargin
+        color: "transparent"
+        border.width: 1
+        border.color: Theme.palette.baseColor2
+        radius: Style.current.radius
 
         ColumnLayout {
-            width: scrollView.availableWidth
-            spacing: Style.current.padding
+            id: msgColumn
+            anchors.fill: parent
+            anchors.margins: Style.current.padding
 
-            StatusBaseText {
-                id: description
-                color: Theme.palette.directColor1
-                wrapMode: Text.WordWrap
-                text: qsTr("%1 would like to verify your identity. Answer the question to prove your identity to %2")
-                        .arg(d.senderDisplayName).arg(d.senderDisplayName)
-                font.pixelSize: 15
+            StatusTimeStampLabel {
                 Layout.fillWidth: true
-            }
-
-            SimplifiedMessageView {
-                id: verificationMessage
                 timestamp: d.messageTimestamp
-                messageDetails.messageText: d.challengeText
-                messageDetails.sender.displayName: d.senderDisplayName
-                messageDetails.sender.profileImage.name: d.senderIcon
-                messageDetails.sender.profileImage.assetSettings.isImage: true
-                messageDetails.sender.profileImage.pubkey: d.senderPublicKey
-                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(d.senderPublicKey)
-                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(d.senderPublicKey, Utils.isEnsVerified(d.senderPublicKey))
-                Layout.fillWidth: true
             }
-
-            StatusInput {
-                id: verificationResponse
-                visible: !d.responseText
-                input.multiline: true
-                placeholderText: qsTr("Provide answer to verification request from this contact.")
-                minimumHeight: 152
-                maximumHeight: 152
-                input.verticalAlignment: TextEdit.AlignTop
-                charLimit: 280
-                Layout.fillWidth: true
-            }
-
-            SimplifiedMessageView {
-                id: responseMessage
-                visible: !!d.responseText
-                timestamp: d.responseTimestamp
-                messageDetails.messageText: d.responseText
-                messageDetails.sender.displayName: userProfile.displayName
-                messageDetails.sender.profileImage.name: userProfile.icon
-                messageDetails.sender.profileImage.assetSettings.isImage: true
-                messageDetails.sender.profileImage.pubkey: userProfile.pubKey
-                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(userProfile.pubKey)
-                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(userProfile.pubKey, !!userProfile.preferredName)
-                Layout.fillWidth: true
-            }
-
             StatusBaseText {
-                id: responseSent
-                visible: !!d.responseText
-                color: Theme.palette.baseColor1
-                wrapMode: Text.WordWrap
-                text: qsTr("Your answer has been sent to %1.").arg(d.senderDisplayName)
-                font.pixelSize: 13
-                horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: d.challengeText
             }
         }
     }
 
-    footer: StatusDialogFooter {
-        rightButtons: ObjectModel {
-            StatusButton {
-                visible: !d.responseText
-                text: qsTr("Refuse Verification")
-                objectName: "refuseVerificationButton"
-                onClicked: {
-                    root.verificationRefused(d.senderPublicKey)
-                    root.close();
-                }
+    StatusInput {
+        id: verificationResponse
+        input.multiline: true
+        label: qsTr("Your answer")
+        placeholderText: qsTr("Write your answer...")
+        minimumHeight: 152
+        maximumHeight: 152
+        input.verticalAlignment: TextEdit.AlignTop
+        charLimit: 280
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.padding
+    }
+
+    rightButtons: ObjectModel {
+        StatusButton {
+            text: qsTr("Decline")
+            type: StatusBaseButton.Type.Danger
+            objectName: "refuseVerificationButton"
+            onClicked: {
+                root.verificationRefused(d.senderPublicKey)
+                root.close()
             }
-            StatusButton {
-                text: qsTr("Send Answer")
-                objectName: "sendAnswerButton"
-                visible: !d.responseText
-                enabled: verificationResponse.text !== ""
-                onClicked: {
-                    root.responseSent(d.senderPublicKey, SQUtils.StringUtils.escapeHtml(verificationResponse.text))
-                    d.responseText = verificationResponse.text
-                    d.responseTimestamp = Date.now()
-                }
-            }
-            StatusFlatButton {
-                visible: d.responseText
-                text: qsTr("Change answer")
-                objectName: "changeAnswerButton"
-                onClicked: {
-                    d.responseText = ""
-                }
-            }
-            StatusButton {
-                visible: d.responseText
-                text: qsTr("Close")
-                objectName: "closeButton"
-                onClicked: root.close()
+        }
+        StatusButton {
+            text: qsTr("Send reply")
+            type: StatusBaseButton.Type.Success
+            objectName: "sendAnswerButton"
+            enabled: verificationResponse.text !== ""
+            onClicked: {
+                root.responseSent(d.senderPublicKey, SQUtils.StringUtils.escapeHtml(verificationResponse.text))
+                d.responseText = verificationResponse.text
+                d.responseTimestamp = Date.now()
+                root.close()
             }
         }
     }
