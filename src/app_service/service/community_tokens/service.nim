@@ -334,6 +334,12 @@ QtObject:
     try:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityCollectiblesReceivedPayload)
+
+      let watchOnlyAccounts = self.walletAccountService.getWatchOnlyAccounts()
+      if any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0]):
+        # skip events on watch-only accounts
+        return
+
       for coll in tokenDataPayload.collectibles:
         if not coll.communityData.isSome():
           continue
@@ -404,6 +410,11 @@ QtObject:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityTokenReceivedPayload)
       if len(tokenDataPayload.communityId) == 0:
+        return
+
+      let watchOnlyAccounts = self.walletAccountService.getWatchOnlyAccounts()
+      if any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0]):
+        # skip events on watch-only accounts
         return
 
       var accountName, accountAddress: string
