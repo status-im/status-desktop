@@ -58,7 +58,7 @@ ActivityNotificationMessage {
         OutgoingContactVerificationCta {
             verificationStatus: notification ? notification.verificationStatus : Constants.verificationStatus.unverified
             onActivate: {
-                Global.openOutgoingIDRequestPopup(root.contactId, popup => {})
+                Global.openOutgoingIDRequestPopup(root.contactId, root.contactDetails, null)
                 root.closeActivityCenter()
             }
         }
@@ -70,7 +70,7 @@ ActivityNotificationMessage {
         IncomingContactVerificationCta {
             verificationStatus: notification ? notification.verificationStatus : Constants.verificationStatus.unverified
             onActivate: {
-                Global.openIncomingIDRequestPopup(root.contactId, popup => {})
+                Global.openIncomingIDRequestPopup(root.contactId, root.contactDetails, null)
                 root.closeActivityCenter()
             }
         }

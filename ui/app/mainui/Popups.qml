@@ -183,11 +183,13 @@ QtObject {
         openPopup(removeIDVerificationPopupComponent, {publicKey, contactDetails}, cb)
     }
 
-    function openOutgoingIDRequestPopup(publicKey, cb) {
+    function openOutgoingIDRequestPopup(publicKey, contactDetails, cb) {
+        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
         try {
-            const verificationDetails = root.rootStore.profileSectionStore.contactsStore.getSentVerificationDetailsAsJson(publicKey)
+            const verificationDetails = rootStore.contactStore.getSentVerificationDetailsAsJson(publicKey)
             const popupProperties = {
-                userPublicKey: publicKey,
+                publicKey: publicKey,
+                contactDetails: details,
                 verificationStatus: verificationDetails.requestStatus,
                 verificationChallenge: verificationDetails.challenge,
                 verificationResponse: verificationDetails.response,
@@ -202,13 +204,9 @@ QtObject {
         }
     }
 
-    function openIncomingIDRequestPopup(publicKey, cb) {
-        const popupProperties = {
-            contactsStore: root.rootStore.profileSectionStore.contactsStore,
-            publicKey: publicKey
-        }
-
-        openPopup(contactVerificationRequestPopupComponent, popupProperties, cb)
+    function openIncomingIDRequestPopup(publicKey, contactDetails, cb) {
+        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
+        openPopup(contactVerificationRequestPopupComponent, {publicKey, contactDetails: details})
     }
 
     function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
@@ -357,7 +355,7 @@ QtObject {
                 onAccepted: {
                     rootStore.contactStore.removeContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.cancelVerificationRequest(publicKey)
+                        rootStore.contactStore.removeTrustStatus(publicKey)
                     if (markAsUntrusted) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
@@ -372,11 +370,14 @@ QtObject {
         Component {
             id: contactVerificationRequestPopupComponent
             ContactVerificationRequestPopup {
-                onResponseSent: {
-                    root.rootStore.profileSectionStore.contactsStore.acceptVerificationRequest(senderPublicKey, response)
+                contactsStore: rootStore.contactStore
+                onResponseSent: (senderPublicKey, response) => {
+                    contactsStore.acceptVerificationRequest(senderPublicKey, response)
+                    Global.displaySuccessToastMessage(qsTr("ID verification reply sent"))
                 }
-                onVerificationRefused: {
-                    root.rootStore.profileSectionStore.contactsStore.declineVerificationRequest(senderPublicKey)
+                onVerificationRefused: (senderPublicKey) => {
+                    contactsStore.declineVerificationRequest(senderPublicKey)
+                    Global.displaySuccessToastMessage(qsTr("ID verification request declined"))
                 }
                 onClosed: destroy()
             }
@@ -386,13 +387,15 @@ QtObject {
             id: contactOutgoingVerificationRequestPopupComponent
             OutgoingContactVerificationRequestPopup {
                 onVerificationRequestCanceled: {
-                    root.rootStore.profileSectionStore.contactsStore.cancelVerificationRequest(userPublicKey)
+                    rootStore.contactStore.cancelVerificationRequest(publicKey)
                 }
                 onUntrustworthyVerified: {
-                    root.rootStore.profileSectionStore.contactsStore.verifiedUntrustworthy(userPublicKey)
+                    rootStore.contactStore.verifiedUntrustworthy(publicKey)
+                    Global.displaySuccessToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
                 }
                 onTrustedVerified: {
-                    root.rootStore.profileSectionStore.contactsStore.verifiedTrusted(userPublicKey)
+                    rootStore.contactStore.verifiedTrusted(publicKey)
+                    Global.displaySuccessToastMessage(qsTr("%1 ID verified").arg(mainDisplayName))
                 }
                 onClosed: destroy()
             }
@@ -411,7 +414,7 @@ QtObject {
             id: markAsIDVerifiedPopupComponent
             MarkAsIDVerifiedDialog {
                 onAccepted: {
-                    rootStore.contactStore.verifiedTrusted(publicKey)
+                    rootStore.contactStore.markAsTrusted(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 ID verified").arg(mainDisplayName))
                     close()
                 }
@@ -576,8 +579,6 @@ QtObject {
             MarkAsUntrustedPopup {
                 onAccepted: {
                     rootStore.contactStore.markUntrustworthy(publicKey)
-                    if (removeIDVerification)
-                        rootStore.contactStore.cancelVerificationRequest(publicKey)
                     if (removeContact) {
                         rootStore.contactStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
@@ -608,7 +609,7 @@ QtObject {
                 onAccepted: {
                     rootStore.contactStore.blockContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.cancelVerificationRequest(publicKey)
+                        rootStore.contactStore.removeTrustStatus(publicKey)
                     if (removeContact)
                         rootStore.contactStore.removeContact(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 blocked").arg(mainDisplayName))

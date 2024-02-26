@@ -73,8 +73,8 @@ StatusListItem {
             width: visible ? implicitWidth : 0
             height: visible ? implicitHeight : 0
             text: verificationRequestStatus === Constants.verificationStatus.verifying ?
-                qsTr("Respond to ID Request") :
-                qsTr("See ID Request")
+                qsTr("Reply to ID verification request") :
+                qsTr("Review ID verification reply")
             size: StatusBaseButton.Size.Small
             onClicked: root.showVerificationRequest(root.publicKey)
         },
