@@ -22,8 +22,8 @@ var NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Mainnet",
-    "rpcUrl": "https://goerli-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
-    "fallbackUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "fallbackUrl": "",
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#627EEA",
