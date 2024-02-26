@@ -37,6 +37,13 @@ Item {
         None
     }
 
+    QtObject {
+        id: d
+
+        // Use Layer1 controller since this could go on top of other activity lists
+        readonly property var activityController: root.store.tmpActivityController1
+    }
+
     StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
@@ -174,7 +181,7 @@ Item {
                     onClicked: recipientSelected(entry, TabAddressSelectorView.Type.RecentsAddress)
                 }
 
-                model: root.store.tmpActivityController.model
+                model: d.activityController.model
 
                 onVisibleChanged: {
                     if (visible) {
@@ -193,9 +200,9 @@ Item {
 
                 function updateRecentsActivity() {
                     if(root.selectedAccount) {
-                        root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address], false))
+                        d.activityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address]), false)
                     }
-                    root.store.tmpActivityController.updateFilter()
+                    d.activityController.updateFilter()
                 }
             }
         }

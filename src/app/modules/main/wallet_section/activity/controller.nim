@@ -197,6 +197,9 @@ QtObject:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", res.error
       return
+      
+  proc resetFilter*(self: Controller) {.slot.} =
+    self.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
   proc setFilterTime*(self: Controller, startTimestamp: int, endTimestamp: int) {.slot.} =
     self.currentActivityFilter.period = backend_activity.newPeriod(startTimestamp, endTimestamp)
@@ -424,7 +427,7 @@ QtObject:
     var addresses = newSeq[string]()
     for i in 0 ..< addressesJson.len:
       if addressesJson[i].kind != JString:
-        error "not string entry in the json adday for index ", i
+        error "not string entry in the addresses json array for index ", i
         return
       addresses.add(addressesJson[i].getStr())
 
@@ -440,6 +443,21 @@ QtObject:
 
     self.status.emitFilterChainsChanged()
     self.updateAssetsIdentities()
+
+  proc setFilterChainsJson*(self: Controller, jsonArray: string, allChainsSelected: bool) {.slot.}  =
+    let chainsJson = parseJson(jsonArray)
+    if chainsJson.kind != JArray:
+      error "invalid array of json ints"
+      return
+
+    var chains = newSeq[int]()
+    for i in 0 ..< chainsJson.len:
+      if chainsJson[i].kind != JInt:
+        error "not int entry in the chains json array for index ", i
+        return
+      chains.add(chainsJson[i].getInt())
+
+    self.setFilterChains(chains, allChainsSelected)
 
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)

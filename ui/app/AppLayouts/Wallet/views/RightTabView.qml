@@ -8,7 +8,7 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.panels 1.0
 
 import "./"
@@ -69,6 +69,8 @@ RightTabBaseView {
                     return ""
                 }
             }
+
+            readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
         }
 
         ColumnLayout {
@@ -174,6 +176,12 @@ RightTabBaseView {
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
+                            d.detailedCollectibleActivityController.resetFilter()
+                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")), RootStore.showAllAccounts)
+                            d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
+                            d.detailedCollectibleActivityController.setFilterCollectibles(JSON.stringify([uid]))
+                            d.detailedCollectibleActivityController.updateFilter()
+
                             stack.currentIndex = 1
                         }
                         onSendRequested: (symbol) => {
@@ -212,10 +220,15 @@ RightTabBaseView {
         CollectibleDetailView {
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
+            activityModel: d.detailedCollectibleActivityController.model
+            rootStore: SharedStores.RootStore
+            walletRootStore: RootStore
+            communitiesStore: root.communitiesStore
 
             onVisibleChanged: {
-                if (!visible)
+                if (!visible) {
                     RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC721)
+                }
             }
         }
         AssetsDetailView {
