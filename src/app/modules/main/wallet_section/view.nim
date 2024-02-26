@@ -6,6 +6,9 @@ import ./io_interface
 import ../../shared_models/currency_amount
 import ./wallet_connect/controller as wcc
 
+type 
+  ActivityControllerArray* = array[2, activityc.Controller]
+
 QtObject:
   type
     View* = ref object of QObject
@@ -16,7 +19,7 @@ QtObject:
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
-      tmpActivityController: activityc.Controller
+      tmpActivityControllers: ActivityControllerArray
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
@@ -31,11 +34,11 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectibleDetailsController: collectible_detailsc.Controller, wcController: wcc.Controller): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityControllers: ActivityControllerArray, collectibleDetailsController: collectible_detailsc.Controller, wcController: wcc.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
-    result.tmpActivityController = tmpActivityController
+    result.tmpActivityControllers = tmpActivityControllers
     result.collectibleDetailsController = collectibleDetailsController
     result.wcController = wcController
 
@@ -151,10 +154,15 @@ QtObject:
   QtProperty[QVariant] collectibleDetailsController:
     read = getCollectibleDetailsController
 
-  proc getTmpActivityController(self: View): QVariant {.slot.} =
-    return newQVariant(self.tmpActivityController)
-  QtProperty[QVariant] tmpActivityController:
-    read = getTmpActivityController
+  proc getTmpActivityController0(self: View): QVariant {.slot.} =
+    return newQVariant(self.tmpActivityControllers[0])
+  QtProperty[QVariant] tmpActivityController0:
+    read = getTmpActivityController0
+
+  proc getTmpActivityController1(self: View): QVariant {.slot.} =
+    return newQVariant(self.tmpActivityControllers[1])
+  QtProperty[QVariant] tmpActivityController1:
+    read = getTmpActivityController1
 
   proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
     return self.delegate.getLatestBlockNumber(chainId)

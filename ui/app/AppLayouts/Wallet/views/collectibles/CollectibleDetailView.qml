@@ -11,6 +11,7 @@ import AppLayouts.Communities.panels 1.0
 
 import utils 1.0
 import shared.controls 1.0
+import shared.views 1.0
 
 import "../../stores"
 import "../../controls"
@@ -18,7 +19,12 @@ import "../../controls"
 Item {
     id: root
 
-    property var collectible
+    required property var rootStore
+    required property var walletRootStore
+    required property var communitiesStore
+
+    required property var collectible
+    property var activityModel
     property bool isCollectibleLoading
     readonly property int isNarrowMode : width < 700
 
@@ -70,7 +76,7 @@ Item {
                 visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
                 size: root.isNarrowMode ? PrivilegedTokenArtworkPanel.Size.Medium : PrivilegedTokenArtworkPanel.Size.Large
                 artwork: collectible.imageUrl
-                color: !!collectible ? collectible.communityColor : "transparent"
+                color: !!collectible && root.isCommunityCollectible? collectible.communityColor : "transparent"
                 isOwner: root.isOwnerTokenType
             }
 
@@ -86,8 +92,8 @@ Item {
                 color: collectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
-                mediaUrl: collectible.mediaUrl
-                mediaType: collectible.mediaType
+                mediaUrl: collectible.mediaUrl ?? ""
+                mediaType: collectible.mediaType ?? ""
                 fallbackImageUrl: collectible.imageUrl
             }
 
@@ -147,6 +153,11 @@ Item {
                 width: implicitWidth
                 text: qsTr("Properties")
             }
+            StatusTabButton {
+                rightPadding: 0
+                width: implicitWidth
+                text: qsTr("Activity")
+            }
         }
 
         StatusScrollView {
@@ -154,15 +165,56 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             contentWidth: availableWidth
-            Flow {
-                width: scrollView.availableWidth
-                spacing: 10
-                Repeater {
-                    model: collectible.traits
-                    InformationTile {
-                        maxWidth: parent.width
-                        primaryText: model.traitType
-                        secondaryText: model.value
+
+            Loader {
+                id: tabLoader
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                sourceComponent: {
+                    switch (collectiblesDetailsTab.currentIndex) {
+                    case 0: return traitsView
+                    case 1: return activityView
+                    }
+                }
+
+                Component {
+                    id: traitsView
+                    Flow {
+                        width: scrollView.availableWidth
+                        spacing: 10
+                        Repeater {
+                            model: collectible.traits
+                            InformationTile {
+                                maxWidth: parent.width
+                                primaryText: model.traitType
+                                secondaryText: model.value
+                            }
+                        }
+                    }
+                }
+
+                Component {
+                    id: activityView
+                        StatusListView {
+                        width: scrollView.availableWidth
+                        height: scrollView.availableHeight
+                        model: root.activityModel
+                        delegate: TransactionDelegate {
+                            required property var model
+                            required property int index
+                            width: parent.width
+                            modelData: model.activityEntry
+                            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
+                            rootStore: root.rootStore
+                            walletRootStore: root.walletRootStore
+                            showAllAccounts: root.walletRootStore.showAllAccounts
+                            displayValues: true
+                            community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
+                            loading: false
+                            onClicked: {
+                                // TODO: Implement switch to transaction details screen
+                            }
+                        }
                     }
                 }
             }

@@ -30,7 +30,8 @@ QtObject {
     property var collectiblesModel: walletSectionSendInst.collectiblesModel
     property var nestedCollectiblesModel: walletSectionSendInst.nestedCollectiblesModel
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    property var tmpActivityController: walletSection.tmpActivityController
+    property var tmpActivityController0: walletSection.tmpActivityController0
+    property var tmpActivityController1: walletSection.tmpActivityController1
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
         filters: [

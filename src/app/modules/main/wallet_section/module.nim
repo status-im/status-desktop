@@ -51,7 +51,8 @@ export io_interface
 type
   ActivityID = enum
     History
-    Temporary
+    Temporary0
+    Temporary1
 
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -84,8 +85,11 @@ type
 
     activityController: activityc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
-    # instance to be used in temporary, short-lived, workflows (e.g. send popup)
-    tmpActivityController: activityc.Controller
+    # Instances to be used in temporary, short-lived, workflows (e.g. send popup). There's probably tidier ways of
+    # doing this (one for each required module, create them dynamically) but for now this will do.
+    # We need one for each app "layer" that simultaneously needs to show a different list of activity
+    # entries (e.g. send popup is one "layer" above the collectible details activity tab)
+    tmpActivityControllers: ActivityControllerArray
 
     wcController: wcc.Controller
 
@@ -139,14 +143,18 @@ proc newModule*(
   result.transactionService = transactionService
   result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService,
     savedAddressService, events)
-  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService,
+  result.tmpActivityControllers = [
+      activityc.newController(int32(ActivityID.Temporary0), currencyService, tokenService,
+    savedAddressService, events),
+      activityc.newController(int32(ActivityID.Temporary1), currencyService, tokenService,
     savedAddressService, events)
+  ]
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
   result.wcController = wcc.newController(events, walletAccountService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectibleDetailsController, result.wcController)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.collectibleDetailsController, result.wcController)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -159,7 +167,8 @@ method delete*(self: Module) =
   self.controller.delete
   self.view.delete
   self.activityController.delete
-  self.tmpActivityController.delete
+  for i in 0..self.tmpActivityControllers.len-1:
+    self.tmpActivityControllers[i].delete
   self.collectibleDetailsController.delete
   self.wcController.delete
 
