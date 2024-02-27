@@ -601,6 +601,19 @@ QtObject:
     let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
+
+  proc markAsTrusted*(self: Service, publicKey: string) =
+    let response = status_contacts.markAsTrusted(publicKey)
+    if not response.error.isNil:
+      error "error marking as trusted ", msg = response.error.message
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
+
+    self.events.emit(SIGNAL_CONTACT_TRUSTED,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
     if not response.error.isNil:

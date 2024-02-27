@@ -91,6 +91,10 @@ QtObject {
         root.contactsModule.dismissContactRequest(pubKey, contactRequestId)
     }
 
+    function markAsTrusted(pubKey) {
+        root.contactsModule.markAsTrusted(pubKey)
+    }
+
     function markUntrustworthy(pubKey) {
         root.contactsModule.markUntrustworthy(pubKey)
     }

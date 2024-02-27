@@ -67,6 +67,10 @@ proc getImageServerURL*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("imageServerURL".prefix, payload)
 
+proc markAsTrusted*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("markAsTrusted".prefix, payload)
+
 proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [pubkey]
   result = callPrivateRPC("markAsUntrustworthy".prefix, payload)

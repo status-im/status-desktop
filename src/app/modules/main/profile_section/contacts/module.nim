@@ -196,6 +196,9 @@ method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustwort
   self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
   self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
 
+method markAsTrusted*(self: Module, publicKey: string): void =
+  self.controller.markAsTrusted(publicKey)
+
 method markUntrustworthy*(self: Module, publicKey: string): void =
   self.controller.markUntrustworthy(publicKey)
 

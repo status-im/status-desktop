@@ -126,6 +126,9 @@ proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestI
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, "")
 
+proc markAsTrusted*(self: Controller, publicKey: string) =
+  self.contactsService.markAsTrusted(publicKey)
+
 proc markUntrustworthy*(self: Controller, publicKey: string) =
   self.contactsService.markUntrustworthy(publicKey)
 
