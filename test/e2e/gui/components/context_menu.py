@@ -1,7 +1,7 @@
 import allure
 
 from gui.elements.object import QObject
-from gui.objects_map import names
+from gui.objects_map import names, communities_names
 
 
 class ContextMenu(QObject):
@@ -15,6 +15,16 @@ class ContextMenu(QObject):
         self._context_hide_include_in_total_balance = QObject(names.contextMenuItem_HideInclude)
         self._context_edit_saved_address_option = QObject(names.contextSavedAddressEdit)
         self._context_delete_saved_address_option = QObject(names.contextSavedAddressDelete)
+        self._edit_channel_context_item = QObject(communities_names.edit_Channel_StatusMenuItem)
+        self._delete_channel_context_item = QObject(communities_names.delete_Channel_StatusMenuItem)
+
+    @allure.step('Is edit channel option present in context menu')
+    def is_edit_channel_option_present(self):
+        return self._edit_channel_context_item.exists
+
+    @allure.step('Is delete channel option present in context menu')
+    def is_delete_channel_option_present(self):
+        return self._delete_channel_context_item.exists
 
     @allure.step('Select in context menu')
     def select(self, value: str):

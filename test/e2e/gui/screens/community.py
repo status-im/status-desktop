@@ -95,7 +95,8 @@ class ToolBar(QObject):
         self._options_list = List(names.o_StatusListView)
         self._edit_channel_context_item = QObject(communities_names.edit_Channel_StatusMenuItem)
         self._channel_icon = QObject(communities_names.statusToolBar_statusSmartIdenticonLetter_StatusLetterIdenticon)
-        self._channel_name = TextLabel(communities_names.statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
+        self._channel_name = TextLabel(
+            communities_names.statusToolBar_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
         self._channel_description = TextLabel(communities_names.statusToolBar_TruncatedTextWithTooltip)
         self._delete_channel_context_item = QObject(communities_names.delete_Channel_StatusMenuItem)
         self._channel_header = QObject(communities_names.statusToolBar_chatInfoBtnInHeader_StatusChatInfoButton)
@@ -135,15 +136,15 @@ class ToolBar(QObject):
     @allure.step('Open more options dropdown')
     def open_more_options_dropdown(self):
         self._more_options_button.click()
-        return self
+        return ContextMenu()
 
     @allure.step('Get visibility state of edit item')
     def is_edit_item_visible(self) -> bool:
-        return self._edit_channel_context_item.is_visible
+        return self._edit_channel_context_item.exists
 
     @allure.step('Get visibility state of delete item')
     def is_delete_item_visible(self) -> bool:
-        return self._delete_channel_context_item.is_visible
+        return self._delete_channel_context_item.exists
 
 
 class CategoryItem:
@@ -188,13 +189,15 @@ class LeftPanel(QObject):
         super().__init__(communities_names.mainWindow_communityColumnView_CommunityColumnView)
         self._community_info_button = Button(communities_names.mainWindow_communityHeaderButton_StatusChatInfoButton)
         self._community_logo = QObject(communities_names.mainWindow_identicon_StatusSmartIdenticon)
-        self._name_text_label = TextLabel(communities_names.mainWindow_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
+        self._name_text_label = TextLabel(
+            communities_names.mainWindow_statusChatInfoButtonNameText_TruncatedTextWithTooltip)
         self._members_text_label = TextLabel(communities_names.mainWindow_Members_TruncatedTextWithTooltip)
         self._general_channel_item = QObject(communities_names.scrollView_general_StatusChatListItem)
         self._add_channels_button = Button(communities_names.add_channels_StatusButton)
         self._channel_list_item = QObject(communities_names.channel_listItem)
         self._channel_icon_template = QObject(communities_names.channel_identicon_StatusSmartIdenticon)
-        self._channel_or_category_button = Button(communities_names.mainWindow_createChannelOrCategoryBtn_StatusBaseText)
+        self._channel_or_category_button = Button(
+            communities_names.mainWindow_createChannelOrCategoryBtn_StatusBaseText)
         self._create_channel_menu_item = Button(communities_names.create_channel_StatusMenuItem)
         self._create_category_menu_item = Button(communities_names.create_category_StatusMenuItem)
         self._join_community_button = Button(communities_names.mainWindow_Join_Community_StatusButton)
@@ -203,7 +206,8 @@ class LeftPanel(QObject):
         self._create_category_button = Button(communities_names.add_categories_StatusFlatButton)
         self._delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
         self._edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
-        self._add_channel_inside_category_item = QObject(communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
+        self._add_channel_inside_category_item = QObject(
+            communities_names.scrollView_addButton_StatusChatListCategoryItemButton)
         self._more_button = Button(communities_names.scrollView_menuButton_StatusChatListCategoryItemButton)
         self._arrow_button = Button(communities_names.scrollView_toggleButton_StatusChatListCategoryItemButton)
 
@@ -265,7 +269,7 @@ class LeftPanel(QObject):
         return CommunitySettingsScreen().wait_until_appears()
 
     @allure.step('Open create channel popup')
-    def open_create_channel_popup(self, attempt: int =2) -> NewChannelPopup:
+    def open_create_channel_popup(self, attempt: int = 2) -> NewChannelPopup:
         try:
             self._channel_or_category_button.click()
             self._create_channel_menu_item.click()
@@ -275,7 +279,6 @@ class LeftPanel(QObject):
                 self.open_create_channel_popup(attempt - 1)
             else:
                 raise er
-
 
     @allure.step('Get visibility state of create channel or category button')
     def is_create_channel_or_category_button_visible(self) -> bool:
@@ -300,7 +303,7 @@ class LeftPanel(QObject):
     @allure.step('Open general channel context menu')
     def open_general_channel_context_menu(self):
         self._general_channel_item.open_context_menu()
-        ContextMenu().wait_until_appears()
+        return ContextMenu()
 
     @allure.step('Open category context menu')
     def open_category_context_menu(self):
@@ -390,8 +393,10 @@ class Chat(QObject):
 
     def __init__(self):
         super().__init__(communities_names.mainWindow_ChatColumnView)
-        self._channel_icon = QObject(communities_names.chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon)
-        self._channel_name_label = TextLabel(communities_names.chatMessageViewDelegate_channelIdentifierNameText_StyledText)
+        self._channel_icon = QObject(
+            communities_names.chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon)
+        self._channel_name_label = TextLabel(
+            communities_names.chatMessageViewDelegate_channelIdentifierNameText_StyledText)
         self._channel_welcome_label = TextLabel(communities_names.chatMessageViewDelegate_Welcome)
         self._channel_identifier_view = QObject(messaging_names.chatMessageViewDelegate_ChannelIdentifierView)
 

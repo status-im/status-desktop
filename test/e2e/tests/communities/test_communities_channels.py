@@ -16,7 +16,8 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703051', 'Delete community channel')
 @pytest.mark.case(703049, 703050, 703051)
 @pytest.mark.parametrize(
-    'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, new_channel_description, new_channel_emoji',
+    'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
+    'new_channel_description, new_channel_emoji',
     [('Channel', 'Description', 'sunglasses', None, '#4360df', 'New-channel', 'New channel description', 'thumbsup')])
 # @pytest.mark.critical TODO: https://github.com/status-im/desktop-qa-automation/issues/535
 def test_create_edit_remove_community_channel(main_screen, channel_name, channel_description, channel_emoji, channel_emoji_image,
@@ -87,19 +88,24 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
         with step('Right-click a channel on the left navigation bar'):
             community_screen.left_panel.right_click_on_panel()
         with step('Verify that context menu does not appear'):
-            assert not ContextMenu().is_visible
+            assert ContextMenu().is_visible is False, \
+                f"Context menu should not appear"
 
     with step('Verify that member cannot edit and delete channel'):
         with step('Right-click on general channel in the left navigation bar'):
-            community_screen.left_panel.open_general_channel_context_menu()
-        with step('Verify that edit item is not present in context menu'):
-            assert not community_screen.tool_bar.is_edit_item_visible()
-        with step('Verify that delete item is not present in context menu'):
-            assert not community_screen.tool_bar.is_delete_item_visible()
+            general_channel_context_menu = community_screen.left_panel.open_general_channel_context_menu()
+        with step('Verify that edit item is not present in channel context menu'):
+            assert general_channel_context_menu.is_edit_channel_option_present() is False, \
+                f'Edit channel option is present when it should not'
+        with step('Verify that delete item is not present in channel context menu'):
+            assert general_channel_context_menu.is_delete_channel_option_present() is False, \
+                f'Delete channel option is present when it should not'
 
-        with step('Open more options context menu'):
-            more_options_dropdown = community_screen.tool_bar.open_more_options_dropdown()
+        with step('Open context menu from the tool bar'):
+            more_options = community_screen.tool_bar.open_more_options_dropdown()
         with step('Verify that edit item is not present in context menu'):
-            assert not more_options_dropdown.is_edit_item_visible()
+            assert more_options.is_edit_channel_option_present() is False, \
+                f'Edit channel option is present when it should not'
         with step('Verify that delete item is not present in context menu'):
-            assert not more_options_dropdown.is_delete_item_visible()
+            assert more_options.is_delete_channel_option_present() is False, \
+                f'Delete channel option is present when it should not'
