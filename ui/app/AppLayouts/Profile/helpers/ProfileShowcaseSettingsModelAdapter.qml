@@ -76,6 +76,13 @@ QObject {
                 name: "showcaseKey"
                 expression: model.address
                 expectedRoles: ["address"]
+            },
+            FastExpressionRole {
+                function canReceiveFromMyAccounts() {
+                    return accountsSourceModel.count > 1
+                }
+                name: "canReceiveFromMyAccounts"
+                expression: canReceiveFromMyAccounts()
             }
         ]
     }

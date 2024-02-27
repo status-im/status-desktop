@@ -11,7 +11,9 @@ ListModel {
             shortName: "SOCKS",
             symbol: "SOCKS",
             category: TokenCategories.Category.Community,
-            communityId: ""
+            communityId: "",
+            communityImage: "",
+            address: "23534tlgtu90345t"
         },
         {
             key: "zrx",
@@ -20,7 +22,9 @@ ListModel {
             shortName: "ZRX",
             symbol: "ZRX",
             category: TokenCategories.Category.Community,
-            communityId: ""
+            communityId: "",
+            communityImage: "",
+            address: "23534tlgtu90345t"
         },
         {
             key: "1inch",
@@ -29,7 +33,9 @@ ListModel {
             shortName: "1INCH",
             symbol: "1INCH",
             category: TokenCategories.Category.Own,
-            communityId: ""
+            communityId: "",
+            communityImage: "",
+            address: "23534tlgtu90345t"
         },
         {
             key: "Aave",
@@ -38,7 +44,9 @@ ListModel {
             shortName: "AAVE",
             symbol: "AAVE",
             category: TokenCategories.Category.Own,
-            communityId: ""
+            communityId: "",
+            communityImage: "",
+            address: "23534tlgtu90345t"
         },
         {
             key: "Amp",
@@ -47,7 +55,9 @@ ListModel {
             shortName: "AMP",
             symbol: "AMP",
             category: TokenCategories.Category.Own,
-            communityId: ""
+            communityId: "",
+            communityImage: "",
+            address: "23534tlgtu90345t"
         },
         {
             key: "Dai",
@@ -56,7 +66,9 @@ ListModel {
             shortName: "DAI",
             symbol: "DAI",
             category: TokenCategories.Category.General,
-            communityId: ""
+            communityId: "0x1",
+            communityImage: "https://pbs.twimg.com/profile_images/1599347398769143808/C6qG3RQv_400x400.jpg",
+            address: "stgdrswaE2q"
         },
         {
             key: "snt",
@@ -65,7 +77,8 @@ ListModel {
             shortName: "snt",
             symbol: "SNT",
             category: TokenCategories.Category.General,
-            communityId: ""
+            communityId: "",
+            address: "321312wdsadas"
         },
         {
             key: "stt",
@@ -74,7 +87,8 @@ ListModel {
             shortName: "stt",
             symbol: "STT",
             category: TokenCategories.Category.Own,
-            communityId: ""
+            communityId: "",
+            address: "rwr32e1wqdscdwe43r34r"
         },
         {
             key: "eth",
@@ -83,7 +97,9 @@ ListModel {
             shortName: "eth",
             symbol: "ETH",
             category: TokenCategories.Category.General,
-            communityId: ""
+            communityId: "000",
+            communityImage: ModelsData.icons.status,
+            address: "rwr43r34r"
         }
     ]
 
