@@ -478,4 +478,7 @@ proc removeCommunityChat*(self: Controller, communityId: string, channelId: stri
   self.communityService.deleteCommunityChat(communityId, channelId)
 
 proc getNetworks*(self: Controller): seq[NetworkDto] =
- return self.networksService.getNetworks()
+  return self.networksService.getNetworks()
+
+proc promoteSelfToControlNode*(self: Controller, communityId: string) =
+  self.communityService.promoteSelfToControlNode(communityId)

@@ -2391,3 +2391,21 @@ QtObject:
     except Exception as e:
       error "Error setting community shard", msg = e.msg
       self.events.emit(SIGNAL_COMMUNITY_SHARD_SET_FAILED, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))
+
+  proc promoteSelfToControlNode*(self: Service, communityId: string) =
+    try:
+      let response = status_go.promoteSelfToControlNode(communityId)
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, error.message)
+
+      if response.result == nil or response.result.kind == JNull or response.result["communities"].kind == JNull or
+          response.result["communities"].len == 0:
+        error "error: ", procName="promoteSelfToControlNode", errDesription = "result is nil"
+        return
+
+      let community = response.result["communities"][0].toCommunityDto()
+      self.communities[communityId] = community
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+    except Exception as e:
+      error "error promoting self to control node", msg = e.msg

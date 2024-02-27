@@ -945,3 +945,6 @@ method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, membe
         airdropAddress = revealedAccount.address
 
     self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
+
+method promoteSelfToControlNode*(self: Module, communityId: string) =
+  self.controller.promoteSelfToControlNode(communityId)

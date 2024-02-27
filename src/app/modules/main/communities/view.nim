@@ -816,3 +816,5 @@ QtObject:
   proc sendSharedAddressesForAllNonKeycardKeypairsSignedSignal*(self: View) =
     self.sharedAddressesForAllNonKeycardKeypairsSigned()
 
+  proc promoteSelfToControlNode*(self: View, communityId: string) {.slot.} =
+    self.delegate.promoteSelfToControlNode(communityId)

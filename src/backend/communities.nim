@@ -520,7 +520,8 @@ proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): 
   return callPrivateRPC("getCommunityMembersForWalletAddresses".prefix, %* [communityId, chainId])
 
 proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])
+  let payload = %*[communityId]
+  return core.callPrivateRPC("wakuext_promoteSelfToControlNode", payload)
 
 proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   if index != -1:

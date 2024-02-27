@@ -838,7 +838,7 @@ QtObject {
             id: importControlNodePopup
             ImportControlNodePopup {
                 onClosed: destroy()
-                onImportControlNode: console.warn("!!! TODO importControlNode for community:", community.name) // FIXME implement moving (importing) the control node
+                onImportControlNode: root.rootStore.promoteSelfToControlNode(community.id)
             }
         },
 
