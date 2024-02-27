@@ -20,8 +20,8 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed_password',
                          [pytest.param(constants.user.user_account_one,
                                        constants.user.user_account_one_changed_password)])
-@pytest.mark.flaky
-# reason='https://github.com/status-im/status-desktop/issues/13013'
+@pytest.mark.critical
+# TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account, user_account_changed_password):
     with step('Open profile settings'):
         settings_scr = main_screen.left_panel.open_settings()
@@ -36,7 +36,7 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
         ChangePasswordPopup().click_re_encrypt_data_restart_button()
 
     with step('Verify the application process is not running'):
-        psutil.Process(aut.pid).wait(timeout=10)
+        psutil.Process(aut.pid).wait(timeout=30)
 
     with step('Restart application'):
         aut.restart()
