@@ -6,6 +6,7 @@ AssetsDetailsHeader 1.0 AssetsDetailsHeader.qml
 ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyButton 1.0 CopyButton.qml
+CopyButtonWithCircle 1.0 CopyButtonWithCircle.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 CurrencyAmountInput 1.0 CurrencyAmountInput.qml
 DisabledTooltipButton 1.0 DisabledTooltipButton.qml

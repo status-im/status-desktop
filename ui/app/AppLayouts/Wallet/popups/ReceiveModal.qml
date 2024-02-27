@@ -18,6 +18,8 @@ import shared.popups 1.0
 import shared.popups.send.controls 1.0
 
 import AppLayouts.stores 1.0
+import AppLayouts.Wallet.controls 1.0
+
 import ".."
 import "../stores"
 
@@ -29,6 +31,13 @@ StatusModal {
 
     property bool switchingAccounsEnabled: true
     property bool changingPreferredChainsEnabled: true
+
+    property string qrImageSource: RootStore.getQrCode(d.visibleAddress)
+    property var getNetworkShortNames: function(chainIDsString) {
+        return RootStore.getNetworkShortNames(chainIDsString)
+    }
+
+    property var store: RootStore
 
     signal selectedAccountIndexChanged(int selectedIndex)
     signal updatePreferredChains(string address, string preferredChains)
@@ -53,7 +62,7 @@ StatusModal {
         }
 
         selectedAccount: root.selectedAccount
-        getNetworkShortNames: RootStore.getNetworkShortNames
+        getNetworkShortNames: root.getNetworkShortNames
         onSelectedIndexChanged: {
             root.selectedAccountIndexChanged(selectedIndex)
         }
@@ -63,10 +72,11 @@ StatusModal {
     showAdvancedFooter: true
     advancedFooterComponent: Rectangle {
         width: parent.width
-        height: d.advanceFooterHeight
+        height: rowLayout.height + 56 // Makes it totally 88 for one liner text as per design
         color: Theme.palette.baseColor4
-        radius: 16
+        radius: 8
 
+        // Hide round corners of the upper part
         Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
@@ -75,6 +85,7 @@ StatusModal {
             color: parent.color
         }
 
+        // Divider
         Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
@@ -83,24 +94,39 @@ StatusModal {
             color: Theme.palette.baseColor2
         }
 
-        StatusBaseText {
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.bigPadding
-            anchors.verticalCenter: parent.verticalCenter
-            text: WalletUtils.colorizedChainPrefix(d.preferredChainShortNames) + root.selectedAccount.address
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-        }
+        Item { // Needed to avoid binding loop warnings
+            anchors.centerIn: parent
+            height: childrenRect.height
+            width: parent.width
 
-        StatusRoundButton {
-            width: 32
-            height: 32
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.bigPadding
-            anchors.verticalCenter: parent.verticalCenter
-            icon.name: "copy"
-            type: StatusRoundButton.Type.Tertiary
-            onClicked: RootStore.copyToClipboard(d.visibleAddress)
+            RowLayout {
+                id: rowLayout
+
+                width: parent.width
+
+                StatusBaseText {
+                    Layout.leftMargin: Style.current.bigPadding
+                    Layout.preferredWidth: parent.width - copyButton.width
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                    textFormat: TextEdit.RichText
+                    wrapMode: Text.WrapAnywhere
+                    text: WalletUtils.colorizedChainPrefix(d.preferredChainShortNames) + root.selectedAccount.address
+                    font.pixelSize: 15
+                    color: Theme.palette.directColor1
+                }
+
+                CopyButtonWithCircle {
+                    id: copyButton
+
+                    Layout.rightMargin: Style.current.bigPadding
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                    Layout.fillWidth: true
+                    textToCopy: d.visibleAddress
+                    successCircleVisible: true
+                }
+            }
         }
     }
 
@@ -117,12 +143,10 @@ StatusModal {
         property var preferredChainIdsArray: root.selectedAccount.preferredSharingChainIds.split(":").filter(Boolean)
         property var preferredChainIds: d.preferredChainIdsArray.join(":")
 
-        readonly property string preferredChainShortNames: d.multiChainView? RootStore.getNetworkShortNames(d.preferredChainIds) : ""
+        readonly property string preferredChainShortNames: d.multiChainView? root.getNetworkShortNames(d.preferredChainIds) : ""
         readonly property string visibleAddress: "%1%2".arg(d.preferredChainShortNames).arg(root.selectedAccount.address)
 
         readonly property var networkProxies: [layer1NetworksClone, layer2NetworksClone]
-
-
     }
 
     Column {
@@ -191,23 +215,21 @@ StatusModal {
                 fillMode: Image.PreserveAspectFit
                 mipmap: true
                 smooth: false
-                source: RootStore.getQrCode(d.visibleAddress)
+                source: root.qrImageSource
             }
 
             Rectangle {
                 anchors.centerIn: qrCodeImage
-                width: 78
-                height: 78
+                width: 88
+                height: 88
                 color: "white"
+                radius: width / 2
                 StatusSmartIdenticon {
                     anchors.centerIn: parent
-                    anchors.margins: 2
-                    width: 78
-                    height: 78
                     name: root.selectedAccount.name
                     asset {
-                        width: 78
-                        height: 78
+                        width: 72
+                        height: 72
                         name: !root.selectedAccount.name && !root.selectedAccount.emoji? "status-logo-icon" : ""
                         color: !root.selectedAccount.name && !root.selectedAccount.emoji? "transparent" : Utils.getColorForId(root.selectedAccount.colorId)
                         emoji: root.selectedAccount.emoji
@@ -241,11 +263,11 @@ StatusModal {
                     model: d.networkProxies.length
                     delegate: Repeater {
                         model: d.networkProxies[index]
-                        delegate: InformationTag {
-                            tagPrimaryLabel.text: model.shortName
-                            tagPrimaryLabel.color: model.chainColor
+                        delegate: StatusNetworkListItemTag {
+                            enabled: false
+                            button.visible: false
+                            title: model.shortName
                             asset.name: Style.svg("tiny/" + model.iconUrl)
-                            asset.isImage: true
                             visible: d.preferredChainIdsArray.includes(model.chainId.toString())
                         }
                     }
@@ -269,7 +291,9 @@ StatusModal {
                     id: selectPopup
 
                     x: editButton.width - width
-                    y: editButton.height + 8
+                    y: editButton.height + 2
+
+                    margins: -1 // to allow positioning outside the bounds of the dialog
 
                     layer1Networks: layer1NetworksClone
                     layer2Networks: layer2NetworksClone
@@ -291,7 +315,7 @@ StatusModal {
                     CloneModel {
                         id: layer1NetworksClone
 
-                        sourceModel: RootStore.layer1Networks
+                        sourceModel: root.store.layer1Networks
                         roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl", "isEnabled"]
                         // rowData used to clone returns string. Convert it to bool for bool arithmetics
                         rolesOverride: [{
@@ -303,7 +327,7 @@ StatusModal {
                     CloneModel {
                         id: layer2NetworksClone
 
-                        sourceModel: RootStore.layer2Networks
+                        sourceModel: root.store.layer2Networks
                         roles: layer1NetworksClone.roles
                         rolesOverride: layer1NetworksClone.rolesOverride
                     }
