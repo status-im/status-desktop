@@ -732,7 +732,10 @@ QtObject:
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
       if wasJoined and not community.joined and not community.isMember:
-        self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
+        if not community.spectated:
+            self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: community.id))
+        else:
+          self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
 
     except Exception as e:
       error "Error handling community updates", msg = e.msg

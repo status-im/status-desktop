@@ -549,6 +549,15 @@ Item {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
+
+                stateIcon.color: Theme.palette.dangerColor1
+                stateIcon.border.color: Theme.palette.baseColor2
+                stateIcon.border.width: 2
+                stateIcon.visible: model.amIBanned
+                stateIcon.asset.name: "cancel"
+                stateIcon.asset.color: Theme.palette.baseColor2
+                stateIcon.asset.width: 14
+
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
                 }

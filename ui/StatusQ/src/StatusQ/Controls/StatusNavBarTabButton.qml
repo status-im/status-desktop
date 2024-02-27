@@ -1,13 +1,17 @@
 import QtQuick 2.13
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Theme 0.1
     
 StatusIconTabButton {
     id: statusNavBarTabButton 
     property alias badge: statusBadge
     property alias tooltip: statusTooltip
     property Component popupMenu
+    property alias stateIcon: stateIcon
+
 
     StatusToolTip {
         id: statusTooltip
@@ -16,6 +20,17 @@ StatusIconTabButton {
         orientation: StatusToolTip.Orientation.Right
         x: statusNavBarTabButton.width + 16
         y: statusNavBarTabButton.height / 2 - height / 2 + 4
+    }
+
+    StatusRoundIcon {
+        id: stateIcon
+        visible: false
+        width: 20
+        height: width
+        anchors.top: parent.top
+        anchors.left: parent.right
+
+        anchors.leftMargin: (width) * -1
     }
 
     StatusBadge {
