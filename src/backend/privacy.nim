@@ -9,7 +9,7 @@ logScope:
   topics = "rpc-privacy"
 
 proc changeDatabasePassword*(keyUID: string, oldHashedPassword: string, newHashedPassword: string): RpcResponse[JsonNode]
-  {.raises: [Exception].} =
+  =
   try:
     let response = status_go.changeDatabasePassword(keyUID, oldHashedPassword, newHashedPassword)
     result.result = Json.decode(response, JsonNode)

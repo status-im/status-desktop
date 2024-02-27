@@ -8,7 +8,7 @@ logScope:
   topics = "mailserver"
 
 proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [{
       "id": id,
       "name": name,
@@ -17,24 +17,24 @@ proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
     }]
   result = core.callPrivateRPC("mailservers_addMailserver", payload)
 
-proc getMailservers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getMailservers*(): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("mailservers_getMailservers")
 
-proc syncChatFromSyncedFrom*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc syncChatFromSyncedFrom*(chatId: string): RpcResponse[JsonNode] =
   let payload = %*[chatId]
   result = core.callPrivateRPC("syncChatFromSyncedFrom".prefix, payload)
   info "syncChatFromSyncedFrom", topics="mailserver-interaction", rpc_method="wakuext_syncChatFromSyncedFrom", chatId, result
 
-proc fillGaps*(chatId: string, messageIds: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc fillGaps*(chatId: string, messageIds: seq[string]): RpcResponse[JsonNode] =
   let payload = %*[chatId, messageIds]
   result = core.callPrivateRPC("fillGaps".prefix, payload)
   info "fillGaps", topics="mailserver-interaction", rpc_method="wakuext_fillGaps", chatId, messageIds, result
 
-proc requestAllHistoricMessagesWithRetries*(forceFetchingBackup: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc requestAllHistoricMessagesWithRetries*(forceFetchingBackup: bool): RpcResponse[JsonNode] =
   let payload = %*[forceFetchingBackup]
   result = core.callPrivateRPC("requestAllHistoricMessagesWithRetries".prefix, payload)
 
-proc requestMoreMessages*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc requestMoreMessages*(chatId: string): RpcResponse[JsonNode] =
   let payload = %*[{
     "id": chatId
   }]

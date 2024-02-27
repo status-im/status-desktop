@@ -16,7 +16,7 @@ proc saveChat*(
     ensName: string = "",
     profile: string = "",
     joined: int64 = 0
-    ): RpcResponse[JsonNode] {.raises: [Exception].} =
+    ): RpcResponse[JsonNode] =
   # TODO: ideally status-go/stimbus should handle some of these fields instead of having the client
   # send them: lastMessage, unviewedMEssagesCount, timestamp, lastClockValue, name?
   return callPrivateRPC("saveChat".prefix, %* [
@@ -35,26 +35,26 @@ proc saveChat*(
     }
   ])
 
-proc getChannelGroups*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getChannelGroups*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("chat_getChannelGroups", payload)
 
-proc getChannelGroupById*(channelGroupId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getChannelGroupById*(channelGroupId: string): RpcResponse[JsonNode] =
   let payload = %* [channelGroupId]
   result = callPrivateRPC("chat_getChannelGroupByID", payload)
 
-proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] =
   let communityId = ""
   let payload = %* [communityId, chatId, ensName]
   result = callPrivateRPC("chat_createOneToOneChat", payload)
 
-proc leaveGroupChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc leaveGroupChat*(chatId: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])
 
-proc deactivateChat*(chatId: string, preserveHistory: bool = false): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deactivateChat*(chatId: string, preserveHistory: bool = false): RpcResponse[JsonNode] =
   callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chatId, "preserveHistory": preserveHistory }])
 
-proc clearChatHistory*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc clearChatHistory*(chatId: string): RpcResponse[JsonNode] =
   callPrivateRPC("clearHistory".prefix, %* [{ "id": chatId }])
 
 proc sendChatMessage*(
@@ -67,7 +67,7 @@ proc sendChatMessage*(
     communityId: string = "",
     stickerHash: string = "",
     stickerPack: string = "0",
-    ): RpcResponse[JsonNode] {.raises: [Exception].} =
+    ): RpcResponse[JsonNode] =
   let (standardLinkPreviews, statusLinkPreviews) = extractLinkPreviewsLists(linkPreviews)
   result = callPrivateRPC("sendChatMessage".prefix, %* [
     {
@@ -92,7 +92,7 @@ proc sendImages*(chatId: string,
                  replyTo: string,
                  preferredUsername: string,
                  linkPreviews: seq[LinkPreview],
-                 ): RpcResponse[JsonNode] {.raises: [Exception].} =
+                 ): RpcResponse[JsonNode] =
   let imagesJson = %* images.map(image => %*
       {
         "chatId": chatId,
@@ -106,7 +106,7 @@ proc sendImages*(chatId: string,
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
 
-proc muteChat*(chatId: string, interval: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc muteChat*(chatId: string, interval: int): RpcResponse[JsonNode] =
   result = callPrivateRPC("muteChatV2".prefix, %* [
     {
       "chatId": chatId,
@@ -114,42 +114,42 @@ proc muteChat*(chatId: string, interval: int): RpcResponse[JsonNode] {.raises: [
     }
   ])
 
-proc unmuteChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc unmuteChat*(chatId: string): RpcResponse[JsonNode] =
   let payload = %* [chatId]
   result = callPrivateRPC("unmuteChat".prefix, payload)
 
-proc deleteMessagesByChatId*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deleteMessagesByChatId*(chatId: string): RpcResponse[JsonNode] =
   let payload = %* [chatId]
   result = callPrivateRPC("deleteMessagesByChatID".prefix, payload)
 
-proc addGroupMembers*(communityID: string, chatId: string, pubKeys: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addGroupMembers*(communityID: string, chatId: string, pubKeys: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [nil, communityID, chatId, pubKeys]
   result = callPrivateRPC("addMembersToGroupChat".prefix, payload)
 
-proc removeMemberFromGroupChat*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc removeMemberFromGroupChat*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] =
   let payload = %* [nil, communityID, chatId, pubKey]
   result = callPrivateRPC("removeMemberFromGroupChat".prefix, payload)
 
-proc renameGroupChat*(communityID: string, chatId: string, newName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc renameGroupChat*(communityID: string, chatId: string, newName: string): RpcResponse[JsonNode] =
   let payload = %* [nil, communityID, chatId, newName]
   result = callPrivateRPC("changeGroupChatName".prefix, payload)
 
-proc makeAdmin*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc makeAdmin*(communityID: string, chatId: string, pubKey: string): RpcResponse[JsonNode] =
   let payload = %* [nil, communityID, chatId, [pubKey]]
   result = callPrivateRPC("addAdminsToGroupChat".prefix, payload)
 
-proc createGroupChat*(communityID: string, groupName: string, pubKeys: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createGroupChat*(communityID: string, groupName: string, pubKeys: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [nil, communityID, groupName, pubKeys]
   result = callPrivateRPC("createGroupChatWithMembers".prefix, payload)
 
-proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] =
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)
 
-proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
 
-proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] =
   let croppedImage = newCroppedImage(imageJson)
   let payload = %* [communityID, chatID, name, color, croppedImage]
   return core.callPrivateRPC("chat_editChat", payload)

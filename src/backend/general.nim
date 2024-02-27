@@ -9,7 +9,7 @@ export response_type
 logScope:
   topics = "rpc-general"
 
-proc validateMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc validateMnemonic*(mnemonic: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.validateMnemonic(mnemonic.strip())
     result.result = Json.decode(response, JsonNode)
@@ -18,11 +18,11 @@ proc validateMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Excep
     error "error doing rpc request", methodName = "validateMnemonic", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc startMessenger*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc startMessenger*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = core.callPrivateRPC("startMessenger".prefix, payload)
 
-proc logout*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc logout*(): RpcResponse[JsonNode] =
   try:
     let response = status_go.logout()
     result.result = Json.decode(response, JsonNode)
@@ -30,31 +30,31 @@ proc logout*(): RpcResponse[JsonNode] {.raises: [Exception].} =
     error "error logging out", methodName = "logout", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc generateSymKeyFromPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc generateSymKeyFromPassword*(password: string): RpcResponse[JsonNode] =
   let payload = %* [password]
   result = core.callPrivateRPC("waku_generateSymKeyFromPassword", payload)
 
-proc adminPeers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc adminPeers*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = core.callPrivateRPC("admin_peers", payload)
 
-proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc wakuV2Peers*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = core.callPrivateRPC("peers".prefix, payload)
 
-proc dialPeer*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc dialPeer*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   result = core.callPrivateRPC("dialPeer".prefix, payload)
 
-proc dropPeerByID*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc dropPeerByID*(peer: string): RpcResponse[JsonNode] =
   let payload = %* [peer]
   result = core.callPrivateRPC("dropPeer".prefix, payload)
 
-proc removePeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc removePeer*(peer: string): RpcResponse[JsonNode] =
   let payload = %* [peer]
   result = core.callPrivateRPC("admin_removePeer", payload)
 
-proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcResponse[JsonNode] =
   let params = %* {"password": password, "userInputs": userInputs}
   try:
     let response = status_go.getPasswordStrengthScore($(params))
@@ -63,7 +63,7 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] =
   try:
     let response = status_go.generateImages(imagePath, aX, aY, bX, bY)
     result.result = Json.decode(response, JsonNode)
@@ -71,7 +71,7 @@ proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNo
     error "error", methodName = "generateImages", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.initKeystore(keystoreDir)
     result.result = Json.decode(response, JsonNode)
@@ -79,9 +79,9 @@ proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] {.raises: [Except
     error "error", methodName = "initKeystore", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc backupData*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc backupData*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("backupData".prefix, payload)
 
-proc parseSharedUrl*(url: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("parseSharedURL".prefix, %*[url])

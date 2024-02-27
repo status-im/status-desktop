@@ -6,7 +6,7 @@ import ./backend
 export response_type
 
 
-proc addBookmark*(bookmark: backend.Bookmark): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addBookmark*(bookmark: backend.Bookmark): RpcResponse[JsonNode] =
   result = callPrivateRPC("addBookmark".prefix, %*[{
     "url": bookmark.url,
     "name": bookmark.name,
@@ -15,10 +15,10 @@ proc addBookmark*(bookmark: backend.Bookmark): RpcResponse[JsonNode] {.raises: [
     "deletedAt": bookmark.deletedAt
   }])
 
-proc removeBookmark*(url: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc removeBookmark*(url: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("removeBookmark".prefix, %*[url])
 
-proc updateBookmark*(oldUrl: string, bookmark: backend.Bookmark): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc updateBookmark*(oldUrl: string, bookmark: backend.Bookmark): RpcResponse[JsonNode] =
   result = callPrivateRPC("updateBookmark".prefix, %*[oldUrl, {
     "url": bookmark.url,
     "name": bookmark.name,

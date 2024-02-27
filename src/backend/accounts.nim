@@ -19,30 +19,30 @@ const SEED* = "seed"
 const KEY* = "key"
 const WATCH* = "watch"
 
-proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getAccounts*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("accounts_getAccounts")
 
-proc getWatchOnlyAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getWatchOnlyAccounts*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("accounts_getWatchOnlyAccounts")
 
-proc getKeypairs*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getKeypairs*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("accounts_getKeypairs")
 
-proc getKeypairByKeyUid*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getKeypairByKeyUid*(keyUid: string): RpcResponse[JsonNode] =
   let payload = %* [keyUid]
   return core.callPrivateRPC("accounts_getKeypairByKeyUID", payload)
 
-proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deleteAccount*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
-proc deleteKeypair*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deleteKeypair*(keyUid: string): RpcResponse[JsonNode] =
   let payload = %* [keyUid]
   return core.callPrivateRPC("accounts_deleteKeypair", payload)
 
 ## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
 proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [
     password,
     {
@@ -65,7 +65,7 @@ proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, 
 
 ## Adds a new keypair and creates a Keystore file if password is provided, otherwise it only creates a new keypair. Notifies paired devices.
 proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   var kpJson = %* {
     "key-uid": keyUid,
     "name": keypairName,
@@ -101,13 +101,13 @@ proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey
 
 ## Adds a new account without creating a Keystore file and notifies paired devices
 proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   return addAccount(password = "", name, address, path, publicKey, keyUid, accountType, colorId, emoji, hideFromTotalBalance)
 
 ## Updates either regular or keycard account, without interaction to a Keystore file and notifies paired devices
 proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType, colorId, emoji: string,
   walletDefaultAccount: bool, chatDefaultAccount: bool, prodPreferredChainIds, testPreferredChainIds: string, hideFromTotalBalance: bool):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [
     {
       "address": address,
@@ -129,7 +129,7 @@ proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType,
   ]
   return core.callPrivateRPC("accounts_saveAccount", payload)
 
-proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* {
     "n": NUMBER_OF_ADDRESSES_TO_GENERATE,
     "mnemonicPhraseLength": MNEMONIC_PHRASE_LENGTH,
@@ -200,7 +200,7 @@ proc compressPk*(publicKey: string): RpcResponse[string] =
   except JsonParsingError as e:
     result.result = response
 
-proc generateAlias*(publicKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc generateAlias*(publicKey: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.generateAlias(publicKey)
     result.result = %* response
@@ -214,11 +214,11 @@ proc isAlias*(value: string): bool =
   let r = Json.decode(response, JsonNode)
   return r["result"].getBool()
 
-proc getRandomMnemonic*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getRandomMnemonic*(): RpcResponse[JsonNode] =
   let payload = %* []
   return core.callPrivateRPC("accounts_getRandomMnemonic", payload)
 
-proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
     "Bip39Passphrase": ""
@@ -234,26 +234,26 @@ proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.rais
 
 ## Imports a new mnemonic and creates local keystore file.
 proc importMnemonic*(mnemonic, password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [mnemonic, password]
   return core.callPrivateRPC("accounts_importMnemonic", payload)
 
 proc makeSeedPhraseKeypairFullyOperable*(mnemonic, password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [mnemonic, password]
   return core.callPrivateRPC("accounts_makeSeedPhraseKeypairFullyOperable", payload)
 
 proc makePartiallyOperableAccoutsFullyOperable*(password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [password]
   return core.callPrivateRPC("accounts_makePartiallyOperableAccoutsFullyOperable", payload)
 
 proc migrateNonProfileKeycardKeypairToApp*(mnemonic: string, password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [mnemonic, password]
   return core.callPrivateRPC("accounts_migrateNonProfileKeycardKeypairToApp", payload)
 
-proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
     "paths": paths,
@@ -269,16 +269,16 @@ proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths
 
 ## Imports a new private key and creates local keystore file.
 proc importPrivateKey*(privateKey, password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [privateKey, password]
   return core.callPrivateRPC("accounts_importPrivateKey", payload)
 
 proc makePrivateKeyKeypairFullyOperable*(privateKey, password: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [privateKey, password]
   return core.callPrivateRPC("accounts_makePrivateKeyKeypairFullyOperable", payload)
 
-proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
   let payload = %* {"privateKey": privateKey}
   try:
     let response = status_go.createAccountFromPrivateKey($payload)
@@ -287,7 +287,7 @@ proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] {.r
     error "error doing rpc request", methodName = "createAccountFromPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* {
     "accountID": accountId,
     "paths": paths
@@ -301,7 +301,7 @@ proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNod
     error "error doing rpc request", methodName = "deriveAccounts", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc openedAccounts*(path: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc openedAccounts*(path: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.openAccounts(path)
     result.result = Json.decode(response, JsonNode)
@@ -311,7 +311,7 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] {.raises: [Exception].
     raise newException(RpcException, e.msg)
 
 proc storeDerivedAccounts*(id, hashedPassword: string, paths: seq[string]):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* {
     "accountID": id,
     "paths": paths,
@@ -326,7 +326,7 @@ proc storeDerivedAccounts*(id, hashedPassword: string, paths: seq[string]):
     error "error doing rpc request", methodName = "storeDerivedAccounts", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc storeAccounts*(id, hashedPassword: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc storeAccounts*(id, hashedPassword: string): RpcResponse[JsonNode] =
   let payload = %* {
     "accountID": id,
     "password": hashedPassword
@@ -340,7 +340,7 @@ proc storeAccounts*(id, hashedPassword: string): RpcResponse[JsonNode] {.raises:
     error "error doing rpc request", methodName = "storeAccounts", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc addPeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addPeer*(peer: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.addPeer(peer)
     result.result = %* response
@@ -350,7 +350,7 @@ proc addPeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
     raise newException(RpcException, e.msg)
 
 proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings,
-  config: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  config: JsonNode): RpcResponse[JsonNode] =
   try:
     let response = status_go.saveAccountAndLogin($account, hashedPassword,
     $settings, $config, $subaccounts)
@@ -361,7 +361,7 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     raise newException(RpcException, e.msg)
 
 proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subaccounts, settings, config: JsonNode):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   try:
     let response = status_go.saveAccountAndLoginWithKeycard($account, password, $settings, $config, $subaccounts, chatKey)
     result.result = Json.decode(response, JsonNode)
@@ -371,7 +371,7 @@ proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subacco
     raise newException(RpcException, e.msg)
 
 proc convertRegularProfileKeypairToKeycard*(account: JsonNode, settings: JsonNode, keycardUid: string, password: string, newPassword: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   try:
     let response = status_go.convertToKeycardAccount($account, $settings, keycardUid, password, newPassword)
     result.result = Json.decode(response, JsonNode)
@@ -380,7 +380,7 @@ proc convertRegularProfileKeypairToKeycard*(account: JsonNode, settings: JsonNod
     raise newException(RpcException, e.msg)
 
 proc convertKeycardProfileKeypairToRegular*(mnemonic: string, currPassword: string, newPassword: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   try:
     let response = status_go.convertToRegularAccount(mnemonic, currPassword, newPassword)
     result.result = Json.decode(response, JsonNode)
@@ -390,7 +390,7 @@ proc convertKeycardProfileKeypairToRegular*(mnemonic: string, currPassword: stri
 
 proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail, large: string, nodeCfgObj: string):
   RpcResponse[JsonNode]
-  {.raises: [Exception].} =
+  =
   try:
     var payload = %* {
       "name": name,
@@ -409,7 +409,7 @@ proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail,
     error "error doing rpc request", methodName = "login", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): RpcResponse[JsonNode] =
   try:
     let response = status_go.loginWithKeycard($account, password, chatKey, $confNode)
     result.result = Json.decode(response, JsonNode)
@@ -418,7 +418,7 @@ proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): 
     raise newException(RpcException, e.msg)
 
 proc verifyAccountPassword*(address: string, hashedPassword: string, keystoreDir: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   try:
     let response = status_go.verifyAccountPassword(keystoreDir, address, hashedPassword)
     result.result = Json.decode(response, JsonNode)
@@ -428,7 +428,7 @@ proc verifyAccountPassword*(address: string, hashedPassword: string, keystoreDir
     raise newException(RpcException, e.msg)
 
 proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   try:
     let response = status_go.verifyDatabasePassword(keyuid, hashedPassword)
     result.result = Json.decode(response, JsonNode)
@@ -438,56 +438,56 @@ proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
     raise newException(RpcException, e.msg)
 
 proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
+  RpcResponse[JsonNode] =
   let payload = %* [keyUID, imagePath, aX, aY, bX, bY]
   result = core.callPrivateRPC("multiaccounts_storeIdentityImage", payload)
 
-proc deleteIdentityImage*(keyUID: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc deleteIdentityImage*(keyUID: string): RpcResponse[JsonNode] =
   let payload = %* [keyUID]
   result = core.callPrivateRPC("multiaccounts_deleteIdentityImage", payload)
 
-proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc setDisplayName*(displayName: string): RpcResponse[JsonNode] =
   let payload = %* [displayName]
   result = core.callPrivateRPC("setDisplayName".prefix, payload)
 
-proc getDerivedAddresses*(password: string, derivedFrom: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getDerivedAddresses*(password: string, derivedFrom: string, paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [password, derivedFrom, paths]
   result = core.callPrivateRPC("wallet_getDerivedAddresses", payload)
 
-proc getDerivedAddressesForMnemonic*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getDerivedAddressesForMnemonic*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] =
   let payload = %* [mnemonic, paths]
   result = core.callPrivateRPC("wallet_getDerivedAddressesForMnemonic", payload)
 
-proc getAddressDetails*(chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getAddressDetails*(chainId: int, address: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, address]
   result = core.callPrivateRPC("wallet_getAddressDetails", payload)
 
-proc addressExists*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addressExists*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   result = core.callPrivateRPC("wallet_addressExists", payload)
 
-proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc verifyPassword*(password: string): RpcResponse[JsonNode] =
   let payload = %* [password]
   return core.callPrivateRPC("accounts_verifyPassword", payload)
 
-proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonNode] =
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_verifyKeystoreFileForAccount", payload)
 
-proc getProfileShowcaseForContact*(contactId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getProfileShowcaseForContact*(contactId: string): RpcResponse[JsonNode] =
   let payload = %* [contactId]
   result = callPrivateRPC("getProfileShowcaseForContact".prefix, payload)
 
-proc getProfileShowcaseAccountsByAddress*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getProfileShowcaseAccountsByAddress*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   result = callPrivateRPC("getProfileShowcaseAccountsByAddress".prefix, payload)
 
-proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] =
   result = callPrivateRPC("getProfileShowcasePreferences".prefix, %*[])
 
-proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] =
   result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)
 
-proc addressWasShown*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addressWasShown*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_addressWasShown", payload)

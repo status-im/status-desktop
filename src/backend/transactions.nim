@@ -56,30 +56,30 @@ proc `$`*(self: MultiTransactionDto): string =
     multiTxType:{self.multiTxType}
   )"""
 
-proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] =
   core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
 
-proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) {.raises: [Exception].} =
+proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) =
   let payload = %* [chainIds, addresses]
   discard core.callPrivateRPC("wallet_checkRecentHistoryForChainIDs", payload)
 
 proc getTransfersByAddress*(chainId: int, address: string, toBlock: Uint256, limitAsHexWithoutLeadingZeros: string,
-  loadMore: bool = false): RpcResponse[JsonNode] {.raises: [Exception].} =
+  loadMore: bool = false): RpcResponse[JsonNode] =
   let toBlockParsed = if not loadMore: newJNull() else: %("0x" & stint.toHex(toBlock))
 
   core.callPrivateRPC("wallet_getTransfersByAddressAndChainID", %* [chainId, address, toBlockParsed, limitAsHexWithoutLeadingZeros, loadMore])
 
-proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
   core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
 
-proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc fetchCryptoServices*(): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
 
-proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] =
   let payload = %* [multiTransactionCommand, data, password]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
 
-proc proceedWithTransactionsSignatures*(signatures: TransactionsSignatures): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc proceedWithTransactionsSignatures*(signatures: TransactionsSignatures): RpcResponse[JsonNode] =
   var data = %* {}
   for key, value in signatures:
     data[key] = %* { "r": value.r, "s": value.s, "v": value.v }
@@ -87,10 +87,10 @@ proc proceedWithTransactionsSignatures*(signatures: TransactionsSignatures): Rpc
   var payload = %* [data]
   result = core.callPrivateRPC("wallet_proceedWithTransactionsSignatures", payload)
 
-proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] =
   let payload = %* [transactionIDs]
   result = core.callPrivateRPC("wallet_getMultiTransactions", payload)
 
-proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] =
   let payload = %* [chainId, hash]
   core.callPrivateRPC("wallet_watchTransactionByChainID", payload)
