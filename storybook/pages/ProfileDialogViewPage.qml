@@ -8,6 +8,7 @@ import shared.stores 1.0
 import mainui 1.0
 
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet.stores 1.0
 
@@ -127,29 +128,56 @@ SplitView {
     ListModel {
         id: linksModel
         ListElement {
-            uuid: "0001"
             text: "__github"
             url: "https://github.com/caybro"
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
         }
         ListElement {
-            uuid: "0002"
             text: "__twitter"
             url: "https://twitter.com/caybro"
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
         }
         ListElement {
-            uuid: "0003"
             text: "__personal_site"
             url: "https://status.im"
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
         }
         ListElement {
-            uuid: "0004"
             text: "__youtube"
             url: "https://www.youtube.com/@LukasTinkl"
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
         }
         ListElement {
-            uuid: "0006"
             text: "__telegram"
             url: "https://t.me/ltinkl"
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+        }
+    }
+
+    ManageCollectiblesModel {
+        id: manageCollectiblesModel
+        Component.onCompleted: {
+            for (let i = 0; i < this.count; i++) {
+                setProperty(i, "showcaseVisibility", Constants.ShowcaseVisibility.Everyone)
+            }
+        }
+    }
+
+    WalletAccountsModel {
+        id: walletAccountsModel
+        Component.onCompleted: {
+            for (let i = 0; i < this.count; i++) {
+                setProperty(i, "showcaseVisibility", Constants.ShowcaseVisibility.Everyone)
+            }
+        }
+    }
+
+    CommunitiesModel {
+        id: communitiesModel
+        Component.onCompleted: {
+            for (let i = 0; i < this.count; i++) {
+                setProperty(i, "showcaseVisibility", Constants.ShowcaseVisibility.Everyone)
+            }
         }
     }
 
@@ -310,7 +338,6 @@ SplitView {
 
                     sourceComponent: ProfileDialogView {
                         implicitWidth: 640
-                        enabledNetworks: NetworksModel.allNetworks
 
                         readOnly: ctrlReadOnly.checked
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
@@ -319,9 +346,9 @@ SplitView {
 
                         sendToAccountEnabled: true
 
-                        showcaseCommunitiesModel: CommunitiesModel {}
-                        showcaseAccountsModel: WalletAccountsModel {}
-                        showcaseCollectiblesModel: ManageCollectiblesModel {}
+                        showcaseCommunitiesModel: communitiesModel
+                        showcaseAccountsModel: walletAccountsModel
+                        showcaseCollectiblesModel: manageCollectiblesModel
                         showcaseSocialLinksModel: linksModel
                         // TODO: showcaseAssetsModel
 

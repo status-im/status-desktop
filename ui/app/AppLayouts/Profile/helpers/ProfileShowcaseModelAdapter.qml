@@ -93,6 +93,10 @@ QObject {
                 function getShowcaseVisibility() {
                     return Constants.ShowcaseVisibility.Everyone
                 }
+            },
+            FastExpressionRole {
+                name: "canReceiveFromMyAccounts"
+                expression: true
             }
         ]
     }

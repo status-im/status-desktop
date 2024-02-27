@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.0
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -15,12 +16,16 @@ Control {
 
     padding: 12
 
+    property bool highlight: false
     property string title: ""
     property string subTitle: ""
     property string tagIcon: ""
     property var enabledNetworks
     property bool loading: false
     property alias rightSideButtons: rightSideButtonsLoader.sourceComponent
+    signal clicked(var mouse)
+    signal communityTagClicked(var mouse)
+    
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 32
@@ -29,14 +34,34 @@ Control {
     }
 
     background: Rectangle {
+        id: background
         anchors.fill: parent
         color: Style.current.background
         radius: Style.current.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
+        layer.enabled: mouseArea.containsMouse || root.highlight
+        layer.effect: DropShadow {
+            source: background
+            horizontalOffset: 0
+            verticalOffset: 2
+            radius: 16
+            samples: 25
+            spread: 0
+            color: Theme.palette.backdropColor
+        }
     }
 
     contentItem: Item {
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton|Qt.RightButton
+            hoverEnabled: true
+            onClicked: {
+                root.clicked(mouse);
+            }
+        }
         ColumnLayout {
             id: titleColumn
             anchors.fill: parent
@@ -55,15 +80,15 @@ Control {
                 Item { Layout.fillWidth: true }
                 Loader {
                     id: rightSideButtonsLoader
-                    Layout.alignment: Qt.AlignRight
+                    Layout.alignment: Qt.AlignRight | Qt.AlignTop
                 }
             }
 
             StatusTextWithLoadingState {
-                text: root.title
+                Layout.fillWidth: true
                 Layout.preferredHeight: 22
                 Layout.topMargin: Style.current.halfPadding
-                Layout.fillWidth: true
+                text: root.title
                 elide: Text.ElideRight
                 font.weight: Font.Medium
                 loading: root.loading
@@ -94,12 +119,18 @@ Control {
                 Repeater {
                     id: chainRepeater
                     model: root.enabledNetworks
-                    delegate: StatusRoundedImage {
+                    delegate: StatusRoundedComponent {
                         width: 20
                         height: 20
-                        visible: image.source !== ""
-                        image.source: Style.svg(model.iconUrl)
+                        visible: model.iconUrl !== ""
+                        color: Theme.palette.baseColor3
                         z: index + 1
+                        border.color: Style.current.background
+                        StatusIcon {
+                            anchors.fill:parent
+                            anchors.margins: 1
+                            icon: Style.svg(model.iconUrl)
+                        }
                     }
                 }
             }
@@ -111,9 +142,15 @@ Control {
                 verticalPadding: 0
                 spacing: 0
                 visible: !!root.tagIcon
-                asset.name: root.tagIcon
+                communityImage: root.tagIcon
                 asset.width: 20
                 asset.height: 20
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        root.communityTagClicked(mouse);
+                    }
+                }
             }
         }
     }

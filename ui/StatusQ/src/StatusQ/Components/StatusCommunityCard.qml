@@ -168,7 +168,7 @@ Rectangle {
         \qmlsignal StatusCommunityCard::clicked(string communityId)
         This signal is emitted when the card item is clicked.
     */
-    signal clicked(string communityId)
+    signal clicked(var mouse, string communityId)
 
     QtObject {
         id: d
@@ -177,13 +177,14 @@ Rectangle {
         readonly property int cardHeigth: (root.cardSize === StatusCommunityCard.Size.Big) ? 190 : 119
         readonly property int totalHeigth:  (root.cardSize === StatusCommunityCard.Size.Big) ? 230 : 144
         readonly property int margins: 12
-        readonly property int bannerRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 20 : 16
+        readonly property int bannerRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 20 : 8
         readonly property int bannerRadiusHovered: (root.cardSize === StatusCommunityCard.Size.Big) ? 30 : 16
-        readonly property int cardRadius: 16
+        readonly property int cardRadius: (root.cardSize === StatusCommunityCard.Size.Big) ? 16 : 8
         readonly property color cardColor: Theme.palette.name === "light" ? Theme.palette.indirectColor1 : Theme.palette.baseColor2
         readonly property color fontColor: Theme.palette.directColor1
         readonly property color loadingColor1: Theme.palette.baseColor5
         readonly property color loadingColor2: Theme.palette.baseColor4
+        readonly property int titleFontWeight: (root.cardSize === StatusCommunityCard.Size.Big) ? Font.Bold : Font.Medium
 
         function numberFormat(number) {
             var res = number
@@ -287,11 +288,12 @@ Rectangle {
         z: banner.z + 1
         visible: root.loaded
         anchors.top: parent.top
-        anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 40 : 23
+        anchors.topMargin: (root.cardSize === StatusCommunityCard.Size.Big) ? 40 : 25
         width: parent.width
         height: d.cardHeigth
         color: d.cardColor
         radius: d.cardRadius
+        border.color: root.border.color
         clip: true
 
         // Right header extra info component
@@ -314,16 +316,18 @@ Rectangle {
             spacing: (root.cardSize === StatusCommunityCard.Size.Big) ? 6 : 0
             StatusBaseText {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
+                Layout.fillWidth: (root.cardSize === StatusCommunityCard.Size.Big)
+                Layout.preferredHeight: 22
                 text: root.name
-                font.weight: Font.Bold
+                font.weight: d.titleFontWeight
                 font.pixelSize: root.titleFontSize
                 color: d.fontColor
                 elide: Text.ElideRight
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.fillHeight: (root.cardSize === StatusCommunityCard.Size.Big)
+                Layout.preferredHeight: 16
                 text: root.description
                 font.pixelSize: root.descriptionFontSize
                 lineHeight: 1.2
@@ -516,7 +520,8 @@ Rectangle {
         anchors.fill: parent
         cursorShape: root.loaded ? Qt.PointingHandCursor : Qt.ArrowCursor
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onClicked: root.clicked(root.communityId)
+        onClicked: root.clicked(mouse ,root.communityId)
     }
 }
