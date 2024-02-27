@@ -4,6 +4,7 @@ import configs.timeouts
 import driver
 from driver.objects_access import walk_children
 from gui.components.change_password_popup import ChangePasswordPopup
+from gui.components.settings.build_your_showcase_popup import BuildShowcasePopup
 from gui.components.social_links_popup import SocialLinksPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -30,11 +31,15 @@ class ProfileSettingsView(QObject):
     @allure.step('Get display name')
     def display_name(self) -> str:
         self._identity_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         return self._display_name_text_field.text
 
     @allure.step('Set user name')
     def set_name(self, value: str):
         self._identity_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         self._display_name_text_field.text = value
         self.save_changes()
 
@@ -42,12 +47,16 @@ class ProfileSettingsView(QObject):
     @allure.step('Get bio')
     def bio(self) -> str:
         self._identity_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         return self._bio_text_field.text
 
     @bio.setter
     @allure.step('Set bio')
     def bio(self, value: str):
         self._identity_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         self._bio_text_field.text = value
         self.save_changes()
 
@@ -55,6 +64,8 @@ class ProfileSettingsView(QObject):
     @allure.step('Get social links')
     def social_links(self) -> dict:
         self._web_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         links = {}
         for link_name in walk_children(
                 driver.waitForObjectExists(self._links_list.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)):
@@ -84,6 +95,8 @@ class ProfileSettingsView(QObject):
     @allure.step('Verify social links')
     def verify_social_links(self, links):
         self._web_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         twitter = links[0]
         personal_site = links[1]
         github = links[2]
@@ -106,6 +119,8 @@ class ProfileSettingsView(QObject):
     @allure.step('Open social links form')
     def open_social_links_popup(self):
         self._web_tab_button.click()
+        if BuildShowcasePopup().is_visible:
+            BuildShowcasePopup().close()
         self._add_more_links_label.click()
         return SocialLinksPopup().wait_until_appears()
 

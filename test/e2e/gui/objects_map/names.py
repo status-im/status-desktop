@@ -8,8 +8,11 @@ statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type
 statusDesktop_mainWindow_overlay_popup2 = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2, "type": "PopupItem", "unnamed": 1, "visible": True}
 scrollView_StatusScrollView = {"container": statusDesktop_mainWindow_overlay, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "DidYouKnowSplashScreen"}
+
+# Common names
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
 mainWindow_Save_changes_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "DisabledTooltipButton", "visible": True}
+closeCrossPopupButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # Main right panel
 mainWindow_RighPanel = {"container": statusDesktop_mainWindow, "type": "ColumnLayout", "objectName": "mainRightView", "visible": True}
@@ -326,7 +329,6 @@ removeConfirmationConfirmButton = {"checkable": False, "container": statusDeskto
 turn_on_testnet_mode_StatusButton = {"container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn on testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
 turn_off_testnet_mode_StatusButton = {"container": statusDesktop_mainWindow_overlay, "id": "acceptBtn", "text": "Turn off testnet mode", "type": "StatusButton", "unnamed": 1, "visible": True}
 testnet_mode_cancelButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
-testnet_mode_closeCrossButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # Testnet mode banner
 mainWindow_testnetBanner_ModuleWarning = {"container": statusDesktop_mainWindow, "objectName": "testnetBanner", "type": "ModuleWarning", "visible": True}
@@ -431,6 +433,9 @@ send_Answer_StatusButton = {"checkable": False, "container": statusDesktop_mainW
 refuse_Verification_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "refuseVerificationButton", "type": "StatusButton", "unnamed": 1, "visible": True}
 change_answer_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "changeAnswerButton", "type": "StatusFlatButton", "visible": True}
 close_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "closeButton", "type": "StatusButton", "visible": True}
+
+# Build showcase popup
+build_your_showcase_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "buildShowcaseButton", "type": "StatusButton", "visible": True}
 
 # OS NAMES
 # Open Files Dialog
