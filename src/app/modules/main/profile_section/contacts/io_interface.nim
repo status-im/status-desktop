@@ -39,6 +39,9 @@ method dismissContactRequest*(self: AccessInterface, publicKey: string, contactR
 method dismissContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getLatestContactRequestForContactAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

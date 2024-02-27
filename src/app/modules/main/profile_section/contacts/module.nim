@@ -110,6 +110,17 @@ method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: 
 method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
   self.controller.dismissContactRequest(publicKey, contactRequestId)
 
+method getLatestContactRequestForContactAsJson*(self: Module, publicKey: string): string =
+  let contactRequest = self.controller.getLatestContactRequestForContact(publicKey)
+  let jsonObj = %* {
+    "id": contactRequest.id,
+    "from": contactRequest.from,
+    "clock": contactRequest.clock,
+    "text": contactRequest.text,
+    "contactRequestState": contactRequest.contactRequestState.int,
+  }
+  return $jsonObj
+
 method switchToOrCreateOneToOneChat*(self: Module, publicKey: string) =
   self.controller.switchToOrCreateOneToOneChat(publicKey)
 
