@@ -233,6 +233,7 @@ ColumnLayout {
         id: sectionDelegate
         AssetsSectionDelegate {
             width: parent.width
+            text: qsTr("Community minted")
             onOpenInfoPopup: Global.openPopup(communityInfoPopupCmp)
         }
     }
