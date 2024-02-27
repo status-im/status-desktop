@@ -10,7 +10,8 @@ StatusIconTabButton {
     property alias badge: statusBadge
     property alias tooltip: statusTooltip
     property Component popupMenu
-    property bool isMemberBanned: false
+    property alias stateIcon: stateIcon
+
 
     StatusToolTip {
         id: statusTooltip
@@ -22,22 +23,14 @@ StatusIconTabButton {
     }
 
     StatusRoundIcon {
-        id: banIcon
-        visible: isMemberBanned
-
+        id: stateIcon
+        visible: false
         width: 20
         height: width
-        color: Theme.palette.dangerColor1
-        border.color: Theme.palette.baseColor2
-        border.width: 2
         anchors.top: parent.top
         anchors.left: parent.right
 
         anchors.leftMargin: (width) * -1
-
-        asset.name: "cancel"
-        asset.color: Theme.palette.baseColor2
-        asset.width: 14
     }
 
     StatusBadge {

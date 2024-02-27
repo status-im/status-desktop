@@ -114,7 +114,7 @@ ColumnLayout {
                         width: 24
                         height: width
                         name: "communities"
-                        color: "red"
+                        color: Theme.palette.dangerColor1
                         bgWidth: 22
                         bgHeight: 22
                     }
@@ -122,8 +122,8 @@ ColumnLayout {
 
                 StatusBaseText {
                     text: qsTr("You've been banned from <b>%1<b>").arg(root.name)
-                    color: Theme.palette.warningColor1
-                    font.pixelSize: Style.current.titleTextFontSize
+                    color: Theme.palette.dangerColor1
+                    font.pixelSize: Style.current.secondaryAdditionalTextSize
                 }
             }
             Item {

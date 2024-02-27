@@ -64,7 +64,7 @@ StackLayout {
         sourceComponent: {
             if (chatItem.isCommunity() && !chatItem.amIMember) {
                 if (sectionItemModel.amIBanned) {
-                    return ccommunityBanComponent
+                    return communityBanComponent
                 } else if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
                     return controlNodeOfflineComponent
                 } else if (chatItem.requiresTokenPermissionToJoin) {
@@ -244,7 +244,7 @@ StackLayout {
     }
 
     Component {
-        id: ccommunityBanComponent
+        id: communityBanComponent
         BannedMemberCommunityView {
             id: communityBanView
             readonly property var communityData: sectionItemModel
