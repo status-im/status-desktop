@@ -52,6 +52,7 @@ QtObject {
         Global.openOutgoingIDRequestPopup.connect(openOutgoingIDRequestPopup)
         Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
         Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
+        Global.openInviteFriendsToCommunityByIdPopup.connect(openInviteFriendsToCommunityByIdPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
         Global.openReviewContactRequestPopup.connect(openReviewContactRequestPopup)
         Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
@@ -213,6 +214,14 @@ QtObject {
 
     function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
         openPopup(inviteFriendsToCommunityPopup, { community: community, communitySectionModule: communitySectionModule }, cb)
+    }
+
+    function openInviteFriendsToCommunityByIdPopup(communityId, cb) {
+        root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityId)
+        const communitySectionModuleData = root.rootStore.mainModuleInst.getCommunitySectionModule()
+        const communityData = root.communitiesStore.getCommunityDetails(communityId)
+
+        openPopup(inviteFriendsToCommunityPopup, { community: communityData, communitySectionModule: communitySectionModuleData }, cb)
     }
 
     function openContactRequestPopup(publicKey, contactDetails, cb) {
@@ -478,7 +487,6 @@ QtObject {
                 onClosed: destroy()
             }
         },
-
         Component {
             id: sendContactRequestPopupComponent
 

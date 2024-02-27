@@ -29,6 +29,8 @@ ListModel {
             imageUrl: ModelsData.collectibles.cryptoPunks,
             isLoading: false,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
@@ -74,6 +76,8 @@ ListModel {
             imageUrl: "https://i.seadn.io/s/raw/files/ba2811bb5cd0bed67529d69fa92ef5aa.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
@@ -114,6 +118,8 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty1Big,
             isLoading: true,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
@@ -154,6 +160,8 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty2Big,
             isLoading: false,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
@@ -197,6 +205,8 @@ ListModel {
             imageUrl: ModelsData.collectibles.kitty3Big,
             isLoading: false,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
@@ -242,6 +252,8 @@ ListModel {
             imageUrl: "https://i.seadn.io/s/raw/files/cfa559bb63e4378f17649c1e3b8f18fe.jpg?auto=format&dpr=1&w=1000",
             isLoading: false,
             backgroundColor: "",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
@@ -274,6 +286,8 @@ ListModel {
             imageUrl: "",
             isLoading: false,
             backgroundColor: "ivory",
+            permalink:"opensea.com",
+            domain:"opensea",
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
