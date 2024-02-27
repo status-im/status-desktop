@@ -53,6 +53,7 @@ StatusDialog {
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: Style.current.bigPadding
+            objectName: "buildShowcaseButton"
 
             text: qsTr("Build your showcase")
             onClicked: root.close()
