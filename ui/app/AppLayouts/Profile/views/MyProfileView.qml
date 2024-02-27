@@ -399,6 +399,10 @@ SettingsContentBase {
             id: profilePreview
             ProfileDialog {
                 publicKey: root.contactsStore.myPublicKey
+                socialLinks: priv.showcaseModels.socialLinksVisibleModel
+                assetsModel: root.assetsModel
+                enabledNetworks: root.enabledNetworks
+                collectiblesModel: priv.showcaseModels.collectiblesVisibleModel
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
                 networkConnectionStore: root.networkConnectionStore

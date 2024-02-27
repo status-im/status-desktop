@@ -22,6 +22,7 @@ Row {
         height: 40
         isLetterIdenticon: false
         imgIsIdenticon: false
+        bgBorderWidth: 1
     }
 
     spacing: 8
@@ -63,7 +64,7 @@ Row {
                 height: statusImageWithTitle.asset.height
                 radius: statusImageWithTitle.asset.bgRadius || width/2
                 color: Theme.palette.statusRoundedImage.backgroundColor
-                border.width: 1
+                border.width: statusImageWithTitle.asset.bgBorderWidth
                 border.color: Theme.palette.directColor7
                 showLoadingIndicator: true
             }
@@ -118,6 +119,7 @@ Row {
         width: !iconOrImage.active ? parent.width :
                                      parent.width - iconOrImage.width - parent.spacing
         anchors.verticalCenter: parent.verticalCenter
+
         Row {
             id: headerTitleRow
             width: parent.width

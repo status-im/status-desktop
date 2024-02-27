@@ -80,6 +80,12 @@ Control {
     property color backgroundColor: Theme.palette.baseColor4
 
     /*!
+       \qmlproperty color PermissionsRow::backgroundColor
+       This property holds the control background color, including border color of overlapped elements.
+    */
+    property color backgroundBorderColor: Theme.palette.baseColor4
+
+    /*!
        \qmlproperty int PermissionsRow::backgroundRadius
        This property holds the background radius.
     */
@@ -169,6 +175,7 @@ Control {
     background: Rectangle {
         color: root.backgroundColor
         radius: root.backgroundRadius
+        border.color: root.backgroundBorderColor
     }
 
     contentItem: RowLayout {
