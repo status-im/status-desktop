@@ -256,4 +256,8 @@ QtObject {
     function updatePermissionsModel(communityId, sharedAddresses) {
         communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
+
+    function promoteSelfToControlNode(communityId) {
+        communitiesModuleInst.promoteSelfToControlNode(communityId)
+    }
 }

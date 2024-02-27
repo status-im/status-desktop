@@ -259,3 +259,6 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
 
 method removeCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method promoteSelfToControlNode*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

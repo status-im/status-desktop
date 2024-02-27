@@ -441,7 +441,7 @@ QtObject:
       let contractDetails = transactionArgs.data.parseJson().toContractDetails()
       if transactionArgs.success:
         # promoteSelfToControlNode will be moved to status-go in next phase
-        discard tokens_backend.promoteSelfToControlNode(contractDetails.communityId)
+        discard communities_backend.promoteSelfToControlNode(contractDetails.communityId)
         let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: contractDetails.communityId)
         self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
 

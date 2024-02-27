@@ -140,10 +140,6 @@ proc registerLostOwnershipNotification*(communityId: string): RpcResponse[JsonNo
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerLostOwnershipNotification", payload)
 
-proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[communityId]
-  return core.callPrivateRPC("wakuext_promoteSelfToControlNode", payload)
-
 proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_ownerTokenOwnerAddress", payload)
