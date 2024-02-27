@@ -46,6 +46,7 @@ QtObject {
     signal markAsUntrustedRequested(string publicKey, var contactDetails)
     signal removeContactRequested(string publicKey, var contactDetails)
     signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
+    signal openInviteFriendsToCommunityByIdPopup(string communityId, var cb)
     signal openIncomingIDRequestPopup(string publicKey, var contactDetails, var cb)
     signal openOutgoingIDRequestPopup(string publicKey, var contactDetails, var cb)
     signal openDeleteMessagePopup(string messageId, var messageStore)

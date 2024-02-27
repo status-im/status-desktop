@@ -35,7 +35,6 @@ Pane {
     property var contactsStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
-    property alias enabledNetworks: showcaseView.enabledNetworks
 
     property var dirtyValues: ({})
     property bool dirty: false
@@ -631,6 +630,8 @@ Pane {
                     collectiblesModel: root.showcaseCollectiblesModel
                     socialLinksModel: root.showcaseSocialLinksModel
                     // assetsModel: root.showcaseAssetsModel
+
+                    walletStore: WalletNS.RootStore
 
                     onCloseRequested: root.closeRequested()
                     onCopyToClipboard: root.profileStore.copyToClipboard(text)
