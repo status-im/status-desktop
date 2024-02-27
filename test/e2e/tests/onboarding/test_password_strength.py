@@ -61,13 +61,13 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
         assert create_password_view.get_password_from_first_field(0) == expected_password
 
         create_password_view.click_hide_icon(0)
-        assert create_password_view.get_password_from_first_field(2) == '••••••••••'
+        assert create_password_view.get_password_from_first_field(2) == '●●●●●●●●●●'
 
         create_password_view.click_show_icon(1)
         assert create_password_view.get_password_from_confirmation_field(0) == expected_password
 
         create_password_view.click_hide_icon(0)
-        assert create_password_view.get_password_from_confirmation_field(2) == '••••••••••'
+        assert create_password_view.get_password_from_confirmation_field(2) == '●●●●●●●●●●'
 
     with step('Confirm creation of password and set password in confirmation again field'):
         confirm_password_view = create_password_view.click_create_password()
@@ -82,4 +82,4 @@ def test_check_password_strength_and_login(keys_screen, main_window, user_accoun
 
     with step('Click show icon to hide password and check that there are dots instead'):
         create_password_view.click_hide_icon(0)
-        assert confirm_password_view.get_password_from_confirmation_again_field(2) == '••••••••••'
+        assert confirm_password_view.get_password_from_confirmation_again_field(2) == '●●●●●●●●●●'
