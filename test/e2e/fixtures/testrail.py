@@ -3,6 +3,7 @@ import typing
 from collections import namedtuple
 
 import pytest
+import requests
 from testrail_api import TestRailAPI
 
 import configs
@@ -33,6 +34,16 @@ def init_testrail_api(request):
         configs.testrail.USR,
         configs.testrail.PSW
     )
+
+    response = requests.get(
+        configs.testrail.URL,
+        auth=(configs.testrail.USR, configs.testrail.PSW),
+    )
+
+    if response.status_code != 200:
+        LOG.info('TestRail report skipped because of Testrail server error')
+        return
+
     test_cases = get_test_cases_in_session(request)
     test_run = get_test_run(configs.testrail.RUN_NAME)
     if not test_run:
@@ -136,7 +147,7 @@ def _get_test_cases():
             return results
 
 
-def  get_test_cases_in_session(request) -> typing.List[test_case]:
+def get_test_cases_in_session(request) -> typing.List[test_case]:
     tests = request.session.items
     test_cases = []
     for test in tests:
@@ -156,10 +167,10 @@ def  get_test_cases_in_session(request) -> typing.List[test_case]:
 def create_test_run(name: str, ids: list) -> dict:
     test_run = testrail_api.runs.add_run(
         project_id=configs.testrail.PROJECT_ID,
-        name = name,
-        description = f'Jenkins: {configs.testrail.CI_BUILD_URL}',
-        include_all = False if list else True,
-        case_ids = ids or None
+        name=name,
+        description=f'Jenkins: {configs.testrail.CI_BUILD_URL}',
+        include_all=False if list else True,
+        case_ids=ids or None
     )
     return test_run
 
