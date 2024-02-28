@@ -344,6 +344,13 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     chatMember.role = MemberRole.None
     members.add(chatMember)
 
+
+  var bannedMembers = newSeq[MemberItem]()
+  for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
+    let state = memberState.toMembershipRequestState()
+    if state == MembershipRequestState.Banned or state == MembershipRequestState.UnbannedPending:
+      bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+
   result = initItem(
     channelGroup.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
@@ -375,25 +382,15 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
       var state = MembershipRequestState.Accepted
-      if not member.joined:
+      if member.id in communityDetails.pendingAndBannedMembers:
+        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
+        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+          state = memberState
+      elif not member.joined:
         state = MembershipRequestState.AwaitingAddress
 
-      result = initMemberItem(
-        pubKey = member.id,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        memberRole = member.role,
-        membershipRequestState = state
-      )),
+      result = self.createMemberItem(member.id, state, member.role)
+    ),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
@@ -405,64 +402,14 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     )) else: @[],
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
-    # bannedMembers
-    channelGroup.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem=
-      let contactDetails = self.controller.getContactDetails(bannedMemberId)
-      result = initMemberItem(
-        pubKey = bannedMemberId,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        membershipRequestState = MembershipRequestState.Banned,
-      )
-    ),
+    bannedMembers,
     # pendingMemberRequests
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
-      result = initMemberItem(
-        pubKey = requestDto.publicKey,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id,
-        membershipRequestState = MembershipRequestState(requestDto.state),
-      )
+      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     # declinedMemberRequests
     if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
-      result = initMemberItem(
-        pubKey = requestDto.publicKey,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id,
-        membershipRequestState = MembershipRequestState(requestDto.state),
-      )
+      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     channelGroup.encrypted,
     communityTokensItems,
@@ -1648,5 +1595,25 @@ method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
   if walletAcc.isNil:
     return
   self.addressWasShown(value)
+
+method createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
+  let contactDetails = self.controller.getContactDetails(memberId)
+  let status = self.controller.getStatusForContactWithId(memberId)
+  return initMemberItem(
+    pubKey = memberId,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
+    icon = contactDetails.icon,
+    colorId = contactDetails.colorId,
+    colorHash = contactDetails.colorHash,
+    onlineStatus = toOnlineStatus(status.statusType),
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
+    memberRole = role,
+    membershipRequestState = state,
+  )
 
 {.pop.}
