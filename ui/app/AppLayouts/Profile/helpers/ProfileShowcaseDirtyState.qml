@@ -31,6 +31,15 @@ QObject {
       */
     readonly property alias hiddenModel: hidden
 
+    /**
+      * Returns dirty state of the showcase model.
+      */
+    readonly property alias dirty: writable.dirty
+
+    function revert() {
+        writable.revert()
+    }
+
     function currentState() {
         return writable.currentState()
     }

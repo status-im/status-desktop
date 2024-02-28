@@ -10,11 +10,20 @@ import utils 1.0
 QObject {
     id: root
 
+    // GENERAL
+    readonly property bool dirty: communities.dirty || accounts.dirty || collectibles.dirty
+
+    function revert() {
+        communities.revert()
+        accounts.revert()
+        collectibles.revert()
+    }
+
     // COMMUNITIES
 
     // Input models
-    property alias communitiesSourceModel: communities.sourceModel
-    property alias communitiesShowcaseModel: communities.showcaseModel
+    property alias communitiesSourceModel: modelAdapter.communitiesSourceModel
+    property alias communitiesShowcaseModel: modelAdapter.communitiesShowcaseModel
 
     // Output models
     readonly property alias communitiesVisibleModel: communities.visibleModel
@@ -36,8 +45,8 @@ QObject {
     // ACCOUNTS
 
     // Input models
-    property alias accountsSourceModel: accounts.sourceModel
-    property alias accountsShowcaseModel: accounts.showcaseModel
+    property alias accountsSourceModel: modelAdapter.accountsSourceModel
+    property alias accountsShowcaseModel: modelAdapter.accountsShowcaseModel
 
     // Output models
     readonly property alias accountsVisibleModel: accounts.visibleModel
@@ -66,8 +75,8 @@ QObject {
     // COLLECTIBLES
 
     // Input models
-    property alias collectiblesSourceModel: collectiblesFilter.sourceModel
-    property alias collectiblesShowcaseModel: collectibles.showcaseModel
+    property alias collectiblesSourceModel: modelAdapter.collectiblesSourceModel
+    property alias collectiblesShowcaseModel: modelAdapter.collectiblesShowcaseModel
 
     // Output models
     readonly property alias collectiblesVisibleModel: collectibles.visibleModel
@@ -86,25 +95,36 @@ QObject {
         collectibles.changePosition(key, to)
     }
 
+    ProfileShowcaseModelAdapter {
+        id: modelAdapter
+    }
+
     ProfileShowcaseDirtyState {
         id: communities
+
+        sourceModel: modelAdapter.adaptedCommunitiesSourceModel
+        showcaseModel: modelAdapter.adaptedCommunitiesShowcaseModel
     }
 
     ProfileShowcaseDirtyState {
         id: accounts
+
+        sourceModel: modelAdapter.adaptedAccountsSourceModel
+        showcaseModel: modelAdapter.adaptedAccountsShowcaseModel
     }
 
     ProfileShowcaseDirtyState {
         id: collectibles
 
         sourceModel: collectiblesFilter
+        showcaseModel: modelAdapter.adaptedCollectiblesShowcaseModel
     }
 
     SortFilterProxyModel {
         id: collectiblesFilter
 
         delayed: true
-
+        sourceModel: modelAdapter.adaptedCollectiblesSourceModel
         proxyRoles: FastExpressionRole {
             name: "maxVisibility"
 
