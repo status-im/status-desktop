@@ -27,6 +27,7 @@ REPO_URL="https://github.com/${STATUS_GO_OWNER}/${STATUS_GO_REPO}"
 STATUS_GO_VERSION=$1
 COMMIT_MESSAGE="chore: bump status-go"
 TIMESTAMP=$(date +%s)
+STATUS_DESKTOP_MAIN_BRANCH="master"
 
 HELP_MESSAGE=$(cat <<-END
 This is a tool to help creating PRs with specific status-go versions
@@ -104,7 +105,7 @@ else
 fi
 
 
-git checkout -q master
+git checkout -q ${STATUS_DESKTOP_MAIN_BRANCH}
 git pull
 git checkout -b ${BRANCH_NAME}
 cd vendor/status-go
@@ -120,10 +121,10 @@ git add ./vendor/status-go
 git commit -m "${COMMIT_MESSAGE}"
 git push --set-upstream origin ${BRANCH_NAME}
 git push
-git checkout master
+git checkout ${STATUS_DESKTOP_MAIN_BRANCH}
 git branch -D ${BRANCH_NAME}
 
-STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-desktop/compare/master...${BRANCH_NAME}"
+STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-desktop/compare/$STATUS_DESKTOP_MAIN_BRANCH}...${BRANCH_NAME}"
 STATUS_DESKTOP_PR_LINK="${STATUS_DESKTOP_PR_LINK}?quick_pull=1&title=chore:+bump+status-go&body=update+status+go"
 
 cat << EOF
