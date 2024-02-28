@@ -28,6 +28,7 @@ StatusMenu {
     property string chatCategoryId: ""
     property bool showDebugOptions: false
     property alias deleteChatConfirmationDialog: deleteChatConfirmationDialogComponent
+    property bool hideIfPermissionsNotMet: false
 
     signal displayProfilePopup(string publicKey)
     signal displayEditChannelPopup(string chatId)

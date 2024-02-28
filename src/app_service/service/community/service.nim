@@ -427,6 +427,7 @@ QtObject:
     chatDto.canPost = chat.canPost
     chatDto.categoryId = chat.categoryId
     chatDto.members = chat.members
+    chatDto.hideIfPermissionsNotMet = chat.hideIfPermissionsNotMet
 
   proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
     for chat in chats:
@@ -642,7 +643,9 @@ QtObject:
             )
 
           # Handle name/description changes
-          if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or chat.emoji != prevChat.emoji:
+          if chat.name != prevChat.name or chat.description != prevChat.description or
+              chat.color != prevChat.color or chat.emoji != prevChat.emoji or
+              chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = findChatById(chat.id, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
@@ -1251,9 +1254,10 @@ QtObject:
       description: string,
       emoji: string,
       color: string,
-      categoryId: string) =
+      categoryId: string,
+      hideIfPermissionsNotMet: bool) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId)
+      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId, hideIfPermissionsNotMet)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
@@ -1288,7 +1292,8 @@ QtObject:
       emoji: string,
       color: string,
       categoryId: string,
-      position: int) =
+      position: int,
+      hideIfPermissionsNotMet: bool) =
     try:
       let response = status_go.editCommunityChannel(
         communityId,
@@ -1298,7 +1303,8 @@ QtObject:
         emoji,
         color,
         categoryId,
-        position)
+        position,
+        hideIfPermissionsNotMet)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -2247,6 +2253,13 @@ QtObject:
     else:
       return community.declinedRequestsToJoin[indexDeclined].publicKey
 
+  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
+    if not self.communities.hasKey(communityId):
+      return false
+
+    let community = self.getCommunityById(communityId)
+    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
+
   proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
     let community = self.getCommunityById(communityId)
     for id, tokenPermission in community.tokenPermissions:
@@ -2255,13 +2268,6 @@ QtObject:
           if id == chatId:
             return true
     return false
-
-  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
-    if not self.communities.hasKey(communityId):
-      return false
-
-    let community = self.getCommunityById(communityId)
-    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
 
   proc shareCommunityUrlWithChatKey*(self: Service, communityId: string): string =
     try:

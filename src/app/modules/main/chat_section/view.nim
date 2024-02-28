@@ -31,6 +31,7 @@ QtObject:
       permissionsCheckOngoing: bool
       isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
       shardingInProgress: bool
+      allChannelsAreHiddenBecauseNotPermitted: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -268,9 +269,10 @@ QtObject:
       description: string,
       emoji: string,
       color: string,
-      categoryId: string
+      categoryId: string,
+      hideIfPermissionsNotMet: bool,
       ) {.slot.} =
-    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId)
+    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId, hideIfPermissionsNotMet)
 
   proc editCommunityChannel*(
       self: View,
@@ -280,7 +282,8 @@ QtObject:
       emoji: string,
       color: string,
       categoryId: string,
-      position: int
+      position: int,
+      hideIfPermissionsNotMet: bool
     ) {.slot.} =
     self.delegate.editCommunityChannel(
       channelId,
@@ -289,7 +292,8 @@ QtObject:
       emoji,
       color,
       categoryId,
-      position
+      position,
+      hideIfPermissionsNotMet
     )
 
   proc leaveCommunity*(self: View) {.slot.} =
@@ -487,3 +491,18 @@ QtObject:
     self.setShardingInProgress(true)
     self.delegate.setCommunityShard(shardIndex)
 
+  proc allChannelsAreHiddenBecauseNotPermittedChanged*(self: View) {.signal.}
+
+  proc getAllChannelsAreHiddenBecauseNotPermitted*(self: View): bool {.slot.} =
+    return self.allChannelsAreHiddenBecauseNotPermitted
+
+  QtProperty[bool] allChannelsAreHiddenBecauseNotPermitted:
+    read = getAllChannelsAreHiddenBecauseNotPermitted
+    notify = allChannelsAreHiddenBecauseNotPermittedChanged
+
+  proc refreshAllChannelsAreHiddenBecauseNotPermittedChanged*(self: View) =
+    let allAreHidden = self.model.allChannelsAreHiddenBecauseNotPermitted()
+    if (allAreHidden == self.allChannelsAreHiddenBecauseNotPermitted):
+      return
+    self.allChannelsAreHiddenBecauseNotPermitted = allAreHidden
+    self.allChannelsAreHiddenBecauseNotPermittedChanged()

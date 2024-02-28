@@ -11,9 +11,11 @@ import shared.stores 1.0
 import shared.views.chat 1.0
 import shared.stores.send 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
+import QtQuick.Layouts 1.15
 
 import "."
 import "../panels"
@@ -50,6 +52,7 @@ StatusSectionLayout {
     property bool hasViewAndPostPermissions: false
     property bool amIMember: false
     property bool amISectionAdmin: false
+    readonly property bool allChannelsAreHiddenBecauseNotPermitted: rootStore.allChannelsAreHiddenBecauseNotPermitted
 
     property bool isInvitationPending: false
 
@@ -114,6 +117,7 @@ StatusSectionLayout {
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
 
     headerContent: Loader {
+        visible: !root.allChannelsAreHiddenBecauseNotPermitted
         id: headerContentLoader
         sourceComponent: root.contentLocked ? joinCommunityHeaderPanelComponent : chatHeaderContentViewComponent
     }
@@ -127,7 +131,8 @@ StatusSectionLayout {
 
     centerPanel: Loader {
         anchors.fill: parent
-        sourceComponent: root.contentLocked ? joinCommunityCenterPanelComponent : chatColumnViewComponent
+        sourceComponent: root.allChannelsAreHiddenBecauseNotPermitted ? allChatsAreHiddenComponent :
+                                      (root.contentLocked ? joinCommunityCenterPanelComponent : chatColumnViewComponent)
     }
 
     showRightPanel: {
@@ -176,7 +181,8 @@ StatusSectionLayout {
                     channelColor: chatColor,
                     categoryId: chatCategoryId,
                     channelPosition: channelPosition,
-                    deleteChatConfirmationDialog: deleteDialog
+                    deleteChatConfirmationDialog: deleteDialog,
+                    hideIfPermissionsNotMet: hideIfPermissionsNotMet
                 });
             }
         }
@@ -231,6 +237,18 @@ StatusSectionLayout {
             requirementsCheckPending: root.chatContentModule.permissionsCheckOngoing
             onRevealAddressClicked: root.revealAddressClicked()
             onInvitationPendingClicked: root.invitationPendingClicked()
+        }
+    }
+
+    Component {
+        id: allChatsAreHiddenComponent
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: root.allChannelsAreHiddenBecauseNotPermitted
+            text: qsTr("Sorry, you don't hodl the necessary tokens to view or post in any of <b>"+sectionItemModel.name+"</b> channels")
+            color: Theme.palette.dangerColor1
         }
     }
 

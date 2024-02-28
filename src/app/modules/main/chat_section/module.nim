@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar, marshal
+import NimQml, Tables, chronicles, json, sequtils, strformat, sugar, marshal
 
 import io_interface
 import ../io_interface as delegate_interface
@@ -19,7 +19,6 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 import ../../../core/notifications/details as notification_details
-import ../../../../app_service/common/conversion
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
@@ -185,6 +184,9 @@ proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, c
         position = -1, # Set position as -1, so that the Category Item is on top of its Channels
         category.id,
         category.position,
+        hideIfPermissionsNotMet = false,
+        viewOnlyPermissionsSatisfied = true,
+        viewAndPostPermissionsSatisfied = true
       )
   if insertIntoModel:
     self.view.chatsModel().appendItem(result)
@@ -462,6 +464,16 @@ proc updateChatLocked(self: Module, chatId: string) =
   let locked = self.controller.checkChatIsLocked(communityId, chatId)
   self.view.chatsModel().setItemLocked(chatId, locked)
 
+proc updateViewOnlyPermissionsSatisfied(self: Module, chatId: string, satisifed: bool) =
+  if not self.controller.isCommunity():
+    return
+  self.view.chatsModel().setViewOnlyPermissionsSatisfied(chatId, satisifed)
+
+proc updateViewAndPostPermissionsSatisfied(self: Module, chatId: string, satisifed: bool) =
+  if not self.controller.isCommunity():
+    return
+  self.view.chatsModel().setViewAndPostPermissionsSatisfied(chatId, satisifed)
+
 proc updateChatRequiresPermissions(self: Module, chatId: string) =
   if not self.controller.isCommunity():
     return
@@ -513,7 +525,7 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
 
-proc addNewChat*(
+proc addNewChat(
     self: Module,
     chatDto: ChatDto,
     channelGroup: ChannelGroupDto,
@@ -559,10 +571,14 @@ proc addNewChat*(
 
   var memberRole = self.getUserMemberRole(chatDto.members)
 
-  if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
-    memberRole = channelGroup.memberRole
   if chatDto.chatType != ChatType.PrivateGroupChat:
     memberRole = channelGroup.memberRole
+
+  if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
+    memberRole = channelGroup.memberRole
+    if memberRole == MemberRole.None:
+      let community = communityService.getCommunityById(chatDto.communityId)
+      memberRole = community.memberRole
 
   var categoryOpened = true
   if chatDto.categoryId != "":
@@ -587,7 +603,7 @@ proc addNewChat*(
     chatDto.color,
     chatDto.emoji,
     chatDto.description,
-    ChatType(chatDto.chatType).int,
+    chatDto.chatType.int,
     memberRole,
     chatDto.timestamp.int,
     hasNotification,
@@ -612,6 +628,9 @@ proc addNewChat*(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
+    hideIfPermissionsNotMet = chatDto.hideIfPermissionsNotMet,
+    viewOnlyPermissionsSatisfied = true, # will be updated in async call
+    viewAndPostPermissionsSatisfied = true # will be updated in async call
   )
 
   self.addSubmodule(
@@ -717,10 +736,23 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
 
   self.setFirstChannelAsActive()
 
+proc refreshHiddenBecauseNotPermittedState(self: Module) =
+  self.view.refreshAllChannelsAreHiddenBecauseNotPermittedChanged()
+
+  let activeChatItem = self.view.chatsModel().activeItem()
+  if activeChatItem == nil:
+    return
+
+  let activeItemShouldBeHidden = self.view.chatsModel().itemShouldBeHiddenBecauseNotPermitted(activeChatItem)
+  if activeItemShouldBeHidden:
+    let firstNotHiddenItemId = self.view.chatsModel().firstNotHiddenItemId()
+    self.setActiveItem(firstNotHiddenItemId)
+
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
-  self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color)
+  self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
+  self.refreshHiddenBecauseNotPermittedState()
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   # One To One chat is available only in the `Chat` section
@@ -862,6 +894,9 @@ proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPerm
     self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
     self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)
     self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
+  self.updateViewOnlyPermissionsSatisfied(chatId, viewOnlyPermissions.satisfied)
+  self.updateViewAndPostPermissionsSatisfied(chatId, viewAndPostPermissions.satisfied)
+  self.refreshHiddenBecauseNotPermittedState()
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
@@ -1086,13 +1121,13 @@ method onAcceptRequestToJoinFailedNoPermission*(self: Module, communityId: strin
   let contact = self.controller.getContactById(memberKey)
   self.view.emitOpenNoPermissionsToJoinPopupSignal(community.name, contact.displayName,  community.id, requestId)
 
-method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string) =
-  self.controller.createCommunityChannel(name, description, emoji, color, categoryId)
+method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string, hideIfPermissionsNotMet: bool) =
+  self.controller.createCommunityChannel(name, description, emoji, color, categoryId, hideIfPermissionsNotMet)
 
 method editCommunityChannel*(self: Module, channelId, name, description, emoji, color,
-    categoryId: string, position: int) =
+    categoryId: string, position: int, hideIfPermissionsNotMet: bool) =
   self.controller.editCommunityChannel(channelId, name, description, emoji, color, categoryId,
-    position)
+    position, hideIfPermissionsNotMet)
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)
@@ -1157,6 +1192,9 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       active=false,
       c.position,
       categoryId="",
+      hideIfPermissionsNotMet=false,
+      viewOnlyPermissionsSatisfied = true,
+      viewAndPostPermissionsSatisfied = true
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1179,6 +1217,9 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       active=false,
       c.position,
       categoryId,
+      hideIfPermissionsNotMet=false,
+      viewOnlyPermissionsSatisfied = true,
+      viewAndPostPermissionsSatisfied = true
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 

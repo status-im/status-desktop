@@ -61,6 +61,8 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
+    readonly property bool allChannelsAreHiddenBecauseNotPermitted: root.chatCommunitySectionModule.allChannelsAreHiddenBecauseNotPermitted
+
     readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
 
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
@@ -336,13 +338,13 @@ QtObject {
     }
 
     function createCommunityChannel(channelName, channelDescription, channelEmoji, channelColor,
-            categoryId) {
+            categoryId, hideIfPermissionsNotMet) {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription,
-            channelEmoji.trim(), channelColor, categoryId);
+            channelEmoji.trim(), channelColor, categoryId, hideIfPermissionsNotMet);
     }
 
     function editCommunityChannel(chatId, newName, newDescription, newEmoji, newColor,
-            newCategory, channelPosition) {
+            newCategory, channelPosition, hideIfPermissionsNotMet) {
         chatCommunitySectionModule.editCommunityChannel(
                     chatId,
                     newName,
@@ -350,7 +352,8 @@ QtObject {
                     newEmoji,
                     newColor,
                     newCategory,
-                    channelPosition
+                    channelPosition,
+                    hideIfPermissionsNotMet
                 )
     }
 

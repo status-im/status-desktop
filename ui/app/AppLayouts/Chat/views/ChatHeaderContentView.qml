@@ -34,7 +34,8 @@ Item {
                                    string chatColor,
                                    string chatCategoryId,
                                    int channelPosition,
-                                   var deleteDialog)
+                                   var deleteDialog,
+                                   bool hideIfPermissionsNotMet)
 
     function addRemoveGroupMember() {
         root.state = d.stateMembersSelectorContent
@@ -166,6 +167,7 @@ Item {
                     chatType = chatContentModule.chatDetails.type
                     chatMuted = chatContentModule.chatDetails.muted
                     channelPosition = chatContentModule.chatDetails.position
+                    hideIfPermissionsNotMet = chatContentModule.chatDetails.hideIfPermissionsNotMet
                 }
 
                 onMuteChat: {
@@ -229,7 +231,8 @@ Item {
                     root.displayEditChannelPopup(chatId, chatName, chatDescription,
                                                  chatEmoji, chatColor,
                                                  chatCategoryId, channelPosition,
-                                                 contextMenu.deleteChatConfirmationDialog);
+                                                 contextMenu.deleteChatConfirmationDialog,
+                                                 hideIfPermissionsNotMet);
                 }
                 onAddRemoveGroupMember: {
                     root.addRemoveGroupMember()

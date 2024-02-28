@@ -302,7 +302,8 @@ proc createCommunityChannel*(
     description: string,
     emoji: string,
     color: string,
-    categoryId: string
+    categoryId: string,
+    hideIfPermissionsNotMet: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunityChat".prefix, %*[
     communityId,
@@ -316,7 +317,8 @@ proc createCommunityChannel*(
         "emoji": emoji,
         "color": color
       },
-      "category_id": categoryId
+      "category_id": categoryId,
+      "hide_if_permissions_not_met": hideIfPermissionsNotMet
     }])
 
 proc editCommunityChannel*(
@@ -327,7 +329,8 @@ proc editCommunityChannel*(
     emoji: string,
     color: string,
     categoryId: string,
-    position: int
+    position: int,
+    hideIfPermissionsNotMet: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editCommunityChat".prefix, %*[
     communityId,
@@ -343,7 +346,8 @@ proc editCommunityChannel*(
         "color": color
       },
       "category_id": categoryId,
-      "position": position
+      "position": position,
+      "hide_if_permissions_not_met": hideIfPermissionsNotMet
     }])
 
 proc reorderCommunityCategories*(communityId: string, categoryId: string, position: int): RpcResponse[JsonNode] {.raises: [Exception].} =

@@ -331,6 +331,7 @@ Item {
                         chatMuted = obj.muted
                         channelPosition = obj.position
                         chatCategoryId = obj.categoryId
+                        hideIfPermissionsNotMet = obj.hideIfPermissionsNotMet
                     } catch (e) {
                         console.error("error parsing chat item json object, id: ", id, " error: ", e)
                         close()
@@ -385,7 +386,8 @@ Item {
                         categoryId: chatCategoryId,
                         chatId: chatContextMenuView.chatId,
                         channelPosition: channelPosition,
-                        deleteChatConfirmationDialog: deleteChatConfirmationDialog
+                        deleteChatConfirmationDialog: deleteChatConfirmationDialog,
+                        hideIfPermissionsNotMet: hideIfPermissionsNotMet
                     });
                 }
             }
@@ -626,9 +628,9 @@ Item {
             property var deleteChatConfirmationDialog
             
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
-                                                chCategoryId) {
+                                                chCategoryId, hideIfPermissionsNotMet) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
-                                                  chCategoryId)
+                                                  chCategoryId, hideIfPermissionsNotMet)
                 chatId = root.store.currentChatContentModule().chatDetails.id
             }
             onEditCommunityChannel: {
@@ -638,7 +640,8 @@ Item {
                                                 chEmoji,
                                                 chColor,
                                                 chCategoryId,
-                                                channelPosition);
+                                                channelPosition,
+                                                hideIfPermissionsNotMet);
             }
 
             onAddPermissions: function (permissions) {

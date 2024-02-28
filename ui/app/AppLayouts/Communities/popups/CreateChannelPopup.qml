@@ -32,7 +32,7 @@ StatusStackModal {
     property bool isEdit: false
     property bool isDeleteable: false
     property bool viewOnlyCanAddReaction
-    property bool hideIfPermissionsNotMet
+    property bool hideIfPermissionsNotMet: false
 
     property string communityId: ""
     property string chatId: "_newChannel"
@@ -58,8 +58,8 @@ StatusStackModal {
     readonly property int maxChannelDescLength: 140
 
     // channel signals
-    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
-    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
+    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId, bool hideIfPermissionsNotMet)
+    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId, bool hideIfPermissionsNotMet)
     signal deleteCommunityChannel()
 
     // Permissions signals:
@@ -187,13 +187,15 @@ StatusStackModal {
                                             StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                             emoji,
                                             colorPanel.color.toString().toUpperCase(),
-                                            root.categoryId)
+                                            root.categoryId,
+                                            d.hideIfPermissionsNotMet)
             } else {
                 root.editCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
                                             StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                             emoji,
                                             colorPanel.color.toString().toUpperCase(),
-                                            root.categoryId)
+                                            root.categoryId,
+                                            d.hideIfPermissionsNotMet)
             }
 
             if (d.channelEditModel.dirtyPermissions) {
@@ -798,7 +800,6 @@ StatusStackModal {
                     Layout.rightMargin: Style.current.padding
                     leftSide: false
                     text: qsTr("Hide channel from members who don't have permissions to view the channel")
-                    visible: false //TODO: Enable connect to the backend when it's ready https://github.com/status-im/status-desktop/issues/13291
                     checked: d.hideIfPermissionsNotMet
                     onToggled: {
                         d.hideIfPermissionsNotMet = checked;

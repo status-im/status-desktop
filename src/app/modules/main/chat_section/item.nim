@@ -35,6 +35,9 @@ type
     loaderActive: bool
     locked: bool
     requiresPermissions: bool
+    hideIfPermissionsNotMet: bool
+    viewOnlyPermissionsSatisfied: bool
+    viewAndPostPermissionsSatisfied: bool
 
 proc initItem*(
     id,
@@ -62,7 +65,10 @@ proc initItem*(
     onlineStatus = OnlineStatus.Inactive,
     loaderActive = false,
     locked = false,
-    requiresPermissions = false
+    requiresPermissions = false,
+    hideIfPermissionsNotMet: bool,
+    viewOnlyPermissionsSatisfied: bool,
+    viewAndPostPermissionsSatisfied: bool
     ): Item =
   result = Item()
   result.id = id
@@ -92,6 +98,9 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
+  result.hideIfPermissionsNotMet = hideIfPermissionsNotMet
+  result.viewOnlyPermissionsSatisfied = viewOnlyPermissionsSatisfied
+  result.viewAndPostPermissionsSatisfied = viewAndPostPermissionsSatisfied
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -120,6 +129,9 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
+    hideIfPermissionsNotMet: {$self.hideIfPermissionsNotMet},
+    viewOnlyPermissionsSatisfied: {$self.viewOnlyPermissionsSatisfied},
+    viewAndPostPermissionsSatisfied: {$self.viewAndPostPermissionsSatisfied}
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -148,7 +160,10 @@ proc toJsonNode*(self: Item): JsonNode =
     "onlineStatus": self.onlineStatus,
     "loaderActive": self.loaderActive,
     "locked": self.locked,
-    "requiresPermissions": self.requiresPermissions
+    "requiresPermissions": self.requiresPermissions,
+    "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
+    "viewOnlyPermissionsSatisfied": self.viewOnlyPermissionsSatisfied,
+    "viewAndPostPermissionsSatisfied": self.viewAndPostPermissionsSatisfied
   }
 
 proc delete*(self: Item) =
@@ -247,6 +262,24 @@ proc categoryId*(self: Item): string =
 proc `categoryId=`*(self: var Item, value: string) =
   self.categoryId = value
 
+proc hideIfPermissionsNotMet*(self: Item): bool =
+  self.hideIfPermissionsNotMet
+
+proc `hideIfPermissionsNotMet=`*(self: var Item, value: bool) =
+  self.hideIfPermissionsNotMet = value
+
+proc viewAndPostPermissionsSatisfied*(self: Item): bool =
+  self.viewAndPostPermissionsSatisfied
+
+proc `viewAndPostPermissionsSatisfied=`*(self: var Item, value: bool) =
+  self.viewAndPostPermissionsSatisfied = value
+
+proc viewOnlyPermissionsSatisfied*(self: Item): bool =
+  self.viewOnlyPermissionsSatisfied
+
+proc `viewOnlyPermissionsSatisfied=`*(self: var Item, value: bool) =
+  self.viewOnlyPermissionsSatisfied = value
+
 proc categoryPosition*(self: Item): int =
   self.categoryPosition
 
@@ -300,3 +333,6 @@ proc requiresPermissions*(self: Item): bool =
 
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
+
+proc hideBecausePermissionsAreNotMet*(self: Item): bool =
+  self.hideIfPermissionsNotMet and not self.viewOnlyPermissionsSatisfied and not self.viewAndPostPermissionsSatisfied

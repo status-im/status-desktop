@@ -23,6 +23,7 @@ QtObject:
     isContact: bool
     active: bool
     blocked: bool
+    hideIfPermissionsNotMet: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -34,7 +35,7 @@ QtObject:
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
       isUsersListAvailable: bool, name, icon: string, color, description,
       emoji: string, hasUnreadMessages: bool, notificationsCount: int, highlight, muted: bool, position: int,
-      isUntrustworthy: bool, isContact: bool = false, blocked: bool = false) =
+      isUntrustworthy: bool, isContact: bool = false, blocked: bool = false, hideIfPermissionsNotMet: bool) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -53,6 +54,7 @@ QtObject:
     self.isContact = isContact
     self.active = false
     self.blocked = blocked
+    self.hideIfPermissionsNotMet = hideIfPermissionsNotMet
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -227,3 +229,14 @@ QtObject:
   proc setBlocked*(self: ChatDetails, value: bool) =
     self.blocked = value
     self.blockedChanged()
+
+  proc hideIfPermissionsNotMetChanged(self: ChatDetails) {.signal.}
+  proc getHideIfPermissionsNotMet(self: ChatDetails): bool {.slot.} =
+    return self.hideIfPermissionsNotMet
+  QtProperty[bool] hideIfPermissionsNotMet:
+    read = getHideIfPermissionsNotMet
+    notify = hideIfPermissionsNotMetChanged
+
+  proc setHideIfPermissionsNotMet*(self: ChatDetails, value: bool) =
+    self.hideIfPermissionsNotMet = value
+    self.hideIfPermissionsNotMetChanged()
