@@ -30,7 +30,6 @@ SettingsContentBase {
     property PrivacyStore privacyStore
     property ContactsStore contactsStore
     property NetworkConnectionStore networkConnectionStore
-    required property WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
 
     property var communitiesModel
@@ -48,8 +47,7 @@ SettingsContentBase {
         Communities = 1,
         Accounts = 2,
         Collectibles = 3,
-        Assets = 4,
-        Web = 5
+        Web = 4
     }
 
     titleRowComponentLoader.sourceComponent: StatusButton {
@@ -99,12 +97,6 @@ SettingsContentBase {
             objectName: "collectiblesTabButton"
             width: implicitWidth
             text: qsTr("Collectibles")
-        }
-
-        StatusTabButton {
-            objectName: "assetsTabButton"
-            width: implicitWidth
-            text: qsTr("Assets")
         }
 
         StatusTabButton {
@@ -236,21 +228,9 @@ SettingsContentBase {
 
             onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
             onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
-        }
 
-        // assets
-        ProfileShowcaseAssetsPanel {
-            id: profileShowcaseAssetsPanel
 
-            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
-            showcaseModel: root.profileStore.profileShowcaseAssetsModel
-            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
-            formatCurrencyAmount: function(amount, symbol) {
-                return root.currencyStore.formatCurrencyAmount(amount, symbol)
-            }
 
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
         }
 
         // web
