@@ -34,12 +34,15 @@ Item {
             root.store.addAccountModule.selectedEmoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         }
 
-        accountName.text = root.store.addAccountModule.accountName
         if (d.isEdit) {
+            accountName.placeholderText = qsTr("Enter an account name...")
+            accountName.text = root.store.addAccountModule.accountName
             accountName.input.asset.emoji = root.store.addAccountModule.selectedEmoji;
         } else {
+            accountName.placeholderText = root.store.getNextAccountNameSuggestion()
             accountName.input.asset.isLetterIdenticon = true;
         }
+        accountName.input.edit.cursorPosition = accountName.text.length
         accountName.input.edit.forceActiveFocus()
         accountName.validate(true)
     }
@@ -102,7 +105,6 @@ Item {
                 id: accountName
                 objectName: "AddAccountPopup-AccountName"
                 anchors.horizontalCenter: parent.horizontalCenter
-                placeholderText: qsTr("Enter an account name...")
                 label: qsTr("Name")
                 charLimit: 20
                 text: root.store.addAccountModule.accountName

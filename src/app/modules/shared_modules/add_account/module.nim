@@ -352,6 +352,9 @@ proc isAuthenticationNeededForSelectedOrigin[T](self: Module[T]): bool =
     return false
   return true
 
+method getIndexForNextAccountNameSuggestion*[T](self: Module[T]): int =
+  return self.controller.getIndexForNextAccountNameSuggestion()
+
 method changeDerivationPath*[T](self: Module[T], derivationPath: string) =
   self.view.setDerivationPath(derivationPath)
   if self.isAuthenticationNeededForSelectedOrigin():

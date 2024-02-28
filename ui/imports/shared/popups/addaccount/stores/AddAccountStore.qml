@@ -75,6 +75,11 @@ BasePopupStore {
         return root.addAccountModule.getStoredAccountName()
     }
 
+    function getNextAccountNameSuggestion() {
+        let index = root.addAccountModule.getIndexForNextAccountNameSuggestion()
+        return qsTr("Account %1").arg(index)
+    }
+
     function getStoredSelectedEmoji() {
         return root.addAccountModule.getStoredSelectedEmoji()
     }

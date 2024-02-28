@@ -66,6 +66,15 @@ proc getKeypairByKeyUidFromDb(keyUid: string): KeypairDto =
   except Exception as e:
     info "no known keypair", keyUid=keyUid, procName="getKeypairByKeyUid", errName = e.name, errDesription = e.msg
 
+proc getIndexForNextAccountNameSuggestion*(): int =
+  try:
+    let response = status_go_accounts.getIndexForNextAccountNameSuggestion()
+    if not response.error.isNil:
+      return
+    return response.result.getInt
+  except Exception as e:
+    error "error: ", procName="getIndexForNextAccountNameSuggestion", errName = e.name, errDesription = e.msg
+
 proc getEnsName(address: string, chainId: int): string =
   try:
     let response = backend.getName(chainId, address)

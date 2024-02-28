@@ -15,7 +15,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
         Then the account is correctly displayed with "<new_name>" and "#<new_color>" and emoji unicode "<new_emoji_unicode>" in accounts list
         Examples:
             | name           | new_name         | new_color | new_emoji  | new_emoji_unicode |
-            | Status account | MyPrimaryAccount | 216266    | sunglasses | 1f60e             |
+            | Account 1 | MyPrimaryAccount | 216266    | sunglasses | 1f60e             |
 
     	Scenario Outline: The user can add, edit and remove a watch only account
         When the user adds a watch only account "<address>" with "<name>" color "#<color>" and emoji "<emoji>"

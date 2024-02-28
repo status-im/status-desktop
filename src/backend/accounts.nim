@@ -28,6 +28,9 @@ proc getWatchOnlyAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc getKeypairs*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_getKeypairs")
 
+proc getIndexForNextAccountNameSuggestion*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("accounts_getIndexForNextAccountNameSuggestion")
+
 proc getKeypairByKeyUid*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [keyUid]
   return core.callPrivateRPC("accounts_getKeypairByKeyUID", payload)

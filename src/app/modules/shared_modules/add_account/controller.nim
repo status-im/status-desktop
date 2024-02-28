@@ -132,6 +132,9 @@ proc getKeypairs*(self: Controller): seq[KeypairDto] =
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
+proc getIndexForNextAccountNameSuggestion*(self: Controller): int =
+  return wallet_account_service.getIndexForNextAccountNameSuggestion()
+
 proc getSavedAddress*(self: Controller, address: string): SavedAddressDto =
   return self.savedAddressService.getSavedAddress(address)
 

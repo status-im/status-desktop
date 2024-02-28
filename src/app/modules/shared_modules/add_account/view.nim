@@ -363,3 +363,6 @@ QtObject:
 
   proc removingSavedAddressRejected*(self: View) {.slot.} =
     self.setDisablePopup(false)
+
+  proc getIndexForNextAccountNameSuggestion*(self: View): int {.slot.} =
+    return self.delegate.getIndexForNextAccountNameSuggestion()
