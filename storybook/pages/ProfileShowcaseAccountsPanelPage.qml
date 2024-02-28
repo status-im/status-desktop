@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
 
-import mainui 1.0
 import AppLayouts.Profile.panels 1.0
 import shared.stores 1.0
 
@@ -21,91 +20,76 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    Popups {
-        popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: CommunityTokensStore {}
+    readonly property string currentWallet: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+
+    ListModel {
+        id: hiddenModelItem
+        ListElement {
+            name: "My Status Account"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            colorId: "primary"
+            emoji: "🇨🇿"
+            walletType: ""
+            visibility: 0
+        }
+        ListElement {
+            name: "testing (no emoji, colored, seed)"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            colorId: ""
+            emoji: ""
+            walletType: "seed"
+            visibility: 0
+        }
+        ListElement {
+            name: "My Bro's Account"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            colorId: "orange"
+            emoji: "🇸🇰"
+            walletType: "watch"
+            visibility: 0
+        }
     }
 
-    readonly property string currentWallet: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+    ListModel {
+        id: inShowcaseModelItem
+
+        ListElement {
+            name: "My Status Account"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            colorId: "primary"
+            emoji: "🇨🇿"
+            walletType: ""
+            visibility: 1
+        }
+        ListElement {
+            name: "testing (no emoji, colored, seed)"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            colorId: ""
+            emoji: ""
+            walletType: "seed"
+            visibility: 1
+        }
+        ListElement {
+            name: "My Bro's Account"
+            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            colorId: "orange"
+            emoji: "🇸🇰"
+            walletType: "watch"
+            visibility: 1
+        }
+    }
 
     ListModel {
         id: emptyModel
     }
 
-    ListModel {
-        id: accountsModel
-
-        ListElement {
-            name: "My Status Account"
-            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
-            colorId: "primary"
-            emoji: "🇨🇿"
-            walletType: ""
-        }
-        ListElement {
-            name: "testing (no emoji, colored, seed)"
-            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-            colorId: ""
-            emoji: ""
-            walletType: "seed"
-        }
-        ListElement {
-            name: "My Bro's Account"
-            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
-            colorId: "orange"
-            emoji: "🇸🇰"
-            walletType: "watch"
-        }
-    }
-
-    ListModel {
-        id: inShowcaseAccountsModel
-
-        property int hiddenCount: emptyModelChecker.checked ? 0 : accountsModel.count - count
-
-        signal baseModelFilterConditionsMayHaveChanged()
-
-        function setVisibilityByIndex(index, visibility) {
-            if (visibility === Constants.ShowcaseVisibility.NoOne) {
-                remove(index)
-            } else {
-                 get(index).showcaseVisibility = visibility
-            }
-        }
-
-        function setVisibility(address, visibility) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).address === address) {
-                    setVisibilityByIndex(i, visibility)
-                }
-            }
-        }
-
-        function hasItemInShowcase(address) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).address === address) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        function upsertItemJson(item) {
-            append(JSON.parse(item))
-        }
-    }
-
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ProfileShowcaseAccountsPanel {
+        id: showcasePanel
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
-        ProfileShowcaseAccountsPanel {
-            id: showcasePanel
-            width: 500
-            baseModel: emptyModelChecker.checked ? emptyModel : accountsModel
-            showcaseModel: inShowcaseAccountsModel
-            currentWallet: root.currentWallet
-        }
+        inShowcaseModel: emptyModelChecker.checked ? emptyModel : inShowcaseModelItem
+        hiddenModel: emptyModelChecker.checked ? emptyModel : hiddenModelItem
+        currentWallet: root.currentWallet
     }
 
     LogsAndControlsPanel {
@@ -117,9 +101,8 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            Button {
-                text: "Reset (clear settings)"
-                onClicked: showcasePanel.reset()
+            Label {
+                text: "ⓘ Shwcase interaction implemented in ProfileShowcasePanelPage"
             }
 
             CheckBox {
@@ -127,8 +110,6 @@ SplitView {
 
                 text: "Empty model"
                 checked: false
-
-                onClicked: showcasePanel.reset()
             }
         }
     }

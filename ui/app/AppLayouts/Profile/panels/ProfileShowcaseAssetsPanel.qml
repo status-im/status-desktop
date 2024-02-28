@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
@@ -18,40 +19,28 @@ ProfileShowcasePanel {
 
     signal navigateToAccountsTab()
 
-    keyRole: "symbol"
-    roleNames: ["symbol", "name", "address", "communityId", "enabledNetworkBalance", "decimals"].concat(showcaseRoles)
-    filterFunc: (modelData) => modelData.symbol !== "" && !showcaseModel.hasItemInShowcase(modelData.symbol)
     emptyInShowcasePlaceholderText: qsTr("Assets here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Assets here will be hidden from your profile")
 
-    hiddenDraggableDelegateComponent: AssetShowcaseDelegate {
-        Drag.keys: ["x-status-draggable-showcase-item-hidden"]
-        showcaseObj: modelData
-        dragParent: dragParentData
-        visualIndex: visualIndexData
-        formatCurrencyAmount: function(amount, symbol) {
-            return root.formatCurrencyAmount(amount, symbol)
-        }
-        onShowcaseVisibilityRequested: {
-            var tmpObj = Object()
-            root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
-            tmpObj.showcaseVisibility = value
-            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
-            root.showcaseEntryChanged()
-        }
-    }
-    showcaseDraggableDelegateComponent: AssetShowcaseDelegate {
-        Drag.keys: ["x-status-draggable-showcase-item"]
-        showcaseObj: modelData
-        dragParent: dragParentData
-        visualIndex: visualIndexData
-        dragAxis: Drag.YAxis
-        showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
-        onShowcaseVisibilityRequested: {
-            showcaseModel.setVisibility(showcaseObj.symbol, value)
-            root.showcaseEntryChanged()
+    delegate: ProfileShowcasePanel.Delegate {
+
+        property double totalValue: !!model && !!model.decimals ? balancesAggregator.value/(10 ** model.decimals): 0
+
+        title: !!model && !!model.name ? model.name : ""
+        secondaryTitle: !!model && !!model.enabledNetworkBalance ?
+                        LocaleUtils.currencyAmountToLocaleString(model.enabledNetworkBalance) :
+                        !!model && !!model.symbol ? root.formatCurrencyAmount(totalValue, model.symbol) : Qt.locale().zeroDigit
+
+        hasImage: true
+        icon.source: !!model ? Constants.tokenIcon(model.symbol) : ""
+
+        SumAggregator {
+            id: balancesAggregator
+            model: !!model && !!model.balances ? model.balances: null
+            roleName: "balance"
         }
     }
+
     additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
     Component {

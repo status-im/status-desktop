@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -16,43 +17,50 @@ import AppLayouts.Profile.controls 1.0
 DoubleFlickableWithFolding {
     id: root
 
-    readonly property var showcaseRoles: ["showcaseVisibility", "order"]
+    property Component delegate: Delegate {}
 
-    required property string keyRole
-    required property var roleNames
-    required property var filterFunc
-
-    property var baseModel
-    property var showcaseModel
-
-    property Component showcaseDraggableDelegateComponent
-    property Component hiddenDraggableDelegateComponent
+    // Expected roles: 
+    // - visibility: int
+    property var inShowcaseModel
+    property var hiddenModel
 
     property Component additionalFooterComponent
 
+    // Placeholder text to be shown when the list is empty
     property string emptyInShowcasePlaceholderText
     property string emptyHiddenPlaceholderText
 
-    readonly property Connections showcaseUpdateConnections: Connections {
-        target: root.showcaseModel
+    // Signal to requst position change of the visible items
+    signal changePositionRequested(var key, int to)
+    // Signal to request visibility change of the items
+    signal setVisibilityRequested(var key, int toVisibility)
 
-        function onBaseModelFilterConditionsMayHaveChanged() {
-            root.updateBaseModelFilters()
+    // Public delegate component. Implements the minimal ShowcaseDelegate interface needed for DND
+    component Delegate: ShowcaseDelegate {
+        id: showcaseDelegate
+
+        property var model: modelData
+        property var dragKeys: dragKeysData
+
+        readonly property var key: model ? model.key : null
+
+        Drag.keys: dragKeys
+
+        dragParent: root
+        visualIndex: visualIndexData
+        dragAxis: Drag.YAxis
+        showcaseVisibility: model ? model.visibility ?? Constants.ShowcaseVisibility.NoOne :
+                                      Constants.ShowcaseVisibility.NoOne
+
+        onShowcaseVisibilityRequested: function (toVisibility){
+            root.setVisibilityRequested(key, toVisibility)
         }
     }
 
-    function reset() {
-        root.showcaseModel.clear()
-        updateBaseModelFilters()
+    ScrollBar.vertical: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
-
-    function updateBaseModelFilters() {
-        // Reset base model to update filter conditions
-        hiddenListView.model = null
-        hiddenListView.model = root.baseModel
-    }
-
-    signal showcaseEntryChanged()
 
     QtObject {
         id: d
@@ -69,20 +77,16 @@ DoubleFlickableWithFolding {
 
     clip: true
 
-    ScrollBar.vertical: StatusScrollBar {
-        policy: ScrollBar.AsNeeded
-        visible: resolveVisibility(policy, root.height, root.contentHeight)
-    }
-
     flickable1: EmptyShapeRectangleFooterListView {
         id: inShowcaseListView
 
-        model: root.showcaseModel
         width: root.width
         placeholderText: root.emptyInShowcasePlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !dropAreaRow.visible
         spacing: Style.current.halfPadding
+        delegate: delegateWrapper
+        model: root.inShowcaseModel
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -101,66 +105,7 @@ DoubleFlickableWithFolding {
             }
 
             onToggleFolding: root.flip1Folding()
-        }
-
-        delegate: DropArea {
-            id: showcaseDelegateRoot
-
-            property int visualIndex: index
-
-            width: ListView.view.width
-            height: visible && showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
-
-            keys: d.dragShowcaseItemKey
-            visible: model.showcaseVisibility !== Constants.ShowcaseVisibility.NoOne
-
-            onEntered: function(drag) {
-                const from = drag.source.visualIndex
-                const to = showcaseDraggableDelegateLoader.item.visualIndex
-                if (to === from)
-                    return
-                root.showcaseEntryChanged()
-                root.showcaseModel.move(from, to, 1)
-                drag.accept()
-            }
-
-            // TODO:
-            // This animation is causing issues when there are no elements in the showcase list.
-            // Reenable it once the refactor of the models and delegates is done (simplified): #13498
-            // ListView.onRemove: SequentialAnimation {
-            //  PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: true }
-            //      NumberAnimation { target: showcaseDelegateRoot; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
-            //      PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: false }
-            // }
-
-            // In showcase delegate item container:
-            Loader {
-                id: showcaseDraggableDelegateLoader
-
-                property var modelData: model
-                property var dragParentData: root
-                property int visualIndexData: index
-
-                width: parent.width
-                sourceComponent: root.showcaseDraggableDelegateComponent
-            }
-
-            // Delegate shadow background when dragging:
-            ShadowDelegate {
-                id: showcaseShadow
-
-                visible: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
-                onVisibleChanged: d.isAnyShowcaseDragActive = visible
-            }
-
-            Binding {
-                when: dropAreaRow.visible
-                target: showcaseDraggableDelegateLoader.item
-                property: "blurState"
-                value: true
-                restoreMode: Binding.RestoreBindingOrValue
-            }
-        }
+        } 
 
         // Overlaid showcase listview content drop area:
         DropArea {
@@ -188,14 +133,14 @@ DoubleFlickableWithFolding {
     flickable2: EmptyShapeRectangleFooterListView {
         id: hiddenListView
 
-        model: root.baseModel
         width: root.width
         placeholderText: root.emptyHiddenPlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !hiddenDropAreaButton.visible
-        empty: root.showcaseModel.hiddenCount === 0 && !root.flickable2Folded // TO BE REMOVE: #13498
         additionalFooterComponent: root.additionalFooterComponent
         spacing: Style.current.halfPadding
+        delegate: delegateWrapper
+        model: root.hiddenModel
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -209,62 +154,10 @@ DoubleFlickableWithFolding {
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
 
-                onDropped: {
-                    root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, visibility)
-                    root.showcaseEntryChanged()
-                }
+                onDropped: root.setVisibilityRequested(drop.source.key, visibility)
             }
 
             onToggleFolding: root.flip2Folding()
-        }
-
-        delegate: DropArea {
-            id: hiddenDelegateRoot
-
-            property int visualIndex: index
-
-            visible: root.filterFunc(model)
-            width: ListView.view.width
-            height: visible && hiddenDraggableDelegateLoader.item ? hiddenDraggableDelegateLoader.item.height : 0
-
-            keys: d.dragShowcaseItemKey
-
-            onEntered: function(drag) {
-                drag.accept()
-            }
-
-            onDropped: function(drop) {
-                root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, Constants.ShowcaseVisibility.NoOne)
-                root.showcaseEntryChanged()
-            }
-
-            // Hidden delegate item container:
-            Loader {
-                id: hiddenDraggableDelegateLoader
-
-                property var modelData: model
-                property var dragParentData: root
-                property int visualIndexData: hiddenDelegateRoot.visualIndex
-
-                width: parent.width
-                sourceComponent: root.hiddenDraggableDelegateComponent
-            }
-
-            // Delegate shadow background when dragging:
-            ShadowDelegate {
-                id: hiddenShadow
-
-                visible: hiddenDraggableDelegateLoader.item && hiddenDraggableDelegateLoader.item.dragActive
-                onVisibleChanged: d.isAnyHiddenDragActive = visible
-            }
-
-            Binding {
-                when: hiddenDropAreaButton.visible
-                target: hiddenDraggableDelegateLoader.item
-                property: "blurState"
-                value: true
-                restoreMode: Binding.RestoreBindingOrValue
-            }
         }
 
         // Overlaid hidden listview content drop area:
@@ -288,11 +181,7 @@ DoubleFlickableWithFolding {
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
 
-                onDropped: {
-                    root.showcaseModel.setVisibilityByIndex(drop.source.visualIndex, visibility)
-                    root.showcaseEntryChanged()
-                    root.updateBaseModelFilters()
-                }
+                onDropped: root.setVisibilityRequested(drop.source.key, visibility)
             }
         }
     }
@@ -366,18 +255,7 @@ DoubleFlickableWithFolding {
         property int margins: Style.current.halfPadding
 
         function dropped(drop, visibility) {
-            var showcaseObj = drop.source.showcaseObj
-
-            // need to set total balance for an asset
-            if (drop.source.totalValue !== undefined) {
-                showcaseObj.enabledNetworkBalance = drop.source.totalValue
-            }
-
-            var tmpObj = Object()
-            root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
-            tmpObj.showcaseVisibility = visibility
-            root.showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
-            root.showcaseEntryChanged()
+            root.setVisibilityRequested(drop.source.key,  visibility)
         }
 
         RowLayout {
@@ -426,5 +304,93 @@ DoubleFlickableWithFolding {
         anchors.centerIn: parent
         color: Theme.palette.baseColor5
         radius: Style.current.radius
+    }
+    
+    Component {
+        id: delegateWrapper
+         DropArea {
+            id: showcaseDelegateRoot
+
+            required property var model
+            required property int index
+            readonly property int visualIndex: index
+            readonly property bool isHiddenShowcaseItem: !model.visibility || model.visibility === Constants.ShowcaseVisibility.NoOne
+
+            function handleEntered(drag) {
+                if (!showcaseDelegateRoot.isHiddenShowcaseItem) {
+                    var from = drag.source.visualIndex
+                    var to = visualIndex
+                    if (to === from)
+                        return
+                    root.changePositionRequested(drag.source.key, to)
+                }
+                drag.accept()
+            }
+            function handleDropped(drop) {
+                if (showcaseDelegateRoot.isHiddenShowcaseItem) {
+                    root.setVisibilityRequested(drop.source.key, Constants.ShowcaseVisibility.NoOne)
+                }
+            }
+
+            ListView.onRemove: SequentialAnimation {
+                PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: true }
+                NumberAnimation { target: showcaseDelegateRoot; property: "scale"; to: 0; easing.type: Easing.InOutQuad }
+                PropertyAction { target: showcaseDelegateRoot; property: "ListView.delayRemove"; value: false }
+            }
+
+            width: ListView.view.width
+            height: showcaseDraggableDelegateLoader.item ? showcaseDraggableDelegateLoader.item.height : 0
+            keys: d.dragShowcaseItemKey
+
+            onEntered: handleEntered(drag)
+            onDropped: handleDropped(drop)
+
+            // In showcase delegate item container:
+            Loader {
+                id: showcaseDraggableDelegateLoader
+
+                property var modelData: showcaseDelegateRoot.model
+                property var dragParentData: root
+                property int visualIndexData: showcaseDelegateRoot.index
+                property var dragKeysData: showcaseDelegateRoot.isHiddenShowcaseItem ?
+                                           d.dragHiddenItemKey : d.dragShowcaseItemKey
+
+                width: parent.width
+                sourceComponent: root.delegate
+            }
+
+            Binding {
+                 when: showcaseDelegateRoot.isHiddenShowcaseItem ? d.isAnyShowcaseDragActive : d.isAnyHiddenDragActive
+                 target: showcaseDraggableDelegateLoader.item
+                 property: "blurState"
+                 value: true
+                 restoreMode: Binding.RestoreBindingOrValue
+             }
+
+             Binding {
+                when: showcaseShadow.visible
+                target: d
+                property: showcaseDelegateRoot.isHiddenShowcaseItem ? "isAnyHiddenDragActive" : "isAnyShowcaseDragActive"
+                value: true
+                restoreMode: Binding.RestoreBindingOrValue
+             }
+
+            // Delegate shadow background when dragging:
+            ShadowDelegate {
+                id: showcaseShadow
+
+                visible: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
+            }
+
+            // Delegate shadow background when dragging:
+            Rectangle {
+                width: parent.width
+                height: d.defaultDelegateHeight
+                anchors.centerIn: parent
+                color: Theme.palette.baseColor5
+                radius: Style.current.radius
+                visible: showcaseShadow.visible
+            }
+        }
     }
 }
