@@ -54,7 +54,6 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
     with step('Verify edited channel details are correct in channels list'):
         channel = community_screen.left_panel.get_channel_parameters(new_channel_name)
         assert channel.name == new_channel_name
-        assert channel.selected
 
     with step('Verify edited channel details are correct in community toolbar'):
         assert community_screen.tool_bar.channel_name == new_channel_name

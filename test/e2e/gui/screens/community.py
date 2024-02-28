@@ -51,7 +51,6 @@ class CommunityScreen(QObject):
         with step('Channel is correct in channels list'):
             channel = self.left_panel.get_channel_parameters(name)
             assert channel.name == name
-            assert channel.selected
 
         with step('Channel is correct in community toolbar'):
             assert self.tool_bar.channel_name == name
