@@ -637,7 +637,8 @@ QtObject:
             )
 
           if chat.name != prevChat.name or chat.description != prevChat.description or chat.color != prevChat.color or
-              chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions:
+              chat.emoji != prevChat.emoji or chat.viewersCanPostReactions != prevChat.viewersCanPostReactions or
+              chat.hideIfPermissionsNotMet != prevChat.hideIfPermissionsNotMet:
             var updatedChat = chat
 
             # TODO improve this in https://github.com/status-im/status-desktop/issues/12595
@@ -1278,10 +1279,11 @@ QtObject:
       color: string,
       categoryId: string,
       viewersCanPostReactions: bool,
+      hideIfPermissionsNotMet: bool
       ) =
     try:
       let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId,
-        viewersCanPostReactions)
+        viewersCanPostReactions, hideIfPermissionsNotMet)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
@@ -1318,6 +1320,7 @@ QtObject:
       categoryId: string,
       position: int,
       viewersCanPostReactions: bool,
+      hideIfPermissionsNotMet: bool
       ) =
     try:
       let response = status_go.editCommunityChannel(
@@ -1329,7 +1332,8 @@ QtObject:
         color,
         categoryId,
         position,
-        viewersCanPostReactions
+        viewersCanPostReactions,
+        hideIfPermissionsNotMet
       )
 
       if response.error != nil:
@@ -2282,6 +2286,13 @@ QtObject:
     else:
       return community.declinedRequestsToJoin[indexDeclined].publicKey
 
+  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
+    if not self.communities.hasKey(communityId):
+      return false
+
+    let community = self.getCommunityById(communityId)
+    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
+
   proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
     let community = self.getCommunityById(communityId)
     for id, tokenPermission in community.tokenPermissions:
@@ -2290,13 +2301,6 @@ QtObject:
           if id == chatId:
             return true
     return false
-
-  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
-    if not self.communities.hasKey(communityId):
-      return false
-
-    let community = self.getCommunityById(communityId)
-    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
 
   proc shareCommunityUrlWithChatKey*(self: Service, communityId: string): string =
     try:

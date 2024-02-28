@@ -31,6 +31,7 @@ QtObject:
       permissionsCheckOngoing: bool
       isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
       shardingInProgress: bool
+      allChannelsAreHiddenBecauseNotPermitted: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -269,9 +270,10 @@ QtObject:
       emoji: string,
       color: string,
       categoryId: string,
-      viewersCanPostReactions: bool
+      viewersCanPostReactions: bool,
+      hideIfPermissionsNotMet: bool,
       ) {.slot.} =
-    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions)
+    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions, hideIfPermissionsNotMet)
 
   proc editCommunityChannel*(
       self: View,
@@ -283,6 +285,7 @@ QtObject:
       categoryId: string,
       position: int,
       viewersCanPostReactions: bool,
+      hideIfPermissionsNotMet: bool
     ) {.slot.} =
     self.delegate.editCommunityChannel(
       channelId,
@@ -293,6 +296,7 @@ QtObject:
       categoryId,
       position,
       viewersCanPostReactions,
+      hideIfPermissionsNotMet
     )
 
   proc leaveCommunity*(self: View) {.slot.} =
@@ -490,3 +494,18 @@ QtObject:
     self.setShardingInProgress(true)
     self.delegate.setCommunityShard(shardIndex)
 
+  proc allChannelsAreHiddenBecauseNotPermittedChanged*(self: View) {.signal.}
+
+  proc getAllChannelsAreHiddenBecauseNotPermitted*(self: View): bool {.slot.} =
+    return self.allChannelsAreHiddenBecauseNotPermitted
+
+  QtProperty[bool] allChannelsAreHiddenBecauseNotPermitted:
+    read = getAllChannelsAreHiddenBecauseNotPermitted
+    notify = allChannelsAreHiddenBecauseNotPermittedChanged
+
+  proc refreshAllChannelsAreHiddenBecauseNotPermittedChanged*(self: View) =
+    let allAreHidden = self.model.allChannelsAreHiddenBecauseNotPermitted()
+    if (allAreHidden == self.allChannelsAreHiddenBecauseNotPermitted):
+      return
+    self.allChannelsAreHiddenBecauseNotPermitted = allAreHidden
+    self.allChannelsAreHiddenBecauseNotPermittedChanged()

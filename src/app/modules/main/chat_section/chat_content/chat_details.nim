@@ -24,6 +24,7 @@ QtObject:
     active: bool
     blocked: bool
     canPostReactions: bool
+    hideIfPermissionsNotMet: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -50,6 +51,7 @@ QtObject:
       isContact: bool = false,
       blocked: bool = false,
       canPostReactions: bool = true,
+      hideIfPermissionsNotMet: bool
     ) =
     self.id = id
     self.`type` = `type`
@@ -70,6 +72,7 @@ QtObject:
     self.active = false
     self.blocked = blocked
     self.canPostReactions = canPostReactions
+    self.hideIfPermissionsNotMet = hideIfPermissionsNotMet
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -255,3 +258,14 @@ QtObject:
   proc setCanPostReactions*(self: ChatDetails, value: bool) =
     self.canPostReactions = value
     self.canPostReactionsChanged()
+  
+  proc hideIfPermissionsNotMetChanged(self: ChatDetails) {.signal.}
+  proc getHideIfPermissionsNotMet(self: ChatDetails): bool {.slot.} =
+    return self.hideIfPermissionsNotMet
+  QtProperty[bool] hideIfPermissionsNotMet:
+    read = getHideIfPermissionsNotMet
+    notify = hideIfPermissionsNotMetChanged
+
+  proc setHideIfPermissionsNotMet*(self: ChatDetails, value: bool) =
+    self.hideIfPermissionsNotMet = value
+    self.hideIfPermissionsNotMetChanged()

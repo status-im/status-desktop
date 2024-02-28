@@ -266,11 +266,11 @@ method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string, 
   raise newException(ValueError, "No implementation available")
 
 method createCommunityChannel*(self: AccessInterface, name: string, description: string,
-    emoji: string, color: string, categoryId: string, viewersCanPostReactions: bool) {.base.} =
+    emoji: string, color: string, categoryId: string, viewersCanPostReactions: bool, hideIfPermissionsNotMet: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method editCommunityChannel*(self: AccessInterface, channelId, name, description, emoji, color,
-    categoryId: string, position: int, viewersCanPostReactions: bool) {.base.} =
+    categoryId: string, position: int, viewersCanPostReactions: bool, hideIfPermissionsNotMet: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method leaveCommunity*(self: AccessInterface) {.base.} =
