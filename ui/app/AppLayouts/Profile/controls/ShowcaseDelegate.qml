@@ -17,7 +17,7 @@ import utils 1.0
 StatusDraggableListItem {
     id: root
 
-    property var showcaseObj
+    property alias tag: tagItem
     property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
     property bool blurState: false
 
@@ -46,10 +46,9 @@ StatusDraggableListItem {
 
     actions: [
         ManageTokensCommunityTag {
+            id: tagItem
             Layout.maximumWidth: root.width *.4
-            visible: showcaseObj && !!showcaseObj.communityId
-            text: showcaseObj && !! showcaseObj.communityName ? showcaseObj.communityName : ""
-            asset.name: showcaseObj && !!showcaseObj.communityImage ? showcaseObj.communityImage : ""
+            visible: false
         },
         StatusRoundButton {
             icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)

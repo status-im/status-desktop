@@ -1,8 +1,5 @@
 AddMoreAccountsLink 1.0 AddMoreAccountsLink.qml
-CommunityShowcaseDelegate 1.0 CommunityShowcaseDelegate.qml
-CollectibleShowcaseDelegate 1.0 CollectibleShowcaseDelegate.qml
-AccountShowcaseDelegate 1.0 AccountShowcaseDelegate.qml
-AssetShowcaseDelegate 1.0 AssetShowcaseDelegate.qml
 WalletAccountDelegate 1.0 WalletAccountDelegate.qml
+ShowcaseDelegate 1.0 ShowcaseDelegate.qml
 StaticSocialLinkInput 1.0 StaticSocialLinkInput.qml
 WalletKeyPairDelegate 1.0 WalletKeyPairDelegate.qml

@@ -16,38 +16,25 @@ ProfileShowcasePanel {
 
     signal navigateToAccountsTab()
 
-    keyRole: "uid"
-    roleNames: ["uid", "chainId", "tokenId", "contractAddress", "communityId", "name", "collectionName", "backgroundColor", "imageUrl"].concat(showcaseRoles)
-    filterFunc: (modelData) => !showcaseModel.hasItemInShowcase(modelData.uid)
     emptyInShowcasePlaceholderText: qsTr("Collectibles here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Collectibles here will be hidden from your profile")
 
-    hiddenDraggableDelegateComponent: CollectibleShowcaseDelegate {
-        Drag.keys: ["x-status-draggable-showcase-item-hidden"]
-        showcaseObj: modelData
-        dragParent: dragParentData
-        visualIndex: visualIndexData
-        onShowcaseVisibilityRequested: {
-            var tmpObj = Object()
-            root.roleNames.forEach(role => tmpObj[role] = showcaseObj[role])
-            tmpObj.showcaseVisibility = value
-            showcaseModel.upsertItemJson(JSON.stringify(tmpObj))
-            root.showcaseEntryChanged()
-        }
-    }
-    showcaseDraggableDelegateComponent: CollectibleShowcaseDelegate {
-        Drag.keys: ["x-status-draggable-showcase-item"]
-        showcaseObj: modelData
-        dragParent: dragParentData
-        visualIndex: visualIndexData
-        dragAxis: Drag.YAxis
-        showcaseVisibility: !!modelData ? modelData.showcaseVisibility : Constants.ShowcaseVisibility.NoOne
-        onShowcaseVisibilityRequested: {
-            showcaseModel.setVisibility(showcaseObj.uid, value)
-            root.showcaseEntryChanged()
-        }
-    }
     additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
+
+    delegate: ProfileShowcasePanel.Delegate {
+        title: !!model ? `${model.name}` || `#${model.id}` : ""
+        secondaryTitle: !!model && !!model.collectionName ? model.collectionName : ""
+        hasImage: !!model && !!model.imageUrl
+
+        icon.source: hasImage ? model.imageUrl : ""
+        bgRadius: Style.current.radius
+        assetBgColor: !!model && !!model.backgroundColor ? model.backgroundColor : "transparent"
+
+        tag.visible: model && !!model.communityId
+        tag.text: model && !!model.communityName ? model.communityName : ""
+        tag.asset.name: model && !!model.communityImage ? model.communityImage : ""
+        tag.loading: model && !!model.communityImageLoading ? model.communityImageLoading : false
+    }
 
     Component {
         id: addMoreAccountsComponent

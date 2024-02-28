@@ -16,9 +16,11 @@ import "./profile"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.stores 1.0
 
@@ -112,7 +114,18 @@ SettingsContentBase {
     readonly property var priv: QtObject {
         id: priv
 
-        property bool hasAnyProfileShowcaseChanges: false
+        property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
+
+        property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
+            communitiesSourceModel: root.communitiesModel
+            communitiesShowcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            
+            accountsSourceModel: root.walletStore.accounts
+            accountsShowcaseModel: root.profileStore.profileShowcaseAccountsModel
+
+            collectiblesSourceModel: root.profileStore.collectiblesModel
+            collectiblesShowcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+        }
 
         function reset() {
             descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
@@ -120,33 +133,15 @@ SettingsContentBase {
             profileStore.resetSocialLinks()
             profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
 
-            profileShowcaseCommunitiesPanel.reset()
-            profileShowcaseAccountsPanel.reset()
-            profileShowcaseCollectiblesPanel.reset()
-            profileShowcaseAssetsPanel.reset()
+            priv.showcaseModels.revert()
             root.profileStore.requestProfileShowcasePreferences()
-            hasAnyProfileShowcaseChanges = false
         }
 
         function save() {
             if (hasAnyProfileShowcaseChanges)
-                profileStore.storeProfileShowcasePreferences()
-
-            if (!descriptionPanel.isEnsName)
-                profileStore.setDisplayName(descriptionPanel.displayName.text)
-            profileStore.setBio(descriptionPanel.bio.text.trim())
-            profileStore.saveSocialLinks()
-            if (profileHeader.icon === "") {
-                root.profileStore.removeImage()
-            } else {
-                profileStore.uploadImage(profileHeader.icon,
-                                         profileHeader.cropRect.x.toFixed(),
-                                         profileHeader.cropRect.y.toFixed(),
-                                         (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
-                                         (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed());
-            }
-
-            reset()
+                print ("Profile showcase changes detected: SAVING")
+            //TODO: implement save as deschibed here
+            // https://github.com/status-im/status-desktop/pull/13708
         }
     }
 
@@ -205,32 +200,50 @@ SettingsContentBase {
         // communities
         ProfileShowcaseCommunitiesPanel {
             id: profileShowcaseCommunitiesPanel
-            baseModel: root.communitiesModel
-            showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            inShowcaseModel: priv.showcaseModels.communitiesVisibleModel
+            hiddenModel:  priv.showcaseModels.communitiesHiddenModel
+
+            onChangePositionRequested: function (key, to) {
+                priv.showcaseModels.changeCommunityPosition(key, to)
+            }
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setCommunityVisibility(key, toVisibility)
+            }
         }
 
         // accounts
         ProfileShowcaseAccountsPanel {
             id: profileShowcaseAccountsPanel
-            baseModel: root.walletStore.accounts
-            showcaseModel: root.profileStore.profileShowcaseAccountsModel
+            inShowcaseModel: priv.showcaseModels.accountsVisibleModel
+            hiddenModel: priv.showcaseModels.accountsHiddenModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+
+            onChangePositionRequested: function (key, to) {
+                priv.showcaseModels.changeAccountPosition(key, to)
+            
+            }
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setAccountVisibility(key, toVisibility)
+            }
         }
 
         // collectibles
         ProfileShowcaseCollectiblesPanel {
             id: profileShowcaseCollectiblesPanel
-            baseModel: root.profileStore.collectiblesModel
-            showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
-            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
 
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            addAccountsButtonVisible: priv.showcaseModels.accountsHiddenModel > 0
             onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
 
+            inShowcaseModel: priv.showcaseModels.collectiblesVisibleModel
+            hiddenModel: priv.showcaseModels.collectiblesHiddenModel
 
+            onChangePositionRequested: function (key, to) {
+                priv.showcaseModels.changeCollectiblePosition(key, to)
+            }
 
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setCollectibleVisibility(key, toVisibility)
+            }
         }
 
         // web

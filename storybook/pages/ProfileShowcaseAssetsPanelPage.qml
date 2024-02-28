@@ -2,8 +2,11 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
+
+import SortFilterProxyModel 0.2
 
 import mainui 1.0
 import AppLayouts.Profile.panels 1.0
@@ -23,77 +26,58 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    Popups {
-        popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: CommunityTokensStore {}
-    }
-
     readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
         assetsWithFilteredBalances: walletAssetStore.groupedAccountsAssetsModel
     }
 
-    ListModel {
-        id: emptyModel
+    SortFilterProxyModel {
+        id: inShowcaseModelItem
+        sourceModel: !emptyModelChecker.checked ? walletAssetStore.groupedAccountAssetsModel : null
+        proxyRoles: [
+            FastExpressionRole {
+                name: "key"
+                expression: "Asset 1" + index
+            },
+            FastExpressionRole {
+                name: "visibility"
+                expression: 1
+            }
+        ]
     }
 
-    ListModel {
-        id: inShowcaseAssetsModel
-
-        property int hiddenCount: emptyModelChecker.checked ? 0 : walletAssetStore.groupedAccountsAssetsModel.count - count
-
-        signal baseModelFilterConditionsMayHaveChanged()
-
-        function setVisibilityByIndex(index, visibility) {
-            if (visibility === Constants.ShowcaseVisibility.NoOne) {
-                remove(index)
-            } else {
-                get(index).showcaseVisibility = visibility
+    SortFilterProxyModel {
+        id: hiddenShowcaseModelItem
+        sourceModel: !emptyModelChecker.checked ? walletAssetStore.groupedAccountAssetsModel : null
+        proxyRoles: [
+            FastExpressionRole {
+                name: "key"
+                expression: "Asset 2" + index
+            },
+            FastExpressionRole {
+                name: "visibility"
+                expression: 0
             }
-        }
-
-        function setVisibility(symbol, visibility) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).symbol === symbol) {
-                    setVisibilityByIndex(i, visibility)
-                }
-            }
-        }
-
-        function hasItemInShowcase(symbol) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).symbol === symbol) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        function upsertItemJson(item) {
-            append(JSON.parse(item))
-        }
+        ]
     }
 
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ProfileShowcaseAssetsPanel {
+        id: showcasePanel
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
+        inShowcaseModel: inShowcaseModelItem
+        hiddenModel: hiddenShowcaseModelItem
 
-        ProfileShowcaseAssetsPanel {
-            id: showcasePanel
-            width: 500
-            baseModel: emptyModelChecker.checked ? emptyModel : walletAssetStore.groupedAccountAssetsModel
-            showcaseModel: inShowcaseAssetsModel
-            addAccountsButtonVisible: !hasAllAccountsChecker.checked
+        addAccountsButtonVisible: !hasAllAccountsChecker.checked
 
-            formatCurrencyAmount: function (amount, symbol) {
-                return ({amount: amount,
-                            symbol: symbol.toUpperCase(),
-                            displayDecimals: 4,
-                            stripTrailingZeroes: false})
-            }
-
-            onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseAssetsPanel::onNavigateToAccountsTab")
+        formatCurrencyAmount: function (amount, symbol) {
+            const currencyAmount = ({amount: amount,
+                        symbol: symbol.toUpperCase(),
+                        displayDecimals: 4,
+                        stripTrailingZeroes: false})
+            return LocaleUtils.currencyAmountToLocaleString(currencyAmount)
         }
+
+        onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseAssetsPanel::onNavigateToAccountsTab")
     }
 
     LogsAndControlsPanel {
@@ -123,8 +107,6 @@ SplitView {
 
                 text: "Empty model"
                 checked: false
-
-                onClicked: showcasePanel.reset()
             }
         }
     }
