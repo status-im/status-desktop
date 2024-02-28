@@ -25,6 +25,9 @@ STATUS_GO_REPO="${STATUS_GO_REPO:=status-go}"
 STATUS_GO_OWNER="${STATUS_GO_OWNER:=status-im}"
 REPO_URL="https://github.com/${STATUS_GO_OWNER}/${STATUS_GO_REPO}"
 STATUS_GO_VERSION=$1
+COMMIT_MESSAGE="chore: bump status-go"
+TIMESTAMP=$(date +%s)
+STATUS_DESKTOP_MAIN_BRANCH="master"
 
 HELP_MESSAGE=$(cat <<-END
 This is a tool to help creating PRs with specific status-go versions
@@ -32,6 +35,8 @@ If the given name matches both a branch and a tag the tag is used.
 Usage:
     ${SCRIPT_FILE} {version}
 Examples:
+    # Latest develop
+    ${SCRIPT_FILE} --latest
     # Using branch name
     ${SCRIPT_FILE} feature-abc-xyz
     # Using tag name
@@ -60,60 +65,73 @@ if [[ "${STATUS_GO_VERSION}" = PR-* ]]; then
     STATUS_GO_VERSION="refs/pull/${STATUS_GO_VERSION#"PR-"}/head"
 fi
 
-# ls-remote finds only tags, branches, and pull requests, but can't find commits
-STATUS_GO_MATCHING_REFS=$(git ls-remote ${REPO_URL} ${STATUS_GO_VERSION})
-
-# It's possible that there's both a branch and a tag matching the given version
-STATUS_GO_TAG_SHA1=$(echo "${STATUS_GO_MATCHING_REFS}" | grep 'refs/tags' | cut -f1)
-STATUS_GO_BRANCH_SHA1=$(echo "${STATUS_GO_MATCHING_REFS}" | grep 'refs/heads' | cut -f1)
-
-REQUIRES_MSG=https://github.com/status-im/status-go/
-
-# Prefer tag over branch if both are found
-if [[ -n "${STATUS_GO_TAG_SHA1}" ]]; then
-    STATUS_GO_COMMIT_SHA1="${STATUS_GO_TAG_SHA1}"
-    REQUIRES_MSG=${REQUIRES_MSG}/tree/${STATUS_GO_VERSION}
-elif [[ -n "${STATUS_GO_BRANCH_SHA1}" ]]; then
-    STATUS_GO_COMMIT_SHA1="${STATUS_GO_BRANCH_SHA1}"
-    REQUIRES_MSG=${REQUIRES_MSG}/tree/${STATUS_GO_VERSION}
-elif [[ "${#STATUS_GO_VERSION}" -gt 4 ]]; then
-    STATUS_GO_COMMIT_SHA1="${STATUS_GO_VERSION}"
-    REQUIRES_MSG=${REQUIRES_MSG}/commit/${STATUS_GO_VERSION}
+if [ "$1" = "--latest" ]; then
+    STATUS_GO_VERSION=""
+    BRANCH_NAME=bump/status-go/latest-develop/${TIMESTAMP}
 else
-    echo "ERROR: Input not a tag or branch, but too short to be a SHA1!" >&2
-    exit 1
-fi
+    # ls-remote finds only tags, branches, and pull requests, but can't find commits
+    STATUS_GO_MATCHING_REFS=$(git ls-remote ${REPO_URL} ${STATUS_GO_VERSION})
 
-echo "SHA-1 for ${STATUS_GO_VERSION} is ${STATUS_GO_COMMIT_SHA1}.
-Owner is ${STATUS_GO_OWNER}"
+    # It's possible that there's both a branch and a tag matching the given version
+    STATUS_GO_TAG_SHA1=$(echo "${STATUS_GO_MATCHING_REFS}" | grep 'refs/tags' | cut -f1)
+    STATUS_GO_BRANCH_SHA1=$(echo "${STATUS_GO_MATCHING_REFS}" | grep 'refs/heads' | cut -f1)
 
+    REQUIRES_MSG=https://github.com/status-im/status-go/
 
-TIMESTAMP=$(date +%s)
-BRANCH_NAME=bump/status-go/${STATUS_GO_VERSION}/${TIMESTAMP}
+    # Prefer tag over branch if both are found
+    if [[ -n "${STATUS_GO_TAG_SHA1}" ]]; then
+        STATUS_GO_COMMIT_SHA1="${STATUS_GO_TAG_SHA1}"
+        REQUIRES_MSG=${REQUIRES_MSG}/tree/${STATUS_GO_VERSION}
+    elif [[ -n "${STATUS_GO_BRANCH_SHA1}" ]]; then
+        STATUS_GO_COMMIT_SHA1="${STATUS_GO_BRANCH_SHA1}"
+        REQUIRES_MSG=${REQUIRES_MSG}/tree/${STATUS_GO_VERSION}
+    elif [[ "${#STATUS_GO_VERSION}" -gt 4 ]]; then
+        STATUS_GO_COMMIT_SHA1="${STATUS_GO_VERSION}"
+        REQUIRES_MSG=${REQUIRES_MSG}/commit/${STATUS_GO_VERSION}
+    else
+        echo "ERROR: Input not a tag or branch, but too short to be a SHA1!" >&2
+        exit 1
+    fi
 
-git checkout master
-git pull
-git checkout -b ${BRANCH_NAME}
-cd vendor/status-go
-git checkout ${STATUS_GO_COMMIT_SHA1}
-cd ../..
-git add ./vendor/status-go
-git commit -m "chore: bump status-go
+    echo "SHA-1 for ${STATUS_GO_VERSION} is ${STATUS_GO_COMMIT_SHA1}.
+    Owner is ${STATUS_GO_OWNER}"
+
+    BRANCH_NAME=bump/status-go/${STATUS_GO_VERSION}/${TIMESTAMP}
+    COMMIT_MESSAGE="${COMMIT_MESSAGE}
 
 ### Requires
 - ${REQUIRES_MSG}
-
-
 "
+fi
+
+
+git checkout -q ${STATUS_DESKTOP_MAIN_BRANCH}
+git pull
+git checkout -b ${BRANCH_NAME}
+cd vendor/status-go
+if [ -z ${STATUS_GO_VERSION} ]; then
+    git fetch origin
+    git checkout develop
+    git pull
+else
+    git checkout ${STATUS_GO_COMMIT_SHA1}
+fi
+cd ../..
+git add ./vendor/status-go
+git commit -m "${COMMIT_MESSAGE}"
 git push --set-upstream origin ${BRANCH_NAME}
 git push
-git checkout master
+git checkout ${STATUS_DESKTOP_MAIN_BRANCH}
 git branch -D ${BRANCH_NAME}
 
-cat << EOF
-DONE!!!!!!!!!!!!!
+STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-desktop/compare/$STATUS_DESKTOP_MAIN_BRANCH}...${BRANCH_NAME}"
+STATUS_DESKTOP_PR_LINK="${STATUS_DESKTOP_PR_LINK}?quick_pull=1&title=chore:+bump+status-go&body=update+status+go"
 
-Create a pull request at https://github.com/status-im/status-desktop/pull/new/${BRANCH_NAME}
+cat << EOF
+
+✅ DONE!
+
+Create a pull request at ${STATUS_DESKTOP_PR_LINK}
 
 
 EOF
