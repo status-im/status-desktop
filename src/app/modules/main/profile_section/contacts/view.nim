@@ -155,6 +155,9 @@ QtObject:
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
 
+  proc markAsTrusted*(self: View, publicKey: string) {.slot.} =
+    self.delegate.markAsTrusted(publicKey)
+
   proc markUntrustworthy*(self: View, publicKey: string) {.slot.} =
     self.delegate.markUntrustworthy(publicKey)
 

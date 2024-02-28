@@ -77,6 +77,9 @@ method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method markAsTrusted*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
