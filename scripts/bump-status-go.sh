@@ -103,7 +103,6 @@ else
 "
 fi
 
-echo "<<<"
 
 git checkout -q master
 git pull
@@ -124,10 +123,14 @@ git push
 git checkout master
 git branch -D ${BRANCH_NAME}
 
-cat << EOF
-DONE!!!!!!!!!!!!!
+STATUS_DESKTOP_PR_LINK="https://github.com/status-im/status-desktop/compare/master...${BRANCH_NAME}"
+STATUS_DESKTOP_PR_LINK="${STATUS_DESKTOP_PR_LINK}?quick_pull=1&title=chore:+bump+status-go&body=update+status+go"
 
-Create a pull request at https://github.com/status-im/status-desktop/pull/new/${BRANCH_NAME}
+cat << EOF
+
+✅ DONE!
+
+Create a pull request at ${STATUS_DESKTOP_PR_LINK}
 
 
 EOF
