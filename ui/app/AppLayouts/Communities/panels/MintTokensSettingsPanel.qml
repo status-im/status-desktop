@@ -50,6 +50,7 @@ StackView {
 
     // Models:
     property var tokensModel
+    property var membersModel
     property var accounts // Expected roles: address, name, color, emoji, walletType
     required property var referenceAssetsBySymbolModel
 
@@ -481,6 +482,7 @@ StackView {
         property TokenObject token: TokenObject {}
         readonly property bool deploymentFailed: view.deployState === Constants.ContractTransactionStatus.Failed
 
+        property var membersModel
         property var tokenOwnersModel
         property string airdropKey
         // Owner and TMaster related props
@@ -547,7 +549,9 @@ StackView {
             viewWidth: root.viewWidth
 
             token: tokenViewPage.token
+            membersModel: tokenViewPage.membersModel
             tokenOwnersModel: tokenViewPage.tokenOwnersModel
+            isOwnerTokenItem: tokenViewPage.isOwnerTokenItem
 
             onGeneralAirdropRequested: {
                 root.airdropToken(view.airdropKey,
@@ -942,6 +946,7 @@ StackView {
                     anchors.fill: parent
 
                     tokenOwnersModel: model.tokenOwnersModel
+                    membersModel: root.membersModel
                     airdropKey: model.symbol // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
 
                     token.privilegesLevel: model.privilegesLevel
