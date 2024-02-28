@@ -43,7 +43,7 @@ pipeline {
     buildDiscarder(logRotator(
       numToKeepStr: '10',
       daysToKeepStr: '30',
-      artifactNumToKeepStr: '3',
+      artifactNumToKeepStr: '1',
     ))
     /* Allows combined build to copy */
     copyArtifactPermission('/status-desktop/*')
