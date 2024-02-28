@@ -23,8 +23,8 @@ class ChangePasswordPopup(BasePopup):
         This time is not really predictable, especially for huge DBs.
         """
         self._re_encrypt_data_restart_button.click()
-        assert driver.waitForObject(self._re_encryption_complete_element.real_name, 15000), \
-            f'Re-encryption confirmation is not present within 15 seconds'
-        assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 20000)
+        assert driver.waitForObject(self._re_encryption_complete_element.real_name, 30000), \
+            f'Re-encryption confirmation is not present within 30 seconds'
+        assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 5000)
         assert getattr(self._re_encrypt_data_restart_button.object, 'text') == PasswordView.RESTART_STATUS.value
         self._re_encrypt_data_restart_button.click()
