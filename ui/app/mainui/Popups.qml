@@ -53,6 +53,7 @@ QtObject {
         Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
         Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
+        Global.openReviewContactRequestPopup.connect(openReviewContactRequestPopup)
         Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
         Global.openDownloadModalRequested.connect(openDownloadModal)
         Global.openImagePopup.connect(openImagePopup)
@@ -220,6 +221,19 @@ QtObject {
             contactDetails: details
         }
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
+    }
+
+    function openReviewContactRequestPopup(publicKey, contactDetails, cb) {
+        try {
+            const crDetails = rootStore.contactStore.getLatestContactRequestForContactAsJson(publicKey)
+            if (crDetails.from !== publicKey) {
+                console.warn("Popups.openReviewContactRequestPopup: not matching publicKey:", publicKey)
+                return
+            }
+            openPopup(reviewContactRequestPopupComponent, {publicKey, contactDetails, crDetails}, cb)
+        } catch (e) {
+            console.error("Popups.openReviewContactRequestPopup: error getting or parsing contact request data", e)
+        }
     }
 
     function openPinnedMessagesPopup(store, messageStore, pinnedMessagesModel, messageToPin, chatId) {
@@ -463,6 +477,23 @@ QtObject {
             SendContactRequestModal {
                 rootStore: root.rootStore
                 onAccepted: rootStore.contactStore.sendContactRequest(publicKey, message)
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: reviewContactRequestPopupComponent
+            ReviewContactRequestPopup {
+                onAccepted: {
+                    rootStore.contactStore.acceptContactRequest(publicKey, contactRequestId)
+                    Global.displaySuccessToastMessage(qsTr("Contact request accepted"))
+                    close()
+                }
+                onDiscarded: {
+                    rootStore.contactStore.dismissContactRequest(publicKey, contactRequestId)
+                    Global.displaySuccessToastMessage(qsTr("Contact request ignored"))
+                    close()
+                }
                 onClosed: destroy()
             }
         },

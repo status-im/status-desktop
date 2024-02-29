@@ -42,6 +42,7 @@ QtObject {
     signal openMarkAsIDVerifiedPopup(string publicKey, var contactDetails, var cb)
     signal openRemoveIDVerificationDialog(string publicKey, var contactDetails, var cb)
     signal openContactRequestPopup(string publicKey, var contactDetails, var cb)
+    signal openReviewContactRequestPopup(string publicKey, var contactDetails, var cb)
     signal markAsUntrustedRequested(string publicKey, var contactDetails)
     signal removeContactRequested(string publicKey, var contactDetails)
     signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)

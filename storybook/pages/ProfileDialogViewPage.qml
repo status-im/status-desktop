@@ -148,6 +148,22 @@ SplitView {
                     ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Sent)
                 }
 
+                function acceptContactRequest(publicKey, contactRequestId) {
+                    logs.logEvent("rootStore::contactStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
+                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Mutual)
+                }
+
+                function getLatestContactRequestForContactAsJson(pubKey) {
+                    logs.logEvent("rootStore::contactStore::getLatestContactRequestForContactAsJson", ["pubKey"], arguments)
+                    return {
+                        id: "123456789",
+                        from: pubKey,
+                        clock: Date.now(),
+                        text: "Hey Jo, it’s Alex here, we met at devcon last week!",
+                        contactRequestState: Constants.ContactRequestState.Received
+                    }
+                }
+
                 function sendVerificationRequest(publicKey, challenge) {
                     logs.logEvent("rootStore::contactStore::sendVerificationRequest", ["publicKey", "challenge"], arguments)
                     ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
