@@ -204,8 +204,8 @@ SettingsContentBase {
             inShowcaseModel: priv.showcaseModels.communitiesVisibleModel
             hiddenModel:  priv.showcaseModels.communitiesHiddenModel
 
-            onChangePositionRequested: function (key, to) {
-                priv.showcaseModels.changeCommunityPosition(key, to)
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeCommunityPosition(from, to)
             }
             onSetVisibilityRequested: function (key, toVisibility) {
                 priv.showcaseModels.setCommunityVisibility(key, toVisibility)
@@ -219,8 +219,8 @@ SettingsContentBase {
             hiddenModel: priv.showcaseModels.accountsHiddenModel
             currentWallet: root.walletStore.overview.mixedcaseAddress
 
-            onChangePositionRequested: function (key, to) {
-                priv.showcaseModels.changeAccountPosition(key, to)
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeAccountPosition(from, to)
             
             }
             onSetVisibilityRequested: function (key, toVisibility) {
@@ -238,8 +238,8 @@ SettingsContentBase {
             inShowcaseModel: priv.showcaseModels.collectiblesVisibleModel
             hiddenModel: priv.showcaseModels.collectiblesHiddenModel
 
-            onChangePositionRequested: function (key, to) {
-                priv.showcaseModels.changeCollectiblePosition(key, to)
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeCollectiblePosition(from, to)
             }
 
             onSetVisibilityRequested: function (key, toVisibility) {

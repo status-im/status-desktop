@@ -31,7 +31,7 @@ DoubleFlickableWithFolding {
     property string emptyHiddenPlaceholderText
 
     // Signal to requst position change of the visible items
-    signal changePositionRequested(var key, int to)
+    signal changePositionRequested(int from, int to)
     // Signal to request visibility change of the items
     signal setVisibilityRequested(var key, int toVisibility)
 
@@ -46,7 +46,7 @@ DoubleFlickableWithFolding {
 
         Drag.keys: dragKeys
 
-        dragParent: root
+        dragParent: dragParentData
         visualIndex: visualIndexData
         dragAxis: Drag.YAxis
         showcaseVisibility: model ? model.visibility ?? Constants.ShowcaseVisibility.NoOne :
@@ -322,7 +322,7 @@ DoubleFlickableWithFolding {
                     var to = visualIndex
                     if (to === from)
                         return
-                    root.changePositionRequested(drag.source.key, to)
+                    root.changePositionRequested(drag.source.visualIndex, to)
                 }
                 drag.accept()
             }
