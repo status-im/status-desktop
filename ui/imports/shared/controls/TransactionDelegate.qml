@@ -50,6 +50,7 @@ StatusListItem {
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
 
+    readonly property string txID: isModelDataValid ? modelData.id : "INVALID"
     readonly property int transactionStatus: isModelDataValid ? modelData.status : Constants.TransactionStatus.Pending
     readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
     readonly property string currentCurrency: rootStore.currentCurrency
@@ -176,11 +177,6 @@ StatusListItem {
     }
 
     function getDetailsString(detailsObj) {
-        if (!detailsObj) {
-            rootStore.fetchTxDetails(index)
-            detailsObj = rootStore.getTxDetails()
-        }
-
         let details = ""
         const endl = "\n"
         const endl2 = endl + endl

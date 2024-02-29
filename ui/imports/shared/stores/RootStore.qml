@@ -208,12 +208,13 @@ QtObject {
         walletSectionInst.fetchDecodedTxData(txHash, input)
     }
 
-    function fetchTxDetails(modelIndex) {
-        walletSectionInst.activityController.fetchTxDetails(modelIndex)
+    function fetchTxDetails(txID) {
+        walletSectionInst.activityController.fetchTxDetails(txID)
+        walletSectionInst.activityDetailsController.fetchExtraTxDetails()
     }
 
     function getTxDetails() {
-        return walletSectionInst.activityController.activityDetails
+        return walletSectionInst.activityDetailsController.activityDetails
     }
 
     property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false

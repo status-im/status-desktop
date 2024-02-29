@@ -3,13 +3,14 @@ import tables, stint, sets
 
 import model
 import entry
-import entry_details
 import recipients_model
 import collectibles_model
 import collectibles_item
 import events_handler
 import status
 import utils
+
+import details_controller as details_controller
 
 import web3/conversions
 
@@ -48,7 +49,8 @@ QtObject:
       currencyService: currency_service.Service
       tokenService: token_service.Service
       savedAddressService: saved_address_service.Service
-      activityDetails: ActivityDetails
+
+      detailsController: details_controller.Controller
 
       eventsHandler: EventsHandler
       status: Status
@@ -114,30 +116,17 @@ QtObject:
           ae = entry.newTransactionActivityEntry(backendEntry, self.addresses, extraData, amountToCurrencyConvertor)
       result.add(ae)
 
-  proc fetchTxDetails*(self: Controller, entryIndex: int) {.slot.} =
-    let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
-      return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
-                                    self.currencyService.getCurrencyFormat(symbol))
-
-    self.activityDetails = nil
-    let entry = self.model.getEntry(entryIndex)
+  proc fetchTxDetails*(self: Controller, txID: string) {.slot.} =
+    let index = self.model.getIndex(txID)
+    if index == -1:
+      error "entry index not found"
+      return
+    let entry = self.model.getEntry(index)
     if entry == nil:
-      error "failed to find entry with index: ", entryIndex
+      error "entry not found"
       return
 
-    try:
-      self.activityDetails = newActivityDetails(entry.getMetadata(), amountToCurrencyConvertor)
-    except Exception as e:
-      error "error: ", e.msg
-      return
-
-  proc getActivityDetails(self: Controller): QVariant {.slot.} =
-    if self.activityDetails == nil:
-      return newQVariant()
-    return newQVariant(self.activityDetails)
-
-  QtProperty[QVariant] activityDetails:
-    read = getActivityDetails
+    self.detailsController.setActivityEntry(entry)
 
   proc processResponse(self: Controller, response: JsonNode) =
     defer: self.status.setLoadingData(false)
@@ -307,6 +296,7 @@ QtObject:
     )
 
   proc newController*(requestId: int32,
+                      detailsController: details_controller.Controller,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
@@ -325,6 +315,7 @@ QtObject:
     result.status = newStatus()
 
     result.currencyService = currencyService
+    result.detailsController = detailsController
 
     result.filterTokenCodes = initHashSet[string]()
 

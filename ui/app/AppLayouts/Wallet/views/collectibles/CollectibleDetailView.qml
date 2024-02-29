@@ -19,6 +19,8 @@ import "../../controls"
 Item {
     id: root
 
+    signal launchTransactionDetail(string txID)
+
     required property var rootStore
     required property var walletRootStore
     required property var communitiesStore
@@ -212,7 +214,11 @@ Item {
                             community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
                             loading: false
                             onClicked: {
-                                // TODO: Implement switch to transaction details screen
+                                if (mouse.button === Qt.RightButton) {
+                                    // TODO: Implement context menu
+                                } else {
+                                    root.launchTransactionDetail(modelData.id)
+                                }
                             }
                         }
                     }
