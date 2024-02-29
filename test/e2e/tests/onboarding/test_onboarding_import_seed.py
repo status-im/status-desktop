@@ -31,11 +31,11 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
 @pytest.mark.case(703040)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('autocomplete', [
-    pytest.param(False),
-    pytest.param(True, marks=pytest.mark.critical)
+@pytest.mark.parametrize('autocomplete, default_name', [
+    pytest.param(False, 'Account 1'),
+    pytest.param(True, 'Account 1', marks=pytest.mark.critical)
 ])
-def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, autocomplete: bool):
+def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, default_name, autocomplete: bool):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
@@ -55,7 +55,7 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, au
 
     with (step('Verify that restored account reveals correct status wallet address')):
         status_acc_view = (
-            LeftPanel().open_settings().left_panel.open_wallet_settings().open_status_account_in_settings())
+            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(default_name))
         address = status_acc_view.get_account_address_value()
         assert address == user_account.status_address, \
             f"Recovered account should have address {user_account.status_address}, but has {address}"

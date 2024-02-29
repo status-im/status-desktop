@@ -19,10 +19,10 @@ pytestmark = marks
 @pytest.mark.parametrize(
     'address, default_name, name, color, emoji, acc_emoji, second_name, second_color, second_emoji, second_acc_emoji',
     [
-        pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Status account',
+        pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'Account 1',
                      'WatchOnly', '#2a4af5', 'sunglasses', '😎 ', 'Generated', '#216266', 'thumbsup', '👍 ')
     ])
-@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/519')
+#@pytest.mark.skip(reason='https://github.com/status-im/desktop-qa-automation/issues/519')
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account, address: str, default_name,
                                                name: str, color: str, emoji: str, acc_emoji: str, second_name: str,
                                                second_color: str, second_emoji: str, second_acc_emoji: str):
@@ -101,7 +101,7 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
                  'Account order: reordering is not possible having a single account')
 @pytest.mark.case(703416)
 @pytest.mark.parametrize('default_name, text_on_top', [
-    pytest.param('Status account', 'This account looks a little lonely. Add another account'
+    pytest.param('Account 1', 'This account looks a little lonely. Add another account'
                                    ' to enable re-ordering.')
 ])
 def test_change_account_order_not_possible(main_screen: MainWindow, default_name: str, text_on_top: str):

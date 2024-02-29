@@ -13,7 +13,7 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703022', 'Edit default wallet account')
 @pytest.mark.case(703022)
 @pytest.mark.parametrize('name, new_name, new_color, new_emoji, new_emoji_unicode', [
-    pytest.param('Status account', 'MyPrimaryAccount', '#216266', 'sunglasses', '1f60e')
+    pytest.param('Account 1', 'MyPrimaryAccount', '#216266', 'sunglasses', '1f60e')
 ])
 def test_context_menu_edit_default_account(main_screen: MainWindow, name: str, new_name: str, new_color: str, new_emoji: str,
                                            new_emoji_unicode: str):

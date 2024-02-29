@@ -21,7 +21,7 @@ class WalletNetworkSettings(Enum):
                                     'security risks and potentially even loss of funds.')
     REVERT_TO_DEFAULT_LIVE_MAINNET_TOAST_MESSAGE = 'Live network settings for Mainnet reverted to default'
     REVERT_TO_DEFAULT_TEST_MAINNET_TOAST_MESSAGE = 'Test network settings for Mainnet reverted to default'
-    STATUS_ACCOUNT_DEFAULT_NAME = 'Status account'
+    STATUS_ACCOUNT_DEFAULT_NAME = 'Account 1'
     STATUS_ACCOUNT_DEFAULT_COLOR = '#2a4af5'
 
 
