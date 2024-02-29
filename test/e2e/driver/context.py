@@ -12,16 +12,15 @@ LOG = logging.getLogger(__name__)
 
 @allure.step('Get application context of "{0}"')
 def get_context(aut_id: str):
-    for i in range(10):
-        try:
-            LOG.debug('Attaching to: %s', aut_id)
-            context = squish.attachToApplication(aut_id, SquishServer().host, SquishServer().port)
-            if context is not None:
-                LOG.info('AUT %s context found', aut_id)
-                return context
-        except RuntimeError:
-            time.sleep(10)
-            continue
+    LOG.info('Attaching to: %s', aut_id)
+    try:
+        context = squish.attachToApplication(aut_id, SquishServer().host, SquishServer().port)
+        if context is not None:
+            LOG.info('AUT %s context found', aut_id)
+            return context
+    except RuntimeError as error:
+        LOG.error('AUT %s context has not been found', aut_id)
+        raise error
 
 
 @allure.step('Detaching')

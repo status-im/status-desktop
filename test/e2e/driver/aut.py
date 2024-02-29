@@ -81,27 +81,19 @@ class AUT:
         self.pid = None
 
     @allure.step('Attach Squish to Test Application')
-    def attach(self):
+    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
         LOG.info('Attaching to AUT: localhost:%d', self.port)
-        for i in range(3):
-            try:
-                SquishServer().add_attachable_aut(self.aut_id, self.port)
-                if self.ctx is None:
-                    self.ctx = context.get_context(self.aut_id)
-                else:
-                    if self.ctx is None:
-                        for j in range(3):
-                            try:
-                                context.get_context(self.aut_id)
-                            except AttributeError:
-                                continue
 
-                squish.setApplicationContext(self.ctx)
-                assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
-            except Exception as err:
-                LOG.error('Failed to attach AUT: %s', err)
-                self.stop()
-                raise err
+        try:
+            SquishServer().add_attachable_aut(self.aut_id, self.port)
+            if self.ctx is None:
+                self.ctx = context.get_context(self.aut_id)
+            squish.setApplicationContext(self.ctx)
+            assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
+        except Exception as err:
+            LOG.error('Failed to attach AUT: %s', err)
+            self.stop()
+            raise err
         LOG.info('Successfully attached AUT!')
         return self
 
@@ -141,7 +133,7 @@ class AUT:
         return self
 
     @allure.step('Waiting for port')
-    def wait(self, timeout: int = 3, retries: int = 10):
+    def wait(self, timeout: int = 1, retries: int = 10):
         LOG.info('Waiting for AUT port localhost:%d...', self.port)
         try:
             wait_for_port('localhost', self.port, timeout, retries)
