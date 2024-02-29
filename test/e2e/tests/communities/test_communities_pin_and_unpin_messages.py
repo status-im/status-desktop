@@ -1,14 +1,18 @@
+import time
+from copy import deepcopy
 from datetime import datetime
 
 import allure
 import pytest
 from allure_commons._allure import step
+
+import driver
+from gui.main_window import MainWindow
 from . import marks
 
 import configs
 import constants
-from constants import ColorCodes
-from gui.main_window import MainWindow
+from constants import ColorCodes, UserAccount
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
 
@@ -17,52 +21,131 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703255',
                  'Edit chat - Add pinned message (when any member can pin is disabled)')
-@pytest.mark.case(703255, 703256)
-@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.parametrize('community_params', [
-    {
-        'name': f'Name_{datetime.now():%H%M%S}',
-        'description': f'Description_{datetime.now():%H%M%S}',
-        'color': '#ff7d46',
-    },
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703256',
+                 'Edit chat - Remove pinned message (when any member can pin is disabled)')
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
+@pytest.mark.case(703255, 703256, 703510)
+@pytest.mark.parametrize('user_data_one, user_data_two', [
+    (configs.testpath.TEST_USER_DATA / 'user_account_one', configs.testpath.TEST_USER_DATA / 'user_account_two')
 ])
-def test_pin_and_unpin_message_in_community(main_screen: MainWindow, community_params, user_account):
-    with step('Create community'):
-        main_screen.create_community(constants.community_params['name'], constants.community_params['description'],
-                                     constants.community_params['intro'], constants.community_params['outro'],
-                                     constants.community_params['logo']['fp'],
-                                     constants.community_params['banner']['fp'])
+def test_join_community_and_pin_unpin_message(multiple_instance, user_data_one, user_data_two):
+    user_one: UserAccount = constants.user_account_one
+    user_two: UserAccount = constants.user_account_two
+    community_params = deepcopy(constants.community_params)
+    community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
+    main_screen = MainWindow()
 
-    with step('Go to edit community and check that pin message checkbox is not checked'):
-        community_screen = main_screen.left_panel.select_community(constants.community_params['name'])
-        community_setting = community_screen.left_panel.open_community_settings()
-        edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
-        assert not edit_community_form.pin_message_checkbox_state
+    with multiple_instance() as aut_one, multiple_instance() as aut_two:
+        with step(f'Launch multiple instances with authorized users {user_one.name} and {user_two.name}'):
+            for aut, account in zip([aut_one, aut_two], [user_one, user_two]):
+                aut.attach()
+                main_screen.wait_until_appears(configs.timeouts.APP_LOAD_TIMEOUT_MSEC).prepare()
+                main_screen.authorize_user(account)
+                main_screen.hide()
 
-    with step('Go back to community and send message in general channel'):
-        CommunitySettingsScreen().left_panel.back_to_community()
-        messages_screen = MessagesScreen()
-        message_text = "Hi"
-        messages_screen.group_chat.send_message_to_group_chat(message_text)
-        message_objects = messages_screen.chat.messages
-        message_items = [message.text for message in message_objects]
-        for message_item in message_items:
-            assert message_text in message_item
+        with step(f'User {user_two.name}, get chat key'):
+            aut_two.attach()
+            main_screen.prepare()
+            profile_popup = main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier()
+            chat_key = profile_popup.copy_chat_key
+            profile_popup.close()
+            main_screen.hide()
 
-    with step('Hover message and pin it'):
-        message = messages_screen.chat.find_message_by_text(message_text)
-        message.hover_message().toggle_pin()
+        with step(f'User {user_one.name}, send contact request to {user_two.name}'):
+            aut_one.attach()
+            main_screen.prepare()
+            settings = main_screen.left_panel.open_settings()
+            messaging_settings = settings.left_panel.open_messaging_settings()
+            contacts_settings = messaging_settings.open_contacts_settings()
+            contact_request_popup = contacts_settings.open_contact_request_form()
+            contact_request_popup.send(chat_key, f'Hello {user_two.name}')
+            main_screen.hide()
 
-    with step('Verify that the message was pinned'):
-        assert message.message_is_pinned
-        assert message.pinned_info_text + message.user_name_in_pinned_message == 'Pinned by' + user_account.name
-        assert message.get_message_color() == ColorCodes.ORANGE.value
+        with step(f'User {user_two.name}, accept contact request from {user_one.name}'):
+            aut_two.attach()
+            main_screen.prepare()
+            settings = main_screen.left_panel.open_settings()
+            messaging_settings = settings.left_panel.open_messaging_settings()
+            contacts_settings = messaging_settings.open_contacts_settings()
+            contacts_settings.accept_contact_request(user_one.name)
 
-    with step('Hover message and unpin it'):
-        message.hover_message().toggle_pin()
+        with step(f'User {user_two.name}, create community and invite {user_one.name}'):
+            main_screen.create_community(community_params['name'], community_params['description'],
+                                         community_params['intro'], community_params['outro'],
+                                         community_params['logo']['fp'], community_params['banner']['fp'])
+            main_screen.left_panel.invite_people_in_community([user_one.name], 'Message', community_params['name'])
+            main_screen.hide()
 
-    with step('Verify that the message was unpinned'):
-        assert not message.message_is_pinned
-        assert message.user_name_in_pinned_message == ''
-        assert not messages_screen.tool_bar.is_pin_message_tooltip_visible
+        with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
+            aut_one.attach()
+            main_screen.prepare()
+            messages_view = main_screen.left_panel.open_messages_screen()
+            chat = messages_view.left_panel.open_chat(user_two.name)
+            community_screen = chat.accept_community_invite(community_params['name'], '0')
+
+        with step(f'User {user_one.name}, verify welcome community popup'):
+            welcome_popup = community_screen.left_panel.open_welcome_community_popup()
+            assert community_params['name'] in welcome_popup.title
+            assert community_params['intro'] == welcome_popup.intro
+            welcome_popup.join().authenticate(user_two.password)
+            welcome_popup.share_address()
+            assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
+                                  configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
+
+        with step(f'User {user_one.name}, see two members in community members list'):
+            assert driver.waitFor(lambda: user_two.name in community_screen.right_panel.members)
+            assert driver.waitFor(lambda: '2' in community_screen.left_panel.members)
+            main_screen.hide()
+
+        with step(f'User {user_two.name}, see two members in community members list'):
+            aut_two.attach()
+            main_screen.prepare()
+            assert driver.waitFor(lambda: user_one.name in community_screen.right_panel.members)
+            assert '2' in community_screen.left_panel.members
+
+        with step(f'Go to edit community for {user_two.name} and check that pin message checkbox is not checked'):
+            community_screen = main_screen.left_panel.select_community(community_params['name'])
+            community_setting = community_screen.left_panel.open_community_settings()
+            edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
+            assert not edit_community_form.pin_message_checkbox_state
+
+        with step('Go back to community and send a couple of message in general channel'):
+            CommunitySettingsScreen().left_panel.back_to_community()
+            messages_screen = MessagesScreen()
+            message_text = "Hi"
+            messages_screen.group_chat.send_message_to_group_chat(message_text)
+            second_message_text = "Hi again"
+            messages_screen.group_chat.send_message_to_group_chat(second_message_text)
+            message_objects = messages_screen.chat.messages('0')
+            message_items = [message.text for message in message_objects]
+            for message_item in message_items:
+                assert message_text in message_item, f'Message {message_text} is not visible'
+
+        with step(f'Hover message {second_message_text} and pin it'):
+            message = messages_screen.chat.find_message_by_text(second_message_text, '0')
+            message.hover_message().toggle_pin()
+            main_screen.hide()
+
+        with step(f'User {user_one.name} see the {second_message_text} as pinned'):
+            aut_one.attach()
+            main_screen.prepare()
+            message = messages_screen.chat.find_message_by_text(second_message_text, '1')
+            assert message.message_is_pinned
+            assert message.pinned_info_text + message.user_name_in_pinned_message == 'Pinned by' + user_two.name
+            assert message.get_message_color() == ColorCodes.ORANGE.value
+            main_screen.hide()
+
+        with step(f'User {user_two.name} hover message and unpin it'):
+            aut_two.attach()
+            main_screen.prepare()
+            message = messages_screen.chat.find_message_by_text(second_message_text, '0')
+            message.hover_message().toggle_pin()
+
+        with step(f'User {user_one.name} see the {second_message_text} as unpinned'):
+            aut_one.attach()
+            main_screen.prepare()
+            time.sleep(2)
+            message = messages_screen.chat.find_message_by_text(second_message_text, '1')
+            assert driver.waitFor(lambda: message.message_is_pinned) is False
+            assert message.user_name_in_pinned_message == ''
+            assert driver.waitFor(lambda: messages_screen.tool_bar.is_pin_message_tooltip_visible) is False

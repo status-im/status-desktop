@@ -164,20 +164,21 @@ class ChatView(QObject):
         super().__init__(messaging_names.mainWindow_ChatColumnView)
         self._message_list_item = QObject(messaging_names.chatLogView_chatMessageViewDelegate_MessageView)
 
-    @property
     @allure.step('Get messages')
-    def messages(self) -> typing.List[Message]:
+    def messages(self, index: bool) -> typing.List[Message]:
         _messages = []
+        # message_list_item has different indexes if we run multiple instances, so we pass index
+        self._message_list_item.real_name['index'] = index
         for item in driver.findAllObjects(self._message_list_item.real_name):
             if getattr(item, 'isMessage', False):
                 _messages.append(Message(item))
         return _messages
 
-    def find_message_by_text(self, message_text):
+    def find_message_by_text(self, message_text: str, index: bool):
         message = None
         started_at = time.monotonic()
         while message is None:
-            for _message in self.messages:
+            for _message in self.messages(index):
                 if message_text in _message.text:
                     message = _message
                     break
@@ -186,11 +187,11 @@ class ChatView(QObject):
         return message
 
     @allure.step('Accept community invitation')
-    def accept_community_invite(self, community: str) -> 'CommunityScreen':
+    def accept_community_invite(self, community: str, index: bool) -> 'CommunityScreen':
         message = None
         started_at = time.monotonic()
         while message is None:
-            for _message in self.messages:
+            for _message in self.messages(index):
                 if _message.community_invitation.get('name', '') == community:
                     message = _message
                     break

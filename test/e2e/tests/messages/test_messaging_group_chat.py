@@ -124,7 +124,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
 
         with step('Send message to group chat and verify it was sent'):
             messages_screen.group_chat.send_message_to_group_chat('Hi')
-            message_objects = messages_screen.chat.messages
+            message_objects = messages_screen.chat.messages('0')
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
                 assert 'Hi' in message_item
@@ -150,7 +150,7 @@ def test_group_chat(multiple_instance, user_data_one, user_data_two, user_data_t
 
         with step('Send message to group chat and verify it was sent'):
             messages_screen.group_chat.send_message_to_group_chat('Hi')
-            message_objects = messages_screen.chat.messages
+            message_objects = messages_screen.chat.messages('1')
             message_items = [message.text for message in message_objects]
             for message_item in message_items:
                 assert 'Hi' in message_item
