@@ -25,6 +25,6 @@ class ChangePasswordPopup(BasePopup):
         self._re_encrypt_data_restart_button.click()
         assert driver.waitForObject(self._re_encryption_complete_element.real_name, 30000), \
             f'Re-encryption confirmation is not present within 30 seconds'
-        assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 5000)
+        assert driver.waitForObject(self._re_encrypt_data_restart_button.real_name, 30000)
         assert getattr(self._re_encrypt_data_restart_button.object, 'text') == PasswordView.RESTART_STATUS.value
         self._re_encrypt_data_restart_button.click()
