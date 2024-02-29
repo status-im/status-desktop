@@ -143,29 +143,14 @@ Pane {
         }
     }
 
-    // TODO a popup here instead of buttons
     Component {
         id: btnAcceptContactRequestComponent
-        ColumnLayout {
-            spacing: Style.current.halfPadding
-
-            StatusBaseText {
-                color: Theme.palette.baseColor1
-                font.pixelSize: 13
-                text: qsTr("Review contact request")
-            }
-
-            AcceptRejectOptionsButtonsPanel {
-                menuButton.visible: false
-                onAcceptClicked: {
-                    root.contactsStore.acceptContactRequest(root.publicKey, "")
-                    d.reload()
-                }
-                onDeclineClicked: {
-                    root.contactsStore.dismissContactRequest(root.publicKey)
-                    d.reload()
-                }
-            }
+        StatusButton {
+            objectName: "profileDialog_reviewContactRequestButton"
+            size: StatusButton.Size.Small
+            text: qsTr("Review contact request")
+            onClicked: Global.openReviewContactRequestPopup(root.publicKey, d.contactDetails,
+                                                            popup => popup.closed.connect(d.reload))
         }
     }
 
@@ -175,7 +160,8 @@ Pane {
             objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Send contact request")
-            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails, null)
+            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails,
+                                                      popup => popup.closed.connect(d.reload))
         }
     }
 

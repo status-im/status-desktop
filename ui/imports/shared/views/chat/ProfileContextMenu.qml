@@ -52,7 +52,7 @@ StatusMenu {
     }
     readonly property bool hasPendingContactRequest: {
         return !root.isMe && root.selectedUserPublicKey !== "" &&
-            root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
+                contactDetails.contactRequestState === Constants.ContactRequestState.Received
     }
     readonly property bool hasActiveReceivedVerificationRequestFrom: {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
@@ -127,7 +127,13 @@ StatusMenu {
         }
     }
 
-    // TODO Review contact request popup
+    StatusAction {
+        text: qsTr("Review contact request")
+        objectName: "reviewContactRequest_StatusItem"
+        icon.name: "add-contact"
+        enabled: !root.isMe && !root.isContact && !root.isBridgedAccount && !root.isBlockedContact && root.hasPendingContactRequest
+        onTriggered: Global.openReviewContactRequestPopup(root.selectedUserPublicKey, root.contactDetails, null)
+    }
 
     SendMessageMenuItem {
         id: sendMessageMenuItem

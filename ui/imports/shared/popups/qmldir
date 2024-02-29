@@ -31,3 +31,4 @@ MarkAsUntrustedPopup 1.0 MarkAsUntrustedPopup.qml
 RemoveContactPopup 1.0 RemoveContactPopup.qml
 MarkAsIDVerifiedDialog 1.0 MarkAsIDVerifiedDialog.qml
 RemoveIDVerificationDialog 1.0 RemoveIDVerificationDialog.qml
+ReviewContactRequestPopup 1.0 ReviewContactRequestPopup.qml
