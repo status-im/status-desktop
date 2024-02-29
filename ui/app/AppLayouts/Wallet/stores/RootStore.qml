@@ -52,6 +52,7 @@ QtObject {
     property var activityController: walletSectionInst.activityController
     property var tmpActivityController0: walletSectionInst.tmpActivityController0
     property var tmpActivityController1: walletSectionInst.tmpActivityController1
+    property var activityDetailsController: walletSectionInst.activityDetailsController
     property string signingPhrase: walletSectionInst.signingPhrase
     property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
     property var walletConnectController: walletSectionInst.walletConnectController

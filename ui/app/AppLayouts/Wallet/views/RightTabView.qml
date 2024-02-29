@@ -208,9 +208,8 @@ RightTabBaseView {
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
-                        onLaunchTransactionDetail: function (entryIndex) {
-                            transactionDetailView.transactionIndex = entryIndex
-                            transactionDetailView.transaction = Qt.binding(() => selectedTransaction)
+                        onLaunchTransactionDetail: function (txID) {
+                            RootStore.activityController.fetchTxDetails(txID)
                             stack.currentIndex = 3
                         }
                     }
@@ -218,6 +217,10 @@ RightTabBaseView {
             }
         }
         CollectibleDetailView {
+            id: collectibleDetailView
+
+            visible : (stack.currentIndex === 1)
+
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
             activityModel: d.detailedCollectibleActivityController.model
@@ -229,6 +232,14 @@ RightTabBaseView {
                 if (!visible) {
                     RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC721)
                 }
+            }
+
+            onLaunchTransactionDetail: function (txID) {
+                d.detailedCollectibleActivityController.fetchTxDetails(txID)
+                stack.currentIndex = 3
+
+                // Take user to the activity view when they press the "Back" button
+                walletTabBar.currentIndex = 2
             }
         }
         AssetsDetailView {
@@ -252,6 +263,7 @@ RightTabBaseView {
 
         TransactionDetailView {
             id: transactionDetailView
+            controller: RootStore.activityDetailsController
             onVisibleChanged: {
                 if (visible) {
                     if (!!transaction) {
@@ -261,7 +273,7 @@ RightTabBaseView {
                         }
                     }
                 } else {
-                    transaction = null
+                    controller.resetActivityEntry()
                 }
             }
             showAllAccounts: RootStore.showAllAccounts

@@ -137,21 +137,16 @@ SplitView {
         id: transactionData
 
         property int chainId: 1
-        property string blockNumber: "0x124"
         property int timestamp: Date.now() / 1000
         property int txStatus: 0
         property string type: "eth"
-        property string nonce: "0x123"
         property string from: "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
         property string to: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
-        property string contract: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
         property bool isNFT: false
-        property string input: "0x40e8d703000000000000000000000000670dca62b3418bddd08cbc69cb4490a5a3382a9f0000000000000000000000000000000000000000000000000000000000000064ddd08cbc69cb4490a5a3382a9f0000000000"
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
         property string nftImageUrl: Style.png("collectibles/HappyMeow")
         property string symbol: "ETH"
-        property string txHash: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
 
         readonly property var value: QtObject {
             property real amount: amountSpinbox.realValue
@@ -159,6 +154,17 @@ SplitView {
             property int displayDecimals: 5
             property bool stripTrailingZeroes: true
         }
+    }
+
+    QtObject {
+        id: transactionDetails
+
+        property string nonce: "0x123"
+        property string blockNumber: "0x124"
+        property string txHash: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
+        property string txHashOut: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
+        property string input: "0x40e8d703000000000000000000000000670dca62b3418bddd08cbc69cb4490a5a3382a9f0000000000000000000000000000000000000000000000000000000000000064ddd08cbc69cb4490a5a3382a9f0000000000"
+        property string contract: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
 
         readonly property var totalFees: QtObject {
             property real amount: (transactionData.value / 15) * Math.pow(10, 9)
@@ -167,16 +173,31 @@ SplitView {
             property bool stripTrailingZeroes: true
         }
 
-        readonly property var gasPrice: QtObject {
-            property real amount: 0.0000005
-            property string symbol: "ETH"
-        }
     }
 
     QtObject {
         id: overviewMockup
 
         property var mixedcaseAddress: root.isIncoming ? transactionData.to : transactionData.from
+    }
+
+    QtObject {
+        id: controllerMockup
+
+        property var activityEntry: transactionData
+        property var activityDetails
+
+        function fetchExtraTxDetails() {
+            extraDetailsTimer.start()
+        }
+
+        readonly property Timer extraDetailsTimer: Timer {
+            id: extraDetailsTimer
+            interval: 1000
+            onTriggered: {
+                controllerMockup.activityDetails = transactionDetails
+            }
+        }
     }
 
     SplitView {
@@ -203,7 +224,7 @@ SplitView {
                 active: root.globalUtilsReady && root.mainModuleReady && root.rootStoreReady
                 sourceComponent: TransactionDetailView {
                     contactsStore: contactsStoreMockup
-                    transaction: transactionData
+                    controller: controllerMockup
                     overview: overviewMockup
                 }
             }
