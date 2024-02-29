@@ -531,28 +531,43 @@ class PermissionsSettingsView(QObject):
         self._create_permission_button.wait_until_hidden()
 
     @allure.step('Open Who holds context menu')
-    def open_who_holds_context_menu(self):
-        for child in walk_children(self._who_holds_list_item.object):
-            if getattr(child, 'id', '') == 'addItemButton':
-                driver.mouseClick(child)
-                return
-        raise LookupError('Add button for who holds not found')
+    def open_who_holds_context_menu(self, attempt: int = 2):
+        try:
+            for child in walk_children(self._who_holds_list_item.object):
+                if getattr(child, 'objectName', '') == 'addItemButton':
+                    driver.mouseClick(child)
+                    return
+        except LookupError:
+            if attempt:
+                return self.open_who_holds_context_menu(attempt - 1)
+            else:
+                raise LookupError('Add button for who holds not found')
 
     @allure.step('Open Is allowed to context menu')
-    def open_is_allowed_to_context_menu(self):
-        for child in walk_children(self._is_allowed_to_list_item.object):
-            if getattr(child, 'id', '') == 'addItemButton':
-                driver.mouseClick(child)
-                return
-        raise LookupError('Add button for allowed to not found')
+    def open_is_allowed_to_context_menu(self,  attempt: int = 2):
+        try:
+            for child in walk_children(self._is_allowed_to_list_item.object):
+                if getattr(child, 'objectName', '') == 'addItemButton':
+                    driver.mouseClick(child)
+                    return
+        except LookupError:
+            if attempt:
+                return self.open_is_allowed_to_context_menu(attempt - 1)
+            else:
+                raise LookupError('Add button for allowed to not found')
 
     @allure.step('Open In context menu')
-    def open_in_context_menu(self):
-        for child in walk_children(self._in_list_item.object):
-            if getattr(child, 'id', '') == 'addItemButton':
-                driver.mouseClick(child)
-                return
-        raise LookupError('Add button for in not found')
+    def open_in_context_menu(self, attempt: int = 2):
+        try:
+            for child in walk_children(self._in_list_item.object):
+                if getattr(child, 'objectName', '') == 'addItemButton':
+                    driver.mouseClick(child)
+                    return
+        except LookupError:
+            if attempt:
+                return self.open_in_context_menu(attempt - 1)
+            else:
+                raise LookupError('Add button for in not found')
 
     @allure.step('Switch hide permission checkbox')
     def switch_hide_permission_checkbox(self, state):
