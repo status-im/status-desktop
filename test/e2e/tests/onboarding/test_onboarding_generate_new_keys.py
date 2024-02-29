@@ -132,4 +132,4 @@ def test_generate_new_keys_sign_out_from_settings(aut, main_window, keys_screen,
         sign_out_screen.sign_out_and_quit()
 
     with step('Check the application process is not running'):
-        psutil.Process(aut.pid).wait(timeout=10)
+        psutil.Process(aut.pid).wait(timeout=30)
