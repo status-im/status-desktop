@@ -29,6 +29,9 @@ proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc getAllCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communities".prefix)
 
+proc isDisplayNameDupeOfCommunityMember*(displayName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("isDisplayNameDupeOfCommunityMember".prefix, %* [displayName])
+
 proc spectateCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("spectateCommunity".prefix, %*[communityId])
 
