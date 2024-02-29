@@ -91,8 +91,8 @@ QObject {
         collectibles.setVisibility(key, visibility)
     }
 
-    function changeCollectiblePosition(key, to) {
-        collectibles.changePosition(key, to)
+    function changeCollectiblePosition(from, to) {
+        collectibles.changePosition(from, to)
     }
 
     ProfileShowcaseModelAdapter {

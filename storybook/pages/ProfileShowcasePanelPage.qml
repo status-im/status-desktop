@@ -70,20 +70,8 @@ SplitView {
         SplitView.fillHeight: true
         emptyInShowcasePlaceholderText: "No items in showcase"
         emptyHiddenPlaceholderText: "No hidden items"
-        onChangePositionRequested: function (key, to) {
-            for (var i = 0; i < inShowcaseModelItem.count; i++) {
-                if (inShowcaseModelItem.get(i).key === key) {
-                    inShowcaseModelItem.move(i, to, 1)
-                    break
-                }
-            }
-
-            for (var i = 0; i < hiddenModelItem.count; i++) {
-                if (hiddenModelItem.get(i).key === key) {
-                    hiddenModelItem.move(from, to, 1)
-                    break
-                }
-            }
+        onChangePositionRequested: function (from, to) {
+            inShowcaseModelItem.move(from, to, 1)
         }
         onSetVisibilityRequested: function (key, toVisibility) {
             for (var i = 0; i < inShowcaseModelItem.count; i++) {

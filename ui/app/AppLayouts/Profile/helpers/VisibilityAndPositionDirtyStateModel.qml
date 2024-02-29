@@ -61,39 +61,6 @@ WritableProxyModel {
         set(sourceIdx, { visibility, position })
     }
 
-    /* Sets the position of the item. The "to" parameter is expected to be
-     * a target index in the list and must be in range [0; count - 1].
-     */
-    function changePosition(key, to) {
-        const visible = d.getVisibleEntries()
-        visible.sort((a, b) => a.position - b.position)
-
-        const idx = visible.findIndex(item => item.key === key)
-
-        if (idx === -1) {
-            console.warn(`Entry with key ${key} not found`)
-            return
-        }
-
-        const count = visible.length
-
-        if (to < 0 || to >= count) {
-            console.warn(`Destination position out of range: ${to}`)
-            return
-        }
-
-        // swap
-        [visible[idx], visible[to]] = [visible[to], visible[idx]]
-
-        visible.forEach((e, i) => {
-            if (e.position === i)
-                return
-
-            const idx = d.indexByKey(e.key)
-            set(idx, { position: i })
-        })
-    }
-
     readonly property QtObject d_: QtObject {
         id: d
 

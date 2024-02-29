@@ -34,7 +34,7 @@ QObject {
     /**
       * Returns dirty state of the showcase model.
       */
-    readonly property alias dirty: writable.dirty
+    readonly property bool dirty: writable.dirty || !visibleModel.synced || !hiddenModel.synced
 
     function revert() {
         writable.revert()
@@ -48,8 +48,8 @@ QObject {
         writable.setVisibility(key, visibility)
     }
 
-    function changePosition(key, to) {
-        writable.changePosition(key, to)
+    function changePosition(from, to) {
+        visible.move(from, to)
     }
 
     // internals, debug purpose only
@@ -81,7 +81,7 @@ QObject {
     }
 
     SortFilterProxyModel {
-        id: visible
+        id: visibleSFPM
 
         sourceModel: writable
         delayed: true
@@ -90,12 +90,24 @@ QObject {
         sorters: RoleSorter { roleName: "position" }
     }
 
+    MovableModel {
+        id: visible
+
+        sourceModel: visibleSFPM
+    }
+
     SortFilterProxyModel {
-        id: hidden
+        id: hiddenSFPM
 
         sourceModel: writable
         delayed: true
 
         filters: HiddenFilter {}
+    }
+
+    MovableModel {
+        id: hidden
+
+        sourceModel: hiddenSFPM
     }
 }
