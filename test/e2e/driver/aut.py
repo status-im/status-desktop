@@ -115,7 +115,7 @@ class AUT:
             '--verbose',
             f'--port={self.port}',
             str(self.path),
-            f'-d={self.app_data}',
+            f'--datadir={self.app_data}',
             f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
         ]
         try:
