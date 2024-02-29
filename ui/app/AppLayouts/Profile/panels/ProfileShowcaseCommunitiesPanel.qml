@@ -10,7 +10,7 @@ ProfileShowcasePanel {
     emptyInShowcasePlaceholderText: qsTr("Drag communities here to display in showcase")
     emptyHiddenPlaceholderText: qsTr("Communities here will be hidden from your Profile")
 
-    delegate: ProfileShowcasePanel.Delegate {
+    delegate: ProfileShowcasePanelDelegate {
         title: model ? model.name : ""
         secondaryTitle: model && (model.memberRole === Constants.memberRole.owner ||
                                         model.memberRole === Constants.memberRole.admin ||

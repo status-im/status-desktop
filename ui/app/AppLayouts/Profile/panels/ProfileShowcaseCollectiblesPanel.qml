@@ -21,7 +21,7 @@ ProfileShowcasePanel {
 
     additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
-    delegate: ProfileShowcasePanel.Delegate {
+    delegate: ProfileShowcasePanelDelegate {
         title: !!model ? `${model.name}` || `#${model.id}` : ""
         secondaryTitle: !!model && !!model.collectionName ? model.collectionName : ""
         hasImage: !!model && !!model.imageUrl

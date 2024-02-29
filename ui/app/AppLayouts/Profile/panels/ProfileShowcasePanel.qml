@@ -17,7 +17,7 @@ import AppLayouts.Profile.controls 1.0
 DoubleFlickableWithFolding {
     id: root
 
-    property Component delegate: Delegate {}
+    property Component delegate: ProfileShowcasePanelDelegate {}
 
     // Expected roles: 
     // - visibility: int
@@ -34,28 +34,6 @@ DoubleFlickableWithFolding {
     signal changePositionRequested(int from, int to)
     // Signal to request visibility change of the items
     signal setVisibilityRequested(var key, int toVisibility)
-
-    // Public delegate component. Implements the minimal ShowcaseDelegate interface needed for DND
-    component Delegate: ShowcaseDelegate {
-        id: showcaseDelegate
-
-        property var model: modelData
-        property var dragKeys: dragKeysData
-
-        readonly property var key: model ? model.key : null
-
-        Drag.keys: dragKeys
-
-        dragParent: dragParentData
-        visualIndex: visualIndexData
-        dragAxis: Drag.YAxis
-        showcaseVisibility: model ? model.visibility ?? Constants.ShowcaseVisibility.NoOne :
-                                      Constants.ShowcaseVisibility.NoOne
-
-        onShowcaseVisibilityRequested: function (toVisibility){
-            root.setVisibilityRequested(key, toVisibility)
-        }
-    }
 
     ScrollBar.vertical: StatusScrollBar {
         policy: ScrollBar.AsNeeded
@@ -357,6 +335,11 @@ DoubleFlickableWithFolding {
 
                 width: parent.width
                 sourceComponent: root.delegate
+                onItemChanged: {
+                    if (item) {
+                        item.showcaseVisibilityRequested.connect((toVisibility) => root.setVisibilityRequested(showcaseDelegateRoot.model.key, toVisibility))
+                    }
+                }
             }
 
             Binding {
