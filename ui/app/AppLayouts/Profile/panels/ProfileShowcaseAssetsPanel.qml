@@ -22,7 +22,7 @@ ProfileShowcasePanel {
     emptyInShowcasePlaceholderText: qsTr("Assets here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Assets here will be hidden from your profile")
 
-    delegate: ProfileShowcasePanel.Delegate {
+    delegate: ProfileShowcasePanelDelegate {
 
         property double totalValue: !!model && !!model.decimals ? balancesAggregator.value/(10 ** model.decimals): 0
 

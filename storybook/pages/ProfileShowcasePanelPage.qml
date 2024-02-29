@@ -99,7 +99,7 @@ SplitView {
             }
         }
 
-        delegate: ProfileShowcasePanel.Delegate {
+        delegate: ProfileShowcasePanelDelegate {
             title: model ? model.title : ""
             secondaryTitle: model ? model.secondaryTitle : ""
             hasImage: model ? model.hasImage : false

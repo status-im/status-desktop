@@ -15,7 +15,7 @@ ProfileShowcasePanel {
     emptyInShowcasePlaceholderText: qsTr("Accounts here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Accounts here will be hidden from your profile")
 
-    delegate: ProfileShowcasePanel.Delegate {
+    delegate: ProfileShowcasePanelDelegate {
         title: model ? model.name : ""
         secondaryTitle: WalletUtils.addressToDisplay(model ? model.key : "", "", true, containsMouse)
         hasEmoji: model && !!model.emoji
