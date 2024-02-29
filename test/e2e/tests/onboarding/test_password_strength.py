@@ -27,7 +27,7 @@ def keys_screen(main_window) -> KeysView:
                  'Strength of the password')
 @pytest.mark.case(702989)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-@pytest.mark.skip(reason="To add a bug later")
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/13783")
 def test_check_password_strength_and_login(keys_screen, main_window, user_account):
     values = [('abcdefghij', very_weak_lower_elements),
               ('ABCDEFGHIJ', very_weak_upper_elements),
