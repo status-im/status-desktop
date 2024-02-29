@@ -98,13 +98,13 @@ void MovableModel::desyncOrder()
                &MovableModel::sourceLayoutChanged);
 
     connect(m_sourceModel, &QAbstractItemModel::dataChanged, this,
-            &MovableModel::desyncedSourceDataChanged);
+            &MovableModel::desyncedSourceDataChanged, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this,
-            &MovableModel::sourceRowsInserted);
+            &MovableModel::sourceRowsInserted, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this,
-            &MovableModel::sourceRowsAboutToBeRemoved);
+            &MovableModel::sourceRowsAboutToBeRemoved, Qt::UniqueConnection);
 
     auto count = m_sourceModel->rowCount();
 
@@ -126,18 +126,6 @@ void MovableModel::syncOrder()
     emit layoutAboutToBeChanged();
 
     auto sourceModel = m_sourceModel;
-
-    disconnect(m_sourceModel, nullptr, this, nullptr);
-    connectSignalsForSyncedState();
-
-    for (int i = 0; i < m_indexes.size(); ++i) {
-        const QModelIndex idx = m_indexes[i];
-
-        if (i == idx.row())
-            continue;
-
-        changePersistentIndex(index(i, 0), index(idx.row(), 0));
-    }
 
     resetInternalData();
     emit layoutChanged();
@@ -199,6 +187,18 @@ bool MovableModel::synced() const
 
 void MovableModel::resetInternalData()
 {
+    disconnect(m_sourceModel, nullptr, this, nullptr);
+    connectSignalsForSyncedState();
+
+    for (int i = 0; i < m_indexes.size(); ++i) {
+        const QModelIndex idx = m_indexes[i];
+
+        if (i == idx.row())
+            continue;
+
+        changePersistentIndex(index(i, 0), index(idx.row(), 0));
+    }
+
     QAbstractListModel::resetInternalData();
 
     m_indexes.clear();
@@ -288,6 +288,7 @@ void MovableModel::sourceRowsAboutToBeRemoved(const QModelIndex& parent,
                                               int first, int last)
 {
     Q_ASSERT(!parent.isValid());
+    Q_ASSERT(!m_synced);
 
     std::vector<int> indicesToRemove;
     indicesToRemove.reserve(last - first + 1);
@@ -298,6 +299,9 @@ void MovableModel::sourceRowsAboutToBeRemoved(const QModelIndex& parent,
         if (idx.row() >= first && idx.row() <= last)
             indicesToRemove.push_back(i);
     }
+
+    if (indicesToRemove.empty())
+        return;
 
     std::vector<std::pair<int, int>> sequences;
     auto sequenceBegin = indicesToRemove.front();
@@ -338,35 +342,44 @@ void MovableModel::connectSignalsForSyncedState()
         return;
 
     connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeInserted, this,
-            &MovableModel::beginInsertRows);
+            &MovableModel::beginInsertRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this,
-            &MovableModel::endInsertRows);
+            &MovableModel::endInsertRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this,
-            &MovableModel::beginRemoveRows);
+            &MovableModel::beginRemoveRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this,
-            &MovableModel::endRemoveRows);
+            &MovableModel::endRemoveRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeMoved, this,
-            &MovableModel::beginMoveRows);
+            &MovableModel::beginMoveRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::rowsMoved, this,
-            &MovableModel::endMoveRows);
+            &MovableModel::endMoveRows, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::dataChanged, this,
-            &MovableModel::syncedSourceDataChanged);
+            &MovableModel::syncedSourceDataChanged, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this,
-            &MovableModel::sourceLayoutAboutToBeChanged);
+            &MovableModel::sourceLayoutAboutToBeChanged, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::layoutChanged, this,
-            &MovableModel::sourceLayoutChanged);
+            &MovableModel::sourceLayoutChanged, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::modelAboutToBeReset, this,
-            &MovableModel::beginResetModel);
+            &MovableModel::beginResetModel, Qt::UniqueConnection);
 
     connect(m_sourceModel, &QAbstractItemModel::modelReset, this,
-            &MovableModel::endResetModel);
+            &MovableModel::endResetModel, Qt::UniqueConnection);
+
+    disconnect(m_sourceModel, &QAbstractItemModel::dataChanged, this,
+            &MovableModel::desyncedSourceDataChanged);
+
+    disconnect(m_sourceModel, &QAbstractItemModel::rowsInserted, this,
+            &MovableModel::sourceRowsInserted);
+
+    disconnect(m_sourceModel, &QAbstractItemModel::rowsAboutToBeRemoved, this,
+            &MovableModel::sourceRowsAboutToBeRemoved);
 }
