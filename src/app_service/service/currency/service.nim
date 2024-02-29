@@ -80,7 +80,13 @@ QtObject:
     try:
       let responseObj = response.parseJson
       if (responseObj.kind == JObject):
-        let formatsPerSymbol = jsonToFormatsTable(responseObj)
+
+        var formatsJson: JsonNode
+        discard responseObj.getProp("formats", formatsJson)
+        if formatsJson.isNil or formatsJson.kind == JNull:
+          return
+
+        let formatsPerSymbol = jsonToFormatsTable(formatsJson)
         for symbol, format in formatsPerSymbol:
           self.currencyFormatCache[symbol] = format
         self.events.emit(SIGNAL_CURRENCY_FORMATS_UPDATED, CurrencyFormatsUpdatedArgs())
