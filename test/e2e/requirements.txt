@@ -8,6 +8,6 @@ atomacos==3.3.0; platform_system == "Darwin"
 allure-pytest==2.13.2
 testrail-api==1.12.0
 pyperclip==1.8.2
-pytest-rerunfailures==11.1.2
+pytest-rerunfailures==13.0
 pytest-ignore-flaky==2.1.0
 pytest-timeout==2.2.0

@@ -151,9 +151,9 @@ pipeline {
               passwordVariable: 'TESTRAIL_PSW'
             )
           ]) {
+            /* Keep the --reruns flag first, or it won't work */
             sh """
-              python3 -m pytest ${flags.join(" ")} \
-                --ignore-flaky \
+              python3 -m pytest --reruns=1 ${flags.join(" ")} \
                 --disable-warnings \
                 --alluredir=./allure-results
             """
