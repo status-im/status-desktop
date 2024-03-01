@@ -41,6 +41,8 @@ type
     BanPending,
     UnbanPending,
     KickPending
+    Unbanned,
+    Kicked
 
 type CommunityMembershipRequestDto* = object
   id*: string
@@ -479,7 +481,8 @@ proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): Membersh
       return MembershipRequestState.UnbannedPending
     of CommunityMemberPendingBanOrKick.KickPending:
       return MembershipRequestState.KickedPending
-  return MembershipRequestState.None
+    else:
+      return MembershipRequestState.None
 
 proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   result = CommunitySettingsDto()

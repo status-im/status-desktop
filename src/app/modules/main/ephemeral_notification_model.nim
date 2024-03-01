@@ -84,7 +84,7 @@ QtObject:
       of ModelRole.Url:
         result = newQVariant(item.url)
       of ModelRole.ActionType:
-        result = newQVariant(item.actionType)
+        result = newQVariant(item.actionType.int)
       of ModelRole.ActionData:
         result = newQVariant(item.actionData)
 
@@ -93,7 +93,7 @@ QtObject:
       if(self.items[i].id == id):
         return i
     return -1
-  
+
   proc getItemWithId*(self: Model, id: int64): Item =
     let ind = self.findIndexById(id)
     if(ind == -1):
