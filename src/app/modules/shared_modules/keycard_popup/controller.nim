@@ -180,6 +180,7 @@ proc checkKeycardAvailability*(self: Controller) =
 
 proc init*(self: Controller, fullConnect = true) =
   self.connectKeycardReponseSignal()
+  self.connectKeychainSignals()
 
   var handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
