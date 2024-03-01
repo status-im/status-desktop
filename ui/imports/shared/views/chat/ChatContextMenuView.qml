@@ -70,6 +70,15 @@ StatusMenu {
         }
     }
 
+    StatusAction {
+        text: root.isCommunityChat ? qsTr("Copy channel ID") : qsTr("Copy chat ID")
+        icon.name: "copy"
+        enabled: root.showDebugOptions
+        onTriggered: {
+            Utils.copyToClipboard(root.chatId)
+        }
+    }
+
     StatusMenuSeparator {
         visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat || root.isCommunityChat
     }
