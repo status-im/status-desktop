@@ -17,10 +17,11 @@ class ChangePasswordPopup(BasePopup):
 
     def click_re_encrypt_data_restart_button(self):
         """
-        Timeout is set as rough estimation of 20 seconds. What is happening when changing password is
+        Timeout is set as rough estimation of 30 seconds. What is happening when changing password is
         the process of re-hashing DB initiated. Taking into account the user is new , so DB is relatively small
-        I assume, 20 seconds should be enough to finish re-hashing and show the Restart button
+        I assume, 30 seconds should be enough to finish re-hashing and show the Restart button
         This time is not really predictable, especially for huge DBs.
+        In case it does not please check https://github.com/status-im/status-desktop/issues/13013 for context
         """
         self._re_encrypt_data_restart_button.click()
         assert driver.waitForObject(self._re_encryption_complete_element.real_name, 30000), \

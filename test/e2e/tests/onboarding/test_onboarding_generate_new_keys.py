@@ -32,7 +32,6 @@ def keys_screen(main_window) -> KeysView:
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010)
 @pytest.mark.critical
-@pytest.mark.flaky
 # reason='https://github.com/status-im/status-desktop/issues/13013'
 @pytest.mark.parametrize('user_name, password, user_image, zoom, shift', [
     pytest.param(
