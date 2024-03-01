@@ -36,7 +36,7 @@ StatusMenu {
 
     StatusAction {
         text: enabled? root.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move keypair to a Keycard") : ""
-        enabled: !!root.keyPair
+        enabled: !!root.keyPair && root.keyPair.pairType !== Constants.keypair.type.privateKeyImport
         icon.name: !!root.keyPair && root.keyPair.migratedToKeycard? "keycard-crossed" : "keycard"
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
