@@ -87,14 +87,14 @@ type
     contractAddress*: string
     owners*: seq[CollectibleOwner]
 
-  # see status-go/services/wallet/collectibles/service.go CollectibleDataType
+  # Mirrors status-go/multiaccounts/settings_wallet/database.go CollectiblePreferencesType
   CollectiblePreferencesItemType* {.pure.} = enum
-    NonCommunityCollectible = 1, 
-    CommunityCollectible, 
-    Collection, 
+    NonCommunityCollectible = 1,
+    CommunityCollectible,
+    Collection,
     Community
 
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleContractOwnership
+  # Mirrors status-go/multiaccounts/settings_wallet/database.go CollectiblePreferences
   CollectiblePreferences* = ref object of RootObj
     itemType* {.serializedFieldName("type").}: CollectiblePreferencesItemType
     key* {.serializedFieldName("key").}: string

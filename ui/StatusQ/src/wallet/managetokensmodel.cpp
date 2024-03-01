@@ -4,8 +4,7 @@
 
 Q_LOGGING_CATEGORY(manageTokens, "status.models.manageTokens", QtInfoMsg)
 
-ManageTokensModel::ManageTokensModel(QObject* parent)
-    : QAbstractListModel(parent)
+ManageTokensModel::ManageTokensModel(QObject* parent) : QAbstractListModel(parent)
 {
     connect(this, &QAbstractItemModel::rowsInserted, this, &ManageTokensModel::countChanged);
     connect(this, &QAbstractItemModel::rowsRemoved, this, &ManageTokensModel::countChanged);
@@ -40,9 +39,8 @@ void ManageTokensModel::addItem(const TokenData& item, bool append)
 
 std::optional<TokenData> ManageTokensModel::takeItem(const QString& symbol)
 {
-    const auto token = std::find_if(m_data.cbegin(), m_data.cend(), [symbol](const auto& item) {
-        return symbol == item.symbol;
-    });
+    const auto token =
+        std::find_if(m_data.cbegin(), m_data.cend(), [symbol](const auto& item) { return symbol == item.symbol; });
     const auto row = std::distance(m_data.cbegin(), token);
 
     if (row < 0 || row >= rowCount())
@@ -60,7 +58,7 @@ QList<TokenData> ManageTokensModel::takeAllItems(const QString& groupId)
     QList<int> indexesToRemove;
 
     for (int i = 0; i < m_data.count(); i++) {
-        const auto &token = m_data.at(i);
+        const auto& token = m_data.at(i);
         if (token.communityId == groupId || token.collectionUid == groupId) {
             result.append(token);
             indexesToRemove.append(i);
@@ -68,7 +66,7 @@ QList<TokenData> ManageTokensModel::takeAllItems(const QString& groupId)
     }
 
     QList<int>::reverse_iterator its;
-    for(its = indexesToRemove.rbegin(); its != indexesToRemove.rend(); ++its) {
+    for (its = indexesToRemove.rbegin(); its != indexesToRemove.rend(); ++its) {
         const auto row = *its;
         beginRemoveRows({}, row, row);
         m_data.removeAt(row);
@@ -86,7 +84,7 @@ void ManageTokensModel::clear()
     setDirty(false);
 }
 
-SerializedTokenData ManageTokensModel::save(bool isVisible)
+SerializedTokenData ManageTokensModel::save(bool isVisible, bool itemsAreGroups)
 {
     saveCustomSortOrder();
     const auto size = rowCount();
@@ -96,21 +94,25 @@ SerializedTokenData ManageTokensModel::save(bool isVisible)
         const auto& token = itemAt(i);
         const auto isCommunityGroup = !token.communityId.isEmpty();
         const auto isCollectionGroup = !token.collectionUid.isEmpty();
-        const auto groupId = isCommunityGroup ? token.communityId : isCollectionGroup ? token.collectionUid : QString();
-        result.insert(token.symbol, {i, isVisible, groupId, isCommunityGroup, isCollectionGroup});
+        result.insert(token.symbol,
+                      TokenOrder{token.symbol,
+                                 i,
+                                 isVisible,
+                                 isCommunityGroup,
+                                 token.communityId,
+                                 isCollectionGroup,
+                                 token.collectionUid,
+                                 tokenDataToCollectiblePreferencesItemType(token, isCommunityGroup, itemsAreGroups)});
     }
     setDirty(false);
     return result;
 }
 
-int ManageTokensModel::rowCount(const QModelIndex& parent) const
-{
-    return m_data.size();
-}
+int ManageTokensModel::rowCount(const QModelIndex& parent) const { return m_data.size(); }
 
 QHash<int, QByteArray> ManageTokensModel::roleNames() const
 {
-    static const QHash<int, QByteArray> roles {
+    static const QHash<int, QByteArray> roles{
         {SymbolRole, kSymbolRoleName},
         {NameRole, kNameRoleName},
         {CommunityIdRole, kCommunityIdRoleName},
@@ -134,42 +136,57 @@ QHash<int, QByteArray> ManageTokensModel::roleNames() const
 
 QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
 {
-    if (!checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid | QAbstractItemModel::CheckIndexOption::ParentIsInvalid))
+    if (!checkIndex(index,
+                    QAbstractItemModel::CheckIndexOption::IndexIsValid |
+                        QAbstractItemModel::CheckIndexOption::ParentIsInvalid))
         return {};
 
     const auto& token = m_data.at(index.row());
 
-    switch(static_cast<TokenDataRoles>(role))
-    {
-    case SymbolRole: return token.symbol;
-    case NameRole: return token.name;
-    case CommunityIdRole: return token.communityId;
-    case CommunityNameRole: return token.communityName;
-    case CommunityImageRole: return token.communityImage;
-    case CollectionUidRole: return token.collectionUid;
-    case CollectionNameRole: return token.collectionName;
-    case BalanceRole: return token.balance;
-    case CurrencyBalanceRole: return token.currencyBalance;
-    case CustomSortOrderNoRole: return token.customSortOrderNo;
-    case TokenImageRole: return token.image;
-    case TokenBackgroundColorRole: return token.backgroundColor;
-    case TokenBalancesRole: return token.balances;
-    case TokenDecimalsRole: return token.decimals;
-    case TokenMarketDetailsRole: return token.marketDetails;
-    case IsSelfCollectionRole: return token.isSelfCollection;
+    switch (static_cast<TokenDataRoles>(role)) {
+    case SymbolRole:
+        return token.symbol;
+    case NameRole:
+        return token.name;
+    case CommunityIdRole:
+        return token.communityId;
+    case CommunityNameRole:
+        return token.communityName;
+    case CommunityImageRole:
+        return token.communityImage;
+    case CollectionUidRole:
+        return token.collectionUid;
+    case CollectionNameRole:
+        return token.collectionName;
+    case BalanceRole:
+        return token.balance;
+    case CurrencyBalanceRole:
+        return token.currencyBalance;
+    case CustomSortOrderNoRole:
+        return token.customSortOrderNo;
+    case TokenImageRole:
+        return token.image;
+    case TokenBackgroundColorRole:
+        return token.backgroundColor;
+    case TokenBalancesRole:
+        return token.balances;
+    case TokenDecimalsRole:
+        return token.decimals;
+    case TokenMarketDetailsRole:
+        return token.marketDetails;
+    case IsSelfCollectionRole:
+        return token.isSelfCollection;
     }
 
     return {};
 }
 
-bool ManageTokensModel::dirty() const
-{
-    return m_dirty;
-}
+bool ManageTokensModel::dirty() const { return m_dirty; }
 
 void ManageTokensModel::setDirty(bool flag)
 {
-    if (m_dirty == flag) return;
+    if (m_dirty == flag)
+        return;
     m_dirty = flag;
     emit dirtyChanged();
 }

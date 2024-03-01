@@ -44,6 +44,11 @@ SplitView {
         controller: ManageTokensController {
             sourceModel: renamedModel
             settingsKey: "WalletCollectibles"
+            serializeAsCollectibles: true
+
+            onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
+            onRequestLoadSettings: loadFromQSettings()
+            onRequestClearSettings: clearQSettings()
         }
     }
 

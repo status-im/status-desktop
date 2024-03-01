@@ -44,12 +44,22 @@ SplitView {
         id: assetsController
         sourceModel: ctrlEmptyModel.checked ? null : walletAssetStore.groupedAccountAssetsModel
         settingsKey: "WalletAssets"
+        serializeAsCollectibles: false
+
+        onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
+        onRequestLoadSettings: loadFromQSettings()
+        onRequestClearSettings: clearQSettings()
     }
 
     ManageTokensController {
         id: collectiblesController
         sourceModel: ctrlEmptyModel.checked ? null : renamedModel
         settingsKey: "WalletCollectibles"
+        serializeAsCollectibles: true
+
+        onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
+        onRequestLoadSettings: loadFromQSettings()
+        onRequestClearSettings: clearQSettings()
     }
 
     ManageHiddenPanel {
