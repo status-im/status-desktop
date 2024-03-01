@@ -1,5 +1,7 @@
 #include "managetokenscontroller.h"
 
+#include "tokendata.h"
+
 #include <QElapsedTimer>
 #include <QMutableHashIterator>
 
@@ -24,32 +26,40 @@ ManageTokensController::ManageTokensController(QObject* parent)
         }
         if (m_modelConnectionsInitialized)
             return;
-        connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex &parent, int first, int last) {
+        connect(m_sourceModel,
+                &QAbstractItemModel::rowsInserted,
+                this,
+                [this](const QModelIndex& parent, int first, int last) {
 #ifdef QT_DEBUG
-            QElapsedTimer t;
-            t.start();
-            qCDebug(manageTokens) << "!!! ADDING" << last-first+1 << "NEW TOKENS";
+                    QElapsedTimer t;
+                    t.start();
+                    qCDebug(manageTokens) << "!!! ADDING" << last - first + 1 << "NEW TOKENS";
 #endif
-            for (int i = first; i <= last; i++)
-                addItem(i);
+                    for (int i = first; i <= last; i++)
+                        addItem(i);
 
-            rebuildCommunityTokenGroupsModel();
-            rebuildHiddenCommunityTokenGroupsModel();
-            reloadCommunityIds();
-            m_communityTokensModel->setCommunityIds(m_communityIds);
-            rebuildCollectionGroupsModel();
-            rebuildHiddenCollectionGroupsModel();
+                    rebuildCommunityTokenGroupsModel();
+                    rebuildHiddenCommunityTokenGroupsModel();
+                    reloadCommunityIds();
+                    m_communityTokensModel->setCommunityIds(m_communityIds);
+                    rebuildCollectionGroupsModel();
+                    rebuildHiddenCollectionGroupsModel();
 
-            for (auto model: m_allModels) {
-                model->applySort();
-                model->saveCustomSortOrder();
-            }
+                    for (auto model : m_allModels) {
+                        model->applySort();
+                        model->saveCustomSortOrder();
+                    }
 #ifdef QT_DEBUG
-            qCDebug(manageTokens) << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
+                    qCDebug(manageTokens)
+                        << "!!! ADDING NEW SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
 #endif
-        });
-        connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::parseSourceModel);
-        connect(m_sourceModel, &QAbstractItemModel::dataChanged, this, &ManageTokensController::parseSourceModel); // NB at this point we don't know in which submodel the item is
+                });
+        connect(m_sourceModel, &QAbstractItemModel::rowsRemoved, this, &ManageTokensController::requestLoadSettings);
+        connect(m_sourceModel,
+                &QAbstractItemModel::dataChanged,
+                this,
+                &ManageTokensController::requestLoadSettings); // NB at this point we don't know in
+                                                               // which submodel the item is
         connect(m_communityTokensModel, &ManageTokensModel::rowsMoved, this, [this]() {
             if (!m_arrangeByCommunity)
                 rebuildCommunityTokenGroupsModel();
@@ -57,13 +67,16 @@ ManageTokensController::ManageTokensController(QObject* parent)
             m_communityTokensModel->setCommunityIds(m_communityIds);
             m_communityTokensModel->saveCustomSortOrder();
         });
-        connect(m_communityTokenGroupsModel, &ManageTokensModel::rowsMoved, this, [this](const QModelIndex &parent, int start, int end, const QModelIndex &destination, int toRow) {
-            qCDebug(manageTokens) << "!!! COMMUNITY GROUP MOVED FROM" << start << "TO" << toRow;
-            reloadCommunityIds();
-            m_communityTokensModel->setCommunityIds(m_communityIds);
-            m_communityTokensModel->saveCustomSortOrder();
-            m_communityTokensModel->applySort();
-        });
+        connect(m_communityTokenGroupsModel,
+                &ManageTokensModel::rowsMoved,
+                this,
+                [this](const QModelIndex& parent, int start, int end, const QModelIndex& destination, int toRow) {
+                    qCDebug(manageTokens) << "!!! COMMUNITY GROUP MOVED FROM" << start << "TO" << toRow;
+                    reloadCommunityIds();
+                    m_communityTokensModel->setCommunityIds(m_communityIds);
+                    m_communityTokensModel->saveCustomSortOrder();
+                    m_communityTokensModel->applySort();
+                });
         m_modelConnectionsInitialized = true;
     });
 }
@@ -83,7 +96,7 @@ void ManageTokensController::showHideRegularToken(const QString& symbol, bool fl
             emit tokenHidden(shownItem->symbol, shownItem->name);
         }
     }
-    saveSettings();
+    requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideCommunityToken(const QString& symbol, bool flag)
@@ -109,7 +122,7 @@ void ManageTokensController::showHideCommunityToken(const QString& symbol, bool 
     m_communityTokensModel->saveCustomSortOrder();
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
-    saveSettings();
+    requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
@@ -117,7 +130,7 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     if (flag) { // show
         const auto tokens = m_hiddenTokensModel->takeAllItems(groupId);
         if (!tokens.isEmpty()) {
-            for (const auto& token: tokens) {
+            for (const auto& token : tokens) {
                 m_communityTokensModel->addItem(token);
             }
             emit communityTokenGroupShown(tokens.constFirst().communityName);
@@ -129,7 +142,7 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     } else { // hide
         const auto tokens = m_communityTokensModel->takeAllItems(groupId);
         if (!tokens.isEmpty()) {
-            for (const auto& token: tokens) {
+            for (const auto& token : tokens) {
                 m_hiddenTokensModel->addItem(token, false /*prepend*/);
             }
             emit communityTokenGroupHidden(tokens.constFirst().communityName);
@@ -142,7 +155,7 @@ void ManageTokensController::showHideGroup(const QString& groupId, bool flag)
     }
     rebuildCommunityTokenGroupsModel();
     rebuildHiddenCommunityTokenGroupsModel();
-    saveSettings();
+    requestSaveSettings(serializeSettingsAsJson());
 }
 
 void ManageTokensController::showHideCollectionGroup(const QString& groupId, bool flag)
@@ -150,7 +163,7 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     if (flag) { // show
         const auto tokens = m_hiddenTokensModel->takeAllItems(groupId);
         if (!tokens.isEmpty()) {
-            for (const auto& token: tokens) {
+            for (const auto& token : tokens) {
                 m_regularTokensModel->addItem(token);
             }
             emit collectionTokenGroupShown(tokens.constFirst().collectionName);
@@ -161,7 +174,7 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     } else { // hide
         const auto tokens = m_regularTokensModel->takeAllItems(groupId);
         if (!tokens.isEmpty()) {
-            for (const auto& token: tokens) {
+            for (const auto& token : tokens) {
                 m_hiddenTokensModel->addItem(token, false /*prepend*/);
             }
             emit collectionTokenGroupHidden(tokens.constFirst().collectionName);
@@ -173,60 +186,28 @@ void ManageTokensController::showHideCollectionGroup(const QString& groupId, boo
     }
     rebuildCollectionGroupsModel();
     rebuildHiddenCollectionGroupsModel();
-    saveSettings();
+    requestSaveSettings(serializeSettingsAsJson());
 }
 
-void ManageTokensController::saveSettings()
+void ManageTokensController::saveToQSettings(const QString& json)
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
-    setSettingsDirty(true);
-
-    // gather the data to save
-    SerializedTokenData result;
-    for(auto model : {m_regularTokensModel, m_communityTokensModel})
-        result.insert(model->save());
-    result.insert(m_hiddenTokensModel->save(false));
+    savingStarted();
 
     // save to QSettings
     m_settings.beginGroup(settingsGroupName());
 
-    // arrange by
-    m_settings.setValue(QStringLiteral("ArrangeByCommunity"), m_arrangeByCommunity);
-    m_settings.setValue(QStringLiteral("ArrangeByCollection"), m_arrangeByCollection);
-
     // data
-    m_settings.beginWriteArray(m_settingsKey);
-    SerializedTokenData::const_key_value_iterator it = result.constKeyValueBegin();
-    for (auto i = 0; it != result.constKeyValueEnd() && i < result.size(); it++, i++) {
-        m_settings.setArrayIndex(i);
-        const auto& [pos, visible, groupId] = it->second;
-        m_settings.setValue(QStringLiteral("symbol"), it->first);
-        m_settings.setValue(QStringLiteral("pos"), pos);
-        m_settings.setValue(QStringLiteral("visible"), visible);
-        m_settings.setValue(QStringLiteral("groupId"), groupId);
-    }
-    m_settings.endArray();
-
-    // hidden groups
-    m_settings.setValue(QStringLiteral("HiddenCommunityGroups"), hiddenCommunityGroups());
-    m_settings.setValue(QStringLiteral("HiddenCollectionGroups"), hiddenCollectionGroups());
+    m_settings.setValue(m_settingsKey, json);
 
     m_settings.endGroup();
     m_settings.sync();
 
-    // unset dirty
-    for (auto model: m_allModels)
-        model->setDirty(false);
-
-    loadSettingsData(true); // reload positions and visibility
-
-    incRevision();
-
-    setSettingsDirty(false);
+    savingFinished();
 }
 
-void ManageTokensController::clearSettings()
+void ManageTokensController::clearQSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
@@ -239,71 +220,24 @@ void ManageTokensController::clearSettings()
     emit settingsDirtyChanged(false);
 }
 
-void ManageTokensController::loadSettingsData(bool withGroup)
-{
-    SerializedTokenData result;
-
-    if (withGroup)
-        m_settings.beginGroup(settingsGroupName());
-
-    const auto size = m_settings.beginReadArray(m_settingsKey);
-    for (auto i = 0; i < size; i++) {
-        m_settings.setArrayIndex(i);
-        const auto symbol = m_settings.value(QStringLiteral("symbol")).toString();
-        if (symbol.isEmpty()) {
-            qCWarning(manageTokens) << Q_FUNC_INFO << "Missing symbol while reading tokens settings";
-            continue;
-        }
-        const auto pos = m_settings.value(QStringLiteral("pos"), INT_MAX).toInt();
-        const auto visible = m_settings.value(QStringLiteral("visible"), true).toBool();
-        const auto groupId = m_settings.value(QStringLiteral("groupId")).toString();
-        result.insert(symbol, {pos, visible, groupId});
-    }
-    m_settings.endArray();
-
-    if (withGroup)
-        m_settings.endGroup();
-
-    if (result != m_settingsData)
-        m_settingsData = result;
-}
-
-void ManageTokensController::loadSettings()
+void ManageTokensController::loadFromQSettings()
 {
     Q_ASSERT(!m_settingsKey.isEmpty());
 
-    setSettingsDirty(true);
-    m_settingsData.clear();
+    loadingStarted();
 
     // load from QSettings
     m_settings.beginGroup(settingsGroupName());
-
-    loadSettingsData();
-
-    // hidden groups
-    const auto groups = m_settings.value(QStringLiteral("HiddenCommunityGroups")).toStringList();
-    if (!groups.isEmpty()) {
-        m_hiddenCommunityGroups = {groups.constBegin(), groups.constEnd()};
-        emit hiddenCommunityGroupsChanged();
-    }
-    const auto collections = m_settings.value(QStringLiteral("HiddenCollectionGroups")).toStringList();
-    if (!collections.isEmpty()) {
-        m_hiddenCollectionGroups = {collections.constBegin(), collections.constEnd()};
-        emit hiddenCollectionGroupsChanged();
-    }
-
-    // arrange by
-    setArrangeByCommunity(m_settings.value(QStringLiteral("ArrangeByCommunity"), false).toBool());
-    setArrangeByCollection(m_settings.value(QStringLiteral("ArrangeByCollection"), false).toBool());
-
+    const auto jsonData = m_settings.value(m_settingsKey).toString();
     m_settings.endGroup();
 
-    setSettingsDirty(false);
+    loadingFinished(jsonData);
 }
 
 void ManageTokensController::setSettingsDirty(bool dirty)
 {
-    if (m_settingsDirty == dirty) return;
+    if (m_settingsDirty == dirty)
+        return;
     m_settingsDirty = dirty;
     emit settingsDirtyChanged(m_settingsDirty);
 }
@@ -324,9 +258,77 @@ QStringList ManageTokensController::hiddenCollectionGroups() const
     return {m_hiddenCollectionGroups.constBegin(), m_hiddenCollectionGroups.constEnd()};
 }
 
-void ManageTokensController::revert()
+void ManageTokensController::revert() { requestLoadSettings(); }
+
+void ManageTokensController::savingStarted()
 {
+    setSettingsDirty(true); // save to QSettings
+    m_settings.beginGroup(settingsGroupName());
+
+    m_settings.setValue(QStringLiteral("ArrangeByCommunity"), m_arrangeByCommunity);
+    m_settings.setValue(QStringLiteral("ArrangeByCollection"), m_arrangeByCollection);
+
+    m_settings.endGroup();
+}
+
+void ManageTokensController::savingFinished()
+{
+    // unset dirty
+    for (auto model : m_allModels)
+        model->setDirty(false);
+
+    incRevision();
+
+    setSettingsDirty(false);
+}
+
+void ManageTokensController::loadingStarted()
+{
+    setSettingsDirty(true);
+    m_settingsData.clear();
+
+    m_settings.beginGroup(settingsGroupName());
+
+    // hidden groups
+    const auto groups = m_settings.value(QStringLiteral("HiddenCommunityGroups")).toStringList();
+    if (!groups.isEmpty()) {
+        m_hiddenCommunityGroups = {groups.constBegin(), groups.constEnd()};
+        emit hiddenCommunityGroupsChanged();
+    }
+    const auto collections = m_settings.value(QStringLiteral("HiddenCollectionGroups")).toStringList();
+    if (!collections.isEmpty()) {
+        m_hiddenCollectionGroups = {collections.constBegin(), collections.constEnd()};
+        emit hiddenCollectionGroupsChanged();
+    }
+
+    // arrange by
+    setArrangeByCommunity(m_settings.value(QStringLiteral("ArrangeByCommunity"), false).toBool());
+    setArrangeByCollection(m_settings.value(QStringLiteral("ArrangeByCollection"), false).toBool());
+
+    m_settings.endGroup();
+}
+
+void ManageTokensController::loadingFinished(const QString& jsonData)
+{
+    if (!jsonData.isEmpty()) {
+        auto result = tokenOrdersFromJson(jsonData, m_serializeAsCollectibles);
+        if (result != m_settingsData) {
+            m_settingsData = result;
+        }
+    }
+
     parseSourceModel();
+    setSettingsDirty(false);
+}
+
+QString ManageTokensController::serializeSettingsAsJson()
+{
+    SerializedTokenData result;
+    for (auto model : {m_regularTokensModel, m_communityTokensModel})
+        result.insert(model->save());
+    result.insert(m_hiddenTokensModel->save(false));
+    auto json = tokenOrdersToJson(result, m_serializeAsCollectibles);
+    return json;
 }
 
 QString ManageTokensController::settingsGroupName() const
@@ -343,15 +345,12 @@ bool ManageTokensController::hasSettings() const
 
 int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
 {
-    int leftPos, rightPos;
-    bool leftVisible, rightVisible;
-
-    std::tie(leftPos, leftVisible, std::ignore) = m_settingsData.value(lhsSymbol, {INT_MAX, false, QString()});
-    std::tie(rightPos, rightVisible, std::ignore) = m_settingsData.value(rhsSymbol, {INT_MAX, false, QString()});
+    const auto left = m_settingsData.value(lhsSymbol, TokenOrder());
+    const auto right = m_settingsData.value(rhsSymbol, TokenOrder());
 
     // check if visible
-    leftPos = leftVisible ? leftPos : INT_MAX;
-    rightPos = rightVisible ? rightPos : INT_MAX;
+    auto leftPos = left.visible ? left.sortOrder : undefinedTokenOrder;
+    auto rightPos = right.visible ? right.sortOrder : undefinedTokenOrder;
 
     if (leftPos < rightPos)
         return -1;
@@ -362,10 +361,13 @@ int ManageTokensController::compareTokens(const QString& lhsSymbol, const QStrin
 
 bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
 {
-    if (symbol.isEmpty()) return true;
+    if (symbol.isEmpty())
+        return true;
 
-    const auto& [pos, visible, groupId] = m_settingsData.value(symbol, {INT_MAX, true, QString()});
-    return visible;
+    if (!m_settingsData.contains(symbol)) {
+        return true;
+    }
+    return m_settingsData.value(symbol).visible;
 }
 
 void ManageTokensController::classBegin()
@@ -373,19 +375,17 @@ void ManageTokensController::classBegin()
     // empty on purpose
 }
 
-void ManageTokensController::componentComplete()
-{
-    loadSettings();
-}
+void ManageTokensController::componentComplete() { requestLoadSettings(); }
 
 void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
 {
-    if(m_sourceModel == newSourceModel) return;
+    if (m_sourceModel == newSourceModel)
+        return;
 
-    if(!newSourceModel) {
+    if (!newSourceModel) {
         disconnect(sourceModel());
         // clear all the models
-        for (auto model: m_allModels)
+        for (auto model : m_allModels)
             model->clear();
         m_settingsData.clear();
         m_communityIds.clear();
@@ -399,14 +399,15 @@ void ManageTokensController::setSourceModel(QAbstractItemModel* newSourceModel)
 
     m_sourceModel = newSourceModel;
 
-    connect(m_sourceModel, &QAbstractItemModel::modelReset, this, &ManageTokensController::parseSourceModel);
+    connect(m_sourceModel, &QAbstractItemModel::modelReset, this, &ManageTokensController::requestLoadSettings);
 
-    if (m_sourceModel && m_sourceModel->roleNames().isEmpty()) { // workaround for when a model has no roles and roles are added when the model is populated (ListModel)
+    if (m_sourceModel && m_sourceModel->roleNames().isEmpty()) { // workaround for when a model has no roles and roles
+                                                                 // are added when the model is populated (ListModel)
         // QTBUG-57971
-        connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::parseSourceModel);
+        connect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::requestLoadSettings);
         return;
     } else {
-        parseSourceModel();
+        requestLoadSettings();
     }
 }
 
@@ -415,7 +416,7 @@ void ManageTokensController::parseSourceModel()
     if (!m_sourceModel)
         return;
 
-    disconnect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::parseSourceModel);
+    disconnect(m_sourceModel, &QAbstractItemModel::rowsInserted, this, &ManageTokensController::requestLoadSettings);
 
 #ifdef QT_DEBUG
     QElapsedTimer t;
@@ -423,11 +424,8 @@ void ManageTokensController::parseSourceModel()
 #endif
 
     // clear all the models
-    for (auto model: m_allModels)
+    for (auto model : m_allModels)
         model->clear();
-
-    // load settings
-    loadSettings();
 
     // read and transform the original data
     const auto newSize = m_sourceModel->rowCount();
@@ -447,14 +445,14 @@ void ManageTokensController::parseSourceModel()
     rebuildHiddenCollectionGroupsModel();
 
     // (pre)sort
-    for (auto model: m_allModels) {
+    for (auto model : m_allModels) {
         model->applySort();
         model->saveCustomSortOrder();
         model->setDirty(false);
     }
 
 #ifdef QT_DEBUG
-    qCDebug(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed()/1'000'000.f << "ms";
+    qCDebug(manageTokens) << "!!! PARSING SOURCE DATA TOOK" << t.nsecsElapsed() / 1'000'000.f << "ms";
 #endif
 
     emit sourceModelChanged();
@@ -464,7 +462,7 @@ void ManageTokensController::addItem(int index)
 {
     const auto sourceRoleNames = m_sourceModel->roleNames();
 
-    const auto dataForIndex = [&](const QModelIndex &idx, const QByteArray& rolename) -> QVariant {
+    const auto dataForIndex = [&](const QModelIndex& idx, const QByteArray& rolename) -> QVariant {
         const auto key = sourceRoleNames.key(rolename, -1);
         if (key == -1)
             return {};
@@ -475,7 +473,7 @@ void ManageTokensController::addItem(int index)
     const auto symbol = dataForIndex(srcIndex, kSymbolRoleName).toString();
     const auto communityId = dataForIndex(srcIndex, kCommunityIdRoleName).toString();
     const auto communityName = dataForIndex(srcIndex, kCommunityNameRoleName).toString();
-    const auto visible = m_settingsData.contains(symbol) ? std::get<1>(m_settingsData.value(symbol)) : true;
+    const auto visible = m_settingsData.contains(symbol) ? m_settingsData.value(symbol).visible : true;
     const auto bgColor = dataForIndex(srcIndex, kBackgroundColorRoleName).value<QColor>();
     const auto collectionUid = dataForIndex(srcIndex, kCollectionUidRoleName).toString();
 
@@ -497,8 +495,8 @@ void ManageTokensController::addItem(int index)
     token.decimals = dataForIndex(srcIndex, kDecimalsRoleName);
     token.marketDetails = dataForIndex(srcIndex, kMarketDetailsRoleName);
 
-    token.customSortOrderNo = m_settingsData.contains(symbol) ? std::get<0>(m_settingsData.value(symbol))
-                                                              : (visible ? INT_MAX : 0); // append/prepend
+    token.customSortOrderNo = m_settingsData.contains(symbol) ? m_settingsData.value(symbol).sortOrder
+                                                              : (visible ? undefinedTokenOrder : 0); // append/prepend
 
     if (!visible)
         m_hiddenTokensModel->addItem(token, /*append*/ false);
@@ -510,19 +508,15 @@ void ManageTokensController::addItem(int index)
 
 bool ManageTokensController::dirty() const
 {
-    return std::any_of(m_allModels.cbegin(), m_allModels.cend(), [](auto model) {
-        return model->dirty();
-    });
+    return std::any_of(m_allModels.cbegin(), m_allModels.cend(), [](auto model) { return model->dirty(); });
 }
 
-bool ManageTokensController::arrangeByCommunity() const
-{
-    return m_arrangeByCommunity;
-}
+bool ManageTokensController::arrangeByCommunity() const { return m_arrangeByCommunity; }
 
 void ManageTokensController::setArrangeByCommunity(bool newArrangeByCommunity)
 {
-    if(m_arrangeByCommunity == newArrangeByCommunity) return;
+    if (m_arrangeByCommunity == newArrangeByCommunity)
+        return;
     m_arrangeByCommunity = newArrangeByCommunity;
     if (m_arrangeByCommunity) {
         rebuildCommunityTokenGroupsModel();
@@ -532,14 +526,12 @@ void ManageTokensController::setArrangeByCommunity(bool newArrangeByCommunity)
     emit arrangeByCommunityChanged();
 }
 
-bool ManageTokensController::arrangeByCollection() const
-{
-    return m_arrangeByCollection;
-}
+bool ManageTokensController::arrangeByCollection() const { return m_arrangeByCollection; }
 
 void ManageTokensController::setArrangeByCollection(bool newArrangeByCollection)
 {
-    if(m_arrangeByCollection == newArrangeByCollection) return;
+    if (m_arrangeByCollection == newArrangeByCollection)
+        return;
     m_arrangeByCollection = newArrangeByCollection;
     if (m_arrangeByCollection) {
         rebuildCollectionGroupsModel();
@@ -593,7 +585,7 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
     }
 
     m_communityTokenGroupsModel->clear();
-    for (const auto& group: std::as_const(result))
+    for (const auto& group : std::as_const(result))
         m_communityTokenGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
@@ -610,7 +602,8 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
         const auto communityId = communityToken.communityId;
         if (communityId.isEmpty())
             continue;
-        if (!communityIds.contains(communityId) && m_hiddenCommunityGroups.contains(communityId)) { // insert into groups
+        if (!communityIds.contains(communityId) &&
+            m_hiddenCommunityGroups.contains(communityId)) { // insert into groups
             communityIds.append(communityId);
 
             TokenData tokenGroup;
@@ -632,7 +625,7 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
     }
 
     m_hiddenCommunityTokenGroupsModel->clear();
-    for (const auto& group: std::as_const(result))
+    for (const auto& group : std::as_const(result))
         m_hiddenCommunityTokenGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! HIDDEN GROUPS MODEL REBUILT WITH GROUPS:" << communityIds;
@@ -651,7 +644,8 @@ void ManageTokensController::rebuildCollectionGroupsModel()
         if (!collectionIds.contains(collectionId)) { // insert into groups
             collectionIds.append(collectionId);
 
-            const auto collectionName = !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
+            const auto collectionName =
+                !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
             tokenGroup.collectionUid = collectionId;
@@ -673,7 +667,7 @@ void ManageTokensController::rebuildCollectionGroupsModel()
     }
 
     m_collectionGroupsModel->clear();
-    for (const auto& group: std::as_const(result))
+    for (const auto& group : std::as_const(result))
         m_collectionGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! COLLECTION MODEL REBUILT WITH GROUPS:" << collectionIds;
@@ -689,10 +683,12 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
         const auto& collectionToken = m_hiddenTokensModel->itemAt(i);
         const auto collectionId = collectionToken.collectionUid;
         const auto isSelfCollection = collectionToken.isSelfCollection;
-        if (!collectionIds.contains(collectionId) && m_hiddenCollectionGroups.contains(collectionId)) { // insert into groups
+        if (!collectionIds.contains(collectionId) &&
+            m_hiddenCollectionGroups.contains(collectionId)) { // insert into groups
             collectionIds.append(collectionId);
 
-            const auto collectionName = !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
+            const auto collectionName =
+                !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
             tokenGroup.collectionUid = collectionId;
@@ -714,16 +710,13 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
     }
 
     m_hiddenCollectionGroupsModel->clear();
-    for (const auto& group: std::as_const(result))
+    for (const auto& group : std::as_const(result))
         m_hiddenCollectionGroupsModel->addItem(group);
 
     qCDebug(manageTokens) << "!!! HIDDEN COLLECTION GROUPS MODEL REBUILT WITH GROUPS:" << collectionIds;
 }
 
-QString ManageTokensController::settingsKey() const
-{
-    return m_settingsKey;
-}
+QString ManageTokensController::settingsKey() const { return m_settingsKey; }
 
 void ManageTokensController::setSettingsKey(const QString& newSettingsKey)
 {
@@ -731,4 +724,14 @@ void ManageTokensController::setSettingsKey(const QString& newSettingsKey)
         return;
     m_settingsKey = newSettingsKey;
     emit settingsKeyChanged();
+}
+
+bool ManageTokensController::serializeAsCollectibles() const { return m_serializeAsCollectibles; }
+
+void ManageTokensController::setSerializeAsCollectibles(const bool newSerializeAsCollectibles)
+{
+    if (m_serializeAsCollectibles == newSerializeAsCollectibles)
+        return;
+    m_serializeAsCollectibles = newSerializeAsCollectibles;
+    emit serializeAsCollectiblesChanged();
 }

@@ -18,6 +18,25 @@ QtObject {
     readonly property var assetsController: ManageTokensController {
         sourceModel: groupedAccountAssetsModel
         settingsKey: "WalletAssets"
+        serializeAsCollectibles: false
+
+        // TODO #13313: call the assets controller for all events
+        onRequestSaveSettings: (jsonData) => {
+            // savingStarted()
+            saveToQSettings(jsonData)
+            // savingFinished()
+        }
+        onRequestLoadSettings: {
+            // loadingStarted()
+            loadFromQSettings()
+            // loadingFinished()
+        }
+        onRequestClearSettings: {
+            // savingStarted()
+            clearQSettings()
+            // savingFinished()
+        }
+
         onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
                                          qsTr("%1 community assets successfully hidden").arg(communityName), "", "checkmark-circle",
                                          false, Constants.ephemeralNotificationType.success, "")

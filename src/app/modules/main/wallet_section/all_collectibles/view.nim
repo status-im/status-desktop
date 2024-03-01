@@ -32,6 +32,9 @@ QtObject:
   proc updateCollectiblePreferences*(self: View, collectiblePreferencesJson: string) {.slot.} =
     self.delegate.updateCollectiblePreferences(collectiblePreferencesJson)
 
+  proc clearCollectiblePreferences*(self: View, collectiblePreferencesJson: string) {.slot.} =
+    self.delegate.updateCollectiblePreferences("[]")
+
   proc getCollectiblePreferencesJson(self: View): QVariant {.slot.} =
     let preferences = self.delegate.getCollectiblePreferencesJson()
     return newQVariant(preferences)

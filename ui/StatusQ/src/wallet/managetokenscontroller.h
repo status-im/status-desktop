@@ -16,6 +16,7 @@ class ManageTokensController : public QObject, public QQmlParserStatus
     // input properties
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged FINAL)
     Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey NOTIFY settingsKeyChanged FINAL REQUIRED)
+    Q_PROPERTY(bool serializeAsCollectibles READ serializeAsCollectibles WRITE setSerializeAsCollectibles NOTIFY serializeAsCollectiblesChanged FINAL REQUIRED)
 
     Q_PROPERTY(bool arrangeByCommunity READ arrangeByCommunity WRITE setArrangeByCommunity NOTIFY arrangeByCommunityChanged FINAL)
     Q_PROPERTY(bool arrangeByCollection READ arrangeByCollection WRITE setArrangeByCollection NOTIFY arrangeByCollectionChanged FINAL)
@@ -45,10 +46,18 @@ public:
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
     Q_INVOKABLE void showHideCollectionGroup(const QString& groupId, bool flag);
 
-    Q_INVOKABLE void loadSettings();
-    Q_INVOKABLE void saveSettings();
-    Q_INVOKABLE void clearSettings();
+    Q_INVOKABLE void loadFromQSettings();
+    Q_INVOKABLE void saveToQSettings(const QString& json);
+    Q_INVOKABLE void clearQSettings();
     Q_INVOKABLE void revert();
+
+    /// required to be called before the saving is started
+    Q_INVOKABLE void savingStarted();
+    Q_INVOKABLE void savingFinished();
+    Q_INVOKABLE void loadingStarted();
+    Q_INVOKABLE void loadingFinished(const QString& jsonData);
+
+    Q_INVOKABLE QString serializeSettingsAsJson();
 
     Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
     Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
@@ -64,6 +73,7 @@ signals:
     void arrangeByCollectionChanged();
     void settingsKeyChanged();
     void settingsDirtyChanged(bool dirty);
+    void serializeAsCollectiblesChanged();
 
     void tokenHidden(const QString& symbol, const QString& name);
     void tokenShown(const QString& symbol, const QString& name);
@@ -76,6 +86,17 @@ signals:
     void hiddenCollectionGroupsChanged();
 
     void revisionChanged();
+
+    /// Emitted when the settings are requested to be saved.
+    /// Receiver requires to call savingStarted and savingFinished to notify about the saving process.
+    /// @param jsonData serialized json data
+    void requestSaveSettings(const QString& jsonData);
+    /// Emitted when the settings are requested to be loaded. Client should call loadSettings as a response.
+    /// Receiver requires to call loadingStarted and loadingFinished to notify about the loading process.
+    void requestLoadSettings();
+    /// @brief Emitted when the settings are requested to be cleared.
+    /// Receiver requires to call loadingStarted and loadingFinished to notify about the loading process.
+    void requestClearSettings();
 
 private:
     QAbstractItemModel* m_sourceModel{nullptr};
@@ -130,6 +151,11 @@ private:
     QString settingsKey() const;
     QString settingsGroupName() const;
     void setSettingsKey(const QString& newSettingsKey);
+
+    bool m_serializeAsCollectibles{false};
+    bool serializeAsCollectibles() const;
+    void setSerializeAsCollectibles(const bool newSerializeAsCollectibles);
+
     QSettings m_settings;
     SerializedTokenData m_settingsData; // symbol -> {sortOrder, visible, groupId}
     bool hasSettings() const;
