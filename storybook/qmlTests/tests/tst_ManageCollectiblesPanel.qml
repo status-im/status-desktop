@@ -37,9 +37,19 @@ Item {
             controller: ManageTokensController {
                 sourceModel: renamedModel
                 settingsKey: "WalletCollectibles"
+                serializeAsCollectibles: true
+
+                onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
+                onRequestLoadSettings: loadFromQSettings()
+                onRequestClearSettings: clearQSettings()
+
                 onCommunityTokenGroupHidden: (communityName) => Global.displayToastMessage(
                                                  qsTr("%1 community collectibles successfully hidden").arg(communityName), "", "checkmark-circle",
                                                  false, Constants.ephemeralNotificationType.success, "")
+            }
+
+            function clearSettings() {
+                controller.clearQSettings()
             }
         }
     }

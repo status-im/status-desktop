@@ -22,7 +22,8 @@ DoubleFlickableWithFolding {
     property var getCurrentCurrencyAmount: function(balance) {}
 
     function saveSettings() {
-        root.controller.saveSettings();
+        let jsonSettings = root.controller.serializeSettingsAsJson()
+        root.controller.requestSaveSettings(jsonSettings);
     }
 
     function revert() {
@@ -30,7 +31,7 @@ DoubleFlickableWithFolding {
     }
 
     function clearSettings() {
-        root.controller.clearSettings();
+        root.controller.requestClearSettings()
     }
 
     clip: true
