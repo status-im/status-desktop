@@ -100,6 +100,11 @@ QtObject {
         return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }
 
+    // Returns true if the provided displayName occurs in community members
+    function isDisplayNameDupeOfCommunityMember(displayName) {
+        root.communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
+    }
+
     function requestCommunityInfo(communityKey, shardCluster, shardIndex, importing = false) {
         const publicKey = Utils.isCompressedPubKey(communityKey)
                             ? Utils.changeCommunityKeyCompression(communityKey)

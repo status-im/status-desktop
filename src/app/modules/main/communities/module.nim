@@ -290,6 +290,9 @@ proc getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelIt
       c.filePath,
       true)
 
+method isDisplayNameDupeOfCommunityMember*(self: Module, displayName: string): bool =
+  self.controller.isDisplayNameDupeOfCommunityMember(displayName)
+
 method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
 

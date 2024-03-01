@@ -852,6 +852,20 @@ QtObject:
   proc getCommunityIds*(self: Service): seq[string] =
     return toSeq(self.communities.keys)
 
+  proc isDisplayNameDupeOfCommunityMember*(self: Service, displayName: string): bool =
+    try:
+      let response = status_go.isDisplayNameDupeOfCommunityMember(displayName)
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error scanning communities for member name: " & error.message)
+
+      if response.result.kind != JNull:
+        return response.result.getBool
+
+    except Exception as e:
+      error "error scanning communities for member name: ", errMsg = e.msg
+
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
     let community = self.getCommunityById(communityId)
     for metadata in community.communityTokensMetadata:

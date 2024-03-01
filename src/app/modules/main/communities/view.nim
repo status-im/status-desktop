@@ -482,6 +482,9 @@ QtObject:
   proc spectateCommunity*(self: View, communityId: string) {.slot.} =
     discard self.delegate.spectateCommunity(communityId)
 
+  proc isDisplayNameDupeOfCommunityMember*(self: View, displayName: string): bool {.slot.} =
+    return self.delegate.isDisplayNameDupeOfCommunityMember(displayName)
+
   proc createCommunity*(self: View, name: string,
                         description: string, introMessage: string, outroMessage: string,
                         access: int, color: string, tags: string,
