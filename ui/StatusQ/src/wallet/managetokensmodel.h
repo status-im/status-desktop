@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tokendata.h"
+
 #include <QAbstractListModel>
 #include <QColor>
 #include <QLoggingCategory>
@@ -29,18 +31,6 @@ const auto kMarketDetailsRoleName = QByteArrayLiteral("marketDetails");
 const auto kIsSelfCollectionRoleName = QByteArrayLiteral("isSelfCollection");
 // TODO add communityPrivilegesLevel for collectibles
 } // namespace
-
-struct TokenData {
-    QString symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, image;
-    QColor backgroundColor{Qt::transparent};
-    QVariant balance, currencyBalance;
-    QVariant balances, marketDetails, decimals;
-    int customSortOrderNo{INT_MAX};
-    bool isSelfCollection{false};
-};
-
-// symbol -> {sortOrder, visible, groupId, isCommunityGroup, isCollectionGroup}
-using SerializedTokenData = QHash<QString, std::tuple<int, bool, QString, bool, bool>>;
 
 class ManageTokensModel : public QAbstractListModel
 {
@@ -78,7 +68,7 @@ public:
     QList<TokenData> takeAllItems(const QString& groupId);
     void clear();
 
-    SerializedTokenData save(bool isVisible = true);
+    SerializedTokenData save(bool isVisible = true, bool itemsAreGroups = false);
 
     bool dirty() const;
     void setDirty(bool flag);

@@ -141,6 +141,8 @@ add_library(StatusQ SHARED
         src/wallet/managetokenscontroller.h
         src/wallet/managetokensmodel.cpp
         src/wallet/managetokensmodel.h
+        src/wallet/tokendata.cpp
+        src/wallet/tokendata.h
         )
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)
