@@ -82,6 +82,12 @@ SplitView {
         controller: ManageTokensController {
             sourceModel: renamedModel
             settingsKey: "WalletCollectibles"
+            serializeAsCollectibles: true
+
+            onRequestSaveSettings: (jsonData) => saveToQSettings(jsonData)
+            onRequestLoadSettings: loadFromQSettings()
+            onRequestClearSettings: clearQSettings()
+
             onTokenHidden: (symbol, name) => Global.displayToastMessage(
                                qsTr("%1 was successfully hidden").arg(name), "", "checkmark-circle",
                                false, Constants.ephemeralNotificationType.success, "")

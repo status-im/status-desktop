@@ -31,8 +31,8 @@ Control {
     background: null
 
     function clearSettings() {
-        root.assetsController.clearSettings();
-        root.collectiblesController.clearSettings();
+        root.assetsController.requestClearSettings();
+        root.collectiblesController.requestClearSettings();
     }
 
     QtObject {
