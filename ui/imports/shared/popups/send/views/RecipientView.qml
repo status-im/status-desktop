@@ -44,8 +44,11 @@ Loader {
             }
             case TabAddressSelectorView.Type.SavedAddress: {
                 root.addressText = root.selectedRecipient.address
+
+                // Resolve before using
                 if (!!root.selectedRecipient.ens && root.selectedRecipient.ens.length > 0) {
-                    root.resolvedENSAddress = root.selectedRecipient.ens
+                    d.isPending = true
+                    d.resolveENS(root.selectedRecipient.ens)
                 }
                 preferredChainIds = store.getShortChainIds(root.selectedRecipient.chainShortNames)
                 break
