@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQml.Models 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQml 2.15
+import QtQuick.Controls 2.15
+import QtQml.Models 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.controls 1.0
@@ -34,6 +35,8 @@ StatusModal {
 
     headerSettings.title: d.editMode? qsTr("Edit saved address") : qsTr("Add new saved address")
     headerSettings.subTitle: d.editMode? d.name : ""
+
+    property var store: RootStore
 
     onClosed: {
         root.close()
@@ -115,6 +118,9 @@ StatusModal {
         readonly property bool addressInputIsAddress: !!d.address &&
                                                       d.address != Constants.zeroAddress &&
                                                       (Utils.isAddress(d.address) || Utils.isValidAddressWithChainPrefix(d.address))
+        readonly property bool addressInputHasError: !!addressInput.errorMessageCmp.text
+        onAddressInputHasErrorChanged: addressInput.input.valid = !addressInputHasError // can't use binding because valid is overwritten in StatusInput
+        readonly property string networksHiddenState: "networksHidden"
 
         property ListModel cardsModel: ListModel {}
 
@@ -127,7 +133,7 @@ StatusModal {
         property int contactsWithSameAddress: 0
 
         function checkIfAddressIsAlreadyAdddedToWallet(address) {
-            let account = RootStore.getWalletAccount(address)
+            let account = root.store.getWalletAccount(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToWalletError = !!account.name
             if (!d.addressAlreadyAddedToWalletError) {
@@ -144,7 +150,7 @@ StatusModal {
         }
 
         function checkIfAddressIsAlreadyAdddedToSavedAddresses(address) {
-            let savedAddress = RootStore.getSavedAddress(address)
+            let savedAddress = root.store.getSavedAddress(address)
             d.cardsModel.clear()
             d.addressAlreadyAddedToSavedAddressesError = !!savedAddress.address
             if (!d.addressAlreadyAddedToSavedAddressesError) {
@@ -244,6 +250,7 @@ StatusModal {
                 return
             }
 
+            networkSelector.state = ""
             if (d.addressInputIsAddress) {
                 d.checkForAddressInputOwningErrorsWarnings()
                 return
@@ -259,7 +266,7 @@ StatusModal {
                     || event !== undefined && event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
                 return
 
-            RootStore.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
+            root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId, d.chainShortNames)
             root.close()
         }
     }
@@ -273,7 +280,16 @@ StatusModal {
 
             d.resolvingEnsNameInProgress = false
             d.address = resolvedAddress
-            d.checkForAddressInputOwningErrorsWarnings()
+            try { // allows to avoid issues in storybook without much refactoring
+                d.checkForAddressInputOwningErrorsWarnings()
+            }
+            catch (e) {
+            }
+
+            if (!d.addressInputHasError)
+                networkSelector.state = d.networksHiddenState
+            else
+                networkSelector.state = ""
         }
     }
 
@@ -322,8 +338,11 @@ StatusModal {
         contentWidth: availableWidth
 
         Column {
+            id: column
+
             width: scrollView.availableWidth
             height: childrenRect.height
+
             topPadding: 24 // (16 + 8 for Name, until we add it to the StatusInput component)
             bottomPadding: 28
 
@@ -365,7 +384,7 @@ StatusModal {
                     StatusValidator {
                         name: "check-saved-address-existence"
                         validate: (value) => {
-                                      return !RootStore.savedAddressNameExists(value)
+                                      return !root.store.savedAddressNameExists(value)
                                       || d.editMode && d.storedName == value
                                   }
                         errorMessage: qsTr("Name already in use")
@@ -373,6 +392,7 @@ StatusModal {
                 ]
                 input.clearable: true
                 input.rightPadding: 16
+                input.tabNavItem: addressInput
 
                 onKeyPressed: {
                     d.submit(event)
@@ -391,14 +411,25 @@ StatusModal {
                 input.implicitHeight: Math.min(Math.max(input.edit.contentHeight + topPadding + bottomPadding, minimumHeight), maximumHeight) // setting height instead does not work
                 enabled: !(d.editMode || d.addAddress)
                 input.edit.textFormat: TextEdit.RichText
+                input.rightComponent: (d.resolvingEnsNameInProgress || d.checkingContactsAddressInProgress) ?
+                    loadingIndicator : null
                 input.asset.name: d.addressInputValid && !d.editMode ? "checkbox" : ""
                 input.asset.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                input.asset.width: 17
+                input.asset.height: 17
                 input.rightPadding: 16
                 input.leftIcon: false
+                input.tabNavItem: nameInput
 
                 multiline: true
 
                 property string plainText: input.edit.getText(0, text.length).trim()
+
+                Component {
+                    id: loadingIndicator
+
+                    StatusLoadingIndicator {}
+                }
 
                 onTextChanged: {
                     if (skipTextUpdate || !d.initialized)
@@ -424,6 +455,7 @@ StatusModal {
                             // Update root values
                             if (Utils.isLikelyEnsName(plainText)) {
                                 d.ens = plainText
+                                d.address = ""
                                 d.chainShortNames = ""
                             }
                             else {
@@ -560,6 +592,7 @@ StatusModal {
 
             StatusNetworkSelector {
                 id: networkSelector
+
                 objectName: "addSavedAddressNetworkSelector"
                 title: "Network preference"
                 implicitWidth: d.componentWidth
@@ -612,6 +645,28 @@ StatusModal {
                     item.modelRef.isEnabled = !item.modelRef.isEnabled
                     d.chainShortNamesDirty = true
                 }
+
+                readonly property int animationDuration: 350
+                states: [
+                    // As when networks seclector becomes invisible, spacing before it disappears as well, we see jumping height
+                    // To overcome this, we animate bottom padding to 0 and when spacing disappears, reset bottom padding to spacing to compensate it
+                    State {
+                        name: d.networksHiddenState
+                        PropertyChanges { target: networkSelector; height: 0 }
+                        PropertyChanges { target: networkSelector;  opacity: 0 }
+                        PropertyChanges { target: column; bottomPadding: 0 }
+                    }
+                ]
+                transitions: [
+                    Transition {
+                        NumberAnimation { property: "height"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc }
+                        NumberAnimation { property: "opacity"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc}
+                        SequentialAnimation {
+                            NumberAnimation { property: "bottomPadding"; duration: networkSelector.animationDuration; easing.type: Easing.OutCirc }
+                            PropertyAction { target: column; property: "bottomPadding"; value: column.spacing }
+                        }
+                    }
+                ]
             }
         }
     }
@@ -655,7 +710,6 @@ StatusModal {
         StatusButton {
             text: d.editMode? qsTr("Save") : qsTr("Add address")
             enabled: d.valid && d.dirty
-            loading: d.resolvingEnsNameInProgress || d.checkingContactsAddressInProgress
             onClicked: {
                 d.submit()
             }
