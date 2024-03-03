@@ -30,7 +30,7 @@ StatusDialog {
 
     implicitWidth: 480 // design
 
-    title: ProfileUtils.linkTypeToText(linkType) || qsTr("Modify Custom Link")
+    title: ProfileUtils.linkTypeToText(linkType) ? qsTr("Edit %1 link").arg(ProfileUtils.linkTypeToText(linkType)) : qsTr("Edit custom Link")
 
     footer: StatusDialogFooter {
         leftButtons: ObjectModel {
@@ -94,9 +94,9 @@ StatusDialog {
                                   return !root.containsSocialLink(value,
                                                                   ProfileUtils.addSocialLinkPrefix(linkTarget.text, root.linkType))
                               }
-                    errorMessage: root.linkType === Constants.socialLinkType.custom?
-                                      qsTr("Name and link combination already added") :
-                                      qsTr("Link already added")
+                    errorMessage: root.linkType === Constants.socialLinkType.custom ?
+                                      qsTr("Title and link combination already added") :
+                                      qsTr("Username already added")
                 }
             ]
 
@@ -109,7 +109,7 @@ StatusDialog {
             Layout.fillWidth: true
             Layout.topMargin: customTitle.visible ? Style.current.padding : 0
             placeholderText: ""
-            label: ProfileUtils.linkTypeToDescription(linkType) || qsTr("Modify your link")
+            label: ProfileUtils.linkTypeToDescription(linkType) || qsTr("Edit your link")
             linkType: root.linkType
             icon: root.icon
             text: root.linkUrl
@@ -130,8 +130,8 @@ StatusDialog {
                                                                   ProfileUtils.addSocialLinkPrefix(value, root.linkType))
                               }
                     errorMessage: root.linkType === Constants.socialLinkType.custom?
-                                      qsTr("Name and link combination already added") :
-                                      qsTr("Link already added")
+                                      qsTr("Title and link combination already added") :
+                                      qsTr("Username already added")
                 }
             ]
 
