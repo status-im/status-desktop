@@ -93,4 +93,17 @@ QtObject {
             return "hide"
         }
     }
+
+    // Member role names:
+    function getMemberRoleText(memberRole) {
+        switch(memberRole) {
+        case Constants.memberRole.owner:
+            return qsTr("Owner")
+        case Constants.memberRole.admin:
+            return qsTr("Admin")
+        case Constants.memberRole.tokenMaster:
+            return qsTr("TokenMaster")
+        }
+        return qsTr("Member")
+    }
 }

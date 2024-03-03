@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
@@ -19,7 +20,8 @@ ProfileShowcasePanel {
 
     emptyInShowcasePlaceholderText: qsTr("Collectibles here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Collectibles here will be hidden from your profile")
-
+    emptySearchPlaceholderText: qsTr("No collectibles matching search")
+    searchPlaceholderText: qsTr("Search collectible name, number, collection or community")
     additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
     delegate: ProfileShowcasePanelDelegate {
@@ -47,9 +49,9 @@ ProfileShowcasePanel {
         id: addMoreAccountsComponent
 
         AddMoreAccountsLink {
-             visible: root.addAccountsButtonVisible
-             text: qsTr("Don’t see some of your collectibles?")
-             onClicked: root.navigateToAccountsTab()
+            visible: root.addAccountsButtonVisible
+            text: qsTr("Don’t see some of your collectibles?")
+            onClicked: root.navigateToAccountsTab()
         }
     }
 }
