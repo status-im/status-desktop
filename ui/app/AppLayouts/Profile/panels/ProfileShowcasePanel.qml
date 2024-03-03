@@ -19,7 +19,7 @@ DoubleFlickableWithFolding {
 
     property Component delegate: ProfileShowcasePanelDelegate {}
 
-    // Expected roles: 
+    // Expected roles:
     // - visibility: int
     property var inShowcaseModel
     property var hiddenModel
@@ -30,8 +30,11 @@ DoubleFlickableWithFolding {
     property string emptyInShowcasePlaceholderText
     property string emptyHiddenPlaceholderText
 
-    // Signal to requst position change of the visible items
+    property int showcaseLimit: ProfileUtils.showcaseLimit
+
+    // Signal to request position change of the visible items
     signal changePositionRequested(int from, int to)
+
     // Signal to request visibility change of the items
     signal setVisibilityRequested(var key, int toVisibility)
 
@@ -43,6 +46,8 @@ DoubleFlickableWithFolding {
     QtObject {
         id: d
 
+        readonly property bool limitReached: root.showcaseLimit === inShowcaseCounterTracker.count
+
         readonly property var dragHiddenItemKey: ["x-status-draggable-showcase-item-hidden"]
         readonly property var dragShowcaseItemKey: ["x-status-draggable-showcase-item"]
 
@@ -51,6 +56,27 @@ DoubleFlickableWithFolding {
 
         property int additionalHeaderComponentWidth: 350 // by design
         property int additionalHeaderComponentHeight: 40 // by design
+
+        property bool startAnimation: false
+
+        signal setVisibilityInternalRequested(var key, int toVisibility)
+        onSetVisibilityInternalRequested: {
+            if(toVisibility !== Constants.ShowcaseVisibility.NoOne) {
+                startAnimation = !startAnimation
+            }
+            root.setVisibilityRequested(key, toVisibility)
+        }
+    }
+
+    ModelChangeTracker {
+        id: inShowcaseCounterTracker
+
+        property int count: {
+            revision
+            return model.rowCount()
+        }
+
+        model: root.inShowcaseModel
     }
 
     clip: true
@@ -67,23 +93,68 @@ DoubleFlickableWithFolding {
         model: root.inShowcaseModel
 
         header: FoldableHeader {
+            readonly property bool isDropAreaVisible: root.flickable1Folded && d.isAnyHiddenDragActive
+
             width: ListView.view.width
             title: qsTr("In showcase")
             folded: root.flickable1Folded
-            rightAdditionalComponent: VisibilityDropAreaButtonsRow {
-                width: d.additionalHeaderComponentWidth
-                height: d.additionalHeaderComponentHeight
-                margins: 0
-                visible: root.flickable1Folded &&
-                         (d.isAnyHiddenDragActive ||
-                          parent.containsDrag ||
-                          everyoneContainsDrag ||
-                          contactsContainsDrag ||
-                          verifiedContainsDrag)
+            rightAdditionalComponent: isDropAreaVisible && d.limitReached ? limitReachedHeaderButton :
+                                                                            isDropAreaVisible ? dropHeaderAreaComponent : counterComponent
+
+            Component {
+                id: counterComponent
+                StatusBaseText {
+                    id: counterText
+
+                    width: d.additionalHeaderComponentWidth
+                    height: d.additionalHeaderComponentHeight
+                    horizontalAlignment: Text.AlignRight
+                    text: "%1 / %2".arg(inShowcaseCounterTracker.count).arg(root.showcaseLimit)
+                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    color: Theme.palette.baseColor1
+
+                    ColorAnimation {
+                        id: animateColor
+                        target: counterText
+                        properties: "color"
+                        from: Theme.palette.successColor1
+                        to: Theme.palette.baseColor1
+                        duration: 2000
+                    }
+
+                    Connections {
+                        target: d
+                        function onStartAnimationChanged() {
+                            animateColor.start()
+                        }
+                    }
+                }
+            }
+
+            Component {
+                id: dropHeaderAreaComponent
+                VisibilityDropAreaButtonsRow {
+                    margins: 0
+                    width: d.additionalHeaderComponentWidth
+                    height: d.additionalHeaderComponentHeight
+                }
+            }
+
+            Component {
+                id: limitReachedHeaderButton
+                VisibilityDropAreaButton {
+                    width: d.additionalHeaderComponentWidth
+                    height: d.additionalHeaderComponentHeight
+                    rightInset: 1
+                    text: qsTr("Showcase limit of %1 reached").arg(root.showcaseLimit)
+                    enabled: false
+                    textColor: Theme.palette.baseColor1
+                    iconVisible: false
+                }
             }
 
             onToggleFolding: root.flip1Folding()
-        } 
+        }
 
         // Overlaid showcase listview content drop area:
         DropArea {
@@ -99,12 +170,29 @@ DoubleFlickableWithFolding {
                 width: parent.width
                 height: ProfileUtils.defaultDelegateHeight
                 anchors.bottom: parent.bottom
-                visible: d.isAnyHiddenDragActive ||
-                         parent.containsDrag ||
-                         everyoneContainsDrag ||
-                         contactsContainsDrag ||
-                         verifiedContainsDrag
+                visible: !d.limitReached &&
+                         (d.isAnyHiddenDragActive ||
+                          parent.containsDrag ||
+                          everyoneContainsDrag ||
+                          contactsContainsDrag ||
+                          verifiedContainsDrag)
             }
+        }
+
+        // Overlaid showcase listview content when limit reached:
+        VisibilityDropAreaButton {
+            id: limitReachedButton
+
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.halfPadding
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - Style.current.padding
+            height: ProfileUtils.defaultDelegateHeight - Style.current.padding
+            visible: d.isAnyHiddenDragActive && d.limitReached
+            enabled: false
+            text: qsTr("Showcase limit of %1 reached").arg(root.showcaseLimit)
+            textColor: Theme.palette.baseColor1
+            iconVisible: false
         }
     }
 
@@ -165,8 +253,10 @@ DoubleFlickableWithFolding {
 
         readonly property alias containsDrag: dropArea.containsDrag
 
+        property bool iconVisible: true
+        property string textColor: icon.color
         property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
-        property var dropAreaKeys
+        property var dropAreaKeys: []
 
         padding: Style.current.halfPadding
         spacing: padding/2
@@ -175,7 +265,7 @@ DoubleFlickableWithFolding {
 
         background: ShapeRectangle {
             path.strokeColor: dropArea.containsDrag ? Theme.palette.primaryColor2 : Theme.palette.directColor7
-            path.fillColor: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.baseColor4
+            path.fillColor: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.getColor(Theme.palette.baseColor4, 0.7)
 
             DropArea {
                 id: dropArea
@@ -188,7 +278,7 @@ DoubleFlickableWithFolding {
                 }
 
                 onDropped: function(drop) {
-                    root.setVisibilityRequested(drop.source.key, visibilityDropAreaButton.showcaseVisibility)
+                    d.setVisibilityInternalRequested(drop.source.key, visibilityDropAreaButton.showcaseVisibility)
                 }
             }
         }
@@ -200,6 +290,7 @@ DoubleFlickableWithFolding {
                 spacing: visibilityDropAreaButton.spacing
 
                 StatusIcon {
+                    visible: visibilityDropAreaButton.iconVisible
                     width: 20
                     height: width
                     icon: ProfileUtils.visibilityIcon(visibilityDropAreaButton.showcaseVisibility)
@@ -211,7 +302,7 @@ DoubleFlickableWithFolding {
                     font.pixelSize: Style.current.additionalTextSize
                     font.weight: Font.Medium
                     elide: Text.ElideRight
-                    color: visibilityDropAreaButton.icon.color
+                    color: visibilityDropAreaButton.textColor
                     text: visibilityDropAreaButton.text
                 }
             }
@@ -270,7 +361,7 @@ DoubleFlickableWithFolding {
     
     Component {
         id: delegateWrapper
-         DropArea {
+        DropArea {
             id: showcaseDelegateRoot
 
             required property var model
@@ -290,7 +381,7 @@ DoubleFlickableWithFolding {
             }
             function handleDropped(drop) {
                 if (showcaseDelegateRoot.isHiddenShowcaseItem) {
-                    root.setVisibilityRequested(drop.source.key, Constants.ShowcaseVisibility.NoOne)
+                    d.setVisibilityInternalRequested(drop.source.key, Constants.ShowcaseVisibility.NoOne)
                 }
             }
 
@@ -315,32 +406,49 @@ DoubleFlickableWithFolding {
                 property var dragParentData: root
                 property int visualIndexData: showcaseDelegateRoot.index
                 property var dragKeysData: showcaseDelegateRoot.isHiddenShowcaseItem ?
-                                           d.dragHiddenItemKey : d.dragShowcaseItemKey
+                                               d.dragHiddenItemKey : d.dragShowcaseItemKey
 
                 width: parent.width
                 sourceComponent: root.delegate
                 onItemChanged: {
                     if (item) {
-                        item.showcaseVisibilityRequested.connect((toVisibility) => root.setVisibilityRequested(showcaseDelegateRoot.model.showcaseKey, toVisibility))
+                        item.showcaseVisibilityRequested.connect((toVisibility) => d.setVisibilityInternalRequested(showcaseDelegateRoot.model.showcaseKey, toVisibility))
                     }
                 }
             }
 
             Binding {
-                 when: showcaseDelegateRoot.isHiddenShowcaseItem ? d.isAnyShowcaseDragActive : d.isAnyHiddenDragActive
-                 target: showcaseDraggableDelegateLoader.item
-                 property: "blurState"
-                 value: true
-                 restoreMode: Binding.RestoreBindingOrValue
-             }
+                when: showcaseDelegateRoot.isHiddenShowcaseItem ? d.isAnyShowcaseDragActive : (d.isAnyHiddenDragActive ||
+                                                                                               (d.isAnyHiddenDragActive && d.limitReached))
+                target: showcaseDraggableDelegateLoader.item
+                property: "blurState"
+                value: true
+                restoreMode: Binding.RestoreBindingOrValue
+            }
 
-             Binding {
+            Binding {
                 when: showcaseShadow.visible
                 target: d
                 property: showcaseDelegateRoot.isHiddenShowcaseItem ? "isAnyHiddenDragActive" : "isAnyShowcaseDragActive"
                 value: true
                 restoreMode: Binding.RestoreBindingOrValue
-             }
+            }
+
+            Binding {
+                when: showcaseDelegateRoot.isHiddenShowcaseItem && d.limitReached
+                target: showcaseDraggableDelegateLoader.item
+                property: "contextMenuEnabled"
+                value: false
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding {
+                when: showcaseDelegateRoot.isHiddenShowcaseItem  && d.limitReached
+                target: showcaseDraggableDelegateLoader.item
+                property: "tooltipTextWhenContextMenuDisabled"
+                value: qsTr("Showcase limit of %1 reached. <br>Remove item from showcase to add more.").arg(root.showcaseLimit)
+                restoreMode: Binding.RestoreBindingOrValue
+            }
 
             // Delegate shadow background when dragging:
             ShadowDelegate {

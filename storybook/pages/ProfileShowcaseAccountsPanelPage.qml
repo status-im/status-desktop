@@ -99,6 +99,7 @@ SplitView {
         inShowcaseModel: emptyModelChecker.checked ? emptyModel : inShowcaseModelItem
         hiddenModel: emptyModelChecker.checked ? emptyModel : hiddenModelItem
         currentWallet: root.currentWallet
+        showcaseLimit: 5
     }
 
     LogsAndControlsPanel {

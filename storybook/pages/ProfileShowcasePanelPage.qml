@@ -70,6 +70,7 @@ SplitView {
         SplitView.fillHeight: true
         emptyInShowcasePlaceholderText: "No items in showcase"
         emptyHiddenPlaceholderText: "No hidden items"
+        showcaseLimit: limitCounter.value
         onChangePositionRequested: function (from, to) {
             inShowcaseModelItem.move(from, to, 1)
         }
@@ -100,6 +101,8 @@ SplitView {
         }
 
         delegate: ProfileShowcasePanelDelegate {
+            id: delegate
+
             title: model ? model.title : ""
             secondaryTitle: model ? model.secondaryTitle : ""
             hasImage: model ? model.hasImage : false
@@ -137,11 +140,13 @@ SplitView {
                 Slider {
                     id: inShowcaseCounter
                     from: 0
-                    to: 200
+                    to: limitCounter.value
                     stepSize: 1
-                    value: 25
+                    value: limitCounter.value > 0 ? limitCounter.value - 1 : 0
                 }
+            }
 
+            ColumnLayout {
                 Label {
                     text: "Hidden: " + hiddenCounter.value
                 }
@@ -153,31 +158,43 @@ SplitView {
                     value: 25
                 }
             }
+            ColumnLayout {
+                Label {
+                    text: "Showcase limit: " + limitCounter.value
+                }
+                Slider {
+                    id: limitCounter
+                    from: 0
+                    to: 200
+                    stepSize: 1
+                    value: 5
+                }
+            }
         }
     }
 
     onInShowcaseModelCountChanged: {
         let count = inShowcaseModelCount - inShowcaseModelItem.count;
         let operation = count > 0 ? (i) =>{
-                                   inShowcaseModelItem.append({
-                                       showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
-                                       title: "Item " + i,
-                                       secondaryTitle: "Description " + i,
-                                       hasImage: true,
-                                       image: "https://picsum.photos/200/300?random=" + i,
-                                       iconName: "https://picsum.photos/40/40?random=" + i,
-                                       showcaseVisibility: Math.ceil(Math.random() * 3),
-                                        name: "Test community",
-                                        joined: true,
-                                        isControlNode: true,
-                                        color: "yellow",
-                                        hasTag: Math.random() > 0.5,
-                                        tagText: "New " + 1,
-                                        tagAsset: "https://picsum.photos/40/40?random=" + i,
-                                        tagLoading: Math.random() > 0.5
-                                   })} : (i) => {
-                                       inShowcaseModelItem.remove(inShowcaseModelItem.count - 1);
-                                   }
+                                        inShowcaseModelItem.append({
+                                                                       showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
+                                                                       title: "Item " + i,
+                                                                       secondaryTitle: "Description " + i,
+                                                                       hasImage: true,
+                                                                       image: "https://picsum.photos/200/300?random=" + i,
+                                                                       iconName: "https://picsum.photos/40/40?random=" + i,
+                                                                       showcaseVisibility: Math.ceil(Math.random() * 3),
+                                                                       name: "Test community",
+                                                                       joined: true,
+                                                                       isControlNode: true,
+                                                                       color: "yellow",
+                                                                       hasTag: Math.random() > 0.5,
+                                                                       tagText: "New " + 1,
+                                                                       tagAsset: "https://picsum.photos/40/40?random=" + i,
+                                                                       tagLoading: Math.random() > 0.5
+                                                                   })} : (i) => {
+            inShowcaseModelItem.remove(inShowcaseModelItem.count - 1);
+        }
 
         for (var i = 0; i < Math.abs(count); i++) {
             operation(i)
@@ -187,26 +204,26 @@ SplitView {
     onHiddenModelCountChanged: {
         let count = hiddenModelCount - hiddenModelItem.count;
         let operation = count > 0 ? (i) =>{
-                                   hiddenModelItem.append({
-                                       showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
-                                       title: "Item " + i,
-                                       secondaryTitle: "Description " + i,
-                                       hasImage: true,
-                                       image: "https://picsum.photos/200/300?random=" + i,
-                                       iconName: "https://picsum.photos/40/40?random=" + i,
-                                       showcaseVisibility: 0,
-                                        name: "Test community",
-                                        joined: true,
-                                        memberRole: Constants.memberRole.owner,
-                                        isControlNode: true,
-                                        color: "yellow",
-                                        hasTag: Math.random() > 0.5,
-                                        tagText: "New " + i,
-                                        tagAsset: "https://picsum.photos/40/40?random=" + i,
-                                        tagLoading: Math.random() > 0.8
-                                   })} : (i) => {
-                                       hiddenModelItem.remove(hiddenModelItem.count - 1);
-                                   }
+                                        hiddenModelItem.append({
+                                                                   showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
+                                                                   title: "Item " + i,
+                                                                   secondaryTitle: "Description " + i,
+                                                                   hasImage: true,
+                                                                   image: "https://picsum.photos/200/300?random=" + i,
+                                                                   iconName: "https://picsum.photos/40/40?random=" + i,
+                                                                   showcaseVisibility: 0,
+                                                                   name: "Test community",
+                                                                   joined: true,
+                                                                   memberRole: Constants.memberRole.owner,
+                                                                   isControlNode: true,
+                                                                   color: "yellow",
+                                                                   hasTag: Math.random() > 0.5,
+                                                                   tagText: "New " + i,
+                                                                   tagAsset: "https://picsum.photos/40/40?random=" + i,
+                                                                   tagLoading: Math.random() > 0.8
+                                                               })} : (i) => {
+            hiddenModelItem.remove(hiddenModelItem.count - 1);
+        }
 
         for (var i = 0; i < Math.abs(count); i++) {
             operation(i)
