@@ -7,6 +7,8 @@ import AppLayouts.Wallet 1.0
 
 import StatusQ.Core.Theme 0.1
 
+import StatusQ 0.1
+
 ProfileShowcasePanel {
     id: root
 
@@ -14,7 +16,8 @@ ProfileShowcasePanel {
 
     emptyInShowcasePlaceholderText: qsTr("Accounts here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Accounts here will be hidden from your profile")
-
+    emptySearchPlaceholderText: qsTr("No accounts matching search")
+    searchPlaceholderText: qsTr("Search account name or address")
     delegate: ProfileShowcasePanelDelegate {
         title: model ? model.name : ""
         secondaryTitle: WalletUtils.addressToDisplay(model ? model.address ?? "" : "", "", true, containsMouse)

@@ -21,7 +21,8 @@ ProfileShowcasePanel {
 
     emptyInShowcasePlaceholderText: qsTr("Assets here will show on your profile")
     emptyHiddenPlaceholderText: qsTr("Assets here will be hidden from your profile")
-
+    emptySearchPlaceholderText: qsTr("No assets matching search")
+    searchPlaceholderText: qsTr("Search asset name, symbol or community")
     delegate: ProfileShowcasePanelDelegate {
 
         readonly property double totalValue: !!model && !!model.decimals ? balancesAggregator.value/(10 ** model.decimals): 0

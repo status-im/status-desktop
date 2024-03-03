@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
+import QtQml 2.15
 
 import utils 1.0
 import shared 1.0
@@ -129,12 +130,15 @@ SettingsContentBase {
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             communitiesSourceModel: root.communitiesModel
             communitiesShowcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
             
             accountsSourceModel: root.walletStore.accounts
             accountsShowcaseModel: root.profileStore.profileShowcaseAccountsModel
+            accountsSearcherText: profileShowcaseAccountsPanel.searcherText
 
             collectiblesSourceModel: root.profileStore.collectiblesModel
             collectiblesShowcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+            collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
         }
 
         function reset() {
@@ -211,7 +215,7 @@ SettingsContentBase {
         ProfileShowcaseCommunitiesPanel {
             id: profileShowcaseCommunitiesPanel
             inShowcaseModel: priv.showcaseModels.communitiesVisibleModel
-            hiddenModel:  priv.showcaseModels.communitiesHiddenModel
+            hiddenModel: priv.showcaseModels.communitiesHiddenModel
 
             onChangePositionRequested: function (from, to) {
                 priv.showcaseModels.changeCommunityPosition(from, to)

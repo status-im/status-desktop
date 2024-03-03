@@ -4,15 +4,19 @@ import QtQuick.Layouts 1.15
 import QtQml 2.15
 import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls.Validators 0.1
 
 import shared.controls 1.0
 import utils 1.0
 
 import AppLayouts.Profile.controls 1.0
+
+import SortFilterProxyModel 0.2
 
 DoubleFlickableWithFolding {
     id: root
@@ -29,8 +33,13 @@ DoubleFlickableWithFolding {
     // Placeholder text to be shown when the list is empty
     property string emptyInShowcasePlaceholderText
     property string emptyHiddenPlaceholderText
+    property string emptySearchPlaceholderText
 
     property int showcaseLimit: ProfileUtils.showcaseLimit
+
+    // Searcher related properties:
+    property string searchPlaceholderText
+    property string searcherText: ""
 
     // Signal to request position change of the visible items
     signal changePositionRequested(int from, int to)
@@ -47,6 +56,7 @@ DoubleFlickableWithFolding {
         id: d
 
         readonly property bool limitReached: root.showcaseLimit === inShowcaseCounterTracker.count
+        readonly property bool searchActive: root.searcherText !== ""
 
         readonly property var dragHiddenItemKey: ["x-status-draggable-showcase-item-hidden"]
         readonly property var dragShowcaseItemKey: ["x-status-draggable-showcase-item"]
@@ -84,76 +94,119 @@ DoubleFlickableWithFolding {
     flickable1: EmptyShapeRectangleFooterListView {
         id: inShowcaseListView
 
+        model: root.inShowcaseModel
         width: root.width
-        placeholderText: root.emptyInShowcasePlaceholderText
+        placeholderText: d.searchActive ? root.emptySearchPlaceholderText : root.emptyInShowcasePlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !dropAreaRow.visible
         spacing: Style.current.halfPadding
         delegate: delegateWrapper
-        model: root.inShowcaseModel
-
-        header: FoldableHeader {
-            readonly property bool isDropAreaVisible: root.flickable1Folded && d.isAnyHiddenDragActive
-
+        header: ColumnLayout {
             width: ListView.view.width
-            title: qsTr("In showcase")
-            folded: root.flickable1Folded
-            rightAdditionalComponent: isDropAreaVisible && d.limitReached ? limitReachedHeaderButton :
-                                                                            isDropAreaVisible ? dropHeaderAreaComponent : counterComponent
+            spacing: 0
 
-            Component {
-                id: counterComponent
-                StatusBaseText {
-                    id: counterText
+            SearchBox {
+                id: searcher
 
-                    width: d.additionalHeaderComponentWidth
-                    height: d.additionalHeaderComponentHeight
-                    horizontalAlignment: Text.AlignRight
-                    text: "%1 / %2".arg(inShowcaseCounterTracker.count).arg(root.showcaseLimit)
-                    font.pixelSize: Style.current.tertiaryTextFontSize
-                    color: Theme.palette.baseColor1
+                Layout.fillWidth: true
 
-                    ColorAnimation {
-                        id: animateColor
-                        target: counterText
-                        properties: "color"
-                        from: Theme.palette.successColor1
-                        to: Theme.palette.baseColor1
-                        duration: 2000
+                placeholderText: root.searchPlaceholderText
+                validators: [
+                    StatusValidator {
+                        property bool isEmoji: false
+
+                        name: "check-for-no-emojis"
+                        validate: (value) => {
+                                      if (!value) {
+                                          return true
+                                      }
+
+                                      isEmoji = Constants.regularExpressions.emoji.test(value)
+                                      if (isEmoji){
+                                          return false
+                                      }
+
+                                      return Constants.regularExpressions.alphanumericalExpanded1.test(value)
+                                  }
+                        errorMessage: isEmoji ?
+                                          qsTr("Your search is too cool (use A-Z and 0-9, hyphens and underscores only)")
+                                        : qsTr("Your search contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
                     }
+                ]
 
-                    Connections {
-                        target: d
-                        function onStartAnimationChanged() {
-                            animateColor.start()
+                Binding {
+                    target: root
+                    property: "searcherText"
+                    value: searcher.text
+                    restoreMode: Binding.RestoreBindingOrValue
+                }
+            }
+
+            FoldableHeader {
+                readonly property bool isDropAreaVisible: root.flickable1Folded && d.isAnyHiddenDragActive
+
+                Layout.fillWidth: true
+
+                title: qsTr("In showcase")
+                folded: root.flickable1Folded
+                rightAdditionalComponent: isDropAreaVisible && d.limitReached ? limitReachedHeaderButton :
+                                                                                isDropAreaVisible ? dropHeaderAreaComponent : counterComponent
+
+                Component {
+                    id: counterComponent
+                    StatusBaseText {
+                        id: counterText
+
+                        width: d.additionalHeaderComponentWidth
+                        height: d.additionalHeaderComponentHeight
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                        text: "%1 / %2".arg(inShowcaseCounterTracker.count).arg(root.showcaseLimit)
+                        font.pixelSize: Style.current.tertiaryTextFontSize
+                        color: Theme.palette.baseColor1
+
+                        ColorAnimation {
+                            id: animateColor
+                            target: counterText
+                            properties: "color"
+                            from: Theme.palette.successColor1
+                            to: Theme.palette.baseColor1
+                            duration: 2000
+                        }
+
+                        Connections {
+                            target: d
+                            function onStartAnimationChanged() {
+                                animateColor.start()
+                            }
                         }
                     }
                 }
-            }
 
-            Component {
-                id: dropHeaderAreaComponent
-                VisibilityDropAreaButtonsRow {
-                    margins: 0
-                    width: d.additionalHeaderComponentWidth
-                    height: d.additionalHeaderComponentHeight
+                Component {
+                    id: dropHeaderAreaComponent
+                    VisibilityDropAreaButtonsRow {
+                        margins: 0
+                        width: d.additionalHeaderComponentWidth
+                        height: d.additionalHeaderComponentHeight
+                    }
                 }
-            }
 
-            Component {
-                id: limitReachedHeaderButton
-                VisibilityDropAreaButton {
-                    width: d.additionalHeaderComponentWidth
-                    height: d.additionalHeaderComponentHeight
-                    rightInset: 1
-                    text: qsTr("Showcase limit of %1 reached").arg(root.showcaseLimit)
-                    enabled: false
-                    textColor: Theme.palette.baseColor1
-                    iconVisible: false
+                Component {
+                    id: limitReachedHeaderButton
+                    VisibilityDropAreaButton {
+                        width: d.additionalHeaderComponentWidth
+                        height: d.additionalHeaderComponentHeight
+                        rightInset: 1
+                        text: qsTr("Showcase limit of %1 reached").arg(root.showcaseLimit)
+                        enabled: false
+                        textColor: Theme.palette.baseColor1
+                        iconVisible: false
+                    }
                 }
-            }
 
-            onToggleFolding: root.flip1Folding()
+                onToggleFolding: root.flip1Folding()
+            }
         }
 
         // Overlaid showcase listview content drop area:
@@ -199,14 +252,14 @@ DoubleFlickableWithFolding {
     flickable2: EmptyShapeRectangleFooterListView {
         id: hiddenListView
 
+        model: root.hiddenModel
         width: root.width
-        placeholderText: root.emptyHiddenPlaceholderText
+        placeholderText: d.searchActive ? root.emptySearchPlaceholderText : root.emptyHiddenPlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !hiddenDropAreaButton.visible
         additionalFooterComponent: root.additionalFooterComponent
         spacing: Style.current.halfPadding
         delegate: delegateWrapper
-        model: root.hiddenModel
 
         header: FoldableHeader {
             width: ListView.view.width
@@ -358,7 +411,7 @@ DoubleFlickableWithFolding {
         color: Theme.palette.baseColor5
         radius: Style.current.radius
     }
-    
+
     Component {
         id: delegateWrapper
         DropArea {

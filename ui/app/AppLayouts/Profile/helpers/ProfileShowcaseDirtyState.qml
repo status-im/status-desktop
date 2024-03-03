@@ -16,6 +16,8 @@ import utils 1.0
   * position, second one containing hidden items.
   */
 QObject {
+    id: root
+
     property alias sourceModel: joined.leftModel
     property alias showcaseModel: joined.rightModel
 
@@ -35,6 +37,11 @@ QObject {
       * Returns dirty state of the showcase model.
       */
     readonly property bool dirty: writable.dirty || !visibleModel.synced
+
+    /**
+      * It sets up a searcher filter on top of both the visible and hidden models.
+      */
+    property FastExpressionFilter searcherFilter
 
     function revert() {
         visible.syncOrder()
@@ -105,16 +112,32 @@ QObject {
         sorters: RoleSorter { roleName: "showcasePosition" }
     }
 
+    SortFilterProxyModel {
+        id: searcherVisibleSFPM
+
+        sourceModel: visibleSFPM
+        delayed: true
+        filters: root.searcherFilter
+    }
+
     MovableModel {
         id: visible
 
-        sourceModel: visibleSFPM
+        sourceModel: searcherVisibleSFPM
+    }
+
+    SortFilterProxyModel {
+        id: searcherHiddenSFPM
+
+        sourceModel: writable
+        delayed: true
+        filters: root.searcherFilter
     }
 
     SortFilterProxyModel {
         id: hidden
 
-        sourceModel: writable
+        sourceModel: searcherHiddenSFPM
         delayed: true
 
         filters: HiddenFilter {}

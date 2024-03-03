@@ -424,8 +424,6 @@ QtObject {
     readonly property QtObject memberRole: QtObject{
         readonly property int none: 0
         readonly property int owner: 1
-        readonly property int manageUsers: 2
-        readonly property int moderateContent: 3
         readonly property int admin: 4
         readonly property int tokenMaster: 5
     }

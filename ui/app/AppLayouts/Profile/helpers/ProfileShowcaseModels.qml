@@ -24,6 +24,7 @@ QObject {
     // Input models
     property alias communitiesSourceModel: modelAdapter.communitiesSourceModel
     property alias communitiesShowcaseModel: modelAdapter.communitiesShowcaseModel
+    property string communitiesSearcherText
 
     // Output models
     readonly property alias communitiesVisibleModel: communities.visibleModel
@@ -47,6 +48,7 @@ QObject {
     // Input models
     property alias accountsSourceModel: modelAdapter.accountsSourceModel
     property alias accountsShowcaseModel: modelAdapter.accountsShowcaseModel
+    property string accountsSearcherText
 
     // Output models
     readonly property alias accountsVisibleModel: accounts.visibleModel
@@ -77,6 +79,7 @@ QObject {
     // Input models
     property alias collectiblesSourceModel: modelAdapter.collectiblesSourceModel
     property alias collectiblesShowcaseModel: modelAdapter.collectiblesShowcaseModel
+    property string collectiblesSearcherText
 
     // Output models
     readonly property alias collectiblesVisibleModel: collectibles.visibleModel
@@ -102,8 +105,20 @@ QObject {
     ProfileShowcaseDirtyState {
         id: communities
 
+        function getMemberRole(memberRole) {
+            return ProfileUtils.getMemberRoleText(memberRole)
+        }
+
         sourceModel: modelAdapter.adaptedCommunitiesSourceModel
         showcaseModel: modelAdapter.adaptedCommunitiesShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.communitiesSearcherText
+                return (name.toLowerCase().includes(root.communitiesSearcherText.toLowerCase()) ||
+                        communities.getMemberRole(memberRole).toLowerCase().includes(root.communitiesSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["name", "memberRole"]
+        }
     }
 
     ProfileShowcaseDirtyState {
@@ -111,6 +126,14 @@ QObject {
 
         sourceModel: modelAdapter.adaptedAccountsSourceModel
         showcaseModel: modelAdapter.adaptedAccountsShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.accountsSearcherText
+                return (address.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
+                        name.toLowerCase().includes( root.accountsSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["address", "name"]
+        }
     }
 
     ProfileShowcaseDirtyState {
@@ -118,6 +141,16 @@ QObject {
 
         sourceModel: collectiblesFilter
         showcaseModel: modelAdapter.adaptedCollectiblesShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.collectiblesSearcherText
+                return (name.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        uid.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        communityName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        collectionName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["name", "uid", "collectionName", "communityName"]
+        }
     }
 
     SortFilterProxyModel {
