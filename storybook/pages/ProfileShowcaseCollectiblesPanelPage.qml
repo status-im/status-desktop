@@ -211,6 +211,7 @@ SplitView {
         SplitView.preferredHeight: 500
         inShowcaseModel: emptyModelChecker.checked ? emptyModelItem : joinedInShowcase
         hiddenModel: emptyModelChecker.checked ? emptyModelItem : joinedHiddenModel
+        showcaseLimit: 8
 
         addAccountsButtonVisible: !hasAllAccountsChecker.checked
 

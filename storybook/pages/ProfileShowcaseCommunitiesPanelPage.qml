@@ -129,6 +129,7 @@ SplitView {
 
         inShowcaseModel: emptyModelChecker.checked ? emptyModel : inShowcaseModelItem
         hiddenModel: emptyModelChecker.checked ? emptyModel : hiddenModelItem
+        showcaseLimit: 5
     }
 
     LogsAndControlsPanel {
