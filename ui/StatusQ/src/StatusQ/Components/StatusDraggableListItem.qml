@@ -310,7 +310,8 @@ ItemDelegate {
         Loader {
             active: !!root.icon.name || !!root.icon.source
             visible: active
-            sourceComponent: root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
+            sourceComponent: root.hasIcon && root.assetBgColor ? roundIconComponent :
+                                                                 root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
         }
 
         ColumnLayout {
@@ -401,6 +402,19 @@ ItemDelegate {
             emoji: root.hasEmoji ? root.icon.name : ""
             name: !root.hasEmoji ? root.icon.name : ""
             letterIdenticonColor: root.icon.color
+        }
+    }
+
+    Component {
+        id: roundIconComponent
+        StatusRoundIcon {
+            asset.width: root.icon.width
+            asset.height: root.icon.height
+            asset.name: root.icon.name
+            asset.color: root.icon.color
+            asset.bgColor: root.assetBgColor
+            asset.bgHeight: 40
+            asset.bgWidth: 40
         }
     }
 }

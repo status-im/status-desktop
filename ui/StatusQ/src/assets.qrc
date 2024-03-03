@@ -10411,5 +10411,6 @@
         <file>assets/twemoji/twemoji.js</file>
         <file>assets/img/icons/caution.svg</file>
         <file>assets/img/icons/crown-off.svg</file>
+        <file>assets/img/icons/xtwitter.svg</file>
     </qresource>
 </RCC>

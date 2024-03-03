@@ -22,7 +22,7 @@ type
     removed*: bool
 
 proc socialLinkTextToIcon(text: string): string =
-  if (text == SOCIAL_LINK_TWITTER_ID): return "twitter"
+  if (text == SOCIAL_LINK_TWITTER_ID): return "xtwitter"
   if (text == SOCIAL_LINK_PERSONAL_SITE_ID): return "language"
   if (text == SOCIAL_LINK_GITHUB_ID): return "github"
   if (text == SOCIAL_LINK_YOUTUBE_ID): return "youtube"

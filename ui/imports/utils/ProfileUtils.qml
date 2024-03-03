@@ -26,7 +26,7 @@ QtObject {
     }
 
     function linkTypeToText(linkType) {
-        if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter")
+        if (linkType === Constants.socialLinkType.twitter) return qsTr("X (Twitter)")
         if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal site")
         if (linkType === Constants.socialLinkType.github) return qsTr("Github")
         if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube channel")
@@ -35,13 +35,27 @@ QtObject {
         return "" // "custom" link type allows for user defined text
     }
 
+    function linkTypeToShortText(linkType) {
+        if (linkType === Constants.socialLinkType.twitter) return qsTr("X (Twitter)")
+        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal")
+        if (linkType === Constants.socialLinkType.github) return qsTr("Github")
+        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube")
+        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord")
+        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram")
+        return "" // "custom" link type allows for user defined text
+    }
+
     function linkTypeColor(linkType) {
-        if (linkType === Constants.socialLinkType.twitter) return "#03A9F4"
+        if (linkType === Constants.socialLinkType.twitter) return "#000000"
         if (linkType === Constants.socialLinkType.github) return "#000000"
         if (linkType === Constants.socialLinkType.youtube) return "#FF3000"
         if (linkType === Constants.socialLinkType.discord) return "#7289DA"
         if (linkType === Constants.socialLinkType.telegram) return "#0088CC"
         return Theme.palette.primaryColor1
+    }
+
+    function linkTypeBgColor(linkType) {
+        return Theme.palette.getColor(linkTypeColor(linkType), 0.1)
     }
 
     function linkTypeToDescription(linkType) {
