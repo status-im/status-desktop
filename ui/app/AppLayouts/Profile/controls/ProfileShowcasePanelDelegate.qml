@@ -18,13 +18,13 @@ ShowcaseDelegate {
     // required property visualIndexData
 
     readonly property var model: modelData
-    readonly property var key: model ? model.key : null
+    readonly property var key: model ? model.showcaseKey : null
 
     Drag.keys: dragKeysData
 
     dragParent: dragParentData
     visualIndex: visualIndexData
     dragAxis: Drag.YAxis
-    showcaseVisibility: model ? model.visibility ?? Constants.ShowcaseVisibility.NoOne :
+    showcaseVisibility: model ? model.showcaseVisibility ?? Constants.ShowcaseVisibility.NoOne :
                                     Constants.ShowcaseVisibility.NoOne
 }

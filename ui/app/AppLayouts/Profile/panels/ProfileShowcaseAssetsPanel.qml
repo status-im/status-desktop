@@ -24,7 +24,7 @@ ProfileShowcasePanel {
 
     delegate: ProfileShowcasePanelDelegate {
 
-        property double totalValue: !!model && !!model.decimals ? balancesAggregator.value/(10 ** model.decimals): 0
+        readonly property double totalValue: !!model && !!model.decimals ? balancesAggregator.value/(10 ** model.decimals): 0
 
         title: !!model && !!model.name ? model.name : ""
         secondaryTitle: !!model && !!model.enabledNetworkBalance ?

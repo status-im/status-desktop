@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.controls 1.0
+import AppLayouts.Wallet.controls 1.0
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -11,7 +12,7 @@ import utils 1.0
 import Storybook 1.0
 
 SplitView {
-    //id: root
+    id: root
 
     property int inShowcaseModelCount: inShowcaseCounter.value
     property int hiddenModelCount: hiddenCounter.value
@@ -23,13 +24,13 @@ SplitView {
     ListModel {
         id: inShowcaseModelItem
         ListElement {
-            key: 1
+            showcaseKey: 1
             title: "Item 1"
             secondaryTitle: "Description 1"
             hasImage: true
             image: "https://picsum.photos/200/300?random=1"
             iconName: "https://picsum.photos/40/40?random=1"
-            visibility: 1
+            showcaseVisibility: 1
             name: "Test community"
             joined: true
             isControlNode: true
@@ -44,13 +45,13 @@ SplitView {
     ListModel {
         id: hiddenModelItem
         ListElement {
-            key: 2
+            showcaseKey: 2
             title: "Item 1"
             secondaryTitle: "Description 1"
             hasImage: true
             image: "https://picsum.photos/200/300?random=1"
             iconName: "https://picsum.photos/40/40?random=1"
-            visibility: 0
+            showcaseVisibility: 0
             name: "Test community"
             joined: true
             isControlNode: true
@@ -63,7 +64,6 @@ SplitView {
     }
 
     ProfileShowcasePanel {
-        id: root
         inShowcaseModel: inShowcaseModelItem
         hiddenModel: hiddenModelItem
         SplitView.fillWidth: true
@@ -75,8 +75,8 @@ SplitView {
         }
         onSetVisibilityRequested: function (key, toVisibility) {
             for (var i = 0; i < inShowcaseModelItem.count; i++) {
-                if (inShowcaseModelItem.get(i).key === key) {
-                    inShowcaseModelItem.setProperty(i, "visibility", toVisibility)
+                if (inShowcaseModelItem.get(i).showcaseKey === key) {
+                    inShowcaseModelItem.setProperty(i, "showcaseVisibility", toVisibility)
                     if(toVisibility === 0) {
                         let item = inShowcaseModelItem.get(i)
                         hiddenModelItem.append(item)
@@ -87,8 +87,8 @@ SplitView {
             }
 
             for (var i = 0; i < hiddenModelItem.count; i++) {
-                if (hiddenModelItem.get(i).key === key) {
-                    hiddenModelItem.setProperty(i, "visibility", toVisibility)
+                if (hiddenModelItem.get(i).showcaseKey === key) {
+                    hiddenModelItem.setProperty(i, "showcaseVisibility", toVisibility)
                     if(toVisibility !== 0) {
                         let item = hiddenModelItem.get(i)
                         inShowcaseModelItem.append(item)
@@ -107,10 +107,17 @@ SplitView {
             icon.source: model ? model.image : ""
             icon.color: model ? model.color : ""
 
-            tag.visible: model ? model.hasTag : false
-            tag.text: model ? model.tagText : ""
-            tag.asset.name: model ? model.tagAsset : ""
-            tag.loading: model ? model.tagLoading : false
+            actionComponent: model && model.hasTag ? manageTokensCommunityTag : null
+
+            Component {
+                id: manageTokensCommunityTag
+                ManageTokensCommunityTag {
+                    Layout.maximumWidth: delegate.width *.4
+                    text: model ? model.tagText : ""
+                    asset.name: model ? model.tagAsset : ""
+                    loading: model ? model.tagLoading : false
+                }
+            }
         }
     }
 
@@ -153,13 +160,13 @@ SplitView {
         let count = inShowcaseModelCount - inShowcaseModelItem.count;
         let operation = count > 0 ? (i) =>{
                                    inShowcaseModelItem.append({
-                                       key: Math.random() * Math.random() * Math.random() * 1000,
+                                       showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
                                        title: "Item " + i,
                                        secondaryTitle: "Description " + i,
                                        hasImage: true,
                                        image: "https://picsum.photos/200/300?random=" + i,
                                        iconName: "https://picsum.photos/40/40?random=" + i,
-                                       visibility: Math.ceil(Math.random() * 3),
+                                       showcaseVisibility: Math.ceil(Math.random() * 3),
                                         name: "Test community",
                                         joined: true,
                                         isControlNode: true,
@@ -181,13 +188,13 @@ SplitView {
         let count = hiddenModelCount - hiddenModelItem.count;
         let operation = count > 0 ? (i) =>{
                                    hiddenModelItem.append({
-                                       key: Math.random() * Math.random() * Math.random() * 1000,
+                                       showcaseKey: Math.random() * Math.random() * Math.random() * 1000,
                                        title: "Item " + i,
                                        secondaryTitle: "Description " + i,
                                        hasImage: true,
                                        image: "https://picsum.photos/200/300?random=" + i,
                                        iconName: "https://picsum.photos/40/40?random=" + i,
-                                       visibility: 0,
+                                       showcaseVisibility: 0,
                                         name: "Test community",
                                         joined: true,
                                         memberRole: Constants.memberRole.owner,

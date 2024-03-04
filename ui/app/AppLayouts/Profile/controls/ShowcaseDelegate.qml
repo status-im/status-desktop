@@ -17,7 +17,7 @@ import utils 1.0
 StatusDraggableListItem {
     id: root
 
-    property alias tag: tagItem
+    property alias actionComponent: additionalActionsLoader.sourceComponent
     property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
     property bool blurState: false
 
@@ -45,11 +45,11 @@ StatusDraggableListItem {
     dragAxis: Drag.XAndYAxis
 
     actions: [
-        ManageTokensCommunityTag {
-            id: tagItem
+        Loader {
             Layout.maximumWidth: root.width *.4
-            visible: false
-        },
+            id: additionalActionsLoader
+        }
+        ,
         StatusRoundButton {
             icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)
             Layout.preferredWidth: 58

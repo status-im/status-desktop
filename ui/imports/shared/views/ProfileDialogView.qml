@@ -598,6 +598,10 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
+                    // StatusTabButton {
+                    //     width: implicitWidth
+                    //     text: qsTr("Assets")
+                    // }
                 }
 
                 // Profile Showcase

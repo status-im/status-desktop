@@ -8,6 +8,7 @@ import utils 1.0
 import shared.panels 1.0
 
 import AppLayouts.Profile.controls 1.0
+import AppLayouts.Wallet.controls 1.0
 
 ProfileShowcasePanel {
     id: root
@@ -30,10 +31,16 @@ ProfileShowcasePanel {
         bgRadius: Style.current.radius
         assetBgColor: !!model && !!model.backgroundColor ? model.backgroundColor : "transparent"
 
-        tag.visible: model && !!model.communityId
-        tag.text: model && !!model.communityName ? model.communityName : ""
-        tag.asset.name: model && !!model.communityImage ? model.communityImage : ""
-        tag.loading: model && !!model.communityImageLoading ? model.communityImageLoading : false
+        actionComponent: model && !!model.communityId ? communityTokenTagComponent : null
+
+        Component {
+            id: communityTokenTagComponent
+            ManageTokensCommunityTag {
+                text: model && !!model.communityName ? model.communityName : ""
+                asset.name: model && !!model.communityImage ? model.communityImage : ""
+                loading: model && !!model.communityImageLoading ? model.communityImageLoading : false
+            }
+        }
     }
 
     Component {
