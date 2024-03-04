@@ -132,6 +132,7 @@ StatusSectionLayout {
             sourceComponent: MyProfileView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 walletAssetsStore: root.walletAssetsStore
                 currencyStore: root.currencyStore
@@ -153,6 +154,7 @@ StatusSectionLayout {
             sourceComponent: ChangePasswordView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 privacyStore: root.store.privacyStore
                 passwordStrengthScoreFunction: SharedStores.RootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
@@ -166,6 +168,7 @@ StatusSectionLayout {
             sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 contactsStore: root.store.contactsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
@@ -198,6 +201,7 @@ StatusSectionLayout {
             sourceComponent: MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 advancedStore: root.store.advancedStore
                 messagingStore: root.store.messagingStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
@@ -213,6 +217,7 @@ StatusSectionLayout {
             sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 rootStore: root.store
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore
@@ -231,6 +236,7 @@ StatusSectionLayout {
             sourceComponent: AppearanceView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 appearanceStore: root.store.appearanceStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.appearance)
@@ -245,6 +251,7 @@ StatusSectionLayout {
             sourceComponent: LanguageView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 languageStore: root.store.languageStore
                 currencyStore: root.currencyStore
@@ -259,6 +266,7 @@ StatusSectionLayout {
             sourceComponent: NotificationsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 notificationsStore: root.store.notificationsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
@@ -272,6 +280,7 @@ StatusSectionLayout {
             sourceComponent: SyncingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 isProduction: production
                 profileStore: root.store.profileStore
@@ -289,6 +298,7 @@ StatusSectionLayout {
             sourceComponent: BrowserView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 store: root.store
                 accountSettings: localAccountSensitiveSettings
@@ -303,6 +313,7 @@ StatusSectionLayout {
             sourceComponent: AdvancedView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 messagingStore: root.store.messagingStore
                 advancedStore: root.store.advancedStore
@@ -320,6 +331,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
+                leftParentLayoutMargin: d.leftMargin
 
                 store: QtObject {
                     readonly property bool isProduction: production
@@ -358,6 +370,7 @@ StatusSectionLayout {
             sourceComponent: CommunitiesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 profileSectionStore: root.store
                 rootStore: root.globalStore
@@ -375,6 +388,7 @@ StatusSectionLayout {
             sourceComponent: KeycardView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
 
                 profileSectionStore: root.store
                 keycardStore: root.store.keycardStore
@@ -393,6 +407,7 @@ StatusSectionLayout {
             sourceComponent: SettingsContentBase {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 sectionTitle: "Status Software Terms of Use"
                 contentWidth: d.contentWidth
 
@@ -413,6 +428,7 @@ StatusSectionLayout {
             sourceComponent: SettingsContentBase {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
+                leftParentLayoutMargin: d.leftMargin
                 sectionTitle: "Status Software Privacy Statement"
                 contentWidth: d.contentWidth
 
