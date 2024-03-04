@@ -23,6 +23,11 @@ FocusScope {
     default property alias content: contentWrapper.children
     property alias titleLayout: titleLayout
 
+    // This is the margin set up to the parent when using `SettingsContentBase` inside central
+    // panel property of `StatusSectionLayout` and needs to be taken into account to counteract it
+    // when trying to align horizontally the save toast component
+    required property int leftParentLayoutMargin
+
     property bool dirty: false
 
     // Used to configure the dirty behaviour of the settings page as a must blocker notification when
@@ -152,7 +157,12 @@ FocusScope {
         id: settingsDirtyToastMessage
         anchors.bottom: scrollView.bottom
         anchors.bottomMargin: d.bottomDirtyToastMargin
-        anchors.horizontalCenter: scrollView.horizontalCenter
+
+        // Left anchors and margin added bc of the implementation of the `SettingsContentBase` parent margin and to avoid
+        // this toast to be wrongly centered
+        anchors.left: root.left
+        anchors.leftMargin: -root.leftParentLayoutMargin / 2 + (root.width / 2 - width / 2)
+
         active: root.dirty
         flickable: root.autoscrollWhenDirty ? scrollView.flickable : null
         saveChangesButtonEnabled: root.saveChangesButtonEnabled
