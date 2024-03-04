@@ -57,9 +57,9 @@ SettingsContentBase {
         }
     }
 
-    dirty: manageTokensView.dirty
+    // Dirty state will be just ignored when user leaves manage tokens settings (excluding advanced settings that needs user action)
     ignoreDirty: stackContainer.currentIndex === manageTokensViewIndex && !manageTokensView.advancedTabVisible
-
+    dirty: manageTokensView.dirty
     saveChangesButtonEnabled: dirty
     toast.type: SettingsDirtyToastMessage.Type.Info
     toast.cancelButtonVisible: manageTokensView.advancedTabVisible
