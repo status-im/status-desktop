@@ -589,6 +589,7 @@ QtObject {
     }
 
     readonly property QtObject _d: QtObject {
+        id: _d
         readonly property var sectionDetailsInstantiator: Instantiator {
             model: SortFilterProxyModel {
                 sourceModel: mainModuleInst.sectionsModel
@@ -655,9 +656,10 @@ QtObject {
         readonly property bool isUserAllowedToSendMessage: {
             if (_d.activeChatType === Constants.chatType.oneToOne && _d.oneToOneChatContact) {
                 return _d.oneToOneChatContact.contactRequestState === Constants.ContactRequestState.Mutual
-            }
-            else if(_d.activeChatType === Constants.chatType.privateGroupChat) {
+            } else if (_d.activeChatType === Constants.chatType.privateGroupChat) {
                 return _d.amIMember
+            } else if (_d.activeChatType === Constants.chatType.communityChat) {
+                return currentChatContentModule().viewAndPostPermissionsSatisfied
             }
 
             return true

@@ -278,7 +278,7 @@ Item {
                                 return qsTr("You need to join this community to send messages")
                             }
                             if (!root.viewAndPostPermissionsSatisfied) {
-                                return qsTr("Sorry, you don't have the tokens needed to post in this channel.")
+                                return qsTr("Sorry, you don't have permissions to post in this channel.")
                             }
                             return root.rootStore.chatInputPlaceHolderText
                         } else {
