@@ -220,6 +220,7 @@
         <file>StatusQ/Popups/Dialog/qmldir</file>
         <file>StatusQ/Popups/StatusAction.qml</file>
         <file>StatusQ/Popups/StatusColorDialog.qml</file>
+        <file>StatusQ/Popups/StatusConfirmationDialog.qml</file>
         <file>StatusQ/Popups/StatusMenu.qml</file>
         <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
         <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>

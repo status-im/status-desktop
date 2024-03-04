@@ -48,8 +48,6 @@ SplitView {
             CreateChannelPopup {
                 id: dialog
                 anchors.centerIn: parent
-                modal: false
-                closePolicy: Popup.NoAutoClose
                 destroyOnClose: true
                 isEdit: true
                 isDeleteable: isDeleteableCheckBox.checked
