@@ -25,6 +25,7 @@ export dto_generated_accounts
 logScope:
   topics = "accounts-service"
 
+const DEFAULT_WALLET_ACCOUNT_NAME = "Account 1"
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
@@ -240,7 +241,7 @@ QtObject:
         "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
-        "name": "Status account",
+        "name": DEFAULT_WALLET_ACCOUNT_NAME,
         "derived-from": account.address,
         "emoji": self.defaultWalletEmoji
       },
@@ -493,7 +494,7 @@ QtObject:
           "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
           "wallet": true,
           "path": PATH_DEFAULT_WALLET,
-          "name": "Status account",
+          "name": DEFAULT_WALLET_ACCOUNT_NAME,
           "derived-from": address,
           "emoji": self.defaultWalletEmoji,
         },

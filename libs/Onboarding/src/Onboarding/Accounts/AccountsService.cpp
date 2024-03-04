@@ -256,7 +256,7 @@ QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedMultiAcco
                         {"color", "#4360df"},
                         {"wallet", true},
                         {"path", Constants::General::PathDefaultWallet.get()},
-                        {"name", "Status account"},
+                        {"name", "Account 1"},
                         {"derived-from", account.address}},
             QJsonObject{{"public-key", account.derivedAccounts.whisper.publicKey},
                         {"address", account.derivedAccounts.whisper.address},
