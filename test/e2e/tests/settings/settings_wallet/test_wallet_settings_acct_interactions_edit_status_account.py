@@ -33,8 +33,9 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
              when display name is {profile_display_name}"
 
     with step('Open Status account view in wallet settings'):
-        status_acc_view = (
-            SettingsScreen().left_panel.open_wallet_settings().open_account_in_settings('Account 1'))
+        status_account_index = 0
+        status_acc_view = SettingsScreen().left_panel.open_wallet_settings().open_account_in_settings('Account 1',
+                                                                                                      status_account_index)
 
     with step('Check the default values on the account details view for main account'):
         assert status_acc_view.get_account_name_value() == WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value, \

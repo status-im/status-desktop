@@ -35,7 +35,7 @@ def keys_screen(main_window) -> KeysView:
     pytest.param(False, 'Account 1'),
     pytest.param(True, 'Account 1', marks=pytest.mark.critical)
 ])
-def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, default_name, autocomplete: bool):
+def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, default_name: str, autocomplete: bool):
     with step('Open import seed phrase view and enter seed phrase'):
         input_view = keys_screen.open_import_seed_phrase_view().open_seed_phrase_input_view()
         input_view.input_seed_phrase(user_account.seed_phrase, autocomplete)
@@ -54,8 +54,10 @@ def test_import_seed_phrase(aut: AUT, keys_screen, main_window, user_account, de
             BetaConsentPopup().confirm()
 
     with (step('Verify that restored account reveals correct status wallet address')):
+        status_account_index = 0
         status_acc_view = (
-            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(default_name))
+            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(default_name,
+                                                                                                   status_account_index))
         address = status_acc_view.get_account_address_value()
         assert address == user_account.status_address, \
             f"Recovered account should have address {user_account.status_address}, but has {address}"

@@ -14,6 +14,8 @@ from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703508',
                  'Watched addresses: Excl. / Include in total balance functionality for watched address')
 @pytest.mark.case(703508)
@@ -46,7 +48,8 @@ def test_settings_include_in_total_balance(main_screen: MainWindow, name, watche
             but currently the list is {keypairs_names}"
 
     with step('Open account details view for the watched address'):
-        acc_view = WalletSettingsView().open_account_in_settings(name)
+        account_index = 0
+        acc_view = WalletSettingsView().open_account_in_settings(name, account_index)
 
     with step('Verify details view for the watched address'):
         assert driver.waitFor(

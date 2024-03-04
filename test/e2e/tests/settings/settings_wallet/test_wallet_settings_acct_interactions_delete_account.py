@@ -40,7 +40,8 @@ def test_delete_generated_account_from_wallet_settings(
         add_account_popup.wait_until_hidden()
 
     with step('Open account details view for the generated account'):
-        acc_view = WalletSettingsView().open_account_in_settings(account_name)
+        account_index = 1
+        acc_view = WalletSettingsView().open_account_in_settings(account_name, account_index)
 
     with step('Verify details view for the generated account'):
         assert acc_view.get_account_name_value() == account_name, \

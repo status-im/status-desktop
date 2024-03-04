@@ -93,8 +93,9 @@ class WalletSettingsView(QObject):
             return keypair_names
 
     @allure.step('Open account view in wallet settings by name')
-    def open_account_in_settings(self, name):
+    def open_account_in_settings(self, name: str, index: int):
         self._wallet_account_from_keypair.real_name['objectName'] = name
+        self._wallet_account_from_keypair.real_name['index'] = index
         self._wallet_account_from_keypair.click()
         return AccountDetailsView().wait_until_appears()
 

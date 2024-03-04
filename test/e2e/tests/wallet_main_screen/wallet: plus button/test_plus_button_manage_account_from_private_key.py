@@ -13,6 +13,8 @@ from gui.components.wallet.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
+
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
@@ -24,7 +26,8 @@ pytestmark = marks
                          ])
 def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair,
                                                      name: str, color: str, emoji: str, emoji_unicode: str,
-                                                     new_name: str, new_color: str, new_emoji: str, new_emoji_unicode: str):
+                                                     new_name: str, new_color: str, new_emoji: str,
+                                                     new_emoji_unicode: str):
     with step('Import an account within private key'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
@@ -49,8 +52,10 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Verify that importing private key reveals correct wallet address'):
+        account_index = 0
         settings_acc_view = (
-            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(name))
+            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(name,
+                                                                                                              account_index))
         address = settings_acc_view.get_account_address_value()
         assert address == address_pair.wallet_address, \
             f"Recovered account should have address {address_pair.wallet_address}, but has {address}"
