@@ -131,16 +131,20 @@ QObject {
             // singletons cannot be used in expressions
             readonly property int hidden: Constants.ShowcaseVisibility.NoOne
 
-            expression: {
+            function getMaxVisibility(ownershipModel) {
                 const visibilityMap = root.accountsVisibilityMap
-                const accounts = model.accounts.split(":")
-                const visibilities = accounts.map(a => visibilityMap[a]).filter(
+                const accounts = ModelUtils.modelToFlatArray(ownershipModel, "accountAddress")
+                const visibilities = accounts.map(a => visibilityMap[a.toLowerCase()]).filter(
                                        v => v !== undefined)
 
                 return visibilities.length ? Math.min(...visibilities) : hidden
             }
 
-            expectedRoles: ["accounts"]
+            expression: {
+                return getMaxVisibility(model.ownership)
+            }
+
+            expectedRoles: ["ownership"]
         }
 
         filters: ValueFilter {
@@ -160,13 +164,13 @@ QObject {
 
         function updateAccountsList() {
             const keysAndVisibility = ModelUtils.modelToArray(
-                        accounts.visibleModel, ["key", "visibility"])
+                        accounts.visibleModel, ["showcaseKey", "showcaseVisibility"])
 
-            visibleAccountsList = keysAndVisibility.map(e => e.key)
+            visibleAccountsList = keysAndVisibility.map(e => e.showcaseKey)
 
             accountsVisibilityMap = keysAndVisibility.reduce(
                         (acc, val) => Object.assign(
-                            acc, {[val.key]: val.visibility}), {})
+                            acc, {[val.showcaseKey]: val.showcaseVisibility}), {})
         }
 
         function onDataChanged() {

@@ -23,9 +23,9 @@ WritableProxyModel {
     /* Provides the list of objects representing the current state in the
      * in the following format:
      * [ {
-     *     key: <string or integer>
-     *     position: <integer>
-     *     visibility: <integer>
+     *     showcaseKey: <string or integer>
+     *     showcasePosition: <integer>
+     *     showcaseVisibility: <integer>
      *   }
      * ]
      *
@@ -33,9 +33,9 @@ WritableProxyModel {
      */
     function currentState() {
         const visible = d.getVisibleEntries()
-        const minPos = Math.min(...visible.map(e => e.position))
+        const minPos = Math.min(...visible.map(e => e.showcasePosition))
 
-        return visible.map(e => { e.position -= minPos; return e })
+        return visible.map(e => { e.showcasePosition -= minPos; return e })
     }
 
     /* Sets the visibility of the given item. If the element was hidden, it is
@@ -51,33 +51,33 @@ WritableProxyModel {
         // hiding, changing visibility level
         if (visibility === visibilityHidden
                 || oldVisibility !== visibilityHidden) {
-            set(sourceIdx, { visibility: visibility })
+            set(sourceIdx, { showcaseVisibility: visibility })
             return
         }
 
         // unhiding
-        const positions = d.getVisibleEntries().map(e => e.position)
+        const positions = d.getVisibleEntries().map(e => e.showcasePosition)
         const position = Math.max(-1, ...positions) + 1
-        set(sourceIdx, { visibility, position })
+        set(sourceIdx, { showcaseVisibility: visibility, showcasePosition: position })
     }
 
     readonly property QtObject d_: QtObject {
         id: d
 
         function indexByKey(key) {
-            return ModelUtils.indexOf(root, "key", key)
+            return ModelUtils.indexOf(root, "showcaseKey", key)
         }
 
         function getVisibleEntries() {
-            const roles = ["key", "position", "visibility"]
+            const roles = ["showcaseKey", "showcasePosition", "showcaseVisibility"]
             const keysAndPos = ModelUtils.modelToArray(root, roles)
 
-            return keysAndPos.filter(p => p.visibility
-                                     && p.visibility !== root.visibilityHidden)
+            return keysAndPos.filter(p => p.showcaseVisibility
+                                     && p.showcaseVisibility !== root.visibilityHidden)
         }
 
         function getVisibility(idx) {
-            return ModelUtils.get(root, idx, "visibility")
+            return ModelUtils.get(root, idx, "showcaseVisibility")
                     || root.visibilityHidden
         }
     }

@@ -35,11 +35,11 @@ SplitView {
         sourceModel: !emptyModelChecker.checked ? walletAssetStore.groupedAccountAssetsModel : null
         proxyRoles: [
             FastExpressionRole {
-                name: "key"
+                name: "showcaseKey"
                 expression: "Asset 1" + index
             },
             FastExpressionRole {
-                name: "visibility"
+                name: "showcaseVisibility"
                 expression: 1
             }
         ]
@@ -50,11 +50,11 @@ SplitView {
         sourceModel: !emptyModelChecker.checked ? walletAssetStore.groupedAccountAssetsModel : null
         proxyRoles: [
             FastExpressionRole {
-                name: "key"
+                name: "showcaseKey"
                 expression: "Asset 2" + index
             },
             FastExpressionRole {
-                name: "visibility"
+                name: "showcaseVisibility"
                 expression: 0
             }
         ]
@@ -89,12 +89,6 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            Button {
-                text: "Reset (clear settings)"
-
-                onClicked: showcasePanel.settings.reset()
-            }
-
             CheckBox {
                 id: hasAllAccountsChecker
 

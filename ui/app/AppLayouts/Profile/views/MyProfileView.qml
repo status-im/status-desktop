@@ -32,6 +32,7 @@ SettingsContentBase {
     property PrivacyStore privacyStore
     property ContactsStore contactsStore
     property NetworkConnectionStore networkConnectionStore
+    required property WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
 
     property var communitiesModel
@@ -49,6 +50,7 @@ SettingsContentBase {
         Communities = 1,
         Accounts = 2,
         Collectibles = 3,
+        //Assets = 4,
         Web = 4
     }
 
@@ -101,6 +103,13 @@ SettingsContentBase {
             width: implicitWidth
             text: qsTr("Collectibles")
         }
+
+        // TODO: Uncomment when assets tab is implemented
+        // StatusTabButton {
+        //     objectName: "assetsTabButton"
+        //     width: implicitWidth
+        //     text: qsTr("Assets")
+        // }
 
         StatusTabButton {
             objectName: "webTabButton"
@@ -231,13 +240,12 @@ SettingsContentBase {
         // collectibles
         ProfileShowcaseCollectiblesPanel {
             id: profileShowcaseCollectiblesPanel
-
-            addAccountsButtonVisible: priv.showcaseModels.accountsHiddenModel > 0
-            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
-
             inShowcaseModel: priv.showcaseModels.collectiblesVisibleModel
             hiddenModel: priv.showcaseModels.collectiblesHiddenModel
-
+            addAccountsButtonVisible: priv.showcaseModels.accountsHiddenModel.count > 0
+            
+            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
+            
             onChangePositionRequested: function (from, to) {
                 priv.showcaseModels.changeCollectiblePosition(from, to)
             }
@@ -246,6 +254,22 @@ SettingsContentBase {
                 priv.showcaseModels.setCollectibleVisibility(key, toVisibility)
             }
         }
+
+        // assets
+        // TODO: Integrate the assets tab with the new backend
+        // ProfileShowcaseAssetsPanel {
+        //     id: profileShowcaseAssetsPanel
+
+        //     baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
+        //     showcaseModel: root.profileStore.profileShowcaseAssetsModel
+        //     addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+        //     formatCurrencyAmount: function(amount, symbol) {
+        //         return root.currencyStore.formatCurrencyAmount(amount, symbol)
+        //     }
+
+        //     onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+        //     onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
+        // }
 
         // web
         ProfileSocialLinksPanel {

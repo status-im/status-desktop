@@ -8,55 +8,52 @@ import SortFilterProxyModel 0.2
 QObject {
     id: root
 
-    // input models
-    property alias communitiesSourceModel: communityRenamingSource.sourceModel
-    property alias communitiesShowcaseModel: communityRenamingShowcase.sourceModel
+    // Communities input models
+    property alias communitiesSourceModel: communitySFPM.sourceModel
+    property alias communitiesShowcaseModel: communityShowcaseRenaming.sourceModel
 
     // adapted models
-    readonly property alias adaptedCommunitiesSourceModel: communityRenamingSource
-    readonly property alias adaptedCommunitiesShowcaseModel: communityRenamingShowcase
+    readonly property alias adaptedCommunitiesSourceModel: communitySFPM
+    readonly property alias adaptedCommunitiesShowcaseModel: communityShowcaseRenaming
 
-    // input models
-    property alias accountsSourceModel: accountsRenamingSource.sourceModel
+    // Accounts input models
+    property alias accountsSourceModel: accountsSFPM.sourceModel
     property alias accountsShowcaseModel: accountsRenamingShowcase.sourceModel
 
     // adapted models
-    readonly property alias adaptedAccountsSourceModel: accountsRenamingSource
+    readonly property alias adaptedAccountsSourceModel: accountsSFPM
     readonly property alias adaptedAccountsShowcaseModel: accountsRenamingShowcase
 
-    // input models
-    property alias collectiblesSourceModel: collectiblesRenamingSource.sourceModel
+    // Collectibles input models
+    property alias collectiblesSourceModel: collectiblesSFPM.sourceModel
     property alias collectiblesShowcaseModel: collectiblesRenamingShowcase.sourceModel
 
     // adapted models
-    readonly property alias adaptedCollectiblesSourceModel: collectiblesRenamingSource
+    readonly property alias adaptedCollectiblesSourceModel: collectiblesSFPM
     readonly property alias adaptedCollectiblesShowcaseModel: collectiblesRenamingShowcase
 
 
-    RolesRenamingModel {
-        id: communityRenamingSource
-        mapping: [
-            RoleRename {
-                from: "id"
-                to: "key"
+    SortFilterProxyModel {
+        id: communitySFPM
+        proxyRoles: [
+            FastExpressionRole {
+                name: "showcaseKey"
+                expression: model.id
+                expectedRoles: ["id"]
             }
         ]
     }
 
     RolesRenamingModel {
-        id: communityRenamingShowcase
+        id: communityShowcaseRenaming
         mapping: [
             RoleRename {
                 from: "id"
-                to: "key"
+                to: "showcaseKey"
             },
             RoleRename {
                 from: "order"
-                to: "position"
-            },
-            RoleRename {
-                from: "showcaseVisibility"
-                to: "visibility"
+                to: "showcasePosition"
             },
             // Removing model duplicates
             // TODO: remove this when the lightweigth model is used
@@ -92,35 +89,27 @@ QObject {
         ]
     }
 
-    RolesRenamingModel {
-        id: accountsRenamingSource
-        mapping: [
-            RoleRename {
-                from: "address"
-                to: "key"
-            },
-            RoleRename {
-                from: "position"
-                to: "positions"
+    SortFilterProxyModel {
+        id: accountsSFPM
+        proxyRoles: [
+            FastExpressionRole {
+                name: "showcaseKey"
+                expression: model.address
+                expectedRoles: ["address"]
             }
         ]
     }
-
 
     RolesRenamingModel {
         id: accountsRenamingShowcase
         mapping: [
             RoleRename {
                 from: "address"
-                to: "key"
+                to: "showcaseKey"
             },
             RoleRename {
                 from: "order"
-                to: "position"
-            },
-            RoleRename {
-                from: "showcaseVisibility"
-                to: "visibility"
+                to: "showcasePosition"
             },
             // Removing model duplicates
             // TODO: remove this when the lightweigth model is used
@@ -140,33 +129,27 @@ QObject {
         ]
     }
 
-    RolesRenamingModel {
-        id: collectiblesRenamingSource
-        sourceModel: root.collectiblesSourceModel
-        mapping: [
-            RoleRename {
-                from: "uid"
-                to: "key"
+    SortFilterProxyModel {
+        id: collectiblesSFPM
+        proxyRoles: [
+            FastExpressionRole {
+                name: "showcaseKey"
+                expression: model.uid
+                expectedRoles: ["uid"]
             }
         ]
     }
 
     RolesRenamingModel {
         id: collectiblesRenamingShowcase
-        sourceModel: root.collectiblesShowcaseModel
-
         mapping: [
             RoleRename {
                 from: "uid"
-                to: "key"
+                to: "showcaseKey"
             },
             RoleRename {
                 from: "order"
-                to: "position"
-            },
-            RoleRename {
-                from: "showcaseVisibility"
-                to: "visibility"
+                to: "showcasePosition"
             },
             // Removing model duplicates
             // TODO: remove this when the lightweigth model is used

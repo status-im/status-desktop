@@ -34,13 +34,28 @@ QObject {
     /**
       * Returns dirty state of the showcase model.
       */
-    readonly property bool dirty: writable.dirty || !visibleModel.synced || !hiddenModel.synced
+    readonly property bool dirty: writable.dirty || !visibleModel.synced
 
     function revert() {
+        visible.syncOrder()
         writable.revert()
     }
 
     function currentState() {
+        if (visibleModel.synced) {
+            return writable.currentState()
+        }
+        const newOrder = visible.order()
+        let writableIndexes = []
+
+        for (var i = 0; i < newOrder.length; i++) {
+            writableIndexes.push(visibleSFPM.mapFromSource(newOrder[i]))
+        }
+
+        for (var i = 0; i < newOrder.length; i++) {
+            writable.set(writableIndexes[i], { "showcasePosition": i})
+        }
+        
         return writable.currentState()
     }
 
@@ -58,11 +73,11 @@ QObject {
 
     component HiddenFilter: AnyOf {
         UndefinedFilter {
-            roleName: "visibility"
+            roleName: "showcaseVisibility"
         }
 
         ValueFilter {
-            roleName: "visibility"
+            roleName: "showcaseVisibility"
             value: Constants.ShowcaseVisibility.NoOne
         }
     }
@@ -70,7 +85,7 @@ QObject {
     LeftJoinModel {
         id: joined
 
-        joinRole: "key"
+        joinRole: "showcaseKey"
     }
 
     VisibilityAndPositionDirtyStateModel {
@@ -87,7 +102,7 @@ QObject {
         delayed: true
 
         filters: HiddenFilter { inverted: true }
-        sorters: RoleSorter { roleName: "position" }
+        sorters: RoleSorter { roleName: "showcasePosition" }
     }
 
     MovableModel {
@@ -97,17 +112,11 @@ QObject {
     }
 
     SortFilterProxyModel {
-        id: hiddenSFPM
+        id: hidden
 
         sourceModel: writable
         delayed: true
 
         filters: HiddenFilter {}
-    }
-
-    MovableModel {
-        id: hidden
-
-        sourceModel: hiddenSFPM
     }
 }

@@ -8,6 +8,8 @@ import StatusQ.Core.Utils 0.1
 
 import Storybook 1.0
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 import AppLayouts.Profile.helpers 1.0
@@ -16,53 +18,150 @@ ColumnLayout {
     ListModel {
         id: accountsModel
 
-        ListElement { key: "1"; name: "Crypto Kitties" }
-        ListElement { key: "2"; name: "Status" }
-        ListElement { key: "3"; name: "Fun Stuff" }
-        ListElement { key: "4"; name: "Other Stuff" }
+        ListElement { address: "1"; name: "Crypto Kitties" }
+        ListElement { address: "2"; name: "Status" }
+        ListElement { address: "3"; name: "Fun Stuff" }
+        ListElement { address: "4"; name: "Other Stuff" }
     }
 
     ListModel {
         id: accountsShowcaseModel
-
         ListElement {
-            key: "1"
-            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            position: 0
+            address: "1"
+            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            order: 0
+            name: "name"
+            colorId: "colorId"
+            emoji: "emoji"
         }
         ListElement {
-            key: "3"
-            visibility: Constants.ShowcaseVisibility.Contacts
-            position: 9
+            address: "2"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+            order: 1
+            name: "name"
+            colorId: "colorId"
+            emoji: "emoji"
+        }
+        ListElement {
+            address: "3"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+            order: 2
+            name: "name"
+            colorId: "colorId"
+            emoji: "emoji"
         }
     }
 
     ListModel {
-        id: collectiblesModel
+        id: accounts13
+        ListElement { accountAddress: "1" }
+        ListElement { accountAddress: "3" }
+    }
 
-        ListElement { key: "1"; name: "Collectible 1"; accounts: "1:3" }
-        ListElement { key: "2"; name: "Collectible 2"; accounts: "3" }
-        ListElement { key: "3"; name: "Collectible 3"; accounts: "1:2:3" }
-        ListElement { key: "4"; name: "Collectible 4"; accounts: "1:4" }
+    ListModel {
+        id: accounts3
+        ListElement { accountAddress: "3" }
+    }
+
+    ListModel {
+        id: accounts123
+        ListElement { accountAddress: "1" }
+        ListElement { accountAddress: "2" }
+        ListElement { accountAddress: "3" }
+    }
+
+    ListModel {
+        id: accounts14
+        ListElement { accountAddress: "1" }
+        ListElement { accountAddress: "4" }
+    }
+
+    ListModel {
+        id: collectiblesListModel
+
+        ListElement { item: 1 }
+        ListElement { item: 2 }
+        ListElement { item: 3 }
+        ListElement { item: 4 }
+    }
+
+    SortFilterProxyModel {
+        id: collectiblesModel
+        sourceModel: collectiblesListModel
+        proxyRoles: [
+            FastExpressionRole {
+                name: "ownership"
+                expression: {
+                    if (index == 0) {
+                        return accounts13
+                    } else if (index == 1) {
+                        return accounts3
+                    } else if (index == 2) {
+                        return accounts123
+                    } else if (index == 3) {
+                        return accounts14
+                    }
+                    return undefined
+                }
+            },
+            FastExpressionRole {
+                name: "uid"
+                expression: {
+                    return index + 1
+                }
+            },
+            FastExpressionRole {
+                name: "name"
+                expression: {
+                    return "Collectible " + (index + 1)
+                }
+            }
+        ]
     }
 
     ListModel {
         id: collectiblesShowcaseModel
-
         ListElement {
-            key: "1"
-            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            position: 0
+            uid: "1"
+            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            order: 0
+            name: "name"
+            backgroundColor: "backgroundColor"
+            chainId: "chainId"
+            communityId: "communityId"
+            collectionName: "collectionName"
+            imageUrl: "imageUrl"
+            isLoading: "isLoading"
+            contractAddress: "contractAddress"
+            tokenId: "tokenId"
         }
         ListElement {
-            key: "2"
-            visibility: Constants.ShowcaseVisibility.Contacts
-            position: 2
+            uid: "2"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+            order: 2
+            name: "name"
+            backgroundColor: "backgroundColor"
+            chainId: "chainId"
+            communityId: "communityId"
+            collectionName: "collectionName"
+            imageUrl: "imageUrl"
+            isLoading: "isLoading"
+            contractAddress: "contractAddress"
+            tokenId: "tokenId"
         }
         ListElement {
-            key: "3"
-            visibility: Constants.ShowcaseVisibility.Contacts
-            position: 1
+            uid: "3"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+            order: 1
+            name: "name"
+            backgroundColor: "backgroundColor"
+            chainId: "chainId"
+            communityId: "communityId"
+            collectionName: "collectionName"
+            imageUrl: "imageUrl"
+            isLoading: "isLoading"
+            contractAddress: "contractAddress"
+            tokenId: "tokenId"
         }
     }
 
@@ -74,18 +173,6 @@ ColumnLayout {
 
         collectiblesSourceModel: collectiblesModel
         collectiblesShowcaseModel: collectiblesShowcaseModel
-    }
-
-    MovableModel {
-        id: accountsMovableModel
-
-        sourceModel: showcaseModels.accountsVisibleModel
-    }
-
-    MovableModel {
-        id: collectiblesMovableModel
-
-        sourceModel: showcaseModels.collectiblesVisibleModel
     }
 
     ListModel {
@@ -139,7 +226,7 @@ ColumnLayout {
             }
 
             GenericListView {
-                width: 200
+                width: 300
                 height: 300
 
                 model: accountsModel
@@ -147,12 +234,12 @@ ColumnLayout {
             }
 
             GenericListView {
-                width: 200
+                width: 300
                 height: 300
 
                 model: accountsShowcaseModel
                 label: "SHOWCASE MODEL"
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
             }
 
             Label {
@@ -165,16 +252,13 @@ ColumnLayout {
                 width: 420
                 height: 300
 
-                model: accountsMovableModel
+                model: showcaseModels.accountsVisibleModel
                 label: "IN SHOWCASE"
                 movable: true
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
                 onMoveRequested: {
-                    accountsMovableModel.move(from, to)
-
-                    const key = ModelUtils.get(accountsMovableModel, to, "key")
-                    showcaseModels.changeAccountPosition(key, to);
+                    showcaseModels.changeAccountPosition(from, to);
                 }
 
                 insetComponent: RowLayout {
@@ -183,7 +267,7 @@ ColumnLayout {
                     RoundButton {
                         text: "❌"
                         onClicked: showcaseModels.setAccountVisibility(
-                                       model.key,
+                                       model.showcaseKey,
                                        Constants.ShowcaseVisibility.NoOne)
                     }
 
@@ -195,11 +279,11 @@ ColumnLayout {
                                 return
 
                             showcaseModels.setAccountVisibility(
-                                        topModel.key, currentValue)
+                                        topModel.showcaseKey, currentValue)
                         }
 
                         Component.onCompleted: {
-                            currentIndex = indexOfValue(topModel.visibility)
+                            currentIndex = indexOfValue(topModel.showcaseVisibility)
                             completed = true
                         }
                     }
@@ -214,14 +298,14 @@ ColumnLayout {
 
                 label: "HIDDEN"
 
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
                 insetComponent: Button {
                     text: "unhide"
 
                     onClicked:
                         showcaseModels.setAccountVisibility(
-                            model.key,
+                            model.showcaseKey,
                             Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }
@@ -238,8 +322,6 @@ ColumnLayout {
 
                 model: collectiblesModel
                 label: "COLLECTIBLES MODEL"
-
-                roles: ["key", "name", "accounts"]
             }
 
             GenericListView {
@@ -248,7 +330,7 @@ ColumnLayout {
 
                 model: collectiblesShowcaseModel
                 label: "SHOWCASE MODEL"
-                roles: ["key", "visibility", "position"]
+                roles: ["uid", "showcaseVisibility", "order"]
             }
 
             Label {
@@ -261,16 +343,13 @@ ColumnLayout {
                 width: 610
                 height: 300
 
-                model: collectiblesMovableModel
+                model: showcaseModels.collectiblesVisibleModel
                 label: "IN SHOWCASE"
                 movable: true
-                roles: ["key", "visibility", "position", "accounts", "maxVisibility"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
                 onMoveRequested: {
-                    collectiblesMovableModel.move(from, to)
-
-                    const key = ModelUtils.get(collectiblesMovableModel, to, "key")
-                    showcaseModels.changeCollectiblePosition(key, to);
+                    showcaseModels.changeCollectiblePosition(from, to);
                 }
 
                 insetComponent: RowLayout {
@@ -279,7 +358,7 @@ ColumnLayout {
                     RoundButton {
                         text: "❌"
                         onClicked: showcaseModels.setCollectibleVisibility(
-                                       model.key,
+                                       model.showcaseKey,
                                        Constants.ShowcaseVisibility.NoOne)
                     }
 
@@ -291,11 +370,11 @@ ColumnLayout {
                                 return
 
                             showcaseModels.setCollectibleVisibility(
-                                        topModel.key, currentValue)
+                                        topModel.showcaseKey, currentValue)
                         }
 
                         Component.onCompleted: {
-                            currentIndex = indexOfValue(topModel.visibility)
+                            currentIndex = indexOfValue(topModel.showcaseVisibility)
                             completed = true
                         }
                     }
@@ -310,7 +389,7 @@ ColumnLayout {
 
                 label: "HIDDEN"
 
-                roles: ["key", "visibility", "position",
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition",
                     "accounts", "maxVisibility"]
 
                 insetComponent: Button {
@@ -318,7 +397,7 @@ ColumnLayout {
 
                     onClicked:
                         showcaseModels.setCollectibleVisibility(
-                            model.key,
+                            model.showcaseKey,
                             Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }
@@ -340,13 +419,12 @@ ColumnLayout {
 
     Button {
         text: "SAVE"
+        //TODO: enable when showcaseModels backend APIs is integrated
+        enabled: false
 
         onClicked: {
             const accountsToBeSaved = showcaseModels.accountsCurrentState()
             const collectiblesToBeSaved = showcaseModels.collectiblesCurrentState()
-
-            accountsMovableModel.syncOrder()
-            collectiblesMovableModel.syncOrder()
 
             accountsShowcaseModel.clear()
             accountsShowcaseModel.append(accountsToBeSaved)

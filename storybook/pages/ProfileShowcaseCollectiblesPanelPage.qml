@@ -27,62 +27,62 @@ SplitView {
         id: hiddenModelItem
         readonly property var data: [
             {
-                key: "1234",
+                showcaseKey: "1234",
                 name: "SNTT",
                 collectionName: "Super Nitro Toluen (with pink bg)",
                 backgroundColor: "pink",
                 imageUrl: ModelsData.collectibles.custom,
                 isLoading: false,
                 communityId: "ddls",
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                key: "3454565676",
+                showcaseKey: "3454565676",
                 name: "Kitty 3",
                 collectionName: "Kitties",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
                 isLoading: false,
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                key: "12345",
+                showcaseKey: "12345",
                 name: "Kitty 4",
                 collectionName: "",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty2Big,
                 isLoading: false,
                 communityId: "sox",
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                key: "123456454595374",
+                showcaseKey: "123456454595374",
                 name: "",
                 collectionName: "Super Kitties",
                 backgroundColor: "oink",
                 imageUrl: ModelsData.collectibles.kitty3Big,
                 isLoading: false,
                 communityId: "ast",
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                key: "6912",
+                showcaseKey: "6912",
                 name: "KILLABEAR",
                 collectionName: "KILLABEARS",
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
                 isLoading: true,
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                key: "8876",
+                showcaseKey: "8876",
                 name: "AIORBIT",
                 description: "",
                 collectionName: "AIORBIT (Animated SVG)",
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
                 isLoading: false,
-                visibility: Constants.ShowcaseVisibility.NoOne
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             }
         ]
         Component.onCompleted: append(data)
@@ -93,62 +93,68 @@ SplitView {
 
         readonly property var data: [
             {
-                key: "123",
+                uid: "123",
+                showcaseKey: "1234",
                 name: "SNT",
                 collectionName: "Super Nitro Toluen (with pink bg)",
                 backgroundColor: "pink",
                 imageUrl: ModelsData.collectibles.custom,
                 isLoading: false,
                 communityId: "ddls",
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
-                key: "34545656768",
+                uid: "34545656768",
+                showcaseKey: "3454565676",
                 name: "Kitty 1",
                 collectionName: "Kitties",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
                 isLoading: false,
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
-                key: "123456",
+                uid: "123456",
+                showcaseKey: "12345",
                 name: "Kitty 2",
                 collectionName: "",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty2Big,
                 isLoading: false,
                 communityId: "sox",
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
-                key: "12345645459537432",
+                uid: "12345645459537432",
+                showcaseKey: "123456454595374",
                 name: "",
                 collectionName: "Super Kitties",
                 backgroundColor: "oink",
                 imageUrl: ModelsData.collectibles.kitty3Big,
                 isLoading: false,
                 communityId: "ast",
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
-                key: "691",
+                uid: "691",
+                showcaseKey: "6912",
                 name: "KILLABEAR",
                 collectionName: "KILLABEARS",
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
                 isLoading: true,
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             },
             {
-                key: "8876",
+                uid: "8876",
+                showcaseKey: "8876",
                 name: "AIORBIT",
                 description: "",
                 collectionName: "AIORBIT (Animated SVG)",
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
                 isLoading: false,
-                visibility: Constants.ShowcaseVisibility.Everyone
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             }
         ]
         Component.onCompleted: append(data)
@@ -221,7 +227,7 @@ SplitView {
 
         ColumnLayout {
             Label {
-                text: "ⓘ Shwcase interaction implemented in ProfileShowcasePanelPage"
+                text: "ⓘ Showcase interaction implemented in ProfileShowcasePanelPage"
             }
             
             CheckBox {

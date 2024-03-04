@@ -134,6 +134,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 leftParentLayoutMargin: d.leftMargin
 
+                walletAssetsStore: root.walletAssetsStore
                 currencyStore: root.currencyStore
                 walletStore: root.store.walletStore
                 profileStore: root.store.profileStore

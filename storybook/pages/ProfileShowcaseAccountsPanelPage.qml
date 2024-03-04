@@ -26,27 +26,30 @@ SplitView {
         id: hiddenModelItem
         ListElement {
             name: "My Status Account"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
             colorId: "primary"
             emoji: "🇨🇿"
             walletType: ""
-            visibility: 0
+            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
         }
         ListElement {
             name: "testing (no emoji, colored, seed)"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
             colorId: ""
             emoji: ""
             walletType: "seed"
-            visibility: 0
+            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
         }
         ListElement {
             name: "My Bro's Account"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
             colorId: "orange"
             emoji: "🇸🇰"
             walletType: "watch"
-            visibility: 0
+            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
         }
     }
 
@@ -55,27 +58,33 @@ SplitView {
 
         ListElement {
             name: "My Status Account"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
             colorId: "primary"
             emoji: "🇨🇿"
             walletType: ""
-            visibility: 1
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            showcasePosition: 0
         }
         ListElement {
             name: "testing (no emoji, colored, seed)"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
             colorId: ""
             emoji: ""
             walletType: "seed"
-            visibility: 1
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            showcasePosition: 1
         }
         ListElement {
             name: "My Bro's Account"
-            key: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
+            showcaseKey: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
             colorId: "orange"
             emoji: "🇸🇰"
             walletType: "watch"
-            visibility: 1
+            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            showcasePosition: 2
         }
     }
 
@@ -102,7 +111,7 @@ SplitView {
 
         ColumnLayout {
             Label {
-                text: "ⓘ Shwcase interaction implemented in ProfileShowcasePanelPage"
+                text: "ⓘ Showcase interaction implemented in ProfileShowcasePanelPage"
             }
 
             CheckBox {

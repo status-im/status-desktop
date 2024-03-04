@@ -131,8 +131,6 @@ DoubleFlickableWithFolding {
                 rightInset: 1
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
-
-                onDropped: root.setVisibilityRequested(drop.source.key, visibility)
             }
 
             onToggleFolding: root.flip2Folding()
@@ -158,8 +156,6 @@ DoubleFlickableWithFolding {
                 height: ProfileUtils.defaultDelegateHeight - Style.current.padding
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
-
-                onDropped: root.setVisibilityRequested(drop.source.key, visibility)
             }
         }
     }
@@ -171,8 +167,6 @@ DoubleFlickableWithFolding {
 
         property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
         property var dropAreaKeys
-
-        signal dropped(var drop, int visibility)
 
         padding: Style.current.halfPadding
         spacing: padding/2
@@ -194,7 +188,7 @@ DoubleFlickableWithFolding {
                 }
 
                 onDropped: function(drop) {
-                    visibilityDropAreaButton.dropped(drop, visibilityDropAreaButton.showcaseVisibility)
+                    root.setVisibilityRequested(drop.source.key, visibilityDropAreaButton.showcaseVisibility)
                 }
             }
         }
@@ -232,10 +226,6 @@ DoubleFlickableWithFolding {
         readonly property bool verifiedContainsDrag: dropAreaVerified.containsDrag
         property int margins: Style.current.halfPadding
 
-        function dropped(drop, visibility) {
-            root.setVisibilityRequested(drop.source.key,  visibility)
-        }
-
         RowLayout {
             anchors.fill: parent
             anchors.margins: visibilityDropAreaRow.margins
@@ -248,8 +238,6 @@ DoubleFlickableWithFolding {
                 showcaseVisibility: Constants.ShowcaseVisibility.Everyone
                 text: qsTr("Everyone")
                 dropAreaKeys: d.dragHiddenItemKey
-
-                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
             }
 
             VisibilityDropAreaButton {
@@ -259,8 +247,6 @@ DoubleFlickableWithFolding {
                 showcaseVisibility: Constants.ShowcaseVisibility.Contacts
                 text: qsTr("Contacts")
                 dropAreaKeys: d.dragHiddenItemKey
-
-                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
             }
 
             VisibilityDropAreaButton {
@@ -270,8 +256,6 @@ DoubleFlickableWithFolding {
                 showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
                 text: qsTr("Verified")
                 dropAreaKeys: d.dragHiddenItemKey
-
-                onDropped: visibilityDropAreaRow.dropped(drop, visibility)
             }
         }
     }
@@ -292,7 +276,7 @@ DoubleFlickableWithFolding {
             required property var model
             required property int index
             readonly property int visualIndex: index
-            readonly property bool isHiddenShowcaseItem: !model.visibility || model.visibility === Constants.ShowcaseVisibility.NoOne
+            readonly property bool isHiddenShowcaseItem: !model.showcaseVisibility || model.showcaseVisibility === Constants.ShowcaseVisibility.NoOne
 
             function handleEntered(drag) {
                 if (!showcaseDelegateRoot.isHiddenShowcaseItem) {
@@ -337,7 +321,7 @@ DoubleFlickableWithFolding {
                 sourceComponent: root.delegate
                 onItemChanged: {
                     if (item) {
-                        item.showcaseVisibilityRequested.connect((toVisibility) => root.setVisibilityRequested(showcaseDelegateRoot.model.key, toVisibility))
+                        item.showcaseVisibilityRequested.connect((toVisibility) => root.setVisibilityRequested(showcaseDelegateRoot.model.showcaseKey, toVisibility))
                     }
                 }
             }
@@ -363,16 +347,6 @@ DoubleFlickableWithFolding {
                 id: showcaseShadow
 
                 visible: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
-            }
-
-            // Delegate shadow background when dragging:
-            Rectangle {
-                width: parent.width
-                height: d.defaultDelegateHeight
-                anchors.centerIn: parent
-                color: Theme.palette.baseColor5
-                radius: Style.current.radius
-                visible: showcaseShadow.visible
             }
         }
     }

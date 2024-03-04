@@ -25,44 +25,44 @@ SplitView {
         id: hiddenModelItem
         Component.onCompleted:
             append([{
-                        key: "0x0006",
+                        showcaseKey: "0x0006",
                         name: "Test community 6",
                         joined: true,
                         memberRole: Constants.memberRole.owner,
                         isControlNode: true,
                         image: ModelsData.icons.dribble,
                         color: "yellow",
-                        visibility: Constants.ShowcaseVisibility.NoOne
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
                     },
                     {
-                        key: "0x0007",
+                        showcaseKey: "0x0007",
                         name: "Test community 7",
                         joined: true,
                         memberRole: Constants.memberRole.none,
                         isControlNode: false,
                         image: ModelsData.collectibles.custom,
                         color: "peach",
-                        visibility: Constants.ShowcaseVisibility.NoOne
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
                     },
                     {
-                        key: "0x0008",
+                        showcaseKey: "0x0008",
                         name: "Test community 8",
                         joined: true,
                         memberRole: Constants.memberRole.none,
                         isControlNode: false,
                         image: "",
                         color: "whitesmoke",
-                        visibility: Constants.ShowcaseVisibility.NoOne
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
                     },
                     {
-                        key: "0x0009",
+                        showcaseKey: "0x0009",
                         name: "Test community 9",
                         joined: true,
                         memberRole: Constants.memberRole.admin,
                         isControlNode: false,
                         image: ModelsData.icons.spotify,
                         color: "green",
-                        visibility: Constants.ShowcaseVisibility.NoOne
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
                     },
                    ])
     }
@@ -72,44 +72,48 @@ SplitView {
 
         Component.onCompleted:
             append([{
-                        key: "0x0001",
+                        id: "0x0001",
+                        showcaseKey: "0x0001",
                         name: "Test community",
                         joined: true,
                         memberRole: Constants.memberRole.owner,
                         isControlNode: true,
                         image: ModelsData.icons.dribble,
                         color: "yellow",
-                        visibility: Constants.ShowcaseVisibility.Everyone
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
                     },
                     {
-                        key: "0x0002",
+                        id: "0x0002",
+                        showcaseKey: "0x0002",
                         name: "Test community 2",
                         joined: true,
                         memberRole: Constants.memberRole.none,
                         isControlNode: false,
                         image: ModelsData.collectibles.custom,
                         color: "peach",
-                        visibility: Constants.ShowcaseVisibility.Everyone
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
                     },
                     {
-                        key: "0x0004",
+                        id: "0x0004",
+                        showcaseKey: "0x0004",
                         name: "Test community 3",
                         joined: true,
                         memberRole: Constants.memberRole.none,
                         isControlNode: false,
                         image: "",
                         color: "whitesmoke",
-                        visibility: Constants.ShowcaseVisibility.Everyone
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
                     },
                     {
-                        key: "0x0005",
+                        id: "0x0005",
+                        showcaseKey: "0x0005",
                         name: "Test community 4",
                         joined: true,
                         memberRole: Constants.memberRole.admin,
                         isControlNode: false,
                         image: ModelsData.icons.spotify,
                         color: "green",
-                        visibility: Constants.ShowcaseVisibility.Everyone
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
                     },
                    ])
     }
@@ -137,7 +141,7 @@ SplitView {
 
         ColumnLayout {
             Label {
-                text: "ⓘ Shwcase interaction implemented in ProfileShowcasePanelPage"
+                text: "ⓘ Showcase interaction implemented in ProfileShowcasePanelPage"
             }
 
             CheckBox {
