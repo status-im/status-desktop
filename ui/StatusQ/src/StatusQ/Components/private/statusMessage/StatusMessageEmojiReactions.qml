@@ -155,6 +155,7 @@ Item {
         Item {
             width: addEmojiButton.width + addEmojiButton.anchors.leftMargin // there is more margin between the button and the emojis than between each emoji
             height: addEmojiButton.height
+            visible: root.enabled
 
             StatusIcon {
                 id: addEmojiButton

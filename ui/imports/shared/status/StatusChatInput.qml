@@ -1226,7 +1226,7 @@ Rectangle {
 
                             objectName: "messageInputField"
 
-                            property var lastClick: 0
+                            property double lastClick: 0
                             property int cursorWhenPressed: 0
                             property int previousCursorPosition: 0
 
@@ -1246,7 +1246,7 @@ Rectangle {
                             padding: 0
                             // This is needed to make sure the text area is disabled when the input is disabled
                             Binding on enabled {
-                                value: root.enabled
+                                value: control.enabled
                             }
                             Keys.onUpPressed: {
                                 if (isEdit && !activeFocus) {
