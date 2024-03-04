@@ -68,6 +68,7 @@ SettingsContentBase {
 
     toast.saveChangesTooltipVisible: root.dirty
     toast.saveChangesTooltipText: qsTr("Invalid changes made to Identity")
+    autoscrollWhenDirty: profileTabBar.currentIndex === MyProfileView.Identity
 
     onResetChangesClicked: priv.reset()
 
