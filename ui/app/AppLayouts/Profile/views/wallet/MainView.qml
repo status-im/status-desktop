@@ -49,7 +49,9 @@ Column {
     QtObject {
         id: d
 
+        property bool propertyReevaluation: false
         readonly property int unimportedNonProfileKeypairs: {
+            d.propertyReevaluation
             let total = 0
             for (var i = 0; i < keypairsRepeater.count; i++) {
                 let item = keypairsRepeater.itemAt(i)
@@ -70,6 +72,7 @@ Column {
         }
 
         readonly property int allNonProfileKeypairsMigratedToAKeycard: {
+            d.propertyReevaluation
             for (var i = 0; i < keypairsRepeater.count; i++) {
                 let item = keypairsRepeater.itemAt(i)
                 if (item == undefined || item == null) {
@@ -251,6 +254,13 @@ Column {
             id: keypairsRepeater
             objectName: "generatedAccounts"
             model: walletStore.originModel
+            onItemAdded: {
+                d.propertyReevaluation = !d.propertyReevaluation
+            }
+            onItemRemoved: {
+                d.propertyReevaluation = !d.propertyReevaluation
+            }
+
             delegate: WalletKeyPairDelegate {
                 width: parent.width
                 keyPair: model.keyPair
