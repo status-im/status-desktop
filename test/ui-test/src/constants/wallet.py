@@ -1,7 +1,7 @@
 from collections import namedtuple
 from enum import Enum
 
-DEFAULT_ACCOUNT_NAME = 'Status account'
+DEFAULT_ACCOUNT_NAME = 'Account 1'
 
 account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
 
