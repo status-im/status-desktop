@@ -84,7 +84,10 @@ StatusStackModal {
     leftPadding: 0
     rightPadding: 0
     currentIndex: d.currentPage
-
+    closePolicy: d.dirty && !root.isDiscordImport ? Popup.NoAutoClose : (Popup.CloseOnEscape | Popup.CloseOnPressOutside)
+    
+    closeHandler: d.closeRequested
+    
     enum CurrentPage {
         ChannelDetails, //0
         ColorPicker, //1
@@ -95,6 +98,15 @@ StatusStackModal {
 
     QtObject {
         id: d
+
+        readonly property bool dirty: d.channelEditModel.dirtyPermissions ||
+                                    d.viewOnlyCanAddReaction !== root.viewOnlyCanAddReaction ||
+                                    d.hideIfPermissionsNotMet !== root.hideIfPermissionsNotMet ||
+                                    nameInput.input.text !== root.channelName ||
+                                    descriptionTextArea.text !== root.channelDescription ||
+                                    colorPanel.color.toString().toUpperCase() !== root.channelColor ||
+                                    nameInput.input.asset.emoji !== root.channelEmoji
+
         property int currentPage: CreateChannelPopup.CurrentPage.ChannelDetails
 
         readonly property QtObject communityDetails: QtObject {
@@ -165,6 +177,10 @@ StatusStackModal {
         }
 
         function saveAndClose() {
+            if (!d.isFormValid()) {
+                scrollView.scrollBackUp()
+                return
+            }
             let emoji = StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji)
             if (!isEdit) {
                 root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
@@ -206,6 +222,27 @@ StatusStackModal {
             }
 
             // TODO Open the channel once we have designs for it
+            root.close()
+        }
+
+        function closeRequested() {
+            if (d.dirty && !root.isDiscordImport)
+                closeConfirmation.open()
+            else
+                root.close()
+        }
+    }
+
+    StatusConfirmationDialog {
+        id: closeConfirmation
+        title: qsTr("Save changes to #%1 channel?").arg(root.channelName || nameInput.input.text)
+        body: qsTr("You have made changes to #%1 channel. If you close this dialog without saving these changes will be lost?").arg(root.channelName || nameInput.input.text)
+        acceptButtonText: qsTr("Save changes")
+        rejectButtonText: qsTr("Close without saving")
+        onAccepted: {
+            d.saveAndClose()
+        }
+        onRejected: {
             root.close()
         }
     }
@@ -637,7 +674,7 @@ StatusStackModal {
         StatusScrollView {
             id: scrollView
 
-            readonly property bool canGoNext: d.isFormValid()
+            readonly property bool canGoNext: d.isFormValid() && (root.isDiscordImport ? true : d.dirty)
 
             property ScrollBar vScrollBar: ScrollBar.vertical
 
@@ -861,11 +898,6 @@ StatusStackModal {
             }
             readonly property var nextAction: function () {
                 if (!root.isDiscordImport) {
-                    if (!d.isFormValid()) {
-                        scrollView.scrollBackUp()
-                        return
-                    }
-
                     d.saveAndClose()
                 } else {
                     d.currentPage = CreateChannelPopup.CurrentPage.DiscordImportUploadFile;

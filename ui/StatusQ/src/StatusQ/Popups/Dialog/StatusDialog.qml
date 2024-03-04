@@ -22,6 +22,11 @@ Dialog {
         This property decides the modal background color
     */
     property string backgroundColor: Theme.palette.statusModal.backgroundColor
+    /*!
+       \qmlproperty closeHandler
+        This property decides the action to be performed when the close button is clicked. It allows to define
+    */
+    property var closeHandler: root.close
 
     anchors.centerIn: Overlay.overlay
 
@@ -57,7 +62,7 @@ Dialog {
         visible: root.title || root.subtitle
         headline.title: root.title
         headline.subtitle: root.subtitle
-        actions.closeButton.onClicked: root.close()
+        actions.closeButton.onClicked: root.closeHandler()
     }
 
     footer: StatusDialogFooter {
