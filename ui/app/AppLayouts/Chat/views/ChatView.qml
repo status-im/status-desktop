@@ -10,6 +10,7 @@ import shared.status 1.0
 import shared.stores 1.0
 import shared.views.chat 1.0
 import shared.stores.send 1.0
+import SortFilterProxyModel 0.2
 
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
@@ -19,6 +20,7 @@ import "."
 import "../panels"
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.views 1.0
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import "../popups"
 import "../helpers"
@@ -57,6 +59,29 @@ StatusSectionLayout {
     property var viewAndPostPermissionsModel
     property var assetsModel
     property var collectiblesModel
+
+    readonly property var pendingViewOnlyPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.viewOnlyPermissionsModel
+        filters: [
+            ValueFilter {
+                roleName: "permissionState"
+                value: PermissionTypes.State.Approved
+                inverted: true
+            }
+        ]
+    }
+    readonly property var pendingViewAndPostPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.viewAndPostPermissionsModel
+        filters: [
+            ValueFilter {
+                roleName: "permissionState"
+                value: PermissionTypes.State.Approved
+                inverted: true
+            }
+        ]
+    }
+
+    readonly property bool permissionUpdatePending: pendingViewOnlyPermissionsModel.count > 0 || pendingViewAndPostPermissionsModel.count > 0
 
     readonly property bool contentLocked: {
         if (!rootStore.chatCommunitySectionModule.isCommunity()) {
@@ -204,6 +229,7 @@ StatusSectionLayout {
             stickersLoaded: root.stickersLoaded
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
+            permissionUpdatePending: root.permissionUpdatePending
             viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
             viewAndPostPermissionsSatisfied: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.viewAndPostPermissionsSatisfied
             amISectionAdmin: root.amISectionAdmin
