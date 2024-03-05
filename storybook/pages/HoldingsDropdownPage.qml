@@ -119,7 +119,10 @@ SplitView {
                         expression: model.index ? "Ethereum Mainnet" : "Goerli"
                     },
                     ExpressionRole {
-
+                        name: "decimals"
+                        expression: decimalsText.text
+                    },
+                    ExpressionRole {
                         readonly property string icon1: "network/Network=Ethereum"
                         readonly property string icon2: "network/Network=Testnet"
 
@@ -168,6 +171,16 @@ SplitView {
             CheckBox {
                 id: ctrlAllTokensMode
                 text: "All tokens mode"
+            }
+
+            Label {
+                text: "Assets Decimals"
+            }
+
+            TextField {
+                id: decimalsText
+                Layout.preferredWidth: 50
+                text: "2"
             }
         }
     }

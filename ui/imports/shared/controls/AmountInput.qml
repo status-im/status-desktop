@@ -10,7 +10,6 @@ import utils 1.0
 Input {
     id: root
 
-    property int maximumLength: 10
     property var locale: LocaleUtils.userInputLocale
 
     readonly property alias amount: d.amount
@@ -18,6 +17,7 @@ Input {
 
     readonly property bool valid: validationError.length === 0
     property bool allowDecimals: true
+    property int tokenDecimals: 0
 
     property bool validateMaximumAmount: false
     property string maximumAmount: "0"
@@ -66,14 +66,9 @@ Input {
             if (!root.allowDecimals)
                 root.text = root.text.replace(root.locale.decimalPoint, "")
 
-            if(root.text.length === 0) {
+            if (root.text.length === 0) {
                 d.amount = "0"
                 root.validationError = ""
-                return
-            }
-
-            if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
-                root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
                 return
             }
 
@@ -84,23 +79,26 @@ Input {
                 return
             }
 
+            const fractionalPartLength = LocaleUtils.fractionalPartLength(amountNumber)
+            if (fractionalPartLength > root.tokenDecimals) {
+                d.amount = "0"
+                root.validationError = qsTr("Max %n decimal place(s) for this asset", "", root.tokenDecimals)
+                return
+            }
+
             if (!root.allowZero && amountNumber === 0) {
                 d.amount = "0"
                 root.validationError = qsTr("Amount must be greater than 0")
                 return
             }
 
-            const amount = SQUtils.AmountsArithmetic.fromNumber(
-                             amountNumber, d.multiplierIndex)
+            const amount = SQUtils.AmountsArithmetic.fromNumber(amountNumber, d.multiplierIndex)
 
-            if (root.validateMaximumAmount) {
-                const maximumAmount = SQUtils.AmountsArithmetic.fromString(
-                                        root.maximumAmount)
+            if (root.validateMaximumAmount && root.maximumAmount && root.maximumAmount.length > 0) {
+                const maximumAmount = SQUtils.AmountsArithmetic.fromString(root.maximumAmount)
+                const maxExceeded = SQUtils.AmountsArithmetic.cmp(amount, maximumAmount) === 1
 
-                const maxExceeded = SQUtils.AmountsArithmetic.cmp(
-                                      amount, maximumAmount) === 1
-
-                if (SQUtils.AmountsArithmetic.cmp(amount, maximumAmount) === 1) {
+                if (maxExceeded) {
                     root.validationError = root.maximumExceededErrorText
                     return
                 }
@@ -110,7 +108,7 @@ Input {
             // As a target amount should be always integer number
             if (!Number.isInteger(amountNumber) && d.multiplierIndex === 0) {
                 d.amount = amount.toString()
-             } else {
+            } else {
                 d.amount = amount.toFixed(0)
             }
 
