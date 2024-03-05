@@ -50,6 +50,8 @@ Item {
             browserMenuItemEnabled: store.browserMenuItemEnabled
             walletMenuItemEnabled: store.walletMenuItemEnabled
 
+            objectName: "leftTabViewProfileMenu"
+
             onMenuItemClicked: {
                 if (menu_item.subsection === Constants.settingsSubsection.backUpSeed) {
                     Global.openBackUpSeedPopup();
