@@ -27,6 +27,7 @@ Control {
     property string communityId: ""
     property string communityName
     property string communityImage
+    property int balance: 1
 
     // Special Owner and TMaster token properties
     readonly property bool isCommunityCollectible: communityId !== ""
@@ -65,6 +66,13 @@ Control {
         cursorShape: !root.isLoading ? Qt.PointingHandCursor : undefined
     }
 
+    property Component balanceTag: Component {
+        CollectibleBalanceTag {
+            visible: !root.isLoading && (root.balance > 1)
+            balance: root.balance
+        }
+    }   
+
     contentItem: ColumnLayout {
         spacing: 0
 
@@ -89,6 +97,13 @@ Control {
                 active: root.isLoading
                 sourceComponent: LoadingComponent {radius: image.radius}
             }
+
+            Loader {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: Style.current.halfPadding
+                sourceComponent: root.balanceTag
+            }
         }
 
         PrivilegedTokenArtworkPanel {
@@ -109,6 +124,13 @@ Control {
                 anchors.fill: parent
                 active: root.isLoading
                 sourceComponent: LoadingComponent {radius: image.radius}
+            }
+
+            Loader {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: Style.current.halfPadding
+                sourceComponent: root.balanceTag
             }
         }
 

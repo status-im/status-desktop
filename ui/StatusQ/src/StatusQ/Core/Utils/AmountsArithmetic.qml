@@ -124,6 +124,16 @@ QtObject {
     }
 
     /*!
+      \qmlmethod AmountsArithmetic::sum(amount1, amount2)
+      \brief Returns a Big number whose value is the sum of amount1 and amount2.
+     */
+    function sum(amount1, amount2) {
+        console.assert(amount1 instanceof Big.Big)
+        console.assert(amount2 instanceof Big.Big)
+        return amount1.plus(amount2)
+    }
+
+    /*!
       \qmlmethod AmountsArithmetic::cmp(amount1, amount2)
       \brief Compares two amounts.
 
