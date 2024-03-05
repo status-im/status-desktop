@@ -451,13 +451,18 @@ settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "object
 settingsContentBaseScrollView_Flickable = {"container": settingsContentBase_ScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
 
 # Left Panel
-mainWindow_LeftTabView = {"container": mainWindow_StatusSectionLayout_ContentItem, "type": "LeftTabView", "unnamed": 1, "visible": True}
+
+mainWindow_LeftTabView = {"container": statusDesktop_mainWindow, "type": "LeftTabView", "unnamed": 1, "visible": True}
+LeftTabView_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusScrollView", "unnamed": 1, "visible": True}
+LeftTabProfileMenu = {"container": LeftTabView_ScrollView, "objectName": "leftTabViewProfileMenu", "type": "MenuPanel", "visible": True}
+
 mainWindow_Settings_StatusNavigationPanelHeadline = {"container": mainWindow_LeftTabView, "type": "StatusNavigationPanelHeadline", "unnamed": 1, "visible": True}
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_LeftTabView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollView_StatusScrollView, "type": "StatusNavigationListItem", "visible": True}
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-mainWindow_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusScrollView", "unnamed": 1, "visible": True}
-settingsBackUpSeedPhraseOption = {"container": mainWindow_ScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
+
+settingsBackUpSeedPhraseOption = {"container": LeftTabView_ScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
+settingsWalletOption = {"container": LeftTabView_ScrollView, "objectName": "5-AppMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
 # Communities View
 mainWindow_CommunitiesView = {"container": statusDesktop_mainWindow, "type": "CommunitiesView", "unnamed": 1, "visible": True}

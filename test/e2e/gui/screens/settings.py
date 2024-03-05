@@ -24,6 +24,7 @@ class LeftPanel(QObject):
         self._settings_section_template = QObject(names.scrollView_MenuItem_StatusNavigationListItem)
         self._scroll = Scroll(names.scrollView_Flickable)
         self._settings_section_back_up_seed_option = QObject(names.settingsBackUpSeedPhraseOption)
+        self._settings_section_wallet_option = QObject(names.settingsWalletOption)
 
     def _open_settings(self, object_name: str):
         self._settings_section_template.real_name['objectName'] = object_name
@@ -52,16 +53,9 @@ class LeftPanel(QObject):
                 raise ex
 
     @allure.step('Open wallet settings')
-    def open_wallet_settings(self, attempts: int = 2) -> WalletSettingsView:
-        self._open_settings('5-AppMenuItem')
-        time.sleep(0.5)
-        try:
-            return WalletSettingsView()
-        except Exception as ex:
-            if attempts:
-                self.open_wallet_settings(attempts-1)
-            else:
-                raise ex
+    def open_wallet_settings(self) -> WalletSettingsView:
+        self._settings_section_wallet_option.click()
+        return WalletSettingsView()
 
     @allure.step('Open profile settings')
     def open_profile_settings(self) -> ProfileSettingsView:
