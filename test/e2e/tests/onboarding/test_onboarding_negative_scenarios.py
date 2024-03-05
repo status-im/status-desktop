@@ -18,6 +18,7 @@ from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, 
 
 pytestmark = marks
 
+
 @pytest.fixture
 def keys_screen(main_window) -> KeysView:
     with step('Open Generate new keys view'):
@@ -32,7 +33,6 @@ def keys_screen(main_window) -> KeysView:
 @pytest.mark.case(702991)
 @pytest.mark.parametrize('error', [OnboardingMessages.PASSWORD_INCORRECT.value
                                    ])
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/13758")
 def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: str):
     user_one: UserAccount = constants.user_account_one
     user_one_wrong_password: UserAccount = constants.user_account_one_changed_password
@@ -63,7 +63,7 @@ def test_login_with_wrong_password(aut: AUT, keys_screen, main_window, error: st
         login_view.log_in(user_one_wrong_password)
         time.sleep(2)
 
-    with step ('Verify that user cannot log in and the error appears'):
+    with step('Verify that user cannot log in and the error appears'):
         assert login_view.login_error_message == error
 
 
