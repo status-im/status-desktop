@@ -1,4 +1,5 @@
 import strformat
+import app_service/common/types
 
 type
   Item* = object
@@ -10,6 +11,7 @@ type
     collectionName: string
     isCollection: bool
     communityId: string
+    tokenType: TokenType
 
 proc initItem*(
   id: string,
@@ -20,6 +22,7 @@ proc initItem*(
   collectionName: string,
   isCollection: bool,
   communityId: string,
+  tokenType: TokenType
 ): Item =
   result.id = id
   result.chainId = chainId
@@ -28,7 +31,7 @@ proc initItem*(
   result.collectionId = collectionId
   result.collectionName = collectionName
   result.isCollection = isCollection
-  result.communityId = communityId
+  result.tokenType = tokenType
 
 proc `$`*(self: Item): string =
   result = fmt"""CollectiblesNestedEntry(
@@ -40,6 +43,7 @@ proc `$`*(self: Item): string =
     collectionName: {self.collectionName},
     isCollection: {self.isCollection},
     communityId: {self.communityId},
+    tokenType: {self.tokenType},
     ]"""
 
 proc getId*(self: Item): string =
@@ -65,3 +69,6 @@ proc getIsCollection*(self: Item): bool =
 
 proc getCommunityId*(self: Item): string =
   return self.communityId
+
+proc getTokenType*(self: Item): int =
+  return self.tokenType.int

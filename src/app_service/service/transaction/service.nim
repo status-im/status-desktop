@@ -52,6 +52,7 @@ const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 const SIMPLE_TX_BRIDGE_NAME = "Transfer"
 const HOP_TX_BRIDGE_NAME = "Hop"
 const ERC721_TRANSFER_NAME = "ERC721Transfer"
+const ERC1155_TRANSFER_NAME = "ERC1155Transfer"
 
 type TokenTransferMetadata* = object
   tokenName*: string
@@ -264,6 +265,7 @@ QtObject:
     var hopTx = TransactionDataDto()
     var cbridgeTx = TransactionDataDto()
     var eRC721TransferTx = TransactionDataDto()
+    var eRC1155TransferTx = TransactionDataDto()
 
     if(route.bridgeName == SIMPLE_TX_BRIDGE_NAME):
       path.transferTx = txData
@@ -281,6 +283,13 @@ QtObject:
       eRC721TransferTx.recipient = parseAddress(to_addr).some
       eRC721TransferTx.tokenID = stint.u256(tokenSymbol).some
       path.eRC721TransferTx = eRC721TransferTx
+    elif(route.bridgeName == ERC1155_TRANSFER_NAME):
+      eRC1155TransferTx = txData
+      eRC1155TransferTx.chainID =  route.toNetwork.chainId.some
+      eRC1155TransferTx.recipient = parseAddress(to_addr).some
+      eRC1155TransferTx.tokenID = stint.u256(tokenSymbol).some
+      eRC1155TransferTx.amount = route.amountIn.some
+      path.eRC1155TransferTx = eRC1155TransferTx
     else:
       cbridgeTx = txData
       cbridgeTx.chainID =  route.toNetwork.chainId.some
@@ -310,6 +319,8 @@ QtObject:
           let metadata = TokenTransferMetadata(tokenName: tokenName, isOwnerToken: isOwnerToken)
           self.watchTransaction(hash.getStr, fromAddr, toAddr, $PendingTransactionTypeDto.WalletTransfer, $(%metadata), route.fromNetwork.chainID, track = false)
 
+  proc isCollectiblesTransfer(self: Service, sendType: SendType): bool =
+    return sendType == ERC721Transfer or sendType == ERC1155Transfer
 
   proc transferEth(
     self: Service,
@@ -374,7 +385,6 @@ QtObject:
     isOwnerToken: bool
   ) =
     try:
-      let isERC721Transfer = sendType == ERC721Transfer
       var paths: seq[TransactionBridgeDto] = @[]
       var chainID = 0
 
@@ -385,7 +395,7 @@ QtObject:
       var tokenSym = tokenSymbol
       let amountToSend = value.parse(Uint256)
 
-      if isERC721Transfer:
+      if self.isCollectiblesTransfer(sendType):
         let contract_tokenId = tokenSym.split(":")
         if contract_tokenId.len == 2:
           toAddress = parseAddress(contract_tokenId[0])
@@ -468,7 +478,7 @@ QtObject:
         chainID = selectedRoutes[0].fromNetwork.chainID
 
       var tokenSymbol = ""
-      if sendType == ERC721Transfer or sendType == ERC1155Transfer:
+      if self.isCollectiblesTransfer(sendType):
         tokenSymbol = assetKey
       else:
         let token = self.tokenService.getTokenBySymbolByTokensKey(assetKey)
@@ -514,7 +524,7 @@ QtObject:
   proc suggestedRoutes*(self: Service, accountFrom: string, accountTo: string, amount: Uint256, token: string, disabledFromChainIDs,
     disabledToChainIDs, preferredChainIDs: seq[int], sendType: SendType, lockedInAmounts: string): SuggestedRoutesDto =
     var tokenId: string = ""
-    if sendType == ERC721Transfer:
+    if self.isCollectiblesTransfer(sendType):
       tokenId = token
     else:
       let token = self.tokenService.getTokenBySymbolByTokensKey(token)
