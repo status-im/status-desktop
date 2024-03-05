@@ -205,8 +205,9 @@ QtObject:
   proc sendTransactionSentSignal*(self: View, chainId: int, txHash: string, uuid: string, error: string) =
     self.transactionSent(chainId, txHash, uuid, error)
 
-  proc authenticateAndTransfer*(self: View, value: string, uuid: string) {.slot.} =
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetKey, value, uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
+  proc authenticateAndTransfer*(self: View, uuid: string) {.slot.} =
+    self.delegate.authenticateAndTransfer(self.selectedSenderAccount.address(), self.selectedRecipient, self.selectedAssetKey,
+      uuid, self.sendType, self.selectedTokenName, self.selectedTokenIsOwnerToken)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant) {.signal.}
   proc setTransactionRoute*(self: View, routes: TransactionRoutes) =

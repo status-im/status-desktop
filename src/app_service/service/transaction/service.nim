@@ -327,14 +327,13 @@ QtObject:
     from_addr: string,
     to_addr: string,
     tokenSymbol: string,
-    value: string,
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string
   ) =
     try:
       var paths: seq[TransactionBridgeDto] = @[]
-      let amountToSend = value.parse(Uint256)
+      var totalAmountToSend: UInt256
       let toAddress = parseAddress(to_addr)
 
       for route in routes:
@@ -347,6 +346,7 @@ QtObject:
         if route.approvalRequired:
           paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
 
+        totalAmountToSend += route.amountIn
         txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
           $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
         txData.to = parseAddress(to_addr).some
@@ -359,7 +359,7 @@ QtObject:
           toAddress: to_addr,
           fromAsset: tokenSymbol,
           toAsset: tokenSymbol,
-          fromAmount:  "0x" & amountToSend.toHex,
+          fromAmount:  "0x" & totalAmountToSend.toHex,
           multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
@@ -376,7 +376,6 @@ QtObject:
     from_addr: string,
     to_addr: string,
     tokenSymbol: string,
-    value: string,
     uuid: string,
     routes: seq[TransactionPathDto],
     password: string,
@@ -384,78 +383,81 @@ QtObject:
     tokenName: string,
     isOwnerToken: bool
   ) =
-    try:
-      var paths: seq[TransactionBridgeDto] = @[]
-      var chainID = 0
-
-      if(routes.len > 0):
-        chainID = routes[0].fromNetwork.chainID
-
-      var toAddress: Address
-      var tokenSym = tokenSymbol
-      let amountToSend = value.parse(Uint256)
-
-      if self.isCollectiblesTransfer(sendType):
-        let contract_tokenId = tokenSym.split(":")
-        if contract_tokenId.len == 2:
-          toAddress = parseAddress(contract_tokenId[0])
-          tokenSym = contract_tokenId[1]
-      else:
-        let network = self.networkService.getNetwork(chainID)
-        let token = self.tokenService.getTokenBySymbolByTokensKey(tokenSym)
-        if token != nil:
-          for addressPerChain in token.addressPerChainId:
-            if addressPerChain.chainId == network.chainId:
-              toAddress = parseAddress(addressPerChain.address)
-
-      let transfer = Transfer(
-        to: parseAddress(to_addr),
-        value: amountToSend,
+    var
+      toContractAddress: Address
+      paths: seq[TransactionBridgeDto] = @[]
+      totalAmountToSend: UInt256
+      mtCommand = MultiTransactionCommandDto(
+        fromAddress: from_addr,
+        toAddress: to_addr,
+        fromAsset: tokenSymbol,
+        toAsset: tokenSymbol,
+        multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
       )
-      let data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
 
+    if self.isCollectiblesTransfer(sendType):
+      let contract_tokenId = mtCommand.toAsset.split(":")
+      if contract_tokenId.len == 2:
+        toContractAddress = parseAddress(contract_tokenId[0])
+        mtCommand.fromAsset = contract_tokenId[1]
+        mtCommand.toAsset = contract_tokenId[1]
+
+    try:
       for route in routes:
         var txData = TransactionDataDto()
         var gasFees: string = ""
 
-        if(not route.gasFees.eip1559Enabled):
+        if not self.isCollectiblesTransfer(sendType):
+          let token = self.tokenService.getTokenBySymbolByTokensKey(mtCommand.toAsset)
+          if token != nil:
+            for addressPerChain in token.addressPerChainId:
+              if addressPerChain.chainId == route.toNetwork.chainId:
+                toContractAddress = parseAddress(addressPerChain.address)
+                break
+
+        if not route.gasFees.eip1559Enabled:
           gasFees = $route.gasFees.gasPrice
 
         if route.approvalRequired:
-          paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
+          let approvalPath = self.createApprovalPath(route, mtCommand.fromAddress, toContractAddress, gasFees)
+          paths.add(approvalPath)
 
-        txData = ens_utils.buildTokenTransaction(parseAddress(from_addr), toAddress,
-          $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
+        totalAmountToSend += route.amountIn
+        let transfer = Transfer(
+          to: parseAddress(mtCommand.toAddress),
+          value: route.amountIn,
+        )
+        let data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+
+        txData = ens_utils.buildTokenTransaction(
+          parseAddress(mtCommand.fromAddress),
+          toContractAddress,
+          $route.gasAmount,
+          gasFees,
+          route.gasFees.eip1559Enabled,
+          $route.gasFees.maxPriorityFeePerGas,
+          $route.gasFees.maxFeePerGasM
+          )
         txData.data = data
 
-        paths.add(self.createPath(route, txData, tokenSym, to_addr))
+        let path = self.createPath(route, txData, mtCommand.toAsset, mtCommand.toAddress)
+        paths.add(path)
 
-      var response: RpcResponse[JsonNode]
-      response = transactions.createMultiTransaction(
-        MultiTransactionCommandDto(
-          fromAddress: from_addr,
-          toAddress: to_addr,
-          fromAsset: tokenSym,
-          toAsset: tokenSym,
-          fromAmount:  "0x" & amountToSend.toHex,
-          multiTxType: transactions.MultiTransactionType.MultiTransactionSend,
-        ),
-        paths,
-        password,
-      )
+      mtCommand.fromAmount =  "0x" & totalAmountToSend.toHex
+
+      let response = transactions.createMultiTransaction(mtCommand, paths, password)
 
       if password != "":
-        self.sendTransactionSentSignal(from_addr, to_addr, uuid, routes, response, err="", tokenName, isOwnerToken)
+        self.sendTransactionSentSignal(mtCommand.fromAddress, mtCommand.toAddress, uuid, routes, response, err="", tokenName, isOwnerToken)
 
     except Exception as e:
-      self.sendTransactionSentSignal(from_addr, to_addr, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
+      self.sendTransactionSentSignal(mtCommand.fromAddress, mtCommand.toAddress, uuid, @[], RpcResponse[JsonNode](), fmt"Error sending token transfer transaction: {e.msg}")
 
   proc transfer*(
     self: Service,
     fromAddr: string,
     toAddr: string,
     assetKey: string,
-    value: string,
     uuid: string,
     selectedRoutes: seq[TransactionPathDto],
     password: string,
@@ -490,9 +492,9 @@ QtObject:
           isEthTx = true
 
       if(isEthTx):
-        self.transferEth(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword)
+        self.transferEth(fromAddr, toAddr, tokenSymbol, uuid, selectedRoutes, finalPassword)
       else:
-        self.transferToken(fromAddr, toAddr, tokenSymbol, value, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
+        self.transferToken(fromAddr, toAddr, tokenSymbol, uuid, selectedRoutes, finalPassword, sendType, tokenName, isOwnerToken)
 
     except Exception as e:
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
