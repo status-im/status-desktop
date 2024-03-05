@@ -24,28 +24,32 @@ SplitView {
                 icon: Style.svg(ModelsData.networks.optimism),
                 amount: "300",
                 multiplierIndex: 0,
-                infiniteAmount: false
+                infiniteAmount: false,
+                decimals: 6
             },
             {
                 name: "Arbitrum",
                 icon: Style.svg(ModelsData.networks.arbitrum),
                 amount: "400000",
                 multiplierIndex: 3,
-                infiniteAmount: false
+                infiniteAmount: false,
+                decimals: 9
             },
             {
                 name: "Hermez",
                 icon: Style.svg(ModelsData.networks.hermez),
                 amount: "0",
                 multiplierIndex: 0,
-                infiniteAmount: true
+                infiniteAmount: true,
+                decimals: 0
             },
             {
                 name: "Ethereum",
                 icon: Style.svg(ModelsData.networks.ethereum),
                 amount: "12" + "0".repeat(18),
                 multiplierIndex: 18,
-                infiniteAmount: false
+                infiniteAmount: false,
+                decimals: 9
             }
         ]
 
@@ -130,10 +134,24 @@ SplitView {
 
                     text: "∞"
                 }
+
+                Label {
+                    text: "Decimals:"
+                }
+                TextField {
+                    id: decimalsTextField
+
+                    text: "0"
+                }
             }
 
-            Label {
-                text: "amount: " + tokenPanel.amount
+            RowLayout {
+                Label {
+                    text: "amount: " + tokenPanel.amount
+                }
+                Label {
+                    text: "decimals: " + tokenPanel.decimals
+                }
             }
         }
     }
