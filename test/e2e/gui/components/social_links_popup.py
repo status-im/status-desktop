@@ -20,8 +20,8 @@ class SocialLinksPopup(BasePopup):
         self._add_button = Button(names.social_links_add_StatusBackButton)
 
     @allure.step('Get social link')
-    def _get_list_item(self, title: str) -> QObject:
-        self._add_social_link_list_item.real_name['title'] = title
+    def _get_list_item(self, index: int) -> QObject:
+        self._add_social_link_list_item.real_name['index'] = index
         return self._add_social_link_list_item
 
     @allure.step('Get social link field')
@@ -35,8 +35,8 @@ class SocialLinksPopup(BasePopup):
         return self._social_link_text_field
 
     @allure.step('Add link to link field')
-    def add_link(self, network: str, links: typing.List[str]):
-        self._get_list_item(network).click()
+    def add_link(self, index: int, links: typing.List[str]):
+        self._get_list_item(index).click()
         time.sleep(0.5)
         for occurrence, link in enumerate(links):
             self._get_text_field(occurrence).text = link

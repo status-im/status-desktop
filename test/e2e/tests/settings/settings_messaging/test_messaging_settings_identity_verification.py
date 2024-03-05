@@ -69,6 +69,10 @@ def test_messaging_settings_identity_verification(multiple_instance, user_data_o
             assert verify_identity_popup.message_note == Messaging.MESSAGE_NOTE_IDENTITY_REQUEST.value
             assert not verify_identity_popup.is_send_verification_button_enabled
             verify_identity_popup.type_message('Hi. Is that you?').send_verification()
+
+        with step('Verify toast message about sent ID verification request'):
+            toast_messages = main_window.wait_for_notification()
+            assert Messaging.ID_VERIFICATION_REQUEST_SENT.value in toast_messages
             main_window.hide()
 
         with step(f'Check incoming identity request for {user_two.name}'):
@@ -78,6 +82,6 @@ def test_messaging_settings_identity_verification(multiple_instance, user_data_o
             respond_identity_popup = contacts_settings.open_more_options_popup(user_one.name).respond_to_id_request()
             respond_identity_popup.type_message('Hi. Yes, its me').send_answer()
 
-        with step(f'Answer has been sent {user_two.name}'):
-            assert respond_identity_popup.is_change_answer_button_visible
-            respond_identity_popup.close()
+        with step('Verify toast message about sent ID verification reply'):
+            toast_messages = main_window.wait_for_notification()
+            assert Messaging.ID_VERIFICATION_REPLY_SENT.value in toast_messages

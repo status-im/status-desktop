@@ -349,7 +349,7 @@ reEncryptRestartButton = {"container": statusDesktop_mainWindow_overlay, "object
 reEncryptionComplete = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusListItemSubTitle", "type": "StatusTextWithLoadingState", "visible": True}
 
 # Social Links Popup
-socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}
+socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "index": 1, "type": "StatusListItem", "unnamed": 1, "visible": True}
 placeholder_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 social_links_back_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBackButton", "unnamed": 1, "visible": True}
 social_links_add_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}

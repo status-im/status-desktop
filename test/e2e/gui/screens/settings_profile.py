@@ -79,18 +79,18 @@ class ProfileSettingsView(QObject):
     @allure.step('Set social links')
     def social_links(self, links):
         links = {
-            'Twitter': [links[0]],
-            'Personal site': [links[1]],
-            'Github': [links[2]],
-            'YouTube channel': [links[3]],
-            'Discord handle': [links[4]],
-            'Telegram handle': [links[5]],
-            'Custom link': [links[6], links[7]],
+            0: [links[0]],
+            1: [links[1]],
+            2: [links[2]],
+            3: [links[3]],
+            4: [links[4]],
+            5: [links[5]],
+            6: [links[6], links[7]],
         }
 
-        for network, link in links.items():
+        for index, link in links.items():
             social_links_popup = self.open_social_links_popup()
-            social_links_popup.add_link(network, link)
+            social_links_popup.add_link(index, link)
 
     @allure.step('Verify social links')
     def verify_social_links(self, links):
@@ -108,12 +108,12 @@ class ProfileSettingsView(QObject):
 
         actual_links = self.social_links
 
-        assert actual_links['Twitter'] == twitter
-        assert actual_links['Personal site'] == personal_site
+        assert actual_links['X (Twitter)'] == twitter
+        assert actual_links['Personal'] == personal_site
         assert actual_links['Github'] == github
-        assert actual_links['YouTube channel'] == youtube
-        assert actual_links['Discord handle'] == discord
-        assert actual_links['Telegram handle'] == telegram
+        assert actual_links['YouTube'] == youtube
+        assert actual_links['Discord'] == discord
+        assert actual_links['Telegram'] == telegram
         assert actual_links[custom_link_text] == custom_link
 
     @allure.step('Open social links form')

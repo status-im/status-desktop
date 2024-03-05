@@ -8,4 +8,5 @@ class Messaging(Enum):
     NEW_CONTACT_REQUEST = 'New Contact Request'
     MESSAGE_NOTE_IDENTITY_REQUEST = 'Ask a question only they can answer'
     YOU_NEED_TO_BE_A_MEMBER = 'You need to be a member of this group to send messages'
-    
+    ID_VERIFICATION_REQUEST_SENT = 'ID verification request sent'
+    ID_VERIFICATION_REPLY_SENT = 'ID verification reply sent'
