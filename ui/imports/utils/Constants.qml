@@ -1009,6 +1009,7 @@ QtObject {
         StickersBuy,
         Bridge,
         ERC721Transfer,
+        ERC1155Transfer,
         Unknown
     }
 

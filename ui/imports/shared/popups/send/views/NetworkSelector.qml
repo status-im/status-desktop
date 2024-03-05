@@ -28,7 +28,7 @@ Item {
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
-    property bool isERC721Transfer: false
+    property bool isCollectiblesTransfer: false
     property var toNetworksList
     property int errorType: Constants.NoError
     property var bestRoutes
@@ -48,7 +48,7 @@ Item {
         id: tabBar
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: !root.isERC721Transfer
+        visible: !root.isCollectiblesTransfer
         StatusSwitchTabButton {
             text: qsTr("Simple")
         }
@@ -62,12 +62,12 @@ Item {
 
     StackLayout {
         id: stackLayout
-        anchors.top: !root.isERC721Transfer ? tabBar.bottom: parent.top
-        anchors.topMargin: !root.isERC721Transfer ? Style.current.bigPadding: 0
+        anchors.top: !root.isCollectiblesTransfer ? tabBar.bottom: parent.top
+        anchors.topMargin: !root.isCollectiblesTransfer ? Style.current.bigPadding: 0
         height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Style.current.bigPadding:
                                    advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Style.current.bigPadding
         width: parent.width
-        currentIndex: root.isERC721Transfer ? 0: tabBar.currentIndex === 0 ? 0 : 1
+        currentIndex: root.isCollectiblesTransfer ? 0: tabBar.currentIndex === 0 ? 0 : 1
 
         Rectangle {
             id: simple
@@ -80,7 +80,7 @@ Item {
                 anchors.right: parent.right
                 anchors.margins: Style.current.padding
                 isBridgeTx: root.isBridgeTx
-                isERC721Transfer: root.isERC721Transfer
+                isCollectiblesTransfer: root.isCollectiblesTransfer
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store

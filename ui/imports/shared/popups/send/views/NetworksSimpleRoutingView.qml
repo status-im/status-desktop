@@ -19,7 +19,7 @@ RowLayout {
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
-    property bool isERC721Transfer: false
+    property bool isCollectiblesTransfer: false
     property var selectedAccount
     property var toNetworksList
     property var weiToEth: function(wei) {}
@@ -99,7 +99,7 @@ RowLayout {
             implicitWidth: 410
             title: model.chainName
             subTitle: {
-                if(root.isERC721Transfer)
+                if(root.isCollectiblesTransfer)
                     return ""
                 let amountOut = root.weiToEth(model.amountOut)
                 return root.formatCurrencyAmount(amountOut, root.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})

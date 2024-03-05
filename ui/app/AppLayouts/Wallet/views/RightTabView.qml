@@ -175,7 +175,7 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                            RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
+                            RootStore.setCurrentViewedHolding(uid, tokenType)
                             d.detailedCollectibleActivityController.resetFilter()
                             d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")), RootStore.showAllAccounts)
                             d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
@@ -184,10 +184,12 @@ RightTabBaseView {
 
                             stack.currentIndex = 1
                         }
-                        onSendRequested: (symbol) => {
-                                            root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                        onSendRequested: (symbol, tokenType) => {
                                             root.sendModal.preSelectedHoldingID = symbol
-                                            root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                                            root.sendModal.preSelectedHoldingType = tokenType
+                                            root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?
+                                                 Constants.SendType.ERC721Transfer:
+                                                 Constants.SendType.ERC1155Transfer
                                             root.sendModal.onlyAssets = false
                                             root.sendModal.open()
                                         }

@@ -27,6 +27,7 @@ type
     CommunityName
     CommunityColor
     CommunityPrivilegesLevel
+    TokenType
 
 QtObject:
   type
@@ -147,6 +148,7 @@ QtObject:
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
       CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
+      CollectibleRole.TokenType.int:"tokenType",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -197,6 +199,8 @@ QtObject:
         result = newQVariant(item.getCommunityColor())
       of CollectibleRole.CommunityPrivilegesLevel:
         result = newQVariant(item.getCommunityPrivilegesLevel())
+      of CollectibleRole.TokenType:
+        result = newQVariant(item.getTokenType())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):

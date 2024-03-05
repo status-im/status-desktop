@@ -224,7 +224,7 @@ Item {
             numItems: isCollection ? (!!communityId ?
                 root.collectibles.getNumberOfCollectiblesInCommunity(communityId) :
                 root.collectibles.getNumberOfCollectiblesInCollection(collectionUid)) : 0
-            onItemHovered: root.tokenHovered(selectedItem.uid, Constants.TokenType.ERC721, hovered)
+            onItemHovered: root.tokenHovered(selectedItem.uid, tokenType, hovered)
             onItemSelected: {
                 if (isCollection) {
                     d.currentBrowsingCollectionName = collectionName
@@ -233,7 +233,7 @@ Item {
                     else
                         root.collectibles.currentCollectionUid = collectionUid
                 } else {
-                    root.tokenSelected(selectedItem.uid, Constants.TokenType.ERC721)
+                    root.tokenSelected(selectedItem.uid, tokenType)
                 }
             }
         }

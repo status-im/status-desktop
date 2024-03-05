@@ -38,8 +38,8 @@ ColumnLayout {
     property bool isUpdating: false // Indicates if the collectibles list is being updated
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
-    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
-    signal sendRequested(string symbol)
+    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType)
+    signal sendRequested(string symbol, int tokenType)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
@@ -462,11 +462,12 @@ ColumnLayout {
             communityName: model.communityName ?? ""
             communityImage: model.communityImage ?? ""
 
-            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol)
+            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
-                                    communityId: model.communityId, communityName: model.communityName, communityImage: model.communityImage})
+                                    communityId: model.communityId, communityName: model.communityName,
+                                    communityImage: model.communityImage, tokenType: model.tokenType})
             }
             onSwitchToCommunityRequested: (communityId) => root.switchToCommunityRequested(communityId)
         }
@@ -483,13 +484,14 @@ ColumnLayout {
             property string communityId
             property string communityName
             property string communityImage
+            property int tokenType
 
             StatusAction {
                 enabled: root.sendEnabled
                 visibleOnDisabled: true
                 icon.name: "send"
                 text: qsTr("Send")
-                onTriggered: root.sendRequested(symbol)
+                onTriggered: root.sendRequested(symbol, tokenType)
             }
             StatusAction {
                 icon.name: "receive"

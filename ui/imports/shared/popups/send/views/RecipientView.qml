@@ -16,7 +16,7 @@ Loader {
     id: root
 
     property var store
-    property bool isERC721Transfer
+    property bool isCollectiblesTransfer
     property bool isBridgeTx: false
     property bool interactive: true
     property var selectedAsset
@@ -64,7 +64,7 @@ Loader {
             }
 
             // set preferred chains
-            if(!isERC721Transfer) {
+            if(!isCollectiblesTransfer) {
                 if(root.isBridgeTx)
                     root.store.setAllNetworksAsRoutePreferredChains()
                 else
@@ -95,7 +95,7 @@ Loader {
 
         function evaluateAndSetPreferredChains() {
             let address = !!root.item.input && !!root.store.plainText(root.item.input.text) ? root.store.plainText(root.item.input.text): ""
-            let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isERC721Transfer)
+            let result = store.splitAndFormatAddressPrefix(address, !root.isBridgeTx && !isCollectiblesTransfer)
             if(!!result.address) {
                 root.addressText = result.address
                 if(!!root.item.input)

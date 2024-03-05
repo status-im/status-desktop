@@ -312,6 +312,13 @@ type
     totalTokenFees*: float
     totalTime*: int
 
+proc `$`*(self: FeesDto): string =
+  return fmt"""FeesDto(
+    totalFeesInEth:{self.totalFeesInEth},
+    totalTokenFees:{self.totalTokenFees},
+    totalTime:{self.totalTime},
+  )"""
+
 proc convertToFeesDto*(jsonObj: JsonNode): FeesDto =
   result = FeesDto()
   discard jsonObj.getProp("totalFeesInEth", result.totalFeesInEth)
@@ -324,6 +331,14 @@ type
     chainName*: string
     iconUrl*: string
     amountOut*: UInt256
+
+proc `$`*(self: SendToNetwork): string =
+  return fmt"""SendToNetwork(
+    chainId:{self.chainId},
+    chainName:{self.chainName},
+    iconUrl:{self.iconUrl},
+    amountOut:{self.amountOut},
+  )"""
 
 proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
   result = SendToNetwork()
@@ -338,6 +353,14 @@ type
     gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
+
+proc `$`*(self: SuggestedRoutesDto): string =
+  return fmt"""SuggestedRoutesDto(
+    best:{self.best},
+    gasTimeEstimate:{self.gasTimeEstimate},
+    amountToReceive:{self.amountToReceive},
+    toNetworks:{self.toNetworks},
+  )"""
 
 proc convertToSuggestedRoutesDto*(jsonObj: JsonNode): SuggestedRoutesDto =
   result = SuggestedRoutesDto()
