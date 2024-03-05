@@ -400,7 +400,7 @@ ColumnLayout {
 
                 checkable: true
                 size: StatusBaseButton.Size.Small
-                icon.name: checked ? "chevron-down" : "next"
+                icon.name: checked ? "next" : "chevron-down"
                 textColor: Theme.palette.baseColor1
                 textHoverColor: Theme.palette.directColor1
 
@@ -505,7 +505,7 @@ ColumnLayout {
                 onTriggered: root.manageTokensRequested()
             }
             StatusAction {
-                enabled: symbol !== "ETH"
+                enabled: symbol !== Constants.ethToken
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide collectible")
