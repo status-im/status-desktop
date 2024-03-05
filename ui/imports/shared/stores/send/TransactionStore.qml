@@ -62,8 +62,8 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function authenticateAndTransfer(amount, uuid) {
-        walletSectionSendInst.authenticateAndTransfer(amount, uuid)
+    function authenticateAndTransfer(uuid) {
+        walletSectionSendInst.authenticateAndTransfer(uuid)
     }
 
     function suggestedRoutes(amount) {
@@ -155,7 +155,7 @@ QtObject {
     function assetToSelectorAsset(asset) {
         return asset
     }
-    
+
     function collectibleToSelectorCollectible(collectible) {
         return {
             uid: collectible.uid,

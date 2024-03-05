@@ -53,7 +53,7 @@ StatusDialog {
 
     property var sendTransaction: function() {
         d.isPendingTx = true
-        popup.store.authenticateAndTransfer(amountToSendInput.cryptoValueToSend, d.uuid)
+        popup.store.authenticateAndTransfer(d.uuid)
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
@@ -146,7 +146,7 @@ StatusDialog {
             if(symbol !== "ETH") {
                 return value
             }
-            
+
             return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
         }
     }

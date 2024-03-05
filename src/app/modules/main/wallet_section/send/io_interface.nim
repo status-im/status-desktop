@@ -32,7 +32,7 @@ method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRo
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
-    assetKey: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) {.base.} =
+    assetKey: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =

@@ -115,9 +115,9 @@ proc suggestedRoutes*(self: Controller, accountFrom: string, accountTo: string, 
   return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, assetKey: string,
-    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
+    uuid: string, selectedRoutes: seq[TransactionPathDto], password: string, sendType: SendType,
     usePassword: bool, doHashing: bool, tokenName: string, isOwnerToken: bool) =
-  self.transactionService.transfer(from_addr, to_addr, assetKey, value, uuid, selectedRoutes, password, sendType,
+  self.transactionService.transfer(from_addr, to_addr, assetKey, uuid, selectedRoutes, password, sendType,
     usePassword, doHashing, tokenName, isOwnerToken)
 
 proc proceedWithTransactionsSignatures*(self: Controller, fromAddr: string, toAddr: string, uuid: string,
