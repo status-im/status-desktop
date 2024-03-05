@@ -53,27 +53,27 @@ class LeftPanel(QObject):
                 raise ex
 
     @allure.step('Open wallet settings')
-    def open_wallet_settings(self) -> WalletSettingsView:
-        self._settings_section_wallet_option.click()
+    def open_wallet_settings(self) -> 'WalletSettingsView':
+        self._open_settings('5-AppMenuItem')
         return WalletSettingsView()
 
     @allure.step('Open profile settings')
-    def open_profile_settings(self) -> ProfileSettingsView:
+    def open_profile_settings(self) -> 'ProfileSettingsView':
         self._open_settings('0-MainMenuItem')
         return ProfileSettingsView()
 
     @allure.step('Open password settings')
-    def open_password_settings(self) -> ChangePasswordView:
+    def open_password_settings(self) -> 'ChangePasswordView':
         self._open_settings('1-MainMenuItem')
         return ChangePasswordView()
 
     @allure.step('Choose back up seed phrase in settings')
-    def open_back_up_seed_phrase(self) -> BackUpYourSeedPhrasePopUp:
+    def open_back_up_seed_phrase(self) -> 'BackUpYourSeedPhrasePopUp':
         self._open_settings('18-MainMenuItem')
         return BackUpYourSeedPhrasePopUp()
 
     @allure.step('Open syncing settings')
-    def open_syncing_settings(self, attempts: int = 2) -> SyncingSettingsView:
+    def open_syncing_settings(self, attempts: int = 2) -> 'SyncingSettingsView':
         self._open_settings('9-MainMenuItem')
         try:
             return SyncingSettingsView().wait_until_appears()
@@ -84,17 +84,17 @@ class LeftPanel(QObject):
                 raise ec
 
     @allure.step('Choose sign out and quit in settings')
-    def open_sign_out_and_quit(self):
+    def open_sign_out_and_quit(self) -> 'SignOutPopup':
         self._open_settings('17-ExtraMenuItem')
         return SignOutPopup()
 
     @allure.step('Open keycard settings')
-    def open_keycard_settings(self) -> KeycardSettingsView:
+    def open_keycard_settings(self) -> 'KeycardSettingsView':
         self._open_settings('14-MainMenuItem')
         return KeycardSettingsView()
 
     @allure.step('Open ENS usernames settings')
-    def open_ens_usernames_settings(self) -> ENSSettingsView:
+    def open_ens_usernames_settings(self) -> 'ENSSettingsView':
         time.sleep(1)
         self._open_settings('3-MainMenuItem')
         return ENSSettingsView()
