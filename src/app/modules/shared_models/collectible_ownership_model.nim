@@ -1,4 +1,5 @@
 import NimQml, Tables, strutils, strformat
+import stint
 
 import backend/collectibles_types as backend
 
@@ -61,7 +62,7 @@ QtObject:
     of ModelRole.AccountAddress:
       result = newQVariant(item.address)
     of ModelRole.Balance:
-      result = newQVariant($item.balance)
+      result = newQVariant(item.balance.toString(10))
     of ModelRole.TxTimestamp:
       result = newQVariant(item.txTimestamp)
 
