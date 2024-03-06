@@ -1252,18 +1252,8 @@ method onMembershipStatusUpdated*[T](self: Module[T], communityId: string, membe
     let item = self.view.model().getItemById(communityId)
     if item.id != "":
       item.updateMembershipStatus(memberPubkey, status)
-
-    case status:
-        of MembershipRequestState.Banned:
-          self.displayEphemeralNotification(fmt "{contactName} was banned from {communityDto.name}", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
-
-        of MembershipRequestState.Kicked:
-          self.displayEphemeralNotification(fmt "{contactName} was kicked from {communityDto.name}", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
-
-        of MembershipRequestState.Unbanned:
-          self.displayEphemeralNotification(fmt "{contactName} unbanned from {communityDto.name}", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
-        else:
-          discard
+    if status == MembershipRequestState.Banned or status == MembershipRequestState.Kicked or status == MembershipRequestState.Unbanned:
+      self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, status.int)
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
