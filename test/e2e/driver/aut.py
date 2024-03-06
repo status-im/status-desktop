@@ -64,7 +64,7 @@ class AUT:
                     body=screenshot.read_bytes(),
                     attachment_type=allure.attachment_type.PNG)
             except Exception as err:
-                LOG.info(err)
+                LOG.error(err)
 
         self.stop()
 

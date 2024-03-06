@@ -42,11 +42,10 @@ def setup_session_scope(
 def setup_function_scope(
         caplog,
         generate_test_data,
-        check_result,
-        application_logs
+        check_result
 ):
     # FIXME: broken due to KeyError: <_pytest.stash.StashKey object at 0x7fd1ba6d78c0>
-    #caplog.set_level(configs.LOG_LEVEL)
+    # caplog.set_level(configs.LOG_LEVEL)
     yield
 
 
@@ -61,10 +60,7 @@ def pytest_exception_interact(node):
     test_path, test_name, test_params = generate_test_info(node)
     node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
     node_dir.mkdir(parents=True, exist_ok=True)
-
-    screenshot = node_dir / 'screenshot.png'
-    if screenshot.exists():
-        screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
+    screenshot = node_dir / f'screenshot_{datetime.today().strftime("%Y-%m-%d %H:%M:%S")}.png'
     ImageGrab.grab(xdisplay=configs.system.DISPLAY if IS_LIN else None).save(screenshot)
     allure.attach(
         name='Screenshot on fail',
