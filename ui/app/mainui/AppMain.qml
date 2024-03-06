@@ -224,6 +224,31 @@ Item {
                                            "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash))
             }
         }
+
+        function onCommunityMemberStatusEphemeralNotification(communityName: string, memberName: string, state: CommunityMembershipRequestState) {
+            var text = ""
+            switch (state) {
+                case Constants.CommunityMembershipRequestState.Banned:
+                    text = qsTr("%1 was banned from %2").arg(memberName).arg(communityName)
+                    break
+                case Constants.CommunityMembershipRequestState.Unbanned:
+                    text = qsTr("%1 unbanned from %2").arg(memberName).arg(communityName)
+                    break
+                case Constants.CommunityMembershipRequestState.Kicked:
+                    text = qsTr("%1 was kicked from %2").arg(memberName).arg(communityName)
+                    break
+                default: return
+            }
+
+            Global.displayToastMessage(
+                text,
+                "",
+                "checkmark-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {

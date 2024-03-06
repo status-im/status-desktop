@@ -354,3 +354,9 @@ QtObject:
 
   proc onCheckIfAddressWasCopied*(self: View, value: string) {.slot.} =
     self.delegate.checkIfAddressWasCopied(value)
+
+  proc communityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string, membershipState: int) {.signal.}
+
+  proc emitCommunityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string,
+    membershipState: int) =
+    self.communityMemberStatusEphemeralNotification(communityName, memberName, membershipState)
