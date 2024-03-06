@@ -27,7 +27,7 @@ assert SQUISH_DIR_RAW is not None
 SQUISH_DIR = SystemPath(SQUISH_DIR_RAW)
 
 # Status Application
-STATUS_DATA: SystemPath = RUN / 'status'
+STATUS_DATA: SystemPath = RUN
 
 # Sets log level, can be one of: "ERROR", "WARN", "INFO", "DEBUG", "TRACE". "INFO"
 LOG_LEVEL = 'DEBUG'

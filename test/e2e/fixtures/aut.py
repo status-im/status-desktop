@@ -26,7 +26,6 @@ def application_logs():
         for app_data in configs.testpath.STATUS_DATA.iterdir():
             for log in (app_data / 'logs').iterdir():
                 allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
-                log.unlink()
 
 
 @pytest.fixture
