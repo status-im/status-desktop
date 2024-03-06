@@ -212,6 +212,11 @@ type StatusDesktopConfig = object
     longdesc: "Can be one of: \"ERROR\", \"WARN\", \"INFO\", \"DEBUG\", \"TRACE\". \"INFO\" in production build, otherwise \"DEBUG\""
     name: "LOG_LEVEL"
     abbr: "log-level" .}: string
+  enableFleetSelection* {.
+    defaultValue: false
+    desc: "Determines if the fleet selection UI is enabled"
+    name: "ENABLE_FLEET_SELECTION"
+    abbr: "enable-fleet-selection" .}: bool
 
 
 # On macOS the first time when a user gets the "App downloaded from the

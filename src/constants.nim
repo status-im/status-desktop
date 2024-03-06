@@ -41,6 +41,7 @@ let
   WAKU_V2_PORT* = desktopConfig.defaultWakuV2Port
   STATUS_PORT* = desktopConfig.statusPort
   LOG_LEVEL* = desktopConfig.logLevel
+  FLEET_SELECTION_ENABLED* = desktopConfig.enableFleetSelection
 
   # build variables
   POKT_TOKEN_RESOLVED* = desktopConfig.poktToken
