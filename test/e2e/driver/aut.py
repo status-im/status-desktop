@@ -7,7 +7,7 @@ from PIL import ImageGrab
 
 import configs
 import driver
-from os import path
+import shortuuid
 from datetime import datetime
 from configs.system import IS_LIN
 from driver import context
@@ -32,7 +32,7 @@ class AUT:
         self.pid = None
         self.port = None
         self.aut_id = f'AUT_{datetime.now():%H%M%S}'
-        self.app_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}'
+        self.app_data = configs.testpath.STATUS_DATA / f'app_{shortuuid.ShortUUID().random(length=10)}'
         if user_data is not None:
             user_data.copy_to(self.app_data / 'data')
         self.options = ''

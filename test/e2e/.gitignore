@@ -10,3 +10,4 @@ tmp/
 
 *.DS_Store
 
+/local run results/

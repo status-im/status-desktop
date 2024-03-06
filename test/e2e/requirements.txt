@@ -11,3 +11,4 @@ pyperclip==1.8.2
 pytest-rerunfailures==13.0
 pytest-ignore-flaky==2.1.0
 pytest-timeout==2.2.0
+shortuuid==1.0.12

@@ -12,9 +12,8 @@ TEST_VP: typing.Optional[SystemPath] = None
 TEST_ARTIFACTS: typing.Optional[SystemPath] = None
 
 # Test Directories
-RUN_ID = os.getenv('RUN_DIR', f'run_{datetime.now():%d%m%Y_%H%M%S}')
-TEMP: SystemPath = ROOT / 'tmp'
-RESULTS: SystemPath = TEMP / 'results'
+RUN_ID = os.getenv('RUN_DIR', f'run_{datetime.today().strftime("%Y-%m-%d %H:%M:%S")}')
+RESULTS: SystemPath = ROOT / 'local run results'
 RUN: SystemPath = RESULTS / RUN_ID
 VP: SystemPath = ROOT / 'ext' / 'vp'
 TEST_FILES: SystemPath = ROOT / 'ext' / 'test_files'
