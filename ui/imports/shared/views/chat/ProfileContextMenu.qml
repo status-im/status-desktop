@@ -206,7 +206,7 @@ StatusMenu {
         text: contactDetails.localNickname ? qsTr("Edit nickname") : qsTr("Add nickname")
         icon.name: "edit_pencil"
         enabled: !root.isMe && !root.isBridgedAccount
-        onTriggered: Global.openNicknamePopupRequested(root.selectedUserPublicKey, root.contactDetails)
+        onTriggered: Global.openNicknamePopupRequested(root.selectedUserPublicKey, root.contactDetails, null)
     }
 
     StatusMenuSeparator {
