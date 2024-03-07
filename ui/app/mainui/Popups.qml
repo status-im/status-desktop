@@ -136,8 +136,8 @@ QtObject {
         openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup}, cb)
     }
 
-    function openNicknamePopup(publicKey: string, contactDetails) {
-        openPopup(nicknamePopupComponent, {publicKey, contactDetails})
+    function openNicknamePopup(publicKey: string, contactDetails, cb) {
+        openPopup(nicknamePopupComponent, {publicKey, contactDetails}, cb)
     }
 
     function openMarkAsUntrustedPopup(publicKey: string, contactDetails) {

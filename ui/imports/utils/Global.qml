@@ -31,7 +31,7 @@ QtObject {
 
     signal openPopupRequested(var popupComponent, var params)
     signal closePopupRequested()
-    signal openNicknamePopupRequested(string publicKey, var contactDetails)
+    signal openNicknamePopupRequested(string publicKey, var contactDetails, var cb)
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
     signal openBackUpSeedPopup()

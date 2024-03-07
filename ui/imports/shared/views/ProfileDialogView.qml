@@ -161,7 +161,7 @@ Pane {
             size: StatusButton.Size.Small
             text: qsTr("Send contact request")
             onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails,
-                                                      popup => popup.closed.connect(d.reload))
+                                                      popup => popup.accepted.connect(d.reload))
         }
     }
 
@@ -402,7 +402,8 @@ Pane {
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
-                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails)
+                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails,
+                                                              popup => popup.closed.connect(d.reload))
                         }
                     }
                     StatusAction {
@@ -427,7 +428,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && (d.isTrusted || d.isLocallyTrusted)
                         onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, d.contactDetails,
-                                                                           popup => popup.closed.connect(d.reload))
+                                                                           popup => popup.accepted.connect(d.reload))
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")
