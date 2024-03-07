@@ -439,6 +439,8 @@ method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId
   if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let item = self.view.model().getItemWithMessageId(messageId)
+    if(item.isNil):
+      return
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     if(item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
       self.controller.addReaction(messageId, emojiId)
@@ -569,6 +571,8 @@ method onMessageDeleted*(self: Module, messageId, deletedBy: string) =
   if deletedBy == "":
     # deletedBy is empty if it was deleted by the sender
     let messageItem = self.view.model().getItemWithMessageId(messageId)
+    if(messageItem.isNil):
+      return
     if messageItem.id == "":
       return
     deletedByValue = messageItem.senderId
