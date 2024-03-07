@@ -401,7 +401,7 @@ QtObject:
   proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
-        if addrPerChainId.address == contractAddr:
+        if addrPerChainId.address.toLower() == contractAddr.toLower():
           return token
     return nil
 
