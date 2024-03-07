@@ -51,7 +51,7 @@ ComboBox {
         TokenOrderCurrencyBalance, // FIAT value of asset balance (enabledNetworkCurrencyBalance)
         TokenOrderBalance, // Number of tokens (enabledNetworkBalance)
         TokenOrderCurrencyPrice, // Value per token in FIAT (currencyPrice)
-        TokenOrder1WChange, // Level of change in asset balance value (in FIAT) comp. to 7 days earlier
+        TokenOrder1DChange, // Level of change in asset balance value (in FIAT) comp. to 1 day earlier
         TokenOrderAlpha, // Alphabetic by asset name (name)
         TokenOrderDateAdded, // Date added descending (newest first)
         TokenOrderGroupName, // Collection or Community name
