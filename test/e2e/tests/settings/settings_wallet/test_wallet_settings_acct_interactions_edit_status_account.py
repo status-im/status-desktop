@@ -27,7 +27,7 @@ def test_settings_edit_status_account(main_screen: MainWindow, new_name):
 
     with step('Verify Status keypair title'):
         status_keypair_title = settings.get_keypairs_names()[0]
-        profile_display_name = main_screen.left_panel.open_settings().left_panel.open_profile_settings().display_name
+        profile_display_name = main_screen.left_panel.open_settings().left_panel.open_profile_settings().get_display_name
         assert profile_display_name in status_keypair_title, \
             f"Status keypair name should be equal to display name but currently it is {status_keypair_title}, \
              when display name is {profile_display_name}"

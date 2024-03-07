@@ -29,7 +29,7 @@ class ProfileSettingsView(QObject):
 
     @property
     @allure.step('Get display name')
-    def display_name(self) -> str:
+    def get_display_name(self) -> str:
         self._identity_tab_button.click()
         if BuildShowcasePopup().is_visible:
             BuildShowcasePopup().close()
@@ -41,28 +41,25 @@ class ProfileSettingsView(QObject):
         if BuildShowcasePopup().is_visible:
             BuildShowcasePopup().close()
         self._display_name_text_field.text = value
-        self.save_changes()
 
     @property
     @allure.step('Get bio')
-    def bio(self) -> str:
+    def get_bio(self) -> str:
         self._identity_tab_button.click()
         if BuildShowcasePopup().is_visible:
             BuildShowcasePopup().close()
         return self._bio_text_field.text
 
-    @bio.setter
     @allure.step('Set bio')
-    def bio(self, value: str):
+    def set_bio(self, value: str):
         self._identity_tab_button.click()
         if BuildShowcasePopup().is_visible:
             BuildShowcasePopup().close()
         self._bio_text_field.text = value
-        self.save_changes()
 
     @property
     @allure.step('Get social links')
-    def social_links(self) -> dict:
+    def get_social_links(self) -> dict:
         self._web_tab_button.click()
         if BuildShowcasePopup().is_visible:
             BuildShowcasePopup().close()
@@ -75,9 +72,8 @@ class ProfileSettingsView(QObject):
                         links[str(link_name.title)] = str(driver.object.parent(link_value).text)
         return links
 
-    @social_links.setter
     @allure.step('Set social links')
-    def social_links(self, links):
+    def set_social_links(self, links):
         links = {
             0: [links[0]],
             1: [links[1]],
@@ -106,7 +102,7 @@ class ProfileSettingsView(QObject):
         custom_link_text = links[6]
         custom_link = links[7]
 
-        actual_links = self.social_links
+        actual_links = self.get_social_links
 
         assert actual_links['X (Twitter)'] == twitter
         assert actual_links['Personal'] == personal_site
@@ -124,7 +120,4 @@ class ProfileSettingsView(QObject):
         self._add_more_links_label.click()
         return SocialLinksPopup().wait_until_appears()
 
-    @allure.step('Save changes')
-    def save_changes(self):
-        self._save_button.click()
 

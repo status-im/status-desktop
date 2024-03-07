@@ -4,6 +4,7 @@ from allure import step
 
 import constants
 from driver.aut import AUT
+from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
 from . import marks
 
@@ -15,7 +16,7 @@ pytestmark = marks
 @pytest.mark.case(703007)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('new_name', [pytest.param('NewUserName')])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13868')
+# @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13868')
 def test_change_own_display_name(main_screen: MainWindow, user_account, new_name):
     with step('Open own profile popup and check name of user is correct'):
         profile = main_screen.left_panel.open_online_identifier()
@@ -24,6 +25,9 @@ def test_change_own_display_name(main_screen: MainWindow, user_account, new_name
 
     with step('Go to edit profile settings and change the name of the user'):
         profile_popup.edit_profile().set_name(new_name)
+        ChangesDetectedToastMessage().click_save_changes_button()
+        assert ChangesDetectedToastMessage().is_save_changes_button_visible() is False, \
+            f'Save button is not hidden when clicked'
 
     with step('Open own profile popup and check name of user is correct'):
         assert main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().user_name == new_name

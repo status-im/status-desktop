@@ -1,6 +1,10 @@
+import time
+
 import allure
 import pytest
 from allure_commons._allure import step
+
+from gui.screens.settings_profile import ProfileSettingsView
 from . import marks
 
 import constants
@@ -17,27 +21,33 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed',
                          [pytest.param(constants.user.user_account_one, constants.user.user_account_one_changed_name)])
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13868')
+# @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13868')
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, user_account_changed, bio, links):
     with step('Open profile settings and check name, bio and links'):
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
-        assert profile_settings.display_name == user_account.name
-        assert profile_settings.bio == ''
-        for value in profile_settings.social_links.values():
-            assert value == ''
+        assert profile_settings.get_display_name == user_account.name
+        assert profile_settings.get_bio == ''
+        assert len(profile_settings.get_social_links) == 0
 
-    with step('Set new name, bio and links'):
+    with (step('Set new name, bio and links')):
         profile_settings.set_name(user_account_changed.name)
-        profile_settings.bio = bio
-        profile_settings.social_links = links
-        ChangesDetectedToastMessage().save()
+        profile_settings.set_bio(bio)
+        ChangesDetectedToastMessage().click_save_changes_button()
+        assert ChangesDetectedToastMessage().is_save_changes_button_visible() is False, \
+            f'Save button is not hidden when clicked'
+        assert \
+            main_screen.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().user_name \
+            == user_account_changed.name, \
+            f'Display name was not applied after changing'
+        profile_settings.set_social_links(links)
+        ChangesDetectedToastMessage().click_save_changes_button()
 
     with step('Restart application'):
         aut.restart()
         main_screen.authorize_user(user_account_changed)
 
     with step('Open profile settings and check new name, bio and links'):
-        profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
-        assert profile_settings.display_name == user_account_changed.name
-        assert profile_settings.bio == bio
-        profile_settings.verify_social_links(links)
+      profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
+      assert profile_settings.get_display_name == user_account_changed.name
+      assert profile_settings.get_bio == bio
+      profile_settings.verify_social_links(links)
