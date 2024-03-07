@@ -62,7 +62,7 @@ ColumnLayout {
             return true // TODO handle UI threshold (#12611)
         }
 
-        function getTotalBalance(balances, decimals) {
+        function getTotalBalance(balances, decimals, key) {
             let totalBalance = 0
             let nwFilters = root.networkFilters.split(":")
             let addrFilters = root.addressFilters.split(":")
@@ -70,7 +70,7 @@ ColumnLayout {
                 let balancePerAddressPerChain = ModelUtils.get(balances, i)
                 if (nwFilters.includes(balancePerAddressPerChain.chainId+"") &&
                         addrFilters.includes(balancePerAddressPerChain.account)) {
-                    totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain.balance, decimals)
+                    totalBalance+=SQUtils.AmountsArithmetic.toNumber(balancePerAddressPerChain[key], decimals)
                 }
             }
             return totalBalance
@@ -81,7 +81,7 @@ ColumnLayout {
             proxyRoles: [
                 FastExpressionRole {
                     name: "currentBalance"
-                    expression: d.getTotalBalance(model.balances, model.decimals, root.addressFilters, root.networkFilters)
+                    expression: d.getTotalBalance(model.balances, model.decimals, "balance")
                     expectedRoles: ["balances", "decimals"]
                 },
                 FastExpressionRole {
@@ -105,9 +105,16 @@ ColumnLayout {
                     expectedRoles: ["marketDetails"]
                 },
                 FastExpressionRole {
-                    name: "changePct24hour"
-                    expression: model.marketDetails.changePct24hour
-                    expectedRoles: ["marketDetails"]
+                    name: "change1DayFiat"
+                    expression: {
+                        if (!model.isCommunityAsset && !!model.marketDetails) {
+                            const balance1DayAgo = d.getTotalBalance(model.balances, model.decimals, "balance1DayAgo")
+                            const change = (model.currentBalance * model.marketDetails.currencyPrice.amount) - (balance1DayAgo * (model.marketDetails.currencyPrice.amount - model.marketDetails.change24hour))
+                            return change
+                        }
+                        return 0
+                    }
+                    expectedRoles: ["marketDetails", "balances", "decimals", "currentBalance", "isCommunityAsset"]
                 },
                 FastExpressionRole {
                     name: "isCommunityAsset"
@@ -192,7 +199,7 @@ ColumnLayout {
                     { value: SortOrderComboBox.TokenOrderCurrencyBalance, text: qsTr("Asset balance value"), icon: "token-sale", sortRoleName: "currentCurrencyBalance" }, // custom SFPM ExpressionRole on "enabledNetworkCurrencyBalance" amount
                     { value: SortOrderComboBox.TokenOrderBalance, text: qsTr("Asset balance"), icon: "channel", sortRoleName: "currentBalance" }, // custom SFPM ExpressionRole on "enabledNetworkBalance" amount
                     { value: SortOrderComboBox.TokenOrderCurrencyPrice, text: qsTr("Asset value"), icon: "token", sortRoleName: "tokenPrice" }, // custom SFPM ExpressionRole on "currencyPrice" amount
-                    { value: SortOrderComboBox.TokenOrder1WChange, text: qsTr("1d change: balance value"), icon: "history", sortRoleName: "changePct24hour" }, // FIXME changePct1week role missing in backend!!!
+                    { value: SortOrderComboBox.TokenOrder1DChange, text: qsTr("1d change: balance value"), icon: "history", sortRoleName: "change1DayFiat" }, // custom SFPM ExpressionRole
                     { value: SortOrderComboBox.TokenOrderAlpha, text: qsTr("Asset name"), icon: "bold", sortRoleName: "name" },
                     { value: SortOrderComboBox.TokenOrderCustom, text: qsTr("Custom order"), icon: "exchange", sortRoleName: "" },
                     { value: SortOrderComboBox.TokenOrderNone, text: "---", icon: "", sortRoleName: "" }, // separator
