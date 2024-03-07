@@ -647,11 +647,9 @@ private slots:
 
         model.setSourceModel(sourceModel2);
 
-        QCOMPARE(signalsSpy.count(), 4);
+        QCOMPARE(signalsSpy.count(), 2);
         QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
         QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
-        QCOMPARE(signalsSpy.layoutAboutToBeChangedSpy.count(), 1);
-        QCOMPARE(signalsSpy.layoutChangedSpy.count(), 1);
 
 
         QCOMPARE(syncedChangedSpy.count(), 1);
@@ -683,14 +681,18 @@ private slots:
             QCOMPARE(signalsSpy.count(), 0);
         }
 
-        model.setSourceModel(sourceModel);
+        {
+            ModelSignalsSpy signalsSpy(&model);
+            model.setSourceModel(sourceModel);
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+        }
 
         {
             ModelSignalsSpy signalsSpy(&model);
             model.syncOrder();
-            QCOMPARE(signalsSpy.count(), 2);
-            QCOMPARE(signalsSpy.layoutAboutToBeChangedSpy.count(), 1);
-            QCOMPARE(signalsSpy.layoutChangedSpy.count(), 1);
+            QCOMPARE(signalsSpy.count(), 0); //already synced
         }
 
         PersistentIndexesTester indexesTester(&model);
@@ -759,7 +761,7 @@ private slots:
         QVERIFY(indexesTester.compare());
     }
     
-    void sourceModelReset()
+    void sourceModelResetTest()
     {
         QQmlEngine engine;
 
