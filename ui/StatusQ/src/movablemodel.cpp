@@ -20,7 +20,7 @@ void MovableModel::setSourceModel(QAbstractItemModel* sourceModel)
         disconnect(m_sourceModel, nullptr, this, nullptr);
 
     m_sourceModel = sourceModel;
-    syncOrder();
+    syncOrderInternal();
     emit sourceModelChanged();
 
     endResetModel();
@@ -121,10 +121,18 @@ void MovableModel::desyncOrder()
 
 void MovableModel::syncOrder()
 {
+    if (m_synced || m_sourceModel == nullptr)
+        return;
+
+    emit layoutAboutToBeChanged();
+    syncOrderInternal();
+    emit layoutChanged();
+}
+
+void MovableModel::syncOrderInternal()
+{
     if (m_sourceModel)
     {
-        emit layoutAboutToBeChanged();
-
         auto sourceModel = m_sourceModel;
 
         disconnect(m_sourceModel, nullptr, this, nullptr);
@@ -138,8 +146,6 @@ void MovableModel::syncOrder()
 
             changePersistentIndex(index(i, 0), index(idx.row(), 0));
         }
-
-        emit layoutChanged();
     }
 
 

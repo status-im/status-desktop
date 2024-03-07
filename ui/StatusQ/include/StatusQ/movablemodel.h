@@ -55,6 +55,7 @@ private:
 
     // other
     void connectSignalsForSyncedState();
+    void syncOrderInternal();
 
     QPointer<QAbstractItemModel> m_sourceModel;
     bool m_synced = true;
