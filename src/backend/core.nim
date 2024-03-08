@@ -1,4 +1,4 @@
-import json, json_serialization, strformat, chronicles, nimcrypto
+import json, json_serialization, strformat, chronicles
 import status_go
 import response_type
 

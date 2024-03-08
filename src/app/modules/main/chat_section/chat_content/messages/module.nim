@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, uuids, sets, times, tables, strutils, system
+import NimQml, chronicles, sequtils, uuids, sets, times, tables, system
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller

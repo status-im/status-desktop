@@ -6,7 +6,6 @@ import ../../../../app_service/service/node_configuration/service as node_config
 
 import ../../../core/signals/types
 import ../../../core/eventemitter
-import ../../../core/fleets/fleet_configuration
 
 type
   Controller* = ref object of RootObj

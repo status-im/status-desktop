@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar, marshal
+import NimQml, Tables, chronicles, json, sequtils, strformat, sugar, marshal
 
 import io_interface
 import ../io_interface as delegate_interface
@@ -19,7 +19,6 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 import ../../../core/notifications/details as notification_details
-import ../../../../app_service/common/conversion
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service

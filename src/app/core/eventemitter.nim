@@ -17,7 +17,7 @@ proc createEventEmitter*(): EventEmitter =
 
 proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): void =
   if this.events.hasKey(name):
-    this.events[name].add handlerId, handler
+    this.events[name][handlerId] = handler
     return
 
   this.events[name] = [(handlerId, handler)].toOrderedTable

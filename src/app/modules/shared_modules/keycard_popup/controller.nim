@@ -1,4 +1,4 @@
-import chronicles, tables, strutils, sequtils, sugar, stint
+import chronicles, tables, strutils, sequtils, stint
 import uuids
 import io_interface
 

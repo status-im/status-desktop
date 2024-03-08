@@ -1,5 +1,5 @@
 import NimQml, logging, std/json, sequtils, strutils, options
-import tables, stint
+import tables
 
 import app/core/eventemitter
 import app/core/signals/types

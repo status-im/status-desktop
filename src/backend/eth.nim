@@ -1,4 +1,4 @@
-import json, stint, tables
+import json, tables
 import ./core, ./response_type
 from ./gen import rpc
 

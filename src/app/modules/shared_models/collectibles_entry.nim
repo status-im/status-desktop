@@ -1,4 +1,4 @@
-import NimQml, json, strformat, sequtils, sugar, strutils, stint, strutils
+import NimQml, json, strformat, sequtils, strutils, stint, strutils
 import options
 
 import backend/collectibles as backend

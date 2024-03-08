@@ -34,14 +34,14 @@ method getCollectiblePreferencesJson*(self: AccessInterface): string {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCollectibleGroupByCommunity*(self: AccessInterface): bool =
+method getCollectibleGroupByCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleCollectibleGroupByCommunity*(self: AccessInterface): bool =
+method toggleCollectibleGroupByCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCollectibleGroupByCollection*(self: AccessInterface): bool =
+method getCollectibleGroupByCollection*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleCollectibleGroupByCollection*(self: AccessInterface): bool =
+method toggleCollectibleGroupByCollection*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

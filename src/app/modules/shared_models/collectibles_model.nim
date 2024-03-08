@@ -3,8 +3,6 @@ import logging
 
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles
-import app_service/common/utils as common_utils
-import app_service/common/types
 
 type
   CollectibleRole* {.pure.} = enum
@@ -273,7 +271,7 @@ QtObject:
 
     var newTable = initTable[string, int](len(newItems))
     for i in 0 ..< len(newItems):
-      newTable.add(newItems[i].getIDAsString(), i)
+      newTable[newItems[i].getIDAsString()] = i
 
     # Needs to be built in sequential index order
     var oldIndicesToRemove: seq[int] = @[]

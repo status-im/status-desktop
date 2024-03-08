@@ -78,29 +78,29 @@ method getTokenPreferencesJson*(self: AccessInterface): string {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method filterChanged*(self: AccessInterface, addresses: seq[string]) =
+method filterChanged*(self: AccessInterface, addresses: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenGroupByCommunity*(self: AccessInterface): bool =
+method getTokenGroupByCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleTokenGroupByCommunity*(self: AccessInterface): bool =
+method toggleTokenGroupByCommunity*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool =
+method getShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool =
+method toggleShowCommunityAssetWhenSendingTokens*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDisplayAssetsBelowBalance*(self: AccessInterface): bool =
+method getDisplayAssetsBelowBalance*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleDisplayAssetsBelowBalance*(self: AccessInterface): bool =
+method toggleDisplayAssetsBelowBalance*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDisplayAssetsBelowBalanceThreshold*(self: AccessInterface): CurrencyAmount =
+method getDisplayAssetsBelowBalanceThreshold*(self: AccessInterface): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setDisplayAssetsBelowBalanceThreshold*(self: AccessInterface, threshold: int64): bool =
+method setDisplayAssetsBelowBalanceThreshold*(self: AccessInterface, threshold: int64): bool {.base.} =
   raise newException(ValueError, "No implementation available")

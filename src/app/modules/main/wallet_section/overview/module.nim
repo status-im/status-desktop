@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml
 
 import app/global/global_singleton
 import app/core/eventemitter
