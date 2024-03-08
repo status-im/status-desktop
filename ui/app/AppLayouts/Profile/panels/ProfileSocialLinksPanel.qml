@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,27 +18,40 @@ import SortFilterProxyModel 0.2
 
 Control {
     id: root
-
-    property var profileStore
+    
     property var socialLinksModel
     property int showcaseLimit: 20
 
     background: null
 
+    signal addSocialLink(string url, string text)
+    signal updateSocialLink(int index, string url, string text)
+    signal removeSocialLink(int index)
+    signal changePosition(int from, int to)
+
+    QtObject {
+        id: d
+
+        function containsSocialLink(text, url) {
+            return ModelUtils.contains(socialLinksModel, "text", text, Qt.CaseInsensitive) &&
+                     ModelUtils.contains(socialLinksModel, "url", url, Qt.CaseInsensitive) 
+        }
+    }
+
     Component {
         id: addSocialLinkModalComponent
         AddSocialLinkModal {
-            containsSocialLink: root.profileStore.containsSocialLink
-            onAddLinkRequested: root.profileStore.createLink(linkText, linkUrl, linkType, linkIcon)
+            containsSocialLink: d.containsSocialLink
+            onAddLinkRequested: root.addSocialLink(linkUrl, linkText)
         }
     }
 
     Component {
         id: modifySocialLinkModal
         ModifySocialLinkModal {
-            containsSocialLink: root.profileStore.containsSocialLink
-            onUpdateLinkRequested: root.profileStore.updateLink(uuid, linkText, linkUrl)
-            onRemoveLinkRequested: root.profileStore.removeLink(uuid)
+            containsSocialLink: d.containsSocialLink
+            onUpdateLinkRequested: root.updateSocialLink(index, linkUrl, linkText)
+            onRemoveLinkRequested: root.removeSocialLink(index)
         }
     }
 
@@ -54,7 +68,7 @@ Control {
             }
             Item { Layout.fillWidth: true }
             StatusBaseText {
-                text: qsTr("%1 / %2").arg(root.profileStore.temporarySocialLinksModel.count).arg(root.showcaseLimit)
+                text: qsTr("%1 / %2").arg(linksView.count).arg(root.showcaseLimit)
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.tertiaryTextFontSize
             }
@@ -62,7 +76,7 @@ Control {
 
         // empty placeholder when no links; dashed rounded rectangle
         ShapeRectangle {
-            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === root.showcaseLimit
+            readonly property bool maxReached: linksView.count === root.showcaseLimit
 
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width - 4 // the rectangular path is rendered outside
@@ -115,18 +129,16 @@ Control {
                     const to = draggableDelegate.visualIndex
                     if (to === from)
                         return
-                    root.profileStore.moveLink(from, to, 1)
+                    root.changePosition(from, to)
                     drag.accept()
-                }
-
-                onDropped: function(drop) {
-                    root.profileStore.saveSocialLinks(true /*silent*/)
                 }
 
                 StatusDraggableListItem {
                     id: draggableDelegate
 
-                    readonly property string asideText: ProfileUtils.stripSocialLinkPrefix(model.url, model.linkType)
+                    readonly property string asideText: ProfileUtils.stripSocialLinkPrefix(model.url, draggableDelegate.linkType)
+                    readonly property int linkType: ProfileUtils.linkTextToType(model.text)
+                    readonly property string iconName: ProfileUtils.linkTypeToIcon(draggableDelegate.linkType)
 
                     visible: !!asideText
                     width: parent.width
@@ -142,11 +154,11 @@ Control {
                     dragParent: linksView
                     visualIndex: delegateRoot.visualIndex
                     draggable: linksView.count > 1
-                    title: ProfileUtils.linkTypeToShortText(model.linkType) || model.text
+                    title: ProfileUtils.linkTypeToShortText(draggableDelegate.linkType) || model.text
                     hasIcon: true
-                    icon.name: model.icon
-                    icon.color: ProfileUtils.linkTypeColor(model.linkType)
-                    assetBgColor: ProfileUtils.linkTypeBgColor(model.linkType)
+                    icon.name: draggableDelegate.iconName
+                    icon.color: ProfileUtils.linkTypeColor(draggableDelegate.linkType)
+                    assetBgColor: ProfileUtils.linkTypeBgColor(draggableDelegate.linkType)
                     actions: [
                         StatusLinkText {
                             Layout.fillWidth: true
@@ -167,7 +179,7 @@ Control {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Edit link")
                             onClicked: Global.openPopup(modifySocialLinkModal,
-                                                        {linkType: model.linkType, icon: model.icon, uuid: model.uuid,
+                                                        {linkType: draggableDelegate.linkType, icon: draggableDelegate.iconName, index: delegateRoot.visualIndex,
                                                             linkText: model.text, linkUrl: draggableDelegate.asideText})
                         }
                     ]

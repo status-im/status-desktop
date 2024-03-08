@@ -31,8 +31,8 @@ WritableProxyModel {
      *
      * The entries with visibility 0 (hidden) are not included in the list.
      */
-    function currentState() {
-        const visible = d.getVisibleEntries()
+    function currentState(roleNames) {
+        const visible = d.getVisibleEntries(roleNames)
         const minPos = Math.min(...visible.map(e => e.showcasePosition))
 
         return visible.map(e => { e.showcasePosition -= minPos; return e })
@@ -75,9 +75,14 @@ WritableProxyModel {
             return ModelUtils.indexOf(root, "showcaseKey", key)
         }
 
-        function getVisibleEntries() {
-            const roles = ["showcaseKey", "showcasePosition", "showcaseVisibility"]
-            const keysAndPos = ModelUtils.modelToArray(root, roles)
+        function getVisibleEntries(roleNames = ["showcaseKey", "showcasePosition", "showcaseVisibility"]) {
+            if (roleNames.length === 0)
+                roleNames = ["showcaseKey", "showcasePosition", "showcaseVisibility"]
+
+            if (!roleNames.includes("showcaseVisibility"))
+                roleNames.push("showcaseVisibility")
+
+            const keysAndPos = ModelUtils.modelToArray(root, roleNames)
 
             return keysAndPos.filter(p => p.showcaseVisibility
                                      && p.showcaseVisibility !== root.visibilityHidden)

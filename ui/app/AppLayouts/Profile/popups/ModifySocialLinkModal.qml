@@ -21,12 +21,12 @@ StatusDialog {
     property int linkType: -1
     property string icon
 
-    property string uuid
+    property int index
     property string linkText
     property string linkUrl
 
-    signal updateLinkRequested(string uuid, string linkText, string linkUrl)
-    signal removeLinkRequested(string uuid)
+    signal updateLinkRequested(string index, string linkText, string linkUrl)
+    signal removeLinkRequested(string index)
 
     implicitWidth: 480 // design
 
@@ -38,7 +38,7 @@ StatusDialog {
                 type: StatusButton.Danger
                 text: qsTr("Delete")
                 onClicked: {
-                    root.removeLinkRequested(root.uuid)
+                    root.removeLinkRequested(root.index)
                     root.close()
                 }
             }
@@ -48,7 +48,7 @@ StatusDialog {
                 text: qsTr("Update")
                 enabled: linkTarget.valid && (!customTitle.visible || customTitle.valid)
                 onClicked: {
-                    root.updateLinkRequested(root.uuid, customTitle.text, ProfileUtils.addSocialLinkPrefix(linkTarget.text, root.linkType))
+                    root.updateLinkRequested(root.index, customTitle.text, ProfileUtils.addSocialLinkPrefix(linkTarget.text, root.linkType))
                     root.close()
                 }
             }
