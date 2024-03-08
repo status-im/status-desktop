@@ -216,7 +216,7 @@ ItemDelegate {
        \qmlproperty alias StatusDraggableListItem::containsMouse
        Used to read if the component cotains mouse
     */
-    readonly property alias containsMouse: dragHandler.containsMouse
+    readonly property alias containsMouse: hoverHandler.hovered
 
     /*!
        \qmlproperty bool StatusDraggableListItem::changeColorOnDragActive
@@ -270,7 +270,6 @@ ItemDelegate {
             drag.target: root.dragEnabled ? root : null
             drag.axis: root.dragAxis
             preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
-            hoverEnabled: true
             cursorShape: {
                 if (!root.enabled)
                     return undefined
@@ -416,5 +415,8 @@ ItemDelegate {
             asset.bgHeight: 40
             asset.bgWidth: 40
         }
+    }
+    HoverHandler {
+        id: hoverHandler
     }
 }
