@@ -35,6 +35,9 @@ type
     loaderActive: bool
     locked: bool
     requiresPermissions: bool
+    canPostMessages: bool
+    canPostReactions: bool
+    viewersCanPostReactions: bool
 
 proc initItem*(
     id,
@@ -62,7 +65,10 @@ proc initItem*(
     onlineStatus = OnlineStatus.Inactive,
     loaderActive = false,
     locked = false,
-    requiresPermissions = false
+    requiresPermissions = false,
+    canPostMessages = true,
+    canPostReactions = true,
+    viewersCanPostReactions = true,
     ): Item =
   result = Item()
   result.id = id
@@ -92,6 +98,9 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
+  result.canPostMessages = canPostMessages
+  result.canPostReactions = canPostReactions
+  result.viewersCanPostReactions = viewersCanPostReactions
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -120,6 +129,9 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
+    canPostMessages: {$self.canPostMessages},
+    canPostReactions: {$self.canPostReactions},
+    viewersCanPostReactions: {$self.viewersCanPostReactions},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -148,7 +160,10 @@ proc toJsonNode*(self: Item): JsonNode =
     "onlineStatus": self.onlineStatus,
     "loaderActive": self.loaderActive,
     "locked": self.locked,
-    "requiresPermissions": self.requiresPermissions
+    "requiresPermissions": self.requiresPermissions,
+    "canPostMessages": self.canPostMessages,
+    "canPostReactions": self.canPostReactions,
+    "viewersCanPostReactions": self.viewersCanPostReactions,
   }
 
 proc delete*(self: Item) =
@@ -300,3 +315,21 @@ proc requiresPermissions*(self: Item): bool =
 
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
+
+proc canPostMessages*(self: Item): bool =
+  self.canPostMessages
+
+proc `canPostMessages=`*(self: Item, value: bool) =
+  self.canPostMessages = value
+
+proc canPostReactions*(self: Item): bool =
+  self.canPostReactions
+
+proc `canPostReactions=`*(self: Item, value: bool) =
+  self.canPostReactions = value
+
+proc viewersCanPostReactions*(self: Item): bool =
+  self.viewersCanPostReactions
+
+proc `viewersCanPostReactions=`*(self: Item, value: bool) =
+  self.viewersCanPostReactions = value

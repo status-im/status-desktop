@@ -35,6 +35,9 @@ type
     LoaderActive
     Locked
     RequiresPermissions
+    CanPostMessages
+    CanPostReactions
+    ViewersCanPostReactions
 
 QtObject:
   type
@@ -105,6 +108,9 @@ QtObject:
       ModelRole.LoaderActive.int:"loaderActive",
       ModelRole.Locked.int:"locked",
       ModelRole.RequiresPermissions.int:"requiresPermissions",
+      ModelRole.CanPostMessages.int:"canPostMessages",
+      ModelRole.CanPostReactions.int:"canPostReactions",
+      ModelRole.ViewersCanPostReactions.int:"viewersCanPostReactions",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -172,6 +178,12 @@ QtObject:
       result = newQVariant(item.isLocked)
     of ModelRole.RequiresPermissions:
       result = newQVariant(item.requiresPermissions)
+    of ModelRole.CanPostMessages:
+      result = newQVariant(item.canPostMessages)
+    of ModelRole.CanPostReactions:
+      result = newQVariant(item.canPostReactions)
+    of ModelRole.ViewersCanPostReactions:
+      result = newQVariant(item.viewersCanPostReactions)
 
   proc getItemIdxById(items: seq[Item], id: string): int =
     var idx = 0
@@ -322,6 +334,26 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Muted.int])
+
+  proc changeCanPostValues*(self: Model, id: string, canPostMessages, canPostReactions, viewersCanPostReactions: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].canPostMessages == canPostMessages and
+        self.items[index].canPostReactions == canPostReactions and
+        self.items[index].viewersCanPostReactions == viewersCanPostReactions
+      ):
+      return
+    self.items[index].canPostMessages = canPostMessages
+    self.items[index].canPostReactions = canPostReactions
+    self.items[index].viewersCanPostReactions = viewersCanPostReactions
+    let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, @[
+      ModelRole.CanPostMessages.int,
+      ModelRole.CanPostReactions.int,
+      ModelRole.ViewersCanPostReactions.int
+    ])
 
   proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =
     for i in 0 ..< self.items.len:

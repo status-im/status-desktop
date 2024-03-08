@@ -336,13 +336,13 @@ QtObject {
     }
 
     function createCommunityChannel(channelName, channelDescription, channelEmoji, channelColor,
-            categoryId) {
+            categoryId, viewersCanPostReactions) {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription,
-            channelEmoji.trim(), channelColor, categoryId);
+            channelEmoji.trim(), channelColor, categoryId, viewersCanPostReactions);
     }
 
     function editCommunityChannel(chatId, newName, newDescription, newEmoji, newColor,
-            newCategory, channelPosition) {
+            newCategory, channelPosition, viewOnlyCanAddReaction) {
         chatCommunitySectionModule.editCommunityChannel(
                     chatId,
                     newName,
@@ -350,7 +350,8 @@ QtObject {
                     newEmoji,
                     newColor,
                     newCategory,
-                    channelPosition
+                    channelPosition,
+                    viewOnlyCanAddReaction
                 )
     }
 

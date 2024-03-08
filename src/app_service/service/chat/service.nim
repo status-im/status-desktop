@@ -165,13 +165,16 @@ QtObject:
         var chats: seq[ChatDto] = @[]
         for chatDto in receivedData.chats:
           if (chatDto.active):
-            chats.add(chatDto)
-
+            var updatedChat = chatDto
             # Handling members update for non-community chats
             let isCommunityChat = chatDto.chatType == ChatType.CommunityChat
+            let oldChat = self.chats[chatDto.id]
             if not isCommunityChat and self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
               self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
-            self.updateOrAddChat(chatDto)
+            if isCommunityChat:
+              updatedChat.updateMissingFields(oldChat)
+            chats.add(updatedChat)
+            self.updateOrAddChat(updatedChat)
 
           elif self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].active:
             # We left the chat

@@ -331,6 +331,7 @@ Item {
                         chatMuted = obj.muted
                         channelPosition = obj.position
                         chatCategoryId = obj.categoryId
+                        viewersCanPostReactions = obj.viewersCanPostReactions
                     } catch (e) {
                         console.error("error parsing chat item json object, id: ", id, " error: ", e)
                         close()
@@ -385,6 +386,7 @@ Item {
                         categoryId: chatCategoryId,
                         chatId: chatContextMenuView.chatId,
                         channelPosition: channelPosition,
+                        viewOnlyCanAddReaction: viewersCanPostReactions,
                         deleteChatConfirmationDialog: deleteChatConfirmationDialog
                     });
                 }
@@ -628,7 +630,7 @@ Item {
             onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
                                                 chCategoryId) {
                 root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
-                                                  chCategoryId)
+                                                  chCategoryId, viewOnlyCanAddReaction)
                 chatId = root.store.currentChatContentModule().chatDetails.id
             }
             onEditCommunityChannel: {
@@ -638,7 +640,8 @@ Item {
                                                 chEmoji,
                                                 chColor,
                                                 chCategoryId,
-                                                channelPosition);
+                                                channelPosition,
+                                                viewOnlyCanAddReaction);
             }
 
             onAddPermissions: function (permissions) {
@@ -662,9 +665,6 @@ Item {
                                                                 permissions[i].channelsListModel,
                                                                 permissions[i].isPrivate)
                 }
-            }
-            onSetViewOnlyCanAddReaction: function (checked) {
-                root.store.permissionsStore.setViewOnlyCanAddReaction(chatId, checked)
             }
             onSetHideIfPermissionsNotMet: function (checked) {
                 root.store.permissionsStore.setHideIfPermissionsNotMet(chatId, checked)

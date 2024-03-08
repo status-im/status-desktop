@@ -17,10 +17,6 @@ QtObject {
     readonly property var permissionsModel:
         chatCommunitySectionModuleInst.permissionsModel
 
-    function setViewOnlyCanAddReaction(chatId, checked) {
-        //TODO: backend implementation
-    }
-
     function setHideIfPermissionsNotMet(chatId, checked) {
         //TODO: backend implementation
     }

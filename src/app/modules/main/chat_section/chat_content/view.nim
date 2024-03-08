@@ -40,10 +40,10 @@ QtObject:
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
       name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
       notificationsCount: int, highlight, muted: bool, position: int, isUntrustworthy: bool,
-      isContact: bool, blocked: bool) =
+      isContact: bool, blocked: bool, canPostMessages: bool, canPostReactions: bool) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name,
       icon, color, description, emoji, hasUnreadMessages, notificationsCount, highlight, muted, position,
-      isUntrustworthy, isContact, blocked)
+      isUntrustworthy, isContact, blocked, canPostMessages, canPostReactions)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 
@@ -149,6 +149,8 @@ QtObject:
     self.chatDetails.setEmoji(chatDto.emoji)
     self.chatDetails.setColor(chatDto.color)
     self.chatDetails.setMuted(chatDto.muted)
+    self.chatDetails.setCanPostMessages(chatDto.canPostMessages)
+    self.chatDetails.setCanPostReactions(chatDto.canPostReactions)
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
