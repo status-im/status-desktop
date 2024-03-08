@@ -702,7 +702,6 @@ QtObject {
         readonly property int telegram: 6
     }
 
-    readonly property int maxNumOfSocialLinks: 20
     readonly property int maxSocialLinkTextLength: 24
 
     readonly property QtObject localPairingEventType: QtObject {

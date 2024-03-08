@@ -35,7 +35,7 @@ DoubleFlickableWithFolding {
     property string emptyHiddenPlaceholderText
     property string emptySearchPlaceholderText
 
-    property int showcaseLimit: ProfileUtils.showcaseLimit
+    property int showcaseLimit: 100
 
     // Searcher related properties:
     property string searchPlaceholderText
