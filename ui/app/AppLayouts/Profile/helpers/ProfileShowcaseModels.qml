@@ -98,6 +98,17 @@ QObject {
         collectibles.changePosition(from, to)
     }
 
+    // The complete preferences models json current state:
+    function buildJSONModelsCurrentState() {
+        return JSON.stringify({
+            "communities": communitiesCurrentState(),
+            "accounts": accountsCurrentState(),
+            "collectibles": collectiblesCurrentState()
+            // TODO: Assets --> Issue #13492
+            // TODO: Web --> Issue #13495
+        })
+    }
+
     ProfileShowcaseModelAdapter {
         id: modelAdapter
     }

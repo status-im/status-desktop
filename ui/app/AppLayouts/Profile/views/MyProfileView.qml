@@ -61,11 +61,7 @@ SettingsContentBase {
         visible: !root.sideBySidePreview
     }
 
-    dirty: (!descriptionPanel.isEnsName &&
-            descriptionPanel.displayName.text !== profileStore.displayName) ||
-           descriptionPanel.bio.text !== profileStore.bio ||
-           profileStore.socialLinksDirty ||
-           profileHeader.icon !== profileStore.profileLargeImage ||
+    dirty: priv.isIdentityTabDirty ||
            priv.hasAnyProfileShowcaseChanges
     saveChangesButtonEnabled: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -126,6 +122,11 @@ SettingsContentBase {
         id: priv
 
         property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
+        property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
+                                           descriptionPanel.displayName.text !== profileStore.displayName) ||
+                                          descriptionPanel.bio.text !== profileStore.bio ||
+                                          profileStore.socialLinksDirty ||
+                                          profileHeader.icon !== profileStore.profileLargeImage
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             communitiesSourceModel: root.communitiesModel
@@ -152,10 +153,20 @@ SettingsContentBase {
         }
 
         function save() {
+            // Accounts, Communities, Assets, Collectibles and social links info
             if (hasAnyProfileShowcaseChanges)
-                print ("Profile showcase changes detected: SAVING")
-            //TODO: implement save as deschibed here
-            // https://github.com/status-im/status-desktop/pull/13708
+                root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
+
+            // Identity info
+            if(isIdentityTabDirty)
+                root.profileStore.saveIdentityInfo(descriptionPanel.displayName.text,
+                                                   descriptionPanel.bio.text.trim(),
+                                                   profileHeader.icon,
+                                                   profileHeader.cropRect.x.toFixed(),
+                                                   profileHeader.cropRect.y.toFixed(),
+                                                   (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
+                                                   (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed())
+            reset()
         }
     }
 
