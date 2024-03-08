@@ -37,6 +37,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
                 visible: true
                 modal: false
+                communityId: "ddls"
 
                 communityName: communityNameText.text
 
