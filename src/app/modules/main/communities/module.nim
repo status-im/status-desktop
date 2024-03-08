@@ -95,7 +95,8 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
-proc buildTokensAndCollectiblesFromCommunities(self: Module)
+proc buildTokensAndCollectiblesFromAllCommunities(self: Module)
+proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto])
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -159,7 +160,7 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  self.buildTokensAndCollectiblesFromCommunities()
+  self.buildTokensAndCollectiblesFromAllCommunities()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -421,6 +422,7 @@ method communityImported*(self: Module, community: CommunityDto) =
 
 method communityDataImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
+  self.buildTokensAndCollectiblesFromCommunities(@[community])
   self.view.emitCommunityInfoRequestCompleted(community.id, "")
 
 method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
@@ -566,12 +568,11 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     communityTokenDecimals
   )
 
-proc buildTokensAndCollectiblesFromCommunities(self: Module) =
+proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
   let communityTokens = self.controller.getAllCommunityTokens()
-  let communities = self.controller.getAllCommunities()
   for community in communities:
     for tokenMetadata in community.communityTokensMetadata:
       # Set fallback supply to infinite in case we don't have it
@@ -599,6 +600,10 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module) =
 
   self.view.tokenListModel.addItems(tokenListItems)
   self.view.collectiblesListModel.addItems(collectiblesListItems)
+
+proc buildTokensAndCollectiblesFromAllCommunities(self: Module) =
+  let communities = self.controller.getAllCommunities()
+  self.buildTokensAndCollectiblesFromCommunities(communities)
 
 proc buildTokensAndCollectiblesFromWallet(self: Module) =
   var tokenListItems: seq[TokenListItem]
