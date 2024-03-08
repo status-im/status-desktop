@@ -140,6 +140,8 @@ SettingsContentBase {
             collectiblesSourceModel: root.profileStore.collectiblesModel
             collectiblesShowcaseModel: root.profileStore.profileShowcaseCollectiblesModel
             collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
+
+            socialLinksSourceModel: root.profileStore.socialLinksModel
         }
 
         function reset() {
@@ -290,9 +292,24 @@ SettingsContentBase {
 
         // web
         ProfileSocialLinksPanel {
-            profileStore: root.profileStore
-            socialLinksModel: root.profileStore.temporarySocialLinksModel
             showcaseLimit: root.profileStore.getProfileShowcaseSocialLinksLimit()
+            socialLinksModel: priv.showcaseModels.socialLinksVisibleModel
+
+            onAddSocialLink: function(url, text) {
+                priv.showcaseModels.appendSocialLink({ showcaseKey: "", text: text, url: url })
+            }
+
+            onUpdateSocialLink: function(index, url, text) {
+                priv.showcaseModels.updateSocialLink(index, { text: text, url: url })
+            }
+
+            onRemoveSocialLink: function(index) {
+                priv.showcaseModels.removeSocialLink(index)
+            }
+
+            onChangePosition: function(from, to) {
+                priv.showcaseModels.changeSocialLinkPosition(from, to)
+            }
         }
 
         Component {

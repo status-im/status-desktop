@@ -78,6 +78,16 @@ QtObject {
         return Constants.socialLinkType.custom
     }
 
+    function linkTypeToIcon(linkType) {
+        if (linkType === Constants.socialLinkType.twitter) return "twitter"
+        if (linkType === Constants.socialLinkType.personalSite) return "language"
+        if (linkType === Constants.socialLinkType.github) return "github"
+        if (linkType === Constants.socialLinkType.youtube) return "youtube"
+        if (linkType === Constants.socialLinkType.discord) return "discord"
+        if (linkType === Constants.socialLinkType.telegram) return "telegram"
+        return "link"
+    }
+
     // showcase
     function visibilityIcon(showcaseVisibility) {
         switch (showcaseVisibility) {

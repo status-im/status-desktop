@@ -1,9 +1,12 @@
 import QtQml 2.15
+import QtQml.Models 2.15
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
+
+import utils 1.0
 
 QObject {
     id: root
@@ -32,6 +35,11 @@ QObject {
     readonly property alias adaptedCollectiblesSourceModel: collectiblesSFPM
     readonly property alias adaptedCollectiblesShowcaseModel: collectiblesRenamingShowcase
 
+    // Social links input models
+    property alias socialLinksSourceModel: socialLinksRoleRenaming.sourceModel
+    
+    // adapted models
+    readonly property alias adaptedSocialLinksSourceModel: socialLinksSFPM
 
     SortFilterProxyModel {
         id: communitySFPM
@@ -189,6 +197,34 @@ QObject {
             RoleRename {
                 from: "communityId"
                 to: "_communityId"
+            }
+        ]
+    }
+
+    RolesRenamingModel {
+        id: socialLinksRoleRenaming
+        mapping: [
+            RoleRename {
+                from: "uuid"
+                to: "showcaseKey"
+            }
+        ]
+    }
+
+    SortFilterProxyModel {
+        id: socialLinksSFPM
+        sourceModel: socialLinksRoleRenaming
+        proxyRoles: [
+            FastExpressionRole {
+                name: "showcasePosition"
+                expression: index
+            },
+            FastExpressionRole {
+                name: "showcaseVisibility"
+                expression: getShowcaseVisibility()
+                function getShowcaseVisibility() {
+                    return Constants.ShowcaseVisibility.Everyone
+                }
             }
         ]
     }

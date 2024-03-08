@@ -122,17 +122,22 @@ Item {
         property bool isInputValidWord: false
     }
 
-    StatusInput {
-        id: seedWordInput
-
-        implicitWidth: parent.width
-        input.leftComponent: StatusBaseText {
+    Component {
+        id: seedInputLeftComponent
+        StatusBaseText {
             rightPadding: 6
             text: root.leftComponentText
             color: seedWordInput.input.edit.activeFocus ?
                    Theme.palette.primaryColor1 : Theme.palette.baseColor1
             font.pixelSize: 15
         }
+    }
+
+    StatusInput {
+        id: seedWordInput
+
+        implicitWidth: parent.width
+        input.leftComponent: seedInputLeftComponent
         input.acceptReturn: true
         onTextChanged: {
             d.isInputValidWord = false

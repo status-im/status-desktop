@@ -22,6 +22,13 @@ QObject {
     property alias showcaseModel: joined.rightModel
 
     /**
+      * True if the showcase model is in single model mode, i.e. the showcase
+      * model is part of the source model. False if the showcase model is a
+      * separate model.
+      */
+    property bool singleModelMode: !joined.rightModel
+
+    /**
       * Model holding elements from 'sourceModel' intended to be visible in the
       * showcase, sorted by 'position' role. Includes roles from both input models.
       */
@@ -48,8 +55,8 @@ QObject {
         writable.revert()
     }
 
-    function currentState() {
-        return writable.currentState()
+    function currentState(roleNames = []) {
+        return writable.currentState(roleNames)
     }
 
     function setVisibility(key, visibility) {
@@ -67,9 +74,23 @@ QObject {
             writableIndexes.push(visibleSFPM.mapToSource(newOrder[i]))
         }
 
-        for (var j = 0; j < newOrder.length; j++) {
-            writable.set(writableIndexes[j], { "showcasePosition": j})
+        for (var i = 0; i < newOrder.length; i++) {
+            writable.set(writableIndexes[i], { "showcasePosition": i})
         }
+    }
+
+    function append(obj) {
+        writable.append(obj)
+    }
+
+    function remove(index) {
+        const writableIndex = d.visibleIndexToWritable(index)
+        writable.remove(writableIndex)
+    }
+
+    function update(index, obj) {
+        const writableIndex = d.visibleIndexToWritable(index)
+        writable.set(writableIndex, obj)
     }
 
     // internals, debug purpose only
@@ -96,7 +117,7 @@ QObject {
     VisibilityAndPositionDirtyStateModel {
         id: writable
 
-        sourceModel: joined
+        sourceModel: root.singleModelMode ? root.sourceModel : joined
         visibilityHidden: Constants.ShowcaseVisibility.NoOne
     }
 
@@ -139,5 +160,16 @@ QObject {
         delayed: true
 
         filters: HiddenFilter {}
+    }
+
+    QtObject {
+        id: d
+
+        function visibleIndexToWritable(index) {
+            const newOrder = visible.order()
+            const sfpmIndex = newOrder[index]
+
+            return visibleSFPM.mapToSource(sfpmIndex)
+        }
     }
 }

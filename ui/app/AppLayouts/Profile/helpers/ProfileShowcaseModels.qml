@@ -11,12 +11,13 @@ QObject {
     id: root
 
     // GENERAL
-    readonly property bool dirty: communities.dirty || accounts.dirty || collectibles.dirty
+    readonly property bool dirty: communities.dirty || accounts.dirty || collectibles.dirty || socialLinks.dirty
 
     function revert() {
         communities.revert()
         accounts.revert()
         collectibles.revert()
+        socialLinks.revert()
     }
 
     // COMMUNITIES
@@ -98,14 +99,43 @@ QObject {
         collectibles.changePosition(from, to)
     }
 
+    // SOCIAL LINKS
+
+    // Input models
+    property alias socialLinksSourceModel: modelAdapter.socialLinksSourceModel
+
+    // Output models
+    readonly property alias socialLinksVisibleModel: socialLinks.visibleModel
+
+    // Methods
+    function appendSocialLink(obj) {
+        socialLinks.append(obj)
+    }
+
+    function updateSocialLink(index, obj) {
+        socialLinks.update(index, obj)
+    }
+
+    function removeSocialLink(index) {
+        socialLinks.remove(index)
+    }
+
+    function changeSocialLinkPosition(from, to) {
+        socialLinks.changePosition(from, to)
+    }
+
+    function socialLinksCurrentState(roleNames) {
+        return socialLinks.currentState(roleNames)
+    }
+
     // The complete preferences models json current state:
     function buildJSONModelsCurrentState() {
         return JSON.stringify({
             "communities": communitiesCurrentState(),
             "accounts": accountsCurrentState(),
-            "collectibles": collectiblesCurrentState()
+            "collectibles": collectiblesCurrentState(),
+            "socialLinks": socialLinksCurrentState(["url", "text", "showcaseVisibility", "showcasePosition"])
             // TODO: Assets --> Issue #13492
-            // TODO: Web --> Issue #13495
         })
     }
 
@@ -163,6 +193,14 @@ QObject {
             expectedRoles: ["name", "uid", "collectionName", "communityName"]
         }
     }
+
+    ProfileShowcaseDirtyState {
+        id: socialLinks
+
+        sourceModel: modelAdapter.adaptedSocialLinksSourceModel
+        singleModelMode: true
+    }
+
 
     SortFilterProxyModel {
         id: collectiblesFilter
