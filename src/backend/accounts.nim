@@ -488,6 +488,14 @@ proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] {.raises: [Exceptio
 proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)
 
+proc getProfileShowcaseSocialLinksLimit*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = callPrivateRPC("getProfileShowcaseSocialLinksLimit".prefix, payload)
+
+proc getProfileShowcaseEntriesLimit*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = callPrivateRPC("getProfileShowcaseEntriesLimit".prefix, payload)
+
 proc addressWasShown*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_addressWasShown", payload)

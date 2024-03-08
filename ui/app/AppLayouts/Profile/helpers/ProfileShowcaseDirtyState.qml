@@ -49,20 +49,9 @@ QObject {
     }
 
     function currentState() {
-        if (visibleModel.synced) {
+        if (visible.synced) {
             return writable.currentState()
         }
-        const newOrder = visible.order()
-        let writableIndexes = []
-
-        for (var i = 0; i < newOrder.length; i++) {
-            writableIndexes.push(visibleSFPM.mapFromSource(newOrder[i]))
-        }
-
-        for (var i = 0; i < newOrder.length; i++) {
-            writable.set(writableIndexes[i], { "showcasePosition": i})
-        }
-        
         return writable.currentState()
     }
 
@@ -72,6 +61,18 @@ QObject {
 
     function changePosition(from, to) {
         visible.move(from, to)
+
+        // Sync writable with movable new positions:
+        const newOrder = visible.order()
+        let writableIndexes = []
+
+        for (var i = 0; i < newOrder.length; i++) {
+            writableIndexes.push(visibleSFPM.mapToSource(newOrder[i]))
+        }
+
+        for (var j = 0; j < newOrder.length; j++) {
+            writable.set(writableIndexes[j], { "showcasePosition": j})
+        }
     }
 
     // internals, debug purpose only

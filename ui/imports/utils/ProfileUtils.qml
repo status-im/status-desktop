@@ -7,7 +7,6 @@ import StatusQ.Core.Theme 0.1
 QtObject {
 
     readonly property int defaultDelegateHeight: 76
-    readonly property int showcaseLimit: 100
 
     function displayName(nickName, ensName, displayName, aliasName)
     {

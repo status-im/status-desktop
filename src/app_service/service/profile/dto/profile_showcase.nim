@@ -18,8 +18,6 @@ type ProfileShowcaseCollectible* = ref object of RootObj
   contractAddress*: string
   chainId*: int
   tokenId*: string
-  communityId*: string
-  accountAddress*: string
   order*: int
 
 type ProfileShowcaseVerifiedToken* = ref object of RootObj
@@ -31,6 +29,11 @@ type ProfileShowcaseUnverifiedToken* = ref object of RootObj
   chainId*: int
   order*: int
 
+type ProfileShowcaseSocialLink* = ref object of RootObj
+  text*: string
+  url*: string
+  order*: int
+
 type ProfileShowcaseDto* = ref object of RootObj
   contactId*: string
   communities*: seq[ProfileShowcaseCommunity]
@@ -38,6 +41,7 @@ type ProfileShowcaseDto* = ref object of RootObj
   collectibles*: seq[ProfileShowcaseCollectible]
   verifiedTokens*: seq[ProfileShowcaseVerifiedToken]
   unverifiedTokens*: seq[ProfileShowcaseUnverifiedToken]
+  socialLinks*: seq[ProfileShowcaseSocialLink]
 
 proc toProfileShowcaseCommunity*(jsonObj: JsonNode): ProfileShowcaseCommunity =
   result = ProfileShowcaseCommunity()
@@ -58,8 +62,6 @@ proc toProfileShowcaseCollectible*(jsonObj: JsonNode): ProfileShowcaseCollectibl
   discard jsonObj.getProp("chainId", result.chainId)
   discard jsonObj.getProp("tokenId", result.tokenId)
   discard jsonObj.getProp("contractAddress", result.contractAddress)
-  discard jsonObj.getProp("communityId", result.communityId)
-  discard jsonObj.getProp("accountAddress", result.accountAddress)
   discard jsonObj.getProp("order", result.order)
 
 proc toProfileShowcaseVerifiedToken*(jsonObj: JsonNode): ProfileShowcaseVerifiedToken =
@@ -71,6 +73,12 @@ proc toProfileShowcaseUnverifiedToken*(jsonObj: JsonNode): ProfileShowcaseUnveri
   result = ProfileShowcaseUnverifiedToken()
   discard jsonObj.getProp("contractAddress", result.contractAddress)
   discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("order", result.order)
+
+proc toProfileShowcaseSocialLink*(jsonObj: JsonNode): ProfileShowcaseSocialLink =
+  result = ProfileShowcaseSocialLink()
+  discard jsonObj.getProp("text", result.text)
+  discard jsonObj.getProp("url", result.url)
   discard jsonObj.getProp("order", result.order)
 
 proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
@@ -93,6 +101,9 @@ proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
   if jsonObj["unverifiedTokens"].kind != JNull:
     for jsonMsg in jsonObj["unverifiedTokens"]:
       result.unverifiedTokens.add(jsonMsg.toProfileShowcaseUnverifiedToken())
+  if jsonObj["socialLinks"].kind != JNull:
+    for jsonMsg in jsonObj["socialLinks"]:
+      result.socialLinks.add(jsonMsg.toProfileShowcaseSocialLink())
 
 proc `%`*(x: ProfileShowcaseAccount): JsonNode =
   result = newJobject()

@@ -20,6 +20,7 @@ Control {
 
     property var profileStore
     property var socialLinksModel
+    property int showcaseLimit: 20
 
     background: null
 
@@ -53,7 +54,7 @@ Control {
             }
             Item { Layout.fillWidth: true }
             StatusBaseText {
-                text: qsTr("%1 / %2").arg(root.profileStore.temporarySocialLinksModel.count).arg(Constants.maxNumOfSocialLinks)
+                text: qsTr("%1 / %2").arg(root.profileStore.temporarySocialLinksModel.count).arg(root.showcaseLimit)
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.tertiaryTextFontSize
             }
@@ -61,13 +62,13 @@ Control {
 
         // empty placeholder when no links; dashed rounded rectangle
         ShapeRectangle {
-            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === Constants.maxNumOfSocialLinks
+            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === root.showcaseLimit
 
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width - 4 // the rectangular path is rendered outside
             Layout.preferredHeight: 48
 
-            text: maxReached ? qsTr("Link limit of %1 reached").arg(Constants.maxNumOfSocialLinks) : ""
+            text: maxReached ? qsTr("Link limit of %1 reached").arg(root.showcaseLimit) : ""
             path.strokeColor: maxReached ? "transparent" : Theme.palette.baseColor2
             path.fillColor: maxReached ? Theme.palette.baseColor4 : "transparent"
             font.pixelSize: Theme.tertiaryTextFontSize

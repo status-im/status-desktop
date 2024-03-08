@@ -31,10 +31,18 @@ QtObject {
 
     readonly property var collectiblesModel: profileModule.collectiblesModel
 
+    readonly property var showcasePreferencesCommunitiesModel: profileModule.showcasePreferencesCommunitiesModel
+    readonly property var showcasePreferencesAccountsModel: profileModule.showcasePreferencesAccountsModel
+    readonly property var showcasePreferencesCollectiblesModel: profileModule.showcasePreferencesCollectiblesModel
+    readonly property var showcasePreferencesAssetsModel: profileModule.showcasePreferencesAssetsModel
+    readonly property var showcasePreferencesSocialLinksModel: profileModule.showcasePreferencesSocialLinksModel
+
+    // TODO: remove old models
     readonly property var profileShowcaseCommunitiesModel: profileModule.profileShowcaseCommunitiesModel
     readonly property var profileShowcaseAccountsModel: profileModule.profileShowcaseAccountsModel
     readonly property var profileShowcaseCollectiblesModel: profileModule.profileShowcaseCollectiblesModel
     readonly property var profileShowcaseAssetsModel: profileModule.profileShowcaseAssetsModel
+
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
     onUserDeclinedBackupBannerChanged: {
@@ -45,14 +53,6 @@ QtObject {
 
     property var details: Utils.getContactDetailsAsJson(pubkey)
 
-    function uploadImage(source, aX, aY, bX, bY) {
-        return root.profileModule.upload(source, aX, aY, bX, bY)
-    }
-
-    function removeImage() {
-        return root.profileModule.remove()
-    }
-
     function getQrCodeSource(text) {
         return globalUtils.qrCode(text)
     }
@@ -61,10 +61,64 @@ QtObject {
         globalUtils.copyToClipboard(value)
     }
 
-    function setDisplayName(displayName) {
+    // Identity related:
+    function saveIdentityInfo(displayName, bio, source, aX, aY, bX, bY) {
+        // TODO: Update according to issue #13767
+        _setDisplayName(displayName)
+        _setBio(bio)
+        if(source)
+            _uploadImage(source, aX, aY, bX, bY)
+        else
+            _removeImage()
+    }
+
+    function _setDisplayName(displayName) {
         root.profileModule.setDisplayName(displayName)
     }
 
+    function _setBio(bio) {
+        root.profileModule.setBio(bio)
+    }
+
+    function _uploadImage(source, aX, aY, bX, bY) {
+        return root.profileModule.upload(source, aX, aY, bX, bY)
+    }
+
+    function _removeImage() {
+        return root.profileModule.remove()
+    }
+
+    // Preferences (Accounts, Communities, Collectibles, Assets and social links):
+    // TO BE REMOVED: Deprecated --> Issue #13688
+    function storeProfileShowcasePreferences() {
+        root.profileModule.storeProfileShowcasePreferences()
+    }
+
+    function getProfileShowcaseEntriesLimit() {
+        return root.profileModule.getProfileShowcaseEntriesLimit()
+    }
+
+    function getProfileShowcaseSocialLinksLimit() {
+        return root.profileModule.getProfileShowcaseSocialLinksLimit()
+    }
+
+    function saveProfileShowcasePreferences(json) {
+        root.profileModule.saveProfileShowcasePreferences(json)
+    }
+
+    function requestProfileShowcasePreferences() {
+        root.profileModule.requestProfileShowcasePreferences()
+    }
+
+    function requestProfileShowcase(publicKey) {
+        root.profileModule.requestProfileShowcase(publicKey)
+    }
+
+    function setIsFirstShowcaseInteraction() {
+        root.profileModule.setIsFirstShowcaseInteraction()
+    }
+
+    // Social links related: All to be removed: Deprecated --> Issue #13688
     function containsSocialLink(text, url) {
         return root.profileModule.containsSocialLink(text, url)
     }
@@ -92,24 +146,5 @@ QtObject {
     function saveSocialLinks(silent = false) {
         root.profileModule.saveSocialLinks(silent)
     }
-
-    function setBio(bio) {
-        root.profileModule.setBio(bio)
-    }
-
-    function storeProfileShowcasePreferences() {
-        root.profileModule.storeProfileShowcasePreferences()
-    }
-
-    function requestProfileShowcasePreferences() {
-        root.profileModule.requestProfileShowcasePreferences()
-    }
-
-    function requestProfileShowcase(publicKey) {
-        root.profileModule.requestProfileShowcase(publicKey)
-    }
-
-    function setIsFirstShowcaseInteraction() {
-        root.profileModule.setIsFirstShowcaseInteraction()
-    }
+    // End of social links to be removed
 }

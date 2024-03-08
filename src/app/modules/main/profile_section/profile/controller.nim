@@ -111,7 +111,7 @@ proc setBio*(self: Controller, bio: string): bool =
   self.settingsService.saveBio(bio)
 
 proc storeProfileShowcasePreferences*(self: Controller, preferences: ProfileShowcasePreferencesDto, revealedAddresses: seq[string]) =
-  self.profileService.setProfileShowcasePreferences(preferences)
+  self.profileService.saveProfileShowcasePreferences(preferences)
   self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: revealedAddresses))
 
 proc requestProfileShowcasePreferences*(self: Controller) =
@@ -122,6 +122,12 @@ proc requestProfileShowcaseForContact*(self: Controller, contactId: string) =
 
 proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =
   self.profileService.fetchProfileShowcaseAccountsByAddress(address)
+
+proc getProfileShowcaseSocialLinksLimit*(self: Controller): int =
+  self.profileService.getProfileShowcaseSocialLinksLimit()
+
+proc getProfileShowcaseEntriesLimit*(self: Controller): int =
+  self.profileService.getProfileShowcaseEntriesLimit()
 
 proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
   self.communityService.requestCommunityInfo(communityId, shard)
