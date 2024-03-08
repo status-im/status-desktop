@@ -118,7 +118,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { sh './scripts/clean-git.sh' }
+    cleanup { cleanWs() }
   }
 }
 
