@@ -25,6 +25,7 @@ ProfileShowcasePanel {
     additionalFooterComponent: root.addAccountsButtonVisible ? addMoreAccountsComponent : null
 
     delegate: ProfileShowcasePanelDelegate {
+        id: delegate
         title: !!model ? `${model.name}` || `#${model.id}` : ""
         secondaryTitle: !!model && !!model.collectionName ? model.collectionName : ""
         hasImage: !!model && !!model.imageUrl
@@ -34,6 +35,12 @@ ProfileShowcasePanel {
         assetBgColor: !!model && !!model.backgroundColor ? model.backgroundColor : "transparent"
 
         actionComponent: model && !!model.communityId ? communityTokenTagComponent : null
+        showcaseMaxVisibility: model ? model.maxVisibility : Constants.ShowcaseVisibility.Everyone
+        onShowcaseMaxVisibilityChanged: {
+            if (delegate.showcaseVisibility > delegate.showcaseMaxVisibility) {
+               root.setVisibilityRequested(delegate.key, delegate.showcaseMaxVisibility)
+            }
+        }
 
         Component {
             id: communityTokenTagComponent

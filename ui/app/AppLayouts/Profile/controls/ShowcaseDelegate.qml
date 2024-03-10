@@ -19,7 +19,10 @@ StatusDraggableListItem {
     id: root
 
     property alias actionComponent: additionalActionsLoader.sourceComponent
+
     property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+    property int showcaseMaxVisibility: Constants.ShowcaseVisibility.Everyone
+
     property bool blurState: false
     property bool contextMenuEnabled: true
     property string tooltipTextWhenContextMenuDisabled
@@ -27,9 +30,15 @@ StatusDraggableListItem {
     signal showcaseVisibilityRequested(int value)
 
     component ShowcaseVisibilityAction: StatusMenuItem {
-        property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+        id: menuItem
+        required property int showcaseVisibility
+
+        ButtonGroup.group: showcaseVisibilityGroup
         icon.name: ProfileUtils.visibilityIcon(showcaseVisibility)
         icon.color: Theme.palette.primaryColor1
+        checked: root.showcaseVisibility === showcaseVisibility
+        
+        enabled: root.showcaseMaxVisibility >= showcaseVisibility
     }
 
     layer.enabled: root.blurState
@@ -87,32 +96,32 @@ StatusDraggableListItem {
                         onClosed: menuLoader.active = false
                         StatusMenuHeadline { text: qsTr("Show to") }
 
+                        Binding on width {
+                            value: Math.max(implicitWidth, everyoneAction.implicitWidth, contactsAction.implicitWidth, idVerifiedContactsAction.implicitWidth) + margins * 2
+                            delayed: true
+                        }
+
                         ShowcaseVisibilityAction {
-                            ButtonGroup.group: showcaseVisibilityGroup
+                            id: everyoneAction
                             showcaseVisibility: Constants.ShowcaseVisibility.Everyone
-                            text: qsTr("Everyone")
-                            checked: root.showcaseVisibility === showcaseVisibility
+                            text: enabled ? qsTr("Everyone") : qsTr("Everyone (set account to Everyone)")
                         }
                         ShowcaseVisibilityAction {
-                            ButtonGroup.group: showcaseVisibilityGroup
+                            id: contactsAction
                             showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-                            text: qsTr("Contacts")
-                            checked: root.showcaseVisibility === showcaseVisibility
+                            text: enabled ? qsTr("Contacts") : qsTr("Contacts (set account to Contacts)")
                         }
                         ShowcaseVisibilityAction {
-                            ButtonGroup.group: showcaseVisibilityGroup
+                            id: idVerifiedContactsAction
                             showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                            text: qsTr("ID verified contacts")
-                            checked: root.showcaseVisibility === showcaseVisibility
+                            text: enabled ? qsTr("ID verified contacts") : qsTr("ID verified contacts (set account to ID verified contacts)")
                         }
 
                         StatusMenuSeparator {}
 
                         ShowcaseVisibilityAction {
-                            ButtonGroup.group: showcaseVisibilityGroup
                             showcaseVisibility: Constants.ShowcaseVisibility.NoOne
                             text: qsTr("No one")
-                            checked: root.showcaseVisibility === showcaseVisibility
                         }
                     }
                 }
