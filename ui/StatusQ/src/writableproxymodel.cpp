@@ -4,6 +4,7 @@
 #include <QAbstractItemModelTester>
 #endif
 #include <memory>
+#include <QDebug>
 
 
 template <typename T>
@@ -23,6 +24,8 @@ public:
     QSet<QPersistentModelIndex> removedRows;
     QVector<int> proxyToSourceRowMapping;
     bool dirty{false};
+    bool syncedRemovals{false};
+    bool syncedRemovalsInitialized{false};
 
     void setData(const QModelIndex& index, const QVariant& value, int role);
     template<typename T>
@@ -244,11 +247,14 @@ int WritableProxyModelPrivate::countOffset() const
 
 void WritableProxyModelPrivate::moveFromCacheToInserted(const QModelIndex& sourceIndex)
 {
-    if (!q.sourceModel())
+    if (!q.sourceModel() || syncedRemovals)
         return;
-        
+    
     //User updated this row. Move it in inserted rows. We shouldn't delete it
     auto proxyIndex = insertedRows.insert(q.mapFromSource(sourceIndex), cache.take(sourceIndex));
+    // syncedRemovalsInitialized cannot be changed after this point
+    syncedRemovalsInitialized = true;
+
     auto itemData = q.sourceModel()->itemData(sourceIndex);
     for (auto it = itemData.begin(); it != itemData.end(); ++it)
     {
@@ -283,7 +289,7 @@ void WritableProxyModelPrivate::checkForDirtyRemoval(const QModelIndex& sourceIn
         {
             if (cachedData.contains(role) && cachedData[role] == q.sourceModel()->data(sourceIndex, role))
                 cachedData.remove(role);
-        }
+            }
 
         if (cachedData.isEmpty()) {
             cache.remove(sourceIndex);
@@ -623,6 +629,27 @@ void WritableProxyModel::setDirty(bool flag)
 
     d->dirty = flag;
     emit dirtyChanged();
+}
+
+bool WritableProxyModel::syncedRemovals() const
+{
+    return d->syncedRemovals;
+}
+
+void WritableProxyModel::setSyncedRemovals(bool syncedRemovals)
+{
+    if (d->syncedRemovalsInitialized)
+    {
+        qWarning() << "WritableProxyModel: syncedRemovals cannot be updated after it has been initialized";
+        return;
+    }
+
+    if (syncedRemovals == d->syncedRemovals)
+        return;
+
+    d->syncedRemovals = syncedRemovals;
+    d->syncedRemovalsInitialized = true;
+    emit syncedRemovalsChanged();
 }
 
 void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
@@ -992,6 +1019,12 @@ void WritableProxyModel::onRowsRemoved(const QModelIndex& parent, int first, int
 void WritableProxyModel::onModelAboutToBeReset()
 {
     beginResetModel();
+    if (d->syncedRemovals)
+    {
+        d->clear();
+        return;
+    }
+
     for (auto iter = d->cache.begin(); iter != d->cache.end();)
     {
         auto key = iter.key();
@@ -1006,6 +1039,7 @@ void WritableProxyModel::onModelReset()
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
     resetInternalData();
+    d->checkForDirtyRemoval({}, {});
     endResetModel();
 }
 
