@@ -732,6 +732,66 @@ private slots:
         QCOMPARE(model.data(model.index(3, 0), 1), {});
     }
 
+    void updaedDataIsNotKeptAfterSourceRemove()
+    {
+        WritableProxyModel model;
+        QAbstractItemModelTester tester(&model);
+
+        TestSourceModel sourceModel({
+           { "title", { "Token 1", "Token 2", "Token3" }},
+           { "communityId", { "community_1", "community_2", "community_3" }}});
+
+        model.setSourceModel(&sourceModel);
+        model.setProperty("syncedRemovals", true);
+
+        QSignalSpy rowsRemovedSpy(&model, &WritableProxyModel::rowsRemoved);
+        QSignalSpy modelResetSpy(&model, &WritableProxyModel::modelReset);
+        QSignalSpy dataChangedSpy(&model, &WritableProxyModel::dataChanged);
+        QSignalSpy rowsInsertedSpy(&model, &WritableProxyModel::rowsInserted);
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.syncedRemovals(), true);
+
+        model.setData(model.index(0, 0), "Token 1.1", 0);
+        
+        QCOMPARE(model.dirty(), true);
+        QCOMPARE(model.rowCount(), 3);
+
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 1.1");
+        QCOMPARE(dataChangedSpy.count(), 1);
+
+        sourceModel.remove(0);
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.rowCount(), 2);
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 2");
+
+        QCOMPARE(rowsRemovedSpy.count(), 1);
+        QCOMPARE(rowsRemovedSpy.first().at(1), 0);
+        QCOMPARE(rowsRemovedSpy.first().at(2), 0);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+
+        model.setData(model.index(0, 0), "Token 2.1", 0);
+
+        QCOMPARE(model.dirty(), true);
+
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 2.1");
+
+        sourceModel.reset({
+           { "title", { "Token 3", "Token 4" }},
+           { "communityId", { "community_3", "community_4" }}
+        });
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.rowCount(), 2);
+
+        QCOMPARE(rowsRemovedSpy.count(), 1);
+        QCOMPARE(modelResetSpy.count(), 1);
+        QCOMPARE(dataChangedSpy.count(), 2);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+    }
+
     void dataIsAccessibleAfterSourceModelMove()
     {
         WritableProxyModel model;
