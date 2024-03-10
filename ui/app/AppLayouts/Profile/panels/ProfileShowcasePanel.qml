@@ -69,6 +69,8 @@ DoubleFlickableWithFolding {
 
         property bool startAnimation: false
 
+        property var dragItem: null
+
         signal setVisibilityInternalRequested(var key, int toVisibility)
         onSetVisibilityInternalRequested: {
             if(toVisibility !== Constants.ShowcaseVisibility.NoOne) {
@@ -297,6 +299,7 @@ DoubleFlickableWithFolding {
                 height: ProfileUtils.defaultDelegateHeight - Style.current.padding
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
+                
             }
         }
     }
@@ -315,6 +318,8 @@ DoubleFlickableWithFolding {
         spacing: padding/2
 
         icon.color: Theme.palette.primaryColor1
+
+        visible: d.dragItem && d.dragItem.showcaseMaxVisibility >= showcaseVisibility
 
         background: ShapeRectangle {
             path.strokeColor: dropArea.containsDrag ? Theme.palette.primaryColor2 : Theme.palette.directColor7
@@ -500,6 +505,14 @@ DoubleFlickableWithFolding {
                 target: showcaseDraggableDelegateLoader.item
                 property: "tooltipTextWhenContextMenuDisabled"
                 value: qsTr("Showcase limit of %1 reached. <br>Remove item from showcase to add more.").arg(root.showcaseLimit)
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding {
+                when: showcaseDraggableDelegateLoader.item && showcaseDraggableDelegateLoader.item.dragActive
+                target: d
+                property: "dragItem"
+                value: showcaseDraggableDelegateLoader.item
                 restoreMode: Binding.RestoreBindingOrValue
             }
 
