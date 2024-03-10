@@ -192,7 +192,7 @@ void WritableProxyModelPrivate::createProxyToSourceRowMap()
 bool WritableProxyModelPrivate::contains(const QModelIndex& sourceIndex, const QVector<int>& roles) const {
     if (cache.contains(sourceIndex)) {
         auto valueMap = cache[sourceIndex];
-        return std::all_of(roles.begin(), roles.end(), [&valueMap](int role) { return valueMap.contains(role); });
+        return std::any_of(roles.begin(), roles.end(), [&valueMap](int role) { return valueMap.contains(role); });
     }
 
     if (insertedRows.contains(q.mapFromSource(sourceIndex))) {
@@ -289,7 +289,7 @@ void WritableProxyModelPrivate::checkForDirtyRemoval(const QModelIndex& sourceIn
         {
             if (cachedData.contains(role) && cachedData[role] == q.sourceModel()->data(sourceIndex, role))
                 cachedData.remove(role);
-            }
+        }
 
         if (cachedData.isEmpty()) {
             cache.remove(sourceIndex);
@@ -605,7 +605,7 @@ bool WritableProxyModel::set(int at, const QVariantMap& data)
         return false;
 
     auto index = this->index(at, 0);
-    auto itemData = this->itemData(index);
+    QMap<int, QVariant> itemData;
     auto roleNames = this->roleNames();
 
     for (auto it = data.begin(); it != data.end(); ++it)

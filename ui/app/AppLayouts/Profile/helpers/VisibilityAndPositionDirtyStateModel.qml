@@ -49,17 +49,24 @@ WritableProxyModel {
             return
 
         // hiding, changing visibility level
-        if (visibility === visibilityHidden
-                || oldVisibility !== visibilityHidden) {
-            set(sourceIdx, { showcaseVisibility: visibility })
+        if (visibility === visibilityHidden) {
+            set(sourceIdx, { showcaseVisibility: undefined, showcasePosition: undefined})
             return
         }
 
-        // unhiding
-        const positions = d.getVisibleEntries().map(e => e.showcasePosition)
-        const position = Math.max(-1, ...positions) + 1
-        set(sourceIdx, { showcaseVisibility: visibility, showcasePosition: position })
+        if (oldVisibility === visibilityHidden || oldVisibility === undefined) {
+            // unhiding
+            const positions = d.getVisibleEntries().map(e => e.showcasePosition)
+            const position = Math.max(-1, ...positions) + 1
+            set(sourceIdx, { showcaseVisibility: visibility, showcasePosition: position })
+            return
+        }
+
+        // changing visibility level
+        set(sourceIdx, { showcaseVisibility: visibility })
     }
+
+    syncedRemovals: true
 
     readonly property QtObject d_: QtObject {
         id: d

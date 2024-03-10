@@ -36,7 +36,7 @@ QObject {
     /**
       * Returns dirty state of the showcase model.
       */
-    readonly property bool dirty: writable.dirty || !visibleModel.synced
+    readonly property bool dirty: writable.dirty
 
     /**
       * It sets up a searcher filter on top of both the visible and hidden models.
@@ -49,9 +49,6 @@ QObject {
     }
 
     function currentState() {
-        if (visible.synced) {
-            return writable.currentState()
-        }
         return writable.currentState()
     }
 

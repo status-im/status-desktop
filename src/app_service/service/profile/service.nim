@@ -193,6 +193,7 @@ QtObject:
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         error "Error saving profile showcase preferences", msg = rpcResponseObj{"error"}
         return
+      self.requestProfileShowcasePreferences()
     except Exception as e:
       error "Error saving profile showcase preferences", msg = e.msg
 
