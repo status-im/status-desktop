@@ -166,7 +166,6 @@ SettingsContentBase {
                                                    profileHeader.cropRect.y.toFixed(),
                                                    (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
                                                    (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed())
-            reset()
         }
     }
 
