@@ -148,6 +148,7 @@ QtObject:
     self.chatDetails.setDescription(chatDto.description)
     self.chatDetails.setEmoji(chatDto.emoji)
     self.chatDetails.setColor(chatDto.color)
+    self.chatDetails.setMuted(chatDto.muted)
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
