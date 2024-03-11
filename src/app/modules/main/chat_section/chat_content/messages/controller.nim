@@ -267,7 +267,6 @@ proc belongsToCommunity*(self: Controller): bool =
 
 proc loadMoreMessages*(self: Controller): bool =
   let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
-  trace "<<< loadMoreMessages", limit
   return self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
 proc addReaction*(self: Controller, messageId: string, emojiId: int) =
@@ -307,11 +306,9 @@ proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId
 
 proc setSearchedMessageId*(self: Controller, searchedMessageId: string) =
-  trace "<<< controller.setSearchedMessageId", searchedMessageId
   self.searchedMessageId = searchedMessageId
 
 proc clearSearchedMessageId*(self: Controller) =
-  trace "<<< controller.clearSearchedMessageId"
   self.setSearchedMessageId("")
 
 proc getAsyncFirstUnseenMessageId*(self: Controller) =

@@ -39,7 +39,6 @@ logScope:
 let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE* = 20
 const MESSAGES_PER_PAGE_MAX* = 40
-const CURSOR_VALUE_IGNORE = "ignore"
 const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
@@ -214,8 +213,6 @@ QtObject:
     return self.pinnedMsgCursor[chatId]
 
   proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE): bool =
-    trace "<<< service.asyncLoadMoreMessagesForChat 0", chatId, limit
-
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
       return false
@@ -225,19 +222,8 @@ QtObject:
     if msgCursor.isPending():
       return true
 
-    trace "<<< service.asyncLoadMoreMessagesForChat 1"
-
     if msgCursor.isMostRecent():
       return false
-
-    # let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    trace "<<< service.asyncLoadMoreMessagesForChat 2"
-
-    # if msgCursorValue == CURSOR_VALUE_IGNORE:
-    #   return
-
-    # trace "<<< service.asyncLoadMoreMessagesForChat 3"
 
     let msgCursorValue = msgCursor.getValue()
     msgCursor.setPending()
@@ -255,18 +241,15 @@ QtObject:
     return true
 
   proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
-    trace "<<< asyncLoadPinnedMessagesForChat", chatId
-
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadPinnedMessagesForChat"
       return
 
     let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
-    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    if(pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
+    if not pinnedMsgCursor.isFetchable():
       return
 
+    let pinnedMsgCursorValue = pinnedMsgCursor.getValue()
     pinnedMsgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
@@ -281,14 +264,11 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
-    trace "<<< service.asyncLoadInitialMessagesForChat", chatId
-
     if self.isChatCursorInitialized(chatId):
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
         reactions: @[])
 
-      trace "<<< asyncLoadInitialMessagesForChat: emit SIGNAL_MESSAGES_LOADED"
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
@@ -422,7 +402,6 @@ QtObject:
       self.events.emit(SIGNAL_ENVELOPE_EXPIRED, data)
 
     self.events.on(SIGNAL_APPEND_CHAT_MESSAGES) do(e: Args):
-      trace "<<< message.services.on(SIGNAL_APPEND_CHAT_MESSAGES)"
       let args = AppendChatMessagesArgs(e)
 
       if args.messages != nil and args.messages.kind != JNull:
@@ -492,8 +471,6 @@ QtObject:
     return (tokenStr, weiStr)
 
   proc onAsyncLoadPinnedMessagesForChat*(self: Service, response: string) {.slot.} =
-    trace "<<< onAsyncLoadPinnedMessagesForChat"
-
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load pinned messages response is not a json object"
@@ -523,8 +500,6 @@ QtObject:
     self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
-    trace "<<< onAsyncLoadMoreMessagesForChat", response
-
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load more messages response is not a json object"

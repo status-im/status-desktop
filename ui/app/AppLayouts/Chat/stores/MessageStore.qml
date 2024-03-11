@@ -28,8 +28,6 @@ QtObject {
     }
 
     function loadMoreMessages () {
-        console.log("<<< QML.MessageStore.loadMoreMessages", !!messageModule, root.loading)
-
         if(!messageModule)
             return
 

@@ -355,17 +355,13 @@ proc createChatIdentifierItem(self: Module): Item =
   )
 
 proc checkIfMessageLoadedAndScroll(self: Module) =
-  
   let searchedMessageId = self.controller.getSearchedMessageId()
-
-  trace "<<< module.checkIfMessageLoadedAndScroll", searchedMessageId
 
   if searchedMessageId.len == 0:
     return
 
   let index = self.view.model().findIndexForMessageId(searchedMessageId)
   if index == -1:
-    trace "<<< module.checkIfMessageLoadedAndScroll, STILL MISSING"
     self.controller.increaseLoadingMessagesPerPageFactor()
     if self.controller.loadMoreMessages():
       warn "failed to start loading more messages"
@@ -373,7 +369,6 @@ proc checkIfMessageLoadedAndScroll(self: Module) =
     # If failed to `loadMoreMessages`, then the most recent message is already loaded.
     # Then message is not found.
 
-  trace "<<< module.checkIfMessageLoadedAndScroll, FOUND", index
   self.controller.clearSearchedMessageId()
   self.controller.resetLoadingMessagesPerPageFactor()
   if index != -1:
@@ -395,20 +390,13 @@ method reevaluateViewLoadingState*(self: Module) =
                 not self.firstUnseenMessageState.initialized or
                 self.firstUnseenMessageState.fetching or
                 self.view.getMessageSearchOngoing()
-  trace "<<< module.reevaluateViewLoadingState", 
-    loading = $loading,
-    initialMessagesLoaded = $self.initialMessagesLoaded,
-    firstUnseenMessageStateInitialized = $self.firstUnseenMessageState.initialized,
-    messageSearchOutgoing = $self.view.getMessageSearchOngoing()
   self.view.setLoading(loading)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
-
   let messageIds = messages.map(x => x.id)
   let reactionIds = reactions.map(x => x.id)
-  trace "<<< newMessagesLoaded", messageIds, reactionIds
 
-  if(messages.len > 0):
+  if messages.len > 0:
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
 
     if self.controller.getChatDetails().hasMoreMessagesToRequest():
@@ -651,7 +639,6 @@ method updateChatFetchMoreMessages*(self: Module) =
 
 proc switchToMessage*(self: Module, messageId: string) =
   let index = self.view.model().findIndexForMessageId(messageId)
-  trace "<<< module.switchToMessage", messageId, index
   if index != -1:
     self.controller.clearSearchedMessageId()
     self.view.emitSwitchToMessageSignal(index)
@@ -659,7 +646,6 @@ proc switchToMessage*(self: Module, messageId: string) =
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
-  trace "<<< module.scrollToMessage", messageId, getMessageSearchOngoing = $self.view.getMessageSearchOngoing()
   if messageId == "":
     return
 
@@ -671,8 +657,6 @@ method scrollToMessage*(self: Module, messageId: string) =
   self.view.setMessageSearchOngoing(true)
 
 method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
-  trace "<<< module.onGetMessageById", requestId, getMessageRequestId = $self.getMessageRequestId, messageId, errorMessage
-
   if self.getMessageRequestId != requestId:
     return
 

@@ -33,22 +33,19 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
   }
 
   # handle messages
-  if(arg.msgCursor != CURSOR_VALUE_IGNORE):
-    var messagesArr: JsonNode
-    var messagesCursor: JsonNode
-    let msgsResponse = status_go.fetchMessages(arg.chatId, arg.msgCursor, arg.limit)
-    discard msgsResponse.result.getProp("cursor", messagesCursor)
-    discard msgsResponse.result.getProp("messages", messagesArr)
-    responseJson["messages"] = messagesArr
-    responseJson["messagesCursor"] = messagesCursor
+  var messagesArr: JsonNode
+  var messagesCursor: JsonNode
+  let msgsResponse = status_go.fetchMessages(arg.chatId, arg.msgCursor, arg.limit)
+  discard msgsResponse.result.getProp("cursor", messagesCursor)
+  discard msgsResponse.result.getProp("messages", messagesArr)
+  responseJson["messages"] = messagesArr
+  responseJson["messagesCursor"] = messagesCursor
 
   # handle reactions
-  if(arg.msgCursor != CURSOR_VALUE_IGNORE):
-    # messages and reactions are using the same cursor
-    var reactionsArr: JsonNode
-    let rResponse = status_go.fetchReactions(arg.chatId, arg.msgCursor, arg.limit)
-    reactionsArr = rResponse.result
-    responseJson["reactions"] = reactionsArr
+  var reactionsArr: JsonNode
+  let rResponse = status_go.fetchReactions(arg.chatId, arg.msgCursor, arg.limit)
+  reactionsArr = rResponse.result
+  responseJson["reactions"] = reactionsArr
 
   arg.finish(responseJson)
 
@@ -61,15 +58,14 @@ const asyncFetchPinnedChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe
   var responseJson = %*{
     "chatId": arg.chatId
   }
-  #handle pinned messages
-  if(arg.msgCursor != CURSOR_VALUE_IGNORE):
-    var pinnedMsgArr: JsonNode
-    var msgCursor: JsonNode
-    let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.msgCursor, arg.limit)
-    discard pinnedMsgsResponse.result.getProp("cursor", msgCursor)
-    discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
-    responseJson["pinnedMessages"] = pinnedMsgArr
-    responseJson["pinnedMessagesCursor"] = msgCursor
+  # handle pinned messages
+  var pinnedMsgArr: JsonNode
+  var msgCursor: JsonNode
+  let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.msgCursor, arg.limit)
+  discard pinnedMsgsResponse.result.getProp("cursor", msgCursor)
+  discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
+  responseJson["pinnedMessages"] = pinnedMsgArr
+  responseJson["pinnedMessagesCursor"] = msgCursor
 
   arg.finish(responseJson)
 
