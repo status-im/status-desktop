@@ -24,7 +24,7 @@ QObject {
 
     // Input models
     property alias communitiesSourceModel: modelAdapter.communitiesSourceModel
-    property alias communitiesShowcaseModel: modelAdapter.communitiesShowcaseModel
+    property alias communitiesShowcaseModel: communities.showcaseModel
     property string communitiesSearcherText
 
     // Output models
@@ -48,7 +48,7 @@ QObject {
 
     // Input models
     property alias accountsSourceModel: modelAdapter.accountsSourceModel
-    property alias accountsShowcaseModel: modelAdapter.accountsShowcaseModel
+    property alias accountsShowcaseModel: accounts.showcaseModel
     property string accountsSearcherText
 
     // Output models
@@ -79,7 +79,7 @@ QObject {
 
     // Input models
     property alias collectiblesSourceModel: modelAdapter.collectiblesSourceModel
-    property alias collectiblesShowcaseModel: modelAdapter.collectiblesShowcaseModel
+    property alias collectiblesShowcaseModel: collectibles.showcaseModel
     property string collectiblesSearcherText
 
     // Output models
@@ -151,7 +151,6 @@ QObject {
         }
 
         sourceModel: modelAdapter.adaptedCommunitiesSourceModel
-        showcaseModel: modelAdapter.adaptedCommunitiesShowcaseModel
         searcherFilter: FastExpressionFilter {
             expression: {
                 root.communitiesSearcherText
@@ -166,7 +165,6 @@ QObject {
         id: accounts
 
         sourceModel: modelAdapter.adaptedAccountsSourceModel
-        showcaseModel: modelAdapter.adaptedAccountsShowcaseModel
         searcherFilter: FastExpressionFilter {
             expression: {
                 root.accountsSearcherText
@@ -181,7 +179,6 @@ QObject {
         id: collectibles
 
         sourceModel: collectiblesFilter
-        showcaseModel: modelAdapter.adaptedCollectiblesShowcaseModel
         searcherFilter: FastExpressionFilter {
             expression: {
                 root.collectiblesSearcherText
