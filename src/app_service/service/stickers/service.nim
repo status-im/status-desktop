@@ -12,20 +12,16 @@ import backend/chat as status_chat
 import backend/response_type
 import backend/eth as status_eth
 import backend/backend as status_go_backend
-import backend/wallet_connect as status_wallet_connect
 import backend/wallet as status_wallet
 
 import ./dto/stickers
-import ../ens/utils as ens_utils
 import ../token/service as token_service
 import ../settings/service as settings_service
-import ../eth/dto/transaction
 import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../chat/service as chat_service
 import app_service/common/types
-import app_service/common/utils as common_utils
 import ../eth/utils as status_utils
 
 export StickerDto

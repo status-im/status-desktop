@@ -1,5 +1,3 @@
-import NimQml
-
 type
     EmojiReactionItem* = ref object
         emojiId: int

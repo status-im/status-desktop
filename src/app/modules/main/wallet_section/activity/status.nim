@@ -1,5 +1,5 @@
 import NimQml, std/json, sequtils, strutils, times
-import stint, atomics
+import atomics
 
 import app/core/signals/types
 

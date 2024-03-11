@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, tables
+import NimQml, sequtils, sugar
 
 import ./io_interface, ./view
 import ./controller as accountsc

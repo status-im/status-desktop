@@ -14,13 +14,13 @@ method executeCancelCommand*(self: KeyPairMigrateSuccessState, controller: Contr
     if profileMigrated:
       info "quit the app cause this is not an available option in the context of SetupNewKeycard flow for profile keypair"
       quit() # quit the app
-      return
+
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     if controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid():
       info "quit the app cause this is not an available option in the context of MigrateFromKeycardToApp flow for profile keypair"
       quit() # quit the app
-      return
+
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   if self.flowType == FlowType.MigrateFromAppToKeycard:
     info "quit the app cause this is not an available option in the context of MigrateFromAppToKeycard"

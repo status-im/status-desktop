@@ -1,5 +1,6 @@
 import strformat
 import ../../../app_service/common/types
+import ../../../app_service/service/contacts/dto/contacts
 
 type
   ContactRequest* {.pure.} = enum
@@ -17,6 +18,17 @@ type
     Canceled
     Trusted
     Untrustworthy
+
+proc toVerificationRequestStatus*(value: VerificationStatus): VerificationRequestStatus =
+  case value:
+  of VerificationStatus.Unverified: return VerificationRequestStatus.None
+  of VerificationStatus.Verifying: return VerificationRequestStatus.Pending
+  of VerificationStatus.Verified: return VerificationRequestStatus.Answered
+  of VerificationStatus.Declined: return VerificationRequestStatus.Declined
+  of VerificationStatus.Canceled: return VerificationRequestStatus.Canceled
+  of VerificationStatus.Trusted: return VerificationRequestStatus.Trusted
+  of VerificationStatus.Untrustworthy: return VerificationRequestStatus.Untrustworthy
+  else: return VerificationRequestStatus.None
 
 type
   UserItem* = ref object of RootObj

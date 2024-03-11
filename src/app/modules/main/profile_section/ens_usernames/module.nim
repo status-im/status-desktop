@@ -4,7 +4,6 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model
 
-import app/global/global_singleton
 import app/core/eventemitter
 import app_service/common/conversion as service_conversion
 import app_service/common/utils as common_utils

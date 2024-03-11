@@ -91,7 +91,7 @@ method viewDidLoad*(self: Module) =
     if receivedVerificationRequest.status == VerificationStatus.Verifying or
         receivedVerificationRequest.status == VerificationStatus.Verified:
       let contactItem = self.createItemFromPublicKey(receivedVerificationRequest.fromID)
-      contactItem.incomingVerificationStatus = VerificationRequestStatus(receivedVerificationRequest.status)
+      contactItem.incomingVerificationStatus = toVerificationRequestStatus(receivedVerificationRequest.status)
       receivedVerificationRequestItems.add(contactItem)
   self.view.receivedContactRequestsModel().addItems(receivedVerificationRequestItems)
 
@@ -276,7 +276,7 @@ method onVerificationRequestCanceled*(self: Module, publicKey: string) =
 
 method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
   let item =  self.createItemFromPublicKey(request.fromID)
-  item.incomingVerificationStatus = VerificationRequestStatus(request.status)
+  item.incomingVerificationStatus = toVerificationRequestStatus(request.status)
   if (self.view.receivedContactRequestsModel.containsItemWithPubKey(request.fromID)):
     if request.status != VerificationStatus.Verifying and
         request.status != VerificationStatus.Verified:

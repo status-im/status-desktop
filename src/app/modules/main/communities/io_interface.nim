@@ -1,7 +1,6 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community_tokens/dto/community_token
 import app_service/common/types
 import ../../shared_models/section_item
 

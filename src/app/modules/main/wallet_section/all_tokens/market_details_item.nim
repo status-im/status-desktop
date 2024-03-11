@@ -1,7 +1,6 @@
 import NimQml, strutils
 
 import ./io_interface
-import app/modules/shared_models/currency_amount
 import app/modules/shared/wallet_utils
 import app_service/service/currency/dto
 

@@ -18,7 +18,6 @@ import app_service/common/social_links
 import app/modules/shared_models/social_links_model
 import app/modules/shared_models/social_link_item
 import app/modules/shared_modules/collectibles/controller as collectiblesc
-import app/modules/shared_models/collectibles_entry
 
 # TODO: remove usage of old models
 import models/profile_preferences_community_item

@@ -1,7 +1,6 @@
 import Tables, stint
 import ./item
 
-import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/stickers/service as stickers_service
 from app_service/service/keycard/service import KeycardEvent
 

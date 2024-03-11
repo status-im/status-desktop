@@ -18,7 +18,6 @@ import ./activity/controller as activityc
 import ./activity/details_controller as activity_detailsc
 import ./wallet_connect/controller as wcc
 
-import app/modules/shared_models/collectibles_model as collectiblesm
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
 import app/global/global_singleton
@@ -41,8 +40,6 @@ import app_service/service/devices/service as devices_service
 import app_service/service/community_tokens/service as community_tokens_service
 
 import backend/collectibles as backend_collectibles
-import backend/activity as backend_activity
-
 
 logScope:
   topics = "wallet-section-module"

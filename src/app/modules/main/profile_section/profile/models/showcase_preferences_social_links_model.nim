@@ -1,7 +1,5 @@
 import NimQml, tables, strutils, sequtils, json
 
-import app_service/service/profile/dto/profile_showcase_preferences
-
 type
   ShowcasePreferencesSocialLinkItem* = object of RootObj
     url*: string
