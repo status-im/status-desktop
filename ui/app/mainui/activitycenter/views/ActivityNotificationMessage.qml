@@ -19,7 +19,6 @@ ActivityNotificationBase {
 
     property var contactDetails: null
     property int maximumLineCount: 2
-    property bool clickable: true
 
     signal messageClicked()
 
@@ -82,12 +81,10 @@ ActivityNotificationBase {
     bodyComponent: MouseArea {
         implicitWidth: parent.width
         implicitHeight: messageView.implicitHeight
-        hoverEnabled: root.clickable && root.messageBadgeComponent
+        hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
-        enabled: root.clickable
         onClicked: {
-            root.activityCenterStore.switchTo(notification)
-            root.closeActivityCenter()
+            root.messageClicked()
         }
 
         SimplifiedMessageView {

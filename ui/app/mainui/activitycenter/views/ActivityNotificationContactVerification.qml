@@ -25,8 +25,6 @@ ActivityNotificationMessage {
         }
     }
 
-    clickable: true
-
     messageDetails.messageText: {
         if (!notification)
             return ""
@@ -53,6 +51,10 @@ ActivityNotificationMessage {
     }
 
     ctaComponent: isOutgoingMessage ? outgoingContactVerificationCta : incomingContactVerificationCta
+
+    onMessageClicked: {
+        root.openProfilePopup()
+    }
 
     Component {
         id: outgoingContactVerificationCta
