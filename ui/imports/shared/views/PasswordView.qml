@@ -289,6 +289,7 @@ ColumnLayout {
         Layout.minimumHeight: 80
         border.color: Theme.palette.baseColor2
         border.width: 1
+        color: "transparent"
         radius: Style.current.radius
         implicitHeight: strengthColumn.implicitHeight
         implicitWidth: strengthColumn.implicitWidth
