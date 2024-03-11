@@ -368,6 +368,7 @@ proc checkIfMessageLoadedAndScroll(self: Module) =
     trace "<<< module.checkIfMessageLoadedAndScroll, STILL MISSING"
     self.controller.increaseLoadingMessagesPerPageFactor()
     if self.controller.loadMoreMessages():
+      warn "failed to start loading more messages"
       return
     # If failed to `loadMoreMessages`, then the most recent message is already loaded.
     # Then message is not found.
@@ -677,6 +678,12 @@ method onGetMessageById*(self: Module, requestId: UUID, messageId: string, messa
 
   if errorMessage != "":
     error "attempted to scroll to a not fetched message", errorMessage, messageId, chatId = self.controller.getMyChatId()
+    self.view.setMessageSearchOngoing(false)
+    return
+
+  if message.contentType == ContentType.ContactIdentityVerification or
+     message.contentType == ContentType.ContactRequest:
+    warn "attempted to scroll to a non-displayed message", messageId, contentType = $message.contentType
     self.view.setMessageSearchOngoing(false)
     return
 

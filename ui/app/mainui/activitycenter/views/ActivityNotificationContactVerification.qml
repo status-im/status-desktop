@@ -25,6 +25,8 @@ ActivityNotificationMessage {
         }
     }
 
+    clickable: true
+
     messageDetails.messageText: {
         if (!notification)
             return ""
