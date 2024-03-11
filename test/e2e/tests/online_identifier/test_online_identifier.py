@@ -16,7 +16,6 @@ pytestmark = marks
 @pytest.mark.case(703007)
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 @pytest.mark.parametrize('new_name', [pytest.param('NewUserName')])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13799')
 def test_change_own_display_name(main_screen: MainWindow, user_account, new_name):
     with step('Open own profile popup and check name of user is correct'):
         profile = main_screen.left_panel.open_online_identifier()

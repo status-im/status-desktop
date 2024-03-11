@@ -19,7 +19,6 @@ pytestmark = marks
 @pytest.mark.parametrize('user_account, user_account_changed',
                          [pytest.param(constants.user.user_account_one, constants.user.user_account_one_changed_name)])
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/13799')
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, user_account_changed, bio, links):
     with step('Open profile settings and check name, bio and links'):
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()
