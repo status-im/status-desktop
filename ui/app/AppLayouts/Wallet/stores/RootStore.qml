@@ -487,4 +487,26 @@ QtObject {
     function addressWasShown(address) {
         return root.mainModuleInst.addressWasShown(address)
     }
+
+    function getExplorerUrl() {
+        let link = Constants.networkExplorerLinks.etherscan
+        if (root.areTestNetworksEnabled) {
+            if (root.isGoerliEnabled) {
+                link = Constants.networkExplorerLinks.sepoliaEtherscan
+            } else {
+                link = Constants.networkExplorerLinks.goerliEtherscan
+            }
+        }
+        return link
+    }
+
+    function getExplorerNameForNetwork(networkShortName)  {
+        if (networkShortName === Constants.networkShortChainNames.arbiscan) {
+            return qsTr("Arbiscan Explorer")
+        }
+        if (networkShortName === Constants.networkShortChainNames.optimism) {
+            return qsTr("Optimism Explorer")
+        }
+        return qsTr("Etherscan Explorer")
+    }
 }

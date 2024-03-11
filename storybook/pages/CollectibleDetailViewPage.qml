@@ -86,12 +86,20 @@ SplitView {
                             return "NAMEFOR: %1".arg(address)
                         }
 
+                        function getExplorerNameForNetwork(networkName) {
+                            return qsTr("%1 Explorer").arg(networkName)
+                        }
+
                         readonly property bool showAllAccounts: true
                     }
                     communitiesStore: QtObject {
                         function getCommunityDetailsAsJson(communityId) {
-                            return ""
-                        }
+                            return {
+                                name : "Mock Community",
+                                image : Style.png("tokens/UNI"),
+                                color : "orchid"
+                            }                        
+			}
                     }
                 }
                 Component.onCompleted: viewLoader.active = true

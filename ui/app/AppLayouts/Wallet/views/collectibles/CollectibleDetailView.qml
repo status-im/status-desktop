@@ -28,26 +28,41 @@ Item {
     required property var collectible
     property var activityModel
     property bool isCollectibleLoading
-    readonly property int isNarrowMode : width < 700
 
     // Community related token props:
     readonly property bool isCommunityCollectible: !!collectible ? collectible.communityId !== "" : false
     readonly property bool isOwnerTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) : false
     readonly property bool isTMasterTokenType: !!collectible ? (collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.TMaster) : false
 
+    readonly property var communityDetails: isCommunityCollectible ? root.communitiesStore.getCommunityDetailsAsJson(collectible.communityId) : null
+
     CollectibleDetailsHeader {
         id: collectibleHeader
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        asset.name: collectible.collectionImageUrl
-        asset.isImage: true
-        primaryText: collectible.collectionName
-        secondaryText: "#" + collectible.tokenId
-        isNarrowMode: root.isNarrowMode
+        collectibleName: collectible.name
+        collectibleId: "#" + collectible.tokenId
+        collectionTag.tagPrimaryLabel.text: !!communityDetails ? communityDetails.name : collectible.collectionName
+        isCollection: !!collectible.collectionName
+        communityImage: !!communityDetails ? communityDetails.image: ""
         networkShortName: collectible.networkShortName
         networkColor: collectible.networkColor
         networkIconURL: collectible.networkIconUrl
+        networkExplorerName: root.walletRootStore.getExplorerNameForNetwork(collectible.networkShortName)
+        onCollectionTagClicked: {
+            if (root.isCommunityCollectible) {
+                Global.switchToCommunity(collectible.communityId)
+            }
+            /* TODO for non community token link out to collection on opensea
+            https://github.com/status-im/status-desktop/issues/13918 */
+
+        }
+        onOpenCollectibleExternally: {
+            /* TODO add link out to opensea
+            https://github.com/status-im/status-desktop/issues/13918 */
+        }
+        onOpenCollectibleOnExplorer: Global.openLink("%1/nft/%2/%3".arg(root.walletRootStore.getExplorerUrl()).arg(collectible.contractAddress).arg(collectible.tokenId))
     }
 
     ColumnLayout {
@@ -55,7 +70,7 @@ Item {
         anchors.top: collectibleHeader.bottom
         anchors.topMargin: 25
         anchors.left: parent.left
-        anchors.leftMargin: root.isNarrowMode ? 0 : 52
+        anchors.leftMargin: 52
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
@@ -76,7 +91,7 @@ Item {
                 id: privilegedCollectibleImage
 
                 visible: root.isCommunityCollectible && (root.isOwnerTokenType || root.isTMasterTokenType)
-                size: root.isNarrowMode ? PrivilegedTokenArtworkPanel.Size.Medium : PrivilegedTokenArtworkPanel.Size.Large
+                size: PrivilegedTokenArtworkPanel.Size.Large
                 artwork: collectible.imageUrl
                 color: !!collectible && root.isCommunityCollectible? collectible.communityColor : "transparent"
                 isOwner: root.isOwnerTokenType
@@ -85,12 +100,10 @@ Item {
             StatusRoundedMedia {
                 id: collectibleimage
 
-                readonly property int size : root.isNarrowMode ? 132 : 253
-
                 visible: !privilegedCollectibleImage.visible
-                width: size
-                height: size
-                radius: 2
+                width: 248
+                height: width
+                radius: Style.current.radius
                 color: collectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
@@ -110,10 +123,11 @@ Item {
                     width: parent.width
                     height: 24
 
-                    text: collectible.name
+                    text: root.isCommunityCollectible && !!communityDetails ? qsTr("Minted by %1").arg(root.communityDetails.name):  root.collectible.collectionName
                     color: Theme.palette.directColor1
                     font.pixelSize: 17
                     lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
                     elide: Text.ElideRight
                     wrapMode: Text.WordWrap
                 }
@@ -147,7 +161,7 @@ Item {
         StatusTabBar {
             id: collectiblesDetailsTab
             Layout.fillWidth: true
-            Layout.topMargin: root.isNarrowMode ? Style.current.padding : Style.current.xlPadding
+            Layout.topMargin: Style.current.xlPadding
             visible: collectible.traits.count > 0
 
             StatusTabButton {
