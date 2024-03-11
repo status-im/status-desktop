@@ -10,6 +10,7 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
+import utils 1.0
 
 CommonContactDialog {
     id: root
@@ -28,7 +29,6 @@ CommonContactDialog {
     readonly property var d: QtObject {
         id: d
         readonly property bool editMode: root.nickname !== ""
-        readonly property int maxNicknameLength: 32
     }
 
     StatusInput {
@@ -37,17 +37,37 @@ CommonContactDialog {
         label: qsTr("Nickname")
         input.clearable: true
         text: root.nickname
-        charLimit: d.maxNicknameLength
-        validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
+        charLimit: Constants.keypair.nameLengthMax
         validators: [
             StatusValidator {
-                validatorObj: RXValidator { regularExpression: /^[\w\d_ -]*$/u }
+                validatorObj: RXValidator { regularExpression: /^[\w\d_ -\.]*$/u }
                 validate: (value) => validatorObj.test(value)
+                errorMessage: qsTr("Invalid characters (use A-Z and 0-9, hyphens and underscores only)")
+            },
+            StatusMinLengthValidator {
+                minLength: Constants.keypair.nameLengthMin
+                errorMessage: qsTr("Nicknames must be at least %n character(s) long", "", minLength)
+            },
+            StatusValidator {
+                name: "startsWithSpaceValidator"
+                validate: function (t) { return !(t.startsWith(" ") || t.endsWith(" "))}
+                errorMessage: qsTr("Nicknames can’t start or end with a space")
+            },
+            StatusValidator {
+                name: "endsWith-ethValidator"
+                validate: function (t) { return !(t.endsWith("-eth") || t.endsWith("_eth") || t.endsWith(".eth")) }
+                errorMessage: qsTr("Nicknames can’t end in “.eth”, “_eth” or “-eth”")
+            },
+            StatusValidator {
+                name: "isAliasValidator"
+                validate: function (t) { return !Utils.isAlias(t) }
+                errorMessage: qsTr("Adjective-animal nickname formats are not allowed")
             }
         ]
-        Keys.onReleased: {
+        onKeyPressed: {
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                root.editDone(nicknameInput.text)
+                if (root.nickname !== nicknameInput.text && nicknameInput.valid)
+                    root.editDone(nicknameInput.text)
             }
         }
     }

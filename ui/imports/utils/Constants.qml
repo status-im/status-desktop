@@ -560,7 +560,7 @@ QtObject {
             },
             StatusValidator {
                 name: "isAliasValidator"
-                validate: function (t) { return !globalUtils.isAlias(t) }
+                validate: function (t) { return !Utils.isAlias(t) }
                 errorMessage: qsTr("Adjective-animal Display Name formats are not allowed")
             }
             // https://github.com/status-im/status-desktop/issues/13434
@@ -673,7 +673,7 @@ QtObject {
 
     readonly property QtObject regularExpressions: QtObject {
         readonly property var alphanumerical: /^$|^[a-zA-Z0-9]+$/
-        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_.\u0020]+$/
+        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_\.\u0020]+$/
         readonly property var alphanumericalExpanded1: /^[a-zA-Z0-9\-_]+(?: [a-zA-Z0-9\-_]+)*$/
         readonly property var alphanumericalWithSpace: /^$|^[a-zA-Z0-9\s]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/

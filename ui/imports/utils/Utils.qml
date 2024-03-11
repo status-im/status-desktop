@@ -22,7 +22,7 @@ QtObject {
     }
     
     function isDigit(value) {
-      return /^\d$/.test(value);
+        return /^\d$/.test(value);
     }
 
     function isHex(value) {
@@ -42,7 +42,11 @@ QtObject {
     }
 
     function isCompressedPubKey(pubKey) {
-      return globalUtilsInst.isCompressedPubKey(pubKey)
+        return globalUtilsInst.isCompressedPubKey(pubKey)
+    }
+
+    function isAlias(name) {
+        return globalUtilsInst.isAlias(name)
     }
 
     function getCommunityIdFromFullChatId(fullChatId) {
@@ -105,7 +109,7 @@ QtObject {
         if (Style.current.name === Constants.lightThemeName) {
             colorIndex = Style.darkTheme.accountColors.indexOf(upperCaseColor)
         } else {
-             colorIndex = Style.lightTheme.accountColors.indexOf(upperCaseColor)
+            colorIndex = Style.lightTheme.accountColors.indexOf(upperCaseColor)
         }
         if (colorIndex === -1) {
             // Unknown color
