@@ -50,6 +50,10 @@ SplitView {
             logs.logEvent("Utils::downloadImageByUrl", ["url", "path"], arguments)
         }
 
+        function isAlias(name)  {
+            return false
+        }
+
         Component.onCompleted: {
             Utils.globalUtilsInst = this
             root.globalUtilsReady = true
