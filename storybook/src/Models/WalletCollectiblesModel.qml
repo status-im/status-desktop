@@ -241,6 +241,24 @@ ListModel {
             networkShortName: "OPT",
             networkColor: "red",
             networkIconUrl: ModelsData.networks.optimism
+        },
+        {
+            uid: "ID-Community1",
+            chainId: 1,
+            contractAddress: "0x06",
+            tokenId: "406",
+            name: "Community Admin Token",
+            imageUrl: ModelsData.collectibles.mana,
+            backgroundColor: "transparent",
+            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            collectionUid: "community-uid-1",
+            collectionName: "",
+            collectionImageUrl: "",
+            traits: [],
+            communityId: "community-id-1",
+            networkShortName: "OPT",
+            networkColor: "red",
+            networkIconUrl: ModelsData.networks.optimism
         }
     ]
 

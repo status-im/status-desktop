@@ -242,7 +242,7 @@ QtObject:
     notify = ownershipChanged
 
   proc communityIdChanged*(self: CollectiblesEntry) {.signal.}
-  proc getCommunityID*(self: CollectiblesEntry): string {.slot.} =
+  proc getCommunityId*(self: CollectiblesEntry): string {.slot.} =
     if not self.hasCommunityData():
       return ""
     return self.getCommunityData().id

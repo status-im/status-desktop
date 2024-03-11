@@ -12,76 +12,80 @@ import shared.controls 1.0
 
 ColumnLayout {
     id: root
-    property alias primaryText: collectibleName.text
-    property string secondaryText
-    property bool isNarrowMode
+
+    property alias collectibleName: collectibleName.text
+    property alias collectibleId: collectibleId.text
+    property alias collectionTag: collectionTag
+    property string isCollection
+
+    property string communityImage
     property string networkShortName
     property string networkColor
     property string networkIconURL
+    property string networkExplorerName
 
-    property StatusAssetSettings asset: StatusAssetSettings {
-        readonly property int size: root.isNarrowMode ? 24 : 38
-        width: size
-        height: size
-        isImage: true
-    }
-
-    Component {
-        id: collectibleIdComponent
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            font.pixelSize: isNarrowMode ? 15 : 22
-            lineHeight: isNarrowMode ? 22 : 30
-            lineHeightMode: Text.FixedHeight
-            elide: Text.ElideRight
-            color: Theme.palette.baseColor1
-        }
-    }
+    signal collectionTagClicked()
+    signal openCollectibleExternally()
+    signal openCollectibleOnExplorer()
 
     RowLayout {
-        StatusSmartIdenticon {
-            id: identiconLoader
-            asset: root.asset
+        RowLayout {
+            StatusBaseText {
+                id: collectibleName
+
+                font.pixelSize: 22
+                lineHeight: 30
+                lineHeightMode: Text.FixedHeight
+                elide: Text.ElideRight
+                color: Theme.palette.directColor1
+            }
+            StatusBaseText {
+                id: collectibleId
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                font.pixelSize: 22
+                lineHeight: 30
+                lineHeightMode: Text.FixedHeight
+                elide: Text.ElideRight
+                color: Theme.palette.baseColor1
+            }
         }
 
-        StatusBaseText {
-            id: collectibleName
+        Item{Layout.fillWidth: true}
 
-            font.pixelSize: 22
-            lineHeight: 30
-            lineHeightMode: Text.FixedHeight
-            elide: Text.ElideRight
-            color: Theme.palette.directColor1
-        }
-
-        Loader {
-            id: collectibleIdTopRow
-            sourceComponent: collectibleIdComponent
-            visible: !root.isNarrowMode
-            Layout.fillWidth: true
-
-            Binding {
-                target: collectibleIdTopRow.item
-                property: "text"
-                value: root.secondaryText
+        RowLayout {
+            spacing: 12
+            StatusButton {
+                size: StatusBaseButton.Size.Small
+                text: root.networkExplorerName
+                icon.name: "external"
+                asset.emoji: d.effectiveEmoji
+                onClicked: root.openCollectibleOnExplorer()
+            }
+            StatusButton {
+                size: StatusBaseButton.Size.Small
+                text: "OpenSea"
+                icon.name: "external"
+                asset.emoji: d.effectiveEmoji
+                onClicked: root.openCollectibleExternally()
             }
         }
     }
 
     RowLayout {
-        Layout.leftMargin: root.isNarrowMode ? 0 : 48
         spacing: 10
 
-        Loader {
-            id: collectibleIdBottomRow
-            sourceComponent: collectibleIdComponent
-            visible: root.isNarrowMode
-            Layout.maximumWidth: root.width - parent.spacing - networkTag.width
-
-            Binding {
-                target: collectibleIdBottomRow.item
-                property: "text"
-                value: root.secondaryText
+        InformationTag {
+            id: collectionTag
+            asset.name: !!root.communityImage ? root.communityImage: !sensor.containsMouse ? root.isCollection ? "tiny/folder" : "tiny/profile" : "tiny/external"
+            asset.isImage: !!root.communityImage
+            MouseArea {
+                id: sensor
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    root.collectionTagClicked()
+                }
             }
         }
 
