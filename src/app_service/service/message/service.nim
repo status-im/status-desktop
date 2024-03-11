@@ -214,6 +214,8 @@ QtObject:
     return self.pinnedMsgCursor[chatId]
 
   proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
+    trace "<<< service.asyncLoadMoreMessagesForChat 0", chatId, limit
+
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
       return
@@ -221,11 +223,12 @@ QtObject:
     let msgCursor = self.initOrGetMessageCursor(chatId)
     let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
-    if(msgCursorValue == CURSOR_VALUE_IGNORE):
+    trace "<<< service.asyncLoadMoreMessagesForChat 1"
+
+    if msgCursorValue == CURSOR_VALUE_IGNORE:
       return
 
-    if(msgCursorValue != CURSOR_VALUE_IGNORE):
-      msgCursor.setPending()
+    msgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
@@ -263,11 +266,14 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
-    if(self.isChatCursorInitialized(chatId)):
+    trace "<<< service.asyncLoadInitialMessagesForChat", chatId
+
+    if self.isChatCursorInitialized(chatId):
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
         reactions: @[])
 
+      trace "<<< asyncLoadInitialMessagesForChat: emit SIGNAL_MESSAGES_LOADED"
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
@@ -401,6 +407,7 @@ QtObject:
       self.events.emit(SIGNAL_ENVELOPE_EXPIRED, data)
 
     self.events.on(SIGNAL_APPEND_CHAT_MESSAGES) do(e: Args):
+      trace "<<< message.services.on(SIGNAL_APPEND_CHAT_MESSAGES)"
       let args = AppendChatMessagesArgs(e)
 
       if args.messages != nil and args.messages.kind != JNull:
@@ -499,6 +506,8 @@ QtObject:
     self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
+    trace "<<< onAsyncLoadMoreMessagesForChat", response
+
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load more messages response is not a json object"

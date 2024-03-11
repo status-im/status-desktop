@@ -306,9 +306,11 @@ proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId
 
 proc setSearchedMessageId*(self: Controller, searchedMessageId: string) =
+  trace "<<< controller.setSearchedMessageId", searchedMessageId
   self.searchedMessageId = searchedMessageId
 
 proc clearSearchedMessageId*(self: Controller) =
+  trace "<<< controller.clearSearchedMessageId"
   self.setSearchedMessageId("")
 
 proc getAsyncFirstUnseenMessageId*(self: Controller) =

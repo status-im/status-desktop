@@ -54,6 +54,7 @@ Item {
         readonly property bool keepUnread: messageStore.keepUnread
 
         readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTimeQueued(root, 100, function() {
+            console.log("<<< QML.loadMoreMessagesIfScrollBelowThreshold", scrollY)
             if(scrollY < 1000) messageStore.loadMoreMessages()
         })
 

@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, uuids, sets, times, tables, system
+import NimQml, chronicles, sequtils, uuids, sets, times, tables, system, sugar
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -354,19 +354,31 @@ proc createChatIdentifierItem(self: Module): Item =
     bridgeMessage = BridgeMessage(),
   )
 
-proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
+proc checkIfMessageLoadedAndScroll(self: Module) =
+  
   let searchedMessageId = self.controller.getSearchedMessageId()
-  if(searchedMessageId.len > 0):
-    let index = self.view.model().findIndexForMessageId(searchedMessageId)
-    if(index != -1):
-      self.controller.clearSearchedMessageId()
-      self.controller.resetLoadingMessagesPerPageFactor()
-      self.view.emitScrollToMessageSignal(index)
-      self.view.setMessageSearchOngoing(false)
-      self.reevaluateViewLoadingState()
-    else:
-      self.controller.increaseLoadingMessagesPerPageFactor()
-      self.loadMoreMessages()
+
+  trace "<<< module.checkIfMessageLoadedAndScroll", searchedMessageId
+
+  if searchedMessageId.len == 0:
+    return
+
+  let index = self.view.model().findIndexForMessageId(searchedMessageId)
+  if index == -1:
+    trace "<<< module.checkIfMessageLoadedAndScroll, STILL MISSING"
+    self.controller.increaseLoadingMessagesPerPageFactor()
+    # FIXME:
+    # if self.loadMoreMessages():
+    self.loadMoreMessages()
+    return
+    # If failed to `loadMoreMessages` didn'
+
+  trace "<<< module.checkIfMessageLoadedAndScroll, FOUND", index
+  self.controller.clearSearchedMessageId()
+  self.controller.resetLoadingMessagesPerPageFactor()
+  self.view.emitScrollToMessageSignal(index)
+  self.view.setMessageSearchOngoing(false)
+  self.reevaluateViewLoadingState()
 
 proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
@@ -378,12 +390,23 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  self.view.setLoading(not self.initialMessagesLoaded or
-                       not self.firstUnseenMessageState.initialized or
-                       self.firstUnseenMessageState.fetching or
-                       self.view.getMessageSearchOngoing())
+  let loading = not self.initialMessagesLoaded or 
+                not self.firstUnseenMessageState.initialized or
+                self.firstUnseenMessageState.fetching or
+                self.view.getMessageSearchOngoing()
+  trace "<<< module.reevaluateViewLoadingState", 
+    loading = $loading,
+    initialMessagesLoaded = $self.initialMessagesLoaded,
+    firstUnseenMessageStateInitialized = $self.firstUnseenMessageState.initialized,
+    messageSearchOutgoing = $self.view.getMessageSearchOngoing()
+  self.view.setLoading(loading)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
+
+  let messageIds = messages.map(x => x.id)
+  let reactionIds = reactions.map(x => x.id)
+  trace "<<< module.newMessagesLoaded", messageIds, reactionIds
+
   if(messages.len > 0):
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
 
@@ -397,7 +420,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     self.view.model().resetNewMessagesMarker()
 
     # check if this loading was caused by the click on a messages from the app search result
-    self.checkIfMessageLoadedAndScrollToItIfItIs()
+    self.checkIfMessageLoadedAndScroll()
 
   self.initialMessagesLoaded = true
   self.reevaluateViewLoadingState()
@@ -433,6 +456,7 @@ method onMessageDelivered*(self: Module, messageId: string) =
   self.view.model().itemDelivered(messageId)
 
 method loadMoreMessages*(self: Module) =
+  trace "<<< module.loadMoreMessages"
   self.controller.loadMoreMessages()
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
@@ -627,13 +651,15 @@ method updateChatFetchMoreMessages*(self: Module) =
 
 proc switchToMessage*(self: Module, messageId: string) =
   let index = self.view.model().findIndexForMessageId(messageId)
-  if(index != -1):
+  trace "<<< module.switchToMessage", messageId, index
+  if index != -1:
     self.controller.clearSearchedMessageId()
     self.view.emitSwitchToMessageSignal(index)
   else:
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
+  trace "<<< module.scrollToMessage", messageId, getMessageSearchOngoing = $self.view.getMessageSearchOngoing()
   if messageId == "":
     return
 
@@ -641,9 +667,11 @@ method scrollToMessage*(self: Module, messageId: string) =
     return
 
   self.getMessageRequestId = self.controller.asyncGetMessageById(messageId)
+  self.controller.setSearchedMessageId(messageId)
   self.view.setMessageSearchOngoing(true)
 
 method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
+  trace "<<< module.onGetMessageById", requestId, getMessageRequestId = $self.getMessageRequestId, messageId, errorMessage
 
   if self.getMessageRequestId != requestId:
     return
@@ -653,8 +681,7 @@ method onGetMessageById*(self: Module, requestId: UUID, messageId: string, messa
     self.view.setMessageSearchOngoing(false)
     return
 
-  self.controller.setSearchedMessageId(messageId)
-  self.checkIfMessageLoadedAndScrollToItIfItIs()
+  self.checkIfMessageLoadedAndScroll()
   self.reevaluateViewLoadingState()
 
 method requestMoreMessages*(self: Module) =

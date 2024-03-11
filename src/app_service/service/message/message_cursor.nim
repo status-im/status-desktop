@@ -28,6 +28,12 @@ proc setPending*(self: MessageCursor) =
 proc isFetchable*(self: MessageCursor): bool =
   return not (self.pending or self.mostRecent)
 
+proc isPending*(self: MessageCursor): bool =
+  return self.pending
+
+proc isMostRecent*(self: MessageCursor): bool =
+  return self.mostRecent
+
 proc isEmpty*(self: MessageCursor): bool =
   return self.value == ""
 
