@@ -5,9 +5,11 @@ import view, controller
 import internal/[state, state_factory]
 import app/modules/shared/[keypairs, wallet_utils]
 import app/modules/shared_models/[keypair_model, keypair_item, currency_amount]
-import app/global/app_translatable_constants as atc
 import app/global/global_singleton
 import app/core/eventemitter
+
+import app/global/app_translatable_constants as atc
+const dummyUsage = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT # dummy usage to prevent false-alarm warning
 
 import app_service/common/utils
 import app_service/service/keycard/constants

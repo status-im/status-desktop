@@ -1625,7 +1625,7 @@ method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
     return
   self.addressWasShown(value)
 
-method createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
+proc createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return initMemberItem(

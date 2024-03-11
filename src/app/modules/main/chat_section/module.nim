@@ -586,7 +586,7 @@ proc addNewChat*(
     chatDto.color,
     chatDto.emoji,
     chatDto.description,
-    ChatType(chatDto.chatType).int,
+    chatDto.chatType.int,
     memberRole,
     chatDto.timestamp.int,
     hasNotification,

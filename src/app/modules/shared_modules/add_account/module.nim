@@ -13,6 +13,8 @@ import app/modules/shared_models/[keypair_model, derived_address_model]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 
 import app_service/common/account_constants
+const dummyUsage = account_constants.ZERO_ADDRESS # dummy usage to prevent false-alarm warning
+
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/saved_address/service as saved_address_service
@@ -32,7 +34,7 @@ const NumOfGeneratedAddressesRegular = MaxNumOfGeneratedAddresses
 const NumOfGeneratedAddressesKeycard = 10
 
 
-logScope:
+logScope: 
   topics = "wallet-add-account-module"
 
 type
