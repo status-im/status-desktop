@@ -1163,7 +1163,7 @@ Item {
                             return Constants.appViewStackIndex.node
 
                         // We should never end up here
-                        console.error("AppMain: Unknown section type", activeSectionType)
+                        console.error("AppMain: Unknown section type")
                     }
 
                     // NOTE:

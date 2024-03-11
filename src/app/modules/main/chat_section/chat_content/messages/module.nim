@@ -393,9 +393,6 @@ method reevaluateViewLoadingState*(self: Module) =
   self.view.setLoading(loading)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
-  let messageIds = messages.map(x => x.id)
-  let reactionIds = reactions.map(x => x.id)
-
   if messages.len > 0:
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
 

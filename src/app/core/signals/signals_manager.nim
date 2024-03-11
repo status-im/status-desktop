@@ -38,8 +38,8 @@ QtObject:
         error "Invalid signal received", data = statusSignal
       return
 
-    # if allowLogging:
-    #   trace "Raw signal data", data = $jsonSignal
+    if allowLogging:
+      trace "Raw signal data", data = $jsonSignal
 
     var signal:Signal
     try:
