@@ -30,9 +30,9 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         networks.switch_testnet_mode_toggle().turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned on'):
-        assert len(ToastMessage().get_toast_messages) == 1, \
+        assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
-        message = ToastMessage().get_toast_messages[0]
+        message = main_screen.wait_for_notification()[0]
         assert message == WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
         if not configs.system.TEST_MODE:
@@ -52,8 +52,8 @@ def test_switch_testnet_mode(main_screen: MainWindow):
         networks.switch_testnet_mode_toggle().turn_off_testnet_mode_in_testnet_modal()
 
     with step('Verify that Testnet mode turned off'):
-        assert len(ToastMessage().get_toast_messages) == 2
-        message = ToastMessage().get_toast_messages[1]
+        assert len(main_screen.wait_for_notification()) == 2
+        message = main_screen.wait_for_notification()[1]
         assert message == WalletNetworkSettings.TESTNET_DISABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
         if not configs.system.TEST_MODE:
@@ -105,9 +105,9 @@ def test_switch_testnet_off_by_toggle_and_cancel_in_confirmation(main_screen: Ma
         testnet_modal.turn_on_testnet_mode_in_testnet_modal()
 
     with step('Verify testnet mode is enabled'):
-        assert len(ToastMessage().get_toast_messages) == 1, \
+        assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
-        message = ToastMessage().get_toast_messages[0]
+        message = main_screen.wait_for_notification()[0]
         assert message == WalletNetworkSettings.TESTNET_ENABLED_TOAST_MESSAGE.value, \
             f"Toast message is incorrect, current message is {message}"
         if not configs.system.TEST_MODE:

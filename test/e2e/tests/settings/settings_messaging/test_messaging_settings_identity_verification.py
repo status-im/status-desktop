@@ -70,11 +70,10 @@ def test_messaging_settings_identity_verification(multiple_instance, user_data_o
             assert not verify_identity_popup.is_send_verification_button_enabled
             verify_identity_popup.type_message('Hi. Is that you?').send_verification()
 
-        # TODO https://github.com/status-im/desktop-qa-automation/issues/547 - will be enabled in this task
-        # with step('Verify toast message about sent ID verification request'):
-        #     toast_messages = main_window.wait_for_notification()
-        #     assert Messaging.ID_VERIFICATION_REQUEST_SENT.value in toast_messages
-        #     main_window.hide()
+        with step('Verify toast message about sent ID verification request'):
+            toast_messages = main_window.wait_for_notification()
+            assert Messaging.ID_VERIFICATION_REQUEST_SENT.value in toast_messages
+            main_window.hide()
 
         with step(f'Check incoming identity request for {user_two.name}'):
             aut_two.attach()
@@ -83,7 +82,6 @@ def test_messaging_settings_identity_verification(multiple_instance, user_data_o
             respond_identity_popup = contacts_settings.open_more_options_popup(user_one.name).respond_to_id_request()
             respond_identity_popup.type_message('Hi. Yes, its me').send_answer()
 
-        # TODO https://github.com/status-im/desktop-qa-automation/issues/547 - will be enabled in this task
-        # with step('Verify toast message about sent ID verification reply'):
-        #     toast_messages = main_window.wait_for_notification()
-        #     assert Messaging.ID_VERIFICATION_REPLY_SENT.value in toast_messages
+        with step('Verify toast message about sent ID verification reply'):
+            toast_messages = main_window.wait_for_notification()
+            assert Messaging.ID_VERIFICATION_REPLY_SENT.value in toast_messages

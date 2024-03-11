@@ -35,9 +35,9 @@ def test_plus_button_add_watched_address(
             f"Authentication should not appear for adding watched addresses"
 
     with step('Verify toast message notification when adding account'):
-        assert len(ToastMessage().get_toast_messages) == 1, \
+        assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
-        message = ToastMessage().get_toast_messages[0]
+        message = main_screen.wait_for_notification()[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):

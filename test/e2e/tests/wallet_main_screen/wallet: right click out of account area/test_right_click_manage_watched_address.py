@@ -36,9 +36,9 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(ToastMessage().get_toast_messages) == 1, \
+        assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
-        message = ToastMessage().get_toast_messages[0]
+        message = main_screen.wait_for_notification()[0]
         assert message == f'"{name}" successfully added'
 
     with step('Right click recently watched address and select edit option'):

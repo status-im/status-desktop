@@ -1,6 +1,8 @@
+import typing
+
 import allure
 
-import driver
+from driver.objects_access import walk_children
 from gui.elements.object import QObject
 from gui.objects_map import names
 
@@ -11,14 +13,12 @@ class ToastMessage(QObject):
         super(ToastMessage, self).__init__(names.ephemeral_Notification_List)
         self._toast_message = QObject(names.ephemeralNotificationList_StatusToastMessage)
 
-    @property
     @allure.step('Get toast messages')
-    def get_toast_messages(self):
+    def get_toast_messages(self) -> typing.List[str]:
         messages = []
-        for obj in driver.findAllObjects(self._toast_message.real_name):
-            messages.append(str(obj.primaryText))
+        for child in walk_children(self.object):
+            if getattr(child, 'id', '') == 'title':
+                messages.append(str(child.text))
         if len(messages) == 0:
-            raise LookupError(
-                'Toast messages were not found')
-        else:
-            return messages
+            raise LookupError('Toast message not found')
+        return messages

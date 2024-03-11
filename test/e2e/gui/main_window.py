@@ -1,5 +1,4 @@
 import logging
-import os
 import time
 import typing
 
@@ -215,11 +214,11 @@ class MainWindow(Window):
         return app_screen
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> str:
+    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:
         started_at = time.monotonic()
         while True:
             try:
-                return ToastMessage().get_toast_messages
+                return ToastMessage().get_toast_messages()
             except LookupError as err:
                 LOG.info(err)
                 assert time.monotonic() - started_at < timeout_msec, str(err)

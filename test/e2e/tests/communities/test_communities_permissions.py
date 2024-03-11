@@ -5,7 +5,6 @@ from allure_commons._allure import step
 import configs
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
 from gui.components.delete_popup import DeletePermissionPopup
-from gui.components.toast_message import ToastMessage
 from gui.screens.community_settings import PermissionsIntroView
 from . import marks
 
@@ -54,13 +53,13 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
         permissions_settings.set_in(in_channel)
         permissions_settings.create_permission()
 
-    # TODO: https://github.com/status-im/desktop-qa-automation/issues/547
-    # with step('Check toast message for permission creation'):
-    #     assert len(ToastMessage().get_toast_messages) == 1, \
-    #         f"Multiple toast messages appeared"
-    #     message = ToastMessage().get_toast_messages[0]
-    #     assert message == ToastMessages.CREATE_PERMISSION_TOAST.value, \
-    #         f"Toast message is incorrect, current message is {message}"
+    with step('Check toast message for permission creation'):
+        toast_messages = main_screen.wait_for_notification()
+        assert len(toast_messages) == 1, \
+            f"Multiple toast messages appeared"
+        message = toast_messages[0]
+        assert message == ToastMessages.CREATE_PERMISSION_TOAST.value, \
+            f"Toast message is incorrect, current message is {message}"
 
     with step('Created permission is displayed on permission page'):
         if asset_title is not False:
@@ -108,11 +107,10 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
             assert driver.waitFor(lambda: permissions_intro_view.is_hide_icon_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
-    # TODO: https://github.com/status-im/desktop-qa-automation/issues/547
-    # with step('Check toast message for edited permission'):
-    #    messages = ToastMessage().get_toast_messages
-    #    assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
-    #        f"Toast message is incorrect, current message is {message}"
+    with step('Check toast message for edited permission'):
+       messages = main_screen.wait_for_notification()
+       assert ToastMessages.UPDATE_PERMISSION_TOAST.value in messages, \
+           f"Toast message is incorrect, current message is {message}"
 
     with step('Delete permission'):
         permissions_intro_view.click_delete_permission()
@@ -121,8 +119,7 @@ def test_add_edit_and_remove_permissions(main_screen: MainWindow, params, checkb
     with step('Verify that permission was deleted'):
         assert driver.waitFor(lambda: PermissionsIntroView().is_visible)
 
-    # TODO: https://github.com/status-im/desktop-qa-automation/issues/547
-    # with step('Check toast message for deleted permission'):
-    #    messages = ToastMessage().get_toast_messages
-    #    assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
-    #        f"Toast message is incorrect, current message is {message}"
+    with step('Check toast message for deleted permission'):
+       messages = main_screen.wait_for_notification()
+       assert ToastMessages.DELETE_PERMISSION_TOAST.value in messages, \
+           f"Toast message is incorrect, current message is {message}"

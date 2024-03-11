@@ -39,7 +39,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {name} not found'
 
     with step('Verify toast message when adding saved address'):
-        messages = ToastMessage().get_toast_messages
+        messages = main_screen.wait_for_notification()
         assert f'{name} successfully added to your saved addresses' in messages, \
             f"Toast message about adding saved address is not correct or not present. Current list of messages: {messages}"
 
@@ -52,7 +52,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
             configs.timeouts.UI_LOAD_TIMEOUT_MSEC), f'Address: {new_name} not found'
 
     with step('Verify toast message when editing saved address'):
-        messages = ToastMessage().get_toast_messages
+        messages = main_screen.wait_for_notification()
         assert f'{new_name} saved address successfully edited' in messages, \
             f"Toast message about editing saved address is not correct or not present. Current list of messages: {messages}"
 
@@ -60,7 +60,7 @@ def test_manage_saved_address(main_screen: MainWindow, name: str, address: str, 
         wallet.left_panel.open_saved_addresses().delete_saved_address(new_name)
 
     with step('Verify toast message when deleting saved address'):
-        messages = ToastMessage().get_toast_messages
+        messages = main_screen.wait_for_notification()
         assert f'{new_name} was successfully removed from your saved addresses' in messages, \
             f"Toast message about deleting saved address is not correct or not present. Current list of messages: {messages}"
 

@@ -33,9 +33,9 @@ def test_plus_button_manage_generated_account(main_screen: MainWindow, user_acco
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(ToastMessage().get_toast_messages) == 1, \
+        assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
-        message = ToastMessage().get_toast_messages[0]
+        message = main_screen.wait_for_notification()[0]
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
@@ -62,7 +62,7 @@ def test_plus_button_manage_generated_account(main_screen: MainWindow, user_acco
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
 
     with step('Verify toast message notification when removing account'):
-        messages = ToastMessage().get_toast_messages
+        messages = main_screen.wait_for_notification()
         assert f'"{new_name}" successfully removed' in messages, \
             f"Toast message about account removal is not correct or not present. Current list of messages: {messages}"
 
