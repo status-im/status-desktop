@@ -265,9 +265,10 @@ proc getOneToOneChatNameAndImage*(self: Controller):
 proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
-proc loadMoreMessages*(self: Controller) =
+proc loadMoreMessages*(self: Controller): bool =
   let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
-  self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
+  trace "<<< loadMoreMessages", limit
+  return self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
 proc addReaction*(self: Controller, messageId: string, emojiId: int) =
   self.messageService.addReaction(self.chatId, messageId, emojiId)

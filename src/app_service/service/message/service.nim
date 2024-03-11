@@ -213,21 +213,33 @@ QtObject:
 
     return self.pinnedMsgCursor[chatId]
 
-  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
+  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE): bool =
     trace "<<< service.asyncLoadMoreMessagesForChat 0", chatId, limit
 
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
-      return
+      return false
 
     let msgCursor = self.initOrGetMessageCursor(chatId)
-    let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
+
+    if msgCursor.isPending():
+      return true
 
     trace "<<< service.asyncLoadMoreMessagesForChat 1"
 
-    if msgCursorValue == CURSOR_VALUE_IGNORE:
-      return
+    if msgCursor.isMostRecent():
+      return false
 
+    # let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
+
+    trace "<<< service.asyncLoadMoreMessagesForChat 2"
+
+    # if msgCursorValue == CURSOR_VALUE_IGNORE:
+    #   return
+
+    # trace "<<< service.asyncLoadMoreMessagesForChat 3"
+
+    let msgCursorValue = msgCursor.getValue()
     msgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
@@ -240,8 +252,11 @@ QtObject:
     )
 
     self.threadpool.start(arg)
+    return true
 
   proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
+    trace "<<< asyncLoadPinnedMessagesForChat", chatId
+
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadPinnedMessagesForChat"
       return
@@ -277,7 +292,7 @@ QtObject:
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
-    self.asyncLoadMoreMessagesForChat(chatId)
+    discard self.asyncLoadMoreMessagesForChat(chatId)
 
   proc handleMessagesUpdate(self: Service, chats: var seq[ChatDto], messages: var seq[MessageDto]) =
     # We included `chats` in this condition cause that's the form how `status-go` sends updates.
@@ -452,7 +467,7 @@ QtObject:
     self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
       var receivedData = DiscordChannelImportFinishedSignal(e)
       self.resetMessageCursor(receivedData.channelId)
-      self.asyncLoadMoreMessagesForChat(receivedData.channelId)
+      discard self.asyncLoadMoreMessagesForChat(receivedData.channelId)
 
     self.events.on(SIGNAL_CHAT_LEFT) do(e: Args):
       var chatArg = ChatArgs(e)
@@ -477,6 +492,8 @@ QtObject:
     return (tokenStr, weiStr)
 
   proc onAsyncLoadPinnedMessagesForChat*(self: Service, response: string) {.slot.} =
+    trace "<<< onAsyncLoadPinnedMessagesForChat"
+
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load pinned messages response is not a json object"

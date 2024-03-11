@@ -367,16 +367,16 @@ proc checkIfMessageLoadedAndScroll(self: Module) =
   if index == -1:
     trace "<<< module.checkIfMessageLoadedAndScroll, STILL MISSING"
     self.controller.increaseLoadingMessagesPerPageFactor()
-    # FIXME:
-    # if self.loadMoreMessages():
-    self.loadMoreMessages()
-    return
-    # If failed to `loadMoreMessages` didn'
+    if self.controller.loadMoreMessages():
+      return
+    # If failed to `loadMoreMessages`, then the most recent message is already loaded.
+    # Then message is not found.
 
   trace "<<< module.checkIfMessageLoadedAndScroll, FOUND", index
   self.controller.clearSearchedMessageId()
   self.controller.resetLoadingMessagesPerPageFactor()
-  self.view.emitScrollToMessageSignal(index)
+  if index != -1:
+    self.view.emitScrollToMessageSignal(index)
   self.view.setMessageSearchOngoing(false)
   self.reevaluateViewLoadingState()
 
@@ -405,7 +405,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   let messageIds = messages.map(x => x.id)
   let reactionIds = reactions.map(x => x.id)
-  trace "<<< module.newMessagesLoaded", messageIds, reactionIds
+  trace "<<< newMessagesLoaded", messageIds, reactionIds
 
   if(messages.len > 0):
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
@@ -456,8 +456,7 @@ method onMessageDelivered*(self: Module, messageId: string) =
   self.view.model().itemDelivered(messageId)
 
 method loadMoreMessages*(self: Module) =
-  trace "<<< module.loadMoreMessages"
-  self.controller.loadMoreMessages()
+  discard self.controller.loadMoreMessages()
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId
