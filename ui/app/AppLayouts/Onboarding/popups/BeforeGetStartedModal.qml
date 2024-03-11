@@ -6,6 +6,7 @@ import QtQml.Models 2.14
 import utils 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -13,7 +14,7 @@ import StatusQ.Popups.Dialog 0.1
 StatusDialog {
     id: root
 
-    width: 480
+    width: 600
     topPadding: Style.current.bigPadding
     bottomPadding: Style.current.bigPadding
     closePolicy: Popup.NoAutoClose
@@ -28,95 +29,93 @@ StatusDialog {
             StatusButton {
                 objectName: "getStartedStatusButton"
                 enabled: acknowledge.checked && termsOfUse.checked
-                size: StatusBaseButton.Size.Large
-                font.weight: Font.Medium
-                text: qsTr("Get Started")
+                text: qsTr("Get started")
                 onClicked: root.close()
             }
         }
     }
 
-    contentItem: Item {
-        Column {
-            width: 416
-            spacing: Style.current.padding
-            anchors.centerIn: parent
+    contentItem: ColumnLayout {
+        spacing: Style.current.padding
 
-            StatusCheckBox {
-                id: acknowledge
-                objectName: "acknowledgeCheckBox"
-                spacing: Style.current.halfPadding
-                font.pixelSize: 15
-                width: parent.width
-                text: qsTr("I acknowledge that Status Desktop is in Beta and by using it I take the full responsibility for all risks concerning my data and funds.")
-            }
+        StatusCheckBox {
+            Layout.fillWidth: true
+            id: acknowledge
+            objectName: "acknowledgeCheckBox"
+            spacing: Style.current.halfPadding
+            text: qsTr("I acknowledge that Status Desktop is in Beta and by using it I take the full responsibility for all risks concerning my data and funds.")
+        }
 
-            StatusCheckBox {
-                id: termsOfUse
-                objectName: "termsOfUseCheckBox"
-                width: parent.width
-                font.pixelSize: 15
+        StatusCheckBox {
+            Layout.fillWidth: true
+            id: termsOfUse
+            objectName: "termsOfUseCheckBox"
 
-                contentItem: Row {
-                    spacing: 4
-                    leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
+            contentItem: Row {
+                spacing: 4
+                leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
-                    StatusBaseText {
-                        text: qsTr("I accept Status")
-                        font.pixelSize: 15
-                    }
+                StatusBaseText {
+                    text: qsTr("I accept Status")
+                }
 
-                    StatusBaseText {
-                        objectName: "termsOfUseLink"
-                        text: qsTr("Terms of Use")
-                        color: Theme.palette.primaryColor1
-                        font.pixelSize: 15
-                        font.weight: Font.Medium
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onEntered: {
-                                parent.font.underline = true
-                            }
-                            onExited: {
-                                parent.font.underline = false
-                            }
-                            onClicked: {
-                                Qt.openUrlExternally("https://status.im/terms-of-use/")
-                            }
-                        }
-                    }
-
-                    StatusBaseText {
-                        text: "&"
-                        font.pixelSize: 15
-                    }
-
-                    StatusBaseText {
-                        objectName: "privacyPolicyLink"
-                        text: qsTr("Privacy Policy")
-                        color: Theme.palette.primaryColor1
-                        font.pixelSize: 15
-                        font.weight: Font.Medium
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onEntered: {
-                                parent.font.underline = true
-                            }
-                            onExited: {
-                                parent.font.underline = false
-                            }
-                            onClicked: {
-                                Qt.openUrlExternally("https://status.im/privacy-policy/")
-                            }
-                        }
+                StatusLinkText {
+                    objectName: "termsOfUseLink"
+                    text: qsTr("Terms of Use")
+                    color: Theme.palette.primaryColor1
+                    font.weight: Font.Medium
+                    font.pixelSize: Theme.primaryTextFontSize
+                    onClicked: {
+                        detailsPopup.title = qsTr("Status Software Terms of Use")
+                        detailsPopup.textFile = SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../../imports/assets/docs/terms-of-use.mdwn"))
+                        detailsPopup.open()
                     }
                 }
+
+                StatusBaseText {
+                    text: "&"
+                }
+
+                StatusLinkText {
+                    objectName: "privacyPolicyLink"
+                    text: qsTr("Privacy Policy")
+                    color: Theme.palette.primaryColor1
+                    font.weight: Font.Medium
+                    font.pixelSize: Theme.primaryTextFontSize
+                    onClicked: {
+                        detailsPopup.title = qsTr("Status Software Privacy Statement")
+                        detailsPopup.textFile = SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../../imports/assets/docs/privacy.mdwn"))
+                        detailsPopup.open()
+                    }
+                }
+            }
+        }
+    }
+
+    StatusDialog {
+        id: detailsPopup
+
+        property string textFile
+
+        width: 600
+        padding: 0
+        standardButtons: Dialog.Ok
+        anchors.centerIn: parent
+        visible: false
+
+        onClosed: textFile = ""
+
+        StatusScrollView {
+            id: scrollView
+            anchors.fill: parent
+            contentWidth: availableWidth
+            padding: 20
+
+            StatusBaseText {
+                width: scrollView.availableWidth
+                wrapMode: Text.Wrap
+                textFormat: Text.MarkdownText
+                text: detailsPopup.textFile
             }
         }
     }
