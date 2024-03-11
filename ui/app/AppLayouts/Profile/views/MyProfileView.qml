@@ -130,18 +130,18 @@ SettingsContentBase {
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             communitiesSourceModel: root.communitiesModel
-            communitiesShowcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            communitiesShowcaseModel: root.profileStore.showcasePreferencesCommunitiesModel
             communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
             
             accountsSourceModel: root.walletStore.accounts
-            accountsShowcaseModel: root.profileStore.profileShowcaseAccountsModel
+            accountsShowcaseModel: root.profileStore.showcasePreferencesAccountsModel
             accountsSearcherText: profileShowcaseAccountsPanel.searcherText
 
             collectiblesSourceModel: root.profileStore.collectiblesModel
-            collectiblesShowcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+            collectiblesShowcaseModel: root.profileStore.showcasePreferencesCollectiblesModel
             collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
 
-            socialLinksSourceModel: root.profileStore.socialLinksModel
+            socialLinksSourceModel: root.profileStore.showcasePreferencesSocialLinksModel
         }
 
         function reset() {
