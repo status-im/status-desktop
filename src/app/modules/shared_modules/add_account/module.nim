@@ -34,7 +34,7 @@ const NumOfGeneratedAddressesRegular = MaxNumOfGeneratedAddresses
 const NumOfGeneratedAddressesKeycard = 10
 
 
-logScope: 
+logScope:
   topics = "wallet-add-account-module"
 
 type
