@@ -52,6 +52,10 @@ ActivityNotificationMessage {
 
     ctaComponent: isOutgoingMessage ? outgoingContactVerificationCta : incomingContactVerificationCta
 
+    onMessageClicked: {
+        root.openProfilePopup()
+    }
+
     Component {
         id: outgoingContactVerificationCta
 

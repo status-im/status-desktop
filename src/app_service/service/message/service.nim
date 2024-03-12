@@ -39,7 +39,6 @@ logScope:
 let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE* = 20
 const MESSAGES_PER_PAGE_MAX* = 40
-const CURSOR_VALUE_IGNORE = "ignore"
 const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
@@ -213,19 +212,21 @@ QtObject:
 
     return self.pinnedMsgCursor[chatId]
 
-  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
+  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE): bool =
     if (chatId.len == 0):
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
-      return
+      return false
 
     let msgCursor = self.initOrGetMessageCursor(chatId)
-    let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
-    if(msgCursorValue == CURSOR_VALUE_IGNORE):
-      return
+    if msgCursor.isPending():
+      return true
 
-    if(msgCursorValue != CURSOR_VALUE_IGNORE):
-      msgCursor.setPending()
+    if msgCursor.isMostRecent():
+      return false
+
+    let msgCursorValue = msgCursor.getValue()
+    msgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
@@ -237,6 +238,7 @@ QtObject:
     )
 
     self.threadpool.start(arg)
+    return true
 
   proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
     if (chatId.len == 0):
@@ -244,11 +246,10 @@ QtObject:
       return
 
     let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
-    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    if(pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
+    if not pinnedMsgCursor.isFetchable():
       return
 
+    let pinnedMsgCursorValue = pinnedMsgCursor.getValue()
     pinnedMsgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
@@ -263,7 +264,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
-    if(self.isChatCursorInitialized(chatId)):
+    if self.isChatCursorInitialized(chatId):
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
         reactions: @[])
@@ -271,7 +272,7 @@ QtObject:
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
-    self.asyncLoadMoreMessagesForChat(chatId)
+    discard self.asyncLoadMoreMessagesForChat(chatId)
 
   proc handleMessagesUpdate(self: Service, chats: var seq[ChatDto], messages: var seq[MessageDto]) =
     # We included `chats` in this condition cause that's the form how `status-go` sends updates.
@@ -445,7 +446,7 @@ QtObject:
     self.events.on(SignalType.DiscordChannelImportFinished.event) do(e: Args):
       var receivedData = DiscordChannelImportFinishedSignal(e)
       self.resetMessageCursor(receivedData.channelId)
-      self.asyncLoadMoreMessagesForChat(receivedData.channelId)
+      discard self.asyncLoadMoreMessagesForChat(receivedData.channelId)
 
     self.events.on(SIGNAL_CHAT_LEFT) do(e: Args):
       var chatArg = ChatArgs(e)

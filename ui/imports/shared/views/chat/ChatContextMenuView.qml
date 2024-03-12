@@ -125,13 +125,26 @@ StatusMenu {
         }
     }
 
-    StatusAction {
-        objectName: "chatFetchMessagesMenuItem"
-        text: qsTr("Fetch messages")
-        icon.name: "download"
+    
+    StatusMenu {
+        title: qsTr("Debug actions")
         enabled: root.showDebugOptions
-        onTriggered: {
-            root.requestMoreMessages(root.chatId)
+
+        StatusAction {
+            text: root.isCommunityChat ? qsTr("Copy channel ID") : qsTr("Copy chat ID")
+            icon.name: "copy"
+            onTriggered: {
+                Utils.copyToClipboard(root.chatId)
+            }
+        }
+
+        StatusAction {
+            objectName: "chatFetchMessagesMenuItem"
+            text: qsTr("Fetch messages")
+            icon.name: "download"
+            onTriggered: {
+                root.requestMoreMessages(root.chatId)
+            }
         }
     }
 

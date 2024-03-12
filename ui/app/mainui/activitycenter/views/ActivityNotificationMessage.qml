@@ -84,8 +84,7 @@ ActivityNotificationBase {
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.activityCenterStore.switchTo(notification)
-            root.closeActivityCenter()
+            root.messageClicked()
         }
 
         SimplifiedMessageView {

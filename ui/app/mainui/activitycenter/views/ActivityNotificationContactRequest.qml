@@ -66,6 +66,10 @@ ActivityNotificationMessage {
         }
     }
 
+    onMessageClicked: {
+        root.openProfilePopup()
+    }
+
     Component {
         id: reviewContactRequestPopupComponent
 
