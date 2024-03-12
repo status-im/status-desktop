@@ -23,7 +23,6 @@ class ChangesDetectedToastMessage(QObject):
 
 class PermissionsChangesDetectedToastMessage(QObject):
 
-
     def __init__(self):
         super().__init__(communities_names.editPermissionView_settingsDirtyToastMessage_SettingsDirtyToastMessage)
         self._update_permission_button = Button(communities_names.editPermissionView_Save_changes_StatusButton)
