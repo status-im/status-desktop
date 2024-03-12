@@ -42,7 +42,8 @@ def setup_session_scope(
 def setup_function_scope(
         caplog,
         generate_test_data,
-        check_result
+        check_result,
+        application_logs
 ):
     # FIXME: broken due to KeyError: <_pytest.stash.StashKey object at 0x7fd1ba6d78c0>
     # caplog.set_level(configs.LOG_LEVEL)
