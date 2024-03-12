@@ -282,16 +282,15 @@ Item {
         }
     }
 
-    DisabledTooltipButton {
+    StatusButton {
         id: startBtn
         interactive: startButtonEnabled
-        buttonType: DisabledTooltipButton.Normal
-        aliasedObjectName: "ensStartButton"
+        objectName: "ensStartButton"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Start")
-        tooltipText: root.tooltipText
+        tooltip.text: root.tooltipText
         onClicked: startBtnClicked()
     }
 }

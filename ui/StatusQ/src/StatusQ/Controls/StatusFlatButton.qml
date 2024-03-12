@@ -40,6 +40,6 @@ StatusBaseButton {
 
     disabledTextColor: Theme.palette.baseColor1
 
-    borderColor: (type === StatusBaseButton.Type.Normal || hovered) && !loading ? "transparent"
-                                                                                : Theme.palette.baseColor2
+    borderColor: (type === StatusBaseButton.Type.Normal || hovered) && !loading && interactive ? "transparent"
+                                                                                               : Theme.palette.baseColor2
 }

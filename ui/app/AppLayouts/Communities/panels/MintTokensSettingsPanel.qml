@@ -139,16 +139,12 @@ StackView {
         title: qsTr("Tokens")
 
         buttons: [
-            DisabledTooltipButton {
-                readonly property bool buttonEnabled: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
-
-                buttonType: DisabledTooltipButton.Normal
-                aliasedObjectName: "addNewItemButton"
+            StatusButton {
+                objectName: "addNewItemButton"
                 text: qsTr("Mint token")
-                enabled: root.isAdminOnly || buttonEnabled
-                interactive: buttonEnabled
+                interactive: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
                 onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-                tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
+                tooltip.text: root.isAdminOnly ? qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName) : ""
             }
         ]
 
