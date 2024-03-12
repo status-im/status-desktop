@@ -562,13 +562,12 @@ QtObject {
                 name: "isAliasValidator"
                 validate: function (t) { return !Utils.isAlias(t) }
                 errorMessage: qsTr("Adjective-animal Display Name formats are not allowed")
+            },
+            StatusValidator {
+                name: "isDuplicateInComunitiesValidator"
+                validate: function(t) { return !Utils.isDisplayNameDupeOfCommunityMember(t) }
+                errorMessage: qsTr("This Display Name is already in use in one of your joined communities")
             }
-            // https://github.com/status-im/status-desktop/issues/13434
-            // StatusValidator {
-            //     name: "isDuplicateInComunitiesValidator"
-            //     validate: function(t) { return !globalUtils.isDuplicatedInComunities(t) }
-            //     errorMessage: qsTr("This Display Name is already in use in one of your joined communities")
-            // }
         ]
     }
 
