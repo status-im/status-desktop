@@ -62,67 +62,73 @@ StatusDraggableListItem {
 
             Layout.maximumWidth: root.width *.4
         },
-        DisabledTooltipButton {
+        StatusButton {
             interactive: root.contextMenuEnabled
-            tooltipText: root.tooltipTextWhenContextMenuDisabled
-            buttonComponent: StatusRoundButton {
-                enabled: root.contextMenuEnabled
-                icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)
-                width: 58
-                height: 30
-                border.width: 1
-                border.color: Theme.palette.directColor7
-                radius: 14
-                highlighted: menuLoader.item && menuLoader.item.opened
-                onClicked: {
-                    menuLoader.active = true
-                    menuLoader.item.popup(width - menuLoader.item.width, height)
-                }
+            tooltip.text: root.tooltipTextWhenContextMenuDisabled
+            icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)
+            horizontalPadding: Style.current.halfPadding
+            verticalPadding: 3
+            Layout.preferredWidth: 72
+            Layout.preferredHeight: root.height/2
+            radius: height/2
+            highlighted: menuLoader.item && menuLoader.item.opened
+            onClicked: {
+                menuLoader.active = true
+                menuLoader.item.popup(width - menuLoader.item.width, height)
+            }
+            text: "    " // NB to give the icon and indicator some even space
 
-                ButtonGroup {
-                    id: showcaseVisibilityGroup
-                    exclusive: true
-                    onClicked: function(button) {
-                        const newVisibility = (button as ShowcaseVisibilityAction).showcaseVisibility
-                        if (newVisibility !== root.showcaseVisibility)
-                            root.showcaseVisibilityRequested(newVisibility)
+            indicator: StatusIcon {
+                anchors.right: parent.right
+                anchors.rightMargin: parent.horizontalPadding
+                anchors.verticalCenter: parent.verticalCenter
+                icon: "chevron-down"
+                color: parent.interactive ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+            }
+
+            ButtonGroup {
+                id: showcaseVisibilityGroup
+                exclusive: true
+                onClicked: function(button) {
+                    const newVisibility = (button as ShowcaseVisibilityAction).showcaseVisibility
+                    if (newVisibility !== root.showcaseVisibility)
+                        root.showcaseVisibilityRequested(newVisibility)
+                }
+            }
+
+            Loader {
+                id: menuLoader
+                active: false
+                sourceComponent: StatusMenu {
+                    onClosed: menuLoader.active = false
+                    StatusMenuHeadline { text: qsTr("Show to") }
+
+                    Binding on width {
+                        value: Math.max(implicitWidth, everyoneAction.implicitWidth, contactsAction.implicitWidth, idVerifiedContactsAction.implicitWidth) + margins * 2
+                        delayed: true
                     }
-                }
 
-                Loader {
-                    id: menuLoader
-                    active: false
-                    sourceComponent: StatusMenu {
-                        onClosed: menuLoader.active = false
-                        StatusMenuHeadline { text: qsTr("Show to") }
+                    ShowcaseVisibilityAction {
+                        id: everyoneAction
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                        text: enabled ? qsTr("Everyone") : qsTr("Everyone (set account to Everyone)")
+                    }
+                    ShowcaseVisibilityAction {
+                        id: contactsAction
+                        showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+                        text: enabled ? qsTr("Contacts") : qsTr("Contacts (set account to Contacts)")
+                    }
+                    ShowcaseVisibilityAction {
+                        id: idVerifiedContactsAction
+                        showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+                        text: enabled ? qsTr("ID verified contacts") : qsTr("ID verified contacts (set account to ID verified contacts)")
+                    }
 
-                        Binding on width {
-                            value: Math.max(implicitWidth, everyoneAction.implicitWidth, contactsAction.implicitWidth, idVerifiedContactsAction.implicitWidth) + margins * 2
-                            delayed: true
-                        }
+                    StatusMenuSeparator {}
 
-                        ShowcaseVisibilityAction {
-                            id: everyoneAction
-                            showcaseVisibility: Constants.ShowcaseVisibility.Everyone
-                            text: enabled ? qsTr("Everyone") : qsTr("Everyone (set account to Everyone)")
-                        }
-                        ShowcaseVisibilityAction {
-                            id: contactsAction
-                            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
-                            text: enabled ? qsTr("Contacts") : qsTr("Contacts (set account to Contacts)")
-                        }
-                        ShowcaseVisibilityAction {
-                            id: idVerifiedContactsAction
-                            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                            text: enabled ? qsTr("ID verified contacts") : qsTr("ID verified contacts (set account to ID verified contacts)")
-                        }
-
-                        StatusMenuSeparator {}
-
-                        ShowcaseVisibilityAction {
-                            showcaseVisibility: Constants.ShowcaseVisibility.NoOne
-                            text: qsTr("No one")
-                        }
+                    ShowcaseVisibilityAction {
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                        text: qsTr("No one")
                     }
                 }
             }
