@@ -123,10 +123,10 @@ SettingsContentBase {
 
         property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
         property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
-                                           descriptionPanel.displayName.text !== profileStore.displayName) ||
-                                          descriptionPanel.bio.text !== profileStore.bio ||
-                                          profileStore.socialLinksDirty ||
-                                          profileHeader.icon !== profileStore.profileLargeImage
+                                            descriptionPanel.displayName.text !== profileStore.displayName) ||
+                                            descriptionPanel.bio.text !== profileStore.bio ||
+                                            profileStore.socialLinksDirty ||
+                                            profileHeader.icon !== profileStore.profileLargeImage
 
         property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
             communitiesSourceModel: root.communitiesModel
@@ -154,18 +154,21 @@ SettingsContentBase {
 
         function save() {
             // Accounts, Communities, Assets, Collectibles and social links info
-            if (hasAnyProfileShowcaseChanges)
+            if (hasAnyProfileShowcaseChanges) {
                 root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
+            }
 
             // Identity info
-            if(isIdentityTabDirty)
+            if (isIdentityTabDirty) {
                 root.profileStore.saveIdentityInfo(descriptionPanel.displayName.text,
                                                    descriptionPanel.bio.text.trim(),
                                                    profileHeader.icon,
-                                                   profileHeader.cropRect.x.toFixed(),
-                                                   profileHeader.cropRect.y.toFixed(),
-                                                   (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
-                                                   (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed())
+                                                   profileHeader.cropRect.x,
+                                                   profileHeader.cropRect.y,
+                                                   (profileHeader.cropRect.x + profileHeader.cropRect.width),
+                                                   (profileHeader.cropRect.y + profileHeader.cropRect.height))
+                profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
+            }
         }
     }
 
