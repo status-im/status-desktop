@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
+import QtQml 2.15
 
 import utils 1.0
 import shared 1.0
@@ -16,9 +17,11 @@ import "./profile"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.stores 1.0
 
@@ -48,8 +51,8 @@ SettingsContentBase {
         Communities = 1,
         Accounts = 2,
         Collectibles = 3,
-        Assets = 4,
-        Web = 5
+        //Assets = 4,
+        Web = 4
     }
 
     titleRowComponentLoader.sourceComponent: StatusButton {
@@ -58,16 +61,13 @@ SettingsContentBase {
         visible: !root.sideBySidePreview
     }
 
-    dirty: (!descriptionPanel.isEnsName &&
-            descriptionPanel.displayName.text !== profileStore.displayName) ||
-           descriptionPanel.bio.text !== profileStore.bio ||
-           profileStore.socialLinksDirty ||
-           profileHeader.icon !== profileStore.profileLargeImage ||
+    dirty: priv.isIdentityTabDirty ||
            priv.hasAnyProfileShowcaseChanges
     saveChangesButtonEnabled: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
     toast.saveChangesTooltipVisible: root.dirty
     toast.saveChangesTooltipText: qsTr("Invalid changes made to Identity")
+    autoscrollWhenDirty: profileTabBar.currentIndex === MyProfileView.Identity
 
     onResetChangesClicked: priv.reset()
 
@@ -101,11 +101,12 @@ SettingsContentBase {
             text: qsTr("Collectibles")
         }
 
-        StatusTabButton {
-            objectName: "assetsTabButton"
-            width: implicitWidth
-            text: qsTr("Assets")
-        }
+        // TODO: Uncomment when assets tab is implemented
+        // StatusTabButton {
+        //     objectName: "assetsTabButton"
+        //     width: implicitWidth
+        //     text: qsTr("Assets")
+        // }
 
         StatusTabButton {
             objectName: "webTabButton"
@@ -120,7 +121,26 @@ SettingsContentBase {
     readonly property var priv: QtObject {
         id: priv
 
-        property bool hasAnyProfileShowcaseChanges: false
+        property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
+        property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
+                                           descriptionPanel.displayName.text !== profileStore.displayName) ||
+                                          descriptionPanel.bio.text !== profileStore.bio ||
+                                          profileStore.socialLinksDirty ||
+                                          profileHeader.icon !== profileStore.profileLargeImage
+
+        property ProfileShowcaseModels showcaseModels: ProfileShowcaseModels {
+            communitiesSourceModel: root.communitiesModel
+            communitiesShowcaseModel: root.profileStore.profileShowcaseCommunitiesModel
+            communitiesSearcherText: profileShowcaseCommunitiesPanel.searcherText
+            
+            accountsSourceModel: root.walletStore.accounts
+            accountsShowcaseModel: root.profileStore.profileShowcaseAccountsModel
+            accountsSearcherText: profileShowcaseAccountsPanel.searcherText
+
+            collectiblesSourceModel: root.profileStore.collectiblesModel
+            collectiblesShowcaseModel: root.profileStore.profileShowcaseCollectiblesModel
+            collectiblesSearcherText: profileShowcaseCollectiblesPanel.searcherText
+        }
 
         function reset() {
             descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
@@ -128,41 +148,32 @@ SettingsContentBase {
             profileStore.resetSocialLinks()
             profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
 
-            profileShowcaseCommunitiesPanel.reset()
-            profileShowcaseAccountsPanel.reset()
-            profileShowcaseCollectiblesPanel.reset()
-            profileShowcaseAssetsPanel.reset()
+            priv.showcaseModels.revert()
             root.profileStore.requestProfileShowcasePreferences()
-            hasAnyProfileShowcaseChanges = false
         }
 
         function save() {
+            // Accounts, Communities, Assets, Collectibles and social links info
             if (hasAnyProfileShowcaseChanges)
-                profileStore.storeProfileShowcasePreferences()
+                root.profileStore.saveProfileShowcasePreferences(showcaseModels.buildJSONModelsCurrentState())
 
-            if (!descriptionPanel.isEnsName)
-                profileStore.setDisplayName(descriptionPanel.displayName.text)
-            profileStore.setBio(descriptionPanel.bio.text.trim())
-            profileStore.saveSocialLinks()
-            if (profileHeader.icon === "") {
-                root.profileStore.removeImage()
-            } else {
-                profileStore.uploadImage(profileHeader.icon,
-                                         profileHeader.cropRect.x.toFixed(),
-                                         profileHeader.cropRect.y.toFixed(),
-                                         (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
-                                         (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed());
-            }
-
-            reset()
+            // Identity info
+            if(isIdentityTabDirty)
+                root.profileStore.saveIdentityInfo(descriptionPanel.displayName.text,
+                                                   descriptionPanel.bio.text.trim(),
+                                                   profileHeader.icon,
+                                                   profileHeader.cropRect.x.toFixed(),
+                                                   profileHeader.cropRect.y.toFixed(),
+                                                   (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
+                                                   (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed())
         }
     }
 
     StackLayout {
         id: stackLayout
 
-        width: contentWidth
-        height: contentHeight
+        width: root.contentWidth
+        height: profileTabBar.currentIndex === MyProfileView.Web ? implicitHeight : root.contentHeight
         currentIndex: profileTabBar.currentIndex
 
         onCurrentIndexChanged: {
@@ -213,50 +224,75 @@ SettingsContentBase {
         // communities
         ProfileShowcaseCommunitiesPanel {
             id: profileShowcaseCommunitiesPanel
-            baseModel: root.communitiesModel
-            showcaseModel: root.profileStore.profileShowcaseCommunitiesModel
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            inShowcaseModel: priv.showcaseModels.communitiesVisibleModel
+            hiddenModel: priv.showcaseModels.communitiesHiddenModel
+            showcaseLimit: root.profileStore.getProfileShowcaseEntriesLimit()
+
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeCommunityPosition(from, to)
+            }
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setCommunityVisibility(key, toVisibility)
+            }
         }
 
         // accounts
         ProfileShowcaseAccountsPanel {
             id: profileShowcaseAccountsPanel
-            baseModel: root.walletStore.accounts
-            showcaseModel: root.profileStore.profileShowcaseAccountsModel
+            inShowcaseModel: priv.showcaseModels.accountsVisibleModel
+            hiddenModel: priv.showcaseModels.accountsHiddenModel
+            showcaseLimit: root.profileStore.getProfileShowcaseEntriesLimit()
             currentWallet: root.walletStore.overview.mixedcaseAddress
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeAccountPosition(from, to)
+            
+            }
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setAccountVisibility(key, toVisibility)
+            }
         }
 
         // collectibles
         ProfileShowcaseCollectiblesPanel {
             id: profileShowcaseCollectiblesPanel
-            baseModel: root.profileStore.collectiblesModel
-            showcaseModel: root.profileStore.profileShowcaseCollectiblesModel
-            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
-
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+            inShowcaseModel: priv.showcaseModels.collectiblesVisibleModel
+            hiddenModel: priv.showcaseModels.collectiblesHiddenModel
+            showcaseLimit: root.profileStore.getProfileShowcaseEntriesLimit()
+            addAccountsButtonVisible: priv.showcaseModels.accountsHiddenModel.count > 0
+            
             onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
+            
+            onChangePositionRequested: function (from, to) {
+                priv.showcaseModels.changeCollectiblePosition(from, to)
+            }
+
+            onSetVisibilityRequested: function (key, toVisibility) {
+                priv.showcaseModels.setCollectibleVisibility(key, toVisibility)
+            }
         }
 
         // assets
-        ProfileShowcaseAssetsPanel {
-            id: profileShowcaseAssetsPanel
+        // TODO: Integrate the assets tab with the new backend
+        // ProfileShowcaseAssetsPanel {
+        //     id: profileShowcaseAssetsPanel
 
-            baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
-            showcaseModel: root.profileStore.profileShowcaseAssetsModel
-            addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
-            formatCurrencyAmount: function(amount, symbol) {
-                return root.currencyStore.formatCurrencyAmount(amount, symbol)
-            }
+        //     baseModel: root.walletAssetsStore.groupedAccountAssetsModel // TODO: instantiate an assets model in profile module
+        //     showcaseModel: root.profileStore.profileShowcaseAssetsModel
+        //     addAccountsButtonVisible: root.profileStore.profileShowcaseAccountsModel.hiddenCount > 0
+        //     formatCurrencyAmount: function(amount, symbol) {
+        //         return root.currencyStore.formatCurrencyAmount(amount, symbol)
+        //     }
 
-            onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
-            onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
-        }
+        //     onShowcaseEntryChanged: priv.hasAnyProfileShowcaseChanges = true
+        //     onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
+        // }
 
         // web
         ProfileSocialLinksPanel {
             profileStore: root.profileStore
             socialLinksModel: root.profileStore.temporarySocialLinksModel
+            showcaseLimit: root.profileStore.getProfileShowcaseSocialLinksLimit()
         }
 
         Component {

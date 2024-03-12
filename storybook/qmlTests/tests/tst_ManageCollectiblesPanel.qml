@@ -139,7 +139,7 @@ Item {
             verify(!!lvCommunity)
 
             // verify we have 2 community collectible groups
-            tryCompare(lvCommunity, "count", 3)
+            tryCompare(lvCommunity, "count", 4)
             tryCompare(notificationSpy, "count", 0)
             triggerDelegateMenuAction(lvCommunity, 0, "miHideTokenGroup", true)
             // verify the signal to show the notification toast got fired
@@ -147,7 +147,7 @@ Item {
 
             // verify we have one less group
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 2)
+            tryCompare(lvCommunity, "count", 3)
         }
 
         function test_dnd() {
@@ -190,7 +190,7 @@ Item {
             const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
             verify(!!lvCommunity)
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 3)
+            tryCompare(lvCommunity, "count", 4)
 
             const group0 = findChild(lvCommunity, "manageTokensGroupDelegate-0")
             const title0 = group0.title
@@ -225,7 +225,7 @@ Item {
             const lvCommunity = findChild(controlUnderTest, "communityTokensListView")
             verify(!!lvCommunity)
             waitForItemPolished(lvCommunity)
-            tryCompare(lvCommunity, "count", 3)
+            tryCompare(lvCommunity, "count", 4)
 
             // get the "Bearz" group at index 1
             var bearzGroupTokenDelegate = findChild(lvCommunity, "manageTokensGroupDelegate-1")

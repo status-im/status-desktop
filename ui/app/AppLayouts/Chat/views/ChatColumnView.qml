@@ -45,6 +45,7 @@ Item {
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
+    property bool permissionUpdatePending: false
     property bool viewAndPostPermissionsSatisfied: true
     property var viewAndPostHoldingsModel
 
@@ -258,6 +259,7 @@ Item {
                                  && root.rootStore.sectionDetails.joined
                                  && !root.rootStore.sectionDetails.amIBanned
                                  && root.rootStore.isUserAllowedToSendMessage
+                                 && !root.permissionUpdatePending
                     }
 
                     store: root.rootStore
@@ -277,8 +279,11 @@ Item {
                             if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned) {
                                 return qsTr("You need to join this community to send messages")
                             }
+                            if (root.permissionUpdatePending) {
+                                return qsTr("Some permissions are being updated. You will be able to send messages once the control node is back online.")
+                            }
                             if (!root.viewAndPostPermissionsSatisfied) {
-                                return qsTr("Sorry, you don't have the tokens needed to post in this channel.")
+                                return qsTr("Sorry, you don't have permissions to post in this channel.")
                             }
                             return root.rootStore.chatInputPlaceHolderText
                         } else {

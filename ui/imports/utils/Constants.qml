@@ -424,8 +424,6 @@ QtObject {
     readonly property QtObject memberRole: QtObject{
         readonly property int none: 0
         readonly property int owner: 1
-        readonly property int manageUsers: 2
-        readonly property int moderateContent: 3
         readonly property int admin: 4
         readonly property int tokenMaster: 5
     }
@@ -704,7 +702,6 @@ QtObject {
         readonly property int telegram: 6
     }
 
-    readonly property int maxNumOfSocialLinks: 20
     readonly property int maxSocialLinkTextLength: 24
 
     readonly property QtObject localPairingEventType: QtObject {
@@ -1009,6 +1006,7 @@ QtObject {
         StickersBuy,
         Bridge,
         ERC721Transfer,
+        ERC1155Transfer,
         Unknown
     }
 
@@ -1228,7 +1226,8 @@ QtObject {
         BannedPending,
         UnbannedPending,
         KickedPending,
-        AwaitingAddress
+        AwaitingAddress,
+        Unbanned
     }
 
     readonly property QtObject walletAccountColors: QtObject {

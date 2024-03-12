@@ -143,29 +143,14 @@ Pane {
         }
     }
 
-    // TODO a popup here instead of buttons
     Component {
         id: btnAcceptContactRequestComponent
-        ColumnLayout {
-            spacing: Style.current.halfPadding
-
-            StatusBaseText {
-                color: Theme.palette.baseColor1
-                font.pixelSize: 13
-                text: qsTr("Review contact request")
-            }
-
-            AcceptRejectOptionsButtonsPanel {
-                menuButton.visible: false
-                onAcceptClicked: {
-                    root.contactsStore.acceptContactRequest(root.publicKey, "")
-                    d.reload()
-                }
-                onDeclineClicked: {
-                    root.contactsStore.dismissContactRequest(root.publicKey)
-                    d.reload()
-                }
-            }
+        StatusButton {
+            objectName: "profileDialog_reviewContactRequestButton"
+            size: StatusButton.Size.Small
+            text: qsTr("Review contact request")
+            onClicked: Global.openReviewContactRequestPopup(root.publicKey, d.contactDetails,
+                                                            popup => popup.closed.connect(d.reload))
         }
     }
 
@@ -175,7 +160,8 @@ Pane {
             objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Send contact request")
-            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails, null)
+            onClicked: Global.openContactRequestPopup(root.publicKey, d.contactDetails,
+                                                      popup => popup.accepted.connect(d.reload))
         }
     }
 
@@ -218,26 +204,14 @@ Pane {
     }
 
     Component {
-        id: txtRejectedContactRequestComponent
-        StatusBaseText {
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Theme.palette.baseColor1
-            verticalAlignment: Text.AlignVCenter
-            text: qsTr("Contact Request Rejected")
-        }
-    }
-
-    Component {
-        id: btnRespondToIdRequestComponent
-        StatusButton {
+        id: btnReplyToIdRequestComponent
+        StatusFlatButton {
             size: StatusButton.Size.Small
-            text: qsTr("Respond to ID verification request")
+            text: qsTr("Reply to ID verification request")
             objectName: "respondToIDRequest_StatusItem"
-            onClicked: {
-                Global.openIncomingIDRequestPopup(root.publicKey,
-                                                  popup => popup.closed.connect(d.reload))
-            }
+            icon.name: "checkmark-circle"
+            onClicked: Global.openIncomingIDRequestPopup(root.publicKey, d.contactDetails,
+                                                         popup => popup.closed.connect(d.reload))
         }
     }
 
@@ -246,14 +220,22 @@ Pane {
         StatusFlatButton {
             size: StatusButton.Size.Small
             text: qsTr("Request ID verification")
+            objectName: "requestIDVerification_StatusItem"
             icon.name: "checkmark-circle"
-            enabled: d.isContact && !d.isBlocked && !d.isLocallyTrusted &&
-                     d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
-                     !d.isVerificationRequestReceived
-            onClicked: {
-                Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
-                                              popup => popup.accepted.connect(d.reload))
-            }
+            onClicked: Global.openSendIDRequestPopup(root.publicKey, d.contactDetails,
+                                                     popup => popup.accepted.connect(d.reload))
+        }
+    }
+
+    Component {
+        id: btnReviewIDVerificationReply
+        StatusFlatButton {
+            size: StatusButton.Size.Small
+            text: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? qsTr("ID verification pending")
+                                                                                         : qsTr("Review ID verification reply")
+            icon.name: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? "history" : "checkmark-circle"
+            onClicked: Global.openOutgoingIDRequestPopup(root.publicKey, d.contactDetails,
+                                                         popup => popup.closed.connect(d.reload))
         }
     }
 
@@ -314,6 +296,7 @@ Pane {
 
             Item { Layout.fillWidth: true }
 
+            // secondary action button
             Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
@@ -321,13 +304,18 @@ Pane {
                     if (d.isCurrentUser && !root.readOnly)
                         return btnShareProfile
 
-                    if (d.isContact && !d.isBlocked && !d.isLocallyTrusted &&
-                            d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
-                            !d.isVerificationRequestReceived)
-                        return btnRequestIDVerification
+                    if (d.isContact && !(d.isTrusted || d.isLocallyTrusted) && !d.isBlocked) {
+                        if (d.isVerificationRequestSent)
+                            return btnReviewIDVerificationReply
+                        else if (d.isVerificationRequestReceived)
+                            return btnReplyToIdRequestComponent
+                        else if (d.outgoingVerificationStatus === Constants.verificationStatus.unverified)
+                            return btnRequestIDVerification
+                    }
                 }
             }
 
+            // primary action button
             Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
@@ -365,10 +353,8 @@ Pane {
                     case Constants.ContactRequestState.Received:
                         break // handled above
                     case Constants.ContactRequestState.Mutual: {
-                        if (d.incomingVerificationStatus === Constants.verificationStatus.declined) {
+                        if (d.outgoingVerificationStatus === Constants.verificationStatus.declined) {
                             return btnBlockUserComponent
-                        } else if (!d.isTrusted && d.isVerificationRequestReceived) {
-                            return btnRespondToIdRequestComponent
                         }
                         break
                     }
@@ -413,19 +399,11 @@ Pane {
                                                                       popup => popup.accepted.connect(d.reload))
                     }
                     StatusAction {
-                        text: qsTr("Review ID verification reply")
-                        icon.name: "checkmark-circle"
-                        enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
-                        onTriggered: {
-                            Global.openOutgoingIDRequestPopup(root.publicKey,
-                                                              popup => popup.closed.connect(d.reload))
-                        }
-                    }
-                    StatusAction {
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
                         onTriggered: {
-                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails)
+                            Global.openNicknamePopupRequested(root.publicKey, d.contactDetails,
+                                                              popup => popup.closed.connect(d.reload))
                         }
                     }
                     StatusAction {
@@ -450,7 +428,7 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && (d.isTrusted || d.isLocallyTrusted)
                         onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, d.contactDetails,
-                                                                           popup => popup.closed.connect(d.reload))
+                                                                           popup => popup.accepted.connect(d.reload))
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")
@@ -467,6 +445,13 @@ Pane {
                         onTriggered: {
                             Global.markAsUntrustedRequested(root.publicKey, d.contactDetails)
                         }
+                    }
+                    StatusAction {
+                        text: qsTr("Cancel ID verification request")
+                        icon.name: "delete"
+                        type: StatusAction.Type.Danger
+                        enabled: d.isContact && !d.isBlocked && d.isVerificationRequestSent
+                        onTriggered: root.contactsStore.cancelVerificationRequest(root.publicKey)
                     }
                     StatusAction {
                         text: qsTr("Remove untrusted mark")
@@ -595,16 +580,6 @@ Pane {
                 width: scrollView.availableWidth
                 spacing: 20
 
-                // TODO own tab in Showcase
-                // ProfileBioSocialsPanel {
-                //     Layout.fillWidth: true
-                //     Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
-                //     Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
-                //     bio: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
-                //     userSocialLinksJson: root.readOnly ? root.profileStore.temporarySocialLinksJson
-                //                                        : d.contactDetails.socialLinks
-                // }
-
                 StatusTabBar {
                     id: showcaseTabBar
                     Layout.fillWidth: true
@@ -624,10 +599,10 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Collectibles")
                     }
-                    StatusTabButton {
-                        width: implicitWidth
-                        text: qsTr("Assets")
-                    }
+                    // StatusTabButton {
+                    //     width: implicitWidth
+                    //     text: qsTr("Assets")
+                    // }
                 }
 
                 // Profile Showcase

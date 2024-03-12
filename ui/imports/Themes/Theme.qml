@@ -102,6 +102,7 @@ QtObject {
 
     property int additionalTextSize: 13
 
+    property int secondaryAdditionalTextSize: 17
     property int primaryTextFontSize: 15
     property int secondaryTextFontSize: 14
     property int tertiaryTextFontSize: 12

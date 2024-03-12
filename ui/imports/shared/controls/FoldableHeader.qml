@@ -12,6 +12,7 @@ Rectangle {
     property alias title: label.text
     property alias switchText: modeSwitch.text
     property alias checked: modeSwitch.checked
+    property Component rightAdditionalComponent
 
     signal toggleFolding
     signal toggleSwitch
@@ -59,6 +60,9 @@ Rectangle {
             textColor: Theme.palette.baseColor1
             font.pixelSize: 13
             onToggled: root.toggleSwitch()
+        }
+        Loader {
+            sourceComponent: root.rightAdditionalComponent
         }
     }
 }

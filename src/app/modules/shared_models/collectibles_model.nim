@@ -3,8 +3,6 @@ import logging
 
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles
-import app_service/common/utils as common_utils
-import app_service/common/types
 
 type
   CollectibleRole* {.pure.} = enum
@@ -27,6 +25,7 @@ type
     CommunityName
     CommunityColor
     CommunityPrivilegesLevel
+    TokenType
 
 QtObject:
   type
@@ -147,6 +146,7 @@ QtObject:
       CollectibleRole.CommunityName.int:"communityName",
       CollectibleRole.CommunityColor.int:"communityColor",
       CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
+      CollectibleRole.TokenType.int:"tokenType",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -197,6 +197,8 @@ QtObject:
         result = newQVariant(item.getCommunityColor())
       of CollectibleRole.CommunityPrivilegesLevel:
         result = newQVariant(item.getCommunityPrivilegesLevel())
+      of CollectibleRole.TokenType:
+        result = newQVariant(item.getTokenType())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -269,7 +271,7 @@ QtObject:
 
     var newTable = initTable[string, int](len(newItems))
     for i in 0 ..< len(newItems):
-      newTable.add(newItems[i].getIDAsString(), i)
+      newTable[newItems[i].getIDAsString()] = i
 
     # Needs to be built in sequential index order
     var oldIndicesToRemove: seq[int] = @[]

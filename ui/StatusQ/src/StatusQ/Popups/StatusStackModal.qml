@@ -45,7 +45,7 @@ StatusModal {
 
     property Item finishButton: StatusButton {
         text: qsTr("Finish")
-        onClicked: root.close()
+        onClicked: root.closeHandler()
     }
 
     function replace(item) { replaceItem = item; }
@@ -127,7 +127,7 @@ StatusModal {
                 onItemChanged: {
                     root.rightButtons = item ? item.rightButtons : [ nextButton, finishButton ]
                     if (!item && root.itemsCount == 0) {
-                        root.close();
+                        root.closeHandler();
                     }
                 }
             }

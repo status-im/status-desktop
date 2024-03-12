@@ -23,71 +23,138 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    Popups {
-        popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: CommunityTokensStore {}
-    }
-
     ListModel {
-        id: emptyModel
-    }
-
-    ListModel {
-        id: collectiblesModel
-
+        id: hiddenModelItem
         readonly property var data: [
             {
-                uid: "123",
-                name: "SNT",
+                showcaseKey: "1234",
+                name: "SNTT",
                 collectionName: "Super Nitro Toluen (with pink bg)",
                 backgroundColor: "pink",
                 imageUrl: ModelsData.collectibles.custom,
                 isLoading: false,
-                communityId: "ddls"
+                communityId: "ddls",
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                uid: "34545656768",
-                name: "Kitty 1",
+                showcaseKey: "3454565676",
+                name: "Kitty 3",
                 collectionName: "Kitties",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
-                isLoading: false
+                isLoading: false,
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                uid: "123456",
-                name: "Kitty 2",
+                showcaseKey: "12345",
+                name: "Kitty 4",
                 collectionName: "",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty2Big,
                 isLoading: false,
-                communityId: "sox"
+                communityId: "sox",
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                uid: "12345645459537432",
+                showcaseKey: "123456454595374",
                 name: "",
                 collectionName: "Super Kitties",
                 backgroundColor: "oink",
                 imageUrl: ModelsData.collectibles.kitty3Big,
                 isLoading: false,
-                communityId: "ast"
+                communityId: "ast",
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                uid: "691",
+                showcaseKey: "6912",
                 name: "KILLABEAR",
                 collectionName: "KILLABEARS",
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
-                isLoading: true
+                isLoading: true,
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
             },
             {
-                uid: "8876",
+                showcaseKey: "8876",
                 name: "AIORBIT",
                 description: "",
                 collectionName: "AIORBIT (Animated SVG)",
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
-                isLoading: false
+                isLoading: false,
+                showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+            }
+        ]
+        Component.onCompleted: append(data)
+    }
+
+    ListModel {
+        id: inShowcaseModelItem
+
+        readonly property var data: [
+            {
+                uid: "123",
+                showcaseKey: "1234",
+                name: "SNT",
+                collectionName: "Super Nitro Toluen (with pink bg)",
+                backgroundColor: "pink",
+                imageUrl: ModelsData.collectibles.custom,
+                isLoading: false,
+                communityId: "ddls",
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            },
+            {
+                uid: "34545656768",
+                showcaseKey: "3454565676",
+                name: "Kitty 1",
+                collectionName: "Kitties",
+                backgroundColor: "",
+                imageUrl: ModelsData.collectibles.kitty1Big,
+                isLoading: false,
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            },
+            {
+                uid: "123456",
+                showcaseKey: "12345",
+                name: "Kitty 2",
+                collectionName: "",
+                backgroundColor: "",
+                imageUrl: ModelsData.collectibles.kitty2Big,
+                isLoading: false,
+                communityId: "sox",
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            },
+            {
+                uid: "12345645459537432",
+                showcaseKey: "123456454595374",
+                name: "",
+                collectionName: "Super Kitties",
+                backgroundColor: "oink",
+                imageUrl: ModelsData.collectibles.kitty3Big,
+                isLoading: false,
+                communityId: "ast",
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            },
+            {
+                uid: "691",
+                showcaseKey: "6912",
+                name: "KILLABEAR",
+                collectionName: "KILLABEARS",
+                backgroundColor: "#807c56",
+                imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
+                isLoading: true,
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+            },
+            {
+                uid: "8876",
+                showcaseKey: "8876",
+                name: "AIORBIT",
+                description: "",
+                collectionName: "AIORBIT (Animated SVG)",
+                backgroundColor: "",
+                imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
+                isLoading: false,
+                showcaseVisibility: Constants.ShowcaseVisibility.Everyone
             }
         ]
         Component.onCompleted: append(data)
@@ -117,63 +184,38 @@ SplitView {
     }
 
     LeftJoinModel {
-        id: leftJoinModel
+        id: joinedInShowcase
 
-        leftModel: collectiblesModel
+        leftModel: inShowcaseModelItem
         rightModel: communityModel
 
         joinRole: "communityId"
     }
 
     ListModel {
-        id: inShowcaseCollectiblesModel
-
-        property int hiddenCount: emptyModelChecker.checked ? 0 : collectiblesModel.count - count
-
-        signal baseModelFilterConditionsMayHaveChanged()
-
-        function setVisibilityByIndex(index, visibility) {
-            if (visibility === Constants.ShowcaseVisibility.NoOne) {
-                remove(index)
-            } else {
-                get(index).showcaseVisibility = visibility
-            }
-        }
-
-        function setVisibility(uid, visibility) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).uid === uid) {
-                    setVisibilityByIndex(i, visibility)
-                }
-            }
-        }
-
-        function hasItemInShowcase(uid) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).uid === uid) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        function upsertItemJson(item) {
-            append(JSON.parse(item))
-        }
+        id: emptyModelItem
     }
 
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    LeftJoinModel {
+        id: joinedHiddenModel
+
+        leftModel: hiddenModelItem
+        rightModel: communityModel
+
+        joinRole: "communityId"
+    }
+
+    ProfileShowcaseCollectiblesPanel {
+        id: showcasePanel
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
-        ProfileShowcaseCollectiblesPanel {
-            id: showcasePanel
-            width: 500
-            baseModel: emptyModelChecker.checked ? emptyModel : leftJoinModel
-            showcaseModel: inShowcaseCollectiblesModel
-            addAccountsButtonVisible: !hasAllAccountsChecker.checked
+        inShowcaseModel: emptyModelChecker.checked ? emptyModelItem : joinedInShowcase
+        hiddenModel: emptyModelChecker.checked ? emptyModelItem : joinedHiddenModel
+        showcaseLimit: 8
 
-            onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseCollectiblesPanel::onNavigateToAccountsTab")
-        }
+        addAccountsButtonVisible: !hasAllAccountsChecker.checked
+
+        onNavigateToAccountsTab: logs.logEvent("ProfileShowcaseCollectiblesPanel::onNavigateToAccountsTab")
     }
 
     LogsAndControlsPanel {
@@ -185,12 +227,10 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            Button {
-                text: "Reset (clear settings)"
-
-                onClicked: showcasePanel.settings.reset()
+            Label {
+                text: "ⓘ Showcase interaction implemented in ProfileShowcasePanelPage"
             }
-
+            
             CheckBox {
                 id: hasAllAccountsChecker
 
@@ -203,10 +243,7 @@ SplitView {
 
                 text: "Empty model"
                 checked: false
-
-                onClicked: showcasePanel.reset()
             }
-
         }
     }
 }

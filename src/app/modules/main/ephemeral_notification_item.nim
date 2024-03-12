@@ -6,6 +6,14 @@ type
     Success
     Danger
 
+type EphemeralActionType* {.pure} = enum
+  None = 0
+  NavigateToCommunityAdmin
+  OpenFinaliseOwnershipPopup
+  OpenSendModalPopup
+  ViewTransactionDetails
+  OpenFirstCommunityTokenPopup
+
 type
   Item* = object
     id: int64
@@ -19,7 +27,7 @@ type
     loading: bool
     ephNotifType: EphemeralNotificationType
     url: string
-    actionType: int
+    actionType: EphemeralActionType
     actionData: string
     details: NotificationDetails
 
@@ -33,7 +41,7 @@ proc initItem*(id: int64,
     loading = false,
     ephNotifType = EphemeralNotificationType.Default,
     url = "",
-    actionType = 0, # It means, no action enabled
+    actionType = EphemeralActionType.None, # It means, no action enabled
     actionData = "",
     details: NotificationDetails): Item =
   result = Item()
@@ -63,7 +71,7 @@ proc title*(self: Item): string =
 
 proc durationInMs*(self: Item): int =
   self.durationInMs
-  
+
 proc subTitle*(self: Item): string =
   self.subTitle
 
@@ -85,7 +93,7 @@ proc ephNotifType*(self: Item): EphemeralNotificationType =
 proc url*(self: Item): string =
   self.url
 
-proc actionType*(self: Item): int =
+proc actionType*(self: Item): EphemeralActionType =
   self.actionType
 
 proc actionData*(self: Item): string =

@@ -16,6 +16,8 @@ import utils 1.0
   * position, second one containing hidden items.
   */
 QObject {
+    id: root
+
     property alias sourceModel: joined.leftModel
     property alias showcaseModel: joined.rightModel
 
@@ -31,6 +33,21 @@ QObject {
       */
     readonly property alias hiddenModel: hidden
 
+    /**
+      * Returns dirty state of the showcase model.
+      */
+    readonly property bool dirty: writable.dirty
+
+    /**
+      * It sets up a searcher filter on top of both the visible and hidden models.
+      */
+    property FastExpressionFilter searcherFilter
+
+    function revert() {
+        visible.syncOrder()
+        writable.revert()
+    }
+
     function currentState() {
         return writable.currentState()
     }
@@ -39,8 +56,20 @@ QObject {
         writable.setVisibility(key, visibility)
     }
 
-    function changePosition(key, to) {
-        writable.changePosition(key, to)
+    function changePosition(from, to) {
+        visible.move(from, to)
+
+        // Sync writable with movable new positions:
+        const newOrder = visible.order()
+        let writableIndexes = []
+
+        for (var i = 0; i < newOrder.length; i++) {
+            writableIndexes.push(visibleSFPM.mapToSource(newOrder[i]))
+        }
+
+        for (var j = 0; j < newOrder.length; j++) {
+            writable.set(writableIndexes[j], { "showcasePosition": j})
+        }
     }
 
     // internals, debug purpose only
@@ -49,11 +78,11 @@ QObject {
 
     component HiddenFilter: AnyOf {
         UndefinedFilter {
-            roleName: "visibility"
+            roleName: "showcaseVisibility"
         }
 
         ValueFilter {
-            roleName: "visibility"
+            roleName: "showcaseVisibility"
             value: Constants.ShowcaseVisibility.NoOne
         }
     }
@@ -61,7 +90,7 @@ QObject {
     LeftJoinModel {
         id: joined
 
-        joinRole: "key"
+        joinRole: "showcaseKey"
     }
 
     VisibilityAndPositionDirtyStateModel {
@@ -72,19 +101,41 @@ QObject {
     }
 
     SortFilterProxyModel {
-        id: visible
+        id: visibleSFPM
 
         sourceModel: writable
         delayed: true
 
         filters: HiddenFilter { inverted: true }
-        sorters: RoleSorter { roleName: "position" }
+        sorters: RoleSorter { roleName: "showcasePosition" }
+    }
+
+    SortFilterProxyModel {
+        id: searcherVisibleSFPM
+
+        sourceModel: visibleSFPM
+        delayed: true
+        filters: root.searcherFilter
+    }
+
+    MovableModel {
+        id: visible
+
+        sourceModel: searcherVisibleSFPM
+    }
+
+    SortFilterProxyModel {
+        id: searcherHiddenSFPM
+
+        sourceModel: writable
+        delayed: true
+        filters: root.searcherFilter
     }
 
     SortFilterProxyModel {
         id: hidden
 
-        sourceModel: writable
+        sourceModel: searcherHiddenSFPM
         delayed: true
 
         filters: HiddenFilter {}

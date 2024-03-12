@@ -15,10 +15,9 @@ StatusListView {
     property bool footerContentVisible: true
     property Component additionalFooterComponent
 
-    // TO BE REMOVE: #13498
-    property bool empty: root.model && root.count === 0
-
     ScrollBar.vertical: null
+    footerPositioning: ListView.PullBackFooter
+
 
     footer: ColumnLayout {
         width: root.width
@@ -27,7 +26,7 @@ StatusListView {
             Layout.preferredHeight: root.footerHeight
             Layout.fillWidth: true
 
-            visible: root.empty// TO BE REPLACE root.empty in (#13498):  root.empty = root.model && root.count === 0
+            visible: root.model && root.count === 0
 
             ShapeRectangle {
                 id: shapeRectangle

@@ -102,7 +102,7 @@ Item {
                 id: accountName
                 objectName: "AddAccountPopup-AccountName"
                 anchors.horizontalCenter: parent.horizontalCenter
-                placeholderText: qsTr("Enter an account name...")
+                placeholderText: qsTr("Account name")
                 label: qsTr("Name")
                 charLimit: 20
                 text: root.store.addAccountModule.accountName

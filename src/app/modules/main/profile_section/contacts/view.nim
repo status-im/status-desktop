@@ -143,6 +143,9 @@ QtObject:
   proc dismissContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
     self.delegate.dismissContactRequest(publicKey, contactRequestId)
 
+  proc getLatestContactRequestForContactAsJson*(self: View, publicKey: string): string {.slot.} =
+    self.delegate.getLatestContactRequestForContactAsJson(publicKey)
+
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
     self.delegate.changeContactNickname(publicKey, nickname)
 
@@ -154,6 +157,9 @@ QtObject:
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
+
+  proc markAsTrusted*(self: View, publicKey: string) {.slot.} =
+    self.delegate.markAsTrusted(publicKey)
 
   proc markUntrustworthy*(self: View, publicKey: string) {.slot.} =
     self.delegate.markUntrustworthy(publicKey)

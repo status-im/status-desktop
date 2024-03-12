@@ -6,10 +6,14 @@ import internal/[state, state_factory]
 import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
-import constants as main_constants
 import app/global/global_singleton
-import app/global/app_translatable_constants as atc
 import app/core/eventemitter
+
+import constants as main_constants
+import app/global/app_translatable_constants as atc
+
+const dummyUsage = main_constants.IS_MACOS # dummy usage to prevent false-alarm warning
+const dummyUsage2 = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER # dummy usage to prevent false-alarm warning
 
 import app_service/service/keychain/service as keychain_service
 import app_service/service/accounts/service as accounts_service

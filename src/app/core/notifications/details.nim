@@ -23,7 +23,10 @@ type
     CommunityTokenPermissionDeleted,
     CommunityTokenPermissionCreationFailed,
     CommunityTokenPermissionUpdateFailed,
-    CommunityTokenPermissionDeletionFailed
+    CommunityTokenPermissionDeletionFailed,
+    CommunityMemberKicked,
+    CommunityMemberBanned,
+    CommunityMemberUnbanned
 
   NotificationDetails* = object
     notificationType*: NotificationType # the default value is `UnknownNotification`
@@ -41,14 +44,14 @@ proc isEmpty*(self: NotificationDetails): bool =
 
 proc toNotificationDetails*(jsonObj: JsonNode): NotificationDetails =
   var notificationType: int
-  if (not (jsonObj.getProp("notificationType", notificationType) and 
+  if (not (jsonObj.getProp("notificationType", notificationType) and
     jsonObj.getProp("sectionId", result.sectionId) and
-    jsonObj.getProp("isCommunitySection", result.isCommunitySection) and 
-    jsonObj.getProp("sectionActive", result.sectionActive) and 
-    jsonObj.getProp("chatId", result.chatId) and 
-    jsonObj.getProp("chatActive", result.chatActive) and 
-    jsonObj.getProp("isOneToOne", result.isOneToOne) and 
-    jsonObj.getProp("isGroupChat", result.isGroupChat) and 
+    jsonObj.getProp("isCommunitySection", result.isCommunitySection) and
+    jsonObj.getProp("sectionActive", result.sectionActive) and
+    jsonObj.getProp("chatId", result.chatId) and
+    jsonObj.getProp("chatActive", result.chatActive) and
+    jsonObj.getProp("isOneToOne", result.isOneToOne) and
+    jsonObj.getProp("isGroupChat", result.isGroupChat) and
     jsonObj.getProp("messageId", result.messageId))):
     return NotificationDetails()
 

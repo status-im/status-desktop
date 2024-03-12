@@ -19,7 +19,6 @@ import ../../../../app_service/service/shared_urls/service as shared_urls_servic
 import backend/collectibles as backend_collectibles
 
 import ../../../core/signals/types
-import ../../../global/app_signals
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 

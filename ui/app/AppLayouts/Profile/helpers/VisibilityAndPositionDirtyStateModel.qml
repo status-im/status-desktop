@@ -23,9 +23,9 @@ WritableProxyModel {
     /* Provides the list of objects representing the current state in the
      * in the following format:
      * [ {
-     *     key: <string or integer>
-     *     position: <integer>
-     *     visibility: <integer>
+     *     showcaseKey: <string or integer>
+     *     showcasePosition: <integer>
+     *     showcaseVisibility: <integer>
      *   }
      * ]
      *
@@ -33,9 +33,9 @@ WritableProxyModel {
      */
     function currentState() {
         const visible = d.getVisibleEntries()
-        const minPos = Math.min(...visible.map(e => e.position))
+        const minPos = Math.min(...visible.map(e => e.showcasePosition))
 
-        return visible.map(e => { e.position -= minPos; return e })
+        return visible.map(e => { e.showcasePosition -= minPos; return e })
     }
 
     /* Sets the visibility of the given item. If the element was hidden, it is
@@ -49,68 +49,42 @@ WritableProxyModel {
             return
 
         // hiding, changing visibility level
-        if (visibility === visibilityHidden
-                || oldVisibility !== visibilityHidden) {
-            set(sourceIdx, { visibility: visibility })
+        if (visibility === visibilityHidden) {
+            set(sourceIdx, { showcaseVisibility: undefined, showcasePosition: undefined})
             return
         }
 
-        // unhiding
-        const positions = d.getVisibleEntries().map(e => e.position)
-        const position = Math.max(-1, ...positions) + 1
-        set(sourceIdx, { visibility, position })
+        if (oldVisibility === visibilityHidden || oldVisibility === undefined) {
+            // unhiding
+            const positions = d.getVisibleEntries().map(e => e.showcasePosition)
+            const position = Math.max(-1, ...positions) + 1
+            set(sourceIdx, { showcaseVisibility: visibility, showcasePosition: position })
+            return
+        }
+
+        // changing visibility level
+        set(sourceIdx, { showcaseVisibility: visibility })
     }
 
-    /* Sets the position of the item. The "to" parameter is expected to be
-     * a target index in the list and must be in range [0; count - 1].
-     */
-    function changePosition(key, to) {
-        const visible = d.getVisibleEntries()
-        visible.sort((a, b) => a.position - b.position)
-
-        const idx = visible.findIndex(item => item.key === key)
-
-        if (idx === -1) {
-            console.warn(`Entry with key ${key} not found`)
-            return
-        }
-
-        const count = visible.length
-
-        if (to < 0 || to >= count) {
-            console.warn(`Destination position out of range: ${to}`)
-            return
-        }
-
-        // swap
-        [visible[idx], visible[to]] = [visible[to], visible[idx]]
-
-        visible.forEach((e, i) => {
-            if (e.position === i)
-                return
-
-            const idx = d.indexByKey(e.key)
-            set(idx, { position: i })
-        })
-    }
+    syncedRemovals: true
 
     readonly property QtObject d_: QtObject {
         id: d
 
         function indexByKey(key) {
-            return ModelUtils.indexOf(root, "key", key)
+            return ModelUtils.indexOf(root, "showcaseKey", key)
         }
 
         function getVisibleEntries() {
-            const roles = ["key", "position", "visibility"]
+            const roles = ["showcaseKey", "showcasePosition", "showcaseVisibility"]
             const keysAndPos = ModelUtils.modelToArray(root, roles)
 
-            return keysAndPos.filter(p => p.visibility
-                                     && p.visibility !== root.visibilityHidden)
+            return keysAndPos.filter(p => p.showcaseVisibility
+                                     && p.showcaseVisibility !== root.visibilityHidden)
         }
 
         function getVisibility(idx) {
-            return ModelUtils.get(root, idx, "visibility")
+            return ModelUtils.get(root, idx, "showcaseVisibility")
                     || root.visibilityHidden
         }
     }

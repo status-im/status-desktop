@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, strutils, sugar
+import NimQml, strutils
 
 import app/global/global_singleton
 import app/core/eventemitter

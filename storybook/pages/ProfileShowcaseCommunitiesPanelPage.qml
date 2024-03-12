@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as CoreUtils
 
-import mainui 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Profile.controls 1.0
 import shared.stores 1.0
@@ -22,106 +21,115 @@ SplitView {
 
     orientation: Qt.Vertical
 
-    Popups {
-        popupParent: root
-        rootStore: QtObject {}
-        communityTokensStore: CommunityTokensStore {}
+    ListModel {
+        id: hiddenModelItem
+        Component.onCompleted:
+            append([{
+                        showcaseKey: "0x0006",
+                        name: "Test community 6",
+                        joined: true,
+                        memberRole: Constants.memberRole.owner,
+                        isControlNode: true,
+                        image: ModelsData.icons.dribble,
+                        color: "yellow",
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                    },
+                    {
+                        showcaseKey: "0x0007",
+                        name: "Test community 7",
+                        joined: true,
+                        memberRole: Constants.memberRole.none,
+                        isControlNode: false,
+                        image: ModelsData.collectibles.custom,
+                        color: "peach",
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                    },
+                    {
+                        showcaseKey: "0x0008",
+                        name: "Test community 8",
+                        joined: true,
+                        memberRole: Constants.memberRole.none,
+                        isControlNode: false,
+                        image: "",
+                        color: "whitesmoke",
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                    },
+                    {
+                        showcaseKey: "0x0009",
+                        name: "Test community 9",
+                        joined: true,
+                        memberRole: Constants.memberRole.admin,
+                        isControlNode: false,
+                        image: ModelsData.icons.spotify,
+                        color: "green",
+                        showcaseVisibility: Constants.ShowcaseVisibility.NoOne
+                    },
+                   ])
+    }
+
+    ListModel {
+        id: inShowcaseModelItem
+
+        Component.onCompleted:
+            append([{
+                        id: "0x0001",
+                        showcaseKey: "0x0001",
+                        name: "Test community",
+                        joined: true,
+                        memberRole: Constants.memberRole.owner,
+                        isControlNode: true,
+                        image: ModelsData.icons.dribble,
+                        color: "yellow",
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                    },
+                    {
+                        id: "0x0002",
+                        showcaseKey: "0x0002",
+                        name: "Test community 2",
+                        joined: true,
+                        memberRole: Constants.memberRole.none,
+                        isControlNode: false,
+                        image: ModelsData.collectibles.custom,
+                        color: "peach",
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                    },
+                    {
+                        id: "0x0004",
+                        showcaseKey: "0x0004",
+                        name: "Test community 3",
+                        joined: true,
+                        memberRole: Constants.memberRole.none,
+                        isControlNode: false,
+                        image: "",
+                        color: "whitesmoke",
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                    },
+                    {
+                        id: "0x0005",
+                        showcaseKey: "0x0005",
+                        name: "Test community 4",
+                        joined: true,
+                        memberRole: Constants.memberRole.admin,
+                        isControlNode: false,
+                        image: ModelsData.icons.spotify,
+                        color: "green",
+                        showcaseVisibility: Constants.ShowcaseVisibility.Everyone
+                    },
+                   ])
     }
 
     ListModel {
         id: emptyModel
     }
 
-    ListModel {
-        id: communitiesModel
-
-        Component.onCompleted:
-            append([{
-                        id: "0x0001",
-                        name: "Test community",
-                        joined: true,
-                        memberRole: Constants.memberRole.owner,
-                        isControlNode: true,
-                        image: ModelsData.icons.dribble,
-                        color: "yellow"
-                    },
-                    {
-                        id: "0x0002",
-                        name: "Test community 2",
-                        joined: true,
-                        memberRole: Constants.memberRole.none,
-                        isControlNode: false,
-                        image: ModelsData.collectibles.custom,
-                        color: "peach"
-                    },
-                    {
-                        id: "0x0004",
-                        name: "Test community 3",
-                        joined: true,
-                        memberRole: Constants.memberRole.none,
-                        isControlNode: false,
-                        image: "",
-                        color: "whitesmoke"
-                    },
-                    {
-                        id: "0x0005",
-                        name: "Test community 4",
-                        joined: true,
-                        memberRole: Constants.memberRole.admin,
-                        isControlNode: false,
-                        image: ModelsData.icons.spotify,
-                        color: "green"
-                    },
-                   ])
-    }
-
-    ListModel {
-        id: inShowcaseCommunitiesModel
-
-        property int hiddenCount: emptyModelChecker.checked ? 0 : communitiesModel.count - count
-
-        signal baseModelFilterConditionsMayHaveChanged()
-
-        function setVisibilityByIndex(index, visibility) {
-            if (visibility === Constants.ShowcaseVisibility.NoOne) {
-                remove(index)
-            } else {
-                get(index).showcaseVisibility = visibility
-            }
-        }
-
-        function setVisibility(id, visibility) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).id === id) {
-                    setVisibilityByIndex(i, visibility)
-                }
-            }
-        }
-
-        function hasItemInShowcase(id) {
-            for (let i = 0; i < count; ++i) {
-                if (get(i).id === id) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        function upsertItemJson(item) {
-            append(JSON.parse(item))
-        }
-    }
-
-    StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
+    ProfileShowcaseCommunitiesPanel {
+        id: showcasePanel
         SplitView.fillWidth: true
         SplitView.preferredHeight: 500
 
-        ProfileShowcaseCommunitiesPanel {
-            id: showcasePanel
-            width: 500
-            baseModel: emptyModelChecker.checked ? emptyModel : communitiesModel
-            showcaseModel: inShowcaseCommunitiesModel
-        }
+        inShowcaseModel: emptyModelChecker.checked ? emptyModel : inShowcaseModelItem
+        hiddenModel: emptyModelChecker.checked ? emptyModel : hiddenModelItem
+        showcaseLimit: 5
     }
 
     LogsAndControlsPanel {
@@ -133,9 +141,8 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            Button {
-                text: "Reset (clear settings)"
-                onClicked: showcasePanel.reset()
+            Label {
+                text: "ⓘ Showcase interaction implemented in ProfileShowcasePanelPage"
             }
 
             CheckBox {
@@ -143,11 +150,10 @@ SplitView {
 
                 text: "Empty model"
                 checked: false
-
-                onClicked: showcasePanel.reset()
             }
         }
     }
+
 }
 
 // category: Panels

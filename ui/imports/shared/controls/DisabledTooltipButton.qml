@@ -36,6 +36,7 @@ Item {
     StatusToolTip {
         id: tooltip
         visible: hoverHandler.hovered && !!text
+        offset: -(tooltip.x + tooltip.width/2 - root.width/2)
     }
 
     Component{

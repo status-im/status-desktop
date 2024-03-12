@@ -24,7 +24,8 @@ StatusStackModal {
     anchors.centerIn: parent
     padding: currentIndex === 0 ? 0 : Style.current.padding
 
-    headerSettings.title: qsTr("Add more links")
+    headerSettings.title: currentIndex === 0 ? qsTr("Add a link") :
+                                               qsTr("Add %1 link").arg(ProfileUtils.linkTypeToText(d.selectedLinkType) || qsTr("custom"))
     rightButtons: [finishButton]
     finishButton: StatusButton {
         text: qsTr("Add")
@@ -50,7 +51,7 @@ StatusStackModal {
 
         readonly property var staticLinkTypesModel: ListModel {
             readonly property var data: [
-                { type: Constants.socialLinkType.twitter, icon: "twitter", text: "__twitter" },
+                { type: Constants.socialLinkType.twitter, icon: "xtwitter", text: "__twitter" },
                 { type: Constants.socialLinkType.personalSite, icon: "language", text: "__personal_site" },
                 { type: Constants.socialLinkType.github, icon: "github", text: "__github" },
                 { type: Constants.socialLinkType.youtube, icon: "youtube", text: "__youtube" },
@@ -85,6 +86,7 @@ StatusStackModal {
                 title: ProfileUtils.linkTypeToText(model.type) || qsTr("Custom link")
                 asset.name: model.icon
                 asset.color: ProfileUtils.linkTypeColor(model.type)
+                asset.bgColor: ProfileUtils.linkTypeBgColor(model.type)
                 onClicked: {
                     customTitle.reset()
                     linkTarget.reset()
@@ -109,7 +111,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 visible: d.selectedLinkType === Constants.socialLinkType.custom
                 placeholderText: ""
-                label: qsTr("Add a title")
+                label: qsTr("Title")
                 linkType: Constants.socialLinkType.custom
                 icon: "language"
                 charLimit: Constants.maxSocialLinkTextLength
@@ -129,8 +131,8 @@ StatusStackModal {
                                                                       ProfileUtils.addSocialLinkPrefix(linkTarget.text, d.selectedLinkType))
                                   }
                         errorMessage: d.selectedLinkType === Constants.socialLinkType.custom?
-                                          qsTr("Name and link combination already added") :
-                                          qsTr("Link already added")
+                                          qsTr("Ttile and link combination already added") :
+                                          qsTr("Username already added")
                     }
                 ]
 
@@ -143,7 +145,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 Layout.topMargin: customTitle.visible ? Style.current.padding : 0
                 placeholderText: ""
-                label: ProfileUtils.linkTypeToDescription(linkType) || qsTr("Add your link")
+                label: linkType === Constants.socialLinkType.custom ? qsTr("Link") : qsTr("Username")
                 linkType: d.selectedLinkType
                 icon: d.selectedIcon
                 input.tabNavItem: customTitle.input.edit
@@ -163,8 +165,8 @@ StatusStackModal {
                                                                       ProfileUtils.addSocialLinkPrefix(value, d.selectedLinkType))
                                   }
                         errorMessage: d.selectedLinkType === Constants.socialLinkType.custom?
-                                          qsTr("Name and link combination already added") :
-                                          qsTr("Link already added")
+                                          qsTr("Title and link combination already added") :
+                                          qsTr("Username already added")
                     }
                 ]
 

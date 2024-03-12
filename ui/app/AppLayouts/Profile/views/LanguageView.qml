@@ -189,13 +189,12 @@ SettingsContentBase {
             sourceComponent: ConfirmationDialog {
                 headerSettings.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
-                confirmButtonLabel: qsTr("Close the app now")
+                confirmButtonLabel: qsTr("Restart")
                 onConfirmButtonClicked: {
                     languageConfirmationDialog.active = false
-                    Qt.quit()
+                    Utils.restartApplication()
                 }
             }
         }
     }
 }
-

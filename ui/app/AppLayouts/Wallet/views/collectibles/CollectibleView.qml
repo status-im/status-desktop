@@ -27,6 +27,7 @@ Control {
     property string communityId: ""
     property string communityName
     property string communityImage
+    property int balance: 1
 
     // Special Owner and TMaster token properties
     readonly property bool isCommunityCollectible: communityId !== ""
@@ -34,6 +35,11 @@ Control {
     readonly property bool isPrivilegedToken: (privilegesLevel === Constants.TokenPrivilegesLevel.Owner) ||
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
     property color ornamentColor // Relevant color for these special tokens (community color)
+
+    readonly property var d: QtObject {
+        id: d
+        readonly property bool unknownCommunityName: root.communityName.startsWith("0x") && root.communityId === root.communityName
+    }
 
     signal clicked
     signal rightClicked
@@ -60,6 +66,13 @@ Control {
         cursorShape: !root.isLoading ? Qt.PointingHandCursor : undefined
     }
 
+    property Component balanceTag: Component {
+        CollectibleBalanceTag {
+            visible: !root.isLoading && (root.balance > 1)
+            balance: root.balance
+        }
+    }   
+
     contentItem: ColumnLayout {
         spacing: 0
 
@@ -84,6 +97,13 @@ Control {
                 active: root.isLoading
                 sourceComponent: LoadingComponent {radius: image.radius}
             }
+
+            Loader {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: Style.current.halfPadding
+                sourceComponent: root.balanceTag
+            }
         }
 
         PrivilegedTokenArtworkPanel {
@@ -104,6 +124,13 @@ Control {
                 anchors.fill: parent
                 active: root.isLoading
                 sourceComponent: LoadingComponent {radius: image.radius}
+            }
+
+            Loader {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.margins: Style.current.halfPadding
+                sourceComponent: root.balanceTag
             }
         }
 
@@ -154,15 +181,15 @@ Control {
             Layout.leftMargin: Style.current.halfPadding
             Layout.rightMargin: Style.current.halfPadding
             Layout.maximumWidth: parent.width - Layout.leftMargin - Layout.rightMargin
-            text: root.communityName
-            asset.name: root.communityImage
+            communityName: root.communityName
+            communityId: root.communityId
+            communityImage: root.communityImage
             visible: root.isCommunityCollectible
             enabled: !root.isLoading
-            StatusToolTip {
-                text: qsTr("This token was minted by the %1 community").arg(root.communityName)
-                visible: parent.hovered
-            }
+            useLongTextDescription: false
+            
             TapHandler {
+                enabled: !d.unknownCommunityName
                 acceptedButtons: Qt.LeftButton
                 onSingleTapped: root.switchToCommunityRequested(root.communityId)
             }

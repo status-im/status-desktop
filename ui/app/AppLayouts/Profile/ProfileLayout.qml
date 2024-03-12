@@ -73,8 +73,6 @@ StatusSectionLayout {
     QtObject {
         id: d
 
-        readonly property int leftMargin: 64
-
         readonly property int contentWidth: 560
         readonly property int rightPanelWidth: 768
 
@@ -105,7 +103,7 @@ StatusSectionLayout {
         readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex].item : null
 
         anchors.fill: parent
-        anchors.leftMargin: d.leftMargin
+        anchors.leftMargin: Constants.settingsSection.leftMargin
 
         currentIndex: Global.settingsSubsection
 
@@ -307,6 +305,7 @@ StatusSectionLayout {
                 messagingStore: root.store.messagingStore
                 advancedStore: root.store.advancedStore
                 walletStore: root.store.walletStore
+                isFleetSelectionEnabled: fleetSelectionEnabled
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }

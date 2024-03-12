@@ -1,4 +1,4 @@
-import NimQml, strutils, logging, json, options, chronicles
+import NimQml, strutils, json, chronicles
 
 import backend/wallet as backend_wallet
 import backend/wallet_connect as backend_wallet_connect

@@ -44,7 +44,7 @@ method load*(
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getAppNetwork*(self: AccessInterface): NetworkDto =
+method getAppNetwork*(self: AccessInterface): NetworkDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAppNetworkChanged*(self: AccessInterface) {.base.} =

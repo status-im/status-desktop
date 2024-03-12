@@ -1,7 +1,6 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community_tokens/dto/community_token
 import app_service/common/types
 import ../../shared_models/section_item
 
@@ -33,6 +32,9 @@ method setCuratedCommunities*(self: AccessInterface, curatedCommunities: seq[Com
   raise newException(ValueError, "No implementation available")
 
 method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isDisplayNameDupeOfCommunityMember*(self: AccessInterface, displayName: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method navigateToCommunity*(self: AccessInterface, communityId: string) {.base.} =
@@ -258,4 +260,7 @@ method onCommunityMemberRevealedAccountsLoaded*(self: AccessInterface, community
   raise newException(ValueError, "No implementation available")
 
 method removeCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method promoteSelfToControlNode*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")

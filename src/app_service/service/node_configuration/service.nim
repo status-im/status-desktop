@@ -1,4 +1,4 @@
-import chronicles, strutils
+import chronicles
 
 import ./dto/node_config
 import ../settings/service as settings_service

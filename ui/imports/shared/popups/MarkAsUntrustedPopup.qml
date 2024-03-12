@@ -21,8 +21,6 @@ CommonContactDialog {
         id: d
         readonly property int outgoingVerificationStatus: contactDetails.verificationStatus
         readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
-        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying ||
-                                                              incomingVerificationStatus === Constants.verificationStatus.verified
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
     }
@@ -36,7 +34,7 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveIDVerification
-        visible: contactDetails.isContact && !d.isTrusted && d.isVerificationRequestReceived
+        visible: (contactDetails.isContact && d.isTrusted) || contactDetails.trustStatus === Constants.trustStatus.trusted
         checked: visible
         enabled: false
         text: qsTr("Remove ID verification")

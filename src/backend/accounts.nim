@@ -488,6 +488,14 @@ proc getProfileShowcasePreferences*(): RpcResponse[JsonNode] =
 proc setProfileShowcasePreferences*(preferences: JsonNode): RpcResponse[JsonNode] =
   result = callPrivateRPC("setProfileShowcasePreferences".prefix, preferences)
 
+proc getProfileShowcaseSocialLinksLimit*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  result = callPrivateRPC("getProfileShowcaseSocialLinksLimit".prefix, payload)
+
+proc getProfileShowcaseEntriesLimit*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  result = callPrivateRPC("getProfileShowcaseEntriesLimit".prefix, payload)
+
 proc addressWasShown*(address: string): RpcResponse[JsonNode] =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_addressWasShown", payload)

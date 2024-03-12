@@ -23,6 +23,8 @@ const eventActivityGetOldestTimestampDone*: string = "wallet-activity-get-oldest
 const eventActivityFetchTransactionDetails*: string = "wallet-activity-fetch-transaction-details-result"
 const eventActivityGetCollectiblesDone*: string = "wallet-activity-get-collectibles"
 
+const eventActivitySessionUpdated*: string = "wallet-activity-session-updated"
+
 type
   Period* = object
     startTimestamp*: int
@@ -62,6 +64,27 @@ type
     filterOutAssets*: bool
     filterOutCollectibles*: bool
 
+proc `$`*(p: Period): string =
+  if p.startTimestamp == noLimitTimestampForPeriod and p.endTimestamp == noLimitTimestampForPeriod:
+    return "Period(UNLIMITED)"
+
+  return fmt"""Period(
+    startTimestamp: {p.startTimestamp},
+    endTimestamp: {p.endTimestamp}
+  )"""
+
+proc `$`*(t: ActivityFilter): string =
+  return fmt"""ActivityFilter(
+    period: {t.period},
+    types: {t.types},
+    statuses: {t.statuses},
+    counterpartyAddresses: {t.counterpartyAddresses},
+    assets: {t.assets},
+    collectibles: {t.collectibles},
+    filterOutAssets: {t.filterOutAssets},
+    filterOutCollectibles: {t.filterOutCollectibles}
+  )"""
+
 proc toJson[T](obj: Option[T]): JsonNode =
   if obj.isSome:
     toJson(obj.get())
@@ -73,6 +96,17 @@ proc fromJson[T](jsonObj: JsonNode, TT: typedesc[Option[T]]): Option[T] =
     return some(to(jsonObj, T))
   else:
     return none(T)
+
+proc fromJson[T](jsonObj: JsonNode, TT: typedesc[seq[T]]): seq[T] =
+  if jsonObj.kind != JArray:
+    error "Expected array, got: ", jsonObj.kind
+    return @[]
+
+  result = newSeq[T](jsonObj.len)
+  for i, elem in jsonObj.getElems():
+    result[i] = fromJson(elem, T)
+
+  return result
 
 proc `%`*(at: ActivityType): JsonNode {.inline.} =
   return newJInt(ord(at))
@@ -241,8 +275,6 @@ proc `$`*(pt: ProtocolType): string {.inline.} =
       return "Hop"
     of Uniswap:
       return "Uniswap"
-    else:
-      return ""
 
 # Mirrors status-go/services/wallet/activity/activity.go TransferType
 type
@@ -286,6 +318,7 @@ type
     transferType*: Option[TransferType]
 
     communityId*: Option[string]
+    isNew*: bool
 
   # Mirrors status-go/services/wallet/activity/activity.go EntryData
   Data* = object
@@ -312,6 +345,8 @@ type
     chainIdIn*: Option[ChainId]
     transferType*: Option[TransferType]
 
+    isNew*: bool
+
     nftName*: Option[string]
     nftUrl*: Option[string]
 
@@ -329,6 +364,18 @@ type
     offset*: int
     hasMore*: bool
     errorCode*: ErrorCode
+
+
+  # Mirrors services/wallet/activity/session.go EntryUpdate
+  EntryUpdate* = object
+    pos*: int
+    entry*: ActivityEntry
+
+  # Mirrors services/wallet/activity/session.go SessionUpdate
+  SessionUpdate* = object
+    hasNewOnTop*: bool
+    `new`*: seq[EntryUpdate]
+    removed*: seq[TransactionIdentity]
 
 proc getPayloadType*(ae: ActivityEntry): PayloadType =
   return ae.payloadType
@@ -366,6 +413,7 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const nftNameField = "nftName"
   const nftUrlField = "nftUrl"
   const communityIdField = "communityId"
+  const isNewField = "isNew"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
     transaction:  if e.hasKey(transactionField):
@@ -419,9 +467,11 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
     result.chainIdIn = some(fromJson(e[chainIdInField], ChainId))
   if e.hasKey(transferTypeField) and e[transferTypeField].kind != JNull:
     result.transferType = some(fromJson(e[transferTypeField], TransferType))
+  result.isNew = e.hasKey(isNewField) and e[isNewField].getBool()
 
 proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.} =
   let data = fromJson(e, Data)
+  let zeroValue: UInt256 = "0x0".parse(UInt256, 16)
   result = T(
     payloadType: data.payloadType,
     transaction: data.transaction,
@@ -429,8 +479,8 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     activityType: data.activityType.get(),
     activityStatus: data.activityStatus.get(),
     timestamp: data.timestamp.get(),
-    amountOut: data.amountOut.get(),
-    amountIn: data.amountIn.get(),
+    amountOut: if data.amountOut.isSome: data.amountOut.get() else: zeroValue,
+    amountIn: if data.amountIn.isSome: data.amountIn.get() else: zeroValue,
     tokenOut: data.tokenOut,
     tokenIn: data.tokenIn,
     symbolOut: data.symbolOut,
@@ -440,7 +490,8 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     chainIdOut: data.chainIdOut,
     chainIdIn: data.chainIdIn,
     transferType: data.transferType,
-    communityId: data.communityId
+    communityId: data.communityId,
+    isNew: data.isNew
   )
 
 proc `$`*(self: ActivityEntry): string =
@@ -464,7 +515,8 @@ proc `$`*(self: ActivityEntry): string =
     chainIdOut* {$self.chainIdOut},
     chainIdIn* {$self.chainIdIn},
     transferType* {$self.transferType},
-    communityId* {$self.communityId}
+    communityId* {$self.communityId},
+    isNew* {$self.isNew},
   )"""
 
 proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inline.} =
@@ -486,14 +538,77 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
     errorCode: ErrorCode(e["errorCode"].getInt())
   )
 
-rpc(filterActivityAsync, "wallet"):
-  requestId: int32
+proc fromJson*(e: JsonNode, T: typedesc[EntryUpdate]): T {.inline.} =
+  const posField = "pos"
+  const entryField = "entry"
+  result = T(
+    pos: if e.hasKey(posField): e[posField].getInt() else: -1,
+    entry: if e.hasKey(entryField): fromJson(e[entryField], ActivityEntry) else: ActivityEntry()
+  )
+
+proc fromJson*(e: JsonNode, T: typedesc[SessionUpdate]): T {.inline.} =
+  const hasNewOnTopField = "hasNewOnTop"
+  const newField = "new"
+  const removedField = "removed"
+  let hasNewOnTop = e.hasKey(hasNewOnTopField) and e[hasNewOnTopField].getBool()
+  let newEntries = if e.hasKey(newField): fromJson(e[newField], seq[EntryUpdate]) else: @[]
+  let removed = if e.hasKey(removedField): fromJson(e[removedField], seq[TransactionIdentity]) else: @[]
+  result = T(
+    hasNewOnTop: hasNewOnTop,
+    `new`: newEntries,
+    removed: removed
+  )
+
+rpc(startActivityFilterSession, "wallet"):
   addresses: seq[string]
   allAddresses: bool
   chainIds: seq[ChainId]
   filter: ActivityFilter
-  offset: int
-  limit: int
+  count: int
+
+rpc(updateActivityFilterForSession, "wallet"):
+  sessionId: int32
+  filter: ActivityFilter
+  count: int
+
+rpc(resetActivityFilterSession, "wallet"):
+  sessionId: int32
+  count: int
+
+rpc(getMoreForActivityFilterSession, "wallet"):
+  sessionId: int32
+  count: int
+
+rpc(stopActivityFilterSession, "wallet"):
+  sessionId: int32
+
+# returns (sessionId, success)
+proc newActivityFilterSession*(
+  addresses: seq[string],
+  allAddresses: bool,
+  chainIds: seq[ChainId],
+  filter: ActivityFilter,
+  count: int,
+): (int32, bool) {.inline.} =
+  try:
+    let res = startActivityFilterSession(addresses, allAddresses, chainIds, filter, count)
+    if res.error != nil:
+      error "error starting a new session of activity fitlering: ", res.error
+      return (int32(-1), false)
+    return (int32(res.result.getInt()), true)
+  except:
+    return (int32(-1), false)
+
+proc updateFilterForSession*(sessionId: int32, filter: ActivityFilter, count: int): bool {.inline.} =
+  try:
+    let res = updateActivityFilterForSession(sessionId, filter, count)
+    if res.error != nil:
+      error "error updating fitler for session: ", res.error
+      return false
+  except:
+    return false
+
+  return true
 
 # see services/wallet/activity/service.go GetRecipientsResponse
 type GetRecipientsResponse* = object
@@ -540,7 +655,7 @@ rpc(getOldestActivityTimestampAsync, "wallet"):
   requestId: int32
   addresses: seq[string]
 
-type 
+type
   # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
   ContractID* = ref object of RootObj
     chainID*: int

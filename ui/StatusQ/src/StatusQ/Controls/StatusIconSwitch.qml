@@ -50,6 +50,7 @@ Control {
 
         StatusSwitch {
             id: switchItem
+            objectName: "switchItem"
 
             onToggled: root.toggled()
         }

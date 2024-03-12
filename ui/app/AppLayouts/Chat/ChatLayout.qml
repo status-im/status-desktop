@@ -63,7 +63,9 @@ StackLayout {
 
         sourceComponent: {
             if (chatItem.isCommunity() && !chatItem.amIMember) {
-                if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
+                if (sectionItemModel.amIBanned) {
+                    return communityBanComponent
+                } else if (chatItem.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin) {
                     return controlNodeOfflineComponent
                 } else if (chatItem.requiresTokenPermissionToJoin) {
                     return joinCommunityViewComponent
@@ -228,7 +230,24 @@ StackLayout {
         ControlNodeOfflineCommunityView {
             id: controlNodeOfflineView
             readonly property var communityData: sectionItemModel
-            readonly property string communityId: communityData.id
+            name: communityData.name
+            communityDesc: communityData.description
+            color: communityData.color
+            image: communityData.image
+            membersCount: communityData.members.count
+            communityItemsModel: root.rootStore.communityItemsModel
+            notificationCount: activityCenterStore.unreadNotificationsCount
+            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+            onNotificationButtonClicked: Global.openActivityCenterPopup()
+            onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
+        }
+    }
+
+    Component {
+        id: communityBanComponent
+        BannedMemberCommunityView {
+            id: communityBanView
+            readonly property var communityData: sectionItemModel
             name: communityData.name
             communityDesc: communityData.description
             color: communityData.color

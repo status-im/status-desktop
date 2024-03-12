@@ -255,7 +255,6 @@ StatusScrollView {
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
                     communityId: root.communityId
-
                     onClicked: root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,
                                                 model.accountName, model.address)

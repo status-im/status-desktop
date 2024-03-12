@@ -59,6 +59,10 @@ proc declineContactRequest*(id: string): RpcResponse[JsonNode] =
   }]
   result = callPrivateRPC("declineContactRequest".prefix, payload)
 
+proc getLatestContactRequestForContact*(id: string): RpcResponse[JsonNode] =
+  let payload = %* [id]
+  result = callPrivateRPC("getLatestContactRequestForContact".prefix, payload)
+
 proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[JsonNode] =
   let payload = %* [publicKey, ensName, thumbnail]
   result = callPrivateRPC("sendContactUpdate".prefix, payload)
@@ -66,6 +70,10 @@ proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[Json
 proc getImageServerURL*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("imageServerURL".prefix, payload)
+
+proc markAsTrusted*(pubkey: string): RpcResponse[JsonNode] =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("markAsTrusted".prefix, payload)
 
 proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]

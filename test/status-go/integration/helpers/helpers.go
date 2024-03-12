@@ -114,6 +114,7 @@ func WaitForWalletEvents(eventQueue chan GoEvent, eventNames []walletevent.Event
 
 // WaitForWalletEvents waits for the given events to be received on the eventQueue.
 // It returns the wallet events in the order they are received.
+// If a condition is provided, only returning true on the respective call will discard that event.
 func WaitForWalletEventsWithOptionals(eventQueue chan GoEvent, eventNames []walletevent.EventType, timeout time.Duration, condition func(walletEvent *walletevent.Event) bool, optionalEventNames []walletevent.EventType) (walletEvents []*walletevent.Event, err error) {
 	if len(eventNames) == 0 {
 		return nil, errors.New("no event names provided")

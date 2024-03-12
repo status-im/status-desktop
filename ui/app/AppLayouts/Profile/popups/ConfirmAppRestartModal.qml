@@ -1,44 +1,26 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-
-import utils 1.0
+import QtQuick 2.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
+import StatusQ.Popups.Dialog 0.1
 
-import shared 1.0
-import shared.panels 1.0
-import shared.popups 1.0
-
-// TODO: replace with StatusModal
-ModalPopup {
-    height: 237
-    width: 400
-
-    property Popup parentPopup
-
+StatusDialog {
+    id: root
     title: qsTr("Application Restart")
 
-    StyledText {
+    contentItem: StatusBaseText {
         text: qsTr("Please restart the application to apply the changes.")
-        font.pixelSize: 15
-        anchors.left: parent.left
-        anchors.right: parent.right
         wrapMode: Text.WordWrap
     }
 
-    footer: Item {
-        id: footerContainer
-        width: parent.width
-        height: children[0].height
-
-        StatusButton {
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
-            type: StatusBaseButton.Type.Danger
-            text: qsTr("Restart")
-            anchors.bottom: parent.bottom
-            onClicked: Utils.restartApplication();
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                type: StatusBaseButton.Type.Danger
+                text: qsTr("Restart")
+                onClicked: root.accepted()
+            }
         }
     }
 }

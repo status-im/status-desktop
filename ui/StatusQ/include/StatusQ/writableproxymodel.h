@@ -26,6 +26,9 @@ class WritableProxyModel : public QAbstractProxyModel
     Q_OBJECT
 
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged)
+    //If true, the removals are synced with the source model. Removing an edited item from source will also remove it from proxy
+    //If false, eemoving an edited item from source will not remove it from proxy. It will become a newly inserted row
+    Q_PROPERTY(bool syncedRemovals READ syncedRemovals WRITE setSyncedRemovals NOTIFY syncedRemovalsChanged)
 
 public:
     explicit WritableProxyModel(QObject* parent = nullptr);
@@ -48,6 +51,7 @@ public:
     Q_INVOKABLE bool set(int at, const QVariantMap& data);
 
     bool dirty() const;
+    bool syncedRemovals() const;
 
     //QAbstractProxyModel overrides
     void setSourceModel(QAbstractItemModel* sourceModel) override;
@@ -75,9 +79,11 @@ public:
 
 signals:
     void dirtyChanged();
+    void syncedRemovalsChanged();
 
 private:
     void setDirty(bool flag);
+    void setSyncedRemovals(bool syncedRemovals);
 
     void onSourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
     void onRowsAboutToBeInserted(const QModelIndex& parent, int start, int end);
@@ -88,8 +94,9 @@ private:
     void onModelReset();
     void onLayoutAboutToBeChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint);
     void onLayoutChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint);
+    void onRowsAboutToBeMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow);
     void onRowsMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow);
-    
+
     QScopedPointer<WritableProxyModelPrivate> d;
     friend class WritableProxyModelPrivate;
 };

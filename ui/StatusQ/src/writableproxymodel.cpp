@@ -4,6 +4,8 @@
 #include <QAbstractItemModelTester>
 #endif
 #include <memory>
+#include <QDebug>
+
 
 template <typename T>
 using IndexedValues = QHash<T /*key*/, QMap<int/*role*/, QVariant/*value*/>>;
@@ -22,6 +24,8 @@ public:
     QSet<QPersistentModelIndex> removedRows;
     QVector<int> proxyToSourceRowMapping;
     bool dirty{false};
+    bool syncedRemovals{false};
+    bool syncedRemovalsInitialized{false};
 
     void setData(const QModelIndex& index, const QVariant& value, int role);
     template<typename T>
@@ -34,6 +38,13 @@ public:
     int proxyToSourceRow(int row) const;
     int sourceToProxyRow(int row) const;
     QVector<QPair<int, int>> sourceRowRangesBetween(int start, int end) const;
+
+    // helpers for handling layoutChanged from source
+    QList<QPersistentModelIndex> layoutChangePersistentIndexes;
+    QModelIndexList proxyIndexes;
+
+    void storePersitentIndexes();
+    void updatePersistentIndexes();
 
     //Simple mapping. No sorting, no moving
     //TODO: add mapping for temporarily moved rows
@@ -126,6 +137,33 @@ int WritableProxyModelPrivate::sourceToProxyRow(int row) const
     return -1;
 }
 
+void WritableProxyModelPrivate::storePersitentIndexes()
+{
+    const auto persistentIndexes = q.persistentIndexList();
+
+    for (const QModelIndex& persistentIndex: persistentIndexes) {
+
+        Q_ASSERT(persistentIndex.isValid());
+        const auto srcIndex = q.mapToSource(persistentIndex);
+
+        if (srcIndex.isValid()) {
+            proxyIndexes << persistentIndex;
+            layoutChangePersistentIndexes << srcIndex;
+        }
+    }
+}
+
+void WritableProxyModelPrivate::updatePersistentIndexes()
+{
+    for (int i = 0; i < proxyIndexes.size(); ++i) {
+        q.changePersistentIndex(proxyIndexes.at(i),
+                                q.mapFromSource(layoutChangePersistentIndexes.at(i)));
+    }
+
+    layoutChangePersistentIndexes.clear();
+    proxyIndexes.clear();
+}
+
 void WritableProxyModelPrivate::createProxyToSourceRowMap()
 {
     if (!q.sourceModel())
@@ -142,7 +180,8 @@ void WritableProxyModelPrivate::createProxyToSourceRowMap()
             continue;
         }
 
-        while(removedRows.contains(sourceModel->index(sourceIter, 0)) && sourceIter < sourceModel->rowCount())
+        while(removedRows.contains(sourceModel->index(sourceIter, 0))
+              && sourceIter < sourceModel->rowCount())
             ++sourceIter;
 
         proxyToSourceRowMapping.append(sourceIter);
@@ -153,7 +192,7 @@ void WritableProxyModelPrivate::createProxyToSourceRowMap()
 bool WritableProxyModelPrivate::contains(const QModelIndex& sourceIndex, const QVector<int>& roles) const {
     if (cache.contains(sourceIndex)) {
         auto valueMap = cache[sourceIndex];
-        return std::all_of(roles.begin(), roles.end(), [&valueMap](int role) { return valueMap.contains(role); });
+        return std::any_of(roles.begin(), roles.end(), [&valueMap](int role) { return valueMap.contains(role); });
     }
 
     if (insertedRows.contains(q.mapFromSource(sourceIndex))) {
@@ -208,11 +247,14 @@ int WritableProxyModelPrivate::countOffset() const
 
 void WritableProxyModelPrivate::moveFromCacheToInserted(const QModelIndex& sourceIndex)
 {
-    if (!q.sourceModel())
+    if (!q.sourceModel() || syncedRemovals)
         return;
-        
+    
     //User updated this row. Move it in inserted rows. We shouldn't delete it
     auto proxyIndex = insertedRows.insert(q.mapFromSource(sourceIndex), cache.take(sourceIndex));
+    // syncedRemovalsInitialized cannot be changed after this point
+    syncedRemovalsInitialized = true;
+
     auto itemData = q.sourceModel()->itemData(sourceIndex);
     for (auto it = itemData.begin(); it != itemData.end(); ++it)
     {
@@ -563,7 +605,7 @@ bool WritableProxyModel::set(int at, const QVariantMap& data)
         return false;
 
     auto index = this->index(at, 0);
-    auto itemData = this->itemData(index);
+    QMap<int, QVariant> itemData;
     auto roleNames = this->roleNames();
 
     for (auto it = data.begin(); it != data.end(); ++it)
@@ -587,6 +629,27 @@ void WritableProxyModel::setDirty(bool flag)
 
     d->dirty = flag;
     emit dirtyChanged();
+}
+
+bool WritableProxyModel::syncedRemovals() const
+{
+    return d->syncedRemovals;
+}
+
+void WritableProxyModel::setSyncedRemovals(bool syncedRemovals)
+{
+    if (d->syncedRemovalsInitialized)
+    {
+        qWarning() << "WritableProxyModel: syncedRemovals cannot be updated after it has been initialized";
+        return;
+    }
+
+    if (syncedRemovals == d->syncedRemovals)
+        return;
+
+    d->syncedRemovals = syncedRemovals;
+    d->syncedRemovalsInitialized = true;
+    emit syncedRemovalsChanged();
 }
 
 void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
@@ -620,6 +683,7 @@ void WritableProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
     connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &WritableProxyModel::onRowsRemoved);
     connect(sourceModel, &QAbstractItemModel::modelAboutToBeReset, this, &WritableProxyModel::onModelAboutToBeReset);
     connect(sourceModel, &QAbstractItemModel::modelReset, this, &WritableProxyModel::onModelReset);
+    connect(sourceModel, &QAbstractItemModel::rowsAboutToBeMoved, this, &WritableProxyModel::onRowsAboutToBeMoved);
     connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &WritableProxyModel::onRowsMoved);
     connect(sourceModel, &QAbstractItemModel::layoutAboutToBeChanged, this, &WritableProxyModel::onLayoutAboutToBeChanged);
     connect(sourceModel, &QAbstractItemModel::layoutChanged, this, &WritableProxyModel::onModelReset);
@@ -927,10 +991,7 @@ void WritableProxyModel::onRowsAboutToBeRemoved(const QModelIndex& parent, int s
         auto sourceIndex = sourceModel()->index(row, 0);
 
         if (d->cache.contains(sourceIndex))
-        {
             d->moveFromCacheToInserted(sourceIndex);
-            continue;
-        }
     }
 
     auto sourceRemoveRanges = d->sourceRowRangesBetween(start, end);
@@ -958,6 +1019,12 @@ void WritableProxyModel::onRowsRemoved(const QModelIndex& parent, int first, int
 void WritableProxyModel::onModelAboutToBeReset()
 {
     beginResetModel();
+    if (d->syncedRemovals)
+    {
+        d->clear();
+        return;
+    }
+
     for (auto iter = d->cache.begin(); iter != d->cache.end();)
     {
         auto key = iter.key();
@@ -972,19 +1039,29 @@ void WritableProxyModel::onModelReset()
     d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
     resetInternalData();
+    d->checkForDirtyRemoval({}, {});
     endResetModel();
+}
+
+
+void WritableProxyModel::onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
+{
+    if(sourceParent.isValid() || destinationParent.isValid())
+        return;
+
+    emit layoutAboutToBeChanged();
+
+    d->storePersitentIndexes();
 }
 
 void WritableProxyModel::onRowsMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow)
 {
     if(sourceParent.isValid() || destinationParent.isValid())
-    {
         return;
-    }
 
-    emit layoutAboutToBeChanged();
-    d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
+    d->updatePersistentIndexes();
+
     emit layoutChanged();
 }
 
@@ -994,11 +1071,14 @@ void WritableProxyModel::onLayoutAboutToBeChanged(const QList<QPersistentModelIn
         return;
 
     emit layoutAboutToBeChanged();
+
+    d->storePersitentIndexes();
 }
 
 void WritableProxyModel::onLayoutChanged(const QList<QPersistentModelIndex>& sourceParents, QAbstractItemModel::LayoutChangeHint hint)
 {
-    d->clearInvalidatedCache();
     d->createProxyToSourceRowMap();
+    d->updatePersistentIndexes();
+
     emit layoutChanged();
 }

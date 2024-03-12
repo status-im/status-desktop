@@ -37,11 +37,9 @@ ColumnLayout {
     property bool hideVerticalScrollbar: false
     property int firstItemOffset: 0
 
-    property var selectedTransaction
-
     property real yPosition: transactionListRoot.visibleArea.yPosition * transactionListRoot.contentHeight
 
-    signal launchTransactionDetail(int entryIndex)
+    signal launchTransactionDetail(string txID)
 
     function resetView() {
         if (!!filterPanelLoader.item) {
@@ -66,7 +64,7 @@ ColumnLayout {
         target: RootStore.transactionActivityStatus
         enabled: root.visible
         function onIsFilterDirtyChanged() {
-            RootStore.updateTransactionFilter()
+            RootStore.updateTransactionFilterIfDirty()
         }
         function onFilterChainsChanged() {
             WalletStores.RootStore.currentActivityFiltersStore.updateCollectiblesModel()
@@ -92,28 +90,17 @@ ColumnLayout {
 
         property bool firstSectionHeaderLoaded: false
 
-        property double lastRefreshTime
         readonly property int maxSecondsBetweenRefresh: 3
-        function refreshData() {
-            RootStore.resetFilter()
-            d.lastRefreshTime = Date.now()
-            newTransactions.visible = false
-        }
 
         property string openTxDetailsHash
 
-        function openTxDetails(txHash) {
+        function openTxDetails(txID) {
             // Prevent opening details when loading, that will invalidate the model data
             if (RootStore.loadingHistoryTransactions) {
                 return false
             }
 
-            const index = WalletStores.RootStore.currentActivityFiltersStore.transactionsList.getIndex(txHash)
-            if (index < 0)
-                return false
-            const entry = transactionListRoot.itemAtIndex(index)
-            root.selectedTransaction = Qt.binding(() => entry.modelData)
-            root.launchTransactionDetail(index)
+            root.launchTransactionDetail(txID)
             return true
         }
     }
@@ -279,49 +266,14 @@ ColumnLayout {
 
             text: qsTr("New transactions")
 
-            visible: false
-            onClicked: d.refreshData()
+            visible: RootStore.newDataAvailable && !RootStore.loadingHistoryTransactions
+            onClicked: RootStore.resetActivityData()
 
             icon.name: "arrow-up"
 
             radius: 36
             type: StatusButton.Primary
             size: StatusBaseButton.Size.Tiny
-        }
-
-        Connections {
-            target: RootStore
-
-            function onNewDataAvailableChanged() {
-                if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
-                    // Show `New transactions` button only when filter is applied
-                    if (!WalletStores.RootStore.currentActivityFiltersStore.filtersSet) {
-                        d.refreshData()
-                        return
-                    }
-
-                    newTransactions.visible = RootStore.newDataAvailable
-                    return
-                }
-
-                if (showRefreshButtonTimer.running) {
-                    if (!RootStore.newDataAvailable) {
-                        showRefreshButtonTimer.stop()
-                        newTransactions.visible = false
-                    }
-                } else if(RootStore.newDataAvailable) {
-                    showRefreshButtonTimer.start()
-                }
-            }
-        }
-
-        Timer {
-            id: showRefreshButtonTimer
-
-            interval: 2000
-            running: false
-            repeat: false
-            onTriggered: newTransactions.visible = RootStore.newDataAvailable
         }
     }
 
@@ -391,7 +343,11 @@ ColumnLayout {
                 if (delegateMenu.transaction.sender !== delegateMenu.transaction.recipient) {
                     WalletStores.RootStore.addressWasShown(delegateMenu.transaction.recipient)
                 }
-                RootStore.copyToClipboard(delegateMenu.transactionDelegate.getDetailsString())
+
+                RootStore.fetchTxDetails(delegateMenu.transaction.id)
+                let detailsObj = RootStore.getTxDetails()
+                let detailsString = delegateMenu.transactionDelegate.getDetailsString(detailsObj)
+                RootStore.copyToClipboard(detailsString)
             }
         }
         StatusMenuSeparator {
@@ -496,8 +452,7 @@ ColumnLayout {
                     if (mouse.button === Qt.RightButton) {
                         delegateMenu.openMenu(this, mouse, modelData)
                     } else {
-                        root.selectedTransaction = Qt.binding(() => transactionDelegate.model.activityEntry)
-                        launchTransactionDetail(transactionDelegate.index)
+                        launchTransactionDetail(modelData.id)
                     }
                 }
             }

@@ -10,11 +10,21 @@ import utils 1.0
 QObject {
     id: root
 
+    // GENERAL
+    readonly property bool dirty: communities.dirty || accounts.dirty || collectibles.dirty
+
+    function revert() {
+        communities.revert()
+        accounts.revert()
+        collectibles.revert()
+    }
+
     // COMMUNITIES
 
     // Input models
-    property alias communitiesSourceModel: communities.sourceModel
-    property alias communitiesShowcaseModel: communities.showcaseModel
+    property alias communitiesSourceModel: modelAdapter.communitiesSourceModel
+    property alias communitiesShowcaseModel: modelAdapter.communitiesShowcaseModel
+    property string communitiesSearcherText
 
     // Output models
     readonly property alias communitiesVisibleModel: communities.visibleModel
@@ -36,8 +46,9 @@ QObject {
     // ACCOUNTS
 
     // Input models
-    property alias accountsSourceModel: accounts.sourceModel
-    property alias accountsShowcaseModel: accounts.showcaseModel
+    property alias accountsSourceModel: modelAdapter.accountsSourceModel
+    property alias accountsShowcaseModel: modelAdapter.accountsShowcaseModel
+    property string accountsSearcherText
 
     // Output models
     readonly property alias accountsVisibleModel: accounts.visibleModel
@@ -66,8 +77,9 @@ QObject {
     // COLLECTIBLES
 
     // Input models
-    property alias collectiblesSourceModel: collectiblesFilter.sourceModel
-    property alias collectiblesShowcaseModel: collectibles.showcaseModel
+    property alias collectiblesSourceModel: modelAdapter.collectiblesSourceModel
+    property alias collectiblesShowcaseModel: modelAdapter.collectiblesShowcaseModel
+    property string collectiblesSearcherText
 
     // Output models
     readonly property alias collectiblesVisibleModel: collectibles.visibleModel
@@ -82,45 +94,101 @@ QObject {
         collectibles.setVisibility(key, visibility)
     }
 
-    function changeCollectiblePosition(key, to) {
-        collectibles.changePosition(key, to)
+    function changeCollectiblePosition(from, to) {
+        collectibles.changePosition(from, to)
+    }
+
+    // The complete preferences models json current state:
+    function buildJSONModelsCurrentState() {
+        return JSON.stringify({
+            "communities": communitiesCurrentState(),
+            "accounts": accountsCurrentState(),
+            "collectibles": collectiblesCurrentState()
+            // TODO: Assets --> Issue #13492
+            // TODO: Web --> Issue #13495
+        })
+    }
+
+    ProfileShowcaseModelAdapter {
+        id: modelAdapter
     }
 
     ProfileShowcaseDirtyState {
         id: communities
+
+        function getMemberRole(memberRole) {
+            return ProfileUtils.getMemberRoleText(memberRole)
+        }
+
+        sourceModel: modelAdapter.adaptedCommunitiesSourceModel
+        showcaseModel: modelAdapter.adaptedCommunitiesShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.communitiesSearcherText
+                return (name.toLowerCase().includes(root.communitiesSearcherText.toLowerCase()) ||
+                        communities.getMemberRole(memberRole).toLowerCase().includes(root.communitiesSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["name", "memberRole"]
+        }
     }
 
     ProfileShowcaseDirtyState {
         id: accounts
+
+        sourceModel: modelAdapter.adaptedAccountsSourceModel
+        showcaseModel: modelAdapter.adaptedAccountsShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.accountsSearcherText
+                return (address.toLowerCase().includes(root.accountsSearcherText.toLowerCase()) ||
+                        name.toLowerCase().includes( root.accountsSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["address", "name"]
+        }
     }
 
     ProfileShowcaseDirtyState {
         id: collectibles
 
         sourceModel: collectiblesFilter
+        showcaseModel: modelAdapter.adaptedCollectiblesShowcaseModel
+        searcherFilter: FastExpressionFilter {
+            expression: {
+                root.collectiblesSearcherText
+                return (name.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        uid.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        communityName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()) ||
+                        collectionName.toLowerCase().includes(root.collectiblesSearcherText.toLowerCase()))
+            }
+            expectedRoles: ["name", "uid", "collectionName", "communityName"]
+        }
     }
 
     SortFilterProxyModel {
         id: collectiblesFilter
 
         delayed: true
-
+        sourceModel: modelAdapter.adaptedCollectiblesSourceModel
         proxyRoles: FastExpressionRole {
             name: "maxVisibility"
 
             // singletons cannot be used in expressions
             readonly property int hidden: Constants.ShowcaseVisibility.NoOne
 
-            expression: {
+            function getMaxVisibility(ownershipModel) {
                 const visibilityMap = root.accountsVisibilityMap
-                const accounts = model.accounts.split(":")
-                const visibilities = accounts.map(a => visibilityMap[a]).filter(
+                const accounts = ModelUtils.modelToFlatArray(ownershipModel, "accountAddress")
+                const visibilities = accounts.map(a => visibilityMap[a.toLowerCase()]).filter(
                                        v => v !== undefined)
 
                 return visibilities.length ? Math.min(...visibilities) : hidden
             }
 
-            expectedRoles: ["accounts"]
+            expression: {
+                return getMaxVisibility(model.ownership)
+            }
+
+            expectedRoles: ["ownership"]
         }
 
         filters: ValueFilter {
@@ -140,13 +208,13 @@ QObject {
 
         function updateAccountsList() {
             const keysAndVisibility = ModelUtils.modelToArray(
-                        accounts.visibleModel, ["key", "visibility"])
+                        accounts.visibleModel, ["showcaseKey", "showcaseVisibility"])
 
-            visibleAccountsList = keysAndVisibility.map(e => e.key)
+            visibleAccountsList = keysAndVisibility.map(e => e.showcaseKey)
 
             accountsVisibilityMap = keysAndVisibility.reduce(
                         (acc, val) => Object.assign(
-                            acc, {[val.key]: val.visibility}), {})
+                            acc, {[val.showcaseKey]: val.showcaseVisibility}), {})
         }
 
         function onDataChanged() {

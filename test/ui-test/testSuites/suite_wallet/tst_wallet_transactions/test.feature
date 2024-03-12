@@ -17,7 +17,7 @@ Feature: Status Desktop Transaction
 
 	@mayfail
     Scenario Outline: The user sends a transaction
- 		When the user sends a transaction to himself from account "Status account" of "<amount>" "<token>" on "<chain_name>" with password "qqqqqqqqqq"
+ 		When the user sends a transaction to himself from account "Account 1" of "<amount>" "<token>" on "<chain_name>" with password "qqqqqqqqqq"
 		Then the transaction is in progress
 
     	Examples:

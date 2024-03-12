@@ -17,24 +17,24 @@ Item {
     ListModel {
         id: communitiesModel
 
-        ListElement { key: "1"; name: "Crypto Kitties" }
-        ListElement { key: "2"; name: "Status" }
-        ListElement { key: "3"; name: "Fun Stuff" }
-        ListElement { key: "4"; name: "Other Stuff" }
+        ListElement { showcaseKey: "1"; name: "Crypto Kitties" }
+        ListElement { showcaseKey: "2"; name: "Status" }
+        ListElement { showcaseKey: "3"; name: "Fun Stuff" }
+        ListElement { showcaseKey: "4"; name: "Other Stuff" }
     }
 
     ListModel {
         id: communitiesShowcaseModel
 
         ListElement {
-            key: "1"
-            visibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            position: 0
+            showcaseKey: "1"
+            showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
+            showcasePosition: 0
         }
         ListElement {
-            key: "3"
-            visibility: Constants.ShowcaseVisibility.Contacts
-            position: 9
+            showcaseKey: "3"
+            showcaseVisibility: Constants.ShowcaseVisibility.Contacts
+            showcasePosition: 9
         }
     }
 
@@ -72,6 +72,7 @@ Item {
         anchors.fill: parent
 
         Grid {
+            id: grid
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: 10
@@ -90,7 +91,7 @@ Item {
             }
 
             GenericListView {
-                width: 200
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: communitiesModel
@@ -98,12 +99,12 @@ Item {
             }
 
             GenericListView {
-                width: 200
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: communitiesShowcaseModel
                 label: "SHOWCASE MODEL"
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
             }
 
             Label {
@@ -113,7 +114,7 @@ Item {
             }
 
             GenericListView {
-                width: 350
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: dirtyState.joined_
@@ -121,12 +122,12 @@ Item {
             }
 
             GenericListView {
-                width: 350
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: dirtyState.writable_
                 label: "WRITABLE MODEL"
-                roles: ["key", "visibility", "position", "name"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition", "name"]
             }
 
 
@@ -137,19 +138,17 @@ Item {
             }
 
             GenericListView {
-                width: 450
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: movableModel
                 label: "IN SHOWCASE"
                 movable: true
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
                 onMoveRequested: {
                     movableModel.move(from, to)
-
-                    const key = ModelUtils.get(movableModel, to, "key")
-                    dirtyState.changePosition(key, to);
+                    dirtyState.changePosition(from, to);
                 }
 
                 insetComponent: RowLayout {
@@ -158,7 +157,7 @@ Item {
                     RoundButton {
                         text: "❌"
                         onClicked: dirtyState.setVisibility(
-                                       model.key,
+                                       model.showcaseKey,
                                        Constants.ShowcaseVisibility.NoOne)
                     }
 
@@ -169,13 +168,13 @@ Item {
                             if (!completed || topModel.index < 0)
                                 return
 
-                            dirtyState.setVisibility(topModel.key, currentValue)
+                            dirtyState.setVisibility(topModel.showcaseKey, currentValue)
                         }
 
                         property bool completed: false
 
                         Component.onCompleted: {
-                            currentIndex = indexOfValue(topModel.visibility)
+                            currentIndex = indexOfValue(topModel.showcaseVisibility)
                             completed = true
                         }
 
@@ -186,19 +185,19 @@ Item {
             }
 
             GenericListView {
-                width: 450
+                width: grid.width / 3 - grid.spacing
                 height: 300
 
                 model: dirtyState.hiddenModel
                 label: "HIDDEN"
 
-                roles: ["key", "visibility", "position"]
+                roles: ["showcaseKey", "showcaseVisibility", "showcasePosition"]
 
                 insetComponent: Button {
                     text: "unhide"
 
                     onClicked: dirtyState.setVisibility(
-                                   model.key,
+                                   model.showcaseKey,
                                    Constants.ShowcaseVisibility.IdVerifiedContacts)
                 }
             }

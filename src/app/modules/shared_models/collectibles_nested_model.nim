@@ -16,6 +16,7 @@ type
     CollectionName
     IsCollection
     CommunityId
+    TokenType
 
 QtObject:
   type
@@ -82,6 +83,7 @@ QtObject:
       CollectiblesNestedRole.CollectionName.int:"collectionName",
       CollectiblesNestedRole.IsCollection.int:"isCollection",
       CollectiblesNestedRole.CommunityId.int:"communityId",
+      CollectiblesNestedRole.TokenType.int:"tokenType",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -111,6 +113,8 @@ QtObject:
       result = newQVariant(item.getIsCollection())
     of CollectiblesNestedRole.CommunityId:
       result = newQVariant(item.getCommunityId())
+    of CollectiblesNestedRole.TokenType:
+        result = newQVariant(item.getTokenType())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):

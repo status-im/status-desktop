@@ -55,3 +55,20 @@ const fetchProfileShowcaseAccountsTask: Task = proc(argEncoded: string) {.gcsafe
   except Exception as e:
     response["error"] = %* e.msg
   arg.finish(response)
+
+type
+  SaveProfileShowcasePreferencesTaskArg = ref object of QObjectTaskArg
+    preferences: ProfileShowcasePreferencesDto
+
+const saveProfileShowcasePreferencesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[SaveProfileShowcasePreferencesTaskArg](argEncoded)
+  try:
+    let response = status_accounts.setProfileShowcasePreferences(arg.preferences.toJsonNode())
+    arg.finish(%* {
+      "response": response,
+      "error": nil,
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })

@@ -53,14 +53,14 @@ StatusDialog {
 
     property var sendTransaction: function() {
         d.isPendingTx = true
-        popup.store.authenticateAndTransfer(amountToSendInput.cryptoValueToSend, d.uuid)
+        popup.store.authenticateAndTransfer(d.uuid)
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.preSelectedAccount && !!holdingSelector.selectedItem
                 && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
-            popup.store.suggestedRoutes(d.isERC721Transfer ? "1" : amountToSendInput.cryptoValueToSend)
+            popup.store.suggestedRoutes(d.isCollectiblesTransfer ? "1" : amountToSendInput.cryptoValueToSend)
         }
     })
 
@@ -73,7 +73,7 @@ StatusDialog {
                                             popup.preSelectedSendType === Constants.SendType.StickersBuy
 
         readonly property var currencyStore: store.currencyStore
-        readonly property int errorType: !amountToSendInput.input.valid && !isERC721Transfer ? Constants.SendAmountExceedsBalance :
+        readonly property int errorType: !amountToSendInput.input.valid && (!isCollectiblesTransfer) ? Constants.SendAmountExceedsBalance :
                                                                           (popup.bestRoutes && popup.bestRoutes.count === 0 &&
                                                                            !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
@@ -88,7 +88,8 @@ StatusDialog {
         property double totalFeesInFiat
         property double totalAmountToReceive
         readonly property bool isBridgeTx: store.sendType === Constants.SendType.Bridge
-        readonly property bool isERC721Transfer: store.sendType === Constants.SendType.ERC721Transfer
+        readonly property bool isCollectiblesTransfer: store.sendType === Constants.SendType.ERC721Transfer ||
+                                                       store.sendType === Constants.SendType.ERC1155Transfer
         property var selectedHolding: null
         property var selectedHoldingType: Constants.TokenType.Unknown
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding && selectedHoldingType === Constants.TokenType.ERC20
@@ -126,8 +127,10 @@ StatusDialog {
                     store.setSendType(Constants.SendType.Transfer)
                 store.setSelectedAssetKey(selectedHolding.tokensKey)
                 store.setSelectedTokenIsOwnerToken(false)
-            } else if (d.selectedHoldingType === Constants.TokenType.ERC721) {
-                store.setSendType(Constants.SendType.ERC721Transfer)
+            } else if (d.selectedHoldingType === Constants.TokenType.ERC721 ||
+                       d.selectedHoldingType === Constants.TokenType.ERC1155) {
+                let sendType = d.selectedHoldingType === Constants.TokenType.ERC721 ? Constants.SendType.ERC721Transfer : Constants.SendType.ERC1155Transfer
+                store.setSendType(sendType)
                 amountToSendInput.input.text = 1
                 store.setSelectedAssetKey(selectedHolding.contractAddress+":"+selectedHolding.tokenId)
                 store.setRouteEnabledFromChains(selectedHolding.chainId)
@@ -143,7 +146,7 @@ StatusDialog {
             if(symbol !== "ETH") {
                 return value
             }
-            
+
             return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
         }
     }
@@ -163,7 +166,7 @@ StatusDialog {
             store.setSendType(popup.preSelectedSendType)
         }
         if ((popup.preSelectedHoldingType > Constants.TokenType.Native) &&
-                (popup.preSelectedHoldingType < Constants.TokenType.ERC1155)) {
+                (popup.preSelectedHoldingType < Constants.TokenType.Unknown)) {
             tokenListRect.browsingHoldingType = popup.preSelectedHoldingType
             if (!!popup.preSelectedHoldingID) {
                 d.setSelectedHoldingId(popup.preSelectedHoldingID, popup.preSelectedHoldingType)
@@ -285,7 +288,7 @@ StatusDialog {
                         Layout.maximumWidth: 300
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                         Layout.preferredHeight: 22
-                        visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isERC721Transfer
+                        visible: d.isSelectedHoldingValidAsset || d.isHoveredHoldingValidAsset && !d.isCollectiblesTransfer
                         title: {
                             if(d.isHoveredHoldingValidAsset && !!d.hoveredHolding.symbol) {
                                 const input = amountToSendInput.inputIsFiat ? d.hoveredHolding.currentCurrencyBalance : d.hoveredHolding.currentBalance
@@ -314,7 +317,7 @@ StatusDialog {
                     }
                 }
                 RowLayout {
-                    visible: d.isSelectedHoldingValidAsset && !d.isERC721Transfer
+                    visible: d.isSelectedHoldingValidAsset && !d.isCollectiblesTransfer
                     AmountToSend {
                         id: amountToSendInput
 
@@ -372,7 +375,7 @@ StatusDialog {
                         id: recipientLoader
                         Layout.fillWidth: true
                         store: popup.store
-                        isERC721Transfer: d.isERC721Transfer
+                        isCollectiblesTransfer: d.isCollectiblesTransfer
                         isBridgeTx: d.isBridgeTx
                         interactive: popup.interactive
                         selectedAsset: d.selectedHolding
@@ -472,7 +475,7 @@ StatusDialog {
                 errorType: d.errorType
                 isLoading: popup.isLoading
                 isBridgeTx: d.isBridgeTx
-                isERC721Transfer: d.isERC721Transfer
+                isCollectiblesTransfer: d.isCollectiblesTransfer
                 bestRoutes: popup.bestRoutes
                 totalFeesInFiat: d.totalFeesInFiat
             }

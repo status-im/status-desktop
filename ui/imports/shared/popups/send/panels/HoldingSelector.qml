@@ -355,8 +355,8 @@ Item {
                         root.collectiblesModel.currentCollectionUid = collectionUid
                 } else {
                     holdingItemSelector.selectedItem = selectedItem
-                    d.currentHoldingType = Constants.TokenType.ERC721
-                    root.itemSelected(selectedItem.uid, Constants.TokenType.ERC721)
+                    d.currentHoldingType = tokenType
+                    root.itemSelected(selectedItem.uid, tokenType)
                     holdingItemSelector.comboBoxControl.popup.close()
                 }
             }

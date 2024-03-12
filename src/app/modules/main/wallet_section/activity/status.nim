@@ -1,5 +1,5 @@
 import NimQml, std/json, sequtils, strutils, times
-import stint, atomics
+import atomics
 
 import app/core/signals/types
 
@@ -9,7 +9,7 @@ import backend/activity as backend_activity
 QtObject:
   type
     Status* = ref object of QObject
-      loadingData: Atomic[int]
+      loadingData: bool
       errorCode: backend_activity.ErrorCode
 
       loadingRecipients: Atomic[int]
@@ -36,7 +36,7 @@ QtObject:
   proc loadingDataChanged*(self: Status) {.signal.}
 
   proc setLoadingData*(self: Status, loadingData: bool) =
-    discard fetchAdd(self.loadingData, if loadingData: 1 else: -1)
+    self.loadingData = loadingData
     self.loadingDataChanged()
 
   proc loadingRecipientsChanged*(self: Status) {.signal.}
@@ -72,7 +72,7 @@ QtObject:
     result.setup()
 
   proc getLoadingData*(self: Status): bool {.slot.} =
-    return load(self.loadingData) > 0
+    return self.loadingData
 
   QtProperty[bool] loadingData:
     read = getLoadingData

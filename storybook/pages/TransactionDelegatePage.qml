@@ -11,6 +11,7 @@ import shared.controls 1.0
 SplitView {
     id: root
 
+    // mirrors ActivityEntry defined in src/app/modules/main/wallet_section/activity/entry.nim
     readonly property QtObject mockupModelData: QtObject {
         readonly property int timestamp: Date.now() / 1000
         readonly property int status: ctrlStatus.currentValue
@@ -38,6 +39,12 @@ SplitView {
         readonly property string chainId: "NETWORKID"
         readonly property string chainIdIn: "NETWORKID-IN"
         readonly property string chainIdOut: "NETWORKID-OUT"
+
+        readonly property bool highlight: _highlight
+        function doneHighlighting() {
+            _highlight = false
+        }
+        property bool _highlight: false
     }
 
     SplitView {
@@ -174,6 +181,13 @@ SplitView {
             Switch {
                 id: ctrlMultiTrans
                 text: "Multi transaction"
+            }
+
+            Button {
+                text: "New transaction"
+                onClicked: {
+                    mockupModelData._highlight = true
+                }
             }
         }
     }

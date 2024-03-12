@@ -4,6 +4,13 @@ import community_tokens_types
 
 include app_service/common/json_utils
 
+# follows the ContractType declared in status go status-go/services/wallet/common/const.go
+type ContractType* {.pure.} = enum
+  ContractTypeUnknown = 0,
+  ContractTypeERC20 = 1,
+  ContractTypeERC721 = 2,
+  ContractTypeERC1155 = 3
+
 type
   # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
   ContractID* = ref object of RootObj
@@ -63,6 +70,7 @@ type
     isFirst*: Option[bool]
     latestTxHash*: Option[string]
     receivedAmount*: Option[float64]
+    contractType*: Option[ContractType]
 
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
@@ -364,6 +372,11 @@ proc fromJson*(t: JsonNode, T: typedesc[Collectible]): Collectible {.inline.} =
     result.receivedAmount = some(receivedAmountNode.getFloat())
   else:
     result.receivedAmount = none(float64)
+  let contractTypeNode = t{"contract_type"}
+  if contractTypeNode != nil and contractTypeNode.kind != JNull:
+    result.contractType = some(ContractType(contractTypeNode.getInt()))
+  else:
+    result.contractType = none(ContractType)
 
 proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
   result = @[]

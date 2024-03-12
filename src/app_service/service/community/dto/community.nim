@@ -41,6 +41,8 @@ type
     BanPending,
     UnbanPending,
     KickPending
+    Unbanned,
+    Kicked
 
 type CommunityMembershipRequestDto* = object
   id*: string
@@ -82,6 +84,7 @@ type TokenCriteriaDto* = object
   decimals* {.serializedFieldName("decimals").}: int
   tokenIds* {.serializedFieldName("tokenIds").}: seq[string]
   ensPattern* {.serializedFieldName("ens_pattern").}: string
+  amountInWei* {.serializedFieldName("amountInWei").}: string
 
 type CommunityTokenPermissionDto* = object
   id*: string
@@ -258,6 +261,7 @@ proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress 
 proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
   result = TokenCriteriaDto()
   discard jsonObj.getProp("amount", result.amount)
+  discard jsonObj.getProp("amountInWei", result.amountInWei)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("name", result.name)
@@ -477,7 +481,8 @@ proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): Membersh
       return MembershipRequestState.UnbannedPending
     of CommunityMemberPendingBanOrKick.KickPending:
       return MembershipRequestState.KickedPending
-  return MembershipRequestState.None
+    else:
+      return MembershipRequestState.None
 
 proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   result = CommunitySettingsDto()

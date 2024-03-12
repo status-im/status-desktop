@@ -16,6 +16,7 @@ type
     communityId*: string
     supply*: string
     infiniteSupply*: bool
+    decimals*: int
 
 proc initTokenListItem*(
   key: string,
@@ -27,6 +28,7 @@ proc initTokenListItem*(
   communityId: string = "",
   supply: string = "1",
   infiniteSupply: bool = true,
+  decimals: int
 ): TokenListItem =
   result.key = key
   result.symbol = symbol
@@ -37,6 +39,7 @@ proc initTokenListItem*(
   result.communityId = communityId
   result.supply = supply
   result.infiniteSupply = infiniteSupply
+  result.decimals = decimals
 
 proc `$`*(self: TokenListItem): string =
   result = fmt"""TokenListItem(
@@ -48,6 +51,7 @@ proc `$`*(self: TokenListItem): string =
     communityId: {self.communityId},
     supply: {self.supply},
     infiniteSupply: {self.infiniteSupply},
+    decimals: {self.decimals},
     ]"""
 
 proc getKey*(self: TokenListItem): string =
@@ -76,3 +80,6 @@ proc getSupply*(self: TokenListItem): string =
 
 proc getInfiniteSupply*(self: TokenListItem): bool =
   return self.infiniteSupply
+
+proc getDecimals*(self: TokenListItem): int =
+  return self.decimals

@@ -95,7 +95,8 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
-proc buildTokensAndCollectiblesFromCommunities(self: Module)
+proc buildTokensAndCollectiblesFromAllCommunities(self: Module)
+proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto])
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -159,7 +160,7 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  self.buildTokensAndCollectiblesFromCommunities()
+  self.buildTokensAndCollectiblesFromAllCommunities()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -254,6 +255,11 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  var amIbanned = false
+  if myPublicKey in community.pendingAndBannedMembers:
+    amIbanned = community.pendingAndBannedMembers[myPublicKey] == CommunityMemberPendingBanOrKick.Banned
+
   return initCuratedCommunityItem(
     community.id,
     community.name,
@@ -267,6 +273,7 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
     int(community.activeMembersCount),
     community.featuredInDirectory,
     tokenPermissionsItems,
+    amIbanned
   )
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
@@ -283,6 +290,9 @@ proc getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelIt
       c.description,
       c.filePath,
       true)
+
+method isDisplayNameDupeOfCommunityMember*(self: Module, displayName: string): bool =
+  self.controller.isDisplayNameDupeOfCommunityMember(displayName)
 
 method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
@@ -412,6 +422,7 @@ method communityImported*(self: Module, community: CommunityDto) =
 
 method communityDataImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
+  self.buildTokensAndCollectiblesFromCommunities(@[community])
   self.view.emitCommunityInfoRequestCompleted(community.id, "")
 
 method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
@@ -543,6 +554,7 @@ method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string
 
 proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
     infiniteSupply: bool): TokenListItem =
+  let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
   result = initTokenListItem(
     key = token.symbol,
     name = token.name,
@@ -553,14 +565,14 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     communityId = communityId,
     supply,
     infiniteSupply,
+    communityTokenDecimals
   )
 
-proc buildTokensAndCollectiblesFromCommunities(self: Module) =
+proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
   let communityTokens = self.controller.getAllCommunityTokens()
-  let communities = self.controller.getAllCommunities()
   for community in communities:
     for tokenMetadata in community.communityTokensMetadata:
       # Set fallback supply to infinite in case we don't have it
@@ -589,6 +601,10 @@ proc buildTokensAndCollectiblesFromCommunities(self: Module) =
   self.view.tokenListModel.addItems(tokenListItems)
   self.view.collectiblesListModel.addItems(collectiblesListItems)
 
+proc buildTokensAndCollectiblesFromAllCommunities(self: Module) =
+  let communities = self.controller.getAllCommunities()
+  self.buildTokensAndCollectiblesFromCommunities(communities)
+
 proc buildTokensAndCollectiblesFromWallet(self: Module) =
   var tokenListItems: seq[TokenListItem]
 
@@ -607,6 +623,7 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
       communityId = token.communityId,
       image = "",
       category = ord(TokenListItemCategory.General),
+      decimals = token.decimals
     )
     tokenListItems.add(tokenListItem)
 
@@ -936,3 +953,6 @@ method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, membe
         airdropAddress = revealedAccount.address
 
     self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)
+
+method promoteSelfToControlNode*(self: Module, communityId: string) =
+  self.controller.promoteSelfToControlNode(communityId)

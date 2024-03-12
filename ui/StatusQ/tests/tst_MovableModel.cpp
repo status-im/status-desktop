@@ -651,6 +651,7 @@ private slots:
         QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
         QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
 
+
         QCOMPARE(syncedChangedSpy.count(), 1);
         QCOMPARE(model.synced(), true);
         QCOMPARE(model.rowCount(), 2);
@@ -680,12 +681,18 @@ private slots:
             QCOMPARE(signalsSpy.count(), 0);
         }
 
-        model.setSourceModel(sourceModel);
+        {
+            ModelSignalsSpy signalsSpy(&model);
+            model.setSourceModel(sourceModel);
+            QCOMPARE(signalsSpy.count(), 2);
+            QCOMPARE(signalsSpy.modelAboutToBeResetSpy.count(), 1);
+            QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+        }
 
         {
             ModelSignalsSpy signalsSpy(&model);
             model.syncOrder();
-            QCOMPARE(signalsSpy.count(), 0);
+            QCOMPARE(signalsSpy.count(), 0); //already synced
         }
 
         PersistentIndexesTester indexesTester(&model);
@@ -725,7 +732,6 @@ private slots:
         ])";
 
         ListModelWrapper sourceModel(engine, source);
-        ListModelWrapper sourceModelCopy(engine, source);
 
         QSortFilterProxyModel sfpm;
         sfpm.setSourceModel(sourceModel);
@@ -753,6 +759,70 @@ private slots:
         QCOMPARE(model.synced(), true);
         QCOMPARE(signalsSpy.count(), signalsSpySfpm.count());
         QVERIFY(indexesTester.compare());
+    }
+    
+    void sourceModelResetTest()
+    {
+        QQmlEngine engine;
+
+        auto source = R"([
+            { "name": "A", "subname": "a1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "B", "subname": "b1" },
+            { "name": "C", "subname": "c1" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c3" }
+        ])";
+
+        ListModelWrapper sourceModel(engine, source);
+
+        QSortFilterProxyModel sfpm;
+        sfpm.setSourceModel(sourceModel);
+
+        MovableModel model;
+        model.setSourceModel(&sfpm);
+
+        ModelSignalsSpy signalsSpy(&model);
+        ModelSignalsSpy signalsSpySfpm(&sfpm);
+
+        PersistentIndexesTester indexesTester(&model);
+
+        sfpm.setSortRole(1);
+        sfpm.sort(0, Qt::DescendingOrder);
+
+        model.move(0, 1);
+
+        ListModelWrapper expectedSorted(engine, R"([
+            { "name": "C", "subname": "c3" },
+            { "name": "C", "subname": "c2" },
+            { "name": "C", "subname": "c1" },
+            { "name": "B", "subname": "b1" },
+            { "name": "A", "subname": "a2" },
+            { "name": "A", "subname": "a1" }
+        ])");
+
+
+        auto source2 = R"([
+            { "name": "E", "subname": "a1" },
+            { "name": "F", "subname": "a2" },
+            { "name": "F", "subname": "b1" },
+            { "name": "G", "subname": "c1" },
+            { "name": "H", "subname": "c2" },
+            { "name": "H", "subname": "c3" }
+        ])";
+
+        ListModelWrapper sourceModel2(engine, source2);
+        sfpm.setSourceModel(sourceModel2);
+        sfpm.setFilterRole(0);
+        sfpm.setFilterFixedString("H");
+
+        QCOMPARE(model.rowCount(), 2);
+        QCOMPARE(signalsSpy.modelResetSpy.count(), 1);
+        QCOMPARE(signalsSpy.rowsAboutToBeRemovedSpy.count(), 1);
+        QCOMPARE(signalsSpy.rowsAboutToBeRemovedSpy.at(0).at(0), QModelIndex{});
+        QCOMPARE(signalsSpy.rowsAboutToBeRemovedSpy.at(0).at(1), 2);
+        QCOMPARE(signalsSpy.rowsAboutToBeRemovedSpy.at(0).at(2), 5);
+        QCOMPARE(signalsSpy.rowsRemovedSpy.count(), 1);
     }
 };
 

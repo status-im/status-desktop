@@ -1,4 +1,4 @@
-import stint, std/strutils, uuids
+import std/strutils, uuids
 import ./io_interface
 
 import app/core/signals/types
@@ -217,6 +217,9 @@ proc getCommunityTags*(self: Controller): string =
 
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
+
+proc isDisplayNameDupeOfCommunityMember*(self: Controller, displayName: string): bool =
+  result = self.communityService.isDisplayNameDupeOfCommunityMember(displayName)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   result = self.communityService.getCommunityById(communityId)
@@ -478,4 +481,7 @@ proc removeCommunityChat*(self: Controller, communityId: string, channelId: stri
   self.communityService.deleteCommunityChat(communityId, channelId)
 
 proc getNetworks*(self: Controller): seq[NetworkDto] =
- return self.networksService.getNetworks()
+  return self.networksService.getNetworks()
+
+proc promoteSelfToControlNode*(self: Controller, communityId: string) =
+  self.communityService.promoteSelfToControlNode(communityId)

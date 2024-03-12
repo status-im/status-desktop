@@ -344,6 +344,13 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     chatMember.role = MemberRole.None
     members.add(chatMember)
 
+
+  var bannedMembers = newSeq[MemberItem]()
+  for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
+    let state = memberState.toMembershipRequestState()
+    if state == MembershipRequestState.Banned or state == MembershipRequestState.UnbannedPending:
+      bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+
   result = initItem(
     channelGroup.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
@@ -375,25 +382,15 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
       var state = MembershipRequestState.Accepted
-      if not member.joined:
+      if member.id in communityDetails.pendingAndBannedMembers:
+        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
+        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+          state = memberState
+      elif not member.joined:
         state = MembershipRequestState.AwaitingAddress
 
-      result = initMemberItem(
-        pubKey = member.id,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        memberRole = member.role,
-        membershipRequestState = state
-      )),
+      result = self.createMemberItem(member.id, state, member.role)
+    ),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
@@ -405,64 +402,14 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     )) else: @[],
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
-    # bannedMembers
-    channelGroup.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem=
-      let contactDetails = self.controller.getContactDetails(bannedMemberId)
-      result = initMemberItem(
-        pubKey = bannedMemberId,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        membershipRequestState = MembershipRequestState.Banned,
-      )
-    ),
+    bannedMembers,
     # pendingMemberRequests
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
-      result = initMemberItem(
-        pubKey = requestDto.publicKey,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id,
-        membershipRequestState = MembershipRequestState(requestDto.state),
-      )
+      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     # declinedMemberRequests
     if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
-      result = initMemberItem(
-        pubKey = requestDto.publicKey,
-        displayName = contactDetails.dto.displayName,
-        ensName = contactDetails.dto.name,
-        isEnsVerified = contactDetails.dto.ensVerified,
-        localNickname = contactDetails.dto.localNickname,
-        alias = contactDetails.dto.alias,
-        icon = contactDetails.icon,
-        colorId = contactDetails.colorId,
-        colorHash = contactDetails.colorHash,
-        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
-        isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id,
-        membershipRequestState = MembershipRequestState(requestDto.state),
-      )
+      result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
     ) else: @[],
     channelGroup.encrypted,
     communityTokensItems,
@@ -875,7 +822,10 @@ method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSett
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
   let item = self.view.model().getItemById(id)
-  self.setActiveSection(item)
+  if item.isEmpty():
+    discard self.communitiesModule.spectateCommunity(id)
+  else:
+    self.setActiveSection(item)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
   for cModule in self.channelGroupModules.values:
@@ -1284,9 +1234,26 @@ method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, me
     item.updatePendingRequestLoadingState(memberKey, false)
 
 method onMembershipStatusUpdated*[T](self: Module[T], communityId: string, memberPubkey: string, status: MembershipRequestState) =
-  let item = self.view.model().getItemById(communityId)
-  if item.id != "":
-    item.updateMembershipStatus(memberPubkey, status)
+  let myPublicKey = singletonInstance.userProfile.getPubKey()
+  let communityDto = self.controller.getCommunityById(communityId)
+
+  if myPublicKey == memberPubkey:
+    case status:
+      of MembershipRequestState.Banned:
+        singletonInstance.globalEvents.showCommunityMemberBannedNotification(fmt "You've been banned from {communityDto.name}", "", communityId)
+      of MembershipRequestState.Kicked:
+        singletonInstance.globalEvents.showCommunityMemberKickedNotification(fmt "You were kicked from {communityDto.name}", "", communityId)
+      of MembershipRequestState.Unbanned:
+        singletonInstance.globalEvents.showCommunityMemberUnbannedNotification(fmt "You were unbanned from {communityDto.name}", "", communityId)
+      else:
+        discard
+  elif communityDto.isControlNode:
+    let (contactName, _, _) = self.controller.getContactNameAndImage(memberPubkey)
+    let item = self.view.model().getItemById(communityId)
+    if item.id != "":
+      item.updateMembershipStatus(memberPubkey, status)
+    if status == MembershipRequestState.Banned or status == MembershipRequestState.Kicked or status == MembershipRequestState.Unbanned:
+      self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, status.int)
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
@@ -1333,7 +1300,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     finalEphNotifType = EphemeralNotificationType.Danger
 
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, "",
-  loading, finalEphNotifType, url, 0, "", details)
+  loading, finalEphNotifType, url, EphemeralActionType.None, "", details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 # TO UNIFY with the one above.
@@ -1349,7 +1316,7 @@ method displayEphemeralWithActionNotification*[T](self: Module[T], title: string
     finalEphNotifType = EphemeralNotificationType.Danger
 
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, iconColor,
-  loading, finalEphNotifType, "", actionType, actionData, details)
+  loading, finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 # TO UNIFY with the one above.
@@ -1366,11 +1333,11 @@ method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: s
 
 
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false,
-  finalEphNotifType, "", actionType, actionData, details)
+  finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
-  if(details.notificationType == NotificationType.NewMessage or
+  if details.notificationType == NotificationType.NewMessage or
     details.notificationType == NotificationType.NewMessageWithPersonalMention or
     details.notificationType == NotificationType.CommunityTokenPermissionCreated or
     details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
@@ -1378,16 +1345,25 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
     details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
     details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
-    details.notificationType == NotificationType.NewMessageWithGlobalMention):
+    details.notificationType == NotificationType.NewMessageWithGlobalMention:
     self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
 
-  elif(details.notificationType == NotificationType.NewContactRequest or
+  elif details.notificationType == NotificationType.NewContactRequest or
     details.notificationType == NotificationType.IdentityVerificationRequest or
-    details.notificationType == NotificationType.ContactRemoved):
+    details.notificationType == NotificationType.ContactRemoved:
     self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
 
-  elif(details.notificationType == NotificationType.AcceptedContactRequest):
+  elif details.notificationType == NotificationType.AcceptedContactRequest:
     self.displayEphemeralNotification(title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int, "", details)
+
+  elif details.notificationType == NotificationType.CommunityMemberKicked:
+    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
+
+  elif details.notificationType == NotificationType.CommunityMemberBanned:
+    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
+
+  elif details.notificationType == NotificationType.CommunityMemberUnbanned:
+    self.displayEphemeralWithActionNotification(title, "Visit community" , "communities", "", false, EphemeralNotificationType.Success.int, EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId)
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
@@ -1648,5 +1624,25 @@ method checkIfAddressWasCopied*[T](self: Module[T], value: string) =
   if walletAcc.isNil:
     return
   self.addressWasShown(value)
+
+proc createMemberItem*[T](self: Module[T], memberId: string, state: MembershipRequestState, role: MemberRole): MemberItem =
+  let contactDetails = self.controller.getContactDetails(memberId)
+  let status = self.controller.getStatusForContactWithId(memberId)
+  return initMemberItem(
+    pubKey = memberId,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
+    icon = contactDetails.icon,
+    colorId = contactDetails.colorId,
+    colorHash = contactDetails.colorHash,
+    onlineStatus = toOnlineStatus(status.statusType),
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
+    memberRole = role,
+    membershipRequestState = state,
+  )
 
 {.pop.}

@@ -50,10 +50,6 @@ Control {
         readonly property string channelMembershipRequestPendingText: qsTr("Channel Membership Request Pending...")
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
 
-        function holdingsTextFormat(name, amount) {
-            return PermissionsHelpers.setHoldingsTextFormat(Constants.TokenType.ERC20, name, amount)
-        }
-
         function getInvitationPendingText() {
             return root.joinCommunity ? d.communityMembershipRequestPendingText : d.channelMembershipRequestPendingText
         }

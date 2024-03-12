@@ -1,7 +1,8 @@
 ProfileDescriptionPanel 1.0 ProfileDescriptionPanel.qml
-ProfileSocialLinksPanel 1.0 ProfileSocialLinksPanel.qml
-ProfileShowcaseCommunitiesPanel 1.0 ProfileShowcaseCommunitiesPanel.qml
-ProfileShowcaseCollectiblesPanel 1.0 ProfileShowcaseCollectiblesPanel.qml
 ProfileShowcaseAccountsPanel 1.0 ProfileShowcaseAccountsPanel.qml
 ProfileShowcaseAssetsPanel 1.0 ProfileShowcaseAssetsPanel.qml
+ProfileShowcaseCollectiblesPanel 1.0 ProfileShowcaseCollectiblesPanel.qml
+ProfileShowcaseCommunitiesPanel 1.0 ProfileShowcaseCommunitiesPanel.qml
+ProfileShowcasePanel 1.0 ProfileShowcasePanel.qml
+ProfileSocialLinksPanel 1.0 ProfileSocialLinksPanel.qml
 SupportedTokenListsPanel 1.0 SupportedTokenListsPanel.qml

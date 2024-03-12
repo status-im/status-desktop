@@ -1,9 +1,9 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm, sugar
+import NimQml, json, sequtils, chronicles, strutils
 
 import backend/collectibles as backend
 
 import app/core/eventemitter
-import app/core/tasks/[qt, threadpool]
+import app/core/tasks/threadpool
 import app/core/signals/types
 
 logScope:

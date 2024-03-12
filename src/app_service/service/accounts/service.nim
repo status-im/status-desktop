@@ -25,6 +25,7 @@ export dto_generated_accounts
 logScope:
   topics = "accounts-service"
 
+const DEFAULT_WALLET_ACCOUNT_NAME = "Account 1"
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
@@ -240,7 +241,7 @@ QtObject:
         "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
-        "name": "Status account",
+        "name": DEFAULT_WALLET_ACCOUNT_NAME,
         "derived-from": account.address,
         "emoji": self.defaultWalletEmoji
       },
@@ -379,25 +380,7 @@ QtObject:
       "UDPPort": WAKU_V2_PORT
     }
 
-    result["WalletConfig"] = %* {
-      "LoadAllTransfers": true,
-      "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
-      "RaribleMainnetAPIKey": RARIBLE_MAINNET_API_KEY_RESOLVED,
-      "RaribleTestnetAPIKey": RARIBLE_TESTNET_API_KEY_RESOLVED,
-      "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
-      "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
-      "AlchemyAPIKeys": %* {
-        "1": ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED,
-        "5": ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED,
-        "11155111": ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED,
-        "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-        "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
-        "421614": ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
-        "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-        "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED,
-        "11155420": ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED
-      }
-    }
+    result["WalletConfig"] = NODE_CONFIG["WalletConfig"]
 
     result["TorrentConfig"] = %* {
       "Port": TORRENT_CONFIG_PORT,
@@ -511,7 +494,7 @@ QtObject:
           "colorId": DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT,
           "wallet": true,
           "path": PATH_DEFAULT_WALLET,
-          "name": "Status account",
+          "name": DEFAULT_WALLET_ACCOUNT_NAME,
           "derived-from": address,
           "emoji": self.defaultWalletEmoji,
         },

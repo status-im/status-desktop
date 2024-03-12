@@ -1,5 +1,4 @@
 import app_service/service/wallet_account/dto/account_token_item
-import app_service/service/currency/dto
 
 type
   GroupedAccountAssetsDataSource* = tuple[

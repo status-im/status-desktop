@@ -24,9 +24,16 @@ FocusScope {
     property alias titleLayout: titleLayout
 
     property bool dirty: false
-    property bool ignoreDirty // ignore dirty state and do not notifyDirty()
+
+    // Used to configure the dirty behaviour of the settings page as a must blocker notification when
+    // user wants to leave the current page or just, ignore the changes done. Default: blocker
+    property bool ignoreDirty: false
+
     property bool saveChangesButtonEnabled: false
     readonly property alias toast: settingsDirtyToastMessage
+
+    // Used to configure the dirty toast behaviour (by default overlay on top of content)
+    property bool autoscrollWhenDirty: false
 
     readonly property real availableHeight:
         scrollView.availableHeight - settingsDirtyToastMessagePlaceholder.height
@@ -45,6 +52,7 @@ FocusScope {
         id: d
 
         readonly property int titleRowHeight: 56
+        readonly property int bottomDirtyToastMargin: 36
     }
 
     MouseArea {
@@ -121,14 +129,16 @@ FocusScope {
                 }
             }
 
+            // Used only when dirty toast visible and in case of autoscrolling configuration
             Item {
                 id: settingsDirtyToastMessagePlaceholder
 
                 width: settingsDirtyToastMessage.implicitWidth
-                height: settingsDirtyToastMessage.active && !root.ignoreDirty ? settingsDirtyToastMessage.implicitHeight : 0
+                height: settingsDirtyToastMessage.active && root.autoscrollWhenDirty ?
+                            (settingsDirtyToastMessage.implicitHeight + d.bottomDirtyToastMargin) : 0 /*Overlay on top of content*/
 
                 Behavior on implicitHeight {
-                    enabled: !root.ignoreDirty
+                    enabled: root.autoscrollWhenDirty
                     NumberAnimation {
                         duration: 150
                         easing.type: Easing.InOutQuad
@@ -141,10 +151,18 @@ FocusScope {
     SettingsDirtyToastMessage {
         id: settingsDirtyToastMessage
         anchors.bottom: scrollView.bottom
-        anchors.bottomMargin: root.ignoreDirty ? 40 : 0
-        anchors.horizontalCenter: scrollView.horizontalCenter
+        anchors.bottomMargin: d.bottomDirtyToastMargin
+
+        // Left anchors and margin added bc of the implementation of the `SettingsContentBase` parent margin and to avoid
+        // this toast to be wrongly centered
+        // Constants.settingsSection.leftMargin is the margin set up to the parent when using `SettingsContentBase` inside central
+        // panel property of `StatusSectionLayout` and needs to be taken into account to counteract it
+        // when trying to align horizontally the save toast component
+        anchors.left: root.left
+        anchors.leftMargin: -Constants.settingsSection.leftMargin / 2 + (root.width / 2 - width / 2)
+
         active: root.dirty
-        flickable: root.ignoreDirty ? null : scrollView.flickable
+        flickable: root.autoscrollWhenDirty ? scrollView.flickable : null
         saveChangesButtonEnabled: root.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()

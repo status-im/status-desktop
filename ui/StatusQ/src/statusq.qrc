@@ -191,6 +191,7 @@
         <file>StatusQ/Core/Utils/ModelUtils.qml</file>
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
         <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
+        <file>StatusQ/Core/Utils/QObject.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
         <file>StatusQ/Core/Utils/StatesStack.qml</file>
         <file>StatusQ/Core/Utils/StringUtils.qml</file>
@@ -220,6 +221,7 @@
         <file>StatusQ/Popups/Dialog/qmldir</file>
         <file>StatusQ/Popups/StatusAction.qml</file>
         <file>StatusQ/Popups/StatusColorDialog.qml</file>
+        <file>StatusQ/Popups/StatusConfirmationDialog.qml</file>
         <file>StatusQ/Popups/StatusMenu.qml</file>
         <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
         <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>

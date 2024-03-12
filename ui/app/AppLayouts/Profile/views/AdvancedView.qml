@@ -36,6 +36,8 @@ SettingsContentBase {
     property AdvancedStore advancedStore
     property WalletStore walletStore
 
+    property bool isFleetSelectionEnabled
+
     Item {
         id: advancedContainer
         width: root.contentWidth
@@ -59,6 +61,7 @@ SettingsContentBase {
                 text: qsTr("Fleet")
                 currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
+                visible: root.isFleetSelectionEnabled
             }
 
             StatusSettingsLineButton {

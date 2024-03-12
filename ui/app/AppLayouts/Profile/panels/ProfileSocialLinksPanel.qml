@@ -20,6 +20,7 @@ Control {
 
     property var profileStore
     property var socialLinksModel
+    property int showcaseLimit: 20
 
     background: null
 
@@ -42,30 +43,35 @@ Control {
 
     contentItem: ColumnLayout {
         id: layout
-        spacing: 12
+        spacing: Style.current.halfPadding
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.halfPadding
+            Layout.bottomMargin: Style.current.padding
             StatusBaseText {
-                text: qsTr("Links")
-                color: Theme.palette.baseColor1
+                text: qsTr("In showcase")
+                color: Theme.palette.directColor1
             }
             Item { Layout.fillWidth: true }
             StatusBaseText {
-                text: qsTr("%1/%2").arg(root.profileStore.temporarySocialLinksModel.count).arg(Constants.maxNumOfSocialLinks)
+                text: qsTr("%1 / %2").arg(root.profileStore.temporarySocialLinksModel.count).arg(root.showcaseLimit)
                 color: Theme.palette.baseColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
             }
         }
 
         // empty placeholder when no links; dashed rounded rectangle
         ShapeRectangle {
-            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === Constants.maxNumOfSocialLinks
+            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === root.showcaseLimit
 
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width - 4 // the rectangular path is rendered outside
-            Layout.preferredHeight: 44
-            text: maxReached? qsTr("Link limit of %1 reached").arg(Constants.maxNumOfSocialLinks) : ""
+            Layout.preferredHeight: 48
+
+            text: maxReached ? qsTr("Link limit of %1 reached").arg(root.showcaseLimit) : ""
+            path.strokeColor: maxReached ? "transparent" : Theme.palette.baseColor2
+            path.fillColor: maxReached ? Theme.palette.baseColor4 : "transparent"
+            font.pixelSize: Theme.tertiaryTextFontSize
 
             StatusLinkText {
                 objectName: "addMoreSocialLinks"
@@ -81,10 +87,14 @@ Control {
 
         StatusListView {
             id: linksView
+
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight
+            Layout.bottomMargin: ProfileUtils.defaultDelegateHeight / 2
+
             model: root.socialLinksModel
             interactive: false
+            spacing: Style.current.halfPadding
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
@@ -120,7 +130,9 @@ Control {
 
                     visible: !!asideText
                     width: parent.width
-                    height: visible ? implicitHeight : 0
+                    height: visible ? ProfileUtils.defaultDelegateHeight : 0
+                    topInset: 0
+                    bottomInset: 0
 
                     anchors {
                         horizontalCenter: parent.horizontalCenter
@@ -130,10 +142,11 @@ Control {
                     dragParent: linksView
                     visualIndex: delegateRoot.visualIndex
                     draggable: linksView.count > 1
-                    title: ProfileUtils.linkTypeToText(model.linkType) || model.text
+                    title: ProfileUtils.linkTypeToShortText(model.linkType) || model.text
                     hasIcon: true
                     icon.name: model.icon
                     icon.color: ProfileUtils.linkTypeColor(model.linkType)
+                    assetBgColor: ProfileUtils.linkTypeBgColor(model.linkType)
                     actions: [
                         StatusLinkText {
                             Layout.fillWidth: true
@@ -161,7 +174,5 @@ Control {
                 }
             }
         }
-
-        Item { Layout.fillHeight: true }
     }
 }

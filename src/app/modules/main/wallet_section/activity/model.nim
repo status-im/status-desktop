@@ -111,6 +111,19 @@ QtObject:
 
     return m.getTransactionIdentity().isSome() and d.transaction.isSome() and m.getTransactionIdentity().get() == d.transaction.get()
 
+  proc addNewEntries*(self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    for j in countdown(newEntries.high, 0):
+      let ae = newEntries[j]
+      let pos = insertPositions[j]
+      self.beginInsertRows(parentModelIndex, pos, pos)
+      self.entries.insert(ae, pos)
+      self.endInsertRows()
+
+    self.countChanged()
+
   proc updateEntries*(self: Model, updates: seq[backend.Data]) =
     for i in countdown(self.entries.high, 0):
       for j in countdown(updates.high, 0):

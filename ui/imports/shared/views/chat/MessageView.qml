@@ -642,6 +642,7 @@ Loader {
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventSent ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventAccepted ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventRemoved ||
+                            root.prevMessageContentType === Constants.messageContentType.bridgeMessageType ||
                             root.senderId !== root.prevMessageSenderId || root.prevMessageDeleted
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
@@ -651,7 +652,7 @@ Loader {
                               (root.chatLogView && root.chatLogView.moving) ||
                               Global.activityPopupOpened
 
-                disableEmojis: root.isChatBlocked
+                disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage
 
                 overrideBackground: root.placeholderMessage

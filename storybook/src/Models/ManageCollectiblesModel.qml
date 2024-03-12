@@ -31,12 +31,12 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 1
                 },
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 2
                 },
             ]
@@ -56,7 +56,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "8",
                     txTimestamp: 3
                 },
             ]
@@ -76,7 +76,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 3
                 },
             ]
@@ -96,7 +96,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 6
                 },
             ]
@@ -116,12 +116,12 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 50
                 },
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 10
                 },
             ]
@@ -141,7 +141,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 16
                 },
             ]
@@ -161,7 +161,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 19
                 },
             ]
@@ -184,7 +184,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "15",
                     txTimestamp: 20
                 },
             ]
@@ -204,7 +204,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "4",
                     txTimestamp: 21
                 },
             ]
@@ -224,7 +224,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 22
                 },
             ]
@@ -244,7 +244,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 23
                 },
             ]
@@ -264,7 +264,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1000",
                     txTimestamp: 25
                 },
             ]
@@ -284,7 +284,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 26
                 },
             ]
@@ -297,6 +297,31 @@ ListModel {
             collectionName: "",
             communityId: "lbear",
             communityName: "Lonely Bearz Community 0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            communityImage: "",
+            imageUrl: "",
+            isLoading: false,
+            backgroundColor: "pink",
+            ownership: [
+                {
+                    accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                    balance: "60",
+                    txTimestamp: 27
+                },
+                {
+                    accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                    balance: "70",
+                    txTimestamp: 60
+                },
+            ]
+        },
+        {
+            uid: "lb#777",
+            chainId: 420,
+            name: "Lonely Turtle #777",
+            collectionUid: "",
+            collectionName: "",
+            communityId: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            communityName: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
             communityImage: "",
             imageUrl: "",
             isLoading: false,

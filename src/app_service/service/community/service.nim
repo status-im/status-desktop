@@ -731,8 +731,31 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+
       if wasJoined and not community.joined and not community.isMember:
-        self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
+        # If we were kicked due to ownership change - we will stay in a spectate mode
+        if community.spectated:
+          self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
+        else:
+          # We were kicked or banned, leave the community
+          self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: community.id))
+          var status = MembershipRequestState.Kicked
+          if community.pendingAndBannedMembers.hasKey(myPublicKey) and
+            community.pendingAndBannedMembers[myPublicKey] == CommunityMemberPendingBanOrKick.Banned:
+            status = MembershipRequestState.Banned
+
+          self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
+            communityId: community.id,
+            memberPubkey: myPublicKey,
+            status: status))
+
+      # Check if we were unbanned
+      if not wasJoined and not community.joined and prevCommunity.pendingAndBannedMembers.hasKey(myPublicKey) and not
+        community.pendingAndBannedMembers.hasKey(myPublicKey):
+        self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
+            communityId: community.id,
+            memberPubkey: myPublicKey,
+            status: MembershipRequestState.Unbanned))
 
     except Exception as e:
       error "Error handling community updates", msg = e.msg
@@ -848,6 +871,20 @@ QtObject:
 
   proc getCommunityIds*(self: Service): seq[string] =
     return toSeq(self.communities.keys)
+
+  proc isDisplayNameDupeOfCommunityMember*(self: Service, displayName: string): bool =
+    try:
+      let response = status_go.isDisplayNameDupeOfCommunityMember(displayName)
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error scanning communities for member name: " & error.message)
+
+      if response.result.kind != JNull:
+        return response.result.getBool
+
+    except Exception as e:
+      error "error scanning communities for member name: ", errMsg = e.msg
 
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
     let community = self.getCommunityById(communityId)
@@ -2116,10 +2153,13 @@ QtObject:
       var status: MembershipRequestState = MembershipRequestState.None
       if community.pendingAndBannedMembers.hasKey(memberPubkey):
         status = community.pendingAndBannedMembers[memberPubkey].toMembershipRequestState()
-      else:
-        for member in community.members:
-          if member.id == memberPubkey:
-            status = MembershipRequestState.Accepted
+
+      if status == MembershipRequestState.None:
+        let prevCommunity = self.communities[community.id]
+        if prevCommunity.pendingAndBannedMembers.hasKey(memberPubkey):
+          status = MembershipRequestState.Unbanned
+        elif len(prevCommunity.members) > len(community.members):
+          status = MembershipRequestState.Kicked
 
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED, CommunityMemberStatusUpdatedArgs(
         communityId: community.id,
@@ -2388,3 +2428,21 @@ QtObject:
     except Exception as e:
       error "Error setting community shard", msg = e.msg
       self.events.emit(SIGNAL_COMMUNITY_SHARD_SET_FAILED, CommunityShardSetArgs(communityId: rpcResponseObj["communityId"].getStr))
+
+  proc promoteSelfToControlNode*(self: Service, communityId: string) =
+    try:
+      let response = status_go.promoteSelfToControlNode(communityId)
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, error.message)
+
+      if response.result == nil or response.result.kind == JNull or response.result["communities"].kind == JNull or
+          response.result["communities"].len == 0:
+        error "error: ", procName="promoteSelfToControlNode", errDesription = "result is nil"
+        return
+
+      let community = response.result["communities"][0].toCommunityDto()
+      self.communities[communityId] = community
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+    except Exception as e:
+      error "error promoting self to control node", msg = e.msg

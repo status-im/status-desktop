@@ -215,7 +215,7 @@ StatusDialog {
 
             onEditButtonClicked: root.editButtonClicked()
             onHeaderImageClicked: root.headerImageClicked()
-            onClose: root.close()
+            onClose: root.closeHandler()
         }
 
         Loader {

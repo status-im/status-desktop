@@ -30,6 +30,8 @@ SplitView {
         function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
 
         function getColorHashAsJson(publicKey, skipEnsVerification=false) {
+            if (skipEnsVerification)
+                return
             return JSON.stringify([{colorId: 0, segmentLength: 1},
                                    {colorId: 19, segmentLength: 2}])
         }
@@ -82,8 +84,8 @@ SplitView {
                                       isBlocked: ctrlIsBlocked.checked,
                                       isSyncing: false,
                                       trustStatus: ctrlTrustStatus.currentValue,
-                                      verificationStatus: Constants.verificationStatus.unverified,
-                                      incomingVerificationStatus: Constants.verificationStatus.unverified,
+                                      verificationStatus: ctrlVerificationStatus.currentValue,
+                                      incomingVerificationStatus: ctrlIncomingVerificationStatus.currentValue,
                                       contactRequestState: ctrlContactRequestState.currentValue,
                                       bio: bio.text,
                                       socialLinks: JSON.stringify
@@ -110,12 +112,22 @@ SplitView {
         }
     }
 
+    Component.onCompleted: {
+        Global.userProfile = {
+            name: "Anna",
+            pubKey: "Oxdeadbeef",
+            icon: ModelsData.collectibles.cryptoPunks
+        }
+    }
+
     Logs { id: logs }
 
     Popups {
         popupParent: root
         rootStore: QtObject {
             property var contactStore: QtObject {
+                property var contactsModule: null
+
                 function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
                     logs.logEvent("rootStore::contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
                     localNickname.text = newNickname
@@ -136,28 +148,104 @@ SplitView {
                     ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Sent)
                 }
 
+                function acceptContactRequest(publicKey, contactRequestId) {
+                    logs.logEvent("rootStore::contactStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
+                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Mutual)
+                }
+
+                function getLatestContactRequestForContactAsJson(pubKey) {
+                    logs.logEvent("rootStore::contactStore::getLatestContactRequestForContactAsJson", ["pubKey"], arguments)
+                    return {
+                        id: "123456789",
+                        from: pubKey,
+                        clock: Date.now(),
+                        text: "Hey Jo, it’s Alex here, we met at devcon last week!",
+                        contactRequestState: Constants.ContactRequestState.Received
+                    }
+                }
+
                 function sendVerificationRequest(publicKey, challenge) {
                     logs.logEvent("rootStore::contactStore::sendVerificationRequest", ["publicKey", "challenge"], arguments)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
                 }
 
                 function markUntrustworthy(publicKey) {
                     logs.logEvent("rootStore::contactStore::markUntrustworthy", ["publicKey"], arguments)
                     ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                }
+
+                function markAsTrusted(publicKey) {
+                    logs.logEvent("rootStore::contactStore::markAsTrusted", ["publicKey"], arguments)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
                 }
 
                 function removeContact(publicKey) {
                     logs.logEvent("rootStore::contactStore::removeContact", ["publicKey"], arguments)
                     ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
+                    ctrlIsContact.checked = false
                 }
 
                 function verifiedTrusted(publicKey) {
                     logs.logEvent("rootStore::contactStore::verifiedTrusted", ["publicKey"], arguments)
                     ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
                 }
 
                 function removeTrustStatus(publicKey) {
                     logs.logEvent("rootStore::contactStore::removeTrustStatus", ["publicKey"], arguments)
                     ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                }
+
+                function cancelVerificationRequest(pubKey) {
+                    logs.logEvent("rootStore::contactStore::cancelVerificationRequest", ["pubKey"], arguments)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                }
+
+                function declineVerificationRequest(pubKey) {
+                    logs.logEvent("rootStore::contactStore::declineVerificationRequest", ["pubKey"], arguments)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                }
+
+                function acceptVerificationRequest(pubKey, response) {
+                    logs.logEvent("rootStore::contactStore::acceptVerificationRequest", ["pubKey"], arguments)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
+                }
+
+                function verifiedUntrustworthy(pubKey) {
+                    logs.logEvent("rootStore::contactStore::verifiedUntrustworthy", ["pubKey"], arguments)
+                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
+                }
+
+                function getSentVerificationDetailsAsJson(pubKey) {
+                    return {
+                        requestStatus: ctrlVerificationStatus.currentValue,
+                        challenge: "The real Alex would know this 100%! What’s my favourite colour?",
+                        response: ctrlIncomingVerificationStatus.currentValue === Constants.verificationStatus.verified ? "Yellow!" : "",
+                        displayName: ProfileUtils.displayName(localNickname.text, name.text, displayName.text),
+                        icon: Style.png("status-logo"),
+                        requestedAt: Date.now() - 86400000,
+                        repliedAt: Date.now()
+                    }
+                }
+
+                function getVerificationDetailsFromAsJson(pubKey) {
+                    return {
+                        from: "0xdeadbeef",
+                        challenge: "The real Alex would know this 100%! What’s my favourite colour?",
+                        response: "",
+                        requestedAt: Date.now() - 86400000,
+                    }
                 }
             }
         }
@@ -231,6 +319,7 @@ SplitView {
                             function removeContact(publicKey) {
                                 logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
                                 ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
+                                ctrlIsContact.checked = false
                             }
 
                             function acceptContactRequest(publicKey, contactRequestId) {
@@ -255,6 +344,12 @@ SplitView {
                             function verifiedTrusted(publicKey) {
                                 logs.logEvent("contactsStore::verifiedTrusted", ["publicKey"], arguments)
                                 ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
+                            }
+
+                            function cancelVerificationRequest(pubKey) {
+                                logs.logEvent("contactsStore::cancelVerificationRequest", ["pubKey"], arguments)
+                                ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                                ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
                             }
 
                             function getLinkToProfile(publicKey) {
@@ -324,7 +419,7 @@ SplitView {
                     Label { text: "localNickname:" }
                     TextField {
                         id: localNickname
-                        text: "Nick"
+                        text: "Alex"
                         placeholderText: "Local Nickname"
                     }
                     Label { text: "displayName:" }
@@ -332,6 +427,19 @@ SplitView {
                         id: displayName
                         text: "Alex Pella"
                         placeholderText: "Display Name"
+                    }
+                    CheckBox {
+                        id: ensVerified
+                        checked: true
+                        text: "ensVerified"
+                    }
+
+                    Label { text: "name:" }
+                    TextField {
+                        id: name
+                        enabled: ensVerified.checked
+                        text: ensVerified.checked ? "mock-ens-name.eth" : ""
+                        placeholderText: "ENS name"
                     }
                 }
                 RowLayout {
@@ -354,21 +462,16 @@ SplitView {
                         from: 0
                         to: 11 // Theme.palette.userCustomizationColors.length
                     }
-                }
-                RowLayout {
-                    Layout.fillWidth: true
-                    CheckBox {
-                        id: ensVerified
-                        checked: true
-                        text: "ensVerified"
-                    }
-
-                    Label { text: "name:" }
-                    TextField {
-                        id: name
-                        enabled: ensVerified.checked
-                        text: ensVerified.checked ? "mock-ens-name.eth" : ""
-                        placeholderText: "ENS name"
+                    Label { text: "onlineStatus" }
+                    ComboBox {
+                        id: ctrlOnlineStatus
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: Constants.onlineStatus.unknown, text: "unknown" },
+                            { value: Constants.onlineStatus.inactive, text: "inactive" },
+                            { value: Constants.onlineStatus.online, text: "online" }
+                        ]
                     }
                 }
                 RowLayout {
@@ -392,14 +495,6 @@ SplitView {
                             { value: Constants.ContactRequestState.Dismissed, text: "Dismissed" }
                         ]
                     }
-                    CheckBox {
-                        id: ctrlIsBlocked
-                        text: "isBlocked"
-                    }
-                }
-                RowLayout {
-                    Layout.fillWidth: true
-                    enabled: !switchOwnProfile.checked
                     Label { text: "trustStatus:" }
                     ComboBox {
                         id: ctrlTrustStatus
@@ -411,16 +506,77 @@ SplitView {
                             { value: Constants.trustStatus.untrustworthy, text: "untrustworthy" }
                         ]
                     }
-                    Label { text: "onlineStatus" }
+                    CheckBox {
+                        id: ctrlIsBlocked
+                        text: "isBlocked"
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Label { text: "incomingVerificationStatus:" }
                     ComboBox {
-                        id: ctrlOnlineStatus
+                        id: ctrlIncomingVerificationStatus
+                        enabled: ctrlIsContact.checked && !switchOwnProfile.checked
                         textRole: "text"
                         valueRole: "value"
                         model: [
-                            { value: Constants.onlineStatus.unknown, text: "unknown" },
-                            { value: Constants.onlineStatus.inactive, text: "inactive" },
-                            { value: Constants.onlineStatus.online, text: "online" }
+                            { value: Constants.verificationStatus.unverified, text: "unverified" },
+                            { value: Constants.verificationStatus.verifying, text: "verifying" },
+                            { value: Constants.verificationStatus.verified, text: "verified" },
+                            { value: Constants.verificationStatus.declined, text: "declined" },
+                            { value: Constants.verificationStatus.canceled, text: "canceled" },
+                            { value: Constants.verificationStatus.trusted, text: "trusted" },
+                            { value: Constants.verificationStatus.untrustworthy, text: "untrustworthy" }
                         ]
+                    }
+                    Label { text: "verificationStatus:" }
+                    ComboBox {
+                        id: ctrlVerificationStatus
+                        enabled: ctrlIsContact.checked && !switchOwnProfile.checked
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: Constants.verificationStatus.unverified, text: "unverified" },
+                            { value: Constants.verificationStatus.verifying, text: "verifying" },
+                            { value: Constants.verificationStatus.verified, text: "verified" },
+                            { value: Constants.verificationStatus.declined, text: "declined" },
+                            { value: Constants.verificationStatus.canceled, text: "canceled" },
+                            { value: Constants.verificationStatus.trusted, text: "trusted" },
+                            { value: Constants.verificationStatus.untrustworthy, text: "untrustworthy" }
+                        ]
+                    }
+                    Button {
+                        text: "Send ID request"
+                        onClicked: {
+                            ctrlIsContact.checked = true
+                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                        }
+                    }
+                    Button {
+                        text: "Reply to ID request"
+                        onClicked: {
+                            ctrlIsContact.checked = true
+                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
+                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
+                        }
+                    }
+                    Button {
+                        text: "Pending ID request"
+                        onClicked: {
+                            ctrlIsContact.checked = true
+                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
+                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
+                        }
+                    }
+                    Button {
+                        text: "Review ID reply"
+                        onClicked: {
+                            ctrlIsContact.checked = true
+                            ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.verified)
+                            ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
+                        }
                     }
                 }
                 RowLayout {

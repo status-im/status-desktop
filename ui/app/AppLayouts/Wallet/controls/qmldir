@@ -11,3 +11,5 @@ ManageTokensCommunityTag 1.0 ManageTokensCommunityTag.qml
 ManageTokensDelegate 1.0 ManageTokensDelegate.qml
 ManageTokensGroupDelegate 1.0 ManageTokensGroupDelegate.qml
 InformationTileAssetDetails 1.0 InformationTileAssetDetails.qml
+StatusNetworkListItemTag 1.0 StatusNetworkListItemTag.qml
+CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml

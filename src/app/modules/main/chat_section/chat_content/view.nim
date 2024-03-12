@@ -148,6 +148,7 @@ QtObject:
     self.chatDetails.setDescription(chatDto.description)
     self.chatDetails.setEmoji(chatDto.emoji)
     self.chatDetails.setColor(chatDto.color)
+    self.chatDetails.setMuted(chatDto.muted)
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
@@ -168,7 +169,7 @@ QtObject:
     self.viewOnlyPermissionsSatisfiedChanged()
 
   proc getViewOnlyPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewOnlyPermissionsSatisfied
+    return self.viewOnlyPermissionsSatisfied or self.amIChatAdmin()
   QtProperty[bool] viewOnlyPermissionsSatisfied:
     read = getViewOnlyPermissionsSatisfied
     notify = viewOnlyPermissionsSatisfiedChanged
@@ -180,7 +181,7 @@ QtObject:
     self.viewAndPostPermissionsSatisfiedChanged()
 
   proc getViewAndPostPermissionsSatisfied*(self: View): bool {.slot.} =
-    return self.viewAndPostPermissionsSatisfied
+    return self.viewAndPostPermissionsSatisfied or self.amIChatAdmin()
   QtProperty[bool] viewAndPostPermissionsSatisfied:
     read = getViewAndPostPermissionsSatisfied
     notify = viewAndPostPermissionsSatisfiedChanged

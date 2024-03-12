@@ -3,13 +3,14 @@ import tables, stint, sets
 
 import model
 import entry
-import entry_details
 import recipients_model
 import collectibles_model
 import collectibles_item
 import events_handler
 import status
 import utils
+
+import details_controller as details_controller
 
 import web3/conversions
 
@@ -48,7 +49,8 @@ QtObject:
       currencyService: currency_service.Service
       tokenService: token_service.Service
       savedAddressService: saved_address_service.Service
-      activityDetails: ActivityDetails
+
+      detailsController: details_controller.Controller
 
       eventsHandler: EventsHandler
       status: Status
@@ -60,8 +62,6 @@ QtObject:
       allAddressesSelected: bool
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
-
-      requestId: int32
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -87,57 +87,22 @@ QtObject:
   QtProperty[QVariant] collectiblesModel:
     read = getCollectiblesModel
 
-  proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
-    if metadata.symbolIn.isSome():
-      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
-    if metadata.symbolOut.isSome():
-      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
-
-  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry): ExtraData =
-    if metadata.symbolIn.isSome() or metadata.amountIn > 0:
-      result.inAmount = self.currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
-    if metadata.symbolOut.isSome() or metadata.amountOut > 0:
-      result.outAmount = self.currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
-
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
-    let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
-      return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
-                                self.currencyService.getCurrencyFormat(symbol))
     for backendEntry in backendEntities:
-      var ae: entry.ActivityEntry
-      case backendEntry.getPayloadType():
-        of MultiTransaction:
-          let extraData = self.buildMultiTransactionExtraData(backendEntry)
-          ae = entry.newMultiTransactionActivityEntry(backendEntry, extraData, amountToCurrencyConvertor)
-        of SimpleTransaction, PendingTransaction:
-          let extraData = self.buildTransactionExtraData(backendEntry)
-          ae = entry.newTransactionActivityEntry(backendEntry, self.addresses, extraData, amountToCurrencyConvertor)
+      let ae = entry.newActivityEntry(backendEntry, self.addresses, self.currencyService)
       result.add(ae)
 
-  proc fetchTxDetails*(self: Controller, entryIndex: int) {.slot.} =
-    let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
-      return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
-                                    self.currencyService.getCurrencyFormat(symbol))
-
-    self.activityDetails = nil
-    let entry = self.model.getEntry(entryIndex)
+  proc fetchTxDetails*(self: Controller, txID: string) {.slot.} =
+    let index = self.model.getIndex(txID)
+    if index == -1:
+      error "entry index not found"
+      return
+    let entry = self.model.getEntry(index)
     if entry == nil:
-      error "failed to find entry with index: ", entryIndex
+      error "entry not found"
       return
 
-    try:
-      self.activityDetails = newActivityDetails(entry.getMetadata(), amountToCurrencyConvertor)
-    except Exception as e:
-      error "error: ", e.msg
-      return
-
-  proc getActivityDetails(self: Controller): QVariant {.slot.} =
-    if self.activityDetails == nil:
-      return newQVariant()
-    return newQVariant(self.activityDetails)
-
-  QtProperty[QVariant] activityDetails:
-    read = getActivityDetails
+    self.detailsController.setActivityEntry(entry)
 
   proc processResponse(self: Controller, response: JsonNode) =
     defer: self.status.setLoadingData(false)
@@ -154,37 +119,69 @@ QtObject:
 
     self.model.setEntries(entries, res.offset, res.hasMore)
 
-    if len(entries) > 0:
-      self.eventsHandler.updateRelevantTimestamp(entries[len(entries) - 1].getTimestamp())
+    if res.offset == 0:
+      self.status.setNewDataAvailable(false)
 
-  proc updateFilter*(self: Controller) {.slot.} =
+  proc sessionId(self: Controller): int32 =
+    return self.eventsHandler.getSessionId()
+
+  proc invalidateData(self: Controller) =
     self.status.setLoadingData(true)
     self.status.setIsFilterDirty(false)
 
     self.model.resetModel(@[])
 
-    self.eventsHandler.updateSubscribedAddresses(self.addresses)
-    self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
 
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
-    if response.error != nil:
-      error "error fetching activity entries: ", response.error
+
+  # Stops the old session and starts a new one. All the incremental changes are lost
+  proc newFilterSession*(self: Controller) {.slot.} =
+    self.invalidateData()
+
+    # stop the previous filter session
+    if self.eventsHandler.hasSessionId():
+      let res = backend_activity.stopActivityFilterSession(self.sessionId())
+      if res.error != nil:
+        error "error stopping the previous session of activity fitlering: ", res.error
+      self.eventsHandler.clearSessionId()
+
+    # start a new filter session
+    let (sessionId, ok) = backend_activity.newActivityFilterSession(self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT)
+    if not ok:
       self.status.setLoadingData(false)
+      return
+
+    self.eventsHandler.setSessionId(sessionId)
+
+  proc updateFilter*(self: Controller) {.slot.} =
+    self.invalidateData()
+
+    if not backend_activity.updateFilterForSession(self.sessionId(), self.currentActivityFilter, FETCH_BATCH_COUNT_DEFAULT):
+      self.status.setLoadingData(false)
+      error "error updating activity filter"
+      return
+
+  proc resetActivityData*(self: Controller) {.slot.} =
+    self.invalidateData()
+
+    let response = backend_activity.resetActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      self.status.setLoadingData(false)
+      error "error fetching activity entries from start: ", response.error
       return
 
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
 
-    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, self.allAddressesSelected, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.getMoreForActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
-      error "error fetching activity entries: ", response.error
+      error "error fetching more activity entries: ", response.error
       return
 
   proc updateCollectiblesModel*(self: Controller) {.slot.} =
     self.status.setLoadingCollectibles(true)
-    let res = backend_activity.getActivityCollectiblesAsync(self.requestId, self.chainIds, self.addresses, 0, FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getActivityCollectiblesAsync(self.sessionId(), self.chainIds, self.addresses, 0, FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", res.error
@@ -192,11 +189,14 @@ QtObject:
 
   proc loadMoreCollectibles*(self: Controller) {.slot.} =
     self.status.setLoadingCollectibles(true)
-    let res = backend_activity.getActivityCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.collectiblesModel.getCount(), FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getActivityCollectiblesAsync(self.sessionId(), self.chainIds, self.addresses, self.collectiblesModel.getCount(), FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", res.error
       return
+      
+  proc resetFilter*(self: Controller) {.slot.} =
+    self.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
   proc setFilterTime*(self: Controller, startTimestamp: int, endTimestamp: int) {.slot.} =
     self.currentActivityFilter.period = backend_activity.newPeriod(startTimestamp, endTimestamp)
@@ -218,7 +218,7 @@ QtObject:
   proc updateStartTimestamp*(self: Controller) {.slot.} =
     self.status.setLoadingStartTimestamp(true)
 
-    let resJson = backend_activity.getOldestActivityTimestampAsync(self.requestId, self.addresses)
+    let resJson = backend_activity.getOldestActivityTimestampAsync(self.sessionId(), self.addresses)
     if resJson.error != nil:
       self.status.setLoadingStartTimestamp(false)
       error "error requesting oldest activity timestamp: ", resJson.error
@@ -262,6 +262,24 @@ QtObject:
       self.model.updateEntries(entries)
     )
 
+    self.eventsHandler.onFilteringSessionUpdated(proc (jn: JsonNode) =
+      if jn.kind != JObject:
+        error "expected an object"
+
+      let res = fromJson(jn, backend_activity.SessionUpdate)
+
+      var updated = newSeq[backend_activity.ActivityEntry](len(res.`new`))
+      var indices = newSeq[int](len(res.`new`))
+      for i in 0 ..< len(res.`new`):
+        updated[i] = res.`new`[i].entry
+        indices[i] = res.`new`[i].pos
+
+      self.status.setNewDataAvailable(res.hasNewOnTop)
+      if len(res.`new`) > 0:
+        let entries = self.backendToPresentation(updated)
+        self.model.addNewEntries(entries, indices)
+    )
+
     self.eventsHandler.onGetRecipientsDone(proc (jsonObj: JsonNode) =
       defer: self.status.setLoadingRecipients(false)
       let res = fromJson(jsonObj, backend_activity.GetRecipientsResponse)
@@ -299,18 +317,13 @@ QtObject:
         error "Error converting activity entries: ", e.msg
     )
 
-    self.eventsHandler.onNewDataAvailable(proc () =
-      self.status.setNewDataAvailable(true)
-    )
-
-  proc newController*(requestId: int32,
+  proc newController*(detailsController: details_controller.Controller,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
                       events: EventEmitter): Controller =
     new(result, delete)
 
-    result.requestId = requestId
     result.model = newModel()
     result.recipientsModel = newRecipientsModel()
     result.collectiblesModel = newCollectiblesModel()
@@ -318,10 +331,11 @@ QtObject:
     result.savedAddressService = savedAddressService
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
-    result.eventsHandler = newEventsHandler(result.requestId, events)
+    result.eventsHandler = newEventsHandler(events)
     result.status = newStatus()
 
     result.currencyService = currencyService
+    result.detailsController = detailsController
 
     result.filterTokenCodes = initHashSet[string]()
 
@@ -424,7 +438,7 @@ QtObject:
     var addresses = newSeq[string]()
     for i in 0 ..< addressesJson.len:
       if addressesJson[i].kind != JString:
-        error "not string entry in the json adday for index ", i
+        error "not string entry in the addresses json array for index ", i
         return
       addresses.add(addressesJson[i].getStr())
 
@@ -441,9 +455,24 @@ QtObject:
     self.status.emitFilterChainsChanged()
     self.updateAssetsIdentities()
 
+  proc setFilterChainsJson*(self: Controller, jsonArray: string, allChainsSelected: bool) {.slot.}  =
+    let chainsJson = parseJson(jsonArray)
+    if chainsJson.kind != JArray:
+      error "invalid array of json ints"
+      return
+
+    var chains = newSeq[int]()
+    for i in 0 ..< chainsJson.len:
+      if chainsJson[i].kind != JInt:
+        error "not int entry in the chains json array for index ", i
+        return
+      chains.add(chainsJson[i].getInt())
+
+    self.setFilterChains(chains, allChainsSelected)
+
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(self.requestId, self.chainIds, self.addresses, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil or res.result.kind != JBool:
       self.status.setLoadingRecipients(false)
       error "error fetching recipients: ", res.error, "; kind ", res.result.kind
@@ -455,7 +484,7 @@ QtObject:
 
   proc loadMoreRecipients(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(self.requestId, self.chainIds, self.addresses, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingRecipients(false)
       error "error fetching more recipient entries: ", res.error
@@ -474,8 +503,12 @@ QtObject:
   proc globalFilterChanged*(self: Controller, addresses: seq[string], allAddressesSelected: bool, chainIds: seq[int], allChainsEnabled: bool) =
     if (self.addresses == addresses and self.allAddressesSelected == allAddressesSelected and self.chainIds == chainIds):
       return
+
     self.setFilterAddresses(addresses, allAddressesSelected)
     self.setFilterChains(chainIds, allChainsEnabled)
+
+    # Every change of chains and addresses have to start a new session to get incremental updates when filter is cleared
+    self.newFilterSession()
 
   proc noLimitTimestamp*(self: Controller): int {.slot.} =
     return backend_activity.noLimitTimestampForPeriod

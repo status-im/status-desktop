@@ -91,6 +91,15 @@ QtObject {
         root.contactsModule.dismissContactRequest(pubKey, contactRequestId)
     }
 
+    function getLatestContactRequestForContactAsJson(pubKey) {
+        let resp = root.contactsModule.getLatestContactRequestForContactAsJson(pubKey)
+        return JSON.parse(resp)
+    }
+
+    function markAsTrusted(pubKey) {
+        root.contactsModule.markAsTrusted(pubKey)
+    }
+
     function markUntrustworthy(pubKey) {
         root.contactsModule.markUntrustworthy(pubKey)
     }

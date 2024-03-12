@@ -546,6 +546,8 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 		--passL:"-lkeycard" \
 		--passL:"$(QRCODEGEN)" \
 		--passL:"-lm" \
+		--warning:UnreachableElse:off \
+		--warningAsError:UseBase:on \
 		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
 ifeq ($(detected_OS),Darwin)
 	install_name_tool -change \

@@ -14,8 +14,8 @@ StatusFlatButton {
 
     signal activate()
 
-    enabled: verificationStatus == Constants.verificationStatus.verifying ||
-             verificationStatus == Constants.verificationStatus.verified
+    enabled: verificationStatus === Constants.verificationStatus.verifying ||
+             verificationStatus === Constants.verificationStatus.verified
     size: StatusBaseButton.Size.Small
     text: {
         switch (verificationStatus) {

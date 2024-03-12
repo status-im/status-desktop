@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
@@ -22,7 +21,7 @@ CommonContactDialog {
 
     signal accepted(string message)
 
-    title: qsTr("Send Contact Request")
+    title: qsTr("Send contact request")
 
     onAboutToShow: {
         messageInput.input.edit.forceActiveFocus()
@@ -30,7 +29,7 @@ CommonContactDialog {
         // (request) update from mailserver
         if (d.userDisplayName === "") {
             root.rootStore.contactStore.requestContactInfo(root.publicKey)
-            d.loadingContactDetails = true
+            root.loadingContactDetails = true
         }
     }
 
@@ -40,18 +39,6 @@ CommonContactDialog {
         readonly property int maxMsgLength: 280
         readonly property int minMsgLength: 1
         readonly property int msgHeight: 152
-
-        property bool loadingContactDetails: false
-
-        property var contactDetails: root.contactDetails
-
-        readonly property bool userIsEnsVerified: contactDetails.ensVerified
-        readonly property string userDisplayName: contactDetails.displayName
-        readonly property string userNickName: contactDetails.localNickname
-        readonly property string prettyEnsName: contactDetails.name
-        readonly property string aliasName: contactDetails.alias
-        readonly property string mainDisplayName: ProfileUtils.displayName(userNickName, prettyEnsName, userDisplayName, aliasName)
-        readonly property var userIcon: contactDetails.largeImage
     }
 
     readonly property var _conn: Connections {
@@ -61,8 +48,8 @@ CommonContactDialog {
             if (publicKey !== root.publicKey)
                 return
             if (ok)
-                d.contactDetails = Utils.getContactDetailsAsJson(root.publicKey, false)
-            d.loadingContactDetails = false
+                root.contactDetails = Utils.getContactDetailsAsJson(root.publicKey, false)
+            root.loadingContactDetails = false
         }
     }
 

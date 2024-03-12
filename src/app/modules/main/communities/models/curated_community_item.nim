@@ -15,6 +15,7 @@ type
     activeMembers: int
     featured: bool
     permissionModel: TokenPermissionsModel
+    amIBanned: bool
 
 proc initCuratedCommunityItem*(
   id: string,
@@ -28,7 +29,8 @@ proc initCuratedCommunityItem*(
   members: int,
   activeMembers: int,
   featured: bool,
-  tokenPermissionsItems: seq[TokenPermissionItem]
+  tokenPermissionsItems: seq[TokenPermissionItem],
+  amIBanned: bool
 ): CuratedCommunityItem =
   result.id = id
   result.name = name
@@ -44,6 +46,7 @@ proc initCuratedCommunityItem*(
   result.permissionModel = newTokenPermissionsModel()
   if tokenPermissionsItems.len > 0:
     result.permissionModel.setItems(tokenPermissionsItems)
+  result.amIBanned = amIBanned
 
 proc `$`*(self: CuratedCommunityItem): string =
   result = fmt"""CuratedCommunityItem(
@@ -56,6 +59,7 @@ proc `$`*(self: CuratedCommunityItem): string =
     members: {self.members}
     activeMembers: {self.activeMembers}
     featured: {self.featured}
+    amIBanned: {self.amIBanned}
     ]"""
 
 proc getId*(self: CuratedCommunityItem): string =
@@ -96,3 +100,6 @@ proc getPermissionsModel*(self: CuratedCommunityItem): TokenPermissionsModel =
 
 proc setPermissionModelItems*(self: CuratedCommunityItem, items: seq[TokenPermissionItem]) =
   self.permissionModel.setItems(items)
+
+proc getAmIBanned*(self: CuratedCommunityItem): bool =
+  return self.amIBanned

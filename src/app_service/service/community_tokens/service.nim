@@ -334,6 +334,12 @@ QtObject:
     try:
       let dataMessageJson = parseJson(jsonMessage)
       let tokenDataPayload = fromJson(dataMessageJson, CommunityCollectiblesReceivedPayload)
+
+      let watchOnlyAccounts = self.walletAccountService.getWatchOnlyAccounts()
+      if any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0]):
+        # skip events on watch-only accounts
+        return
+
       for coll in tokenDataPayload.collectibles:
         if not coll.communityData.isSome():
           continue
@@ -406,6 +412,11 @@ QtObject:
       if len(tokenDataPayload.communityId) == 0:
         return
 
+      let watchOnlyAccounts = self.walletAccountService.getWatchOnlyAccounts()
+      if any(watchOnlyAccounts, proc (x: WalletAccountDto): bool = x.address == accounts[0]):
+        # skip events on watch-only accounts
+        return
+
       var accountName, accountAddress: string
       if len(accounts) > 0:
         accountAddress = accounts[0]
@@ -441,7 +452,7 @@ QtObject:
       let contractDetails = transactionArgs.data.parseJson().toContractDetails()
       if transactionArgs.success:
         # promoteSelfToControlNode will be moved to status-go in next phase
-        discard tokens_backend.promoteSelfToControlNode(contractDetails.communityId)
+        discard communities_backend.promoteSelfToControlNode(contractDetails.communityId)
         let finaliseStatusArgs = FinaliseOwnershipStatusArgs(isPending: false, communityId: contractDetails.communityId)
         self.events.emit(SIGNAL_FINALISE_OWNERSHIP_STATUS, finaliseStatusArgs)
 

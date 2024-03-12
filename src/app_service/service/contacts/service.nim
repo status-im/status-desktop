@@ -11,6 +11,7 @@ import ../../common/activity_center
 
 import ../settings/service as settings_service
 import ../network/service as network_service
+import ../message/dto/message as message_dto
 import ../visual_identity/service as procs_from_visual_identity_service
 
 import ./dto/contacts as contacts_dto
@@ -478,7 +479,7 @@ QtObject:
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
-      error "an error occurred while sending contact request", msg = e.msg
+      error "an error occurred while sending the contact request", msg = e.msg
 
   proc acceptContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
     try:
@@ -501,7 +502,7 @@ QtObject:
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
-      error "an error occurred while accepting contact request", msg=e.msg
+      error "an error occurred while accepting the contact request", msg=e.msg
 
   proc dismissContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
     try:
@@ -520,7 +521,25 @@ QtObject:
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
     except Exception as e:
-      error "an error occurred while dismissing contact request", msg=e.msg
+      error "an error occurred while dismissing the contact request", msg=e.msg
+
+  proc getLatestContactRequestForContact*(self: Service, publicKey: string): message_dto.MessageDto =
+    try:
+      let response = status_contacts.getLatestContactRequestForContact(publicKey)
+
+      if not response.error.isNil:
+        error "error getting incoming contact request ", msg = response.error.message
+        return
+
+      let messages = response.result{"messages"}
+      if messages == nil or len(messages) < 1:
+        error "can't find incoming contact request for", publicKey
+        return
+
+      return messages[0].toMessageDto()
+
+    except Exception as e:
+      error "an error occurred while getting incoming contact request", msg=e.msg
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getContactById(publicKey)
@@ -600,6 +619,19 @@ QtObject:
                                                   text: currentStatusUser.text)
     let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
+
+
+  proc markAsTrusted*(self: Service, publicKey: string) =
+    let response = status_contacts.markAsTrusted(publicKey)
+    if not response.error.isNil:
+      error "error marking as trusted ", msg = response.error.message
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
+
+    self.events.emit(SIGNAL_CONTACT_TRUSTED,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)

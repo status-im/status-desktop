@@ -1,7 +1,6 @@
-import json, json_serialization, logging
+import json, logging
 import core, response_type
 from ./gen import rpc
-import status_go
 
 rpc(signMessage, "wallet"):
   message: string

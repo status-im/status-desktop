@@ -224,6 +224,31 @@ Item {
                                            "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash))
             }
         }
+
+        function onCommunityMemberStatusEphemeralNotification(communityName: string, memberName: string, state: CommunityMembershipRequestState) {
+            var text = ""
+            switch (state) {
+                case Constants.CommunityMembershipRequestState.Banned:
+                    text = qsTr("%1 was banned from %2").arg(memberName).arg(communityName)
+                    break
+                case Constants.CommunityMembershipRequestState.Unbanned:
+                    text = qsTr("%1 unbanned from %2").arg(memberName).arg(communityName)
+                    break
+                case Constants.CommunityMembershipRequestState.Kicked:
+                    text = qsTr("%1 was kicked from %2").arg(memberName).arg(communityName)
+                    break
+                default: return
+            }
+
+            Global.displayToastMessage(
+                text,
+                "",
+                "checkmark-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {
@@ -549,6 +574,15 @@ Item {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
+
+                stateIcon.color: Theme.palette.dangerColor1
+                stateIcon.border.color: Theme.palette.baseColor2
+                stateIcon.border.width: 2
+                stateIcon.visible: model.amIBanned
+                stateIcon.asset.name: "cancel"
+                stateIcon.asset.color: Theme.palette.baseColor2
+                stateIcon.asset.width: 14
+
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
                 }

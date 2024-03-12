@@ -91,7 +91,7 @@ method viewDidLoad*(self: Module) =
     if receivedVerificationRequest.status == VerificationStatus.Verifying or
         receivedVerificationRequest.status == VerificationStatus.Verified:
       let contactItem = self.createItemFromPublicKey(receivedVerificationRequest.fromID)
-      contactItem.incomingVerificationStatus = VerificationRequestStatus(receivedVerificationRequest.status)
+      contactItem.incomingVerificationStatus = toVerificationRequestStatus(receivedVerificationRequest.status)
       receivedVerificationRequestItems.add(contactItem)
   self.view.receivedContactRequestsModel().addItems(receivedVerificationRequestItems)
 
@@ -109,6 +109,17 @@ method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: 
 
 method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
   self.controller.dismissContactRequest(publicKey, contactRequestId)
+
+method getLatestContactRequestForContactAsJson*(self: Module, publicKey: string): string =
+  let contactRequest = self.controller.getLatestContactRequestForContact(publicKey)
+  let jsonObj = %* {
+    "id": contactRequest.id,
+    "from": contactRequest.from,
+    "clock": contactRequest.clock,
+    "text": contactRequest.text,
+    "contactRequestState": contactRequest.contactRequestState.int,
+  }
+  return $jsonObj
 
 method switchToOrCreateOneToOneChat*(self: Module, publicKey: string) =
   self.controller.switchToOrCreateOneToOneChat(publicKey)
@@ -196,6 +207,9 @@ method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustwort
   self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
   self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
 
+method markAsTrusted*(self: Module, publicKey: string): void =
+  self.controller.markAsTrusted(publicKey)
+
 method markUntrustworthy*(self: Module, publicKey: string): void =
   self.controller.markUntrustworthy(publicKey)
 
@@ -262,7 +276,7 @@ method onVerificationRequestCanceled*(self: Module, publicKey: string) =
 
 method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
   let item =  self.createItemFromPublicKey(request.fromID)
-  item.incomingVerificationStatus = VerificationRequestStatus(request.status)
+  item.incomingVerificationStatus = toVerificationRequestStatus(request.status)
   if (self.view.receivedContactRequestsModel.containsItemWithPubKey(request.fromID)):
     if request.status != VerificationStatus.Verifying and
         request.status != VerificationStatus.Verified:

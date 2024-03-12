@@ -59,7 +59,6 @@ proc toShowcasePreferenceItem*(self: ProfileShowcaseCollectibleItem): ProfileSho
   result.chainId = self.chainId
   result.tokenId = self.tokenId
   result.contractAddress = self.contractAddress
-  result.communityId = self.communityId
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

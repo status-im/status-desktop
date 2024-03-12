@@ -10,7 +10,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
-import StatusQ.Internal 0.1
 import StatusQ.Models 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -38,8 +37,8 @@ ColumnLayout {
     property bool isUpdating: false // Indicates if the collectibles list is being updated
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
 
-    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid)
-    signal sendRequested(string symbol)
+    signal collectibleClicked(int chainId, string contractAddress, string tokenId, string uid, int tokenType)
+    signal sendRequested(string symbol, int tokenType)
     signal receiveRequested(string symbol)
     signal switchToCommunityRequested(string communityId)
     signal manageTokensRequested()
@@ -124,26 +123,43 @@ ColumnLayout {
         readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
 
-        function containsAnyAddress(ownership, filterList) {
-            for (let i = 0; i < ownership.count; i++) {
-                let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
-                if (filterList.includes(accountAddress)) {
-                    return true
-                }
-            }
-            return false
-        }
-
         function getLatestTimestmap(ownership, filterList) {
             let latest = 0
-            for (let i = 0; i < ownership.count; i++) {
-                let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
-                if (filterList.includes(accountAddress)) {
-                    let txTimestamp = ModelUtils.get(ownership, i, "txTimestamp")
-                    latest = Math.max(latest, txTimestamp)
+
+            if (!!ownership) {
+                for (let i = 0; i < ownership.count; i++) {
+                    let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
+                    if (filterList.includes(accountAddress)) {
+                        let txTimestamp = ModelUtils.get(ownership, i, "txTimestamp")
+                        latest = Math.max(latest, txTimestamp)
+                    }
                 }
             }
             return latest
+        }
+
+        function getBalance(ownership, filterList) {
+            // Balance is a Uint256, so we need to use AmountsArithmetic to handle it
+            let balance = AmountsArithmetic.fromNumber(0)
+
+            if (!!ownership) {
+                for (let i = 0; i < ownership.count; i++) {
+                    let accountAddress = ModelUtils.get(ownership, i, "accountAddress").toLowerCase()
+                    if (filterList.includes(accountAddress)) {
+                        let tokenBalanceStr = ModelUtils.get(ownership, i, "balance")+""
+                        if (tokenBalanceStr !== "") {
+                            let tokenBalance = AmountsArithmetic.fromString(tokenBalanceStr)
+                            balance = AmountsArithmetic.sum(balance, tokenBalance)
+                        }
+                    }
+                }
+                // For simplicity, we limit the result to the maximum int manageable by QML
+                const maxInt = 2147483647
+                if (AmountsArithmetic.cmp(balance, AmountsArithmetic.fromNumber(maxInt)) === 1) {
+                    return maxInt
+                }
+            }
+            return AmountsArithmetic.toNumber(balance)
         }
     }
 
@@ -158,6 +174,11 @@ ColumnLayout {
                 roleNames: ["collectionName", "communityName"]
             },
             FastExpressionRole {
+                name: "balance"
+                expression: d.addrFilters, d.getBalance(model.ownership, d.addrFilters)
+                expectedRoles: ["ownership"]
+            },
+            FastExpressionRole {
                 name: "lastTxTimestamp"
                 expression: d.addrFilters, d.getLatestTimestmap(model.ownership, d.addrFilters)
                 expectedRoles: ["ownership"]
@@ -166,10 +187,14 @@ ColumnLayout {
         filters: [
             FastExpressionFilter {
                 expression: {
-                    d.addrFilters
-                    return d.nwFilters.includes(model.chainId+"") && d.containsAnyAddress(model.ownership, d.addrFilters)
+                    return d.nwFilters.includes(model.chainId+"")
                 }
-                expectedRoles: ["chainId", "ownership"]
+                expectedRoles: ["chainId"]
+            },
+            ValueFilter {
+                roleName: "balance"
+                value: 0
+                inverted: true
             },
             FastExpressionFilter {
                 expression: {
@@ -400,7 +425,7 @@ ColumnLayout {
 
                 checkable: true
                 size: StatusBaseButton.Size.Small
-                icon.name: checked ? "chevron-down" : "next"
+                icon.name: checked ? "next" : "chevron-down"
                 textColor: Theme.palette.baseColor1
                 textHoverColor: Theme.palette.directColor1
 
@@ -461,12 +486,14 @@ ColumnLayout {
             communityId: model.communityId ?? ""
             communityName: model.communityName ?? ""
             communityImage: model.communityImage ?? ""
+            balance: model.balance ?? 1
 
-            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol)
+            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
-                                    communityId: model.communityId, communityName: model.communityName, communityImage: model.communityImage})
+                                    communityId: model.communityId, communityName: model.communityName,
+                                    communityImage: model.communityImage, tokenType: model.tokenType})
             }
             onSwitchToCommunityRequested: (communityId) => root.switchToCommunityRequested(communityId)
         }
@@ -483,13 +510,14 @@ ColumnLayout {
             property string communityId
             property string communityName
             property string communityImage
+            property int tokenType
 
             StatusAction {
                 enabled: root.sendEnabled
                 visibleOnDisabled: true
                 icon.name: "send"
                 text: qsTr("Send")
-                onTriggered: root.sendRequested(symbol)
+                onTriggered: root.sendRequested(symbol, tokenType)
             }
             StatusAction {
                 icon.name: "receive"
@@ -503,7 +531,7 @@ ColumnLayout {
                 onTriggered: root.manageTokensRequested()
             }
             StatusAction {
-                enabled: symbol !== "ETH"
+                enabled: symbol !== Constants.ethToken
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide collectible")

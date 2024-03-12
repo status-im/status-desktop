@@ -13,6 +13,7 @@ type
     CommunityId
     Supply
     InfiniteSupply
+    Decimals
 
 QtObject:
   type TokenListModel* = ref object of QAbstractListModel
@@ -91,6 +92,7 @@ QtObject:
       ModelRole.CommunityId.int:"communityId",
       ModelRole.Supply.int:"supply",
       ModelRole.InfiniteSupply.int:"infiniteSupply",
+      ModelRole.Decimals.int:"decimals",
     }.toTable
 
   method rowCount(self: TokenlistModel, index: QModelIndex = nil): int =
@@ -124,3 +126,5 @@ QtObject:
         result = newQVariant(item.getSupply())
       of ModelRole.InfiniteSupply:
         result = newQVariant(item.getInfiniteSupply())
+      of ModelRole.Decimals:
+        result = newQVariant(item.getDecimals())

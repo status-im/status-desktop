@@ -4,7 +4,6 @@ import chronicles, libp2p/[multihash, multicodec, cid]
 import nimcrypto, stint
 import ../../common/conversion as common_conversion
 import ../eth/dto/transaction as eth_transaction_dto
-import ../../../backend/eth as status_eth
 import ../../../backend/ens as status_ens
 import ../../common/account_constants
 import ../../common/utils

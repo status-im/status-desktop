@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.14
 import QtGraphicalEffects 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -21,6 +22,7 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool preview: false
+    property bool isOwnerTokenItem: false
 
     // https://bugreports.qt.io/browse/QTBUG-84269
     /* required */ property TokenObject token
@@ -60,6 +62,7 @@ StatusScrollView {
                     
     // Models:
     property var tokenOwnersModel
+    property var membersModel
 
     // Required for preview mode:
     property var accounts
@@ -79,6 +82,23 @@ StatusScrollView {
         id: d
 
         readonly property int iconSize: 20
+
+        readonly property var renamedTokenOwnersModel: RolesRenamingModel {
+            sourceModel: root.tokenOwnersModel
+            mapping: [
+                RoleRename {
+                    from: "contactId"
+                    to: "pubKey"
+                }
+            ]
+        }
+
+        readonly property LeftJoinModel joinModel: LeftJoinModel {
+            leftModel: root.membersModel
+            rightModel: d.renamedTokenOwnersModel
+
+            joinRole: "pubKey"
+        }
     }
 
     padding: 0
@@ -196,27 +216,103 @@ StatusScrollView {
             onClicked: root.mintClicked()
         }
 
-        SortableTokenHoldersPanel {
+        Loader {
+            id: tokenHolderLoader
+
             visible: !root.preview && root.deploymentCompleted
+            sourceComponent: isOwnerTokenItem ? tokenHolderContact : sortableTokenHolderPanel
+        }
 
-            model: root.tokenOwnersModel
-            tokenName: root.name
-            showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
-            isAirdropEnabled: root.deploymentCompleted &&
-                              (token.infiniteSupply || token.remainingTokens > 0)
-            multiplierIndex: root.multiplierIndex
+        Component {
+            id: sortableTokenHolderPanel
 
-            Layout.topMargin: Style.current.padding
-            Layout.fillWidth: true
+            SortableTokenHoldersPanel {
+                model: root.tokenOwnersModel
+                tokenName: root.name
+                showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
+                isAirdropEnabled: root.deploymentCompleted &&
+                                (token.infiniteSupply || token.remainingTokens > 0)
+                multiplierIndex: root.multiplierIndex
 
-            onViewProfileRequested: root.viewProfileRequested(contactId)
-            onViewMessagesRequested: root.viewMessagesRequested(contactId)
-            onAirdropRequested: root.airdropRequested(address)
-            onGeneralAirdropRequested: root.generalAirdropRequested()
-            onRemoteDestructRequested: root.remoteDestructRequested(name, address)
+                Layout.topMargin: Style.current.padding
+                Layout.fillWidth: true
 
-            onKickRequested: root.kickRequested(name, contactId, address)
-            onBanRequested: root.banRequested(name, contactId, address)
+                onViewProfileRequested: root.viewProfileRequested(contactId)
+                onViewMessagesRequested: root.viewMessagesRequested(contactId)
+                onAirdropRequested: root.airdropRequested(address)
+                onGeneralAirdropRequested: root.generalAirdropRequested()
+                onRemoteDestructRequested: root.remoteDestructRequested(name, address)
+
+                onKickRequested: root.kickRequested(name, contactId, address)
+                onBanRequested: root.banRequested(name, contactId, address)
+            }
+        }
+
+        Component {
+            id: tokenHolderContact
+
+            ColumnLayout {
+                Layout.topMargin: Style.current.padding
+                Layout.fillWidth: true
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+
+                    wrapMode: Text.Wrap
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    color: Theme.palette.baseColor1
+
+                    text: qsTr("%1 token hodler").arg(root.name)
+                }
+
+                StatusInfoBoxPanel {
+                    id: infoBoxPanel
+
+                    Layout.fillWidth: true
+                    Layout.topMargin: Style.current.padding
+
+                    enabled: root.deploymentCompleted && (token.infiniteSupply || token.remainingTokens > 0)
+                    visible: d.joinModel.rowCount() === 0
+                    title: qsTr("No hodlers just yet")
+                    text: qsTr("You can Airdrop tokens to deserving Community members or to give individuals token-based permissions.")
+                    buttonText: qsTr("Airdrop")
+
+                    onClicked: root.generalAirdropRequested()
+                }
+
+                StatusListView {
+                    id: tokenOwnerList
+                    objectName: "tokenOwnerList"
+
+                    clip: false
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    anchors.bottomMargin: Style.current.bigPadding
+                    displayMarginEnd: anchors.bottomMargin
+
+                    model: d.joinModel
+                    delegate: StatusMemberListItem {
+                        color: "transparent"
+                        leftPadding: 0
+                        rightPadding: 0
+                        sensor.enabled: false
+
+                        nickName: model.localNickname
+                        userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+                        pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+                        isContact: model.isContact
+                        isVerified: model.verificationStatus === Constants.verificationStatus.verified
+                        isUntrustworthy: model.trustStatus === Constants.trustStatus.untrustworthy
+                        status: model.onlineStatus
+                        asset.name: model.icon
+                        asset.isImage: (asset.name !== "")
+                        asset.isLetterIdenticon: (asset.name === "")
+                        asset.color: Utils.colorForPubkey(model.pubKey)
+                        ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+                    }
+                }
+            }
         }
     }
 }

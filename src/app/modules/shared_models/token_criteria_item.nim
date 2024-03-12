@@ -4,7 +4,7 @@ type
   TokenCriteriaItem* = object
     symbol*: string
     name*: string
-    amount*: float64
+    amount*: string
     `type`*: int
     ensPattern*: string
     criteriaMet*: bool
@@ -12,7 +12,7 @@ type
 proc initTokenCriteriaItem*(
   symbol: string,
   name: string,
-  amount: float64,
+  amount: string,
   `type`: int,
   ensPattern: string,
   criteriaMet: bool
@@ -43,7 +43,7 @@ proc getSymbol*(self: TokenCriteriaItem): string =
 proc getName*(self: TokenCriteriaItem): string =
   return self.name
 
-proc getAmount*(self: TokenCriteriaItem): float64 =
+proc getAmount*(self: TokenCriteriaItem): string =
   return self.amount
 
 proc getEnsPattern*(self: TokenCriteriaItem): string =

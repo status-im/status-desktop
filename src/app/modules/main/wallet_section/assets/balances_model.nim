@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, sugar, stint
+import NimQml, Tables, strutils, sequtils, stint
 
 import ./io_interface
 
@@ -6,6 +6,7 @@ type
   ModelRole {.pure.} = enum
     ChainId = UserRole + 1
     Balance
+    Balance1DayAgo
     Account
 
 QtObject:
@@ -39,6 +40,7 @@ QtObject:
     {
       ModelRole.ChainId.int:"chainId",
       ModelRole.Balance.int:"balance",
+      ModelRole.Balance1DayAgo.int:"balance1DayAgo",
       ModelRole.Account.int:"account",
     }.toTable
 
@@ -55,5 +57,7 @@ QtObject:
         result = newQVariant(item.chainId)
       of ModelRole.Balance:
         result = newQVariant(item.balance.toString(10))
+      of ModelRole.Balance1DayAgo:
+        result = newQVariant(item.balance1DayAgo.toString(10))
       of ModelRole.Account:
         result = newQVariant(item.account)

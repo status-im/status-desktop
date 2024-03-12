@@ -3,6 +3,7 @@ import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/chat/service as chat_service
+import ../../../../../app_service/service/message/dto/message as message_dto
 
 type
   Controller* = ref object of RootObj
@@ -123,8 +124,14 @@ proc acceptContactRequest*(self: Controller, publicKey: string, contactRequestId
 proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
   self.contactsService.dismissContactRequest(publicKey, contactRequestId)
 
+proc getLatestContactRequestForContact*(self: Controller, publicKey: string): message_dto.MessageDto =
+  self.contactsService.getLatestContactRequestForContact(publicKey)
+
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, "")
+
+proc markAsTrusted*(self: Controller, publicKey: string) =
+  self.contactsService.markAsTrusted(publicKey)
 
 proc markUntrustworthy*(self: Controller, publicKey: string) =
   self.contactsService.markUntrustworthy(publicKey)

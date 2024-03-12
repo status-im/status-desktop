@@ -216,7 +216,7 @@ ItemDelegate {
        \qmlproperty alias StatusDraggableListItem::containsMouse
        Used to read if the component cotains mouse
     */
-    readonly property alias containsMouse: dragHandler.containsMouse
+    readonly property alias containsMouse: hoverHandler.hovered
 
     /*!
        \qmlproperty bool StatusDraggableListItem::changeColorOnDragActive
@@ -270,7 +270,6 @@ ItemDelegate {
             drag.target: root.dragEnabled ? root : null
             drag.axis: root.dragAxis
             preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
-            hoverEnabled: true
             cursorShape: {
                 if (!root.enabled)
                     return undefined
@@ -310,7 +309,8 @@ ItemDelegate {
         Loader {
             active: !!root.icon.name || !!root.icon.source
             visible: active
-            sourceComponent: root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
+            sourceComponent: root.hasIcon && root.assetBgColor ? roundIconComponent :
+                                                                 root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
         }
 
         ColumnLayout {
@@ -402,5 +402,21 @@ ItemDelegate {
             name: !root.hasEmoji ? root.icon.name : ""
             letterIdenticonColor: root.icon.color
         }
+    }
+
+    Component {
+        id: roundIconComponent
+        StatusRoundIcon {
+            asset.width: root.icon.width
+            asset.height: root.icon.height
+            asset.name: root.icon.name
+            asset.color: root.icon.color
+            asset.bgColor: root.assetBgColor
+            asset.bgHeight: 40
+            asset.bgWidth: 40
+        }
+    }
+    HoverHandler {
+        id: hoverHandler
     }
 }

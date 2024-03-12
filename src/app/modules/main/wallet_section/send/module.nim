@@ -33,7 +33,6 @@ type TmpSendTransactionDetails = object
   fromAddrPath: string
   toAddr: string
   assetKey: string
-  value: string
   paths: seq[TransactionPathDto]
   uuid: string
   sendType: SendType
@@ -255,11 +254,11 @@ method viewDidLoad*(self: Module) =
 method getTokenBalance*(self: Module, address: string, chainId: int, tokensKey: string): CurrencyAmount =
   return self.controller.getTokenBalance(address, chainId, tokensKey)
 
-method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, value: string, uuid: string, sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
+method authenticateAndTransfer*(self: Module, fromAddr: string, toAddr: string, assetKey: string, uuid: string,
+  sendType: SendType, selectedTokenName: string, selectedTokenIsOwnerToken: bool) =
   self.tmpSendTransactionDetails.fromAddr = fromAddr
   self.tmpSendTransactionDetails.toAddr = toAddr
   self.tmpSendTransactionDetails.assetKey = assetKey
-  self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
   self.tmpSendTransactionDetails.sendType = sendType
   self.tmpSendTransactionDetails.fromAddrPath = ""
@@ -287,7 +286,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     let usePassword = self.tmpSendTransactionDetails.fromAddrPath.len == 0
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
+      self.tmpSendTransactionDetails.assetKey, self.tmpSendTransactionDetails.uuid,
       self.tmpSendTransactionDetails.paths, password, self.tmpSendTransactionDetails.sendType, usePassword, doHashing,
       self.tmpSendTransactionDetails.tokenName, self.tmpSendTransactionDetails.isOwnerToken
     )

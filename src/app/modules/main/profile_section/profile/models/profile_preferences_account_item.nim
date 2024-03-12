@@ -49,9 +49,6 @@ proc toShowcasePreferenceItem*(self: ProfileShowcaseAccountItem): ProfileShowcas
   result = ProfileShowcaseAccountPreference()
 
   result.address = self.address
-  result.name = self.name
-  result.emoji = self.emoji
-  result.colorId = self.colorId
   result.showcaseVisibility = self.showcaseVisibility
   result.order = self.order
 

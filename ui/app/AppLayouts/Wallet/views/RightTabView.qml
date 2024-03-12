@@ -8,7 +8,7 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.panels 1.0
 
 import "./"
@@ -69,6 +69,8 @@ RightTabBaseView {
                     return ""
                 }
             }
+
+            readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
         }
 
         ColumnLayout {
@@ -173,13 +175,21 @@ RightTabBaseView {
                         filterVisible: filterButton.checked
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
-                            RootStore.setCurrentViewedHolding(uid, Constants.TokenType.ERC721)
+                            RootStore.setCurrentViewedHolding(uid, tokenType)
+                            d.detailedCollectibleActivityController.resetFilter()
+                            d.detailedCollectibleActivityController.setFilterAddressesJson(JSON.stringify(RootStore.addressFilters.split(":")), RootStore.showAllAccounts)
+                            d.detailedCollectibleActivityController.setFilterChainsJson(JSON.stringify([chainId]), false)
+                            d.detailedCollectibleActivityController.setFilterCollectibles(JSON.stringify([uid]))
+                            d.detailedCollectibleActivityController.updateFilter()
+
                             stack.currentIndex = 1
                         }
-                        onSendRequested: (symbol) => {
-                                            root.sendModal.preSelectedSendType = Constants.SendType.Transfer
+                        onSendRequested: (symbol, tokenType) => {
                                             root.sendModal.preSelectedHoldingID = symbol
-                                            root.sendModal.preSelectedHoldingType = Constants.TokenType.ERC721
+                                            root.sendModal.preSelectedHoldingType = tokenType
+                                            root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?
+                                                 Constants.SendType.ERC721Transfer:
+                                                 Constants.SendType.ERC1155Transfer
                                             root.sendModal.onlyAssets = false
                                             root.sendModal.open()
                                         }
@@ -200,9 +210,8 @@ RightTabBaseView {
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
-                        onLaunchTransactionDetail: function (entryIndex) {
-                            transactionDetailView.transactionIndex = entryIndex
-                            transactionDetailView.transaction = Qt.binding(() => selectedTransaction)
+                        onLaunchTransactionDetail: function (txID) {
+                            RootStore.activityController.fetchTxDetails(txID)
                             stack.currentIndex = 3
                         }
                     }
@@ -210,12 +219,29 @@ RightTabBaseView {
             }
         }
         CollectibleDetailView {
+            id: collectibleDetailView
+
+            visible : (stack.currentIndex === 1)
+
             collectible: RootStore.collectiblesStore.detailedCollectible
             isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
+            activityModel: d.detailedCollectibleActivityController.model
+            rootStore: SharedStores.RootStore
+            walletRootStore: RootStore
+            communitiesStore: root.communitiesStore
 
             onVisibleChanged: {
-                if (!visible)
+                if (!visible) {
                     RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC721)
+                }
+            }
+
+            onLaunchTransactionDetail: function (txID) {
+                d.detailedCollectibleActivityController.fetchTxDetails(txID)
+                stack.currentIndex = 3
+
+                // Take user to the activity view when they press the "Back" button
+                walletTabBar.currentIndex = 2
             }
         }
         AssetsDetailView {
@@ -239,6 +265,7 @@ RightTabBaseView {
 
         TransactionDetailView {
             id: transactionDetailView
+            controller: RootStore.activityDetailsController
             onVisibleChanged: {
                 if (visible) {
                     if (!!transaction) {
@@ -248,7 +275,7 @@ RightTabBaseView {
                         }
                     }
                 } else {
-                    transaction = null
+                    controller.resetActivityEntry()
                 }
             }
             showAllAccounts: RootStore.showAllAccounts

@@ -1,5 +1,6 @@
 import ./collectibles_entry as flat_item
 import ./collectibles_nested_item as nested_item
+import app_service/common/types
 
 proc collectibleToCollectibleNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
   return nested_item.initItem(
@@ -10,7 +11,8 @@ proc collectibleToCollectibleNestedItem*(flatItem: flat_item.CollectiblesEntry):
     flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
     false,
-    flatItem.getCommunityID()
+    flatItem.getCommunityID(),
+    TokenType(flatItem.getTokenType())
   )
 
 proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): nested_item.Item =
@@ -22,5 +24,6 @@ proc collectibleToCollectionNestedItem*(flatItem: flat_item.CollectiblesEntry): 
     flatItem.getCollectionIDAsString(),
     flatItem.getCollectionName(),
     true,
-    flatItem.getCommunityID()
+    flatItem.getCommunityID(),
+    TokenType(flatItem.getTokenType())
   )

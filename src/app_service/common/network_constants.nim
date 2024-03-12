@@ -22,8 +22,8 @@ var NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Mainnet",
-    "rpcUrl": "https://goerli-archival.rpc.grove.city/v1/" & POKT_TOKEN_RESOLVED,
-    "fallbackUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "fallbackUrl": "",
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#627EEA",
@@ -111,7 +111,7 @@ var NETWORKS* = %* [
     "fallbackUrl": "https://sepolia.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://sepolia.etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
-    "chainColor": "#51D0F0",
+    "chainColor": "#627EEA",
     "shortName": "eth",
     "nativeCurrencyName": "Ether",
     "nativeCurrencySymbol": "ETH",
@@ -128,7 +128,7 @@ var NETWORKS* = %* [
     "fallbackUrl": "",
     "blockExplorerUrl": "https://sepolia-optimism.etherscan.io/",
     "iconUrl": "network/Network=Optimism",
-    "chainColor": "#51D0F0",
+    "chainColor": "#E90101",
     "shortName": "opt",
     "nativeCurrencyName": "Ether",
     "nativeCurrencySymbol": "ETH",
@@ -241,6 +241,7 @@ var NODE_CONFIG* = %* {
     "EnableFilterFullNode": true,
     "UseShardAsDefaultTopic": true,
   },
+  # Don't add properties to the login node config that can be changed from within the app
   "WalletConfig": {
     "Enabled": true,
     "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,

@@ -84,6 +84,8 @@ ListView {
             Drag.hotSpot.x: width / 2
             Drag.hotSpot.y: height / 2
 
+            anchors.fill: delegateRoot
+
             states: State {
                 when: dragArea.pressed
 
@@ -117,27 +119,30 @@ ListView {
                     drag.axis: Drag.YAxis
                 }
             }
-
-            Repeater {
-                model: rowModel
-
-                Label {
-                    readonly property var value:
-                        delegateRoot.topModel[roleName]
-
-                    readonly property var valueSanitized:
-                        value === undefined ? "-" : value
-
-                    readonly property bool last: index === rowModel.count - 1
-                    readonly property string separator: last ? "" : ","
-
-                    text: `${roleName}: ${valueSanitized}${separator}`
-                }
-            }
-
             Loader {
                 readonly property var model: delegateRoot.topModel
                 sourceComponent: insetComponent
+            }
+
+            Flow {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Repeater {
+                    model: rowModel
+
+                    Label {
+                        readonly property var value:
+                            delegateRoot.topModel[roleName]
+
+                        readonly property var valueSanitized:
+                            value === undefined ? "-" : value
+
+                        readonly property bool last: index === rowModel.count - 1
+                        readonly property string separator: last ? "" : ","
+
+                        text: `${roleName}: ${valueSanitized}${separator}`
+                    }
+                }
             }
 
             Item {

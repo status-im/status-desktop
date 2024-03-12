@@ -1,7 +1,6 @@
 import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm, sugar
 
 import web3/ethtypes
-from web3/conversions import `$`
 import backend/backend as backend
 
 import app_service/service/network/service as network_service
@@ -12,7 +11,6 @@ import app/core/tasks/[qt, threadpool]
 import app/core/signals/types
 import app_service/common/cache
 import app_service/common/wallet_constants
-import constants as main_constants
 import ./dto, ./service_items
 
 export dto, service_items
@@ -401,7 +399,7 @@ QtObject:
   proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
-        if addrPerChainId.address == contractAddr:
+        if addrPerChainId.address.toLower() == contractAddr.toLower():
           return token
     return nil
 

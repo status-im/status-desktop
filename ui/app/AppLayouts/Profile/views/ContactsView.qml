@@ -55,7 +55,7 @@ SettingsContentBase {
                 store: ({contactsStore: root.contactsStore})
 
                 onOpenProfileClicked: function (pubkey) {
-                    Global.openProfilePopup(pubkey, null)
+                    Global.openProfilePopup(pubkey, null, null)
                 }
                 onCreateOneToOneChat: function (communityId, chatId, ensName) {
                     root.contactsStore.joinPrivateChat(chatId)
@@ -216,7 +216,7 @@ SettingsContentBase {
                     }
 
                     onShowVerificationRequest: {
-                        Global.openIncomingIDRequestPopup(publicKey, null)
+                        Global.openIncomingIDRequestPopup(publicKey, null, null)
                     }
                 }
 
@@ -320,4 +320,3 @@ SettingsContentBase {
         }
     }
 }
-

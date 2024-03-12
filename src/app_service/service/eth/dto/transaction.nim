@@ -67,6 +67,7 @@ type TransactionBridgeDto* = object
   hopTx*: TransactionDataDto
   cbridgeTx*: TransactionDataDto
   eRC721TransferTx*: TransactionDataDto
+  eRC1155TransferTx*: TransactionDataDto
 
 proc `%`*(x: TransactionBridgeDto): JsonNode =
   result = newJobject()
@@ -76,3 +77,4 @@ proc `%`*(x: TransactionBridgeDto): JsonNode =
   result["hopTx"] = %x.hopTx
   result["cbridgeTx"] = %x.cbridgeTx
   result["eRC721TransferTx"] = %x.eRC721TransferTx
+  result["eRC1155TransferTx"] = %x.eRC1155TransferTx

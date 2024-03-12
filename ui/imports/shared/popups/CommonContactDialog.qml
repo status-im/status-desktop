@@ -17,6 +17,7 @@ StatusDialog {
 
     required property string publicKey
     required property var contactDetails
+    property bool loadingContactDetails
 
     default property alias content: contentLayout.children
 
@@ -26,7 +27,7 @@ StatusDialog {
                                                                        contactDetails.displayName, contactDetails.alias)
     readonly property string optionalDisplayName: ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias)
 
-    width: 480
+    width: Math.max(implicitWidth, 480)
     horizontalPadding: 0
     topPadding: 20
     bottomPadding: 0
@@ -47,6 +48,7 @@ StatusDialog {
                 imageHeight: 60
                 ensVerified: contactDetails.ensVerified
                 onlineStatus: contactDetails.onlineStatus
+                loading: root.loadingContactDetails
             }
 
             ColumnLayout {

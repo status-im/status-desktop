@@ -15,9 +15,9 @@ import ./overview/module as overview_module
 import ./send/module as send_module
 
 import ./activity/controller as activityc
+import ./activity/details_controller as activity_detailsc
 import ./wallet_connect/controller as wcc
 
-import app/modules/shared_models/collectibles_model as collectiblesm
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
 import app/global/global_singleton
@@ -40,8 +40,6 @@ import app_service/service/devices/service as devices_service
 import app_service/service/community_tokens/service as community_tokens_service
 
 import backend/collectibles as backend_collectibles
-import backend/activity as backend_activity
-
 
 logScope:
   topics = "wallet-section-module"
@@ -49,10 +47,6 @@ logScope:
 export io_interface
 
 type
-  ActivityID = enum
-    History
-    Temporary
-
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
@@ -84,8 +78,12 @@ type
 
     activityController: activityc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
-    # instance to be used in temporary, short-lived, workflows (e.g. send popup)
-    tmpActivityController: activityc.Controller
+    # Instances to be used in temporary, short-lived, workflows (e.g. send popup). There's probably tidier ways of
+    # doing this (one for each required module, create them dynamically) but for now this will do.
+    # We need one for each app "layer" that simultaneously needs to show a different list of activity
+    # entries (e.g. send popup is one "layer" above the collectible details activity tab)
+    tmpActivityControllers: ActivityControllerArray
+    activityDetailsController: activity_detailsc.Controller
 
     wcController: wcc.Controller
 
@@ -137,16 +135,34 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService,
-    savedAddressService, events)
-  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService,
-    savedAddressService, events)
+  result.activityDetailsController = activity_detailsc.newController(currencyService)
+  result.activityController = activityc.newController(
+    result.activityDetailsController,
+    currencyService,
+    tokenService,
+    savedAddressService,
+    events)
+  result.tmpActivityControllers = [
+    activityc.newController(
+      result.activityDetailsController,
+      currencyService,
+      tokenService,
+      savedAddressService,
+      events),
+    activityc.newController(
+      result.activityDetailsController,
+      currencyService,
+      tokenService,
+      savedAddressService,
+      events)
+  ]
+
   result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
   result.filter = initFilter(result.controller)
 
   result.wcController = wcc.newController(events, walletAccountService)
 
-  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectibleDetailsController, result.wcController)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.wcController)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -159,7 +175,9 @@ method delete*(self: Module) =
   self.controller.delete
   self.view.delete
   self.activityController.delete
-  self.tmpActivityController.delete
+  for i in 0..self.tmpActivityControllers.len-1:
+    self.tmpActivityControllers[i].delete
+  self.activityDetailsController.delete
   self.collectibleDetailsController.delete
   self.wcController.delete
 

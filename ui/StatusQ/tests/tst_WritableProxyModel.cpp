@@ -5,6 +5,10 @@
 
 #include "StatusQ/writableproxymodel.h"
 
+#include <TestHelpers/persistentindexestester.h>
+#include <TestHelpers/snapshotmodel.h>
+#include <TestHelpers/modeltestutils.h>
+
 namespace {
 
 class TestSourceModel : public QAbstractListModel {
@@ -72,6 +76,10 @@ public:
 
         if(!beginMoveRows(sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationChild))
             return false;
+
+        if (destinationChild > sourceRow) {
+            destinationChild -= 1;
+        }
 
         for (int i = 0; i < count; i++) {
             for (int j = 0; j < m_data.size(); j++) {
@@ -724,6 +732,66 @@ private slots:
         QCOMPARE(model.data(model.index(3, 0), 1), {});
     }
 
+    void updaedDataIsNotKeptAfterSourceRemove()
+    {
+        WritableProxyModel model;
+        QAbstractItemModelTester tester(&model);
+
+        TestSourceModel sourceModel({
+           { "title", { "Token 1", "Token 2", "Token3" }},
+           { "communityId", { "community_1", "community_2", "community_3" }}});
+
+        model.setSourceModel(&sourceModel);
+        model.setProperty("syncedRemovals", true);
+
+        QSignalSpy rowsRemovedSpy(&model, &WritableProxyModel::rowsRemoved);
+        QSignalSpy modelResetSpy(&model, &WritableProxyModel::modelReset);
+        QSignalSpy dataChangedSpy(&model, &WritableProxyModel::dataChanged);
+        QSignalSpy rowsInsertedSpy(&model, &WritableProxyModel::rowsInserted);
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.syncedRemovals(), true);
+
+        model.setData(model.index(0, 0), "Token 1.1", 0);
+        
+        QCOMPARE(model.dirty(), true);
+        QCOMPARE(model.rowCount(), 3);
+
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 1.1");
+        QCOMPARE(dataChangedSpy.count(), 1);
+
+        sourceModel.remove(0);
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.rowCount(), 2);
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 2");
+
+        QCOMPARE(rowsRemovedSpy.count(), 1);
+        QCOMPARE(rowsRemovedSpy.first().at(1), 0);
+        QCOMPARE(rowsRemovedSpy.first().at(2), 0);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+
+        model.setData(model.index(0, 0), "Token 2.1", 0);
+
+        QCOMPARE(model.dirty(), true);
+
+        QCOMPARE(model.data(model.index(0, 0), 0), "Token 2.1");
+
+        sourceModel.reset({
+           { "title", { "Token 3", "Token 4" }},
+           { "communityId", { "community_3", "community_4" }}
+        });
+
+        QCOMPARE(model.dirty(), false);
+        QCOMPARE(model.rowCount(), 2);
+
+        QCOMPARE(rowsRemovedSpy.count(), 1);
+        QCOMPARE(modelResetSpy.count(), 1);
+        QCOMPARE(dataChangedSpy.count(), 2);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+    }
+
     void dataIsAccessibleAfterSourceModelMove()
     {
         WritableProxyModel model;
@@ -765,7 +833,21 @@ private slots:
         QCOMPARE(rowsInsertedSpy.count(), 0);
         QCOMPARE(layoutChangedSpy.count(), 0);
 
-        sourceModel.moveRows({}, 1, 1, {}, 0);
+        PersistentIndexesTester indexesTester(&model);
+
+        {
+            SnapshotModel snapshot(model);
+
+            QObject context;
+            connect(&model, &WritableProxyModel::layoutAboutToBeChanged, &context,
+                    [&snapshot, &model] {
+                QVERIFY(isSame(snapshot, model));
+            });
+
+            sourceModel.moveRows({}, 1, 1, {}, 0);
+        }
+
+        QVERIFY(indexesTester.compare());
 
         QCOMPARE(model.dirty(), true);
         QCOMPARE(model.rowCount(), 2);
@@ -801,9 +883,11 @@ private slots:
         model.setData(model.index(2, 0), "Token 5.1", 0);
         model.setData(model.index(2, 0), "community_5.1", 1);
 
+        PersistentIndexesTester indexesTester(&model);
         bool success = sourceModel.moveRows({}, 1, 2, {}, 0);
 
         QVERIFY(success);
+        QVERIFY(indexesTester.compare());
 
         QCOMPARE(sourceModel.data(sourceModel.index(0, 0), 0), "Token 2");
         QCOMPARE(sourceModel.data(sourceModel.index(1, 0), 0), "Token 3");
@@ -835,11 +919,18 @@ private slots:
         model.removeRows(2, 1);
 
         QCOMPARE(model.dirty(), true);
+        QCOMPARE(model.rowCount(), 2);
         QCOMPARE(model.data(model.index(2, 0), 0), {});
         QCOMPARE(model.data(model.index(1, 0), 0), "Token 2");
         QCOMPARE(model.data(model.index(0, 0), 0), "Token 1");
 
-        sourceModel.moveRows({}, 2, 1, {}, 0);
+        PersistentIndexesTester indexesTester(&model);
+        PersistentIndexesTester sourceIndexesTester(&sourceModel);
+
+        QVERIFY(sourceModel.moveRows({}, 2, 1, {}, 0));
+        QVERIFY(sourceIndexesTester.compare());
+        QVERIFY(indexesTester.compare());
+        QCOMPARE(model.rowCount(), 2);
 
         QCOMPARE(sourceModel.data(sourceModel.index(0, 0), 0), "Token 3");
         QCOMPARE(sourceModel.data(sourceModel.index(1, 0), 0), "Token 1");
@@ -849,7 +940,10 @@ private slots:
         QCOMPARE(model.data(model.index(1, 0), 0), "Token 2");
         QCOMPARE(model.data(model.index(0, 0), 0), "Token 1");
 
-        sourceModel.moveRows({}, 1, 1, {}, 0);
+        QVERIFY(sourceModel.moveRows({}, 1, 1, {}, 0));
+        QVERIFY(sourceIndexesTester.compare());
+        QVERIFY(indexesTester.compare());
+        QCOMPARE(model.rowCount(), 2);
 
         QCOMPARE(sourceModel.data(sourceModel.index(0, 0), 0), "Token 1");
         QCOMPARE(sourceModel.data(sourceModel.index(1, 0), 0), "Token 3");
@@ -859,15 +953,20 @@ private slots:
         QCOMPARE(model.data(model.index(1, 0), 0), "Token 2");
         QCOMPARE(model.data(model.index(0, 0), 0), "Token 1");
 
-        sourceModel.moveRows({}, 0, 1, {}, 2);
+        indexesTester.storeIndexesAndData();
+        sourceIndexesTester.storeIndexesAndData();
+        QVERIFY(sourceModel.moveRows({}, 0, 1, {}, 3));
+        QVERIFY(sourceIndexesTester.compare());
+        QVERIFY(indexesTester.compare());
+        QCOMPARE(model.rowCount(), 2);
 
-        QCOMPARE(sourceModel.data(sourceModel.index(0, 0), 0), "Token 3");
-        QCOMPARE(sourceModel.data(sourceModel.index(1, 0), 0), "Token 2");
-        QCOMPARE(sourceModel.data(sourceModel.index(2, 0), 0), "Token 1");
+       QCOMPARE(sourceModel.data(sourceModel.index(0, 0), 0), "Token 3");
+       QCOMPARE(sourceModel.data(sourceModel.index(1, 0), 0), "Token 2");
+       QCOMPARE(sourceModel.data(sourceModel.index(2, 0), 0), "Token 1");
 
-        QCOMPARE(model.data(model.index(2, 0), 0), {});
-        QCOMPARE(model.data(model.index(1, 0), 0), "Token 1");
-        QCOMPARE(model.data(model.index(0, 0), 0), "Token 2");
+       QCOMPARE(model.data(model.index(2, 0), 0), {});
+       QCOMPARE(model.data(model.index(1, 0), 0), "Token 1");
+       QCOMPARE(model.data(model.index(0, 0), 0), "Token 2");
     }
 
     void proxyInsertedButSourceMovesRows()
