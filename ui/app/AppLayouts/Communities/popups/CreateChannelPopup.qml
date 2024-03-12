@@ -828,7 +828,6 @@ StatusStackModal {
                                 header: null,
                                 topPadding: -root.subHeaderPadding - 8,
                                 leftPadding: 0,
-                                rightPadding: 16,
                                 viewWidth: scrollView.availableWidth - 32
                             };
                             editPermissionView.pushEditView(properties);
@@ -923,7 +922,7 @@ StatusStackModal {
         },
         PermissionsSettingsPanel {
             id: editPermissionView
-            
+
             leftPadding: 16
             rightPadding: 16
             initialPage.header: null
