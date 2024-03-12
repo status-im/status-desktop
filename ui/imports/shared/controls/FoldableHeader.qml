@@ -10,6 +10,7 @@ Rectangle {
 
     property bool folded: false
     property alias title: label.text
+    property alias titleColor: label.color
     property alias switchText: modeSwitch.text
     property alias checked: modeSwitch.checked
     property Component rightAdditionalComponent

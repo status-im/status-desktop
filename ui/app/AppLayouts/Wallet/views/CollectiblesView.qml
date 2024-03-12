@@ -115,10 +115,9 @@ ColumnLayout {
             markerRoleName: "sourceGroup"
         }
 
-        readonly property bool hasCollectibles: d.nonCommunityModel.count || d.loadingItemsModel.count
+        readonly property bool hasRegularCollectibles: d.nonCommunityModel.count || d.loadingItemsModel.count
         readonly property bool hasCommunityCollectibles: d.communityModel.count || d.loadingItemsModel.count
-
-        readonly property bool onlyOneType: !hasCollectibles || !hasCommunityCollectibles
+        readonly property bool onlyRegularCollectiblesType: hasRegularCollectibles && !hasCommunityCollectibles
 
         readonly property var nwFilters: root.networkFilters.split(":")
         readonly property var addrFilters: root.addressFilters.split(":").map((addr) => addr.toLowerCase())
@@ -325,7 +324,7 @@ ColumnLayout {
     ShapeRectangle {
         Layout.fillWidth: true
         Layout.topMargin: Style.current.padding
-        visible: !d.hasCollectibles && !d.hasCommunityCollectibles
+        visible: !d.hasRegularCollectibles && !d.hasCommunityCollectibles
         text: qsTr("Collectibles will appear here")
     }
 
@@ -340,123 +339,52 @@ ColumnLayout {
         flickable1: CustomGridView {
             id: communityCollectiblesView
 
-            header: HeaderDelegate {
-                height: d.headerHeight
-                width: doubleFlickable.width
-                z: 1
-
-                text: qsTr("Community minted")
-
-                scrolled: !doubleFlickable.atYBeginning
-                checked: doubleFlickable.flickable1Folded
-
-                onToggleClicked: doubleFlickable.flip1Folding()
-                onInfoClicked: Global.openPopup(communityInfoPopupCmp)
-            }
-
-            Binding {
-                target: communityCollectiblesView
-                property: "header"
-                when: d.onlyOneType
-                value: null
-
-                restoreMode: Binding.RestoreBindingOrValue
-            }
-
+            header: d.hasCommunityCollectibles ? communityHeaderComponent : null
             width: doubleFlickable.width
             cellHeight: d.communityCellHeight
-
             model: d.communityModelWithLoadingItems
+
+            Component {
+                id: communityHeaderComponent
+
+                FoldableHeader {
+                    height: d.headerHeight
+                    width: doubleFlickable.width
+                    title: qsTr("Community minted")
+                    titleColor: Theme.palette.baseColor1
+                    folded: doubleFlickable.flickable1Folded
+                    rightAdditionalComponent: StatusFlatButton {
+                        icon.name: "info"
+                        textColor: Theme.palette.baseColor1
+
+                        onClicked: Global.openPopup(communityInfoPopupCmp)
+                    }
+                    onToggleFolding:doubleFlickable.flip1Folding()
+                }
+            }
         }
 
         flickable2: CustomGridView {
             id: regularCollectiblesView
 
-            header: HeaderDelegate {
-                height: d.headerHeight
-                width: doubleFlickable.width
-                z: 1
-
-                text: qsTr("Others")
-
-                checked: doubleFlickable.flickable2Folded
-                scrolled: (doubleFlickable.contentY >
-                           communityCollectiblesView.contentHeight
-                           - d.headerHeight)
-                showInfoButton: false
-
-                onToggleClicked: doubleFlickable.flip2Folding()
-            }
-
-            Binding {
-                target: regularCollectiblesView
-                property: "header"
-                when: d.onlyOneType
-                value: null
-
-                restoreMode: Binding.RestoreBindingOrValue
-            }
-
+            header: !d.hasRegularCollectibles || d.onlyRegularCollectiblesType ? null : regularHeaderComponent
             width: doubleFlickable.width
             cellHeight: d.cellHeight
-
             model: d.nonCommunityModelWithLoadingItems
-        }
-    }
 
-    component HeaderDelegate: Rectangle {
-        id: sectionDelegate
+            Component {
+                id: regularHeaderComponent
 
-        property alias text: headerLabel.text
-        property alias checked: toggleButton.checked
-        property bool scrolled: false
-        property alias showInfoButton: infoButton.visible
+                FoldableHeader {
+                    height: d.headerHeight
+                    width: doubleFlickable.width
+                    title: qsTr("Others")
+                    titleColor: Theme.palette.baseColor1
+                    folded: doubleFlickable.flickable2Folded
 
-        signal toggleClicked
-        signal infoClicked
-
-        color: Theme.palette.statusListItem.backgroundColor
-
-        RowLayout {
-            anchors.fill: parent
-
-            StatusFlatButton {
-                id: toggleButton
-
-                checkable: true
-                size: StatusBaseButton.Size.Small
-                icon.name: checked ? "next" : "chevron-down"
-                textColor: Theme.palette.baseColor1
-                textHoverColor: Theme.palette.directColor1
-
-                onToggled: sectionDelegate.toggleClicked()
+                    onToggleFolding:doubleFlickable.flip2Folding()
+                }
             }
-            StatusBaseText {
-                id: headerLabel
-
-                Layout.fillWidth: true
-
-                color: Theme.palette.baseColor1
-                elide: Text.ElideRight
-            }
-
-            StatusFlatButton {
-                id: infoButton
-
-                icon.name: "info"
-                textColor: Theme.palette.baseColor1
-
-                onClicked: sectionDelegate.infoClicked()
-            }
-        }
-
-        Rectangle {
-            width: parent.width
-            height: 4
-            anchors.top: parent.bottom
-
-            color: Theme.palette.directColor8
-            visible: !sectionDelegate.checked && sectionDelegate.scrolled
         }
     }
 
@@ -477,18 +405,18 @@ ColumnLayout {
             title: model.name ? model.name : "..."
             subTitle: model.collectionName ? model.collectionName : model.collectionUid ? model.collectionUid : ""
             mediaUrl: model.mediaUrl ?? ""
-            mediaType: model.mediaType ?? ""
-            fallbackImageUrl: model.imageUrl ?? ""
-            backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
+                                        mediaType: model.mediaType ?? ""
+                                                                      fallbackImageUrl: model.imageUrl ?? ""
+                                                                                                          backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
             isLoading: !!model.isLoading
             privilegesLevel: model.communityPrivilegesLevel ?? Constants.TokenPrivilegesLevel.Community
-            ornamentColor: model.communityColor ?? "transparent"
-            communityId: model.communityId ?? ""
-            communityName: model.communityName ?? ""
-            communityImage: model.communityImage ?? ""
-            balance: model.balance ?? 1
+                                                               ornamentColor: model.communityColor ?? "transparent"
+                                                                                                      communityId: model.communityId ?? ""
+                                                                                                                                        communityName: model.communityName ?? ""
+                                                                                                                                                                              communityImage: model.communityImage ?? ""
+                                                                                                                                                                                                                      balance: model.balance ?? 1
 
-            onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
+                                                                                                                                                                                                                                                onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId, model.symbol, model.tokenType)
             onRightClicked: {
                 Global.openMenu(tokenContextMenu, this,
                                 {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
@@ -581,14 +509,14 @@ ColumnLayout {
                 root.controller.showHideGroup(communityId, false)
                 close()
                 Global.displayToastMessage(
-                    qsTr("%1 community collectibles were successfully hidden. You can toggle collectible visibility via %2.").arg(communityName)
+                            qsTr("%1 community collectibles were successfully hidden. You can toggle collectible visibility via %2.").arg(communityName)
                             .arg(`<a style="text-decoration:none" href="#${Constants.appSection.profile}/${Constants.settingsSubsection.wallet}/${Constants.walletSettingsSubsection.manageCollectibles}">` + qsTr("Settings", "Go to Settings") + "</a>"),
-                    "",
-                    "checkmark-circle",
-                    false,
-                    Constants.ephemeralNotificationType.success,
-                    ""
-                )
+                            "",
+                            "checkmark-circle",
+                            false,
+                            Constants.ephemeralNotificationType.success,
+                            ""
+                            )
             }
         }
     }
