@@ -37,34 +37,33 @@ MenuItem {
                                                                : d.defaultAssetSettings
 
         readonly property StatusAssetSettings assetSettings: StatusAssetSettings {
-
             // overriden properties
-            readonly property int letterSize: 11
+            letterSize: 11
 
             //icon
-            readonly property string name: d.originalAssetSettings ? d.originalAssetSettings.name : d.defaultAssetSettings.name
-            readonly property url source: d.originalAssetSettings ? d.originalAssetSettings.source : d.defaultAssetSettings.source
-            readonly property real width:  d.originalAssetSettings ? d.originalAssetSettings.width : d.defaultAssetSettings.width
-            readonly property real height: d.originalAssetSettings ? d.originalAssetSettings.height : d.defaultAssetSettings.height
-            readonly property color color: d.originalAssetSettings ? d.originalAssetSettings.color : d.defaultAssetSettings.color
-            readonly property color hoverColor: d.originalAssetSettings ? d.originalAssetSettings.hoverColor : d.defaultAssetSettings.hoverColor
-            readonly property color disabledColor: d.originalAssetSettings ? d.originalAssetSettings.disabledColor : d.defaultAssetSettings.disabledColor
-            readonly property int rotation: d.originalAssetSettings ? d.originalAssetSettings.rotation : d.defaultAssetSettings.rotation
-            readonly property bool isLetterIdenticon: d.originalAssetSettings ? d.originalAssetSettings.isLetterIdenticon : d.defaultAssetSettings.isLetterIdenticon
-            readonly property int charactersLen: d.originalAssetSettings ? d.originalAssetSettings.charactersLen : d.defaultAssetSettings.charactersLen
-            readonly property string emoji: d.originalAssetSettings ? d.originalAssetSettings.emoji : d.defaultAssetSettings.emoji
-            readonly property string emojiSize: d.originalAssetSettings ? d.originalAssetSettings.emojiSize : d.defaultAssetSettings.emojiSize
+            name: d.originalAssetSettings ? d.originalAssetSettings.name : d.defaultAssetSettings.name
+            source: d.originalAssetSettings ? d.originalAssetSettings.source : d.defaultAssetSettings.source
+            width:  d.originalAssetSettings ? d.originalAssetSettings.width : d.defaultAssetSettings.width
+            height: d.originalAssetSettings ? d.originalAssetSettings.height : d.defaultAssetSettings.height
+            color: d.originalAssetSettings ? d.originalAssetSettings.color : d.defaultAssetSettings.color
+            hoverColor: d.originalAssetSettings ? d.originalAssetSettings.hoverColor : d.defaultAssetSettings.hoverColor
+            disabledColor: d.originalAssetSettings ? d.originalAssetSettings.disabledColor : d.defaultAssetSettings.disabledColor
+            rotation: d.originalAssetSettings ? d.originalAssetSettings.rotation : d.defaultAssetSettings.rotation
+            isLetterIdenticon: d.originalAssetSettings ? d.originalAssetSettings.isLetterIdenticon : d.defaultAssetSettings.isLetterIdenticon
+            charactersLen: d.originalAssetSettings ? d.originalAssetSettings.charactersLen : d.defaultAssetSettings.charactersLen
+            emoji: d.originalAssetSettings ? d.originalAssetSettings.emoji : d.defaultAssetSettings.emoji
+            emojiSize: d.originalAssetSettings ? d.originalAssetSettings.emojiSize : d.defaultAssetSettings.emojiSize
 
             //icon b
-            readonly property real bgWidth: d.originalAssetSettings ? d.originalAssetSettings.bgWidth : d.defaultAssetSettings.bgWidth
-            readonly property real bgHeight: d.originalAssetSettings ? d.originalAssetSettings.bgHeight : d.defaultAssetSettings.bgHeight
-            readonly property int bgRadius: d.originalAssetSettings ? d.originalAssetSettings.bgRadius : d.defaultAssetSettings.bgRadius
-            readonly property color bgColor: d.originalAssetSettings ? d.originalAssetSettings.bgColor : d.defaultAssetSettings.bgColor
+            bgWidth: d.originalAssetSettings ? d.originalAssetSettings.bgWidth : d.defaultAssetSettings.bgWidth
+            bgHeight: d.originalAssetSettings ? d.originalAssetSettings.bgHeight : d.defaultAssetSettings.bgHeight
+            bgRadius: d.originalAssetSettings ? d.originalAssetSettings.bgRadius : d.defaultAssetSettings.bgRadius
+            bgColor: d.originalAssetSettings ? d.originalAssetSettings.bgColor : d.defaultAssetSettings.bgColor
 
             //image
-            readonly property bool isImage: d.originalAssetSettings ? d.originalAssetSettings.isImage : d.defaultAssetSettings.isImage
-            readonly property int imgStatus: d.originalAssetSettings ? d.originalAssetSettings.imgStatus : d.defaultAssetSettings.imgStatus
-            readonly property bool imgIsIdenticon: d.originalAssetSettings ? d.originalAssetSettings.imgIsIdenticon : d.defaultAssetSettings.imgIsIdenticon
+            isImage: d.originalAssetSettings ? d.originalAssetSettings.isImage : d.defaultAssetSettings.isImage
+            imgStatus: d.originalAssetSettings ? d.originalAssetSettings.imgStatus : d.defaultAssetSettings.imgStatus
+            imgIsIdenticon: d.originalAssetSettings ? d.originalAssetSettings.imgIsIdenticon : d.defaultAssetSettings.imgIsIdenticon
         }
 
         readonly property StatusFontSettings fontSettings: d.isStatusSubMenu
@@ -151,7 +150,7 @@ MenuItem {
             Layout.preferredHeight: 16
             Layout.alignment: Qt.AlignRight
             visible: root.checkable && root.checked
-            icon: "checkmark"
+            icon: "tiny/checkmark"
             color: Theme.palette.primaryColor1
         }
     }
