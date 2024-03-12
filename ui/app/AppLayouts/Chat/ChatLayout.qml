@@ -75,6 +75,16 @@ StackLayout {
         }
     }
 
+    Connections {
+        target: root.rootStore
+        function onGoToMembershipRequestsPage() {
+            root.currentIndex = 1 // go to settings
+            if (communitySettingsLoader.item) {
+                communitySettingsLoader.item.goTo(Constants.CommunitySettingsSections.Members, Constants.CommunityMembershipSubSections.MembershipRequests)
+            }
+        }
+    }
+
     Component {
         id: joinCommunityViewComponent
         JoinCommunityView {
@@ -195,8 +205,10 @@ StackLayout {
 
     Loader {
         id: communitySettingsLoader
-        active: root.rootStore.chatCommunitySectionModule.isCommunity() && root.isPrivilegedUser
-
+        active: root.rootStore.chatCommunitySectionModule.isCommunity() && 
+                root.isPrivilegedUser && 
+                (root.currentIndex === 1 || !!communitySettingsLoader.item) // lazy load and preserve state after loading
+        asynchronous: false // It's false on purpose. We want to load the component synchronously
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
             rootStore: root.rootStore
@@ -214,14 +226,6 @@ StackLayout {
 
             onBackToCommunityClicked: root.currentIndex = 0
             onFinaliseOwnershipClicked: Global.openFinaliseOwnershipPopup(community.id)
-
-            Connections {
-                target: root.rootStore
-                function onGoToMembershipRequestsPage() {
-                    root.currentIndex = 1 // go to settings
-                    communitySettingsView.goTo(Constants.CommunitySettingsSections.Members, Constants.CommunityMembershipSubSections.MembershipRequests)
-                }
-            }
         }
     }
 
