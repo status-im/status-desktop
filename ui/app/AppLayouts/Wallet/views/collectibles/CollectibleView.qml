@@ -36,8 +36,9 @@ Control {
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
     property color ornamentColor // Relevant color for these special tokens (community color)
 
-    readonly property var d: QtObject {
+   QtObject {
         id: d
+
         readonly property bool unknownCommunityName: root.communityName.startsWith("0x") && root.communityId === root.communityName
     }
 
