@@ -164,5 +164,6 @@ croppedImageEditLogo = {"container": mainWindow_communityEditPanelScrollView_Edi
 croppedImageEditBanner = {"container": mainWindow_communityEditPanelScrollView_EditSettingsPanel, "objectName": "editCroppedImageItem_Community banner", "type": "EditCroppedImagePanel", "visible": True}
 
 # User List Panel
-mainWindow_UserListPanel = {"container": statusDesktop_mainWindow, "type": "UserListPanel", "unnamed": 1, "visible": True}
-userListPanel_StatusMemberListItem = {"container": mainWindow_UserListPanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+mainWindow_userListPanel_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "userListPanel", "type": "StatusListView", "visible": True}
+userListPanel_StatusMemberListItem = {"container": mainWindow_userListPanel_StatusListView, "index": 1, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+statusBadge_StatusBadge = {"container": userListPanel_StatusMemberListItem, "id": "statusBadge", "type": "StatusBadge", "unnamed": 1, "visible": True}

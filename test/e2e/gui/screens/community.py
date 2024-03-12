@@ -6,7 +6,7 @@ from allure_commons._allure import step
 
 import configs
 import driver
-from constants import UserChannel
+from constants import UserChannel, ColorCodes
 from driver.objects_access import walk_children
 from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
@@ -423,10 +423,21 @@ class Chat(QObject):
 class Members(QObject):
 
     def __init__(self):
-        super().__init__(communities_names.mainWindow_UserListPanel)
+        super().__init__(communities_names.mainWindow_userListPanel_StatusListView)
         self._member_item = QObject(communities_names.userListPanel_StatusMemberListItem)
+        self._user_badge_color = QObject(communities_names.statusBadge_StatusBadge)
 
     @property
     @allure.step('Get all members')
     def members(self) -> typing.List[str]:
         return [str(member.statusListItemTitle.text) for member in driver.findAllObjects(self._member_item.real_name)]
+
+    @allure.step('Verify member is offline by index')
+    def member_is_offline(self, index: int) -> bool:
+        self._member_item.real_name['index'] = index
+        return self._user_badge_color.object.color.name == ColorCodes.GRAY.value
+
+    @allure.step('Verify member is online by index')
+    def member_is_online(self, index: int) -> bool:
+        self._member_item.real_name['index'] = index
+        return self._user_badge_color.object.color.name == ColorCodes.GREEN.value
