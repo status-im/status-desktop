@@ -311,7 +311,7 @@ ListModel {
                     accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
                     balance: "70",
                     txTimestamp: 60
-                },
+                }
             ]
         },
         {
@@ -329,7 +329,7 @@ ListModel {
             ownership: [
                 {
                     accountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
-                    balance: 1,
+                    balance: "1",
                     txTimestamp: 27
                 },
             ]
