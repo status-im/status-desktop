@@ -522,14 +522,9 @@ proc getCommunityPublicKeyFromPrivateKey*(communityPrivateKey: string,): RpcResp
 proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): RpcResponse[JsonNode] =
   return callPrivateRPC("getCommunityMembersForWalletAddresses".prefix, %* [communityId, chainId])
 
-<<<<<<< HEAD
-proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] =
-  return callPrivateRPC("promoteSelfToControlNode".prefix, %* [communityId])
-=======
 proc promoteSelfToControlNode*(communityId: string): RpcResponse[JsonNode] =
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_promoteSelfToControlNode", payload)
->>>>>>> origin/master
 
 proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] =
   if index != -1:
