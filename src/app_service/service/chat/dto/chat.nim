@@ -260,7 +260,6 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   result.joined = joined
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
-  echo jsonObj
   result = ChatDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
