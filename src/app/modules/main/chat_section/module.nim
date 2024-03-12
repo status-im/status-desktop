@@ -69,7 +69,7 @@ proc buildChatSectionUI(
 
 proc reevaluateRequiresTokenPermissionToJoin(self: Module)
 
-proc changeCanPostValues*(self: Module, chatId: string, canPostMessages, canPostReactions, viewersCanPostReactions: bool)
+proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool)
 
 proc addOrUpdateChat(self: Module,
     chat: ChatDto,
@@ -613,7 +613,6 @@ proc addNewChat*(
         self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
       else:
         false,
-    canPostMessages = chatDto.canPostMessages,
     canPostReactions = chatDto.canPostReactions,
     viewersCanPostReactions = chatDto.viewersCanPostReactions,
   )
@@ -725,7 +724,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
   self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color)
-  self.changeCanPostValues(chat.id, chat.canPostMessages, chat.canPostReactions, chat.viewersCanPostReactions)
+  self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   # One To One chat is available only in the `Chat` section
@@ -775,8 +774,8 @@ method onCategoryUnmuted*(self: Module, categoryId: string) =
 method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted)
 
-proc changeCanPostValues*(self: Module, chatId: string, canPostMessages, canPostReactions, viewersCanPostReactions: bool) =
-  self.view.chatsModel().changeCanPostValues(chatId, canPostMessages, canPostReactions, viewersCanPostReactions)
+proc changeCanPostValues*(self: Module, chatId: string, canPostReactions, viewersCanPostReactions: bool) =
+  self.view.chatsModel().changeCanPostValues(chatId, canPostReactions, viewersCanPostReactions)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -1241,7 +1240,7 @@ proc addOrUpdateChat(self: Module,
 
   if chatExists:
     self.changeMutedOnChat(chat.id, chat.muted)
-    self.changeCanPostValues(chat.id, chat.canPostMessages, chat.canPostReactions, chat.viewersCanPostReactions)
+    self.changeCanPostValues(chat.id, chat.canPostReactions, chat.viewersCanPostReactions)
     self.updateChatRequiresPermissions(chat.id)
     self.updateChatLocked(chat.id)
     if (chat.chatType == ChatType.PrivateGroupChat):

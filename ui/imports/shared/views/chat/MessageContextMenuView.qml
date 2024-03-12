@@ -23,7 +23,7 @@ StatusMenu {
     property string myPublicKey: ""
     property bool amIChatAdmin: false
     property bool disabledForChat: false
-    property bool showOnlyEmojiReactions: false
+    property bool forceEnableEmojiReactions: false
 
     property int chatType: Constants.chatType.unknown
     property string messageId: ""
@@ -56,7 +56,7 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.disabledForChat || root.showOnlyEmojiReactions
+        visible: !root.disabledForChat || root.forceEnableEmojiReactions
 
         MessageReactionsRow {
             id: emojiRow

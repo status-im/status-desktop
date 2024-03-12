@@ -642,10 +642,10 @@ QtObject:
             # Currently, status-go only sends canPostReactions on app start (getChannelGroups)
             # so here, we need to imply it. If viewersCanPostReactions is true, then everyone can post reactions
             # admins can also always post reactions
-            if chat.viewersCanPostReactions == true or
-                (chat.viewersCanPostReactions == false and community.memberRole != MemberRole.None):
+            if chat.viewersCanPostReactions or
+                (not chat.viewersCanPostReactions and community.memberRole != MemberRole.None):
               updatedChat.canPostReactions = true
-            elif chat.viewersCanPostReactions == false and community.memberRole == MemberRole.None:
+            elif not chat.viewersCanPostReactions and community.memberRole == MemberRole.None:
               updatedChat.canPostReactions = false
 
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.

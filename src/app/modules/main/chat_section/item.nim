@@ -35,7 +35,6 @@ type
     loaderActive: bool
     locked: bool
     requiresPermissions: bool
-    canPostMessages: bool
     canPostReactions: bool
     viewersCanPostReactions: bool
 
@@ -66,7 +65,6 @@ proc initItem*(
     loaderActive = false,
     locked = false,
     requiresPermissions = false,
-    canPostMessages = true,
     canPostReactions = true,
     viewersCanPostReactions = true,
     ): Item =
@@ -98,7 +96,6 @@ proc initItem*(
   result.loaderActive = loaderActive
   result.locked = locked
   result.requiresPermissions = requiresPermissions
-  result.canPostMessages = canPostMessages
   result.canPostReactions = canPostReactions
   result.viewersCanPostReactions = viewersCanPostReactions
 
@@ -129,7 +126,6 @@ proc `$`*(self: Item): string =
     loaderActive: {$self.loaderActive},
     locked: {$self.locked},
     requiresPermissions: {$self.requiresPermissions},
-    canPostMessages: {$self.canPostMessages},
     canPostReactions: {$self.canPostReactions},
     viewersCanPostReactions: {$self.viewersCanPostReactions},
     ]"""
@@ -161,7 +157,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "loaderActive": self.loaderActive,
     "locked": self.locked,
     "requiresPermissions": self.requiresPermissions,
-    "canPostMessages": self.canPostMessages,
     "canPostReactions": self.canPostReactions,
     "viewersCanPostReactions": self.viewersCanPostReactions,
   }
@@ -315,12 +310,6 @@ proc requiresPermissions*(self: Item): bool =
 
 proc `requiresPermissions=`*(self: Item, value: bool) =
   self.requiresPermissions = value
-
-proc canPostMessages*(self: Item): bool =
-  self.canPostMessages
-
-proc `canPostMessages=`*(self: Item, value: bool) =
-  self.canPostMessages = value
 
 proc canPostReactions*(self: Item): bool =
   self.canPostReactions

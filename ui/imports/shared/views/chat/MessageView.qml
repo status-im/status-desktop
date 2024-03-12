@@ -1125,7 +1125,7 @@ Loader {
             store: root.rootStore
             reactionModel: root.emojiReactionsModel
             disabledForChat: !root.rootStore.isUserAllowedToSendMessage
-            showOnlyEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
+            forceEnableEmojiReactions: !root.rootStore.isUserAllowedToSendMessage && d.addReactionAllowed
 
             onPinMessage: (messageId) => {
                 root.messageStore.pinMessage(messageId)

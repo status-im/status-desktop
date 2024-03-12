@@ -83,7 +83,6 @@ type ChatDto* = object
   syncedTo*: int64
   syncedFrom*: int64
   firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
-  canPostMessages*: bool
   canPostReactions*: bool
   viewersCanPostReactions*: bool
   position*: int
@@ -146,7 +145,6 @@ proc `$`*(self: ChatDto): string =
     communityId: {self.communityId},
     profile: {self.profile},
     joined: {self.joined},
-    canPostMessages: {self.canPostMessages},
     canPostReactions: {self.canPostReactions},
     viewersCanPostReactions: {self.viewersCanPostReactions},
     syncedTo: {self.syncedTo},
@@ -273,7 +271,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("readMessagesAtClockValue", result.readMessagesAtClockValue)
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
-  discard jsonObj.getProp("canPostMessages", result.canPostMessages)
   discard jsonObj.getProp("canPostReactions", result.canPostReactions)
   discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
@@ -426,7 +423,6 @@ proc communityChannelUuid*(self: ChatDto): string =
 proc updateMissingFields*(chatToUpdate: var ChatDto, oldChat: ChatDto) =
   # This proc sets fields of `chatToUpdate` which are available only for community channels.
   chatToUpdate.position = oldChat.position
-  chatToUpdate.canPostMessages = oldChat.canPostMessages
   chatToUpdate.canPostReactions = oldChat.canPostReactions
   chatToUpdate.viewersCanPostReactions = oldChat.viewersCanPostReactions
   chatToUpdate.categoryId = oldChat.categoryId
