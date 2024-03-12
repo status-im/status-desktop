@@ -20,6 +20,25 @@ const asyncGetChannelGroupsTask: Task = proc(argEncoded: string) {.gcsafe, nimca
     })
 
 type
+  AsyncGetActiveChatsTaskArg = ref object of QObjectTaskArg
+
+const asyncGetActiveChatsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetActiveChatsTaskArg](argEncoded)
+  try:
+    let response = status_chat.getActiveChats()
+    echo "Response ", response
+
+    let responseJson = %*{
+      "chats": response.result,
+      "error": "",
+    }
+    arg.finish(responseJson)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
+
+type
   AsyncCheckChannelPermissionsTaskArg = ref object of QObjectTaskArg
     communityId: string
     chatId: string

@@ -321,6 +321,108 @@ method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
 
+# proc createSectionItem[T](self: Module[T], community: Community): SectionItem =
+#   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
+#   var communityDetails: CommunityDto
+#   var communityTokensItems: seq[TokenItem]
+#   if (isCommunity):
+#     communityDetails = self.controller.getCommunityById(channelGroup.id)
+#     if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
+#       self.controller.getCommunityTokensDetailsAsync(channelGroup.id)
+
+#       # Get community members' revealed accounts
+#       # We will update the model later when we finish loading the accounts
+#       self.controller.asyncGetRevealedAccountsForAllMembers(channelGroup.id)
+
+#   let unviewedCount = channelGroup.unviewedMessagesCount
+#   let notificationsCount = channelGroup.unviewedMentionsCount
+#   let hasNotification = unviewedCount > 0 or notificationsCount > 0
+#   let active = self.getActiveSectionId() == channelGroup.id # We must pass on if the current item section is currently active to keep that property as it is
+
+
+#   # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
+#   var members = channelGroup.members
+#   for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
+#     var chatMember = ChatMember()
+#     chatMember.id = requestForAutoRejoin.publicKey
+#     chatMember.joined = false
+#     chatMember.role = MemberRole.None
+#     members.add(chatMember)
+
+
+#   var bannedMembers = newSeq[MemberItem]()
+#   for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
+#     let state = memberState.toMembershipRequestState()
+#     if state == MembershipRequestState.Banned or state == MembershipRequestState.UnbannedPending:
+#       bannedMembers.add(self.createMemberItem(memberId, state, MemberRole.None))
+
+#   result = initItem(
+#     channelGroup.id,
+#     if isCommunity: SectionType.Community else: SectionType.Chat,
+#     if isCommunity: channelGroup.name else: conf.CHAT_SECTION_NAME,
+#     channelGroup.memberRole,
+#     if isCommunity: communityDetails.isControlNode else: false,
+#     channelGroup.description,
+#     channelGroup.introMessage,
+#     channelGroup.outroMessage,
+#     channelGroup.images.thumbnail,
+#     channelGroup.images.banner,
+#     icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
+#     channelGroup.color,
+#     if isCommunity: communityDetails.tags else: "",
+#     hasNotification,
+#     notificationsCount,
+#     active,
+#     enabled = true,
+#     if (isCommunity): communityDetails.joined else: true,
+#     if (isCommunity): communityDetails.canJoin else: true,
+#     if (isCommunity): communityDetails.spectated else: false,
+#     channelGroup.canManageUsers,
+#     if (isCommunity): communityDetails.canRequestAccess else: true,
+#     if (isCommunity): communityDetails.isMember else: true,
+#     channelGroup.permissions.access,
+#     channelGroup.permissions.ensOnly,
+#     channelGroup.muted,
+#     # members
+#     members.map(proc(member: ChatMember): MemberItem =
+#       let contactDetails = self.controller.getContactDetails(member.id)
+#       var state = MembershipRequestState.Accepted
+#       if member.id in communityDetails.pendingAndBannedMembers:
+#         let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
+#         if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+#           state = memberState
+#       elif not member.joined:
+#         state = MembershipRequestState.AwaitingAddress
+
+#       result = self.createMemberItem(member.id, state, member.role)
+#     ),
+#     # pendingRequestsToJoin
+#     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
+#       x.id,
+#       x.publicKey,
+#       x.chatId,
+#       x.communityId,
+#       x.state,
+#       x.our
+#     )) else: @[],
+#     communityDetails.settings.historyArchiveSupportEnabled,
+#     communityDetails.adminSettings.pinMessageAllMembersEnabled,
+#     bannedMembers,
+#     # pendingMemberRequests
+#     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+#       result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+#     ) else: @[],
+#     # declinedMemberRequests
+#     if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+#       result = self.createMemberItem(requestDto.publicKey, MembershipRequestState(requestDto.state), MemberRole.None)
+#     ) else: @[],
+#     channelGroup.encrypted,
+#     communityTokensItems,
+#     channelGroup.pubsubTopic,
+#     channelGroup.pubsubTopicKey,
+#     channelGroup.shard.index,
+#   )
+
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
@@ -643,12 +745,58 @@ method onChannelGroupsLoaded*[T](
   self.chatsLoaded = true
   if not self.communityDataLoaded:
     return
+
+  let myPubKey = singletonInstance.userProfile.getPubKey()
+
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
-    activeSectionId = singletonInstance.userProfile.getPubKey()
+    activeSectionId = myPubKey
+
+  # Create personal chat section
+  self.channelGroupModules[myPubKey] = chat_section_module.newModule(
+    self,
+    events,
+    sectionId = myPubKey,
+    isCommunity = false,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    gifService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService,
+    sharedUrlsService,
+    networkService
+  )
+  let channelGroupItem = initItem(
+    myPubKey,
+    sectionType = SectionType.Chat,
+    name = conf.CHAT_SECTION_NAME,
+    icon = conf.CHAT_SECTION_ICON,
+    hasNotification = false,# TODO get that from chats
+    notificationsCount = 0,# TODO get that from chats
+    active = self.getActiveSectionId() == myPubKey,
+    enabled = true,
+    joined = true,
+    canJoin = true,
+    canRequestAccess = true,
+    isMember = true,
+    muted = false,
+  )
+  self.view.model().addItem(channelGroupItem)
+  if activeSectionId == channelGroupItem.id:
+    activeSection = channelGroupItem
+
+  self.channelGroupModules[myPubKey].load()
 
   for channelGroup in channelGroups:
+    if channelGroup.id == myPubKey:
+      continue
     self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
       self,
       events,
@@ -684,6 +832,70 @@ method onChannelGroupsLoaded*[T](
   self.view.sectionsLoaded()
   if self.statusDeepLinkToActivate != "":
     self.activateStatusDeepLink(self.statusDeepLinkToActivate)
+
+# method onChannelGroupsLoadedBkp*[T](
+#   self: Module[T],
+#   channelGroups: seq[ChannelGroupDto],
+#   events: EventEmitter,
+#   settingsService: settings_service.Service,
+#   nodeConfigurationService: node_configuration_service.Service,
+#   contactsService: contacts_service.Service,
+#   chatService: chat_service.Service,
+#   communityService: community_service.Service,
+#   messageService: message_service.Service,
+#   gifService: gif_service.Service,
+#   mailserversService: mailservers_service.Service,
+#   walletAccountService: wallet_account_service.Service,
+#   tokenService: token_service.Service,
+#   communityTokensService: community_tokens_service.Service,
+#   sharedUrlsService: urls_service.Service,
+#   networkService: network_service.Service,
+# ) =
+#   self.chatsLoaded = true
+#   if not self.communityDataLoaded:
+#     return
+#   var activeSection: SectionItem
+#   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
+#   if activeSectionId == "":
+#     activeSectionId = singletonInstance.userProfile.getPubKey()
+
+#   for channelGroup in channelGroups:
+#     self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
+#       self,
+#       events,
+#       channelGroup.id,
+#       isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
+#       settingsService,
+#       nodeConfigurationService,
+#       contactsService,
+#       chatService,
+#       communityService,
+#       messageService,
+#       gifService,
+#       mailserversService,
+#       walletAccountService,
+#       tokenService,
+#       communityTokensService,
+#       sharedUrlsService,
+#       networkService
+#     )
+#     let channelGroupItem = self.createChannelGroupItem(channelGroup)
+#     self.view.model().addItem(channelGroupItem)
+#     if activeSectionId == channelGroupItem.id:
+#       activeSection = channelGroupItem
+
+#     self.channelGroupModules[channelGroup.id].load()
+
+#   # Set active section if it is one of the channel sections
+#   if not activeSection.isEmpty():
+#     self.setActiveSection(activeSection)
+
+#   # Remove old loading section
+#   self.view.model().removeItem(LOADING_SECTION_ID)
+
+#   self.view.sectionsLoaded()
+#   if self.statusDeepLinkToActivate != "":
+#     self.activateStatusDeepLink(self.statusDeepLinkToActivate)
 
 method onCommunityDataLoaded*[T](
   self: Module[T],

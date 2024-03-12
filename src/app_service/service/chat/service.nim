@@ -215,6 +215,14 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+  proc asyncGetActiveChat*(self: Service) =
+    let arg = AsyncGetActiveChatsTaskArg(
+      tptr: cast[ByteAddress](asyncGetActiveChatsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetActiveChatsResponse",
+    )
+    self.threadpool.start(arg)
+
   proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
     if (x[1].channelGroupType == Personal): return -1
     if (y[1].channelGroupType == Personal): return 1
@@ -232,12 +240,18 @@ QtObject:
     # Make the personal channelGroup the first one
     self.channelGroups.sort(sortPersonnalChatAsFirst[string, ChannelGroupDto], SortOrder.Ascending)
 
-    for chat in chats:
+    # for chat in chats:
+    #   if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
+    #     if chat.chatType == chat_dto.ChatType.Public:
+    #       # Deactivate old public chats
+    #       discard status_chat.deactivateChat(chat.id)
+    #     else:
+    #       self.chats[chat.id] = chat
+
+  proc hydrateChats(self: Service, data: JsonNode) =
+    for chatJson in data:
+      let chat = chatJson.toChatDto()
       if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
-        if chat.chatType == chat_dto.ChatType.Public:
-          # Deactivate old public chats
-          discard status_chat.deactivateChat(chat.id)
-        else:
           self.chats[chat.id] = chat
 
   proc onAsyncGetChannelGroupsResponse*(self: Service, response: string) {.slot.} =
@@ -257,9 +271,28 @@ QtObject:
       error "error get channel groups: ", errDesription
       self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED, Args())
 
+
+  proc onAsyncGetActiveChatsResponse*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      if(rpcResponseObj["chats"].kind == JNull):
+        raise newException(RpcException, "No chats returned")
+
+      self.hydrateChats(rpcResponseObj["chats"])
+      # self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADED, ChannelGroupsArgs(channelGroups: self.getChannelGroups()))
+    except Exception as e:
+      let errDesription = e.msg
+      error "error get active chats: ", errDesription
+      # self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED, Args())
+
   proc init*(self: Service) =
     self.doConnect()
 
+    self.asyncGetActiveChat()
     self.asyncGetChannelGroups()
 
   proc hasChannel*(self: Service, chatId: string): bool =

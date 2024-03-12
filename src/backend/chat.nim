@@ -35,6 +35,10 @@ proc saveChat*(
     }
   ])
 
+proc getActiveChats*(): RpcResponse[JsonNode] =
+  let payload = %* []
+  result = callPrivateRPC("activeChats".prefix, payload)
+
 proc getChannelGroups*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("chat_getChannelGroups", payload)
