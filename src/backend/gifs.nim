@@ -4,10 +4,10 @@ import response_type
 
 export response_type
 
-proc getRecentGifs*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getRecentGifs*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("gif_getRecentGifs", payload)
 
-proc getFavoriteGifs*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getFavoriteGifs*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("gif_getFavoriteGifs", payload)

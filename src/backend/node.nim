@@ -4,19 +4,19 @@ import response_type
 
 export response_type
 
-proc adminPeers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc adminPeers*(): RpcResponse[JsonNode] =
     let payload = %* []
     result = callPrivateRPC("admin_peers", payload)
 
-proc wakuV2Peers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc wakuV2Peers*(): RpcResponse[JsonNode] =
     let payload = %* []
     result = callPrivateRPC("peers".prefix, payload)
 
-proc sendRPCMessageRaw*(inputJSON: string): string {.raises: [Exception].} =
+proc sendRPCMessageRaw*(inputJSON: string): string =
     result = callPrivateRPCRaw(inputJSON)
 
-proc getRpcStats*(): string {.raises: [Exception].} =
+proc getRpcStats*(): string =
     result = callPrivateRPCNoDecode("rpcstats_getStats")
 
-proc resetRpcStats*() {.raises: [Exception].} =
+proc resetRpcStats*() =
     discard callPrivateRPCNoDecode("rpcstats_reset")

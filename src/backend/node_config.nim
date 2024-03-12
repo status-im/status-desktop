@@ -10,7 +10,7 @@ export response_type
 logScope:
   topics = "rpc-node-config"
 
-proc getNodeConfig*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getNodeConfig*(): RpcResponse[JsonNode] =
   try:
     let response = status_go.getNodeConfig()
     result.result = response.parseJSON()
@@ -19,7 +19,7 @@ proc getNodeConfig*(): RpcResponse[JsonNode] {.raises: [Exception].} =
     error "error doing rpc request", methodName = "getNodeConfig", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] =
   try:
     info "switching fleet", fleet
     let response = status_go.switchFleet(fleet, $nodeConfig)
@@ -28,7 +28,7 @@ proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] {.
     error "error doing rpc request", methodName = "switchFleet", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] =
   try:
     result = core.callPrivateRPC("enableCommunityHistoryArchiveProtocol".prefix)
   except RpcException as e:
