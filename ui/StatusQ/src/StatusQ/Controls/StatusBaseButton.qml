@@ -33,7 +33,10 @@ Button {
         color: d.textColor
     }
 
+    property alias tooltip: tooltip
+
     property bool loading
+    property bool interactive: true
 
     property color normalColor
     property color hoverColor
@@ -56,9 +59,14 @@ Button {
     QtObject {
         id: d
 
-        readonly property color textColor: root.hovered && (root.enabled || root.loading) ? root.textHoverColor :
-                                                                                            root.enabled || root.loading ? root.textColor
-                                                                                                                         : root.disabledTextColor
+        readonly property color textColor: {
+            if (!root.interactive || !root.enabled)
+                return root.disabledTextColor
+            if (root.hovered)
+                return root.textHoverColor
+            return root.textColor
+        }
+
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
         readonly property int iconSize: {
             switch(root.size) {
@@ -119,9 +127,9 @@ Button {
         radius: root.radius
         border.color: root.borderColor
         color: {
-            if (root.enabled)
-                return !root.loading && (root.hovered || root.highlighted) ? hoverColor : normalColor;
-            return disabledColor;
+            if (!root.enabled || !root.interactive)
+                return disabledColor
+            return !root.loading && (root.hovered || root.highlighted) ? hoverColor : normalColor
         }
     }
 
@@ -151,7 +159,7 @@ Button {
                 id: roundIcon
 
                 StatusRoundIcon {
-                    opacity: !root.loading && root.icon.name !== ""  && root.display !== AbstractButton.TextOnly
+                    opacity: !root.loading && root.icon.name !== "" && root.display !== AbstractButton.TextOnly
                     asset.name: root.icon.name
                     asset.width: d.iconSize
                     asset.height: d.iconSize
@@ -216,14 +224,21 @@ Button {
         }
     }
 
-    // stop the mouse clicks in the "loading" state w/o disabling the whole button
+    // stop the mouse clicks in the "loading" or non-interactive state w/o disabling the whole button
     // as this would make it impossible to have hover events or a tooltip
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.AllButtons
-        enabled: root.loading
+        enabled: root.loading || !root.interactive
         onPressed: mouse.accepted = true
         onWheel: wheel.accepted = true
-        cursorShape: !root.loading ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
+        cursorShape: root.interactive && !root.loading ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
+    }
+
+    StatusToolTip {
+        id: tooltip
+        visible: tooltip.text !== "" && root.hovered
+        offset: -(tooltip.x + tooltip.width/2 - root.width/2)
     }
 }

@@ -123,7 +123,8 @@ Pane {
             objectName: "editProfileButton"
             size: StatusButton.Size.Small
             text: qsTr("Edit Profile")
-            enabled: !root.readOnly
+            interactive: !root.readOnly
+            tooltip.text: interactive ? "" : qsTr("Not available in preview mode")
             onClicked: {
                 Global.changeAppSectionBySectionType(Constants.appSection.profile)
                 root.closeRequested()
@@ -319,15 +320,6 @@ Pane {
             Loader {
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredHeight: menuButton.visible ? menuButton.height : -1
-                HoverHandler {
-                    id: actionButtonHoverHandler
-                    enabled: root.readOnly
-                }
-
-                StatusToolTip {
-                    text: qsTr("Not available in preview mode")
-                    visible: actionButtonHoverHandler.hovered
-                }
 
                 sourceComponent: {
                     // current user

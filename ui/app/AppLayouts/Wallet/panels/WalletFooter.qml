@@ -38,14 +38,13 @@ Rectangle {
         height: parent.height
         spacing:  Style.current.padding
 
-        DisabledTooltipButton {
-            buttonType: DisabledTooltipButton.Flat
-            aliasedObjectName: "walletFooterSendButton"
-            icon: "send"
+        StatusFlatButton {
+            objectName: "walletFooterSendButton"
+            icon.name: "send"
             text: root.isCommunityOwnershipTransfer ? qsTr("Send Owner token to transfer %1 Community ownership").arg(root.communityName) : qsTr("Send")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchSendModal()
-            tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
+            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && walletStore.overview.canSend
         }
 
@@ -57,13 +56,12 @@ Rectangle {
             }
         }
 
-        DisabledTooltipButton {
-            icon: "bridge"
-            buttonType: DisabledTooltipButton.Flat
+        StatusFlatButton {
+            icon.name: "bridge"
             text: qsTr("Bridge")
             interactive: networkConnectionStore.sendBuyBridgeEnabled
             onClicked: root.launchBridgeModal()
-            tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
+            tooltip.text: networkConnectionStore.sendBuyBridgeToolTipText
             visible: !walletStore.overview.isWatchOnlyAccount && !root.isCommunityOwnershipTransfer && walletStore.overview.canSend
         }
 

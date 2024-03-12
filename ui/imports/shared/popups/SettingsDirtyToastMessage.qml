@@ -18,8 +18,7 @@ Rectangle {
     property bool saveChangesButtonEnabled: false
     property bool saveForLaterButtonVisible
     property alias saveChangesText: saveChangesButton.text
-    property alias saveChangesTooltipText: saveChangesButton.tooltipText
-    property alias saveChangesTooltipVisible: saveChangesButton.enabled
+    property string saveChangesTooltipText
     property alias saveForLaterText: saveForLaterButton.text
     property alias cancelChangesText: cancelChangesButton.text
     property alias changesDetectedText: changesDetectedTextItem.text
@@ -148,13 +147,12 @@ Rectangle {
             onClicked: root.saveForLaterClicked()
         }
 
-        DisabledTooltipButton {
+        StatusButton {
             id: saveChangesButton
             objectName: "settingsDirtyToastMessageSaveButton"
-            buttonType: DisabledTooltipButton.Normal
             text: root.defaultSaveChangesText
-            enabled: root.active && root.saveChangesButtonEnabled
             interactive: root.active && root.saveChangesButtonEnabled
+            tooltip.text: root.saveChangesTooltipText
             onClicked: root.saveChangesClicked()
         }
     }

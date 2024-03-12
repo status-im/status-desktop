@@ -9,7 +9,6 @@ CopyButton 1.0 CopyButton.qml
 CopyButtonWithCircle 1.0 CopyButtonWithCircle.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 CurrencyAmountInput 1.0 CurrencyAmountInput.qml
-DisabledTooltipButton 1.0 DisabledTooltipButton.qml
 EmojiHash 1.0 EmojiHash.qml
 EmptyShapeRectangleFooterListView 1.0 EmptyShapeRectangleFooterListView.qml
 ErrorDetails 1.0 ErrorDetails.qml

@@ -51,10 +51,12 @@ SplitView {
                         size: modelData
                         text: ctrlText.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -67,10 +69,12 @@ SplitView {
                         size: modelData
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -84,10 +88,12 @@ SplitView {
                         text: ctrlText.text
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -101,10 +107,12 @@ SplitView {
                         size: modelData
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         isRoundIcon: true
                         radius: height/2
                         textFillWidth: ctrlFillWidth.checked
@@ -125,10 +133,12 @@ SplitView {
                         size: modelData
                         text: ctrlText.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -141,10 +151,12 @@ SplitView {
                         size: modelData
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -158,10 +170,12 @@ SplitView {
                         text: ctrlText.text
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
                     }
                 }
@@ -175,10 +189,12 @@ SplitView {
                         size: modelData
                         icon.name: ctrlIconName.text
                         asset.emoji: d.effectiveEmoji
+                        tooltip.text: ctrlTooltip.text
                         textPosition: d.effectiveTextPosition
                         type: ctrlType.currentIndex
                         loading: ctrlLoading.checked
                         enabled: ctrlEnabled.checked
+                        interactive: ctrlInteractive.checked
                         isRoundIcon: true
                         radius: height/2
                         textFillWidth: ctrlFillWidth.checked
@@ -235,6 +251,14 @@ SplitView {
                     }
                 }
                 RowLayout {
+                    Label { text: "Tooltip:" }
+                    TextField {
+                        id: ctrlTooltip
+                        placeholderText: "Tooltip"
+                        text: "Sample tooltip"
+                    }
+                }
+                RowLayout {
                     Label { text: "Type:" }
                     ComboBox {
                         id: ctrlType
@@ -259,6 +283,11 @@ SplitView {
                 Switch {
                     id: ctrlLoading
                     text: "Loading"
+                }
+                Switch {
+                    id: ctrlInteractive
+                    text: "Interactive"
+                    checked: true
                 }
                 Switch {
                     id: ctrlEnabled
