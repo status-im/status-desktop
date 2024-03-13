@@ -17,9 +17,11 @@ StatusDialog {
     property string url: ""
 
     width: (root.image.sourceSize.width > d.maxWidth) ?
-            d.maxWidth : root.image.sourceSize.width
+            d.maxWidth : (root.image.sourceSize.width < d.minWidth) ?
+            d.minWidth : root.image.sourceSize.width
     height: (root.image.sourceSize.height > d.maxHeight) ?
-            d.maxHeight : root.image.sourceSize.height
+            d.maxHeight : (root.image.sourceSize.height < d.minHeight) ?
+            d.minHeight : root.image.sourceSize.height
 
     padding: 0
     background: null
@@ -31,6 +33,8 @@ StatusDialog {
 
         property int maxHeight: Global.applicationWindow.height - 80
         property int maxWidth: Global.applicationWindow.width - 80
+        property int minHeight: 320
+        property int minWidth: 320
     }
 
     onOpened: {
