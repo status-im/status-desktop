@@ -83,14 +83,14 @@ class LeftPanel(QObject):
     @allure.step('Open context menu from left wallet panel')
     @close_exists(BasePopup())
     def _open_context_menu(self) -> ContextMenu:
-        super(LeftPanel, self).open_context_menu()
+        super(LeftPanel, self).right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step('Open context menu for account')
     @close_exists(BasePopup())
     def _open_context_menu_for_account(self, account_name: str) -> ContextMenu:
         self._wallet_account_item.real_name['title'] = account_name
-        self._wallet_account_item.wait_until_appears().open_context_menu()
+        self._wallet_account_item.wait_until_appears().right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step("Select Hide/Include in total balance from context menu for account")
@@ -175,17 +175,17 @@ class SavedAddressesView(QObject):
 
     @allure.step('Open edit address popup for saved address')
     def open_edit_address_popup(self, name: str) -> 'EditSavedAddressPopup':
-        self.open_context_menu(name).select_edit_saved_address()
+        self.right_click(name).select_edit_saved_address()
         return EditSavedAddressPopup()
 
     @allure.step('Delete saved address from the list')
     def delete_saved_address(self, address_name):
-        self.open_context_menu(address_name).select_delete_saved_address()
+        self.right_click(address_name).select_delete_saved_address()
         assert ConfirmationPopup().get_confirmation_text().startswith('Are you sure you want to remove')
         ConfirmationPopup().confirm()
 
     @allure.step('Open context menu in saved address')
-    def open_context_menu(self, name) -> ContextMenu:
+    def right_click(self, name) -> ContextMenu:
         self._open_menu_button.real_name['objectName'] = 'savedAddressView_Delegate_menuButton' + '_' + name
         self._address_list_item.real_name['objectName'] = 'savedAddressView_Delegate' + '_' + name
         self._address_list_item.hover()

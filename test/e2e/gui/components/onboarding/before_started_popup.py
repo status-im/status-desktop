@@ -25,7 +25,7 @@ class BeforeStartedPopUp(BasePopup):
     @allure.step('Allow all and get started')
     def get_started(self):
         self._acknowledge_checkbox.set(True)
-        self._terms_of_use_checkBox.set(True, x=10)
+        self._terms_of_use_checkBox.set(True)
         assert self._terms_of_use_link.is_visible, f"Terms of use link is missing"
         assert self._privacy_policy_link.is_visible, f"Privacy Policy link is missing"
         self._get_started_button.click()

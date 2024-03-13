@@ -12,9 +12,9 @@ LOG = logging.getLogger(__name__)
 class CheckBox(QObject):
 
     @allure.step("Set {0} value: {1}")
-    def set(self, value: bool, x: int = None, y: int = None):
+    def set(self, value: bool):
         if self.is_checked is not value:
-            self.click(x, y)
+            self.click()
             assert driver.waitFor(
                 lambda: self.is_checked is value, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Value not changed'
         LOG.info('%s: value changed to "%s"', self, value)

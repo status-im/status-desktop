@@ -96,36 +96,22 @@ class QObject:
     ):
         driver.mouseClick(
             self.object,
-            x or self.width // 2,
-            y or self.height // 2,
+            x or int(self.object.width * 0.1),
+            y or int(self.object.height * 0.1),
             button or driver.Qt.LeftButton
         )
-        LOG.info('%s: clicked', self)
+        LOG.info('%s: is clicked with Qt.LeftButton', self)
 
     @allure.step('Native click {0}')
-    def native_click(
+    def native_mouse_click(
             self,
             x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
             y: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
             button: driver.MouseButton = None
     ):
         driver.nativeMouseClick(
-            x or self.bounds.x + self.width // 2,
-            y or self.bounds.y + self.height // 2,
-            button or driver.MouseButton.LeftButton
-        )
-        LOG.info(f'{self}: native clicked')
-
-    @allure.step('Native click {0}')
-    def native_click(
-            self,
-            x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
-            y: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
-            button: driver.MouseButton = None
-    ):
-        driver.nativeMouseClick(
-            x or self.bounds.x + self.width // 2,
-            y or self.bounds.y + self.height // 2,
+            x or int(self.bounds.x + self.width // 2),
+            y or int(self.bounds.y + self.height // 2),
             button or driver.MouseButton.LeftButton
         )
         LOG.info(f'{self}: native clicked')
@@ -145,18 +131,18 @@ class QObject:
         assert driver.waitFor(lambda: _hover(), timeout_msec)
         return self
 
-    @allure.step('Open context menu')
-    def open_context_menu(
+    @allure.step('Right click on {0}')
+    def right_click(
             self,
             x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
             y: typing.Union[int, driver.UiTypes.ScreenPoint] = None,
     ):
         self.click(
-            x or self.width // 2,
-            y or self.height // 2,
+            x or int(self.width // 2),
+            y or int(self.height // 2),
             driver.Qt.RightButton
         )
-        LOG.info('%s: clicked via Right Mouse Button', self)
+        LOG.info('%s: right clicked with Qt.RightButton', self)
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):

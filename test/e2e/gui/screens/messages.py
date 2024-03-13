@@ -50,7 +50,7 @@ class LeftPanel(QObject):
     @allure.step('Open context menu group chat')
     def _open_context_menu_for_chat(self, chat_name: str) -> ContextMenu:
         self._contact_item.real_name['objectName'] = chat_name
-        self._contact_item.open_context_menu()
+        self._contact_item.right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step('Open leave popup')

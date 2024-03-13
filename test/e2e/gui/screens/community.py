@@ -301,12 +301,12 @@ class LeftPanel(QObject):
 
     @allure.step('Open general channel context menu')
     def open_general_channel_context_menu(self):
-        self._general_channel_item.open_context_menu()
+        self._general_channel_item.right_click()
         return ContextMenu()
 
     @allure.step('Open category context menu')
     def open_category_context_menu(self):
-        self._category_list_item.open_context_menu()
+        self._category_list_item.right_click()
 
     @allure.step('Open create category popup')
     def open_create_category_popup(self, attempts: int = 2) -> NewCategoryPopup:
@@ -385,7 +385,7 @@ class LeftPanel(QObject):
 
     @allure.step('Right click on left panel')
     def right_click_on_panel(self):
-        super(LeftPanel, self).open_context_menu()
+        super(LeftPanel, self).right_click()
 
 
 class Chat(QObject):

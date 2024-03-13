@@ -127,7 +127,7 @@ class LeftPanel(QObject):
     @allure.step('Open context menu for community')
     def open_community_context_menu(self, name: str) -> ContextMenu:
         driver.objectMap.realName(self._get_community(name))['name'] = name
-        self._get_community(name).open_context_menu()
+        self._get_community(name).right_click()
         return ContextMenu().wait_until_appears()
 
     @allure.step('Invite people in community')
