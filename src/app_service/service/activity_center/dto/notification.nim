@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strformat, strutils, stint, json_serialization
+import json, stew/shims/strformat, strutils, stint, json_serialization
 import ../../message/dto/message
 import ../../contacts/dto/contacts
 import token_data

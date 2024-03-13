@@ -1,5 +1,5 @@
 import NimQml
-import chronicles, os, strformat, re
+import chronicles, os, stew/shims/strformat, re
 
 import ../../../constants as main_constants
 import ../../../app/global/global_singleton

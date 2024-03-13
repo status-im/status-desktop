@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, stew/shims/strformat, algorithm
 
 import ../../../backend/collectibles as collectibles
 import ../../../backend/transactions as transactions

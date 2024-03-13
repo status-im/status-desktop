@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, sequtils, sugar
+import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 import keypair_item
 import ./currency_amount
 

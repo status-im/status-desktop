@@ -1,4 +1,4 @@
-import json, strformat, NimQml
+import json, stew/shims/strformat, NimQml
 import ./link_preview_thumbnail
 include ../../../common/json_utils
 

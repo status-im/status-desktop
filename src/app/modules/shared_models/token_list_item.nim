@@ -1,4 +1,4 @@
-import strformat
+import stew/shims/strformat
 
 type TokenListItemCategory* {.pure.}= enum
   Community = 0,

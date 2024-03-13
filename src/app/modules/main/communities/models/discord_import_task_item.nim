@@ -1,4 +1,4 @@
-import strformat
+import stew/shims/strformat
 import discord_import_errors_model, discord_import_error_item
 import ../../../../../app_service/service/community/dto/community
 

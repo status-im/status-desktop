@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils, sugar
+import NimQml, Tables, strutils, stew/shims/strformat, sequtils, sugar
 
 import app_service/service/network/types
 import ./item

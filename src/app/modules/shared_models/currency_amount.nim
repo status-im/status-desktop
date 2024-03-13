@@ -1,4 +1,4 @@
-import NimQml, strformat, json
+import NimQml, stew/shims/strformat, json
 
 include app_service/common/json_utils
 

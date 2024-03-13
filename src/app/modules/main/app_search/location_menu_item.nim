@@ -1,5 +1,5 @@
 
-import json, strformat
+import json, stew/shims/strformat
 import base_item, location_menu_sub_model, location_menu_sub_item
 
 type

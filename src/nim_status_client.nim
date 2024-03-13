@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat, strutils, times, md5, json
+import NimQml, chronicles, os, stew/shims/strformat, strutils, times, md5, json
 
 import status_go
 import keycard_go

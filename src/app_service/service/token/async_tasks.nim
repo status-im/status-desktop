@@ -1,4 +1,4 @@
-import times, strformat
+import times, stew/shims/strformat
 import backend/backend as backend
 
 include app_service/common/json_utils

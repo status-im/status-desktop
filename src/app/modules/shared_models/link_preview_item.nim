@@ -1,4 +1,4 @@
-import strformat
+import stew/shims/strformat
 import ../../../app_service/service/message/dto/link_preview
 
 type

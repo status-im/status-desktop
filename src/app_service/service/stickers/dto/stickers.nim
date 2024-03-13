@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strformat, strutils, stint, json_serialization, chronicles
+import json, stew/shims/strformat, strutils, stint, json_serialization, chronicles
 
 include ../../../common/json_utils
 include ../../../common/utils

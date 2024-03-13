@@ -1,4 +1,4 @@
-import NimQml, tables, json, sugar, sequtils, strformat, marshal, times, chronicles, stint
+import NimQml, tables, json, sugar, sequtils, stew/shims/strformat, marshal, times, chronicles, stint
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model

@@ -1,4 +1,4 @@
-import strformat, sequtils, stint
+import stew/shims/strformat, sequtils, stint
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/service/network/dto

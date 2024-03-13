@@ -1,4 +1,4 @@
-import json, strformat, tables
+import json, stew/shims/strformat, tables
 
 const INVALID_TIMESTAMP* = -1
 

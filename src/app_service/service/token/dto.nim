@@ -1,4 +1,4 @@
-import json, strformat
+import json, stew/shims/strformat
 
 include app_service/common/json_utils
 

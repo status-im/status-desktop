@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, sequtils
+import NimQml, Tables, stew/shims/strformat, sequtils
 import keycard_item
 
 export keycard_item

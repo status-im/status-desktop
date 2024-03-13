@@ -1,4 +1,4 @@
-import json, strutils, stint, json_serialization, strformat, sugar, sequtils
+import json, strutils, stint, json_serialization, stew/shims/strformat, sugar, sequtils
 
 import
   web3/ethtypes

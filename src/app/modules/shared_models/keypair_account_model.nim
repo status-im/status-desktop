@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, strutils
+import NimQml, Tables, stew/shims/strformat, strutils
 import keypair_account_item
 import ./currency_amount
 

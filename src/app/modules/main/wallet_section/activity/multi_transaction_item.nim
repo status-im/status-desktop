@@ -1,4 +1,4 @@
-import strformat
+import stew/shims/strformat
 
 import ./backend/transactions
 

@@ -1,4 +1,4 @@
-import times, strformat, options, logging
+import times, stew/shims/strformat, options, logging
 import json, json_serialization
 import core, response_type
 import stint

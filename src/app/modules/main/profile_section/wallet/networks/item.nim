@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml, stew/shims/strformat
 
 QtObject:
   type Item* = ref object of QObject

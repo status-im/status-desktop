@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strformat, hashes
+import json, stew/shims/strformat, hashes
 include ../../../common/json_utils
 
 type EnsUsernameDto* = ref object
