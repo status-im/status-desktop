@@ -27,7 +27,6 @@ import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/saved_address/service as saved_address_service
 
-import app/modules/shared/wallet_utils
 import app/modules/shared_models/currency_amount
 
 proc toRef*[T](obj: T): ref T =
