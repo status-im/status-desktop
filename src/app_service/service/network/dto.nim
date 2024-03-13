@@ -5,6 +5,12 @@ import ./types
 
 export types
 
+type
+  UxEnabledState* {.pure.} = enum
+    Enabled
+    AllEnabled
+    Disabled
+
 type NetworkDto* = ref object
   chainId* {.serializedFieldName("chainId").}: int
   nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
@@ -23,6 +29,7 @@ type NetworkDto* = ref object
   chainColor* {.serializedFieldName("chainColor").}: string
   shortName* {.serializedFieldName("shortName").}: string
   relatedChainId* {.serializedFieldName("relatedChainId").}: int
+  enabledState*: UxEnabledState
 
 proc `$`*(self: NetworkDto): string =
   return fmt"""Network(
@@ -40,7 +47,8 @@ proc `$`*(self: NetworkDto): string =
     isTest:{self.isTest}, enabled:{self.enabled},
     chainColor:{self.chainColor},
     shortName:{self.shortName},
-    relatedChainId:{self.relatedChainId}
+    relatedChainId:{self.relatedChainId},
+    enabledState:{self.enabledState}
   )"""
 
 proc hash*(self: NetworkDto): Hash =
@@ -56,3 +64,10 @@ proc `$`*(self: CombinedNetworkDto): string =
     test:{$self.test},
   )"""
 
+proc networkEnabledToUxEnabledState*(enabled: bool, allEnabled: bool): UxEnabledState =
+  return if allEnabled:
+      UxEnabledState.AllEnabled
+    elif enabled:
+      UxEnabledState.Enabled
+    else:
+      UxEnabledState.Disabled

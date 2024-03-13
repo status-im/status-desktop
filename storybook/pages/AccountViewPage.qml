@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import SortFilterProxyModel 0.2
+
 import AppLayouts.Profile.views.wallet 1.0
 
 import StatusQ.Core.Theme 0.1
@@ -48,7 +50,10 @@ SplitView {
         }
 
         readonly property QtObject walletStore: QtObject {
-            property var networks: NetworksModel.mainNetworks
+            property var networks: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }
+            }
             property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
             }

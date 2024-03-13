@@ -44,7 +44,10 @@ ListModel {
         for (let i = 0; i < model.count; i++) {
             const clonedItem = new Object()
             for (var propName of roles) {
-                clonedItem[propName] = model.rowData(i, propName)
+                if(model.rowData === undefined)
+                    clonedItem[propName] = model.get(i, propName)
+                else
+                    clonedItem[propName] = model.rowData(i, propName)
             }
             for (var newProp of rolesOverride) {
                 clonedItem[newProp.role] = newProp.transform(clonedItem)

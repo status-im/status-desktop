@@ -16,7 +16,8 @@ ListModel {
             source: "https://gateway.ipfs.io/ipns/tokens.uniswap.org",
             version: "11.6.0",
             tokensCount: 731,
-            image: ModelsData.assets.uni
+            image: ModelsData.assets.uni,
+            updatedAt: 1710538948
         },
         {
             key: root.status,
@@ -24,7 +25,8 @@ ListModel {
             source: "https://status.im/",
             version: "11.6.0",
             tokensCount: 250,
-            image: ModelsData.assets.snt
+            image: ModelsData.assets.snt,
+            updatedAt: 1710538948
         }
     ]
 

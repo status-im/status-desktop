@@ -266,7 +266,7 @@ method onAppNetworkChanged*[T](self: Module[T]) =
   self.view.emitAppNetworkChangedSignal()
 
 proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : token_item.TokenItem =
-  let network = self.controller.getNetwork(tokenDto.chainId)
+  let network = self.controller.getNetworkByChainId(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
   let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
   let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
@@ -277,7 +277,7 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : token_it
 
 proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, communityTokenJsonItems: JsonNode) : token_item.TokenItem =
   # These 3 values come from local caches so they can be done sync
-  let network = self.controller.getNetwork(tokenDto.chainId)
+  let network = self.controller.getNetworkByChainId(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
   let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
 

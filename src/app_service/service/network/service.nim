@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles, atomics
+import json, json_serialization, chronicles, sugar, sequtils
 
 import ../../../app/core/eventemitter
 import ../../../backend/backend as backend
@@ -21,11 +21,9 @@ type NetworkEndpointUpdatedArgs* = ref object of Args
 type
   Service* = ref object of RootObj
     events: EventEmitter
-    networks: seq[CombinedNetworkDto]
-    networksInited: bool
-    dirty: Atomic[bool]
+    combinedNetworks: seq[CombinedNetworkDto]
+    flatNetworks: seq[NetworkDto]
     settingsService: settings_service.Service
-
 
 proc delete*(self: Service) =
   discard
@@ -35,50 +33,38 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.events = events
   result.settingsService = settingsService
 
-proc init*(self: Service) =
-  discard
+proc fetchNetworks*(self: Service): seq[CombinedNetworkDto]=
+  let response = backend.getEthereumChains()
+  if not response.error.isNil:
+    raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
+  result = if response.result.isNil or response.result.kind == JNull: @[]
+            else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
+  self.combinedNetworks = result
+  let allTestEnabled = self.combinedNetworks.filter(n => n.test.enabled).len == self.combinedNetworks.len
+  let allProdEnabled = self.combinedNetworks.filter(n => n.prod.enabled).len == self.combinedNetworks.len
+  for n in self.combinedNetworks:
+    n.test.enabledState = networkEnabledToUxEnabledState(n.test.enabled, allTestEnabled)
+    n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.enabled, allProdEnabled)
+  self.flatNetworks = @[]
+  for network in self.combinedNetworks:
+    self.flatNetworks.add(network.test)
+    self.flatNetworks.add(network.prod)
 
-proc fetchNetworks*(self: Service, useCached: bool = true): seq[CombinedNetworkDto] =
-  let cacheIsDirty = not self.networksInited or self.dirty.load
-  if useCached and not cacheIsDirty:
-    result = self.networks
-  else:
-    let response = backend.getEthereumChains()
-    if not response.error.isNil:
-      raise newException(Exception, "Error getting networks: " & response.error.message)
-    result = if response.result.isNil or response.result.kind == JNull: @[]
-              else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
-    self.dirty.store(false)
-    self.networks = result
-    self.networksInited = true
+proc init*(self: Service) =
+  discard self.fetchNetworks()
 
 proc resetNetworks*(self: Service) =
-  discard self.fetchNetworks(useCached = false)
+  discard self.fetchNetworks()
 
 proc getCombinedNetworks*(self: Service): seq[CombinedNetworkDto] =
-  return self.fetchNetworks()
+  return self.combinedNetworks
 
-# TODO:: update the networks service to unify the model exposed from this service
-# We currently have 3 types: combined, test/mainet and flat and probably can be optimized
-# follow up task https://github.com/status-im/status-desktop/issues/12717
-proc getFlatNetworks*(self: Service): seq[NetworkDto] =
-  for network in self.fetchNetworks():
-      result.add(network.test)
-      result.add(network.prod)
+proc getFlatNetworks*(self: Service): var seq[NetworkDto] =
+  return self.flatNetworks
 
-proc getNetworks*(self: Service): seq[NetworkDto] =
-  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
-
-  for network in self.fetchNetworks():
-    if testNetworksEnabled:
-      result.add(network.test)
-    else:
-      result.add(network.prod)
-
-proc getAllNetworkChainIds*(self: Service): seq[int] =
-  for network in self.fetchNetworks():
-      result.add(network.test.chainId)
-      result.add(network.prod.chainId)
+# passes networks based on users choice of test/mainnet
+proc getCurrentNetworks*(self: Service): seq[NetworkDto] =
+  self.flatNetworks.filter(n => n.isTest == self.settingsService.areTestNetworksEnabled())
 
 proc upsertNetwork*(self: Service, network: NetworkDto): bool =
   let response = backend.addEthereumChain(backend.Network(
@@ -100,48 +86,34 @@ proc upsertNetwork*(self: Service, network: NetworkDto): bool =
     shortName: network.shortName,
     relatedChainID: network.relatedChainID,
   ))
-  self.dirty.store(true)
   return response.error == nil
 
 proc deleteNetwork*(self: Service, network: NetworkDto) =
   discard backend.deleteEthereumChain(network.chainId)
-  self.dirty.store(true)
 
-proc getNetwork*(self: Service, chainId: int): NetworkDto =
+proc getNetworkByChainId*(self: Service, chainId: int): NetworkDto =
+  var networks = self.combinedNetworks
+  if self.combinedNetworks.len == 0:
+    networks = self.fetchNetworks()
   let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
-  for network in self.fetchNetworks():
+  for network in networks:
     let net = if testNetworksEnabled: network.test
               else: network.prod
     if chainId == net.chainId:
         return net
-
-proc getNetworkByChainId*(self: Service, chainId: int): NetworkDto =
-  for network in self.fetchNetworks():
-    if chainId == network.prod.chainId:
-        return network.prod
-    elif chainId == network.test.chainId:
-       return  network.test
-
-proc getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
-  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
-  for network in self.fetchNetworks():
-    let net = if testNetworksEnabled: network.test
-              else: network.prod
-    if networkType.toChainId() == net.chainId:
-      return net
-
-  # Will be removed, this is used in case of legacy chain Id
-  return NetworkDto(chainId: networkType.toChainId())
+  return nil
 
 proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
   for chainId in chainIds:
-    let network = self.getNetwork(chainId)
+    let network = self.getNetworkByChainId(chainId)
 
-    if network.enabled == enabled:
-      continue
+    if not network.isNil:
+      if network.enabled == enabled:
+        continue
 
-    network.enabled = enabled
-    discard self.upsertNetwork(network)
+      network.enabled = enabled
+      discard self.upsertNetwork(network)
+  discard self.fetchNetworks()
 
 ## This procedure retuns the network to be used based on the app mode (testnet/mainnet).
 ## We don't need to check if retuned network is nil cause it should never be, but if somehow it is, the app will be closed.
@@ -159,7 +131,7 @@ proc getAppNetwork*(self: Service): NetworkDto =
     networkId = Sepolia
     if self.settingsService.isGoerliEnabled():
       networkId = Goerli
-  let network = self.getNetwork(networkId)
+  let network = self.getNetworkByChainId(networkId)
   if network.isNil:
     # we should not be here ever
     error "the app network cannot be resolved"
@@ -169,11 +141,12 @@ proc getAppNetwork*(self: Service): NetworkDto =
 proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
   let network = self.getNetworkByChainId(chainId)
 
-  if network.rpcURL != newMainRpcInput:
-    network.rpcURL = newMainRpcInput
+  if not network.isNil:
+    if network.rpcURL != newMainRpcInput:
+      network.rpcURL = newMainRpcInput
 
-  if network.fallbackURL != newFailoverRpcUrl:
-    network.fallbackURL = newFailoverRpcUrl
+    if network.fallbackURL != newFailoverRpcUrl:
+      network.fallbackURL = newFailoverRpcUrl
 
-  if self.upsertNetwork(network):
-    self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName, revertedToDefault: revertToDefault))
+    if self.upsertNetwork(network):
+      self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName, revertedToDefault: revertToDefault))

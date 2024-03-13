@@ -1,7 +1,7 @@
-import NimQml, Tables, strutils, stew/shims/strformat, sequtils, sugar
+import NimQml, Tables, strutils, sequtils, sugar
 
-import app_service/service/network/types
-import ./item
+import app_service/service/network/dto
+import ./io_interface
 
 const EXPLORER_TX_PREFIX* = "/tx/"
 
@@ -25,34 +25,30 @@ type
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      items: seq[Item]
+      delegate: io_interface.NetworksDataSource
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
 
-  proc newModel*(): Model =
+  proc newModel*(delegate: io_interface.NetworksDataSource): Model =
     new(result, delete)
     result.setup
-
-  proc `$`*(self: Model): string =
-    for i in 0 ..< self.items.len:
-      result &= fmt"""[{i}]:({$self.items[i]})"""
+    result.delegate = delegate
 
   proc countChanged(self: Model) {.signal.}
 
   proc getCount(self: Model): int {.slot.} =
-    self.items.len
+    return self.delegate.getFlatNetworksList().len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
   method rowCount*(self: Model, index: QModelIndex = nil): int =
-    return self.items.len
+    return self.delegate.getFlatNetworksList().len
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -76,179 +72,118 @@ QtObject:
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.items.len):
+    if (index.row < 0 or index.row >= self.rowCount()):
       return
 
-    let item = self.items[index.row]
+    let item = self.delegate.getFlatNetworksList()[index.row]
     let enumRole = role.ModelRole
 
     case enumRole:
     of ModelRole.ChainId:
-      result = newQVariant(item.getChainId())
+      result = newQVariant(item.chainId)
     of ModelRole.NativeCurrencyDecimals:
-      result = newQVariant(item.getNativeCurrencyDecimals())
+      result = newQVariant(item.nativeCurrencyDecimals)
     of ModelRole.Layer:
-      result = newQVariant(item.getLayer())
+      result = newQVariant(item.layer)
     of ModelRole.ChainName:
-      result = newQVariant(item.getChainName())
+      result = newQVariant(item.chainName)
     of ModelRole.RpcURL:
-      result = newQVariant(item.getRpcURL())
+      result = newQVariant(item.rpcURL)
     of ModelRole.BlockExplorerURL:
-      result = newQVariant(item.getBlockExplorerURL())
+      result = newQVariant(item.blockExplorerURL)
     of ModelRole.NativeCurrencyName:
-      result = newQVariant(item.getNativeCurrencyName())
+      result = newQVariant(item.nativeCurrencyName)
     of ModelRole.NativeCurrencySymbol:
-      result = newQVariant(item.getNativeCurrencySymbol())
+      result = newQVariant(item.nativeCurrencySymbol)
     of ModelRole.IsTest:
-      result = newQVariant(item.getIsTest())
+      result = newQVariant(item.isTest)
     of ModelRole.IsEnabled:
-      result = newQVariant(item.getIsEnabled())
+      result = newQVariant(item.enabled)
     of ModelRole.IconUrl:
-      result = newQVariant(item.getIconURL())
+      result = newQVariant(item.iconURL)
     of ModelRole.ShortName:
-      result = newQVariant(item.getShortName())
+      result = newQVariant(item.shortName)
     of ModelRole.ChainColor:
-      result = newQVariant(item.getChainColor())
+      result = newQVariant(item.chainColor)
     of ModelRole.EnabledState:
-      result = newQVariant(item.getEnabledState().int)
+      result = newQVariant(item.enabledState.int)
 
   proc rowData*(self: Model, index: int, column: string): string {.slot.} =
-    if (index >= self.items.len):
+    if (index >= self.rowCount()):
       return
-    let item = self.items[index]
+    let item = self.delegate.getFlatNetworksList()[index]
     case column:
-      of "chainId": result = $item.getChainId()
-      of "nativeCurrencyDecimals": result = $item.getNativeCurrencyDecimals()
-      of "layer": result = $item.getLayer()
-      of "chainName": result = $item.getChainName()
-      of "rpcURL": result = $item.getRpcURL()
-      of "blockExplorerURL": result = $item.getBlockExplorerURL()
-      of "nativeCurrencyName": result = $item.getNativeCurrencyName()
-      of "nativeCurrencySymbol": result = $item.getNativeCurrencySymbol()
-      of "isTest": result = $item.getIsTest()
-      of "isEnabled": result = $item.getIsEnabled()
-      of "iconUrl": result = $item.getIconURL()
-      of "chainColor": result = $item.getChainColor()
-      of "shortName": result = $item.getShortName()
-      of "enabledState": result = $item.getEnabledState().int
+      of "chainId": result = $item.chainId
+      of "nativeCurrencyDecimals": result = $item.nativeCurrencyDecimals
+      of "layer": result = $item.layer
+      of "chainName": result = $item.chainName
+      of "rpcURL": result = $item.rpcURL
+      of "blockExplorerURL": result = $item.blockExplorerURL
+      of "nativeCurrencyName": result = $item.nativeCurrencyName
+      of "nativeCurrencySymbol": result = $item.nativeCurrencySymbol
+      of "isTest": result = $item.isTest
+      of "isEnabled": result = $item.enabled
+      of "iconUrl": result = $item.iconURL
+      of "chainColor": result = $item.chainColor
+      of "shortName": result = $item.shortName
+      of "enabledState": result = $item.enabledState.int
 
-  proc setItems*(self: Model, items: seq[Item]) =
+  proc refreshModel*(self: Model) =
     self.beginResetModel()
-    self.items = items
     self.endResetModel()
-    self.countChanged()
 
-  proc getChainColor*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getChainColor()
-    return ""
-
-  proc getIconUrl*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getIconURL()
-    return ""
-
-  proc getNetworkShortName*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getShortName()
-    return ""
-
-  proc getNetworkFullName*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getChainName()
-    return ""
-
-  proc getNetworkLayer*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return $item.getLayer()
-    return ""
-
-  proc getNetworkIconUrl*(self: Model, shortName: string): string {.slot.} =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getIconURL()
-    return ""
-
-  proc getNetworkName*(self: Model, shortName: string): string {.slot.} =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getChainName()
-    return ""
-
-  proc getNetworkColor*(self: Model, shortName: string): string {.slot.} =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getChainColor()
-    return ""
-
-  proc getNetworkChainId*(self: Model, shortName: string): int {.slot.} =
-    for item in self.items:
-      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
-        return item.getChainId()
-    return 0
-
-  proc getLayer1Network*(self: Model, testNet: bool): int =
-    for item in self.items:
-      if item.getLayer() == NETWORK_LAYER_1 and item.getIsTest() == testNet:
-        return item.getChainId()
-    return 0
-
-  proc getBlockExplorerURL*(self: Model, chainId: int): string {.slot.} =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getBlockExplorerURL() & EXPLORER_TX_PREFIX
+  proc getBlockExplorerURL*(self: Model, chainId: int): string =
+    for item in self.delegate.getFlatNetworksList():
+      if(item.chainId == chainId):
+        return item.blockExplorerURL & EXPLORER_TX_PREFIX
     return ""
 
   proc getEnabledState*(self: Model, chainId: int): UxEnabledState =
-    for item in self.items:
-      if(item.getChainId() == chainId):
-        return item.getEnabledState()
+    for item in self.delegate.getFlatNetworksList():
+      if(item.chainId == chainId):
+        return item.enabledState
     return UxEnabledState.Disabled
 
   # Returns the chains that need to be enabled or disabled (the second return value)
   #   to satisty the transitions: all enabled to only chainId enabled and
   #   only chainId enabled to all enabled
-  proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int): (seq[int], bool) =
+  proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int, areTestNetworksEnabled: bool): (seq[int], bool) =
+    let filteredNetworks = self.delegate.getFlatNetworksList().filter(n => n.isTest == areTestNetworksEnabled)
     var chainIds: seq[int] = @[]
     var enable = false
     case self.getEnabledState(chainId):
       of UxEnabledState.Enabled:
         # Iterate to check for the only chainId enabled case ...
-        for item in self.items:
-          if item.getEnabledState() == UxEnabledState.Enabled and item.getChainId() != chainId:
+        for item in filteredNetworks:
+          if item.enabledState == UxEnabledState.Enabled and item.chainId != chainId:
             # ... as soon as we find another enabled chain mark this by adding it to the list
             chainIds.add(chainId)
             break
 
         # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
         if chainIds.len == 0:
-          for item in self.items:
-            if item.getChainId() != chainId:
-              chainIds.add(item.getChainId())
+          for item in filteredNetworks:
+            if item.chainId != chainId:
+              chainIds.add(item.chainId)
           enable = true
       of UxEnabledState.Disabled:
         chainIds.add(chainId)
         enable = true
       of UxEnabledState.AllEnabled:
         # disable all but chainId
-        for item in self.items:
-          if item.getChainId() != chainId:
-            chainIds.add(item.getChainId())
+        for item in filteredNetworks:
+          if item.chainId != chainId:
+            chainIds.add(item.chainId)
 
     return (chainIds, enable)
 
-  proc getNetworkShortNames*(self: Model, preferredNetworks: string): string =
+  proc getNetworkShortNames*(self: Model, preferredNetworks: string, areTestNetworksEnabled: bool): string =
     var networkString = ""
     let networks = preferredNetworks.split(":")
     for nw in networks:
-      for item in self.items:
-        if $item.getChainId() == nw:
-          networkString = networkString & item.getShortName() & ':'
+      for item in self.delegate.getFlatNetworksList():
+        if $item.chainId == nw and item.isTest == areTestNetworksEnabled:
+          networkString = networkString & item.shortName & ':'
           break
     return networkString
 
@@ -256,11 +191,11 @@ QtObject:
     var networkIds = ""
     let networksNames = shortNames.split(":")
     for name in networksNames:
-      for item in self.items:
-        if item.getShortName() == name:
-          networkIds = networkIds & $item.getChainId() & ':'
+      for item in self.delegate.getFlatNetworksList():
+        if item.shortName == name:
+          networkIds = networkIds & $item.chainId & ':'
           break
     return networkIds
 
-  proc getAllNetworksChainIds*(self: Model): string =
-    return self.items.map(x => x.getChainId()).join(":")
+  proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
+    return self.delegate.getFlatNetworksList().filter(n => n.enabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")

@@ -38,23 +38,7 @@ SplitView {
 
                 Layout.alignment: Qt.AlignHCenter
 
-                allNetworks: simulatedNimModel
-                layer1Networks: SortFilterProxyModel {
-                    function rowData(index, propName) {
-                        return get(index)[propName]
-                    }
-                    sourceModel: simulatedNimModel
-                    filters: ValueFilter { roleName: "layer"; value: 1; }
-                }
-                layer2Networks: SortFilterProxyModel {
-                    sourceModel: simulatedNimModel
-                    filters: [ValueFilter { roleName: "layer"; value: 2; },
-                              ValueFilter { roleName: "isTest"; value: false; }]
-                }
-                enabledNetworks: SortFilterProxyModel {
-                    sourceModel: simulatedNimModel
-                    filters: ValueFilter { roleName: "isEnabled";  value: true; }
-                }
+                flatNetworks: simulatedNimModel
 
                 onToggleNetwork: (network) => {
                     if(multiSelection) {
@@ -77,8 +61,7 @@ SplitView {
                 NetworkSelectPopup {
                     id: networkSelectPopup
 
-                    layer1Networks: networkFilter.layer1Networks
-                    layer2Networks: networkFilter.layer2Networks
+                    flatNetworks: simulatedNimModel
 
                     useEnabledRole: false
 
@@ -112,7 +95,7 @@ SplitView {
                 Layout.preferredWidth: selectPopupLoader.item ? selectPopupLoader.item.width : 0
                 Layout.preferredHeight: selectPopupLoader.item ? selectPopupLoader.item.height : 0
 
-                property var currentModel: networkFilter.layer2Networks
+                property var currentModel: networkFilter.flatNetworks
                 property int currentIndex: 0
 
                 Loader {
@@ -121,8 +104,7 @@ SplitView {
                     active: false
 
                     sourceComponent: NetworkSelectPopup {
-                        layer1Networks: networkFilter.layer1Networks
-                        layer2Networks: networkFilter.layer2Networks
+                        flatNetworks: simulatedNimModel
 
                         singleSelection {
                             enabled: true
@@ -230,7 +212,7 @@ SplitView {
             return get(index)[propName]
         }
 
-        sourceModel: NetworksModel.allNetworks
+        sourceModel: NetworksModel.flatNetworks
         filters: ValueFilter { roleName: "isTest"; value: testModeCheckbox.checked; }
     }
 

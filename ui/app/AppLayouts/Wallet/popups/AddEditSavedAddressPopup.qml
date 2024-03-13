@@ -27,7 +27,7 @@ import ".."
 StatusModal {
     id: root
 
-    property var allNetworks
+    property var flatNetworks
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
@@ -187,7 +187,7 @@ StatusModal {
                 d.ens = ""
                 d.address = Constants.zeroAddress
                 d.chainShortNames = ""
-                allNetworksModelCopy.setEnabledNetworks([])
+                flatNetworksModelCopy.setEnabledNetworks([])
             }
 
             d.cardsModel.clear()
@@ -467,7 +467,7 @@ StatusModal {
                                 if (!prefixArrWithColumn)
                                     prefixArrWithColumn = []
 
-                                allNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
+                                flatNetworksModelCopy.setEnabledNetworks(prefixArrWithColumn)
                             }
                         }
 
@@ -496,8 +496,8 @@ StatusModal {
 
                 function getUnknownPrefixes(prefixes) {
                     let unknownPrefixes = prefixes.filter(e => {
-                                                              for (let i = 0; i < allNetworksModelCopy.count; i++) {
-                                                                  if (e == allNetworksModelCopy.get(i).shortName)
+                                                              for (let i = 0; i < flatNetworksModelCopy.count; i++) {
+                                                                  if (e == flatNetworksModelCopy.get(i).shortName)
                                                                   return false
                                                               }
                                                               return true
@@ -610,7 +610,7 @@ StatusModal {
                 }
 
                 itemsModel: SortFilterProxyModel {
-                    sourceModel: allNetworksModelCopy
+                    sourceModel: flatNetworksModelCopy
                     filters: ValueFilter {
                         roleName: "isEnabled"
                         value: true
@@ -674,20 +674,7 @@ StatusModal {
     NetworkSelectPopup {
         id: networkSelectPopup
 
-        layer1Networks: SortFilterProxyModel {
-            sourceModel: allNetworksModelCopy
-            filters: ValueFilter {
-                roleName: "layer"
-                value: 1
-            }
-        }
-        layer2Networks: SortFilterProxyModel {
-            sourceModel: allNetworksModelCopy
-            filters: ValueFilter {
-                roleName: "layer"
-                value: 2
-            }
-        }
+        flatNetworks: flatNetworksModelCopy
 
         onToggleNetwork: (network) => {
                              network.isEnabled = !network.isEnabled
@@ -718,9 +705,9 @@ StatusModal {
     ]
 
     CloneModel {
-        id: allNetworksModelCopy
+        id: flatNetworksModelCopy
 
-        sourceModel: root.allNetworks
+        sourceModel: root.flatNetworks
         roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl"]
         rolesOverride: [{ role: "isEnabled", transform: (modelData) => Boolean(false) }]
 

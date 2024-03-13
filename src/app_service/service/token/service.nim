@@ -279,11 +279,10 @@ QtObject:
       let tokenList =  Json.decode($tokensResult, TokenListDto, allowUnknownFields = true)
       self.tokenListUpdatedAt = tokenList.updatedAt
 
-      let supportedNetworkChains = self.networkService.getAllNetworkChainIds()
+      let supportedNetworkChains = self.networkService.getFlatNetworks().map(n => n.chainId)
       var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
       var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
       var tokenSymbols: seq[string] = @[]
-
 
       for s in tokenList.data:
         let newSource = SupportedSourcesItem(name: s.name, source: s.source, version: s.version, tokensCount: s.tokens.len)

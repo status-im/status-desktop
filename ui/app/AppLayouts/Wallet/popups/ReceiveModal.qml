@@ -32,9 +32,9 @@ StatusModal {
     property bool switchingAccounsEnabled: true
     property bool changingPreferredChainsEnabled: true
 
-    property string qrImageSource: RootStore.getQrCode(d.visibleAddress)
+    property string qrImageSource: store.getQrCode(d.visibleAddress)
     property var getNetworkShortNames: function(chainIDsString) {
-        return RootStore.getNetworkShortNames(chainIDsString)
+        return store.getNetworkShortNames(chainIDsString)
     }
 
     property var store: RootStore
@@ -131,7 +131,7 @@ StatusModal {
     }
 
     onOpened: {
-        RootStore.addressWasShown(root.selectedAccount.address)
+        store.addressWasShown(root.selectedAccount.address)
     }
 
     QtObject {
@@ -145,8 +145,6 @@ StatusModal {
 
         readonly property string preferredChainShortNames: d.multiChainView? root.getNetworkShortNames(d.preferredChainIds) : ""
         readonly property string visibleAddress: "%1%2".arg(d.preferredChainShortNames).arg(root.selectedAccount.address)
-
-        readonly property var networkProxies: [layer1NetworksClone, layer2NetworksClone]
     }
 
     Column {
@@ -260,16 +258,13 @@ StatusModal {
                 spacing: 5
 
                 Repeater {
-                    model: d.networkProxies.length
-                    delegate: Repeater {
-                        model: d.networkProxies[index]
-                        delegate: StatusNetworkListItemTag {
-                            enabled: false
-                            button.visible: false
-                            title: model.shortName
-                            asset.name: Style.svg("tiny/" + model.iconUrl)
-                            visible: d.preferredChainIdsArray.includes(model.chainId.toString())
-                        }
+                    model: root.store.filteredFlatModel
+                    delegate: StatusNetworkListItemTag {
+                        enabled: false
+                        button.visible: false
+                        title: model.shortName
+                        asset.name: Style.svg("tiny/" + model.iconUrl)
+                        visible: d.preferredChainIdsArray.includes(model.chainId.toString())
                     }
                 }
             }
@@ -295,8 +290,7 @@ StatusModal {
 
                     margins: -1 // to allow positioning outside the bounds of the dialog
 
-                    layer1Networks: layer1NetworksClone
-                    layer2Networks: layer2NetworksClone
+                    flatNetworks: root.store.filteredFlatModel
                     preferredNetworksMode: true
                     preferredSharingNetworks: d.preferredChainIdsArray
 
@@ -304,32 +298,12 @@ StatusModal {
 
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-                    onToggleNetwork: (network, networkModel, index) => {
-                                         d.preferredChainIdsArray = RootStore.processPreferredSharingNetworkToggle(d.preferredChainIdsArray, network)
+                    onToggleNetwork: (network, index) => {
+                                         d.preferredChainIdsArray = store.processPreferredSharingNetworkToggle(d.preferredChainIdsArray, network)
                                      }
 
                     onClosed: {
                         root.updatePreferredChains(root.selectedAccount.address, d.preferredChainIds)
-                    }
-
-                    CloneModel {
-                        id: layer1NetworksClone
-
-                        sourceModel: root.store.layer1Networks
-                        roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl", "isEnabled"]
-                        // rowData used to clone returns string. Convert it to bool for bool arithmetics
-                        rolesOverride: [{
-                            role: "isEnabled",
-                            transform: (modelData) => root.readOnly ? root.chainShortNames.includes(modelData.shortName) : Boolean(modelData.isEnabled)
-                        }]
-                    }
-
-                    CloneModel {
-                        id: layer2NetworksClone
-
-                        sourceModel: root.store.layer2Networks
-                        roles: layer1NetworksClone.roles
-                        rolesOverride: layer1NetworksClone.rolesOverride
                     }
                 }
             }

@@ -194,7 +194,7 @@ method refreshWalletAccounts*(self: Module) =
   self.view.switchReceiveAccount(self.receiveCurrentAccountIndex)
 
 proc refreshNetworks*(self: Module) =
-  let networks = self.controller.getNetworks()
+  let networks = self.controller.getCurrentNetworks()
   let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
   let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
   self.view.setNetworkItems(fromNetworks, toNetworks)

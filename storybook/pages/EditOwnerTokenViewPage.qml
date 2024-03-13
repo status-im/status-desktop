@@ -2,6 +2,8 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import SortFilterProxyModel 0.2
+
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
@@ -45,10 +47,10 @@ SplitView {
                 communityLogo: doodles.checked ? ModelsData.collectibles.doodles : ModelsData.collectibles.mana
                 communityColor: color1.checked ?  "#FFC4E9" : "#f44336"
 
-                layer1Networks: NetworksModel.layer1Networks
-                layer2Networks: NetworksModel.layer2Networks
-                enabledNetworks: NetworksModel.enabledNetworks
-                allNetworks: enabledNetworks
+                flatNetworks: SortFilterProxyModel {
+                    sourceModel: NetworksModel.flatNetworks
+                    filters: ValueFilter { roleName: "isTest"; value: false }
+                }
                 accounts: WalletAccountsModel {}
 
                 onMintClicked: logs.logEvent("EditOwnerTokenView::onMintClicked")

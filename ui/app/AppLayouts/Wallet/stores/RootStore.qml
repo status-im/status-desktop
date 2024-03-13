@@ -139,12 +139,14 @@ QtObject {
         return d.chainColors[chainShortName]
     }
 
-    property var layer1Networks: networksModule.layer1
-    property var layer2Networks: networksModule.layer2
-    property var enabledNetworks: networksModule.enabled
-    property var allNetworks: networksModule.all
-    onAllNetworksChanged: {
-        d.initChainColors(allNetworks)
+    property var flatNetworks: networksModule.flatNetworks
+    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
+        sourceModel: root.flatNetworks
+        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+    }
+
+    onFlatNetworksChanged: {
+        d.initChainColors(flatNetworks)
     }
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
@@ -440,7 +442,12 @@ QtObject {
     }
 
     function getAllNetworksChainIds() {
-        return networksModule.getAllNetworksChainIds()
+        let result = []
+        let chainIdsArray = SQUtils.ModelUtils.modelToFlatArray(root.filteredFlatModel, "chainId")
+        for(let i = 0; i< chainIdsArray.length; i++) {
+            result.push(chainIdsArray[i].toString())
+        }
+        return result
     }
 
     function getNetworkShortNames(chainIds) {
@@ -462,7 +469,7 @@ QtObject {
 
     function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
         let prefChains = preferredSharingNetworks
-        if(prefChains.length === allNetworks.count) {
+        if(prefChains.length === root.filteredFlatModel.count) {
             prefChains = [toggledNetwork.chainId.toString()]
         }
         else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
@@ -470,7 +477,7 @@ QtObject {
         }
         else {
             if(prefChains.length === 1) {
-                prefChains = getAllNetworksChainIds().split(":")
+                prefChains = getAllNetworksChainIds()
             }
             else {
                 for(var i = 0; i < prefChains.length;i++) {

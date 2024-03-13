@@ -40,7 +40,7 @@ method delete*(self: Module) =
 
 method refreshNetworks*(self: Module) =
   self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
-  self.view.setItems(self.controller.getFlatNetworks())
+  self.view.refreshModel()
 
 method load*(self: Module) =
   self.controller.init()
@@ -63,5 +63,9 @@ method viewDidLoad*(self: Module) =
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
 
-method getNetworkLayer*(self: Module, chainId: int): string =
-  return self.view.getNetworkLayer(chainId)
+# Interfaces for getting lists from the service files into the abstract models
+
+method getNetworksDataSource*(self: Module): NetworksDataSource =
+  return (
+    getFlatNetworksList: proc(): var seq[NetworkDto] = self.controller.getFlatNetworks()
+  )

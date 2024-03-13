@@ -713,9 +713,9 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
   let token = self.tokenService.findTokenBySymbol(symbol)
   if token != nil:
     for addrPerChain in token.addressPerChainId:
-      # depending on areTestNetworksEnabled (in getNetwork), contractAddresses will
+      # depending on areTestNetworksEnabled (in getNetworkByChainId), contractAddresses will
       # contain mainnets or testnets only
-      let network = self.networkService.getNetwork(addrPerChain.chainId)
+      let network = self.networkService.getNetworkByChainId(addrPerChain.chainId)
       if network == nil:
         continue
       contractAddresses[addrPerChain.chainId] = addrPerChain.address

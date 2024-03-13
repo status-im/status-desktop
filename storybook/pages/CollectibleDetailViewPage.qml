@@ -72,14 +72,6 @@ SplitView {
                         function formatCurrencyAmount(cryptoValue, symbol) {
                             return "%L1 %2".arg(cryptoValue).arg(symbol)
                         }
-
-                        function getNetworkFullName(chainId) {
-                            return chainId
-                        }
-
-                        function getNetworkColor(chainId) {
-                            return "pink"
-                        }
                     }
                     walletRootStore: QtObject {
                         function getNameForAddress(address) {

@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.15
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
@@ -66,13 +67,13 @@ Item {
         }
 
         readonly property bool isIncoming: transactionType === Constants.TransactionType.Received || transactionType === Constants.TransactionType.ContractDeployment
-        readonly property string networkShortName: d.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
-        readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : "network/Network=Custom"
+        readonly property string networkShortName: d.isTransactionValid ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainId, "shortName") : ""
+        readonly property string networkIcon: isTransactionValid ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainId, "iconUrl") : "network/Network=Custom"
         readonly property int blockNumber: isDetailsValid ? details.blockNumber : 0
         readonly property int blockNumberIn: isDetailsValid ? details.blockNumberIn : 0
         readonly property int blockNumberOut: isDetailsValid ? details.blockNumberOut : 0
         readonly property string networkShortNameOut: networkShortName
-        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdIn) : ""
+        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transaction.chainIdIn, "shortName") : ""
         readonly property string symbol: isTransactionValid ? transaction.symbol : ""
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
@@ -188,8 +189,9 @@ Item {
                 readonly property int latestBlockNumberIn: d.isTransactionValid && !pending && !error && transactionHeader.isMultiTransaction && d.isBridge ? WalletStores.RootStore.getEstimatedLatestBlockNumber(d.transaction.chainIdIn) : 0
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
-                outNetworkLayer: d.isTransactionValid ? Number(RootStore.getNetworkLayer(transactionHeader.isMultiTransaction ? d.transaction.chainIdOut : d.transaction.chainId)) : 0
-                inNetworkLayer: d.isTransactionValid && transactionHeader.isMultiTransaction && d.isBridge ? Number(RootStore.getNetworkLayer(d.transaction.chainIdIn)) : 0
+                outNetworkLayer: d.isTransactionValid ? Number(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", transactionHeader.isMultiTransaction ? d.transaction.chainIdOut : d.transaction.chainId, "layer")) : 0
+                inNetworkLayer: d.isTransactionValid && transactionHeader.isMultiTransaction && d.isBridge ?
+                                    ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "layer") : 0
                 outNetworkTimestamp: d.isTransactionValid ? d.transaction.timestamp : 0
                 inNetworkTimestamp: d.isTransactionValid ? d.transaction.timestamp : 0
                 outChainName: transactionHeader.isMultiTransaction ? transactionHeader.networkNameOut : transactionHeader.networkName
@@ -260,7 +262,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.outSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(RootStore.getNetworkIcon(d.transaction.chainIdOut)) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(ModelUtils.getByKey(RootStore.flatNetworks, "chainId", d.transaction.chainIdOut, "iconUrl")) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -287,7 +289,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(RootStore.getNetworkIcon(d.transaction.chainIdIn)) ?? Style.svg("network/Network=Custom")
+                                    return Style.svg(RootStore.Icon(d.transaction.chainIdIn)) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }

@@ -159,8 +159,8 @@ proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): Commu
 proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
   self.communityTokensService.computeBurnFee(contractUniqueKey, amount, addressFrom, requestId)
 
-proc getNetwork*(self:Controller, chainId: int): NetworkDto =
-  self.networksService.getNetwork(chainId)
+proc getNetworkByChainId*(self:Controller, chainId: int): NetworkDto =
+  self.networksService.getNetworkByChainId(chainId)
 
 proc getOwnerToken*(self: Controller, communityId: string): CommunityTokenDto =
   return self.communityTokensService.getOwnerToken(communityId)

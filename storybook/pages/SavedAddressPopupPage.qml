@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import SortFilterProxyModel 0.2
+
 import Storybook 1.0
 import Models 1.0
 import AppLayouts.Wallet.popups 1.0
@@ -32,6 +34,11 @@ SplitView {
             id: dialog
 
             visible: true
+            flatNetworks: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: false }
+            }
+
             store: QtObject {
                 property var savedAddressNameExists: function() { return false }
             }

@@ -80,10 +80,10 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
   return self.walletAccountService.getWalletAccounts()
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().map(n => n.chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
@@ -130,8 +130,8 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc getTotalCurrencyBalance*(self: Controller, address: seq[string], chainIds: seq[int]): float64 =
   return self.walletAccountService.getTotalCurrencyBalance(address, chainIds)
 
-proc getNetworks*(self: Controller): seq[NetworkDto] =
-  return self.networkService.getNetworks()
+proc getCurrentNetworks*(self: Controller): seq[NetworkDto] =
+  return self.networkService.getCurrentNetworks()
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
   return self.walletAccountService.getKeypairByAccountAddress(address)

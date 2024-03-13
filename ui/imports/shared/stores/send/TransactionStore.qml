@@ -23,7 +23,7 @@ QtObject {
 
     property var fromNetworksModel: walletSectionSendInst.fromNetworksModel
     property var toNetworksModel: walletSectionSendInst.toNetworksModel
-    property var allNetworksModel: networksModule.all
+    property var flatNetworksModel: networksModule.flatNetworks
     property var senderAccounts: walletSectionSendInst.senderAccounts
     property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
     property var accounts: walletSectionSendInst.accounts
@@ -55,7 +55,7 @@ QtObject {
     }
 
     function getEtherscanLink(chainID) {
-        return networksModule.all.getBlockExplorerURL(chainID)
+        return networksModule.getBlockExplorerURL(chainID)
     }
 
     function copyToClipboard(text) {

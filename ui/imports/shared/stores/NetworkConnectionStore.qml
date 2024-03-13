@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import SortFilterProxyModel 0.2
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 
@@ -15,8 +17,13 @@ QtObject {
     readonly property bool balanceCache: walletSectionAssets.hasBalanceCache
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
 
+    readonly property SortFilterProxyModel __filteredflatNetworks: SortFilterProxyModel {
+                                                          sourceModel: networksModule.flatNetworks
+                                                          filters: ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled }
+                                                      }
+
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
-    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < networksModule.all.count
+    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < __filteredflatNetworks.count
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
@@ -52,9 +59,10 @@ QtObject {
     readonly property bool noTokenBalanceAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache
 
     readonly property bool ensNetworkAvailable: !blockchainNetworksDown.includes(mainModule.appNetworkId.toString())
-    readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(networksModule.all.getNetworkFullName(mainModule.appNetworkId))
+    readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(appNetworkName)
     readonly property bool stickersNetworkAvailable: !blockchainNetworksDown.includes(mainModule.appNetworkId.toString())
-    readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(networksModule.all.getNetworkFullName(mainModule.appNetworkId))
+    readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(appNetworkName)
+    readonly property string appNetworkName: ModelUtils.getByKey(networksModule.flatNetworks, "chainId", mainModule.appNetworkId, "chainName")
 
     function getBlockchainNetworkDownTextForToken(balances) {
         if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
@@ -88,7 +96,7 @@ QtObject {
         let jointChainIdString = ""
         for (const chain of chainIdsDown) {
             jointChainIdString = (!!jointChainIdString) ? jointChainIdString + " & " : jointChainIdString
-            jointChainIdString += networksModule.all.getNetworkFullName(parseInt(chain))
+            jointChainIdString += ModelUtils.getByKey(networksModule.flatNetworks, "chainId", parseInt(chain), "chainName")
         }
         return jointChainIdString
     }

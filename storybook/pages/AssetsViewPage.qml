@@ -146,7 +146,7 @@ SplitView {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 currencyStore: d.currencyStore
-                allNetworksModel: NetworksModel.allNetworks
+                allNetworksModel: NetworksModel.flatNetworks
                 networkFilters: d.networksChainsCurrentlySelected
             }
         }
@@ -178,7 +178,7 @@ SplitView {
                 }
                 Repeater {
                     id: networksRepeater
-                    model: NetworksModel.allNetworks
+                    model: NetworksModel.flatNetworks
                     delegate: CheckBox {
                         property int chainID: chainId
                         width: parent.width

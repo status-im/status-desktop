@@ -13,6 +13,8 @@ import shared.stores 1.0
 
 import utils 1.0
 
+import Models 1.0
+
 SplitView {
     id: root
 
@@ -24,20 +26,16 @@ SplitView {
 
     Component.onCompleted: {
         RootStore.getFiatValue = (cryptoValue, symbol) => { return (cryptoValue * 1800).toPrecision(2) }
-        RootStore.getNetworkIcon = (chainId) => { return "tiny/network/Network=Ethereum" }
         RootStore.getLatestBlockNumber = () => { return 4 }
         RootStore.hex2Dec = (number) => { return 10 }
-        RootStore.getNetworkColor = (number) => { return "blue" }
-        RootStore.getNetworkFullName = (chainId) => { return "Ethereum Mainnet" }
-        RootStore.getNetworkShortName = (chainId) => { return "eth" }
         RootStore.formatCurrencyAmount = (value, symbol) => { return value + " " + symbol }
         RootStore.getNameForSavedWalletAddress = (address) => { return "Saved Wallet Name" }
         RootStore.getNameForAddress = (address) => { return "Address Name" }
         RootStore.getEnsForSavedWalletAddress = (address) => { return "123" }
         RootStore.getChainShortNamesForSavedWalletAddress = (address) => { return "" }
         RootStore.getGasEthValue = (gasAmount, gasPrice) => { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
-        RootStore.getNetworkLayer = (chainId) => { return 1 }
         RootStore.currentCurrency = "USD"
+        RootStore.flatNetworks = NetworksModel.flatNetworks
 
         root.rootStoreReady = true
     }

@@ -1,3 +1,10 @@
+import app_service/service/network/dto
+
+type
+  NetworksDataSource* = tuple[
+    getFlatNetworksList: proc(): var seq[NetworkDto]
+  ]
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -23,5 +30,5 @@ method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool
 method refreshNetworks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getNetworkLayer*(self: AccessInterface, chainId: int): string {.base.} =
+method getNetworksDataSource*(self: AccessInterface): NetworksDataSource {.base.} =
   raise newException(ValueError, "No implementation available")

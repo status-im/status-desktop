@@ -43,10 +43,10 @@ proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)
 
 proc getChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().map(n => n.chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
-  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
+  return self.networkService.getCurrentNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()

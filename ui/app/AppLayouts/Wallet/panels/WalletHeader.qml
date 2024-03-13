@@ -1,11 +1,14 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
@@ -99,10 +102,7 @@ Item {
 
                 Layout.alignment: Qt.AlignTop
 
-                allNetworks: walletStore.allNetworks
-                layer1Networks: walletStore.layer1Networks
-                layer2Networks: walletStore.layer2Networks
-                enabledNetworks: walletStore.enabledNetworks
+                flatNetworks: walletStore.filteredFlatModel
 
                 onToggleNetwork: (network) => {
                                      walletStore.toggleNetwork(network.chainId)

@@ -2,8 +2,11 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
+
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
@@ -14,8 +17,7 @@ import "../views"
 StatusDialog {
     id: root
 
-    required property var layer1Networks
-    required property var layer2Networks
+    property var flatNetworks
     property var preferredSharingNetworks: []
     property bool preferredNetworksMode: false
 
@@ -29,7 +31,7 @@ StatusDialog {
     /// It is called for every toggled network if \c singleSelection.enabled is \c false
     /// If \c singleSelection.enabled is \c true, it is called only for the selected network when the selection changes
     /// \see SingleSelectionInfo
-    signal toggleNetwork(var network, var model, int index)
+    signal toggleNetwork(var network, int index)
 
     QtObject {
         id: d
@@ -65,15 +67,16 @@ StatusDialog {
 
     NetworkSelectionView {
         id: scrollView
+        width: parent.width
+        height: parent.height
         anchors.fill: parent
-        layer1Networks: root.layer1Networks
-        layer2Networks: root.layer2Networks
+        flatNetworks: root.flatNetworks
         preferredNetworksMode: root.preferredNetworksMode
         preferredSharingNetworks: root.preferredSharingNetworks
         useEnabledRole: root.useEnabledRole
         singleSelection: d.singleSelection
         onToggleNetwork: {
-            root.toggleNetwork(network, model, index)
+            root.toggleNetwork(network, index)
             if(d.singleSelection.enabled)
                 close()
         }

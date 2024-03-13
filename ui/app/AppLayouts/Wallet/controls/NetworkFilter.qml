@@ -1,11 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+
+import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet.helpers 1.0
 
@@ -16,10 +19,7 @@ import "../views"
 StatusComboBox {
     id: root
 
-    required property var allNetworks
-    required property var layer1Networks
-    required property var layer2Networks
-    required property var enabledNetworks
+    required property var flatNetworks
     property bool multiSelection: true
     property bool preferredNetworksMode: false
     property var preferredSharingNetworks: []
@@ -30,31 +30,31 @@ StatusComboBox {
     signal toggleNetwork(var network)
 
     function setChain(chainId) {
-        if(!multiSelection && !!d.currentModel && d.currentModel.count > 0) {
-            d.currentModel = NetworkModelHelpers.getLayerNetworkModelByChainId(root.layer1Networks,
-                                                                               root.layer2Networks,
-                                                                               chainId) ?? root.layer2Networks
-            d.currentIndex = NetworkModelHelpers.getChainIndexByChainId(root.layer1Networks,
-                                                                        root.layer2Networks,
-                                                                        chainId)
+        if(!multiSelection && !!root.flatNetworks && root.flatNetworks.count > 0) {
+            d.currentIndex = NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, chainId)
+            if(d.currentIndex == -1)
+                d.currentIndex = NetworkModelHelpers.getChainIndexForFirstLayer2Network(root.flatNetworks)
 
             // Notify change:
-            root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
+            root.toggleNetwork(ModelUtils.get(root.flatNetworks, d.currentIndex))
         }
     }
 
     QtObject {
         id: d
 
-        readonly property string selectedChainName: NetworkModelHelpers.getChainName(d.currentModel, d.currentIndex)
-        readonly property string selectedIconUrl: NetworkModelHelpers.getChainIconUrl(d.currentModel, d.currentIndex)
-        readonly property bool allSelected: (!!root.enabledNetworks && !!root.allNetworks) ? root.enabledNetworks.count === root.allNetworks.count :
-                                                                                             false
-        readonly property bool noneSelected: (!!root.enabledNetworks) ? root.enabledNetworks.count === 0 : false
+        readonly property string selectedChainName: NetworkModelHelpers.getChainName(root.flatNetworks, d.currentIndex)
+        readonly property string selectedIconUrl: NetworkModelHelpers.getChainIconUrl(root.flatNetworks, d.currentIndex)
+        readonly property bool allSelected: enabledFlatNetworks.len === root.flatNetworks.count
+        readonly property bool noneSelected: enabledFlatNetworks.len === 0
 
         // Persist selection between selectPopupLoader reloads
-        property var currentModel: layer2Networks
         property int currentIndex: 0
+
+        property SortFilterProxyModel enabledFlatNetworks: SortFilterProxyModel {
+            sourceModel: root.flatNetworks
+            filters: ValueFilter { roleName: "isEnabled"; value: true; enabled: !root.preferredNetworksMode}
+        }
     }
 
     onMultiSelectionChanged: root.setChain()
@@ -103,21 +103,20 @@ StatusComboBox {
             visible: !d.allSelected && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
-                model: root.multiSelection ? root.enabledNetworks : []
+                model: root.preferredNetworksMode ? root.flatNetworks: root.multiSelection ? d.enabledFlatNetworks: []
                 delegate: StatusRoundedImage {
                     width: 24
                     height: 24
-                    visible: image.source !== ""
                     image.source: Style.svg(model.iconUrl)
                     z: index + 1
+                    visible: root.preferredNetworksMode ? root.preferredSharingNetworks.includes(model.chainId.toString()): image.source !== ""
                 }
             }
         }
     }
 
     control.popup.contentItem: NetworkSelectionView {
-        layer1Networks: root.layer1Networks
-        layer2Networks: root.layer2Networks
+        flatNetworks: root.flatNetworks
         preferredSharingNetworks: root.preferredSharingNetworks
         preferredNetworksMode: root.preferredNetworksMode
 
@@ -126,14 +125,13 @@ StatusComboBox {
 
         singleSelection {
             enabled: !root.multiSelection
-            currentModel: d.currentModel
+            currentModel: root.flatNetworks
             currentIndex: d.currentIndex
         }
 
         useEnabledRole: false
 
-        onToggleNetwork: (network, networkModel, index) => {
-                             d.currentModel = networkModel
+        onToggleNetwork: (network, index) => {
                              d.currentIndex = index
                              root.toggleNetwork(network)
                              if(singleSelection.enabled)

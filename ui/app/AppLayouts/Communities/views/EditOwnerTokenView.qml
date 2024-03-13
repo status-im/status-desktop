@@ -27,10 +27,7 @@ StatusScrollView {
     property color communityColor
 
     // Network related properties:
-    property var layer1Networks
-    property var layer2Networks
-    property var enabledNetworks
-    property var allNetworks
+    property var flatNetworks
 
     // Wallet account expected roles: address, name, color, emoji, walletType
     property var accounts
@@ -278,10 +275,7 @@ StatusScrollView {
 
             Layout.fillWidth: true
 
-            allNetworks: root.allNetworks
-            layer1Networks: root.layer1Networks
-            layer2Networks: root.layer2Networks
-            enabledNetworks: root.enabledNetworks
+            flatNetworks: root.flatNetworks
             multiSelection: false
             control.topPadding: 10
             control.background: Rectangle {

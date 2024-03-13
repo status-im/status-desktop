@@ -255,7 +255,7 @@ RightTabBaseView {
 
             visible: (stack.currentIndex === 2)
 
-            allNetworksModel: RootStore.allNetworks
+            allNetworksModel: RootStore.filteredFlatModel
             address: RootStore.overview.mixedcaseAddress
             showAllAccounts: RootStore.showAllAccounts
             currencyStore: RootStore.currencyStore

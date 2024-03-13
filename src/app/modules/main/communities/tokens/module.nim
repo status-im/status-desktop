@@ -299,11 +299,11 @@ method computeBurnFee*(self: Module, contractUniqueKey: string, amount: string, 
   self.controller.computeBurnFee(contractUniqueKey, amount.parse(Uint256), addressFrom, requestId)
 
 proc createUrl(self: Module, chainId: int, transactionHash: string): string =
-  let network = self.controller.getNetwork(chainId)
+  let network = self.controller.getNetworkByChainId(chainId)
   result = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
 
 proc getChainName(self: Module, chainId: int): string =
-  let network = self.controller.getNetwork(chainId)
+  let network = self.controller.getNetworkByChainId(chainId)
   result = if network != nil: network.chainName else: ""
 
 method onCommunityTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =

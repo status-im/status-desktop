@@ -46,7 +46,7 @@ ColumnLayout {
         property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
         property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
      	onPreferredSharingNetworksChanged: {
-            preferredSharingNetworksArray = preferredSharingNetworks.split(":")
+            preferredSharingNetworksArray = preferredSharingNetworks.split(":").filter(Boolean)
             preferredSharingNetworkShortNames = walletStore.getNetworkShortNames(preferredSharingNetworks)
         }
     }
@@ -256,21 +256,7 @@ ColumnLayout {
         color: Theme.palette.transparent
         components: [
             NetworkFilter {
-                layer1Networks: SortFilterProxyModel {
-                    sourceModel: root.walletStore.networks
-                    filters: ValueFilter { roleName: "layer"; value: 1; }
-                }
-                layer2Networks: SortFilterProxyModel {
-                    sourceModel: root.walletStore.networks
-                    filters: ValueFilter { roleName: "layer"; value: 2; }
-                }
-                allNetworks: root.walletStore.networks
-                enabledNetworks: SortFilterProxyModel {
-                    sourceModel: root.walletStore.networks
-                    filters:  ExpressionFilter {
-                        expression: d.preferredSharingNetworksArray.includes(model.chainId.toString())
-                    }
-                }
+                flatNetworks: root.walletStore.networks
                 preferredNetworksMode: true
                 preferredSharingNetworks: d.preferredSharingNetworksArray
                 onToggleNetwork: (network) => {

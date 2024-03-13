@@ -24,7 +24,7 @@ QtObject {
         property ListModel model: ListModel{}
     }
 
-    property var allNetworksModel: NetworksModel.allNetworks
+    property var flatNetworksModel: NetworksModel.flatNetworks
     property var fromNetworksModel: NetworksModel.sendFromNetworks
     property var toNetworksModel: NetworksModel.sendToNetworks
     property var selectedSenderAccount: senderAccounts.get(0)
@@ -182,7 +182,7 @@ QtObject {
         let listOfChains = chainIds.split(":")
         let listOfChainIds = []
         for (let k =0;k<listOfChains.length;k++) {
-            listOfChainIds.push(SQUtils.ModelUtils.getByKey(NetworksModel.allNetworks, "shortName", listOfChains[k], "chainId"))
+            listOfChainIds.push(SQUtils.ModelUtils.getByKey(NetworksModel.flatNetworks, "shortName", listOfChains[k], "chainId"))
         }
         return listOfChainIds
     }
@@ -252,7 +252,7 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-        return SQUtils.ModelUtils.getByKey(NetworksModel.allNetworks, "chainId", chainId, "chainName")
+        return SQUtils.ModelUtils.getByKey(NetworksModel.flatNetworks, "chainId", chainId, "chainName")
     }
 
     function formatCurrencyAmountFromBigInt(balance, symbol, decimals) {
