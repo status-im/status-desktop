@@ -1,5 +1,5 @@
 import NimQml, std/json, sequtils, strutils, options
-import tables, stint, sets
+import tables, stint
 
 import entry
 
@@ -7,7 +7,6 @@ import app/core/eventemitter
 import app/core/signals/types
 
 import backend/activity as backend_activity
-import backend/transactions
 
 type EventCallbackProc = proc (eventObject: JsonNode)
 type WalletEventCallbackProc = proc (data: WalletSignal)
