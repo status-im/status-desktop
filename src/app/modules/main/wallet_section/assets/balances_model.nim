@@ -27,6 +27,8 @@ QtObject:
     result.index = index
 
   method rowCount(self: BalancesModel, index: QModelIndex = nil): int =
+    if self.index < 0 or self.index >= self.delegate.getGroupedAccountsAssetsList().len:
+      return 0
     return self.delegate.getGroupedAccountsAssetsList()[self.index].balancesPerAccount.len
 
   proc countChanged(self: BalancesModel) {.signal.}
